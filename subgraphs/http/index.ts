@@ -15,6 +15,7 @@ import { createRelationshipRoute } from "./routes/relationships.js";
 import { createNotesRoute as createNotesBatchRoute } from "./routes/create.js";
 import { createHubRoute } from "./routes/hub.js";
 import { createIngestSourceRoute } from "./routes/sources.js";
+import { createIngestSourcesBatchRoute } from "./routes/sources-batch.js";
 import { createSourceFolderRoute } from "./routes/source-folders.js";
 import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
@@ -122,6 +123,14 @@ export class HttpSubgraph extends BaseSubgraph {
         "sources/folders",
         { auth: "renown", body: "parsed" },
         timedRoute("POST sources/folders", createSourceFolderRoute(deps)),
+      );
+      // Many sources in one request: the drive and the queue are read and
+      // written once per batch rather than once per source. Registered before
+      // `sources`, like `sources/folders`. Up to 50 sources' content.
+      this.http.post(
+        "sources/batch",
+        { auth: "renown", body: "parsed", maxBodyBytes: 8 * 1024 * 1024 },
+        timedRoute("POST sources/batch", createIngestSourcesBatchRoute(deps)),
       );
       this.http.post(
         "sources",

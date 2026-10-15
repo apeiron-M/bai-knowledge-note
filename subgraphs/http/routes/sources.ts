@@ -45,6 +45,103 @@ interface DriveNode {
   parentFolder?: string | null;
 }
 
+/** The fields one source carries: the body of `POST sources`, and each item of `POST sources/batch`. */
+export const SOURCE_FIELDS = [
+  "title",
+  "content",
+  "sourceType",
+  "description",
+  "author",
+  "url",
+  "publishedAt",
+  "method",
+  "tool",
+] as const;
+
+export interface SourceFields {
+  title: string;
+  content: string;
+  sourceType: string;
+  description?: string;
+  author?: string;
+  url?: string;
+  publishedAt?: string;
+  method?: string;
+  tool?: string;
+}
+
+const text = (value: unknown): string | undefined =>
+  typeof value === "string" && value.length > 0 ? value : undefined;
+
+/**
+ * One source's fields, checked. `at` names the source in a batch
+ * (`sources[3].`) so a refusal says which one. Throws the route's 400.
+ */
+export function readSourceFields(
+  body: Partial<Record<(typeof SOURCE_FIELDS)[number], unknown>>,
+  at = "",
+): SourceFields {
+  const title = text(body.title)?.trim();
+  if (!title) throw new HttpError(400, "BAD_REQUEST", `${at}title is required`);
+  const content = text(body.content);
+  if (!content?.trim()) {
+    throw new HttpError(400, "BAD_REQUEST", `${at}content is required`);
+  }
+  const sourceType = text(body.sourceType) ?? "MANUAL_ENTRY";
+  if (!SOURCE_TYPES.has(sourceType)) {
+    // The reducer drops an unknown enum silently, so this must be a 400
+    // rather than a source that ingests with no type.
+    throw new HttpError(
+      400,
+      "BAD_REQUEST",
+      `${at}sourceType must be one of ${[...SOURCE_TYPES].sort().join(", ")}`,
+      [{ path: `${at}sourceType`, rule: "ENUM" }],
+    );
+  }
+  return {
+    title,
+    content,
+    sourceType,
+    description: text(body.description),
+    author: text(body.author),
+    url: text(body.url),
+    publishedAt: text(body.publishedAt),
+    method: text(body.method),
+    tool: text(body.tool),
+  };
+}
+
+/** What gives a new source its content: INGEST_SOURCE, then — when it is queued — EXTRACTING. */
+export function ingestActions(
+  fields: SourceFields,
+  createdBy: string,
+  createdAt: string,
+  queue: boolean,
+): { type: string; input: Record<string, unknown> }[] {
+  const actions: { type: string; input: Record<string, unknown> }[] = [
+    {
+      type: "INGEST_SOURCE",
+      input: {
+        title: fields.title,
+        content: fields.content,
+        sourceType: fields.sourceType,
+        ...(fields.description ? { description: fields.description } : {}),
+        ...(fields.author ? { author: fields.author } : {}),
+        ...(fields.url ? { url: fields.url } : {}),
+        ...(fields.publishedAt ? { publishedAt: fields.publishedAt } : {}),
+        ...(fields.method ? { method: fields.method } : {}),
+        ...(fields.tool ? { tool: fields.tool } : {}),
+        createdAt,
+        createdBy,
+      },
+    },
+  ];
+  if (queue) {
+    actions.push({ type: "SET_SOURCE_STATUS", input: { status: "EXTRACTING" } });
+  }
+  return actions;
+}
+
 /**
  * `POST sources` — ingest a source from its content alone.
  *
@@ -69,15 +166,7 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       }
       rejectUnknownFields(body as unknown as Record<string, unknown>, [
         "drive",
-        "title",
-        "content",
-        "sourceType",
-        "description",
-        "author",
-        "url",
-        "publishedAt",
-        "method",
-        "tool",
+        ...SOURCE_FIELDS,
         "queue",
         "parentFolder",
         "allowLiteralEscapes",
@@ -85,23 +174,7 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       if (!body.drive) {
         throw new HttpError(400, "BAD_REQUEST", "drive is required");
       }
-      if (!body.title?.trim()) {
-        throw new HttpError(400, "BAD_REQUEST", "title is required");
-      }
-      if (!body.content?.trim()) {
-        throw new HttpError(400, "BAD_REQUEST", "content is required");
-      }
-      const sourceType = body.sourceType ?? "MANUAL_ENTRY";
-      if (!SOURCE_TYPES.has(sourceType)) {
-        // The reducer drops an unknown enum silently, so this must be a 400
-        // rather than a source that ingests with no type.
-        throw new HttpError(
-          400,
-          "BAD_REQUEST",
-          `sourceType must be one of ${[...SOURCE_TYPES].sort().join(", ")}`,
-          [{ path: "sourceType", rule: "ENUM" }],
-        );
-      }
+      const fields = readSourceFields(body);
 
       const driveId = await canonicalForWrite(deps, body.drive, ctx);
       // Resolve placement BEFORE creating anything: a drive without /sources
@@ -115,34 +188,11 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
 
       const module = await deps.reactorClient.getDocumentModelModule(SOURCE_TYPE);
       const draft = module.utils.createDocument() as PHDocument;
-      draft.header.name = body.title.trim();
+      draft.header.name = fields.title;
 
       const now = deps.now().toISOString();
-      const actions: { type: string; input: Record<string, unknown> }[] = [
-        {
-          type: "INGEST_SOURCE",
-          input: {
-            title: body.title.trim(),
-            content: body.content,
-            sourceType,
-            ...(body.description ? { description: body.description } : {}),
-            ...(body.author ? { author: body.author } : {}),
-            ...(body.url ? { url: body.url } : {}),
-            ...(body.publishedAt ? { publishedAt: body.publishedAt } : {}),
-            ...(body.method ? { method: body.method } : {}),
-            ...(body.tool ? { tool: body.tool } : {}),
-            createdAt: now,
-            createdBy: user.address,
-          },
-        },
-      ];
       const queue = body.queue !== false;
-      if (queue) {
-        actions.push({
-          type: "SET_SOURCE_STATUS",
-          input: { status: "EXTRACTING" },
-        });
-      }
+      const actions = ingestActions(fields, user.address, now, queue);
 
       // Lint what will be applied BEFORE anything exists. `executeWrite` lints
       // too, but only after the create, and a refusal there (a publishedAt that
@@ -221,7 +271,7 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       }
 
       const task = queue
-        ? await addQueueTask(deps, driveId, documentId, ctx, body.title.trim())
+        ? (await addQueueTasks(deps, driveId, [{ documentId, target: fields.title }], ctx))?.get(documentId)
         : undefined;
 
       // Report placement as READ BACK from the drive, never echoed from the
@@ -269,51 +319,67 @@ async function verifyPlacement(
 }
 
 /**
- * Adds a `claim` task for the new source, unless one already references it.
+ * Adds a `claim` task for each new source, unless one already references it —
+ * ONE read of the queue and ONE write for any number of sources. The queue is
+ * a single document whose state holds every task it has run, and the reactor
+ * stores its whole state with every operation, so a task per write costs a
+ * full rewrite of it per source.
  *
  * A duplicate task id is unrecoverable — every queue operation resolves by
- * `find(t => t.id === taskId)` and there is no REMOVE_TASK — so the id is
+ * `find(t => t.id === taskId)` and there is no REMOVE_TASK — so the ids are
  * always freshly generated and the existing tasks are checked first.
+ *
+ * `queueId`, when the caller already read the drive, saves a read of it.
+ * Undefined when the vault has no queue.
  */
-async function addQueueTask(
+export async function addQueueTasks(
   deps: HttpRouteDeps,
   driveId: string,
-  documentId: string,
+  entries: readonly { documentId: string; target: string }[],
   ctx: RouteContext,
-  target: string,
-): Promise<{ id: string; created: boolean } | undefined> {
-  const queueId = await findDocumentInDrive(deps, driveId, "bai/pipeline-queue");
-  if (!queueId) return undefined;
-  const queueDoc = await deps.reactorClient.get(queueId);
+  queueId?: string,
+): Promise<Map<string, { id: string; created: boolean }> | undefined> {
+  const id = queueId ?? (await findDocumentInDrive(deps, driveId, "bai/pipeline-queue"));
+  if (!id) return undefined;
+  const queueDoc = await deps.reactorClient.get(id);
   const tasks =
     (
       queueDoc.state as
         | { global?: { tasks?: { id: string; documentRef?: string }[] } }
         | undefined
     )?.global?.tasks ?? [];
-  const existing = tasks.find((task) => task.documentRef === documentId);
-  if (existing) return { id: existing.id, created: false };
-
-  const id = deps.uuid();
-  await executeWrite(deps, {
-    documentId: queueId,
-    document: queueDoc,
-    actions: [
-      {
-        type: "ADD_TASK",
-        input: {
-          id,
-          taskType: "claim",
-          target,
-          documentRef: documentId,
-          createdAt: deps.now().toISOString(),
-        },
+  const byRef = new Map(tasks.map((task) => [task.documentRef, task.id]));
+  const out = new Map<string, { id: string; created: boolean }>();
+  const actions: { type: string; input: Record<string, unknown> }[] = [];
+  for (const { documentId, target } of entries) {
+    const existing = byRef.get(documentId) ?? out.get(documentId)?.id;
+    if (existing) {
+      out.set(documentId, { id: existing, created: false });
+      continue;
+    }
+    const taskId = deps.uuid();
+    actions.push({
+      type: "ADD_TASK",
+      input: {
+        id: taskId,
+        taskType: "claim",
+        target,
+        documentRef: documentId,
+        createdAt: deps.now().toISOString(),
       },
-    ],
-    ctx,
-    wait: true,
-  });
-  return { id, created: true };
+    });
+    out.set(documentId, { id: taskId, created: true });
+  }
+  if (actions.length) {
+    await executeWrite(deps, {
+      documentId: id,
+      document: queueDoc,
+      actions,
+      ctx,
+      wait: true,
+    });
+  }
+  return out;
 }
 
 /**

@@ -1,13 +1,14 @@
-import type { Action, PHDocument } from "document-model";
+import type { PHDocument } from "document-model";
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import { canonicalForWrite } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
-import { stampActions, type RawAction } from "../lib/envelope.js";
+import type { RawAction } from "../lib/envelope.js";
 import { lintActions } from "../lib/lint/index.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 import { rejectUnknownFields } from "../lib/validate.js";
 import { failAndRollback } from "../lib/rollback.js";
-import { folderPaths, resolveVaultFolder } from "../lib/vault-folders.js";
+import { containAll, placements } from "../lib/placement.js";
+import { resolveVaultFolder } from "../lib/vault-folders.js";
 import { executeWrite } from "../lib/write.js";
 
 const MAX_NOTES = 25;
@@ -24,13 +25,6 @@ interface CreateNotesBody {
   notes?: NoteSpec[];
   /** Not accepted — placement is the API's job. Present only to reject it. */
   parentFolder?: string;
-}
-
-interface DriveNode {
-  id?: string;
-  name?: string;
-  documentType?: string;
-  parentFolder?: string | null;
 }
 
 /**
@@ -241,61 +235,3 @@ export function createNotesRoute(deps: HttpRouteDeps) {
 
 const message = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
-
-async function containAll(
-  deps: HttpRouteDeps,
-  driveId: string,
-  parentFolder: string,
-  documentType: string,
-  created: { id: string; name: string }[],
-  ctx: RouteContext,
-): Promise<void> {
-  const actions = stampActions(
-    created.map((c) => ({
-      type: "ADD_FILE",
-      input: { id: c.id, name: c.name, documentType, parentFolder },
-    })),
-    () => deps.now(),
-    () => deps.uuid(),
-    "global",
-  );
-  const signal =
-    ctx.signal && !ctx.signal.aborted ? ctx.signal : undefined;
-  const job = await deps.reactorClient.executeAsync(
-    driveId,
-    "main",
-    actions as unknown as Action[],
-    signal,
-  );
-  const finished = await deps.reactorClient.waitForJob(job.id, signal);
-  if (finished.error) throw new Error(finished.error.message);
-}
-
-async function placements(
-  deps: HttpRouteDeps,
-  driveId: string,
-  ids: string[],
-): Promise<Map<string, { parentFolder: string | null; path: string | null; name: string }>> {
-  const drive = await deps.reactorClient.get(driveId);
-  const nodes =
-    (drive.state as { global?: { nodes?: DriveNode[] } } | undefined)?.global
-      ?.nodes ?? [];
-  const paths = folderPaths(nodes);
-  const byFolder = new Map<string, string>();
-  for (const [path, id] of paths) byFolder.set(id, path);
-
-  const out = new Map<
-    string,
-    { parentFolder: string | null; path: string | null; name: string }
-  >();
-  for (const id of ids) {
-    const node = nodes.find((n) => n.id === id);
-    const parentFolder = node?.parentFolder ?? null;
-    out.set(id, {
-      parentFolder,
-      path: parentFolder ? (byFolder.get(parentFolder) ?? null) : null,
-      name: node?.name ?? "",
-    });
-  }
-  return out;
-}

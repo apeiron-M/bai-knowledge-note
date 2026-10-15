@@ -181,6 +181,10 @@ function publishApi() {
     get: () => Promise.reject(new Error("not used")),
     postRaw: () => Promise.reject(new Error("not used")),
     post: (path: string, body: unknown) => {
+      // A vault older than `POST sources/batch`: these tests cover the add one source at a time.
+      if (path === "/sources/batch") {
+        return Promise.reject(new VaultApiFailure(404, "UNKNOWN", "The vault refused the request (404)."));
+      }
       calls.push({ path, body });
       if (path === "/sources/folders") {
         return Promise.resolve({
@@ -669,6 +673,7 @@ describe("publishFile", () => {
       get: () => Promise.reject(new Error("no")),
       postRaw: () => Promise.reject(new Error("no")),
       post: (path: string) => {
+        if (path === "/sources/batch") return Promise.reject(new VaultApiFailure(404, "UNKNOWN", "The vault refused the request (404)."));
         if (path === "/sources/folders")
           return Promise.resolve({ id: "folder-1", created: false });
         n++;
@@ -792,5 +797,90 @@ describe("cancelConversion", () => {
     await expect(cancelConversion(api, "job-1")).rejects.toMatchObject({
       code: "UNREACHABLE",
     });
+  });
+});
+
+describe("publishFile — in batches", () => {
+  const book = (n: number) =>
+    convertedFile({
+      selected: Array.from({ length: n }, () => true),
+      converted: {
+        filename: "Book.pdf",
+        format: "pdf",
+        plan,
+        sections: Array.from({ length: n }, (_, i) => sec(`S${i + 1}`, `text ${i + 1}`)),
+      },
+    });
+
+  /** A vault with `POST sources/batch`; `answer` shapes each batch's reply. */
+  function batchApi(
+    answer: (batch: number, sources: { title: string }[]) => Record<string, unknown>,
+  ) {
+    const batches: { drive: string; parentFolder: string; queue: boolean; sources: { title: string }[] }[] = [];
+    const other: string[] = [];
+    const api = {
+      get: () => Promise.reject(new Error("not used")),
+      postRaw: () => Promise.reject(new Error("not used")),
+      post: (path: string, body: never) => {
+        if (path === "/sources/folders") return Promise.resolve({ id: "folder-1", created: true });
+        if (path !== "/sources/batch") {
+          other.push(path);
+          return Promise.resolve({});
+        }
+        batches.push(body);
+        return Promise.resolve(answer(batches.length, (body as { sources: { title: string }[] }).sources));
+      },
+    } as unknown as VaultApi;
+    return { api, batches, other };
+  }
+
+  it("sends 30 sections as a batch of 25 and one of 5, each source mapped back in order", async () => {
+    const { api, batches, other } = batchApi((n, sources) => ({
+      sources: sources.map((_, index) => ({
+        index,
+        id: `b${n}-${index}`,
+        operations:
+          n === 2 && index === 1
+            ? [{ type: "INGEST_SOURCE", error: null }, { type: "ATTACH_ORIGINAL_FILE", error: "the ref is unknown" }]
+            : [{ type: "INGEST_SOURCE", error: null }],
+      })),
+      ...(n === 2 ? { queueError: "the queue is locked" } : {}),
+    }));
+    const result = await publishFile(book(30), new Uint8Array([1]), { api, driveId: "d" });
+
+    expect(batches.map((b) => b.sources.length)).toEqual([25, 5]);
+    expect(batches.every((b) => b.drive === "d" && b.parentFolder === "folder-1" && b.queue)).toBe(true);
+    expect(batches.flatMap((b) => b.sources.map((s) => s.title))).toEqual(
+      Array.from({ length: 30 }, (_, i) => `S${i + 1}`),
+    );
+    expect(result.sourceIds).toEqual([
+      ...Array.from({ length: 25 }, (_, i) => `b1-${i}`),
+      ...Array.from({ length: 5 }, (_, i) => `b2-${i}`),
+    ]);
+    expect(result.attachError).toBe("1 source could not take its original: the ref is unknown");
+    expect(result.queueError).toBe("5 sources could not be queued for processing: the queue is locked");
+    expect(other).toEqual([]); // nothing went one source at a time
+  });
+
+  it("stops at a source the vault refuses, naming every source that landed before it", async () => {
+    const { api } = batchApi((n, sources) =>
+      n === 1
+        ? { sources: sources.map((_, index) => ({ index, id: `b1-${index}` })) }
+        : {
+            sources: [{ index: 0, id: "b2-0" }, { index: 1, id: "b2-1" }],
+            failure: { index: 2, code: "INGEST_REJECTED", message: "INGEST_SOURCE was rejected" },
+          },
+    );
+    const failure = await publishFile(book(30), new Uint8Array([1]), { api, driveId: "d" }).then(
+      () => {
+        throw new Error("the publish did not fail");
+      },
+      (e: unknown) => e as PublishPartialFailure,
+    );
+    expect(failure).toBeInstanceOf(PublishPartialFailure);
+    expect(failure.partial.sourceIds).toHaveLength(27);
+    expect(failure.partial.sourceIds.slice(-2)).toEqual(["b2-0", "b2-1"]);
+    expect(failure.partial.failedAt).toBe(27);
+    expect(failure.message).toContain("source 28 of 30");
   });
 });

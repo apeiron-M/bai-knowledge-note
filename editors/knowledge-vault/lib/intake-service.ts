@@ -215,6 +215,8 @@ export type PublishResult = {
   attached: boolean;
   /** Why the original could not be attached, when it could not. The sources still exist. */
   attachError?: string;
+  /** Sources that were added but could not be queued for processing, and why. They exist; the pipeline will not see them until queued. */
+  queueError?: string;
   /** Figures (pictures, formula images) uploaded and claimed by their sources. */
   attachments: number;
   /** Figures that could not be hashed or uploaded; their placeholders stay in the content. */
@@ -461,6 +463,7 @@ export async function publishFile(
     attachments: claimed,
     attachmentErrors: attachmentErrors + figureErrors,
     ...(attachError ? { attachError } : {}),
+    ...(run.queueError ? { queueError: run.queueError } : {}),
   };
 }
 
@@ -474,13 +477,31 @@ export async function publishFile(
  * source created as the page went away is not made twice.
  */
 /**
- * How many sources are created at once. Each is several reactor jobs behind
- * one request — create, place, write, queue, each read back — mostly waiting
- * rather than work, so a few in flight overlap the waits. One at a time, a
- * 920-section book took about six minutes to add. The drive and the queue
- * take their operations in order whatever arrives together.
+ * How many sources are created at once on a vault without `POST
+ * sources/batch` (an engine older than it): one request each, a few in flight
+ * to overlap the waits. The drive and the queue take their operations in
+ * order whatever arrives together.
  */
 export const ADD_CONCURRENCY = 4;
+
+/**
+ * Sources per `POST sources/batch` request (the route takes up to 50). The
+ * vault reads and writes its drive and its queue once per batch rather than
+ * once per source — both are single documents the reactor rewrites whole with
+ * every operation, so a 920-section book added one source per request slowed
+ * to half its speed as it went in.
+ */
+export const BATCH_SOURCES = 25;
+/** Text per batch request, in characters: well under the route's 8 MB body. */
+const BATCH_CHARS = 1_500_000;
+
+type SourcesBatchAnswer = {
+  sources: { index: number; id: string; operations?: { type: string; error?: string | null }[] }[];
+  /** The first source that did not land; it and every one after it in the batch were rolled back. */
+  failure?: { index: number; code: string; message: string };
+  /** The sources landed but could not be queued for processing. */
+  queueError?: string;
+};
 
 async function createSources(
   items: readonly JournalItem[],
@@ -494,7 +515,7 @@ async function createSources(
     onProgress?: (done: number, total: number) => void;
     skip?: Map<string, number>;
   },
-): Promise<{ sourceIds: string[]; attachError?: string }> {
+): Promise<{ sourceIds: string[]; attachError?: string; queueError?: string }> {
   const journal = ctx.jobId === null ? undefined : ctx.journal;
   // Which items are already in the folder, decided up front and in order:
   // each title found there is taken once, as when they went one by one.
@@ -514,7 +535,10 @@ async function createSources(
     firstAttachError?: string;
     finished: number;
     next: number;
-  } = { failure: null, attachFailures: 0, finished: 0, next: 0 };
+    /** Sources added but not queued for processing, and why. */
+    unqueued: number;
+    queueError?: string;
+  } = { failure: null, attachFailures: 0, finished: 0, next: 0, unqueued: 0 };
   // Read through a call: another worker may have set it across an await.
   const failureSoFar = () => run.failure;
 
@@ -535,59 +559,162 @@ async function createSources(
     return journalWrites;
   };
 
+  // Sources already in the folder are done before anything is sent: both ways
+  // of sending below take only the rest, and fall back from one to the other
+  // without counting any of them twice.
+  for (const { index, skip } of plan) {
+    if (!skip) continue;
+    made.set(index, null);
+    run.finished += 1;
+  }
+  const todo = plan.filter((step) => !step.skip).map((step) => step.index);
+  if (run.finished > 0) {
+    ctx.onProgress?.(from + run.finished, items.length);
+    void advanceJournal();
+  }
+
+  /**
+   * Sends the rest in batches (`POST sources/batch`), each source's original
+   * and figures with its content. False when the vault has no such route — an
+   * engine older than it answers 404 with no code — and nothing was sent yet,
+   * so the add goes one source at a time instead.
+   */
+  const inBatches = async (): Promise<boolean> => {
+    while (run.failure === null && run.next < todo.length) {
+      const start = run.next;
+      const batch: number[] = [];
+      let chars = 0;
+      while (run.next < todo.length && batch.length < BATCH_SOURCES) {
+        const item = items[todo[run.next]];
+        const size = item.title.length + item.content.length + JSON.stringify(item.actions).length;
+        if (batch.length > 0 && chars + size > BATCH_CHARS) break;
+        batch.push(todo[run.next]);
+        chars += size;
+        run.next += 1;
+      }
+      let answer: SourcesBatchAnswer;
+      try {
+        answer = await ctx.api.post<SourcesBatchAnswer>("/sources/batch", {
+          drive: ctx.driveId,
+          parentFolder: ctx.folderId,
+          queue: true,
+          sources: batch.map((index) => {
+            const item = items[index];
+            return {
+              title: item.title,
+              content: item.content,
+              sourceType: item.sourceType,
+              method: CONVERT_METHOD,
+              tool: CONVERT_TOOL,
+              ...(item.actions.length > 0 ? { actions: item.actions } : {}),
+            };
+          }),
+        });
+      } catch (error) {
+        if (start === 0 && error instanceof VaultApiFailure && error.status === 404 && error.code === "UNKNOWN") {
+          run.next = start;
+          return false;
+        }
+        const first = batch[0];
+        run.failure = {
+          index: first,
+          why: `Could not create source ${first + 1} of ${items.length} (“${items[first].title}”)${batch.length > 1 ? ` or the ${batch.length - 1} after it` : ""}: ${message(error)}`,
+          // Only a refusal waits for the person; a request with no answer carries on by itself.
+          refusal: error instanceof VaultApiFailure,
+        };
+        return true;
+      }
+      if (!Array.isArray(answer?.sources)) {
+        const first = batch[0];
+        run.failure = {
+          index: first,
+          why: `Could not create source ${first + 1} of ${items.length} (“${items[first].title}”): the vault's answer did not say which sources it made.`,
+          refusal: true,
+        };
+        return true;
+      }
+      for (const landed of answer.sources) {
+        const index = batch[landed.index];
+        made.set(index, landed.id);
+        run.finished += 1;
+        // INGEST_SOURCE and its status are the source; what else was refused is its original or a figure.
+        const refused = (landed.operations ?? []).find(
+          (op) => op.error && op.type !== "INGEST_SOURCE" && op.type !== "SET_SOURCE_STATUS",
+        );
+        if (refused) {
+          run.attachFailures += 1;
+          run.firstAttachError ??= refused.error ?? undefined;
+        }
+      }
+      if (answer.queueError) {
+        run.unqueued += answer.sources.length;
+        run.queueError ??= answer.queueError;
+      }
+      if (answer.failure) {
+        const index = batch[answer.failure.index];
+        run.failure = {
+          index,
+          why: `Could not create source ${index + 1} of ${items.length} (“${items[index].title}”): ${answer.failure.message}`,
+          refusal: true,
+        };
+      }
+      ctx.onProgress?.(from + run.finished, items.length);
+      void advanceJournal();
+    }
+    return true;
+  };
+
   const worker = async (): Promise<void> => {
     // A failure stops new items; those already in flight finish.
-    while (run.failure === null && run.next < plan.length) {
-      const { index, skip } = plan[run.next];
+    while (run.failure === null && run.next < todo.length) {
+      const index = todo[run.next];
       run.next += 1;
       const item = items[index];
-      if (skip) {
-        made.set(index, null);
-      } else {
-        let created: { id: string };
-        try {
-          created = await ctx.api.post<{ id: string }>("/sources", {
-            drive: ctx.driveId,
-            title: item.title,
-            content: item.content,
-            sourceType: item.sourceType,
-            parentFolder: ctx.folderId,
-            queue: true,
-            method: CONVERT_METHOD,
-            tool: CONVERT_TOOL,
-          });
-        } catch (error) {
-          const prior = failureSoFar();
-          if (prior === null || index < prior.index) {
-            run.failure = {
-              index,
-              why: `Could not create source ${index + 1} of ${items.length} (“${item.title}”): ${message(error)}`,
-              // Only a refusal waits for the person; a request with no answer carries on by itself.
-              refusal: error instanceof VaultApiFailure,
-            };
-          }
-          return;
+      let created: { id: string };
+      try {
+        created = await ctx.api.post<{ id: string }>("/sources", {
+          drive: ctx.driveId,
+          title: item.title,
+          content: item.content,
+          sourceType: item.sourceType,
+          parentFolder: ctx.folderId,
+          queue: true,
+          method: CONVERT_METHOD,
+          tool: CONVERT_TOOL,
+        });
+      } catch (error) {
+        const prior = failureSoFar();
+        if (prior === null || index < prior.index) {
+          run.failure = {
+            index,
+            why: `Could not create source ${index + 1} of ${items.length} (“${item.title}”): ${message(error)}`,
+            // Only a refusal waits for the person; a request with no answer carries on by itself.
+            refusal: error instanceof VaultApiFailure,
+          };
         }
-        if (item.actions.length > 0) {
-          try {
-            // `POST actions` is keyed by document alone — the route rejects any
-            // other field (a stray `drive` here cost every UI publish its attachment).
-            await ctx.api.post("/actions", { documentId: created.id, actions: item.actions });
-          } catch (error) {
-            run.attachFailures += 1;
-            run.firstAttachError ??= message(error);
-          }
-        }
-        made.set(index, created.id);
+        return;
       }
+      if (item.actions.length > 0) {
+        try {
+          // `POST actions` is keyed by document alone — the route rejects any
+          // other field (a stray `drive` here cost every UI publish its attachment).
+          await ctx.api.post("/actions", { documentId: created.id, actions: item.actions });
+        } catch (error) {
+          run.attachFailures += 1;
+          run.firstAttachError ??= message(error);
+        }
+      }
+      made.set(index, created.id);
       run.finished += 1;
       ctx.onProgress?.(from + run.finished, items.length);
       void advanceJournal();
     }
   };
-  await Promise.all(
-    Array.from({ length: Math.min(ADD_CONCURRENCY, plan.length) }, () => worker()),
-  );
+  if (!(await inBatches())) {
+    await Promise.all(
+      Array.from({ length: Math.min(ADD_CONCURRENCY, todo.length - run.next) }, () => worker()),
+    );
+  }
   await advanceJournal();
 
   const sourceIds = [...made.entries()]
@@ -607,6 +734,11 @@ async function createSources(
     ...(run.attachFailures
       ? {
           attachError: `${run.attachFailures} source${run.attachFailures === 1 ? "" : "s"} could not take ${run.attachFailures === 1 ? "its" : "their"} original: ${run.firstAttachError}`,
+        }
+      : {}),
+    ...(run.queueError
+      ? {
+          queueError: `${run.unqueued} source${run.unqueued === 1 ? "" : "s"} could not be queued for processing: ${run.queueError}`,
         }
       : {}),
   };
@@ -634,7 +766,7 @@ export async function continuePublish(
 async function carryOn(
   entry: JournalEntry,
   deps: Parameters<typeof continuePublish>[1],
-): Promise<{ sourceIds: string[]; attachError?: string }> {
+): Promise<{ sourceIds: string[]; attachError?: string; queueError?: string }> {
   const items = await deps.journal.items(entry.id);
   if (items.length === 0) {
     await deps.journal.finish(entry.id);
@@ -662,7 +794,11 @@ async function carryOn(
     skip,
   });
   await deps.journal.finish(entry.id).catch(() => {});
-  return { sourceIds: [...entry.sourceIds, ...run.sourceIds], ...(run.attachError ? { attachError: run.attachError } : {}) };
+  return {
+    sourceIds: [...entry.sourceIds, ...run.sourceIds],
+    ...(run.attachError ? { attachError: run.attachError } : {}),
+    ...(run.queueError ? { queueError: run.queueError } : {}),
+  };
 }
 
 /**

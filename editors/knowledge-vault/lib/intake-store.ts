@@ -955,7 +955,8 @@ export function createIntakeStore({
       updateFiles((files) =>
         setState(markPublished(files, id, result.sourceIds), id, {
           attachError: result.attached ? undefined : result.attachError,
-          publishError: undefined,
+          // Added, but not queued: the row says so rather than looking done.
+          publishError: result.queueError ? `Added, but ${result.queueError}` : undefined,
         }),
       );
       if (file.originalRef)

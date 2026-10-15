@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { VaultApiFailure } from "./vault-api.js";
 import type { IntakeFile, Section } from "./intake-model.js";
 import { continuation } from "./intake-publish.js";
 import { continuePublish } from "./intake-service.js";
@@ -51,6 +52,10 @@ describe("adding a file whose sections are partly in the vault already", () => {
     let n = 3;
     const api = {
       post: (path: string, body: { title?: string; documentId?: string }) => {
+        // A vault older than `POST sources/batch`: carrying on one source at a time.
+        if (path === "/sources/batch") {
+          return Promise.reject(new VaultApiFailure(404, "UNKNOWN", "The vault refused the request (404)."));
+        }
         posts.push({ path, body });
         return Promise.resolve(path === "/sources" ? { id: `src-${++n}` } : {});
       },
@@ -84,6 +89,7 @@ describe("adding several sources at once", () => {
     let most = 0;
     const api = {
       post: (path: string, body: { title?: string }) => {
+        if (path === "/sources/batch") return Promise.reject(new VaultApiFailure(404, "UNKNOWN", "The vault refused the request (404)."));
         if (path !== "/sources") return Promise.resolve({});
         inFlight += 1;
         most = Math.max(most, inFlight);
