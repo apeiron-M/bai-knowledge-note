@@ -82,6 +82,7 @@ describe("registerConvertRoutes", () => {
     expect(routes.map((r) => `${r.method} ${r.path}`)).toEqual([
       "GET convert/health",
       "GET convert/progress/:job",
+      "GET convert/result/:job",
       "POST convert",
       "DELETE convert/:job",
     ]);
@@ -102,7 +103,7 @@ describe("registerConvertRoutes", () => {
     expect(() =>
       registerConvertRoutes(scope, { service: stubService() }),
     ).not.toThrow();
-    expect(routes).toHaveLength(4);
+    expect(routes).toHaveLength(5);
   });
 
   it("registers on a fresh scope, so a real reload still gets its routes", () => {
@@ -110,8 +111,8 @@ describe("registerConvertRoutes", () => {
     const second = fakeHttp();
     registerConvertRoutes(first.scope, { service: stubService() });
     registerConvertRoutes(second.scope, { service: stubService() });
-    expect(first.routes).toHaveLength(4);
-    expect(second.routes).toHaveLength(4);
+    expect(first.routes).toHaveLength(5);
+    expect(second.routes).toHaveLength(5);
   });
 
   it("does not crash when the scope reports the route as already registered", () => {

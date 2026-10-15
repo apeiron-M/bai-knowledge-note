@@ -77,7 +77,54 @@ export async function convertFile(
     contentType: "application/octet-stream",
     ...(deps.signal ? { signal: deps.signal } : {}),
   });
+  return readConvertBody(body, input.name);
+}
 
+/**
+ * The answer to a conversion this page — or an earlier load of it — started
+ * with `job` (`GET convert/result/:job`). The vault keeps it half an hour, so
+ * a page reloaded while a file converted picks the answer up instead of
+ * converting the file again. `running` while the service is still at it;
+ * `failed` with the vault's own failure when it failed; null when no answer is
+ * kept — the engine restarted, it ended too long ago, or the vault is older
+ * than this route — and the file has to be converted again.
+ */
+export async function collectConversion(
+  job: string,
+  name: string,
+  deps: { api: VaultApi },
+): Promise<
+  | { kind: "done"; converted: ConvertedFile }
+  | { kind: "running" }
+  | { kind: "failed"; error: VaultApiFailure }
+  | null
+> {
+  let body: ConvertSummary & {
+    running?: boolean;
+    failed?: { status?: number; code?: string; error?: string };
+  };
+  try {
+    body = await deps.api.get(`/convert/result/${encodeURIComponent(job)}`);
+  } catch (error) {
+    if (error instanceof VaultApiFailure && error.status === 404) return null;
+    throw error;
+  }
+  if (body.running === true) return { kind: "running" };
+  if (body.failed) {
+    return {
+      kind: "failed",
+      error: new VaultApiFailure(
+        body.failed.status ?? 500,
+        body.failed.code ?? "CONVERT_FAILED",
+        body.failed.error ?? "The conversion failed.",
+      ),
+    };
+  }
+  return { kind: "done", converted: readConvertBody(body, name) };
+}
+
+/** A convert route's answer, as the review reads it. */
+function readConvertBody(body: ConvertSummary, name: string): ConvertedFile {
   if (!Array.isArray(body.sections)) {
     throw new Error(
       "The conversion service answered with an unexpected body — is CONVERT_SERVICE_URL pointing at this vault's convert route?",
@@ -111,7 +158,7 @@ export async function convertFile(
   });
 
   return {
-    filename: body.filename ?? input.name,
+    filename: body.filename ?? name,
     format: body.format ?? "unknown",
     ocr: body.ocr ?? null,
     textSource: body.textSource ?? "docling",
@@ -224,6 +271,8 @@ export async function publishFile(
     journal?: PublishJournal;
     /** Sources in the vault so far, of how many. */
     onProgress?: (done: number, total: number) => void;
+    /** The add is written down (`journal`): from here it carries on by itself after a reload. */
+    onJournaled?: () => void;
   },
 ): Promise<PublishResult> {
   const plan = publishPlan(file);
@@ -376,6 +425,7 @@ export async function publishFile(
         },
         items,
       );
+      deps.onJournaled?.();
     } catch {
       jobId = null;
     }

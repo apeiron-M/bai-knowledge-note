@@ -4,6 +4,7 @@ import { createCancelRoute } from "./routes/cancel.js";
 import { createConvertRoute, DEFAULT_MAX_UPLOAD_BYTES } from "./routes/convert.js";
 import { createHealthRoute } from "./routes/health.js";
 import { createProgressRoute } from "./routes/progress.js";
+import { createResultRoute } from "./routes/result.js";
 import type { ConvertRouteDeps } from "./lib/deps.js";
 
 /**
@@ -42,6 +43,12 @@ export function registerConvertRoutes(
       "convert/progress/:job",
       { auth: "renown" },
       createProgressRoute(deps),
+    );
+    // The answer to a conversion whose page could not wait for it (lib/kept.ts).
+    http.get(
+      "convert/result/:job",
+      { auth: "renown" },
+      createResultRoute(deps),
     );
     http.post(
       "convert",

@@ -1,6 +1,7 @@
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import { requireUser } from "../lib/authorize.js";
 import type { ConvertRouteDeps } from "../lib/deps.js";
+import { ownerOf, sharedKeptResults } from "../lib/kept.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 import { deriveSections } from "../lib/sections.js";
 
@@ -73,12 +74,16 @@ export const notConfigured = () =>
  * `?minSectionChars=N` overrides the folding floor (see `readMinSectionChars`).
  */
 export function createConvertRoute(deps: ConvertRouteDeps) {
+  const kept = deps.kept ?? sharedKeptResults();
   return async function handleConvert(
     request: Request,
     ctx: RouteContext,
   ): Promise<Response> {
+    // The caller's job, once the conversion is under way: its answer is kept
+    // for a page that cannot wait for this response (lib/kept.ts).
+    let keeping: string | undefined;
     try {
-      requireUser(ctx);
+      const user = requireUser(ctx);
 
       const url = new URL(request.url);
       const filename = url.searchParams.get("filename")?.trim();
@@ -95,6 +100,11 @@ export function createConvertRoute(deps: ConvertRouteDeps) {
       }
       const minSectionChars = readMinSectionChars(url);
       if (!deps.service) throw notConfigured();
+      const job = url.searchParams.get("job") ?? undefined;
+      if (job) {
+        kept.begin(job, ownerOf(user));
+        keeping = job;
+      }
 
       // `ctx.signal` is deliberately NOT forwarded to the service. reactor-api
       // (6.2.3-dev.44 … dev.52, `#serve`) arms it with
@@ -109,7 +119,7 @@ export function createConvertRoute(deps: ConvertRouteDeps) {
         filename,
         bytes,
         ocr: url.searchParams.get("ocr") === "1",
-        job: url.searchParams.get("job") ?? undefined,
+        job,
         figures: url.searchParams.get("figures") === "1",
       });
       // The markdown is handed to the section rule so each section can say
@@ -121,46 +131,50 @@ export function createConvertRoute(deps: ConvertRouteDeps) {
         ...(minSectionChars === undefined ? {} : { minSectionChars }),
       });
 
-      return Response.json(
-        {
-          filename,
-          format: result.format ?? null,
-          chars: result.markdown.length,
-          chunks: result.chunks.length,
-          sections: plan.sections,
-          plan: {
-            cutLevel: plan.cutLevel,
-            splitSections: plan.splitSections,
-            mergedSections: plan.mergedSections,
-            rejoinedSections: plan.rejoinedSections,
-            ceiling: plan.ceiling,
-            minSectionChars: plan.minSectionChars,
-          },
-          ...(url.searchParams.get("markdown") === "1"
-            ? { markdown: result.markdown }
-            : {}),
-          timings: result.timings ?? null,
-          // The service OCR'd the file because its text layer was unusable
-          // (or the caller asked): the UI should say so, since OCR text has
-          // its own kinds of mistakes.
-          ocr: result.ocr ?? null,
-          textSource: result.textSource ?? "docling",
-          // Over the OCR budget: no sections, an estimate, and the caller may
-          // re-request with `?ocr=1` — the user decides to spend the minutes.
-          needsOcr: result.needsOcr ?? null,
-          pages: result.pages ?? null,
-          // Measured completeness: share of the text layer's tokens that made
-          // it through, plus formulas left undecoded and pictures not transcribed.
-          quality: result.quality ?? null,
-          ocrOffer: result.ocrOffer ?? null,
-          // Pictures and display formulas as PNGs (with `?figures=1`), keyed to the n-th placeholder in `markdown`.
-          figures: result.figures ?? [],
-          figureStats: result.figureStats ?? null,
+      const body = JSON.stringify({
+        filename,
+        format: result.format ?? null,
+        chars: result.markdown.length,
+        chunks: result.chunks.length,
+        sections: plan.sections,
+        plan: {
+          cutLevel: plan.cutLevel,
+          splitSections: plan.splitSections,
+          mergedSections: plan.mergedSections,
+          rejoinedSections: plan.rejoinedSections,
+          ceiling: plan.ceiling,
+          minSectionChars: plan.minSectionChars,
         },
-        { headers: OK_CACHE },
-      );
+        ...(url.searchParams.get("markdown") === "1"
+          ? { markdown: result.markdown }
+          : {}),
+        timings: result.timings ?? null,
+        // The service OCR'd the file because its text layer was unusable
+        // (or the caller asked): the UI should say so, since OCR text has
+        // its own kinds of mistakes.
+        ocr: result.ocr ?? null,
+        textSource: result.textSource ?? "docling",
+        // Over the OCR budget: no sections, an estimate, and the caller may
+        // re-request with `?ocr=1` — the user decides to spend the minutes.
+        needsOcr: result.needsOcr ?? null,
+        pages: result.pages ?? null,
+        // Measured completeness: share of the text layer's tokens that made
+        // it through, plus formulas left undecoded and pictures not transcribed.
+        quality: result.quality ?? null,
+        ocrOffer: result.ocrOffer ?? null,
+        // Pictures and display formulas as PNGs (with `?figures=1`), keyed to the n-th placeholder in `markdown`.
+        figures: result.figures ?? [],
+        figureStats: result.figureStats ?? null,
+      });
+      if (keeping) await kept.keep(keeping, 200, body);
+      return new Response(body, {
+        headers: { "content-type": "application/json", ...OK_CACHE },
+      });
     } catch (error) {
-      return jsonError(error);
+      const response = jsonError(error);
+      if (keeping)
+        await kept.keep(keeping, response.status, await response.clone().text());
+      return response;
     }
   };
 }

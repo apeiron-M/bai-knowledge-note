@@ -23,6 +23,7 @@ import {
   attachOriginal,
   cancelConversion,
   continuePublish,
+  collectConversion,
   conversionProgress,
   convertFile,
   publishFile,
@@ -37,6 +38,11 @@ import {
   type PublishJournal,
 } from "./publish-journal.js";
 import { originalRefOf } from "./original-ref.js";
+import {
+  pageBatchJournal,
+  type BatchJournal,
+  type SavedRow,
+} from "./intake-batch-journal.js";
 import { continuation } from "./intake-publish.js";
 import { createVaultApi, VaultApiFailure, type VaultApi } from "./vault-api.js";
 
@@ -157,6 +163,7 @@ export type IntakeDeps = {
       driveId: string;
       journal?: PublishJournal;
       onProgress?: (done: number, total: number) => void;
+      onJournaled?: () => void;
     },
   ) => Promise<PublishResult>;
   attach: (
@@ -177,6 +184,14 @@ export type IntakeDeps = {
   journal?: PublishJournal;
   /** The titles of the sources in a folder, read from the vault: what carrying on checks first. */
   folderTitles?: (driveId: string, folderId: string) => Promise<string[]>;
+  /** Where the batch is written down as it changes, so a reloaded page brings it back (intake-batch-journal.ts). */
+  batch?: BatchJournal;
+  /** The answer to a conversion an earlier load of the page started — the vault keeps it a while (`collectConversion`). */
+  collect?: (
+    job: string,
+    name: string,
+    api: VaultApi,
+  ) => ReturnType<typeof collectConversion>;
 };
 
 export type IntakeStore = ReturnType<typeof createIntakeStore>;
@@ -199,6 +214,14 @@ export const CHECK_WAIT_MS = 15_000;
 
 const BUSY_MESSAGE =
   "The reader is busy with another file, so it will try again shortly.";
+/** A file brought back after a reload whose conversion the vault no longer has. */
+const AGAIN_MESSAGE =
+  "The earlier reading was not kept, so it starts again.";
+
+/** How often a conversion an earlier load started is asked after. */
+export const RESUME_POLL_MS = 2_000;
+/** The batch is written down this long after it changes: progress ticks and quick toggles land in one write. */
+const SAVE_DELAY_MS = 400;
 
 const message = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
@@ -315,6 +338,15 @@ export function createIntakeStore({
     ReturnType<typeof setTimeout> | null
   > = { models: null, other: null };
   let release: (() => void) | null = null;
+  /**
+   * The rows this page has written down (intake-batch-journal.ts), as last
+   * written, with the job each was converting under: only these are mirrored —
+   * a row is written down with its bytes when it joins, or when it comes back.
+   */
+  const written = new Map<string, { file: IntakeFile; job?: string }>();
+  /** Rows the add has taken over (publish-journal.ts carries them on): no longer brought back. */
+  const handedOver = new Set<string>();
+  let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
   const has = (id: string) => state.files.some((f) => f.id === id);
 
@@ -374,6 +406,53 @@ export function createIntakeStore({
     state = settleOpen({ ...state, ...patch });
     syncKeepAlive();
     for (const listener of [...listeners]) listener();
+    scheduleSave();
+  }
+
+  function scheduleSave() {
+    if (!deps.batch || saveTimer) return;
+    saveTimer = setTimeout(() => {
+      saveTimer = null;
+      void saveBatch();
+    }, SAVE_DELAY_MS);
+  }
+
+  /** The same row as far as the journal is concerned: everything but live progress. */
+  function sameRow(a: IntakeFile, b: IntakeFile): boolean {
+    for (const key of Object.keys({ ...a, ...b }) as (keyof IntakeFile)[]) {
+      if (key !== "progress" && a[key] !== b[key]) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Mirror the batch to its journal: each row this page wrote down is written
+   * again when it changed (its conversion only when that is new), and a row
+   * that left — removed, cancelled, added, handed to the add — is struck out.
+   */
+  async function saveBatch() {
+    const batch = deps.batch;
+    if (!batch || !driveId) return;
+    const live = new Set<string>();
+    for (const file of state.files) {
+      if (file.publishedIds !== undefined || handedOver.has(file.id)) continue;
+      const before = written.get(file.id);
+      if (!before) continue;
+      live.add(file.id);
+      const job =
+        file.state === "converting" ? inFlight.get(file.id)?.job : undefined;
+      if (before.job === job && sameRow(before.file, file)) continue;
+      written.set(file.id, { file, job });
+      const withConversion =
+        file.converted !== undefined && file.converted !== before.file.converted;
+      await batch.save(driveId, file, job, withConversion).catch(() => {});
+    }
+    for (const id of [...written.keys()]) {
+      if (live.has(id)) continue;
+      written.delete(id);
+      await batch.remove(id).catch(() => {});
+      batch.release(id);
+    }
   }
 
   const updateFiles = (fn: (files: readonly IntakeFile[]) => IntakeFile[]) =>
@@ -620,19 +699,7 @@ export function createIntakeStore({
         (converted) => {
           // Removed, or the batch cancelled, while it converted: nobody waits for it.
           if (!current()) return;
-          updateFiles((files) => {
-            const next = setState(files, id, {
-              state: "converted",
-              converted,
-              finishedAt: deps.now(),
-            });
-            // Its folder may already hold some of these sections — an earlier
-            // add cut short: those start left out and the rest goes beside them.
-            const read = next.find((f) => f.id === id);
-            const index = vault.status === "ready" ? vault.index : null;
-            const going = read ? continuation(read, index?.titles) : null;
-            return going ? setState(next, id, going) : next;
-          });
+          onConverted(id, converted);
         },
         (error: unknown) => {
           // Stopped on purpose — the file was removed, or the batch cancelled
@@ -640,31 +707,7 @@ export function createIntakeStore({
           // is the stop we asked for: nothing failed, and there is no row left
           // to say so on.
           if (!current() || !has(id)) return;
-          // The file's lane is full on the service's side: not a failure of
-          // this file. Another tab or an agent is using it; wait, then ask again.
-          if (
-            error instanceof VaultApiFailure &&
-            error.code === "CONVERT_BUSY"
-          ) {
-            waitOutBusy(lane);
-            updateFiles((files) =>
-              setState(files, id, {
-                state: "queued",
-                error: BUSY_MESSAGE,
-                startedAt: undefined,
-              }),
-            );
-            return;
-          }
-          // Anything else fails the file — including a `CONVERT_CANCELLED` this
-          // batch did not ask for (the file is still here): Retry sends it again.
-          updateFiles((files) =>
-            setState(files, id, {
-              state: "failed",
-              error: message(error),
-              finishedAt: deps.now(),
-            }),
-          );
+          onConvertFailed(id, lane, error);
         },
       )
       .finally(() => {
@@ -676,6 +719,171 @@ export function createIntakeStore({
         syncKeepAlive();
         pump();
       });
+  }
+
+  /** A conversion's answer reached its row. */
+  function onConverted(id: string, converted: ConvertedFile) {
+    updateFiles((files) => {
+      const next = setState(files, id, {
+        state: "converted",
+        converted,
+        finishedAt: deps.now(),
+      });
+      // Its folder may already hold some of these sections — an earlier
+      // add cut short: those start left out and the rest goes beside them.
+      const read = next.find((f) => f.id === id);
+      const index = vault.status === "ready" ? vault.index : null;
+      const going = read ? continuation(read, index?.titles) : null;
+      return going ? setState(next, id, going) : next;
+    });
+  }
+
+  function onConvertFailed(id: string, lane: ConversionLane, error: unknown) {
+    // The file's lane is full on the service's side: not a failure of this
+    // file. Another tab or an agent is using it; wait, then ask again.
+    if (error instanceof VaultApiFailure && error.code === "CONVERT_BUSY") {
+      waitOutBusy(lane);
+      updateFiles((files) =>
+        setState(files, id, {
+          state: "queued",
+          error: BUSY_MESSAGE,
+          startedAt: undefined,
+        }),
+      );
+      return;
+    }
+    // Anything else fails the file — including a `CONVERT_CANCELLED` this
+    // batch did not ask for (the file is still here): Retry sends it again.
+    updateFiles((files) =>
+      setState(files, id, {
+        state: "failed",
+        error: message(error),
+        finishedAt: deps.now(),
+      }),
+    );
+  }
+
+  /**
+   * A file an earlier load of this page was converting when it went away: the
+   * service carried on, and the vault keeps its answer a while. Its row shows
+   * the service's progress until the answer is in, then goes on as if this
+   * page had sent it. With no answer kept (the engine restarted, or too long
+   * ago), it is read again from the bytes kept with the row. Its slot stays
+   * booked meanwhile — the service is still busy with it — and removing it
+   * stops the job on the service too (`stop`).
+   */
+  function resume(file: IntakeFile, job: string) {
+    const id = file.id;
+    const callApi = api;
+    const controller = new AbortController();
+    const flight = { job, controller, lane: laneOf(file.name), api: callApi };
+    inFlight.set(id, flight);
+    const current = () =>
+      inFlight.get(id) === flight && !controller.signal.aborted;
+    const settle = () => {
+      if (current()) inFlight.delete(id);
+      syncKeepAlive();
+      pump();
+    };
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const again = () => {
+      if (current()) timer = setTimeout(() => void tick(), RESUME_POLL_MS);
+    };
+    const tick = async () => {
+      if (!current()) return;
+      let answer: Awaited<ReturnType<NonNullable<IntakeDeps["collect"]>>>;
+      try {
+        answer = deps.collect ? await deps.collect(job, file.name, callApi) : null;
+      } catch {
+        // The vault did not answer this time: ask again shortly.
+        again();
+        return;
+      }
+      if (!current()) return;
+      if (answer?.kind === "running") {
+        if (!deps.isHidden()) {
+          const progress = await deps.progress(job, callApi).catch(() => null);
+          if (progress && current())
+            updateFiles((files) => setState(files, id, { progress }));
+        }
+        again();
+        return;
+      }
+      if (answer === null) {
+        updateFiles((files) =>
+          setState(files, id, {
+            state: "queued",
+            error: AGAIN_MESSAGE,
+            startedAt: undefined,
+            progress: undefined,
+          }),
+        );
+      } else if (answer.kind === "done") {
+        onConverted(id, answer.converted);
+      } else {
+        onConvertFailed(id, flight.lane, answer.error);
+      }
+      settle();
+    };
+    controller.signal.addEventListener("abort", () => {
+      if (timer) clearTimeout(timer);
+    });
+    timer = setTimeout(() => void tick(), 0);
+    syncKeepAlive();
+  }
+
+  /**
+   * The batch an earlier load of this page left (intake-batch-journal.ts):
+   * read once, when the page first reaches the vault. Each file comes back as
+   * it was — still converting (its answer is collected, `resume`), converted
+   * and waiting for review with its selection, queued, failed — with the bytes
+   * it needs to be read again or added. A file another page of this vault
+   * holds stays with that page; one whose bytes are gone cannot come back.
+   */
+  let batchRead = false;
+  async function restoreBatch() {
+    const batch = deps.batch;
+    if (batchRead || !batch || !driveId) return;
+    batchRead = true;
+    let rows: SavedRow[];
+    try {
+      rows = await batch.rows(driveId);
+    } catch {
+      return;
+    }
+    const back: { file: IntakeFile; job?: string }[] = [];
+    for (const row of rows) {
+      if (has(row.id) || written.has(row.id)) continue;
+      if (!(await batch.claim(row.id))) continue;
+      const blob = await batch.bytes(row.id).catch(() => null);
+      if (!blob) {
+        await batch.remove(row.id).catch(() => {});
+        batch.release(row.id);
+        continue;
+      }
+      let file: IntakeFile = { ...row.file };
+      let job: string | undefined;
+      if (file.state === "converted") {
+        const converted = await batch.conversion(row.id).catch(() => null);
+        file = converted
+          ? { ...file, converted }
+          : { ...file, state: "queued", error: AGAIN_MESSAGE };
+      } else if (file.state === "converting") {
+        if (row.job) job = row.job;
+        else file = { ...file, state: "queued", startedAt: undefined, error: AGAIN_MESSAGE };
+      }
+      blobs.set(file.id, blob);
+      back.push({ file, job });
+    }
+    if (back.length === 0) return;
+    for (const { file, job } of back) written.set(file.id, { file, job });
+    commit({
+      files: [...back.map((b) => b.file), ...state.files],
+      requested: true,
+      collapsed: false,
+    });
+    for (const { file, job } of back) if (job) resume(file, job);
+    pump();
   }
 
   /**
@@ -716,20 +924,33 @@ export function createIntakeStore({
     attachments?: AttachmentPort,
   ): Promise<boolean> {
     const file = state.files.find((f) => f.id === id);
-    const data = bytes.get(id);
+    let data = bytes.get(id);
+    const kept = blobs.get(id);
     // A published row stays visible for its message but never publishes twice:
     // `POST sources` is not idempotent on content.
-    if (!file || !data || !driveId || file.publishedIds || state.publishing)
+    if (!file || (!data && !kept) || !driveId || file.publishedIds || state.publishing)
       return false;
 
     commit({ publishing: true, publishingId: id, progress: null });
     try {
+      // A row brought back after a reload has its bytes as the blob kept with it.
+      if (!data && kept) {
+        data = new Uint8Array(await kept.arrayBuffer());
+        bytes.set(id, data);
+        blobs.delete(id);
+      }
+      if (!data) throw new Error("The file's contents are no longer here — remove it and add it again.");
       const result = await deps.publish(file, data, {
         api,
         attachments,
         driveId,
         journal: deps.journal,
         onProgress: reportProgress,
+        // From here the add's own journal carries it on: the batch lets it go.
+        onJournaled: () => {
+          handedOver.add(id);
+          void saveBatch();
+        },
       });
       updateFiles((files) =>
         setState(markPublished(files, id, result.sourceIds), id, {
@@ -866,7 +1087,9 @@ export function createIntakeStore({
     /** The api every later call uses; re-bound on mount, so a fresh sign-in reaches a running batch. */
     bindApi: (next: VaultApi) => {
       api = next;
-      // The first time the page reaches the vault, carry on what an earlier visit left unfinished.
+      // The first time the page reaches the vault: bring back the batch an
+      // earlier load left, and carry on the adds it left unfinished.
+      void restoreBatch();
       void readCarried();
     },
     /** Try a stopped add again, from where it stopped. */
@@ -925,6 +1148,17 @@ export function createIntakeStore({
         const data = incoming[index].data;
         if (data instanceof Uint8Array) bytes.set(file.id, data);
         else blobs.set(file.id, data);
+        // Written down with its bytes, so a reloaded page brings it back.
+        const batch = deps.batch;
+        if (batch && driveId) {
+          written.set(file.id, { file });
+          void batch.claim(file.id);
+          void batch
+            .add(driveId, file, data instanceof Uint8Array ? new Blob([data.slice()]) : data)
+            .catch(() => {
+              written.delete(file.id);
+            });
+        }
       });
       // New files get the full wait for the vault's answer.
       if (vault.status === "waiting") {
@@ -1187,6 +1421,8 @@ const browserDeps: IntakeDeps = {
   originalRef: originalRefOf,
   journal: pageJournal(),
   folderTitles: readFolderTitles,
+  batch: pageBatchJournal(),
+  collect: (job, name, api) => collectConversion(job, name, { api }),
 };
 
 const stores = new Map<string, IntakeStore>();

@@ -12,12 +12,14 @@ import {
   createIntakeStore,
   intakeStoreFor,
   PROGRESS_POLL_MS,
+  RESUME_POLL_MS,
   sortOffered,
   type IncomingFile,
   type IntakeDeps,
   type LaneConfig,
 } from "./intake-store.js";
 import { PublishPartialFailure } from "./intake-service.js";
+import { memoryBatchJournal } from "./intake-batch-journal.js";
 import { VaultApiFailure, type VaultApi } from "./vault-api.js";
 
 const api = {} as VaultApi;
@@ -1060,5 +1062,61 @@ describe("intake store — files the vault already holds", () => {
     await flush();
     expect(calls).toBe(2);
     expect(states(store)).toEqual(["b.md:converting"]);
+  });
+});
+
+describe("intake store — a reloaded page brings its batch back", () => {
+  /** The first page: files added, written down, and the page gone — its locks with it. */
+  async function leftBehind(files: IncomingFile[]) {
+    const batch = memoryBatchJournal();
+    const first = harness({ batch });
+    first.store.add(files);
+    await vi.advanceTimersByTimeAsync(500);
+    const rows = await batch.rows("drive-1");
+    for (const row of rows) batch.release(row.id);
+    return { batch, rows };
+  }
+
+  it("collects the answer of a file the vault went on converting, and converts the rest here", async () => {
+    const { batch, rows } = await leftBehind([bytesOf("book.pdf", 8), bytesOf("notes.pdf", 6)]);
+    expect(rows.map((r) => [r.file.name, r.file.state, r.job])).toEqual([
+      ["book.pdf", "converting", "job-1"],
+      ["notes.pdf", "queued", undefined],
+    ]);
+
+    const answers = [
+      { kind: "running" as const },
+      { kind: "done" as const, converted: converted("book.pdf") },
+    ];
+    const collect = vi.fn(() => Promise.resolve(answers.shift() ?? null));
+    const second = harness({ batch, collect });
+    second.store.bindApi(api);
+    await flush();
+    // Back as it was: still converting, with the service's progress.
+    expect(states(second.store)).toEqual(["book.pdf:converting", "notes.pdf:queued"]);
+    expect(collect).toHaveBeenCalledWith("job-1", "book.pdf", api);
+    expect(second.store.getSnapshot().files[0].progress?.pagesDone).toBe(3);
+
+    await vi.advanceTimersByTimeAsync(RESUME_POLL_MS);
+    // The answer is in; the next file goes to the reader — book.pdf was never sent again.
+    expect(states(second.store)).toEqual(["book.pdf:converted", "notes.pdf:converting"]);
+    expect(second.calls.map((c) => c.name)).toEqual(["notes.pdf"]);
+
+    // Its conversion is written down too: a second reload would bring it back for review.
+    await vi.advanceTimersByTimeAsync(500);
+    expect((await batch.conversion(rows[0].id))?.sections).toHaveLength(1);
+  });
+
+  it("reads a file again from the bytes kept with it when the vault kept no answer", async () => {
+    const { batch } = await leftBehind([bytesOf("book.pdf", 8)]);
+    const second = harness({ batch, collect: vi.fn(() => Promise.resolve(null)) });
+    second.store.bindApi(api);
+    await vi.advanceTimersByTimeAsync(50);
+    expect(states(second.store)).toEqual(["book.pdf:converting"]);
+    expect(second.calls.map((c) => c.name)).toEqual(["book.pdf"]);
+
+    second.calls[0].reply.resolve(converted("book.pdf"));
+    await flush();
+    expect(states(second.store)).toEqual(["book.pdf:converted"]);
   });
 });

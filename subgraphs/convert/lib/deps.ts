@@ -1,3 +1,4 @@
+import type { KeptResults } from "./kept.js";
 import type { ConversionService } from "./service.js";
 
 /** Everything the convert routes need, injectable for tests. */
@@ -16,4 +17,6 @@ export interface ConvertRouteDeps {
    * checks a file against this vault's cap, not a guess. Absent: the default.
    */
   maxUploadBytes?: number;
+  /** Where finished answers wait for a page that comes back for them (lib/kept.ts); the process's own when absent. */
+  kept?: KeptResults;
 }
