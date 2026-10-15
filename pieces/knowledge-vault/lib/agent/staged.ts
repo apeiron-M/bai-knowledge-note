@@ -2,7 +2,7 @@ import type { KnowledgeVaultClient } from "../common/client.js";
 import { KnowledgeVaultApiError } from "../common/errors.js";
 import { checkProposal, CONFIDENCE, GATES, NOTE_TYPES, OTHER_GATE, type ProposedNote, type SkippedCandidate } from "./extract.js";
 import { completeJson, type LlmClient, type Usage } from "./llm.js";
-import { MIN_WINDOW_CHARS, paceFor, splitInHalf, windowSize, WindowCursor, type TextWindow } from "./windows.js";
+import { draftBatchFor, MIN_WINDOW_CHARS, paceFor, splitInHalf, windowSize, WindowCursor, type TextWindow } from "./windows.js";
 
 /**
  * The extract job as five workflow steps, so Studio shows each one finish
@@ -400,68 +400,102 @@ For each same pair, keep the note that states the claim more precisely.
 Answer: {"same":[{"keep":"c1","drop":"c4","reason":"..."}]}  (an empty list when all differ)`;
 
 export type DraftedNote = ProposedNote & { candidate_id: string; new_topics: string[] };
+export type ConvergedClaim = { candidate_id: string; note_id: string; title: string; reason: string; locus: string; evidence: string };
 
-export async function draftStage(llm: LlmClient, model: string, bundle: Record<string, unknown>, checked: Record<string, unknown>, fetchImpl?: typeof fetch) {
+const NOT_A_MATCH = "the note you named is not one of this claim's close matches in the vault (similarity at least 0.75, not archived, not replaced by another note): write the claim as a note";
+
+export async function draftStage(llm: LlmClient, model: string, bundle: Record<string, unknown>, checked: Record<string, unknown>, fetchImpl?: typeof fetch, windows?: TextWindow[]) {
   const candidates = arr(checked.candidates).map(asRecord);
   const vocabulary = new Set(arr(bundle.topics).map(str));
   const usage: Usage = { prompt_tokens: 0, completion_tokens: 0, cost: 0 };
   const accepted: DraftedNote[] = [];
-  const existing: { candidate_id: string; note_id: string; title: string; reason: string }[] = [];
+  const existing: ConvergedClaim[] = [];
+  const rejected: { candidate_id: string; issues: string[] }[] = [];
   let rounds = 0;
-  let rejected: { candidate_id: string; issues: string[] }[] = [];
   if (candidates.length === 0) {
     return { summary: "No candidates passed the gates, so no notes were drafted.", proposed_count: 0, existing_count: 0, rejected_count: 0, repair_rounds: 0, proposed: [], existing: [], rejected: [], overlaps: [], new_topics: [], cost_usd: 0, tokens: 0 };
   }
 
-  let pending = candidates;
-  let feedback = "";
-  while (pending.length && rounds < 2) {
-    rounds++;
-    const user = [
-      `Source: ${str(bundle.title)}`,
-      "Vault topics (name, notes, an example note):",
-      ...topicLines(bundle),
-      "",
-      "Claims:",
-      ...pending.map((c) => `- ${str(c.id)}: ${str(c.claim)}\n  locus: ${str(c.locus)}\n  evidence: ${str(c.evidence)}\n  vault matches: ${arr(c.matches).map(asRecord).map((m) => `${str(m.id)} "${str(m.title)}" (${str(m.similarity)})`).join("; ") || "none"}`),
-      feedback,
-      "",
-      "Source text for evidence and conditions:",
-      str(bundle.text),
-    ].join("\n");
-    const reply = await completeJson(llm, { model, system: DRAFT_SYSTEM, user, maxTokens: 24_000, reasoningEffort: "medium" }, fetchImpl);
-    usage.prompt_tokens += reply.usage.prompt_tokens;
-    usage.completion_tokens += reply.usage.completion_tokens;
-    usage.cost += reply.usage.cost;
-    const answer = asObject(reply.value, "The model's answer");
-    for (const e of arr(answer.existing).map(asRecord)) existing.push({ candidate_id: str(e.candidate_id), note_id: str(e.note_id), title: str(e.title), reason: str(e.reason) });
-    rejected = [];
-    const done = new Set(existing.map((e) => e.candidate_id));
-    for (const raw of arr(answer.notes).map(asRecord)) {
-      const note: Record<string, unknown> = { ...raw, note_type: str(raw.note_type).toUpperCase().replace(/-/g, "_") };
-      const issues = checkProposal(note, accepted);
-      if (/\d\s*(%|percent)|us\$|\$\s?\d/i.test(str(note.title))) issues.push("the title carries a statistic; state the claim the numbers support, and put the numbers in the description and content");
-      if (containsVerbatim(str(bundle.text), str(note.title))) issues.push("the title repeats a sentence from the source; state the inference it supports in your own words");
-      if (issues.length) {
-        rejected.push({ candidate_id: str(raw.candidate_id), issues });
-        continue;
+  /** One batch of claims from one window, drafted from that window's text, with one repair round. */
+  async function draftBatch(batch: Record<string, unknown>[], w: TextWindow): Promise<void> {
+    let pending = batch;
+    let feedback = "";
+    let batchRounds = 0;
+    let failed: { candidate_id: string; issues: string[] }[] = [];
+    const done = new Set<string>();
+    while (pending.length && batchRounds < 2) {
+      batchRounds++;
+      const user = [
+        `Source: ${str(bundle.title)}`,
+        "Vault topics (name, notes, an example note):",
+        ...topicLines(bundle),
+        "",
+        "Claims:",
+        ...pending.map((c) => `- ${str(c.id)}: ${str(c.claim)}\n  locus: ${str(c.locus)}\n  evidence: ${str(c.evidence)}\n  vault matches: ${arr(c.matches).map(asRecord).map((m) => `${str(m.id)} "${str(m.title)}" (${str(m.similarity)})`).join("; ") || "none"}`),
+        feedback,
+        "",
+        "Source text for evidence and conditions:",
+        ...(w.heading ? [`Section: ${w.heading}`] : []),
+        w.text,
+      ].join("\n");
+      const reply = await completeJson(llm, { model, system: DRAFT_SYSTEM, user, maxTokens: 24_000, reasoningEffort: "medium" }, fetchImpl);
+      usage.prompt_tokens += reply.usage.prompt_tokens;
+      usage.completion_tokens += reply.usage.completion_tokens;
+      usage.cost += reply.usage.cost;
+      const answer = asObject(reply.value, "The model's answer");
+      failed = [];
+      // "Already in the vault" holds only for a note this claim was actually matched with, live and not replaced.
+      for (const e of arr(answer.existing).map(asRecord)) {
+        const id = str(e.candidate_id);
+        const candidate = pending.find((c) => str(c.id) === id);
+        if (!candidate) continue;
+        const match = arr(candidate.matches).map(asRecord).find((m) => str(m.id) === str(e.note_id));
+        if (match?.eligible === true) {
+          existing.push({ candidate_id: id, note_id: str(e.note_id), title: str(match.title) || str(e.title), reason: str(e.reason), locus: str(candidate.locus), evidence: str(candidate.evidence) });
+          done.add(id);
+        } else failed.push({ candidate_id: id, issues: [NOT_A_MATCH] });
       }
-      const topics = arr(note.topics).map(str).filter(Boolean);
-      accepted.push({
-        candidate_id: str(raw.candidate_id), title: str(note.title).trim(), description: str(note.description).trim(),
-        note_type: note.note_type as ProposedNote["note_type"], content: str(note.content), topics,
-        confidence: str(note.confidence) as ProposedNote["confidence"], locus: str(note.locus),
-        new_topics: topics.filter((t) => !vocabulary.has(t)),
-      });
-      done.add(str(raw.candidate_id));
-      for (const merged of arr(raw.merged_ids).map(str)) done.add(merged);
+      for (const raw of arr(answer.notes).map(asRecord)) {
+        const note: Record<string, unknown> = { ...raw, note_type: str(raw.note_type).toUpperCase().replace(/-/g, "_") };
+        const issues = checkProposal(note, accepted);
+        if (/\d\s*(%|percent)|us\$|\$\s?\d/i.test(str(note.title))) issues.push("the title carries a statistic; state the claim the numbers support, and put the numbers in the description and content");
+        if (containsVerbatim(str(bundle.text), str(note.title))) issues.push("the title repeats a sentence from the source; state the inference it supports in your own words");
+        if (issues.length) {
+          failed.push({ candidate_id: str(raw.candidate_id), issues });
+          continue;
+        }
+        const topics = arr(note.topics).map(str).filter(Boolean);
+        accepted.push({
+          candidate_id: str(raw.candidate_id), title: str(note.title).trim(), description: str(note.description).trim(),
+          note_type: note.note_type as ProposedNote["note_type"], content: str(note.content), topics,
+          confidence: str(note.confidence) as ProposedNote["confidence"], locus: str(note.locus),
+          new_topics: topics.filter((t) => !vocabulary.has(t)),
+        });
+        done.add(str(raw.candidate_id));
+        for (const merged of arr(raw.merged_ids).map(str)) done.add(merged);
+      }
+      const retry = new Set(failed.map((r) => r.candidate_id));
+      pending = batch.filter((c) => retry.has(str(c.id)) && !done.has(str(c.id)));
+      feedback = failed.length ? `\nYour previous drafts for these claims were rejected. Fix exactly these issues:\n${failed.map((r) => `- ${r.candidate_id}: ${r.issues.join("; ")}`).join("\n")}` : "";
     }
-    const retry = new Set(rejected.map((r) => r.candidate_id));
-    pending = candidates.filter((c) => retry.has(str(c.id)) && !done.has(str(c.id)));
-    feedback = rejected.length ? `\nYour previous drafts for these claims were rejected. Fix exactly these issues:\n${rejected.map((r) => `- ${r.candidate_id}: ${r.issues.join("; ")}`).join("\n")}` : "";
+    rounds = Math.max(rounds, batchRounds);
+    rejected.push(...failed.filter((r) => !done.has(r.candidate_id)));
   }
-  // Two drafts can make one assertion in different words; a lexical check
-  // misses that, so one short model call compares them.
+
+  // Each window's claims are drafted from that window's text alone, a batch at a time, so every call stays small.
+  const byId = new Map((windows ?? []).map((w) => [w.id, w]));
+  const whole: TextWindow = { id: "w0", heading: null, text: str(bundle.text) };
+  const groups = new Map<string, Record<string, unknown>[]>();
+  for (const c of candidates) {
+    const key = byId.has(str(c.window)) ? str(c.window) : whole.id;
+    groups.set(key, [...(groups.get(key) ?? []), c]);
+  }
+  for (const [key, group] of groups) {
+    const size = draftBatchFor((await llm.active(fetchImpl)).locality);
+    for (let i = 0; i < group.length; i += size) await draftBatch(group.slice(i, i + size), byId.get(key) ?? whole);
+  }
+
+  // Two drafts can make one assertion in different words (from one window or two); one short model call compares them all.
   const overlaps: { kept: string; dropped: string; reason: string }[] = [];
   let overlapCheck: "done" | "skipped" | "failed" = "skipped";
   if (accepted.length > 1) {
@@ -473,22 +507,22 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
       maxTokens: 8000,
       reasoningEffort: "low",
     }, fetchImpl).catch(() => null);
-  if (reply) {
-    overlapCheck = "done";
-    usage.prompt_tokens += reply.usage.prompt_tokens;
-    usage.completion_tokens += reply.usage.completion_tokens;
-    usage.cost += reply.usage.cost;
-    const ids = new Set(accepted.map((n) => n.candidate_id));
-    const gone = new Set<string>();
-    for (const pair of arr(asObject(reply.value, "The overlap check").same).map(asRecord)) {
-      const keep = str(pair.keep);
-      const drop = str(pair.drop);
-      if (!ids.has(keep) || !ids.has(drop) || keep === drop || gone.has(keep) || gone.has(drop)) continue;
-      gone.add(drop);
-      overlaps.push({ kept: keep, dropped: drop, reason: str(pair.reason) });
-    }
-    for (let i = accepted.length - 1; i >= 0; i--) if (gone.has(accepted[i].candidate_id)) accepted.splice(i, 1);
-  } else overlapCheck = "failed";
+    if (reply) {
+      overlapCheck = "done";
+      usage.prompt_tokens += reply.usage.prompt_tokens;
+      usage.completion_tokens += reply.usage.completion_tokens;
+      usage.cost += reply.usage.cost;
+      const ids = new Set(accepted.map((n) => n.candidate_id));
+      const gone = new Set<string>();
+      for (const pair of arr(asObject(reply.value, "The overlap check").same).map(asRecord)) {
+        const keep = str(pair.keep);
+        const drop = str(pair.drop);
+        if (!ids.has(keep) || !ids.has(drop) || keep === drop || gone.has(keep) || gone.has(drop)) continue;
+        gone.add(drop);
+        overlaps.push({ kept: keep, dropped: drop, reason: str(pair.reason) });
+      }
+      for (let i = accepted.length - 1; i >= 0; i--) if (gone.has(accepted[i].candidate_id)) accepted.splice(i, 1);
+    } else overlapCheck = "failed";
   }
   const newTopics = [...new Set(accepted.flatMap((n) => n.new_topics))];
   const merged = candidates.length - accepted.length - existing.length - rejected.length - overlaps.length;

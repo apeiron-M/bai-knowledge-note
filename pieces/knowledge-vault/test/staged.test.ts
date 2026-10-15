@@ -320,7 +320,7 @@ describe("3. vault check", () => {
 
 describe("4. draft", () => {
   const checked = { candidates: [
-    { id: "c1", claim: "A", locus: "p1", evidence: "e", matches: [{ id: "n9", title: "Old", similarity: 0.95 }] },
+    { id: "c1", claim: "A", locus: "p1", evidence: "e", matches: [{ id: "n9", title: "Old", similarity: 0.95, eligible: true }] },
     { id: "c2", claim: "B", matches: [] },
     { id: "c3", claim: "C" },
     { id: "c4", claim: "D" },
@@ -340,7 +340,7 @@ describe("4. draft", () => {
     const out = await draftStage(m.llm, "m", bundle, checked, m.fetchImpl);
     expect(out.proposed.map((n) => n.title)).toEqual(["Budget no longer separates organizations"]);
     expect(out.proposed[0]).toMatchObject({ note_type: "PATTERN", new_topics: ["fresh"] });
-    expect(out.existing).toEqual([{ candidate_id: "c1", note_id: "n9", title: "Old", reason: "same" }]);
+    expect(out.existing).toEqual([{ candidate_id: "c1", note_id: "n9", title: "Old", reason: "same", locus: "p1", evidence: "e" }]);
     expect(out.rejected.map((r) => r.candidate_id)).toEqual(["c4"]);
     expect(out.rejected[0].issues.join(" ")).toMatch(/statistic/);
     expect(m.calls[1].user).toMatch(/c4: the title repeats a sentence from the source/);
@@ -357,6 +357,48 @@ describe("4. draft", () => {
     const none = await draftStage(m.llm, "m", bundle, {}, m.fetchImpl);
     expect(none).toMatchObject({ proposed_count: 0, cost_usd: 0 });
     expect(none.summary).toMatch(/No candidates/);
+  });
+  it("drafts each window's claims from that window's text alone, at most 8 to a call on a local model", async () => {
+    const m = modelSays(JSON.stringify({ notes: [] }), JSON.stringify({ notes: [] }), JSON.stringify({ notes: [] }));
+    const local = new LlmClient({ ...LLM, locality: "local" }, m.fetchImpl);
+    const windows = [{ id: "w1", heading: "Alpha", text: "ALPHA text about GPUs" }, { id: "w2", heading: null, text: "BETA text about memory" }];
+    const many = { candidates: [...Array.from({ length: 10 }, (_, i) => ({ id: `c${i + 1}`, claim: `claim ${i}`, window: "w1" })), { id: "c11", claim: "beta claim", window: "w2" }] };
+    await draftStage(local, "m", bundle, many, m.fetchImpl, windows);
+    const drafts = m.calls.map((c) => c.user);
+    expect(drafts.map((u) => (u.match(/^- c\d+:/gm) ?? []).length)).toEqual([8, 2, 1]);
+    expect(drafts[0]).toMatch(/Section: Alpha\nALPHA text about GPUs$/);
+    expect(drafts[0]).not.toMatch(/BETA/);
+    expect(drafts[2]).toMatch(/BETA text about memory$/);
+  });
+  it("links a claim to an existing note only when that note was a close, live match; otherwise writes it", async () => {
+    const m = modelSays(
+      JSON.stringify({ existing: [
+        { candidate_id: "c1", note_id: "n9", title: "Old", reason: "same" },
+        { candidate_id: "c2", note_id: "n8", title: "Replaced", reason: "same" },
+        { candidate_id: "c3", note_id: "invented", title: "?", reason: "same" },
+      ] }),
+      JSON.stringify({ notes: [note("c2", "Bandwidth limits decoding at small batches", { topics: ["operations"] }), note("c3", "Kernels decide throughput on one GPU", { topics: ["operations"] })] }),
+      '{"same":[]}',
+    );
+    const out = await draftStage(m.llm, "m", bundle, { candidates: [
+      { id: "c1", claim: "A", locus: "p1", evidence: "the passage", matches: [{ id: "n9", title: "Old", similarity: 0.82, eligible: true }] },
+      { id: "c2", claim: "B", matches: [{ id: "n8", title: "Replaced", similarity: 0.95, eligible: false }] },
+      { id: "c3", claim: "C", matches: [] },
+    ] }, m.fetchImpl);
+    expect(out.existing).toEqual([{ candidate_id: "c1", note_id: "n9", title: "Old", reason: "same", locus: "p1", evidence: "the passage" }]);
+    expect(out.proposed.map((n) => n.candidate_id)).toEqual(["c2", "c3"]);
+    expect(m.calls[1].user).toMatch(/c2: the note you named is not one of this claim's close matches/);
+  });
+  it("keeps one note when two windows found the same claim", async () => {
+    const m = modelSays(
+      JSON.stringify({ notes: [note("c1", "Memory bandwidth limits decoding speed", { topics: ["operations"] })] }),
+      JSON.stringify({ notes: [note("c2", "Decoding speed is bound by memory bandwidth", { topics: ["operations"] })] }),
+      JSON.stringify({ same: [{ keep: "c1", drop: "c2", reason: "one assertion" }] }),
+    );
+    const windows = [{ id: "w1", heading: null, text: "first part" }, { id: "w2", heading: null, text: "second part" }];
+    const out = await draftStage(m.llm, "m", bundle, { candidates: [{ id: "c1", claim: "x", window: "w1" }, { id: "c2", claim: "y", window: "w2" }] }, m.fetchImpl, windows);
+    expect(out.proposed.map((n) => n.candidate_id)).toEqual(["c1"]);
+    expect(out.overlaps).toEqual([{ kept: "c1", dropped: "c2", reason: "one assertion" }]);
   });
 });
 
