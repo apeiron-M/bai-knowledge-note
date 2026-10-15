@@ -77,3 +77,18 @@ describe("buildVaultAiTools", () => {
     expect(envelope({ ok: false, error: "e" })).toEqual({ isError: true, content: [{ type: "text", text: "e" }] });
   });
 });
+
+describe("list parameters", () => {
+  it("reads a list of strings as one, so Connect's assistant can pass several note ids", () => {
+    const shape = zodShapeFromParameters({
+      type: "object",
+      properties: { documentIds: { type: "array", items: { type: "string" } } },
+      required: ["documentIds"],
+    });
+    // As Connect's agent reads it: z.object over the shape.
+    const input = z.object(shape);
+    expect(input.safeParse({ documentIds: ["a", "b"] }).success).toBe(true);
+    expect(input.safeParse({ documentIds: "a" }).success).toBe(false);
+    expect(input.safeParse({ documentIds: [1] }).success).toBe(false);
+  });
+});

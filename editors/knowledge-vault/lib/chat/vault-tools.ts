@@ -1,8 +1,9 @@
 /**
- * The chat's tool surface over the vault: nine read-only queries.
+ * The chat's tool surface over the vault: read-only queries (VAULT_TOOLS),
+ * plus three that look outside it (WEB_TOOLS).
  *
  * Read-only is enforced structurally, not by instruction. `executeTool` is a
- * fixed switch over these nine names; there is no path from a model-supplied
+ * fixed switch over these names; there is no path from a model-supplied
  * string to an arbitrary GraphQL operation, and no mutation appears anywhere
  * in this file.
  *
@@ -43,6 +44,27 @@ import {
   rollupDeliverables,
 } from "../../../../processors/graph-indexer/work-outline.js";
 import type { ScopeOfWorkState } from "document-models/scope-of-work";
+import type { TreeNode } from "../source-tree.js";
+import {
+  buildTopicMap,
+  findMatch,
+  queryPhrase,
+  queryWords,
+  rarestWord,
+  resolveMap,
+  shapeContradictions,
+  type MocLinks,
+  type MocNode,
+  type TensionNode,
+  type TensionStatus,
+} from "./vault-structure.js";
+import {
+  browseSources,
+  buildSourceLibrary,
+  summarizeSources,
+  type SourceDocument,
+  type SourceLibrary,
+} from "./source-library.js";
 
 export type ToolResult =
   | { ok: true; data: unknown; summary: string }
@@ -99,7 +121,24 @@ const LIMITS = {
   activity: 5000,
   projects: 25,
   knowledgeRefTitles: 20,
-  noteContent: 6000,
+  sources: { default: 50, max: 200 },
+  /** Notes read_notes reads in one call. */
+  readMany: 8,
+  /** Search hits that come with their text, and how much of it. */
+  searchBodies: 3,
+  /** Search hits that name the source they were extracted from. */
+  searchSources: 5,
+  searchBodyChars: 3000,
+  /** `scan`: how widely the words-anywhere fallback looks before filtering. */
+  keyword: { default: 10, max: 30, scan: 100 },
+  byStatus: { default: 25, max: 100 },
+  contradictions: { default: 20, max: 50 },
+  mapNotes: { default: 50, max: 200 },
+  /** Maps read per vault, and per request when their links are fetched. */
+  maps: 400,
+  /** Above this many maps the hierarchy is listed without descriptions. */
+  mapDescriptions: 40,
+  mapsPerRequest: 100,
   documentWindow: 8000,
   metaString: 300,
   metaArray: 20,
@@ -182,7 +221,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "search_vault",
       description:
-        "Default entry point. Semantic search over the vault's knowledge notes, maps of content, tensions, observations, scopes of work and work breakdowns. Pass the user's question or a short phrase as-is. Returns three things: `hits`, ranked with a 0–1 similarity; `related`, the notes ONE link from those hits with the edge that reached each one (`via`, written from -> to) and `hitCount`, how many hits point at it — a high hitCount means several results agree it matters; and `contested`, any hit that another note CONTRADICTS or SUPERSEDES. READ `contested` FIRST: it means a hit is disputed or stale, so answering from that hit alone would be wrong, not merely thin — say the claim is disputed and cite both sides. `related` already gives you the graph around the answer, so you do NOT need linked_notes for the common case; reach for it only to see ALL edges of one specific note. Use read_note on promising notes for their full text, and read_document on a hit whose status is SCOPE or WBS (a project or goal tree — its real state is in noteType). Does NOT search sources — use list_documents for those. ARCHIVED notes — claims the vault no longer holds as current — are excluded unless includeArchived is true; set it only when the user asks what the vault USED to say.",
+        "Default entry point. Semantic search over the vault's knowledge notes, maps of content, tensions, observations, scopes of work and work breakdowns. Pass the user's question or a short phrase as-is. Returns three things: `hits`, ranked with a 0–1 similarity; `related`, the notes ONE link from those hits with the edge that reached each one (`via`, written from -> to) and `hitCount`, how many hits point at it — a high hitCount means several results agree it matters; and `contested`, any hit that another note CONTRADICTS or SUPERSEDES. READ `contested` FIRST: it means a hit is disputed or stale, so answering from that hit alone would be wrong, not merely thin — say the claim is disputed and cite both sides. `related` already gives you the graph around the answer, so you do NOT need linked_notes for the common case; reach for it only to see ALL edges of one specific note. The top three hits come with their text (`content`, each note sent once per answer), so you can answer from them directly; read_notes reads more at once. The top hits also name the source they were extracted from (`source`); read_document reads it when the question needs the original's detail. Use read_document on a hit whose status is SCOPE or WBS (a project or goal tree — its real state is in noteType). Does NOT search sources — use list_documents for those. ARCHIVED notes — claims the vault no longer holds as current — are excluded unless includeArchived is true; set it only when the user asks what the vault USED to say.",
       parameters: {
         type: "object",
         properties: {
@@ -206,9 +245,105 @@ export const VAULT_TOOLS: ToolSchema[] = [
   {
     type: "function",
     function: {
+      name: "keyword_search",
+      description:
+        "Find documents containing an exact word or phrase — a name, figure, acronym or quoted term — in their title, description or body; case-insensitive. Call it beside search_vault, which ranks by meaning and can miss an exact name or number. When the phrase appears nowhere, its words are matched anywhere in a document (`match` says which). Not for sources: list_sources with query. Hits carry documentId, title, documentType, matchedIn and a snippet around the match; read_note for the whole note.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "The word or phrase, as written.",
+          },
+          limit: {
+            type: "integer",
+            description: `Documents to return (default ${LIMITS.keyword.default}, max ${LIMITS.keyword.max}).`,
+          },
+          includeArchived: {
+            type: "boolean",
+            description: "Also search ARCHIVED notes.",
+          },
+        },
+        required: ["query"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "notes_by_status",
+      description:
+        "Notes at one stage, newest edit first, with the count at every stage: DRAFT, IN_REVIEW (waiting for a person to check), CANONICAL (approved), ARCHIVED (retired). For 'what is waiting for my review', 'how many notes are approved' — never estimate these from search. Narrow with topic (exact name from list_topics) or since (ISO date).",
+      parameters: {
+        type: "object",
+        properties: {
+          status: {
+            type: "string",
+            enum: ["DRAFT", "IN_REVIEW", "CANONICAL", "ARCHIVED"],
+            description: "Default IN_REVIEW.",
+          },
+          topic: { type: "string" },
+          since: {
+            type: "string",
+            description: "ISO 8601 date or date-time.",
+          },
+          limit: {
+            type: "integer",
+            description: `Notes to return (default ${LIMITS.byStatus.default}, max ${LIMITS.byStatus.max}).`,
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "list_contradictions",
+      description:
+        "Recorded disagreements between notes (bai/tension), opened when a note CONTRADICTS another: counts by status — OPEN (undecided, both claims stand), RESOLVED (one side was right), DISSOLVED (both hold, in different contexts) — and, for the status asked, both notes involved and the two claims. read_document on one for its analysis and resolution.",
+      parameters: {
+        type: "object",
+        properties: {
+          status: {
+            type: "string",
+            enum: ["OPEN", "RESOLVED", "DISSOLVED", "ALL"],
+            description: "Default OPEN.",
+          },
+          limit: {
+            type: "integer",
+            description: `Contradictions to return (default ${LIMITS.contradictions.default}, max ${LIMITS.contradictions.max}).`,
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "topic_maps",
+      description:
+        "How the notes are organised by theme: the maps of content (bai/moc) — one HUB, DOMAIN maps for areas, TOPIC maps for clusters, each holding notes as CORE_IDEA. Not list_topics, which lists the tags on notes. Without map: the whole hierarchy, top first, each row with tier, depth, parentId and note counts, plus maps attached to nothing. With map (a documentId or title): where it sits, its child maps and the notes it holds.",
+      parameters: {
+        type: "object",
+        properties: {
+          map: {
+            type: "string",
+            description: "A documentId or title; omit for the hierarchy.",
+          },
+          limit: {
+            type: "integer",
+            description: `Notes to list when opening a map (default ${LIMITS.mapNotes.default}, max ${LIMITS.mapNotes.max}).`,
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "read_note",
       description:
-        "Read one knowledge note or map of content in full: body, topics, status, author. Use after search_vault to ground an answer in what the note actually says. Long bodies are truncated at 6,000 characters.",
+        "Read one knowledge note or map of content in full: the whole body, topics, status, author. Use after search_vault to ground an answer in what the note actually says. Its source — the document it was extracted from — is its DERIVED_FROM link in linked_notes.",
       parameters: {
         type: "object",
         properties: {
@@ -218,6 +353,25 @@ export const VAULT_TOOLS: ToolSchema[] = [
           },
         },
         required: ["documentId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "read_notes",
+      description:
+        "Read several knowledge notes or maps of content in full at once — whole bodies, topics, status, author — by documentId. Read the notes an answer rests on in one step rather than one read_note each.",
+      parameters: {
+        type: "object",
+        properties: {
+          documentIds: {
+            type: "array",
+            items: { type: "string" },
+            description: `documentIds from earlier results, at most ${LIMITS.readMany}.`,
+          },
+        },
+        required: ["documentIds"],
       },
     },
   },
@@ -371,15 +525,23 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "vault_stats",
       description:
-        "Size and shape of the vault: note count, link count, orphan count, graph density. Use for 'how big is this' or to sanity-check coverage.",
-      parameters: { type: "object", properties: {} },
+        "Size and shape of the vault: notes, maps, links, orphans, open tensions, density — and the sources, which no other count covers: how many, by status, kind (sourceType) and original file type, notes extracted from them, and the folders under /sources with their counts. For 'how big is this', 'how many sources', 'what kinds', 'what folders are in sources'.",
+      parameters: {
+        type: "object",
+        properties: {
+          sources: {
+            type: "boolean",
+            description: "Include the sources (default true). False skips reading them, for a faster answer about the notes alone.",
+          },
+        },
+      },
     },
   },
   {
     type: "function",
     function: {
       name: "list_documents",
-      description: `List documents of one type with their documentId and title. The graph index does not cover sources, so bai/source — the long-form material notes were extracted from — is reached through this tool and then read_document; the same goes for the health report, the pipeline queue and the vault config. Pass nameContains to find a document by title, e.g. a source the user could open when the notes do not answer. Every documentId returned is citable as [[documentId]]. Valid types: ${DOCUMENT_TYPES.join(", ")}.`,
+      description: `List documents of one type with their documentId and title — for the kinds the graph index does not cover: the health report, the pipeline queue, the vault config. For sources (bai/source) prefer list_sources, which knows their folders, status and kind; this still finds one by title. Pass nameContains to find a document by title. Every documentId returned is citable as [[documentId]]. Valid types: ${DOCUMENT_TYPES.join(", ")}.`,
       parameters: {
         type: "object",
         properties: {
@@ -400,10 +562,56 @@ export const VAULT_TOOLS: ToolSchema[] = [
   {
     type: "function",
     function: {
+      name: "list_sources",
+      description:
+        "Browse the sources — the long documents notes were extracted from — by folder, as the Sources view shows them: folders under /sources, usually one per topic and one per original file holding its parts. Without folder: the top-level folders and the sources in no folder. folder (a name, a path like \"Reports/2026\", or a folderId) opens one; recursive lists everything beneath it. Filter by status, sourceType, or query (words in a title, description, author, url or folder name; matching folders are returned too). Rows: documentId (cite it; read_document reads it), title, description, status, sourceType, fileType, claimCount, folder. Never cite a folderId.",
+      parameters: {
+        type: "object",
+        properties: {
+          folder: {
+            type: "string",
+            description: "Folder name, path or folderId; omit for /sources.",
+          },
+          recursive: {
+            type: "boolean",
+            description: "Every source beneath the folder, at any depth.",
+          },
+          status: {
+            type: "string",
+            enum: ["INBOX", "EXTRACTING", "EXTRACTED", "ARCHIVED"],
+          },
+          sourceType: {
+            type: "string",
+            enum: ["ARTICLE", "PAPER", "BOOK_CHAPTER", "TRANSCRIPT", "DOCUMENTATION", "CONVERSATION", "WEB_PAGE", "MANUAL_ENTRY"],
+          },
+          query: {
+            type: "string",
+            description: "Words to look for.",
+          },
+          limit: {
+            type: "integer",
+            description: `Sources to return (default ${LIMITS.sources.default}, max ${LIMITS.sources.max}).`,
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "list_projects",
       description:
         "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork). ONE ROW IS ONE PROJECT: `project` is its name, with `code`, `status`, `owner`, `envelopeId`, and `cite` — the anchored marker [[scopeId#envelopeId]] that cites this one project. `scope` is the document HOLDING it ({documentId, title}) — several projects share one scope, so the scope title is NOT the project name and must never be listed as a project in its own right. Each row also carries `progress` as {delivered, total, pct}. Report BOTH when you state progress — for example, 6 of 10 delivered and 74% of the work — because they measure different things: `delivered`/`total` counts deliverables that are finished (closed ones are excluded from both), while `pct` averages how far each open deliverable has got. A project can legitimately read 0 of 3 delivered at 39%, and a bare percentage hides that. It also carries budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count, and `wbs`, the work breakdown that delivers this project — use its `cite` to open that breakdown INSIDE the scope, which is what a reader asking about the work wants; `wbs.documentId` opens the standalone WBS editor instead. Cite exactly one project per row and never repeat a project under a second name. Start here for any question about projects, deliverables, goals or who is working on what; then read_document on scope.documentId for the full outline. Cite a project with its `cite` marker, or the scope as [[scope.documentId]] — the UUID, never a name.",
-      parameters: { type: "object", properties: {} },
+      parameters: {
+        type: "object",
+        properties: {
+          status: {
+            type: "string",
+            enum: ["DRAFT", "TODO", "IN_PROGRESS", "FINISHED", "CANCELED"],
+            description: "Only projects in this state.",
+          },
+        },
+      },
     },
   },
   {
@@ -411,7 +619,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "read_document",
       description:
-        "Read any document by documentId. For a powerhouse/scopeofwork this returns the whole scope as one outline (text) plus structured data: status, every envelope (code, title, owner, set status and progress, budget type/currency, fixed or quote-derived budget, spend, references, cited knowledge with titles, linked WBS and its goal progress), every deliverable with status, owner, progress, quote (quantity × unit cost, margin), milestone and the WBS goal that delivers it, the deliverables no envelope funds, roadmaps and milestones (date, status, coordinators, budget, deliverables), and contributors. For a bai/wbs it returns the goal tree with block reasons, outcomes and notes. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source. Every result carries the documentId you cite it by.",
+        "Read any document by documentId. For a powerhouse/scopeofwork this returns the whole scope as one outline (text) plus structured data: status, every envelope (code, title, owner, set status and progress, budget type/currency, fixed or quote-derived budget, spend, references, cited knowledge with titles, linked WBS and its goal progress), every deliverable with status, owner, progress, quote (quantity × unit cost, margin), milestone and the WBS goal that delivers it, the deliverables no envelope funds, roadmaps and milestones (date, status, coordinators, budget, deliverables), and contributors. For a bai/wbs it returns the goal tree with block reasons, outcomes and notes. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The other direction is a note's DERIVED_FROM link, which linked_notes returns. Every result carries the documentId you cite it by.",
       parameters: {
         type: "object",
         properties: {
@@ -496,6 +704,100 @@ async function noteTitles(
     if (t) titles.set(id, t);
   });
   return titles;
+}
+
+/** How many cited notes the save form reads topics from. */
+const TOPIC_SOURCES = 12;
+
+/**
+ * The topics of a few notes, in one aliased request. `topics` is a per-node
+ * resolver, so this stays small on purpose: it is what the save form reads to
+ * suggest a saved answer's topics from the notes the answer cited. A note the
+ * index does not know is absent; a failed read is an empty map.
+ */
+export async function noteTopics(
+  driveId: string,
+  ids: readonly string[],
+): Promise<Map<string, string[]>> {
+  const wanted = ids.slice(0, TOPIC_SOURCES);
+  const out = new Map<string, string[]>();
+  if (wanted.length === 0) return out;
+  const aliases = wanted
+    .map((_, i) => `n${i}: knowledgeGraphNodeByDocumentId(driveId: $driveId, documentId: $d${i}) { topics }`)
+    .join("\n");
+  const vars = wanted.map((_, i) => `$d${i}: String!`).join(", ");
+  const variables: Record<string, unknown> = { driveId };
+  wanted.forEach((id, i) => {
+    variables[`d${i}`] = id;
+  });
+  const r = await gql<Record<string, { topics: string[] | null } | null>>(
+    graphEndpoint(),
+    `query NTop($driveId: ID!, ${vars}) { ${aliases} }`,
+    variables,
+  );
+  if ("error" in r) return out;
+  wanted.forEach((id, i) => {
+    const topics = r.data[`n${i}`]?.topics;
+    if (topics && topics.length > 0) out.set(id, topics);
+  });
+  return out;
+}
+
+/** One outgoing edge, as the batched forward-links read returns it. */
+interface ForwardEdge {
+  targetDocumentId: string;
+  linkType: string | null;
+  targetTitle: string | null;
+}
+
+/**
+ * The outgoing edges of many documents, a hundred to a request, all requests
+ * in flight together — rather than one request per document. A document
+ * whose edges could not be read is absent from the map; the whole read fails
+ * only when every request did.
+ */
+async function forwardLinksOf(
+  driveId: string,
+  ids: string[],
+): Promise<Map<string, ForwardEdge[]> | { error: string }> {
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += LIMITS.mapsPerRequest) {
+    chunks.push(ids.slice(i, i + LIMITS.mapsPerRequest));
+  }
+  const reads = await Promise.all(
+    chunks.map((chunk) => {
+      const aliases = chunk
+        .map(
+          (_, i) =>
+            `l${i}: knowledgeGraphForwardLinks(driveId: $driveId, documentId: $d${i}) { targetDocumentId linkType targetTitle }`,
+        )
+        .join("\n");
+      const vars = chunk.map((_, i) => `$d${i}: String!`).join(", ");
+      const variables: Record<string, unknown> = { driveId };
+      chunk.forEach((id, i) => {
+        variables[`d${i}`] = id;
+      });
+      return gql<Record<string, ForwardEdge[] | null>>(
+        graphEndpoint(),
+        `query FL($driveId: ID!, ${vars}) { ${aliases} }`,
+        variables,
+      );
+    }),
+  );
+  const out = new Map<string, ForwardEdge[]>();
+  const failures: string[] = [];
+  reads.forEach((r, c) => {
+    if ("error" in r) {
+      failures.push(r.error);
+      return;
+    }
+    chunks[c].forEach((id, i) => {
+      const edges = r.data[`l${i}`];
+      if (edges) out.set(id, edges);
+    });
+  });
+  if (failures.length > 0 && out.size === 0 && ids.length > 0) return { error: failures[0] };
+  return out;
 }
 
 /**
@@ -609,7 +911,10 @@ interface DriveMember {
   name: string | null;
   documentType: string;
 }
-const membersCache = new Map<string, { at: number; members: Map<string, DriveMember> }>();
+const membersCache = new Map<
+  string,
+  { at: number; members: Map<string, DriveMember>; nodes: TreeNode[] }
+>();
 
 /**
  * What the drive holds, from the drive document's own node list.
@@ -625,8 +930,18 @@ const membersCache = new Map<string, { at: number; members: Map<string, DriveMem
 async function driveMembers(
   driveId: string,
 ): Promise<Map<string, DriveMember> | null> {
+  return (await driveTree(driveId))?.members ?? null;
+}
+
+/**
+ * The drive's whole node list — folders as well as files — with the members
+ * derived from it. Folders are what the source library navigates by.
+ */
+async function driveTree(
+  driveId: string,
+): Promise<{ members: Map<string, DriveMember>; nodes: TreeNode[] } | null> {
   const cached = membersCache.get(driveId);
-  if (cached && Date.now() - cached.at < LISTING_TTL_MS) return cached.members;
+  if (cached && Date.now() - cached.at < LISTING_TTL_MS) return cached;
   const tree = await gql<{
     document: { document: { state: unknown } | null } | null;
   }>(
@@ -642,21 +957,32 @@ async function driveMembers(
   // Reporting it as empty would hide every document behind one bad response.
   if (!Array.isArray(nodes)) return null;
   const members = new Map<string, DriveMember>();
+  const treeNodes: TreeNode[] = [];
   for (const raw of nodes as {
     id?: unknown;
     kind?: unknown;
     name?: unknown;
     documentType?: unknown;
+    parentFolder?: unknown;
   }[]) {
     const n = raw;
-    if (n.kind !== "file" || typeof n.id !== "string" || typeof n.documentType !== "string") continue;
+    if (typeof n.id !== "string" || (n.kind !== "file" && n.kind !== "folder")) continue;
+    treeNodes.push({
+      id: n.id,
+      name: typeof n.name === "string" ? n.name : "",
+      kind: n.kind,
+      ...(typeof n.documentType === "string" ? { documentType: n.documentType } : {}),
+      parentFolder: typeof n.parentFolder === "string" && n.parentFolder ? n.parentFolder : null,
+    });
+    if (n.kind !== "file" || typeof n.documentType !== "string") continue;
     members.set(n.id, {
       name: typeof n.name === "string" && n.name ? n.name : null,
       documentType: n.documentType,
     });
   }
-  membersCache.set(driveId, { at: Date.now(), members });
-  return members;
+  const entry = { at: Date.now(), members, nodes: treeNodes };
+  membersCache.set(driveId, entry);
+  return entry;
 }
 
 /**
@@ -762,6 +1088,71 @@ async function liveDocumentIds(driveId: string): Promise<Set<string> | null> {
   return members ? new Set(members.keys()) : null;
 }
 
+/** Sources the reactor serves per request; the result says when a vault holds more. */
+const SOURCES_PAGE = 1000;
+const libraryCache = new Map<string, { at: number; library: SourceLibrary; more: boolean }>();
+
+/**
+ * Every source in the vault with its state, and the tree that places it.
+ *
+ * One request for all of them: `findDocuments` narrowed to this drive and to
+ * `bai/source`, returning each document's state. That carries every source's
+ * text, which is the price of reading `status` and `sourceType` without one
+ * request per source — the Sources view pays the same, one document at a
+ * time. Nothing of the text reaches the model: the library keeps the fields a
+ * row needs and drops the rest. Cached like the listing, so a summary and a
+ * browse in the same answer read the vault once.
+ */
+async function sourceLibrary(
+  driveId: string,
+): Promise<{ library: SourceLibrary; more: boolean } | { error: string }> {
+  const cached = libraryCache.get(driveId);
+  if (cached && Date.now() - cached.at < LISTING_TTL_MS) return cached;
+  const [tree, found] = await Promise.all([
+    driveTree(driveId),
+    gql<{
+      findDocuments: {
+        hasNextPage: boolean;
+        items: {
+          id: string;
+          name: string | null;
+          createdAtUtcIso: string | null;
+          lastModifiedAtUtcIso: string | null;
+          state: unknown;
+        }[];
+      };
+    }>(
+      reactorEndpoint(),
+      `query Sources($parentId: String!, $limit: Int) {
+        findDocuments(search: { type: "bai/source", parentId: $parentId }, paging: { limit: $limit }) {
+          hasNextPage items { id name createdAtUtcIso lastModifiedAtUtcIso state }
+        }
+      }`,
+      { parentId: driveId, limit: SOURCES_PAGE },
+    ),
+  ]);
+  if (!tree) return { error: "could not read the drive's folders and files" };
+  if ("error" in found) return { error: found.error };
+  const documents: SourceDocument[] = found.data.findDocuments.items.map((d) => {
+    const raw = typeof d.state === "string" ? (JSON.parse(d.state) as unknown) : d.state;
+    const global = ((raw as { global?: unknown } | null)?.global ?? {}) as Record<string, unknown>;
+    return {
+      id: d.id,
+      name: d.name ?? d.id,
+      createdAtUtcIso: d.createdAtUtcIso ?? undefined,
+      lastModifiedAtUtcIso: d.lastModifiedAtUtcIso ?? undefined,
+      global,
+    };
+  });
+  const entry = {
+    at: Date.now(),
+    library: buildSourceLibrary(tree.nodes, documents),
+    more: found.data.findDocuments.hasNextPage,
+  };
+  libraryCache.set(driveId, entry);
+  return entry;
+}
+
 /** A document's most recent operation: who made it, and what it was. */
 interface LastOperation {
   action: string;
@@ -835,10 +1226,26 @@ async function lastOperationOf(
   };
 }
 
+/**
+ * Note bodies search has already handed the model in this answer. A model
+ * that searches five times for the same thing would otherwise be sent the
+ * same three bodies five times; once is enough to answer from. Forgotten at
+ * the start of each answer, and after a while for callers that never say
+ * when one starts (Connect's assistant).
+ */
+const bodiesSent = new Map<string, number>();
+const BODY_MEMORY_MS = 10 * 60_000;
+function sentRecently(documentId: string): boolean {
+  const at = bodiesSent.get(documentId);
+  return at !== undefined && Date.now() - at < BODY_MEMORY_MS;
+}
+
 /** Test seam: forget the cached listing and drive membership. */
 export function resetVaultDocumentListing(): void {
   listingCache.clear();
   membersCache.clear();
+  libraryCache.clear();
+  bodiesSent.clear();
 }
 
 /* ------------------------------------------------------------------ */
@@ -931,6 +1338,15 @@ interface ContestedRow {
   otherTitle: string | null;
   reason: string | null;
 }
+
+/** A knowledge note's life: drafted, waiting for review, approved, retired. */
+const NOTE_STATUSES = ["DRAFT", "IN_REVIEW", "CANONICAL", "ARCHIVED"] as const;
+const STATUS_LABEL: Record<(typeof NOTE_STATUSES)[number], string> = {
+  DRAFT: "drafts",
+  IN_REVIEW: "waiting for review",
+  CANONICAL: "approved",
+  ARCHIVED: "archived",
+};
 
 /** Link types that change whether an answer is CORRECT, not just how full. */
 const CONTESTING = new Set(["CONTRADICTS", "SUPERSEDES"]);
@@ -1073,7 +1489,7 @@ export async function executeTool(
         // per hit — the server reads the neighbourhood once and slices it.
         `query S($driveId: ID!, $query: String!, $limit: Int, $includeArchived: Boolean) {
           knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: SEMANTIC, limit: $limit, includeArchived: $includeArchived) {
-            similarity matchedBy node { ${NOTE_FIELDS} }
+            similarity matchedBy node { ${NOTE_FIELDS} content }
             related(limit: ${LIMITS.searchRelated.scan}) { documentId title noteType documentType hitCount via { from to linkType reason } }
             linkedHits { from to linkType reason }
           }
@@ -1082,12 +1498,53 @@ export async function executeTool(
       );
       if ("error" in r) return fail(r.error);
       const raw = r.data.knowledgeGraphSemanticSearch;
-      const hits = raw.map((h) => ({
-        ...h.node,
-        similarity: Number(h.similarity.toFixed(3)),
-        matchedBy: h.matchedBy,
-      }));
+      // The top hits carry their text, so an answer can be written from them
+      // without another round; the rest stay light. A body already sent this
+      // answer is not sent again.
+      let bodies = 0;
+      const hits: Record<string, unknown>[] = raw.map((h) => {
+        const { content, ...node } = h.node;
+        const id = typeof node.documentId === "string" ? node.documentId : "";
+        const text = typeof content === "string" ? content : "";
+        const withBody = bodies < LIMITS.searchBodies && text.trim() !== "" && id !== "" && !sentRecently(id);
+        if (withBody) {
+          bodies++;
+          bodiesSent.set(id, Date.now());
+        }
+        return {
+          ...node,
+          similarity: Number(h.similarity.toFixed(3)),
+          matchedBy: h.matchedBy,
+          ...(withBody
+            ? text.length > LIMITS.searchBodyChars
+              ? { content: text.slice(0, LIMITS.searchBodyChars), contentTruncated: true }
+              : { content: text }
+            : {}),
+        };
+      });
       const { related, contested } = neighbourhoodOf(raw);
+      // Where each top hit came from: the source it was extracted from (its
+      // DERIVED_FROM link). A note is a claim drawn from a longer text; when a
+      // question needs that text's detail — an order it recommends, a worked
+      // example — the model can read the source itself. One batched request.
+      const topIds = hits
+        .slice(0, LIMITS.searchSources)
+        .map((h) => h.documentId)
+        .filter((id): id is string => typeof id === "string");
+      const [links, members] = await Promise.all([forwardLinksOf(driveId, topIds), driveMembers(driveId)]);
+      if (!("error" in links)) {
+        for (const h of hits) {
+          const id = typeof h.documentId === "string" ? h.documentId : "";
+          const from = (links.get(id) ?? [])
+            .filter((e) => e.linkType === "DERIVED_FROM")
+            .map((e) => ({
+              documentId: e.targetDocumentId,
+              title: e.targetTitle ?? members?.get(e.targetDocumentId)?.name ?? e.targetDocumentId,
+              documentType: members?.get(e.targetDocumentId)?.documentType ?? "bai/source",
+            }));
+          if (from.length > 0) Object.assign(h, { source: from.length === 1 ? from[0] : from });
+        }
+      }
       return ok(
         { hits, related, contested },
         `searched "${query}" → ${hits.length} note${hits.length === 1 ? "" : "s"}` +
@@ -1095,6 +1552,311 @@ export async function executeTool(
           (contested.length
             ? `, ${contested.length} CONTESTED — read the contradiction before answering`
             : ""),
+      );
+    }
+
+    case "keyword_search": {
+      const query = str(args, "query");
+      if (!query) return fail("keyword_search needs a word or phrase");
+      const phrase = queryPhrase(query);
+      if (!phrase) return fail("keyword_search needs a word or phrase");
+      const limit = int(args, "limit", LIMITS.keyword.default, LIMITS.keyword.max);
+      const includeArchived = bool(args, "includeArchived");
+      // `content` is read to cut a snippet from, and never sent on.
+      const run = (q: string, n: number) =>
+        gql<{ knowledgeGraphFullSearch: Record<string, unknown>[] }>(
+          graphEndpoint(),
+          `query K($driveId: ID!, $query: String!, $limit: Int, $includeArchived: Boolean) {
+            knowledgeGraphFullSearch(driveId: $driveId, query: $query, limit: $limit, includeArchived: $includeArchived) {
+              ${NOTE_FIELDS} content updatedAt
+            }
+          }`,
+          { driveId, query: q, limit: n, includeArchived },
+        );
+      const asPhrase = await run(phrase, limit);
+      if ("error" in asPhrase) return fail(asPhrase.error);
+      let rows = asPhrase.data.knowledgeGraphFullSearch;
+      let mode: "phrase" | "all words" = "phrase";
+      // The index matches the phrase as written. "gas turbine backlog" is
+      // rarely written that way, so when the phrase finds nothing, look for
+      // the most telling word and keep what contains all of them.
+      const anchor = rarestWord(query);
+      if (rows.length === 0 && queryWords(query).length > 1 && anchor) {
+        const wide = await run(anchor, LIMITS.keyword.scan);
+        if ("error" in wide) return fail(wide.error);
+        rows = wide.data.knowledgeGraphFullSearch;
+        mode = "all words";
+      }
+      const s = (v: unknown) => (typeof v === "string" ? v : null);
+      const hits = rows
+        .map((node) => {
+          const m = findMatch(
+            { title: s(node.title), description: s(node.description), content: s(node.content) },
+            query,
+          );
+          if (!m) return null;
+          return {
+            documentId: node.documentId,
+            title: node.title,
+            documentType: node.documentType,
+            noteType: node.noteType,
+            status: node.status,
+            matchedIn: m.matchedIn,
+            snippet: m.snippet,
+            updatedAt: node.updatedAt,
+          };
+        })
+        .filter((h): h is NonNullable<typeof h> => h !== null)
+        .slice(0, limit);
+      return ok(
+        { query, match: mode, hits },
+        hits.length === 0
+          ? `no document contains "${query}"${queryWords(query).length > 1 ? " — as a phrase or word by word" : ""}`
+          : `"${query}" ${mode === "phrase" ? "appears" : "— all its words appear —"} in ${hits.length} document${hits.length === 1 ? "" : "s"}`,
+      );
+    }
+
+    case "notes_by_status": {
+      const status = (str(args, "status") ?? "IN_REVIEW").toUpperCase();
+      if (!(NOTE_STATUSES as readonly string[]).includes(status)) {
+        return fail(`status must be one of: ${NOTE_STATUSES.join(", ")}`);
+      }
+      const limit = int(args, "limit", LIMITS.byStatus.default, LIMITS.byStatus.max);
+      const topic = str(args, "topic");
+      const sinceRaw = str(args, "since");
+      let since: string | null = null;
+      if (sinceRaw) {
+        const t = Date.parse(sinceRaw);
+        if (Number.isNaN(t)) return fail(`since must be an ISO 8601 date, e.g. 2026-09-01 — got "${sinceRaw}"`);
+        since = new Date(t).toISOString();
+      }
+      // Every status in one request: the full rows for the one asked about,
+      // ids for the others, so the counts cost almost nothing.
+      const selections = NOTE_STATUSES.map(
+        (s) =>
+          `${s}: knowledgeGraphNodesByStatus(driveId: $driveId, status: "${s}") { ${
+            s === status ? `${NOTE_FIELDS} author updatedAt` : "documentId documentType"
+          } }`,
+      ).join("\n");
+      type Row = Record<string, unknown> & { documentId: string; documentType: string | null };
+      const editedAt = (n: Row) => (typeof n.updatedAt === "string" ? n.updatedAt : "");
+      const r = await gql<Record<string, Row[] | undefined>>(
+        graphEndpoint(),
+        `query NS($driveId: ID!${topic ? ", $topic: String!" : ""}) {
+          ${selections}
+          ${topic ? "inTopic: knowledgeGraphByTopic(driveId: $driveId, topic: $topic, includeArchived: true) { documentId }" : ""}
+        }`,
+        topic ? { driveId, topic } : { driveId },
+      );
+      if ("error" in r) return fail(r.error);
+      // Research claims carry CANONICAL too; only notes have a review life.
+      const notesIn = (s: string) =>
+        (r.data[s] ?? []).filter((n) => n.documentType === "bai/knowledge-note");
+      const inTopic = topic ? new Set((r.data.inTopic ?? []).map((n) => n.documentId)) : null;
+      const counts = Object.fromEntries(
+        NOTE_STATUSES.map((s) => [s, notesIn(s).filter((n) => !inTopic || inTopic.has(n.documentId)).length]),
+      ) as Record<(typeof NOTE_STATUSES)[number], number>;
+      const matching = notesIn(status)
+        .filter((n) => !inTopic || inTopic.has(n.documentId))
+        .filter((n) => !since || editedAt(n) >= since)
+        .sort((a, b) => editedAt(b).localeCompare(editedAt(a)));
+      const notes = matching.slice(0, limit).map((n) => ({
+        documentId: n.documentId,
+        title: n.title,
+        documentType: n.documentType,
+        description: n.description,
+        noteType: n.noteType,
+        status: n.status,
+        author: n.author,
+        updatedAt: n.updatedAt,
+      }));
+      const label = STATUS_LABEL[status as (typeof NOTE_STATUSES)[number]];
+      return ok(
+        { status, counts, total: matching.length, notes, ...(topic ? { topic } : {}), ...(since ? { since } : {}) },
+        `${matching.length} note${matching.length === 1 ? "" : "s"} ${label}${topic ? ` in #${topic}` : ""}${since ? ` since ${since.slice(0, 10)}` : ""} — ` +
+          NOTE_STATUSES.map((s) => `${counts[s]} ${STATUS_LABEL[s]}`).join(", "),
+      );
+    }
+
+    case "list_contradictions": {
+      const want = (str(args, "status") ?? "OPEN").toUpperCase();
+      if (!["OPEN", "RESOLVED", "DISSOLVED", "ALL"].includes(want)) {
+        return fail("status must be one of: OPEN, RESOLVED, DISSOLVED, ALL");
+      }
+      const limit = int(args, "limit", LIMITS.contradictions.default, LIMITS.contradictions.max);
+      const r = await gql<{ knowledgeGraphNodesByType: TensionNode[] }>(
+        graphEndpoint(),
+        `query C($driveId: ID!) {
+          knowledgeGraphNodesByType(driveId: $driveId, documentType: "bai/tension") {
+            documentId title description status author createdAt updatedAt
+          }
+        }`,
+        { driveId },
+      );
+      if ("error" in r) return fail(r.error);
+      const tensions = r.data.knowledgeGraphNodesByType;
+      const wanted = want as TensionStatus | "ALL";
+      const shown = shapeContradictions(tensions, new Map(), wanted).rows.slice(0, limit);
+      // The notes each one is between: its INVOLVES edges, for the shown rows only.
+      const links = await forwardLinksOf(driveId, shown.map((t) => t.documentId));
+      const involved = new Map<string, { documentId: string; title: string | null }[]>();
+      if (!("error" in links)) {
+        const untitled = new Set<string>();
+        for (const t of shown) {
+          const notes = (links.get(t.documentId) ?? [])
+            .filter((e) => e.linkType === "INVOLVES")
+            .map((e) => ({ documentId: e.targetDocumentId, title: e.targetTitle }));
+          for (const n of notes) if (!n.title) untitled.add(n.documentId);
+          involved.set(t.documentId, notes);
+        }
+        if (untitled.size > 0) {
+          const titles = await noteTitles(driveId, [...untitled], untitled.size);
+          for (const notes of involved.values()) {
+            for (const n of notes) n.title ??= titles.get(n.documentId) ?? null;
+          }
+        }
+      }
+      const { counts, rows } = shapeContradictions(tensions, involved, wanted);
+      const listed = rows.slice(0, limit);
+      return ok(
+        { counts, total: rows.length, contradictions: listed },
+        `${counts.OPEN} open, ${counts.RESOLVED} resolved, ${counts.DISSOLVED} dissolved contradiction${tensions.length === 1 ? "" : "s"}` +
+          (want === "ALL" ? "" : `; listed ${listed.length} ${want.toLowerCase()}`),
+      );
+    }
+
+    case "topic_maps": {
+      const wantedMap = str(args, "map");
+      const limit = int(args, "limit", LIMITS.mapNotes.default, LIMITS.mapNotes.max);
+      const r = await gql<{ knowledgeGraphNodesByStatus: MocNode[] }>(
+        graphEndpoint(),
+        `query M($driveId: ID!) {
+          knowledgeGraphNodesByStatus(driveId: $driveId, status: "MOC") { documentId title description noteType }
+        }`,
+        { driveId },
+      );
+      if ("error" in r) return fail(r.error);
+      const mocs = r.data.knowledgeGraphNodesByStatus.slice(0, LIMITS.maps);
+      if (mocs.length === 0) {
+        return ok({ maps: [], hubs: 0, unattached: [], notesInMaps: 0 }, "this vault has no maps of content yet");
+      }
+      const edges = await forwardLinksOf(driveId, mocs.map((m) => m.documentId));
+      if ("error" in edges) return fail(edges.error);
+      const links = new Map<string, MocLinks>();
+      for (const m of mocs) {
+        const out = edges.get(m.documentId) ?? [];
+        links.set(m.documentId, {
+          children: out.filter((e) => e.linkType === "CHILD_MOC").map((e) => e.targetDocumentId),
+          notes: out
+            .filter((e) => e.linkType === "CORE_IDEA")
+            .map((e) => ({ documentId: e.targetDocumentId, title: e.targetTitle })),
+        });
+      }
+      const tree = buildTopicMap(mocs, links);
+      const tiers = (t: string) => tree.maps.filter((m) => m.tier === t).length;
+      if (!wantedMap) {
+        // Descriptions help choose a map, but on a vault with hundreds of
+        // them they would crowd out the conversation; opening one gives it.
+        const maps =
+          tree.maps.length <= LIMITS.mapDescriptions
+            ? tree.maps
+            : tree.maps.map((m) => ({ ...m, description: null }));
+        return ok(
+          {
+            ...tree,
+            maps,
+            totalMaps: tree.maps.length,
+            ...(maps !== tree.maps ? { note: "Descriptions left out for size; open a map for its own." } : {}),
+          },
+          `${tree.maps.length} maps of content — ${tiers("HUB")} hub, ${tiers("DOMAIN")} area${tiers("DOMAIN") === 1 ? "" : "s"}, ${tiers("TOPIC")} topic${tiers("TOPIC") === 1 ? "" : "s"} — holding ${tree.notesInMaps} notes` +
+            (tree.unattached.length
+              ? `; ${tree.unattached.length} not attached to ${tree.hubs ? "the hub" : "anything"}`
+              : ""),
+        );
+      }
+      const found = resolveMap(tree.maps, wantedMap);
+      if ("error" in found) return fail(found.error);
+      const map = found.map;
+      const byId = new Map(tree.maps.map((m) => [m.documentId, m]));
+      const path: { documentId: string; title: string }[] = [];
+      const seen = new Set<string>();
+      for (let p = map.parentId; p && !seen.has(p); p = byId.get(p)?.parentId ?? null) {
+        seen.add(p);
+        const parent = byId.get(p);
+        if (parent) path.unshift({ documentId: parent.documentId, title: parent.title });
+      }
+      const held = links.get(map.documentId)?.notes ?? [];
+      const listedNotes = held.slice(0, limit);
+      // Titles the edges did not carry, then each note's kind, from the tree.
+      const untitled = listedNotes.filter((n) => !n.title).map((n) => n.documentId);
+      const [titles, members] = await Promise.all([
+        noteTitles(driveId, untitled, untitled.length),
+        driveMembers(driveId),
+      ]);
+      const notes = listedNotes.map((n) => ({
+        documentId: n.documentId,
+        title: n.title ?? titles.get(n.documentId) ?? members?.get(n.documentId)?.name ?? null,
+        documentType: members?.get(n.documentId)?.documentType ?? null,
+      }));
+      const childMaps = (links.get(map.documentId)?.children ?? [])
+        .map((id) => byId.get(id))
+        .filter((m): m is NonNullable<typeof m> => m !== undefined)
+        .map((m) => ({ documentId: m.documentId, title: m.title, documentType: m.documentType, tier: m.tier, notes: m.notes, notesBeneath: m.notesBeneath }));
+      return ok(
+        { map, path, childMaps, notes, notesTotal: held.length },
+        `opened map "${map.title}" (${map.tier}): ${held.length} note${held.length === 1 ? "" : "s"}` +
+          (childMaps.length ? `, ${childMaps.length} map${childMaps.length === 1 ? "" : "s"} beneath it` : "") +
+          (listedNotes.length < held.length ? `; listed ${listedNotes.length}` : ""),
+      );
+    }
+
+    case "read_notes": {
+      const raw = Array.isArray(args.documentIds) ? args.documentIds : typeof args.documentIds === "string" ? [args.documentIds] : [];
+      // The same unwrapping as one id: a [[documentId]] copied from prose is the id inside it.
+      const ids = [
+        ...new Set(
+          raw
+            .map((v) => str({ v }, "v"))
+            .filter((v): v is string => v !== null),
+        ),
+      ];
+      if (ids.length === 0) return fail("read_notes needs documentIds: a list of the notes to read");
+      const wanted = ids.slice(0, LIMITS.readMany);
+      const aliases = wanted
+        .map(
+          (_, i) =>
+            `n${i}: knowledgeGraphNodeByDocumentId(driveId: $driveId, documentId: $d${i}) { ${NOTE_FIELDS} content author sourceOrigin createdAt updatedAt topics }`,
+        )
+        .join("\n");
+      const vars = wanted.map((_, i) => `$d${i}: String!`).join(", ");
+      const variables: Record<string, unknown> = { driveId };
+      wanted.forEach((id, i) => {
+        variables[`d${i}`] = id;
+      });
+      const r = await gql<Record<string, Record<string, unknown> | null>>(
+        graphEndpoint(),
+        `query RN($driveId: ID!, ${vars}) { ${aliases} }`,
+        variables,
+      );
+      if ("error" in r) return fail(r.error);
+      const notes: Record<string, unknown>[] = [];
+      const missing: string[] = [];
+      wanted.forEach((id, i) => {
+        const node = r.data[`n${i}`];
+        if (node) notes.push(node);
+        else missing.push(id);
+      });
+      const left = ids.length - wanted.length;
+      const titles = notes.map((n) => `"${typeof n.title === "string" ? (n.title.length > 60 ? `${n.title.slice(0, 57)}…` : n.title) : n.documentId as string}"`);
+      return ok(
+        {
+          notes,
+          ...(missing.length ? { missing } : {}),
+          ...(left > 0 ? { notRead: ids.slice(LIMITS.readMany), note: `Only ${LIMITS.readMany} notes are read per call; call again for the rest.` } : {}),
+        },
+        `read ${notes.length} note${notes.length === 1 ? "" : "s"}: ${titles.join(", ")}` +
+          (missing.length ? `; ${missing.length} not found` : "") +
+          (left > 0 ? `; ${left} left for another call` : ""),
       );
     }
 
@@ -1116,14 +1878,10 @@ export async function executeTool(
       const node = r.data.knowledgeGraphNodeByDocumentId;
       if (!node)
         return fail(`no note with id ${documentId} in the graph index`);
-      const content = typeof node.content === "string" ? node.content : "";
-      const truncated = content.length > LIMITS.noteContent;
+      // The whole body: a note is one claim with its argument, and the part a
+      // cap cut off was the part the answer most often needed — the caveat.
       return ok(
-        {
-          ...node,
-          content: truncated ? content.slice(0, LIMITS.noteContent) : content,
-          truncated,
-        },
+        node,
         `read "${typeof node.title === "string" ? node.title : documentId}"`,
       );
     }
@@ -1369,6 +2127,10 @@ export async function executeTool(
     case "linked_notes": {
       const documentId = str(args, "documentId");
       if (!documentId) return fail("linked_notes needs a documentId");
+      // The tree names what the graph cannot: a source at the end of a
+      // DERIVED_FROM link is not a graph node, so the edge arrives without a
+      // title — and a document without a title cannot be cited.
+      const membersRead = driveMembers(driveId);
       const r = await gql<{
         out: {
           targetDocumentId: string;
@@ -1394,9 +2156,14 @@ export async function executeTool(
       if ("error" in r) return fail(r.error);
       // `reason` is the edge's articulation — why the link exists — read
       // from relationship metadata. Null means nobody has said yet.
+      const members = await membersRead;
+      const named = (id: string, title: string | null) => ({
+        title: title ?? members?.get(id)?.name ?? null,
+        documentType: members?.get(id)?.documentType ?? null,
+      });
       const outgoing = r.data.out.slice(0, LIMITS.links).map((e) => ({
         documentId: e.targetDocumentId,
-        title: e.targetTitle,
+        ...named(e.targetDocumentId, e.targetTitle),
         linkType: e.linkType,
         reason: e.reason,
         confidence: e.confidence,
@@ -1427,7 +2194,7 @@ export async function executeTool(
       }
       const incoming = incomingEdges.map((e, i) => ({
         documentId: e.sourceDocumentId,
-        title: titles[`n${i}`]?.title ?? null,
+        ...named(e.sourceDocumentId, titles[`n${i}`]?.title ?? null),
         linkType: e.linkType,
         reason: e.reason,
         confidence: e.confidence,
@@ -1439,6 +2206,13 @@ export async function executeTool(
     }
 
     case "vault_stats": {
+      // The graph's counts and the sources' are read together: each answers a
+      // question the other cannot, and neither failing should hide the other.
+      // `sources: false` skips the heavier read when only the notes matter.
+      const wantSources = args.sources !== false && args.sources !== "false";
+      const sourcesRead = wantSources
+        ? sourceLibrary(driveId)
+        : Promise.resolve({ error: "not asked for" } as const);
       const r = await gql<{
         knowledgeGraphStats: {
           nodeCount: number;
@@ -1465,11 +2239,61 @@ export async function executeTool(
         }`,
         { driveId },
       );
-      if ("error" in r) return fail(r.error);
+      const lib = await sourcesRead;
+      const sources = "error" in lib ? null : summarizeSources(lib.library);
+      const sourcesNote = !wantSources
+        ? {}
+        : "error" in lib
+          ? { sourcesError: lib.error }
+          : lib.more
+            ? { sourcesNote: `The vault holds more than ${SOURCES_PAGE} sources; these counts cover the first ${SOURCES_PAGE}.` }
+            : {};
+      const sourcesLine = !wantSources
+        ? "sources not counted"
+        : sources
+          ? `${sources.total} source${sources.total === 1 ? "" : "s"} in ${sources.folderCount} folder${sources.folderCount === 1 ? "" : "s"}`
+          : "sources could not be counted";
+      if ("error" in r) {
+        if (!sources) return fail(`${r.error}; and the sources could not be read: ${"error" in lib ? lib.error : ""}`);
+        return ok(
+          { graphError: r.error, sources, ...sourcesNote },
+          `the graph index did not answer (${r.error}); ${sourcesLine}`,
+        );
+      }
       const s = r.data.knowledgeGraphStats;
       return ok(
-        { ...s, density: r.data.knowledgeGraphDensity },
-        `vault: ${s.noteCount} notes, ${s.mocCount} maps, ${s.scopeCount} scope${s.scopeCount === 1 ? "" : "s"} of work, ${s.edgeCount} links, ${s.orphanCount} orphans, ${s.openTensionCount} open tension${s.openTensionCount === 1 ? "" : "s"}`,
+        { ...s, density: r.data.knowledgeGraphDensity, ...(wantSources ? { sources } : {}), ...sourcesNote },
+        `vault: ${s.noteCount} notes, ${s.mocCount} maps, ${s.scopeCount} scope${s.scopeCount === 1 ? "" : "s"} of work, ${s.edgeCount} links, ${s.orphanCount} orphans, ${s.openTensionCount} open tension${s.openTensionCount === 1 ? "" : "s"}; ${sourcesLine}`,
+      );
+    }
+
+    case "list_sources": {
+      const lib = await sourceLibrary(driveId);
+      if ("error" in lib) return fail(lib.error);
+      const limit = int(args, "limit", LIMITS.sources.default, LIMITS.sources.max);
+      const r = browseSources(lib.library, {
+        folder: str(args, "folder"),
+        recursive: bool(args, "recursive"),
+        status: str(args, "status"),
+        sourceType: str(args, "sourceType"),
+        query: str(args, "query"),
+        limit,
+      });
+      if (!r.ok) return fail(r.error);
+      const where = r.folder.path ? `/sources/${r.folder.path}` : "/sources";
+      const shown = r.sources.length < r.matched ? `${r.sources.length} of ${r.matched}` : `${r.matched}`;
+      return ok(
+        {
+          folder: r.folder,
+          breadcrumb: r.breadcrumb,
+          subfolders: r.subfolders,
+          sources: r.sources,
+          matched: r.matched,
+          totalBeneath: r.totalBeneath,
+          ...(lib.more ? { note: `Only the first ${SOURCES_PAGE} sources of the vault were read.` } : {}),
+        },
+        `opened ${where}: ${r.subfolders.length} folder${r.subfolders.length === 1 ? "" : "s"}, ${shown} source${r.matched === 1 ? "" : "s"}` +
+          (r.totalBeneath !== r.matched ? ` (${r.totalBeneath} beneath it in all)` : ""),
       );
     }
 
@@ -1633,6 +2457,17 @@ export async function executeTool(
           }
         }
       }
+      // Narrowed after reading, so the summary can still say how many there are.
+      const wantStatus = str(args, "status")?.toUpperCase() ?? null;
+      if (wantStatus && !["DRAFT", "TODO", "IN_PROGRESS", "FINISHED", "CANCELED"].includes(wantStatus)) {
+        return fail("status must be one of: DRAFT, TODO, IN_PROGRESS, FINISHED, CANCELED");
+      }
+      const allProjects = envelopeRows.length;
+      if (wantStatus) {
+        const kept = envelopeRows.filter((r) => r.status === wantStatus);
+        envelopeRows.length = 0;
+        envelopeRows.push(...kept);
+      }
       // The count leads the summary because a model listing these dropped one
       // of ten and still wrote "all ten projects". Naming every code makes the
       // omission visible in the same line that states the total.
@@ -1641,8 +2476,13 @@ export async function executeTool(
         .join(", ");
       const many = envelopeRows.length > 1;
       return ok(
-        { total: envelopeRows.length, projects: envelopeRows, scopes: scopeCount },
-        `listed ${envelopeRows.length} project${many ? "s" : ""} across ${scopeCount} scope${scopeCount === 1 ? "" : "s"}` +
+        {
+          total: envelopeRows.length,
+          projects: envelopeRows,
+          scopes: scopeCount,
+          ...(wantStatus ? { status: wantStatus, allProjects } : {}),
+        },
+        `listed ${envelopeRows.length} ${wantStatus ? `${wantStatus} ` : ""}project${many ? "s" : ""}${wantStatus ? ` of ${allProjects}` : ""} across ${scopeCount} scope${scopeCount === 1 ? "" : "s"}` +
           (codes ? ` — ${codes}` : "") +
           (many ? `. Answer with all ${envelopeRows.length}.` : ""),
       );

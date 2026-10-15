@@ -6,6 +6,7 @@ import {
   ThinkFilter,
   parseSseChunk,
   streamChat,
+  withoutMarkup,
 } from "./completions-client.js";
 import { endpointFor, type ChatEndpoint } from "./provider.js";
 
@@ -381,5 +382,44 @@ describe("server-specific request fields and reasoning models", () => {
     expect(f.push("a < b and <thin") + f.flush()).toBe("a < b and <thin");
     const g = new ThinkFilter();
     expect(g.push("<think>secret") + g.flush()).toBe("");
+  });
+});
+
+describe("error pages", () => {
+  // What the gateway relayed for ChatGPT's 504: its own sentence, then the first
+  // 300 characters of Cloudflare's page — cut off before the page's title.
+  const relayed =
+    'ChatGPT answered 504: <!DOCTYPE html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]--> <!--[if IE 7]> <html class="no-js ie7 oldie" lang="en-US"> <![endif]--> <!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!';
+
+  it("names a page instead of pasting it, keeping the sentence in front of it", () => {
+    expect(withoutMarkup(relayed, 504)).toBe("ChatGPT answered 504 (Gateway time-out)");
+  });
+
+  it("uses the page's own title when it has one", () => {
+    const page = "<!DOCTYPE html><html><head><title>chatgpt.com | 502: Bad gateway</title></head><body>…</body></html>";
+    expect(withoutMarkup(page, 502)).toBe("The server answered with an error page: Bad gateway (HTTP 502)");
+    expect(withoutMarkup(`Upstream said: ${page}`, 502)).toBe("Upstream said (Bad gateway)");
+    expect(withoutMarkup("<html><head><title>Too &amp; slow</title></head></html>", 524)).toBe(
+      "The server answered with an error page: Too & slow (HTTP 524)",
+    );
+  });
+
+  it("leaves a message without markup as it is", () => {
+    expect(withoutMarkup("This model's maximum context length is 32768 tokens.", 400)).toBe(
+      "This model's maximum context length is 32768 tokens.",
+    );
+    expect(withoutMarkup("a < b and c > d", 400)).toBe("a < b and c > d");
+  });
+
+  it("never lets a provider's error page reach the reader", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 504,
+      text: () => Promise.resolve(JSON.stringify({ error: { message: relayed } })),
+    }) as unknown as typeof fetch;
+    const err = await streamChat({ endpoint: LOCAL, model: "m", messages: [] }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ProviderError);
+    expect((err as ProviderError).providerMessage).toBe("ChatGPT answered 504 (Gateway time-out)");
+    expect((err as ProviderError).status).toBe(504);
   });
 });

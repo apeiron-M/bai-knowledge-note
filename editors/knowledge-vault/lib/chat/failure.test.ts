@@ -105,3 +105,25 @@ describe("classifyFailure", () => {
     expect(f.message).toContain("Insufficient credits");
   });
 });
+
+describe("a service that is busy for a moment", () => {
+  const viaApp = (status: number) => new ProviderError(status, "ChatGPT answered 504 (Gateway time-out)", "", "gpt-6.1-sol on your ChatGPT plan", false);
+
+  it("is busy — not a missing model — on the desktop app's gateway or a server you named", () => {
+    for (const status of [408, 502, 504, 524]) {
+      expect(classifyFailure(viaApp(status))).toEqual({ kind: "busy", message: "ChatGPT answered 504 (Gateway time-out)" });
+    }
+  });
+
+  it("leaves a 503 as a model that cannot be served: the gateway already asked again", () => {
+    expect(classifyFailure(viaApp(503)).kind).toBe("model-unavailable");
+  });
+
+  it("stays unavailable on OpenRouter, where a 5xx names one model and the next turn moves on", () => {
+    expect(classifyFailure(or(504, "Gateway time-out")).kind).toBe("model-unavailable");
+  });
+
+  it("does not make a server error that is not a timeout look like one", () => {
+    expect(classifyFailure(viaApp(500)).kind).toBe("model-unavailable");
+  });
+});

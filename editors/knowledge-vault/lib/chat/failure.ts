@@ -32,6 +32,8 @@ export type FailureKind =
   | "model-unavailable"
   | "auth"
   | "unreachable"
+  /** The service failed for a moment — slow, overloaded, a gateway timeout — and the chat already asked again. */
+  | "busy"
   | "aborted"
   | "other";
 
@@ -51,6 +53,14 @@ function providerNamed(raw: string): boolean {
     return false;
   }
 }
+
+/**
+ * Statuses of a service failing for a moment — the ones the chat itself asks
+ * again on (see `isTransientFailure` in use-chat.ts). Not 503: the app's
+ * gateway already asked again twice, so a 503 that reaches the chat means the
+ * model cannot be served, and its settings are the place to look.
+ */
+const TRANSIENT = new Set([408, 502, 504, 520, 521, 522, 523, 524, 529]);
 
 /** The endpoint facts the classifier needs when the request never got a response. */
 export type EndpointHint = { label: string; completionsUrl?: string } | null;
@@ -87,6 +97,13 @@ export function classifyFailure(err: unknown, endpoint: EndpointHint = null): Fa
       return providerNamed(err.raw)
         ? { kind: "model-unavailable", message: said }
         : { kind: "free-quota", message: said };
+    }
+
+    // A gateway timeout or an overloaded server is the service's moment, not
+    // the model's absence. On OpenRouter it stays "unavailable": there a 5xx
+    // names one model's provider, and the next turn moves to another model.
+    if (!err.openRouter && TRANSIENT.has(err.status)) {
+      return { kind: "busy", message: said };
     }
 
     if (err.status >= 500 || err.status === 404 || /no endpoints/i.test(said)) {

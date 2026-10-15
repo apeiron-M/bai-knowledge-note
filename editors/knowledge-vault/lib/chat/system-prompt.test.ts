@@ -36,16 +36,61 @@ describe("buildSystemPrompt", () => {
     const p = buildSystemPrompt(base);
     expect(p).toContain("search_vault");
     expect(p).toContain("read_note");
-    expect(p).toContain("list_documents");
+    expect(p).toContain("vault_stats");
+    expect(p).toContain("list_sources");
     expect(p).toContain("read_document");
     expect(p).toContain("bai/source");
   });
 
-  it("states the note-to-source limitation honestly", () => {
-    const p = buildSystemPrompt(base).toLowerCase();
-    expect(p).toMatch(
-      /not (record|know|available)[^.]*source|source[^.]*not (record|available|known)/,
-    );
+  it("says search ranks by meaning, and sends exact names and figures to keyword_search", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).not.toMatch(/ranks by meaning and keyword together/);
+    expect(p).toMatch(/when the question names something exact \([^)]*\), keyword_search with that too/);
+  });
+
+  it("names the tool for each question about the vault itself", () => {
+    const p = buildSystemPrompt(base);
+    for (const tool of ["notes_by_status", "list_contradictions", "topic_maps", "list_sources"]) {
+      expect(p).toContain(tool);
+    }
+    expect(p).toMatch(/"topic" usually means a map; list_topics is only the tags/);
+  });
+
+  it("sends a note's provenance question to its DERIVED_FROM link, not to a refusal", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/outgoing DERIVED_FROM link\. Asked where a note came from, call linked_notes/);
+    // The refusal stays, but only for a note that really has no link.
+    expect(p).toMatch(/only when a note has none, say the vault does not record its source — never guess one/);
+    expect(p).not.toMatch(/you must not claim or guess a note's provenance/);
+  });
+
+  it("names the vault's sources and their folders in the orientation", () => {
+    const p = buildSystemPrompt({
+      ...base,
+      stats: {
+        ...base.stats,
+        sources: {
+          total: 98,
+          folderCount: 6,
+          folders: [
+            { name: "AI Reports", sources: 74 },
+            { name: "Crypto", sources: 24 },
+          ],
+        },
+      },
+    });
+    expect(p).toContain("Its notes were extracted from 98 sources (bai/source documents) kept in 6 folders under /sources.");
+    expect(p).toContain("The folders directly under /sources are: AI Reports (74), Crypto (24).");
+  });
+
+  it("says what it knows when only the sources could be counted", () => {
+    const p = buildSystemPrompt({
+      ...base,
+      stats: { sources: { total: 3, folderCount: 0, folders: [] } } as never,
+    });
+    expect(p).not.toContain("undefined");
+    expect(p).toContain("Its size is not known yet");
+    expect(p).toContain("Its notes were extracted from 3 sources");
   });
 
   it("treats note content as data, not instructions", () => {

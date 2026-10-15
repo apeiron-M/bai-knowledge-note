@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState, type MouseEvent, type FocusEvent } from "react";
+import { useId, useMemo, useRef, useState, type MouseEvent, type FocusEvent, type ReactNode } from "react";
 import { MarkdownPreview } from "../../../shared/markdown-preview.js";
 import type { Citation, StoredMessage } from "../../lib/chat/chat-storage.js";
 import type { TrailEntry } from "../../hooks/use-chat.js";
@@ -16,6 +16,7 @@ import {
   staleness,
 } from "./ChatCitation.js";
 import { ChatToolTrail } from "./ChatToolTrail.js";
+import { WaitingNote } from "./WaitingNote.js";
 
 export { numberCitations } from "../../lib/chat/inline-citations.js";
 
@@ -25,10 +26,13 @@ export function ChatMessage({
   streaming = false,
   currency,
   searches,
+  footer,
 }: {
   message: StoredMessage;
   /** Only the latest assistant turn carries a live trail. */
   trail?: TrailEntry[];
+  /** Shown under a finished answer, after its sources: what can be done with it. */
+  footer?: ReactNode;
   /** How many searches of the vault found the latest answer; said under what it used. */
   searches?: number;
   streaming?: boolean;
@@ -59,6 +63,7 @@ export function ChatMessage({
       streaming={streaming}
       currency={currency}
       searches={searches}
+      footer={footer}
     />
   );
 }
@@ -83,12 +88,14 @@ function AssistantTurn({
   streaming,
   currency,
   searches,
+  footer,
 }: {
   message: StoredMessage;
   trail?: TrailEntry[];
   streaming: boolean;
   currency?: (documentId: string) => CitationCurrency | null;
   searches?: number;
+  footer?: ReactNode;
 }) {
   const usedId = useId();
   // Depend on the stored arrays themselves (stable across renders), not a
@@ -209,9 +216,13 @@ function AssistantTurn({
           )}
         </div>
       ) : streaming ? (
-        <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
-          {trail && trail.length > 0 ? "Reading…" : "Thinking…"}
-        </p>
+        trail && trail.length > 0 ? (
+          <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
+            Reading…
+          </p>
+        ) : (
+          <WaitingNote />
+        )
       ) : null}
       {streaming && body && (
         <span
@@ -281,6 +292,7 @@ function AssistantTurn({
           )}
         </div>
       )}
+      {!streaming && footer}
     </div>
   );
 }

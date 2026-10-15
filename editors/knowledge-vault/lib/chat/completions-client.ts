@@ -63,6 +63,52 @@ export interface StreamResult {
   model: string | null;
 }
 
+/** What an HTTP status is called, for an error page that names nothing better. */
+const STATUS_TEXT: Record<number, string> = {
+  400: "Bad request",
+  408: "Request timeout",
+  413: "Request too large",
+  429: "Too many requests",
+  500: "Internal server error",
+  502: "Bad gateway",
+  503: "Service unavailable",
+  504: "Gateway time-out",
+  520: "Unknown error",
+  521: "Web server is down",
+  522: "Connection timed out",
+  523: "Origin is unreachable",
+  524: "A timeout occurred",
+  529: "Overloaded",
+};
+
+const MARKUP_RE = /<!doctype html|<html[\s>]|<head[\s>]|<body[\s>]/i;
+const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'", nbsp: " " };
+
+/**
+ * An error message as a person can read it. Servers and the proxies in front
+ * of them answer failures with whole HTML pages — Cloudflare's "504: Gateway
+ * time-out", a load balancer's 502 — and a gateway that relays such a reply
+ * may wrap the page's first few hundred characters in its own sentence. The
+ * markup goes; the page's title (or, cut short before its title, the status's
+ * usual name) stays: "ChatGPT answered 504 (Gateway time-out)".
+ */
+export function withoutMarkup(message: string, status: number): string {
+  const at = message.search(MARKUP_RE);
+  if (at < 0) return message;
+  const page = message.slice(at);
+  const title = /<title[^>]*>([\s\S]*?)<\/title>/i
+    .exec(page)?.[1]
+    ?.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_m, e: string) => ENTITIES[e] ?? "")
+    .replace(/\s+/g, " ")
+    .trim()
+    // "chatgpt.com | 504: Gateway time-out" → "Gateway time-out"
+    .replace(/^[^|]*\|\s*/, "")
+    .replace(/^\d{3}:\s*/, "");
+  const named = title || STATUS_TEXT[status] || `HTTP ${status}`;
+  const lead = message.slice(0, at).replace(/[\s:–—-]+$/, "");
+  return lead ? `${lead} (${named})` : `The server answered with an error page: ${named} (HTTP ${status})`;
+}
+
 /**
  * A non-OK response from the endpoint, with enough structure for callers to
  * tell "add credits" from "this model is down" from "wrong key" from "today's
@@ -285,7 +331,8 @@ export async function streamChat(opts: {
   if (!res.ok) {
     const raw = await res.text().catch(() => "");
     // OpenAI-style `{error:{message}}`, or a bare `{error:"…"}` as some
-    // local servers answer; anything else is shown as the raw body.
+    // local servers answer; anything else is shown as the raw body — never
+    // as markup: an error page is named, not pasted.
     let message = raw;
     try {
       const parsed = JSON.parse(raw) as { error?: { message?: string } | string };
@@ -296,7 +343,7 @@ export async function streamChat(opts: {
     }
     throw new ProviderError(
       res.status,
-      message,
+      withoutMarkup(message, res.status),
       raw,
       endpoint.label,
       endpoint.openRouter,

@@ -46,6 +46,7 @@ import { ChatComposer } from "./chat/ChatComposer.js";
 import { ChatConnectPanel } from "./chat/ChatConnectPanel.js";
 import { ChatHistoryMenu } from "./chat/ChatHistoryMenu.js";
 import { ChatMessage } from "./chat/ChatMessage.js";
+import { SaveAnswer } from "./chat/SaveAnswer.js";
 import { currencyLookup } from "../lib/supersession.js";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { ModelPicker } from "./chat/ModelPicker.js";
@@ -386,6 +387,16 @@ export function ChatView({
                       ? chat.trail.length
                       : undefined
                   }
+                  footer={
+                    m.role === "assistant" && m.content.trim() ? (
+                      <SaveAnswer
+                        message={m}
+                        question={chat.messages[i - 1]?.role === "user" ? chat.messages[i - 1].content : ""}
+                        driveId={driveId}
+                        threadId={chat.thread?.id ?? null}
+                      />
+                    ) : undefined
+                  }
                 />
               ))}
               {chat.isStreaming && (
@@ -557,6 +568,14 @@ function FailureNotice({
     case "unreachable":
       next = <>Once the server answers, just send the message again.</>;
       break;
+    case "busy":
+      next = (
+        <>
+          {providerLabel} is busy or slow right now, and asking again did not
+          help. Send your message again in a minute.
+        </>
+      );
+      break;
     case "credits":
       next = !openRouter ? null : modelIsFree ? null : (
         <>
@@ -643,6 +662,13 @@ function HostFailureNotice({
           ? "The app's AI model service did not answer."
           : failure.message}
       </p>
+      {failure.kind === "busy" ? (
+        <p className="mt-1.5" style={{ color: "var(--bai-text-secondary)" }}>
+          The AI service is busy or slow right now, and asking again did not
+          help. Nothing is wrong with your settings: send your question again
+          in a minute.
+        </p>
+      ) : (
       <p className="mt-1.5">
         <span style={{ color: "var(--bai-text-secondary)" }}>
           Check the AI model in the app&apos;s Settings › Models.
@@ -664,6 +690,7 @@ function HostFailureNotice({
           </>
         )}
       </p>
+      )}
     </NoticeFrame>
   );
 }

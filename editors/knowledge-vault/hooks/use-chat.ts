@@ -15,6 +15,7 @@ import { collectEvidence, parseMarker } from "../lib/chat/evidence.js";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { chatRun, clearChatRun, endChatRun, runFor, startChatRun, stopChatRun, subscribeChatRun, updateChatRun } from "./chat-runs.js";
 import {
+  ProviderError,
   streamChat as realStreamChat,
   type ChatMessage,
   type ToolCall,
@@ -153,16 +154,328 @@ export const TOOL_TEXT_RETRY =
   '<tool_call>{"name": "<tool>", "arguments": {<arguments>}}</tool_call> — JSON, nothing else inside the tags. ' +
   "A documentId is the full UUID string exactly as a result gave it, never a number and never wrapped in brackets. Continue now.";
 
+/* ------------------------------------------------------------------ */
+/*  Answers that point instead of answering                           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Wording that sends the reader to documents instead of telling them what the
+ * documents say: "read the note…", "start with the map…", "the note explains
+ * how…", "follow the notes in this order". One or two can be ordinary prose;
+ * an answer made of them is a reading list — which the person did not ask for:
+ * they asked the chat so they would not have to read, and the citations are
+ * how they check a claim.
+ */
+const DESCRIBING_VERBS =
+  "explains|describes|covers|discusses|details|outlines|shows|frames|gives|lists|introduces|highlights|walks|argues|refines|lays out|indicates|notes that|states|emphasi[sz]es|warns";
+const POINTING_RES = [
+  /\b(?:read|reading|start(?:ing)? with|begin with|look at|check out|explore|dig into|drill into|refer to|consult|follow|open|examine|revisit|study)\b[^.\n]{0,60}?\b(?:notes?|maps?(?: of content)?|MoCs?|documents?|resources?)\b/gi,
+  // "The note “…a title of any length…” explains…" — the title sits between the two.
+  new RegExp(
+    `\\b(?:the|this|that|each|a|companion)\\s+(?:(?:concept|pattern|architecture|observation|decision|companion|knowledge)\\s+)?(?:note|map|MoC|document|observation)\\b[^\\n]{0,220}?\\b(?:${DESCRIBING_VERBS})\\b`,
+    "gi",
+  ),
+  // A line that is a quoted title and what it "shows": — *“Title”* – shows why…
+  new RegExp(`^\\s*(?:[-*•]|\\d+[.)])?\\s*\\*?[“"][^”"\\n]{12,}[”"]\\*?\\s*[–—-]\\s*(?:${DESCRIBING_VERBS})\\b`, "gim"),
+  /\b(?:learning path|reading (?:order|list)|where to read|entry point)\b/gi,
+];
+/** How many of those make an answer a reading list. */
+export const POINTING_THRESHOLD = 3;
+
+export function pointsInsteadOfAnswering(text: string): boolean {
+  let hits = 0;
+  for (const re of POINTING_RES) hits += text.match(re)?.length ?? 0;
+  return hits >= POINTING_THRESHOLD;
+}
+
+/** A question that does ask which documents to read: then a list is the answer. */
+const ASKS_FOR_DOCUMENTS_RE =
+  /\b(?:which|what)\s+(?:notes|documents|sources|maps)\b|\b(?:notes|documents|sources)\s+(?:should|could|can|do)\s+i\b|\blist (?:the |all |every )?(?:notes|documents|sources|maps)\b|\bwhere (?:can|do|should) i (?:read|find)\b|\breading list\b/i;
+
+export function asksForDocuments(question: string): boolean {
+  return ASKS_FOR_DOCUMENTS_RE.test(question);
+}
+
+/** Tools whose result is one or more documents read in full — a source consulted. */
+const FULL_READ_TOOLS = new Set(["read_note", "read_notes", "read_document"]);
+
+/** The documents one trail entry handed over in full. */
+function readIn(e: TrailEntry): { documentId?: unknown; title?: unknown; documentType?: unknown }[] {
+  if (!e.ok || !e.data || typeof e.data !== "object") return [];
+  if (e.tool === "read_notes") {
+    const notes = (e.data as { notes?: unknown }).notes;
+    return Array.isArray(notes) ? (notes as { documentId?: unknown }[]) : [];
+  }
+  if (FULL_READ_TOOLS.has(e.tool)) return [e.data as { documentId?: unknown }];
+  // Search hands over the text of its top hits: those were read too.
+  if (e.tool === "search_vault") {
+    const hits = (e.data as { hits?: unknown }).hits;
+    return Array.isArray(hits)
+      ? (hits as { documentId?: unknown; content?: unknown }[]).filter((h) => typeof h.content === "string")
+      : [];
+  }
+  return [];
+}
+
+/** Every document whose text the model has seen this turn. */
+export function documentsRead(trail: readonly TrailEntry[]): Set<string> {
+  const ids = new Set<string>();
+  for (const e of trail) {
+    for (const d of readIn(e)) if (typeof d.documentId === "string") ids.add(d.documentId);
+  }
+  return ids;
+}
+
+/** Kinds whose citation stands for a claim — and so for what the note says. */
+const CLAIM_KINDS = new Set(["bai/knowledge-note", "bai/research-claim"]);
+
+/**
+ * Notes an answer cites without having read them: it can only repeat their
+ * titles, and a sentence it hangs one on may say something the note does not.
+ * Maps, contradictions, projects and sources are left out — citing a map for
+ * how the vault is organised needs no reading.
+ */
+export function unreadCitations(text: string, trail: readonly TrailEntry[]): KnownDocument[] {
+  const known = collectKnownDocuments([...trail]);
+  const read = documentsRead(trail);
+  const out: KnownDocument[] = [];
+  const seen = new Set<string>();
+  for (const m of text.matchAll(/\[\[([^\]#]+)(?:#[^\]]*)?\]\]/g)) {
+    const id = m[1].trim();
+    if (seen.has(id) || read.has(id)) continue;
+    seen.add(id);
+    const doc = known.get(id);
+    if (doc && (doc.documentType === null || CLAIM_KINDS.has(doc.documentType))) out.push(doc);
+  }
+  return out;
+}
+
+/** How many unread notes, and what share of the cited ones, send an answer back to read. */
+const UNREAD_MIN = 3;
+/** How many of them the loop reads for the model: one read_notes call. */
+const READ_FOR_MODEL = 8;
+/** Rewrites an answer may be sent back for: once to read, once more if it still points. */
+const SUBSTANCE_ROUNDS = 2;
+
+/**
+ * The one nudge an answer gets when it points instead of answering, or rests
+ * on notes it never read. Tools stay on: reading is the point.
+ */
+export function ANSWER_FROM_VAULT(o: {
+  pointing: boolean;
+  unread: KnownDocument[];
+  /** The draft being sent back, so the rewrite keeps what was right in it. */
+  draft?: string;
+  /** True when the loop has already read the notes and their text is above. */
+  readForYou?: boolean;
+}): string {
+  const list = o.unread
+    .slice(0, 12)
+    .map((d) => `- [[${d.documentId}]] ${d.title}`)
+    .join("\n");
+  const why = o.pointing
+    ? "Your draft points the reader to notes instead of telling them what the notes say. They asked you so they would not have to read the notes; the citations are how they check a claim. "
+    : "Your draft cites notes you had not read, so it could only repeat their titles, and a sentence you hang one on may say what the note does not. ";
+  const reading = o.readForYou
+    ? "The notes it leans on have been read for you: their full text is in the read_notes result just above. "
+    : o.unread.length > 0
+      ? `Read these first — read_notes reads them all at once:\n${list}\n`
+      : "";
+  return (
+    why +
+    reading +
+    "Rewrite the answer from that content: the facts, mechanisms, figures, trade-offs and conclusions the notes hold, each claim followed by its [[documentId]]. " +
+    "Do not tell the reader to read, open, start with, explore or follow anything, and do not describe what a note covers — say what it says. " +
+    "Keep the shape the question asked for: a plan stays a plan, each step explained from the notes." +
+    (o.draft ? `\n\nYour draft was:\n---\n${o.draft}\n---` : "")
+  );
+}
+
+/** Whether a final draft goes back to read and answer from the vault (see `ANSWER_FROM_VAULT`). */
+export function needsSubstance(
+  text: string,
+  trail: readonly TrailEntry[],
+  question: string,
+): { pointing: boolean; unread: KnownDocument[] } | null {
+  if (!text.trim() || asksForDocuments(question)) return null;
+  const pointing = pointsInsteadOfAnswering(text);
+  const unread = unreadCitations(text, trail);
+  const cited = new Set([...text.matchAll(/\[\[([^\]#]+)/g)].map((m) => m[1].trim())).size;
+  const leansOnUnread = unread.length >= UNREAD_MIN && unread.length * 2 >= cited;
+  return pointing || leansOnUnread ? { pointing, unread } : null;
+}
+
 /**
  * True when an answer should be sent back for citations: at least one tool
  * result named a document (so there is something to cite) and the text
  * resolves to no citation at all — not a `[[…]]`, not a bracketed title,
  * not a Sources section.
  */
-export function needsCitationRepair(text: string, trail: TrailEntry[]): boolean {
+export function needsCitationRepair(
+  text: string,
+  trail: TrailEntry[],
+  priorCitations: Citation[] = [],
+): boolean {
   if (!text.trim()) return false;
-  if (collectKnownDocuments(trail).size === 0) return false;
-  return resolveCitations(text, trail).citations.length === 0;
+  if (collectKnownDocuments(trail).size === 0 && priorCitations.length === 0) return false;
+  return resolveCitations(text, trail, priorCitations).citations.length === 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Fitting every model: brief failures and full context windows       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * HTTP statuses that mean the model's service failed for a moment, not that
+ * the request was wrong: a gateway that timed out, a server briefly down or
+ * overloaded. ChatGPT answers 504 when it is slow; Cloudflare in front of a
+ * provider answers 52x. Asking again usually works — and the tool calls made
+ * so far are kept, so a long answer does not start over.
+ *
+ * 503 is not here: the desktop app's gateway already asks again twice on a
+ * 503, for every provider and for ChatGPT, and a third layer of retries would
+ * turn one outage into nine requests.
+ */
+const TRANSIENT_STATUSES = new Set([408, 502, 504, 520, 521, 522, 523, 524, 529]);
+/**
+ * The slow ones: each already cost the reader a long wait (Cloudflare gives up
+ * after about a hundred seconds), so they are asked again once per answer.
+ */
+const SLOW_STATUSES = new Set([408, 504, 522, 524]);
+/** How many rounds of one answer may be asked again after a quick failure. */
+export const TRANSIENT_RETRIES = 2;
+/** How many after a slow one. */
+export const SLOW_RETRIES = 1;
+/** The pause before asking again: long enough for a blip to pass. */
+export const RETRY_DELAY_MS = 2000;
+
+export function isTransientFailure(err: unknown): boolean {
+  return err instanceof ProviderError && TRANSIENT_STATUSES.has(err.status);
+}
+
+/**
+ * How each kind of server says a request did not fit its context window:
+ * llama.cpp ("exceeds the available context size"), OpenAI and OpenRouter
+ * ("maximum context length", context_length_exceeded), Anthropic ("prompt is
+ * too long"), Gemini ("input token count … exceeds"), vLLM and others.
+ */
+const CONTEXT_OVERFLOW_RE =
+  /context[ _](?:length|window|size)|maximum context|exceeds? the (?:available )?context|too many (?:input )?tokens|prompt is too long|input is too long|reduce the length|token count[^.]*exceeds|exceed_context_size/i;
+
+export function isContextOverflow(err: unknown): boolean {
+  return (
+    err instanceof ProviderError &&
+    err.status >= 400 &&
+    err.status < 600 &&
+    CONTEXT_OVERFLOW_RE.test(`${err.providerMessage} ${err.raw}`)
+  );
+}
+
+/**
+ * A ceiling no answer is allowed past, whatever the model: beyond it the
+ * request is slow and expensive everywhere and fails outright on most
+ * windows. Tokens are estimated, conservatively, at 3.5 characters each.
+ */
+export const CONTEXT_CEILING_TOKENS = 96_000;
+const CHARS_PER_TOKEN = 3.5;
+/** At the strongest shortening, the one result kept in full is cut to this. */
+export const LAST_RESULT_MAX_CHARS = 24_000;
+/** Documents a shortened result still names, so the model can cite or reread them. */
+const SHORTENED_DOCUMENTS = 25;
+
+export function estimateTokens(messages: readonly ChatMessage[], tools: readonly ToolSchema[]): number {
+  let chars = JSON.stringify(tools).length;
+  for (const m of messages) {
+    chars += m.content.length + 16;
+    if (m.tool_calls) chars += JSON.stringify(m.tool_calls).length;
+  }
+  return Math.ceil(chars / CHARS_PER_TOKEN);
+}
+
+/** Every {documentId, title, documentType} a tool result named, first ones first. */
+function documentsNamed(data: unknown, limit: number): { documentId: string; title: string; documentType?: string }[] {
+  const out: { documentId: string; title: string; documentType?: string }[] = [];
+  const seen = new Set<string>();
+  const visit = (v: unknown, depth: number) => {
+    if (out.length >= limit || depth > 6 || v === null || typeof v !== "object") return;
+    if (Array.isArray(v)) {
+      for (const item of v) visit(item, depth + 1);
+      return;
+    }
+    const o = v as Record<string, unknown>;
+    if (typeof o.documentId === "string" && typeof o.title === "string" && !seen.has(o.documentId)) {
+      seen.add(o.documentId);
+      out.push({
+        documentId: o.documentId,
+        title: o.title,
+        ...(typeof o.documentType === "string" ? { documentType: o.documentType } : {}),
+      });
+    }
+    for (const value of Object.values(o)) visit(value, depth + 1);
+  };
+  visit(data, 0);
+  return out;
+}
+
+/** A tool result as the model sees it once shortened: what it found, not every field of it. */
+export function shortenedResult(entry: Pick<TrailEntry, "summary" | "data">): string {
+  const documents = documentsNamed(entry.data, SHORTENED_DOCUMENTS);
+  return JSON.stringify({
+    shortened:
+      "This earlier result was shortened to fit the model's context window. Call the tool again if you need its details.",
+    summary: entry.summary,
+    ...(documents.length > 0 ? { documents } : {}),
+  });
+}
+
+/**
+ * The transcript at a level of shortening. 0: as it is. 1: every tool result
+ * but the latest round's shortened — what the model read earlier it has
+ * already used. 2: every tool result but the last one shortened, and that one
+ * cut to `LAST_RESULT_MAX_CHARS`. The full results stay in the trail, so
+ * citations and evidence are untouched; only what is sent shrinks.
+ */
+export function fitTranscript(
+  messages: readonly ChatMessage[],
+  results: ReadonlyMap<string, { round: number; entry: TrailEntry }>,
+  level: 0 | 1 | 2,
+): ChatMessage[] {
+  if (level === 0) return [...messages];
+  const tools = messages.filter((m) => m.role === "tool" && m.tool_call_id && results.has(m.tool_call_id));
+  const lastId = tools.at(-1)?.tool_call_id;
+  const latestRound = Math.max(-1, ...tools.map((m) => results.get(m.tool_call_id!)!.round));
+  return messages.map((m) => {
+    const info = m.role === "tool" && m.tool_call_id ? results.get(m.tool_call_id) : undefined;
+    if (!info) return m;
+    const keep = level === 1 ? info.round === latestRound : m.tool_call_id === lastId;
+    if (!keep) return { ...m, content: shortenedResult(info.entry) };
+    if (level === 2 && m.content.length > LAST_RESULT_MAX_CHARS) {
+      return {
+        ...m,
+        content: JSON.stringify({
+          truncated: `Only the first ${LAST_RESULT_MAX_CHARS} of ${m.content.length} characters of this result fit the model's context window.`,
+          partial: m.content.slice(0, LAST_RESULT_MAX_CHARS),
+        }),
+      };
+    }
+    return m;
+  });
+}
+
+/** Wait, unless the person stops the answer first. */
+function pause(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(new DOMException("Aborted", "AbortError"));
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        reject(new DOMException("Aborted", "AbortError"));
+      },
+      { once: true },
+    );
+  });
 }
 
 export interface TrailEntry {
@@ -189,6 +502,12 @@ export interface LoopOptions {
   messages: ChatMessage[];
   /** What the model may call this turn; defaults to the chat's whole set. */
   tools?: ToolSchema[];
+  /**
+   * What earlier answers in this conversation cited. A follow-up ("make that
+   * a plan") is often written from the conversation without a tool call; it
+   * still has to cite, and these are the documents it can.
+   */
+  priorCitations?: Citation[];
   onText?: (delta: string) => void;
   onTrail?: (entry: TrailEntry) => void;
   /** Fires when a new round starts; the UI clears the streamed text of the previous one. */
@@ -238,9 +557,84 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let retriedToolMarkup = false;
   let retriedStaleAnswer = false;
   let retriedFalseOutage = false;
+  // The answer-from-the-vault round: once per answer, and its draft kept in
+  // case the rewrite comes back empty.
+  let substanceRounds = 0;
+  let pointingDraft: string | null = null;
   const tools = o.tools ?? CHAT_TOOLS;
   const asked =
     [...o.messages].reverse().find((m) => m.role === "user")?.content ?? "";
+  // Each tool result by its call id: the round that produced it, and the
+  // trail entry that says what it found — what a shortened copy keeps.
+  const results = new Map<string, { round: number; entry: TrailEntry }>();
+  let shortening: 0 | 1 | 2 = 0;
+  let transientLeft = TRANSIENT_RETRIES;
+  let slowLeft = SLOW_RETRIES;
+  const record = (entry: TrailEntry) => {
+    trail.push(entry);
+    o.onTrail?.(entry);
+  };
+  const shorten = (reason: string) => {
+    shortening = (shortening + 1) as 1 | 2;
+    const before = messages.filter((m) => m.role === "tool").length;
+    const sent = fitTranscript(messages, results, shortening);
+    const kept = sent.filter((m, i) => m.role === "tool" && m.content === messages[i].content).length;
+    record({
+      tool: "compat",
+      summary: `${reason} — shortened ${before - kept} earlier tool result${before - kept === 1 ? "" : "s"} and asked again`,
+      ok: true,
+    });
+  };
+  /**
+   * One request to the model, fitted to it: shortened first when the
+   * conversation is past the ceiling, shortened further when the model says
+   * its window is full, and asked again after a brief failure of its service
+   * — as long as nothing of the reply has reached the reader yet.
+   */
+  const ask = async (toolsOff: boolean): Promise<Awaited<ReturnType<typeof deps.streamChat>>> => {
+    for (;;) {
+      while (shortening < 2 && estimateTokens(fitTranscript(messages, results, shortening), tools) > CONTEXT_CEILING_TOKENS) {
+        shorten("the conversation passed the size any answer is allowed");
+      }
+      // An object, not a `let`: the stream's callback sets it, which a
+      // narrowed boolean would hide from the check below.
+      const reply = { streamed: false };
+      try {
+        return await deps.streamChat({
+          endpoint: o.endpoint,
+          model: o.model,
+          fallbackModels: o.fallbackModels,
+          messages: fitTranscript(messages, results, shortening),
+          tools,
+          toolChoice: toolsOff ? "none" : "auto",
+          signal: o.signal,
+          onText: (d) => {
+            reply.streamed = true;
+            o.onText?.(d);
+          },
+        });
+      } catch (err) {
+        if (o.signal?.aborted) throw err;
+        if (isContextOverflow(err) && shortening < 2) {
+          shorten("the model's context window was full");
+          continue;
+        }
+        const slow = err instanceof ProviderError && SLOW_STATUSES.has(err.status);
+        if (isTransientFailure(err) && !reply.streamed && transientLeft > 0 && (!slow || slowLeft > 0)) {
+          transientLeft--;
+          if (slow) slowLeft--;
+          record({
+            tool: "compat",
+            summary: `${o.endpoint.label} did not answer (HTTP ${(err as ProviderError).status}) — asked again`,
+            ok: true,
+          });
+          await pause(RETRY_DELAY_MS, o.signal);
+          continue;
+        }
+        throw err;
+      }
+    }
+  };
 
   for (;;) {
     iterations++;
@@ -253,16 +647,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
     // which only rewrites what the model already said.
     const toolsOff = forceAnswer || toolsOffNextRound;
     toolsOffNextRound = false;
-    const result = await deps.streamChat({
-      endpoint: o.endpoint,
-      model: o.model,
-      fallbackModels: o.fallbackModels,
-      messages,
-      tools,
-      toolChoice: toolsOff ? "none" : "auto",
-      signal: o.signal,
-      onText: o.onText,
-    });
+    const result = await ask(toolsOff);
 
     if (result.model) answeredBy = result.model;
     // Say so once when OpenRouter answered with a fallback: the user should
@@ -361,6 +746,46 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
         messages.push({ role: "system", content: CHECK_NOW });
         continue;
       }
+      // An answer that points instead of answering, or rests on notes it
+      // never read, goes back once to read them — tools on.
+      // Twice at most: the second time only for an answer that still points,
+      // the notes it leans on having been read the first time.
+      const candidate = !toolsOff && substanceRounds < SUBSTANCE_ROUNDS ? needsSubstance(text, trail, asked) : null;
+      const thin = candidate && (substanceRounds === 0 || candidate.pointing) ? candidate : null;
+      if (thin) {
+        substanceRounds++;
+        pointingDraft = text;
+        record({
+          tool: "compat",
+          summary: thin.pointing
+            ? "answer pointed to notes instead of answering — asked once to answer from them"
+            : `answer cited ${thin.unread.length} notes it had not read — read them and asked once for an answer from them`,
+          ok: true,
+        });
+        // The reading is not left to the model: a smaller one told to read
+        // first rewrites from the titles anyway. The loop reads the notes the
+        // draft leans on, hands their text over as a tool exchange of its own,
+        // then asks for the answer from them.
+        const toRead = thin.unread.slice(0, READ_FOR_MODEL).map((d) => d.documentId);
+        if (toRead.length > 0) {
+          const call: ToolCall = {
+            id: `vault-read-${iterations}`,
+            type: "function",
+            function: { name: "read_notes", arguments: JSON.stringify({ documentIds: toRead }) },
+          };
+          messages.push({ role: "assistant", content: "", tool_calls: [call] });
+          const r = await deps.executeTool("read_notes", { documentIds: toRead }, { driveId: o.driveId });
+          const entry: TrailEntry = r.ok
+            ? { tool: "read_notes", summary: r.summary, ok: true, data: r.data }
+            : { tool: "read_notes", summary: `read_notes: ${r.error}`, ok: false, error: r.error };
+          record(entry);
+          results.set(call.id, { round: iterations, entry });
+          messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(r.ok ? r.data : { error: r.error }) });
+        }
+        messages.push({ role: "system", content: ANSWER_FROM_VAULT({ ...thin, draft: text, readForYou: toRead.length > 0 }) });
+        continue;
+      }
+      if (pointingDraft !== null && !text.trim()) text = pointingDraft;
       // A repair round that came back empty keeps the uncited draft: an
       // answer without markers beats no answer.
       if (uncitedDraft !== null && !text.trim()) text = uncitedDraft;
@@ -387,10 +812,16 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
       }
       // An answer that used the tools but cites nothing goes back once, with
       // the ids it could have cited — see `CITE_NOW`.
-      if (!repairedCitations && needsCitationRepair(text, trail)) {
+      if (!repairedCitations && needsCitationRepair(text, trail, o.priorCitations)) {
         repairedCitations = true;
         uncitedDraft = text;
-        const known = [...collectKnownDocuments(trail).values()];
+        const fromTools = collectKnownDocuments(trail);
+        const known = [
+          ...fromTools.values(),
+          ...(o.priorCitations ?? [])
+            .filter((c) => !fromTools.has(c.documentId))
+            .map((c) => ({ documentId: c.documentId, title: c.title, documentType: c.documentType ?? null })),
+        ];
         const entry: TrailEntry = {
           tool: "compat",
           summary: "answer cited none of the documents it read — asked once for a cited rewrite",
@@ -454,6 +885,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
 
       trail.push(entry);
       o.onTrail?.(entry);
+      results.set(call.id, { round: iterations, entry });
       messages.push({ role: "tool", tool_call_id: call.id, content });
     }
   }
@@ -800,9 +1232,6 @@ export function resolveCitations(
   };
 }
 
-/** Tools whose result is one document read in full — a source consulted. */
-const FULL_READ_TOOLS = new Set(["read_note", "read_document"]);
-
 /**
  * Documents the model read in full this turn and did not cite. Search hits
  * it merely saw are not sources; a note it opened and read is, whether or
@@ -816,18 +1245,18 @@ export function consultedDocuments(
   const seen = new Set<string>();
   const out: Citation[] = [];
   for (const e of trail) {
+    // Read in full on purpose — not the bodies search handed over unasked.
     if (!e.ok || !FULL_READ_TOOLS.has(e.tool)) continue;
-    const d = e.data as
-      | { documentId?: unknown; title?: unknown; documentType?: unknown }
-      | undefined;
-    if (!d || typeof d.documentId !== "string") continue;
-    if (citedIds.has(d.documentId) || seen.has(d.documentId)) continue;
-    seen.add(d.documentId);
-    out.push({
-      documentId: d.documentId,
-      title: typeof d.title === "string" && d.title ? d.title : d.documentId,
-      documentType: typeof d.documentType === "string" ? d.documentType : null,
-    });
+    for (const d of readIn(e)) {
+      if (typeof d.documentId !== "string") continue;
+      if (citedIds.has(d.documentId) || seen.has(d.documentId)) continue;
+      seen.add(d.documentId);
+      out.push({
+        documentId: d.documentId,
+        title: typeof d.title === "string" && d.title ? d.title : d.documentId,
+        documentType: typeof d.documentType === "string" ? d.documentType : null,
+      });
+    }
   }
   return out;
 }
@@ -970,6 +1399,7 @@ export function useChat(o: UseChatOptions): UseChat {
           modelName,
           driveId,
           messages: history,
+          priorCitations: withUser.messages.flatMap((m) => m.citations ?? []),
           signal: ctrl.signal,
           onText: (d) => {
             streamed += d;

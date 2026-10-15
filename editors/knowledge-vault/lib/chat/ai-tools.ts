@@ -51,6 +51,7 @@ interface JsonSchemaProperty {
   type?: string;
   description?: string;
   enum?: unknown[];
+  items?: { type?: string };
 }
 
 /**
@@ -91,6 +92,10 @@ export function zodShapeFromParameters(
           break;
         case "boolean":
           t = z.boolean();
+          break;
+        case "array":
+          // read_notes takes a list of ids; a list of anything else stays open.
+          t = z.array(prop.items?.type === "string" ? z.string() : z.unknown());
           break;
         default:
           t = z.unknown();

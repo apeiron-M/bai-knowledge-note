@@ -73,19 +73,25 @@ const lastRequest = () =>
 afterEach(() => vi.restoreAllMocks());
 
 describe("VAULT_TOOLS", () => {
-  it("exposes exactly the thirteen read-only tools", () => {
+  it("exposes exactly the nineteen read-only tools", () => {
     expect(VAULT_TOOLS.map((t) => t.function.name).sort()).toEqual([
       "document_history",
+      "keyword_search",
       "linked_notes",
+      "list_contradictions",
       "list_documents",
       "list_projects",
+      "list_sources",
       "list_topics",
+      "notes_by_status",
       "notes_by_topic",
       "read_document",
       "read_note",
+      "read_notes",
       "recent_changes",
       "related_notes",
       "search_vault",
+      "topic_maps",
       "vault_editors",
       "vault_stats",
     ]);
@@ -128,7 +134,7 @@ describe("executeTool", () => {
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
-  it("search_vault projects content and topics away and hits the graph endpoint", async () => {
+  it("search_vault reads text for the top hits only, never topics, and hits the graph endpoint", async () => {
     mockGql({
       knowledgeGraphSemanticSearch: [
         {
@@ -146,9 +152,11 @@ describe("executeTool", () => {
     });
     const r = await executeTool("search_vault", { query: "audit trails" }, CTX);
     expect(r.ok).toBe(true);
-    const { url, body } = lastRequest();
+    const { url, body } = requestAt(0);
     expect(url).toContain("/graphql/knowledgeGraph");
-    expect(body.query).not.toMatch(/\bcontent\b/);
+    // The text is read for the top hits to answer from; topics, a resolver
+    // per row, never are.
+    expect(body.query).toMatch(/node \{[^}]*\bcontent\b/);
     expect(body.query).not.toMatch(/\btopics\b/);
     expect(body.variables).toMatchObject({
       driveId: "drive-1",
@@ -166,11 +174,40 @@ describe("executeTool", () => {
   it("search_vault asks for the neighbourhood and the edges between hits", async () => {
     mockGql({ knowledgeGraphSemanticSearch: [] });
     await executeTool("search_vault", { query: "x" }, CTX);
-    const { body } = lastRequest();
+    const { body } = requestAt(0);
     expect(body.query).toMatch(/related\(limit: 15\)/);
     expect(body.query).toMatch(/linkedHits/);
-    // still no full text: the model reads bodies with read_note
-    expect(body.query).not.toMatch(/\bcontent\b/);
+  });
+
+  it("search_vault hands over the text of its top three hits, each once per answer", async () => {
+    const hit = (id: string, content: string) => ({ similarity: 0.9, matchedBy: ["semantic"], node: { documentId: id, title: id, content } });
+    mockGql({
+      knowledgeGraphSemanticSearch: [
+        hit("a", "Body A"),
+        hit("b", "x".repeat(5000)),
+        hit("c", ""),
+        hit("d", "Body D"),
+        hit("e", "Body E"),
+      ],
+    });
+    const first = await executeTool("search_vault", { query: "q" }, CTX);
+    const hitsOf = (r: typeof first) => (r.ok ? (r.data as { hits: Record<string, unknown>[] }).hits : []);
+    expect(hitsOf(first).map((h) => [h.documentId, typeof h.content === "string" ? h.content.length : null, h.contentTruncated ?? false])).toEqual([
+      ["a", 6, false],
+      ["b", 3000, true],
+      ["c", null, false], // nothing to send
+      ["d", 6, false],
+      ["e", null, false], // three already given
+    ]);
+    // The same search again in this answer: those bodies are not sent twice.
+    const again = await executeTool("search_vault", { query: "q" }, CTX);
+    expect(hitsOf(again).map((h) => [h.documentId, typeof h.content === "string"])).toEqual([
+      ["a", false],
+      ["b", false],
+      ["c", false],
+      ["d", false],
+      ["e", true],
+    ]);
   });
 
   it("search_vault merges a neighbour several hits point at into one row", async () => {
@@ -327,7 +364,7 @@ describe("executeTool", () => {
   it("search_vault caps the limit at 20 and rejects an empty query", async () => {
     mockGql({ knowledgeGraphSemanticSearch: [] });
     await executeTool("search_vault", { query: "x", limit: 500 }, CTX);
-    expect(lastRequest().body.variables.limit).toBe(20);
+    expect(requestAt(0).body.variables.limit).toBe(20);
 
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
     expect((await executeTool("search_vault", { query: "   " }, CTX)).ok).toBe(
@@ -336,25 +373,22 @@ describe("executeTool", () => {
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
-  it("read_note truncates a long body and says so", async () => {
+  it("read_note returns the whole body, however long", async () => {
     mockGql({
       knowledgeGraphNodeByDocumentId: {
         documentId: "n1",
         title: "T",
-        content: "x".repeat(9000),
+        content: `${"x".repeat(20_000)} — the caveat at the end`,
         topics: ["a"],
       },
     });
     const r = await executeTool("read_note", { documentId: "n1" }, CTX);
     expect(r.ok).toBe(true);
     if (r.ok) {
-      const d = r.data as {
-        content: string;
-        truncated: boolean;
-        topics: string[];
-      };
-      expect(d.content.length).toBe(6000);
-      expect(d.truncated).toBe(true);
+      const d = r.data as Record<string, unknown>;
+      expect(d.content).toMatch(/the caveat at the end$/);
+      expect((d.content as string).length).toBe(20_000 + " — the caveat at the end".length);
+      expect(d).not.toHaveProperty("truncated");
       expect(d.topics).toEqual(["a"]);
     }
   });
@@ -396,6 +430,7 @@ describe("executeTool", () => {
 
   it("linked_notes returns both directions, capped, with incoming titles resolved in one batch", async () => {
     mockGqlSequence(
+      driveTree("n1"),
       {
         data: {
           out: Array.from({ length: 20 }, (_, i) => ({
@@ -424,36 +459,61 @@ describe("executeTool", () => {
       };
       expect(d.outgoing).toHaveLength(15);
       expect(d.incoming).toEqual([
-        { documentId: "i1", title: "In one", linkType: "BUILDS_ON" },
-        { documentId: "i2", title: "In two", linkType: "RELATES_TO" },
+        { documentId: "i1", title: "In one", documentType: null, linkType: "BUILDS_ON" },
+        { documentId: "i2", title: "In two", documentType: null, linkType: "RELATES_TO" },
       ]);
     }
+    // The drive tree, the links, and one batch of titles.
     expect(
       (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls,
-    ).toHaveLength(2);
+    ).toHaveLength(3);
   });
 
-  it("vault_stats combines stats and density in one request", async () => {
-    mockGql({
-      knowledgeGraphStats: {
-        nodeCount: 521,
-        edgeCount: 2211,
-        orphanCount: 146,
+  it("linked_notes names the source at the end of a DERIVED_FROM link, so it can be cited", async () => {
+    mockGqlSequence(
+      {
+        data: {
+          document: {
+            document: {
+              state: {
+                global: {
+                  nodes: [
+                    { id: "n1", kind: "file", name: "n1", documentType: "bai/knowledge-note" },
+                    { id: "src-1", kind: "file", name: "State of AI 2026 — Part 2", documentType: "bai/source" },
+                  ],
+                },
+              },
+            },
+          },
+        },
       },
-      knowledgeGraphDensity: 0.0081,
-    });
-    const r = await executeTool("vault_stats", {}, CTX);
+      {
+        data: {
+          out: [
+            {
+              targetDocumentId: "src-1",
+              linkType: "DERIVED_FROM",
+              targetTitle: null,
+              reason: "Section 3, the paragraph on turbine backlogs",
+            },
+          ],
+          inc: [],
+        },
+      },
+    );
+    const r = await executeTool("linked_notes", { documentId: "n1" }, CTX);
     expect(r.ok).toBe(true);
-    if (r.ok)
-      expect(r.data).toEqual({
-        nodeCount: 521,
-        edgeCount: 2211,
-        orphanCount: 146,
-        density: 0.0081,
-      });
-    expect(
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls,
-    ).toHaveLength(1);
+    if (r.ok) {
+      expect((r.data as { outgoing: unknown[] }).outgoing).toEqual([
+        {
+          documentId: "src-1",
+          title: "State of AI 2026 — Part 2",
+          documentType: "bai/source",
+          linkType: "DERIVED_FROM",
+          reason: "Section 3, the paragraph on turbine backlogs",
+        },
+      ]);
+    }
   });
 
   it("list_documents hits the reactor endpoint and rejects an unknown type", async () => {
@@ -1430,5 +1490,529 @@ describe("a deleted document is not the vault's", () => {
     );
     const r = await executeTool("read_document", { documentId: "ghost-doc" }, CTX);
     expect(r.ok).toBe(true);
+  });
+});
+
+describe("sources: vault_stats and list_sources", () => {
+  const tree = {
+    data: {
+      document: {
+        document: {
+          state: {
+            global: {
+              nodes: [
+                { id: "f-src", kind: "folder", name: "sources", parentFolder: null },
+                { id: "f-ai", kind: "folder", name: "AI Reports", parentFolder: "f-src" },
+                { id: "f-soa", kind: "folder", name: "State of AI 2026", parentFolder: "f-ai" },
+                { id: "s1", kind: "file", name: "part-1", documentType: "bai/source", parentFolder: "f-soa" },
+                { id: "s2", kind: "file", name: "part-2", documentType: "bai/source", parentFolder: "f-soa" },
+                { id: "s3", kind: "file", name: "pasted", documentType: "bai/source", parentFolder: "f-src" },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+  const sources = {
+    data: {
+      findDocuments: {
+        hasNextPage: false,
+        items: [
+          {
+            id: "s1",
+            name: "part-1",
+            createdAtUtcIso: "2026-10-01T00:00:00.000Z",
+            lastModifiedAtUtcIso: "2026-10-02T00:00:00.000Z",
+            // The reactor may hand state back as a string; both are read.
+            state: JSON.stringify({
+              global: {
+                title: "State of AI 2026 — Part 1",
+                status: "EXTRACTED",
+                sourceType: "PAPER",
+                originalFileName: "state-of-ai.pdf",
+                content: "x".repeat(50_000),
+                extractedClaims: ["n1", "n2"],
+              },
+            }),
+          },
+          {
+            id: "s2",
+            name: "part-2",
+            state: {
+              global: {
+                title: "State of AI 2026 — Part 2",
+                status: "INBOX",
+                sourceType: "PAPER",
+                originalFileName: "state-of-ai.pdf",
+                extractedClaims: [],
+              },
+            },
+          },
+          { id: "s3", name: "pasted", state: { global: { title: "Pasted notes", status: "EXTRACTING" } } },
+          // Deleted from the drive, still in the reactor.
+          { id: "gone", name: "gone", state: { global: { title: "Gone", status: "EXTRACTED" } } },
+        ],
+      },
+    },
+  };
+  const graph = {
+    data: {
+      knowledgeGraphStats: {
+        nodeCount: 221,
+        noteCount: 217,
+        mocCount: 14,
+        scopeCount: 0,
+        edgeCount: 638,
+        orphanCount: 0,
+        openTensionCount: 2,
+      },
+      knowledgeGraphDensity: 0.013,
+    },
+  };
+
+  /** Answers each request by which query it is, since vault_stats sends them in parallel. */
+  function mockVault(overrides: { graph?: unknown; sources?: unknown } = {}) {
+    globalThis.fetch = vi.fn((_url: string, init: RequestInit) => {
+      const { query } = JSON.parse(init.body as string) as { query: string };
+      const body = query.includes("DriveTree")
+        ? tree
+        : query.includes("query Sources")
+          ? (overrides.sources ?? sources)
+          : (overrides.graph ?? graph);
+      return Promise.resolve({ ok: true, json: () => Promise.resolve(body) });
+    }) as unknown as typeof fetch;
+  }
+  const queries = () =>
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.map(
+      (c) => (JSON.parse((c[1] as RequestInit).body as string) as { query: string; variables: Record<string, unknown> }),
+    );
+
+  it("vault_stats adds how many sources there are, of what kinds, in which folders", async () => {
+    mockVault();
+    const r = await executeTool("vault_stats", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as Record<string, unknown> & { sources: Record<string, unknown> };
+    expect(d).toMatchObject({ noteCount: 217, edgeCount: 638, density: 0.013 });
+    expect(d.sources).toMatchObject({
+      total: 3,
+      byStatus: { EXTRACTED: 1, INBOX: 1, EXTRACTING: 1 },
+      bySourceType: { PAPER: 2, "not set": 1 },
+      byFileType: { PDF: 2, "no original file": 1 },
+      notesExtracted: 2,
+      folderCount: 2,
+      inSourcesRoot: 1,
+      folders: [{ folderId: "f-ai", name: "AI Reports", path: "AI Reports", sources: 2, subfolders: 1 }],
+    });
+    expect(r.summary).toBe("vault: 217 notes, 14 maps, 0 scopes of work, 638 links, 0 orphans, 2 open tensions; 3 sources in 2 folders");
+    // One request for every source, narrowed to this drive and to sources —
+    // and none of their text reaches the model.
+    const sourcesQuery = queries().find((q) => q.query.includes("query Sources"));
+    expect(sourcesQuery?.query).toMatch(/type: "bai\/source", parentId: \$parentId/);
+    expect(sourcesQuery?.variables).toMatchObject({ parentId: "drive-1" });
+    expect(JSON.stringify(r.data)).not.toContain("xxxxxxxxxx");
+  });
+
+  it("vault_stats still counts the sources when the graph index does not answer", async () => {
+    mockVault({ graph: { errors: [{ message: "relation graph_nodes does not exist" }] } });
+    const r = await executeTool("vault_stats", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data).toMatchObject({ graphError: "relation graph_nodes does not exist", sources: { total: 3 } });
+      expect(r.summary).toMatch(/graph index did not answer .*; 3 sources in 2 folders/);
+    }
+  });
+
+  it("vault_stats keeps the graph counts when the sources cannot be read", async () => {
+    mockVault({ sources: { errors: [{ message: "reactor busy" }] } });
+    const r = await executeTool("vault_stats", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data).toMatchObject({ noteCount: 217, sources: null, sourcesError: "reactor busy" });
+      expect(r.summary).toMatch(/; sources could not be counted$/);
+    }
+  });
+
+  it("list_sources opens a folder by name and lists citable rows", async () => {
+    mockVault();
+    const r = await executeTool("list_sources", { folder: "State of AI 2026" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as { folder: { path: string }; sources: Record<string, unknown>[] };
+    expect(d.folder.path).toBe("AI Reports/State of AI 2026");
+    expect(d.sources.map((s) => [s.documentId, s.title, s.documentType, s.status])).toEqual([
+      ["s1", "State of AI 2026 — Part 1", "bai/source", "EXTRACTED"],
+      ["s2", "State of AI 2026 — Part 2", "bai/source", "INBOX"],
+    ]);
+    expect(r.summary).toBe("opened /sources/AI Reports/State of AI 2026: 0 folders, 2 sources");
+  });
+
+  it("list_sources reads the vault once for several calls in one answer", async () => {
+    mockVault();
+    await executeTool("vault_stats", {}, CTX);
+    await executeTool("list_sources", {}, CTX);
+    await executeTool("list_sources", { status: "INBOX", recursive: true }, CTX);
+    expect(queries().filter((q) => q.query.includes("query Sources"))).toHaveLength(1);
+  });
+
+  it("list_sources reports a folder that does not exist, with the ones that do", async () => {
+    mockVault();
+    const r = await executeTool("list_sources", { folder: "Biology" }, CTX);
+    expect(r).toEqual({
+      ok: false,
+      error: 'No folder "Biology" under /sources. The folders there are: AI Reports.',
+    });
+  });
+});
+
+describe("structure tools: keyword_search, notes_by_status, list_contradictions, topic_maps", () => {
+  type Handler = (variables: Record<string, unknown>, query: string) => unknown;
+  /** Answers each request by its operation name: `query K(` → handlers.K. */
+  function mockByOperation(handlers: Partial<Record<string, Handler>>) {
+    globalThis.fetch = vi.fn((_url: string, init: RequestInit) => {
+      const { query, variables } = JSON.parse(init.body as string) as {
+        query: string;
+        variables: Record<string, unknown>;
+      };
+      const op = /query\s+(\w+)/.exec(query)?.[1] ?? "";
+      const handler = handlers[op];
+      if (!handler) throw new Error(`no handler for query ${op}`);
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ data: handler(variables, query) }) });
+    }) as unknown as typeof fetch;
+  }
+  const sent = () =>
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.map(
+      (c) => JSON.parse((c[1] as RequestInit).body as string) as { query: string; variables: Record<string, unknown> },
+    );
+
+  it("keyword_search finds a phrase, cuts a snippet, and never sends the body on", async () => {
+    mockByOperation({
+      K: () => ({
+        knowledgeGraphFullSearch: [
+          {
+            documentId: "n1",
+            title: "Turbine orders exceed build capacity",
+            documentType: "bai/knowledge-note",
+            content: `${"Context. ".repeat(80)}Backlog orders of 220 GW outpace the build rate.${" More.".repeat(80)}`,
+          },
+        ],
+      }),
+    });
+    const r = await executeTool("keyword_search", { query: '"220 GW"' }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as { match: string; hits: Record<string, unknown>[] };
+    expect(d.match).toBe("phrase");
+    expect(d.hits[0]).toMatchObject({ documentId: "n1", matchedIn: "content" });
+    expect(d.hits[0].snippet).toMatch(/Backlog orders of 220 GW outpace/);
+    expect(d.hits[0]).not.toHaveProperty("content");
+    // The user's own quotation marks are not part of what was searched for.
+    expect(r.summary).toBe('"220 GW" appears in 1 document');
+    expect(sent()[0].variables).toMatchObject({ query: "220 gw" });
+  });
+
+  it("keyword_search looks for the words separately when the phrase is nowhere", async () => {
+    mockByOperation({
+      K: (v) =>
+        v.query === "customer money offers"
+          ? { knowledgeGraphFullSearch: [] }
+          : {
+              knowledgeGraphFullSearch: [
+                { documentId: "a", title: "Offers a customer pays for", description: "money", documentType: "bai/knowledge-note" },
+                { documentId: "b", title: "Customer retention", description: "nothing else", documentType: "bai/knowledge-note" },
+              ],
+            },
+    });
+    const r = await executeTool("keyword_search", { query: "customer money offers" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as { match: string; hits: { documentId: string }[] };
+    expect(d.match).toBe("all words");
+    expect(d.hits.map((h) => h.documentId)).toEqual(["a"]);
+    // The second look is for the most telling word, widely.
+    expect(sent()[1].variables).toMatchObject({ query: "customer", limit: 100 });
+  });
+
+  it("notes_by_status counts every stage in one request and lists the queue newest first", async () => {
+    const note = (id: string, updatedAt: string) => ({
+      documentId: id,
+      title: `Note ${id}`,
+      documentType: "bai/knowledge-note",
+      status: "IN_REVIEW",
+      updatedAt,
+    });
+    mockByOperation({
+      NS: () => ({
+        DRAFT: [{ documentId: "d1", documentType: "bai/knowledge-note" }],
+        IN_REVIEW: [note("old", "2026-09-01T00:00:00Z"), note("new", "2026-10-01T00:00:00Z"), note("mid", "2026-09-15T00:00:00Z")],
+        // A research claim is CANONICAL by construction — not an approval.
+        CANONICAL: [
+          { documentId: "c1", documentType: "bai/knowledge-note" },
+          { documentId: "rc", documentType: "bai/research-claim" },
+        ],
+        ARCHIVED: [],
+        inTopic: [{ documentId: "old" }, { documentId: "mid" }, { documentId: "c1" }],
+      }),
+    });
+    const r = await executeTool("notes_by_status", { limit: 2 }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const d = r.data as { counts: Record<string, number>; total: number; notes: { documentId: string }[] };
+      expect(d.counts).toEqual({ DRAFT: 1, IN_REVIEW: 3, CANONICAL: 1, ARCHIVED: 0 });
+      expect(d.total).toBe(3);
+      expect(d.notes.map((n) => n.documentId)).toEqual(["new", "mid"]);
+      expect(r.summary).toBe("3 notes waiting for review — 1 drafts, 3 waiting for review, 1 approved, 0 archived");
+    }
+    expect(sent()).toHaveLength(1);
+    expect(sent()[0].query).not.toContain("inTopic");
+
+    const byTopic = await executeTool("notes_by_status", { topic: "pricing", since: "2026-09-10" }, CTX);
+    if (byTopic.ok) {
+      const d = byTopic.data as { counts: Record<string, number>; notes: { documentId: string }[] };
+      expect(d.notes.map((n) => n.documentId)).toEqual(["mid"]);
+      expect(d.counts).toEqual({ DRAFT: 0, IN_REVIEW: 2, CANONICAL: 1, ARCHIVED: 0 });
+    }
+    expect(sent()[1].variables).toMatchObject({ topic: "pricing" });
+    expect((await executeTool("notes_by_status", { status: "APPROVED" }, CTX)).ok).toBe(false);
+  });
+
+  it("list_contradictions names both notes, filling a title the edge did not carry", async () => {
+    mockByOperation({
+      C: () => ({
+        knowledgeGraphNodesByType: [
+          { documentId: "t1", title: "Contradiction on pricing", status: "OPEN", updatedAt: "2026-10-01" },
+          { documentId: "t2", title: "Contradiction on turbines", status: "RESOLVED", updatedAt: "2026-10-02" },
+        ],
+      }),
+      FL: () => ({
+        l0: [
+          { targetDocumentId: "a", linkType: "INVOLVES", targetTitle: "Claim A" },
+          { targetDocumentId: "b", linkType: "INVOLVES", targetTitle: null },
+        ],
+      }),
+      NT: () => ({ n0: { title: "Claim B" } }),
+    });
+    const r = await executeTool("list_contradictions", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const d = r.data as { counts: Record<string, number>; contradictions: { documentId: string; notes: unknown[] }[] };
+      expect(d.counts).toEqual({ OPEN: 1, RESOLVED: 1, DISSOLVED: 0 });
+      expect(d.contradictions).toHaveLength(1);
+      expect(d.contradictions[0]).toMatchObject({
+        documentId: "t1",
+        status: "OPEN",
+        notes: [
+          { documentId: "a", title: "Claim A" },
+          { documentId: "b", title: "Claim B" },
+        ],
+      });
+      expect(r.summary).toBe("1 open, 1 resolved, 0 dissolved contradictions; listed 1 open");
+    }
+  });
+
+  it("topic_maps builds the hierarchy from one request per hundred maps, then opens one", async () => {
+    mockByOperation({
+      M: () => ({
+        knowledgeGraphNodesByStatus: [
+          { documentId: "hub", title: "Vault", noteType: "MOC (HUB)", description: "Entry point" },
+          { documentId: "money", title: "Money Models", noteType: "MOC (DOMAIN)", description: "Offers" },
+          { documentId: "upsell", title: "Upsell Offers", noteType: "MOC (TOPIC)", description: null },
+        ],
+      }),
+      FL: (v) => {
+        const edges: Record<string, unknown[]> = {
+          hub: [{ targetDocumentId: "money", linkType: "CHILD_MOC", targetTitle: "Money Models" }],
+          money: [
+            { targetDocumentId: "upsell", linkType: "CHILD_MOC", targetTitle: "Upsell Offers" },
+            { targetDocumentId: "n1", linkType: "CORE_IDEA", targetTitle: "Sequencing offers compounds revenue" },
+          ],
+          upsell: [{ targetDocumentId: "n2", linkType: "CORE_IDEA", targetTitle: null }],
+        };
+        return Object.fromEntries(Object.keys(v).filter((k) => k.startsWith("d")).map((k) => [`l${k.slice(1)}`, edges[v[k] as string] ?? []]));
+      },
+      NT: () => ({ n0: { title: "Upsells raise order value" } }),
+      DriveTree: () => ({
+        document: { document: { state: { global: { nodes: [{ id: "n2", kind: "file", name: "n2", documentType: "bai/knowledge-note" }] } } } },
+      }),
+    });
+    const all = await executeTool("topic_maps", {}, CTX);
+    expect(all.ok).toBe(true);
+    if (all.ok) {
+      const d = all.data as { maps: { title: string; depth: number; notesBeneath: number }[]; totalMaps: number };
+      expect(d.maps.map((m) => [m.title, m.depth, m.notesBeneath])).toEqual([
+        ["Vault", 0, 2],
+        ["Money Models", 1, 2],
+        ["Upsell Offers", 2, 1],
+      ]);
+      expect(all.summary).toBe("3 maps of content — 1 hub, 1 area, 1 topic — holding 2 notes");
+    }
+    const one = await executeTool("topic_maps", { map: "upsell" }, CTX);
+    expect(one.ok).toBe(true);
+    if (one.ok) {
+      expect(one.data).toMatchObject({
+        map: { documentId: "upsell", tier: "TOPIC" },
+        path: [
+          { documentId: "hub", title: "Vault" },
+          { documentId: "money", title: "Money Models" },
+        ],
+        notes: [{ documentId: "n2", title: "Upsells raise order value", documentType: "bai/knowledge-note" }],
+        notesTotal: 1,
+      });
+    }
+    expect((await executeTool("topic_maps", { map: "biology" }, CTX)).ok).toBe(false);
+  });
+});
+
+describe("tool definitions every kind of model accepts", () => {
+  it("declares each tool in the subset of JSON Schema OpenAI, Anthropic, Gemini, xAI, ChatGPT and local servers all take", () => {
+    for (const tool of CHAT_TOOLS) {
+      const { name, parameters } = tool.function;
+      // OpenAI and others require a name like this; Anthropic caps it at 64.
+      expect(name).toMatch(/^[a-zA-Z0-9_-]{1,64}$/);
+      const p = parameters as { type: string; properties?: Record<string, { type?: string; enum?: unknown[]; items?: unknown }>; required?: string[] };
+      expect(p.type).toBe("object");
+      // OpenAI wants `properties` present; Gemini refuses it empty — and with
+      // it the whole request. So every tool has at least one.
+      expect(Object.keys(p.properties ?? {}).length, `${name} has no parameters`).toBeGreaterThan(0);
+      for (const [key, prop] of Object.entries(p.properties ?? {})) {
+        expect(["string", "integer", "number", "boolean", "array"], `${name}.${key}`).toContain(prop.type);
+        // A list is a list of strings, its item type stated — Gemini requires `items`.
+        if (prop.type === "array") expect((prop as { items?: { type?: string } }).items?.type, `${name}.${key}`).toBe("string");
+        // Gemini takes enums on strings only.
+        if (prop.enum) {
+          expect(prop.type, `${name}.${key}`).toBe("string");
+          expect(prop.enum.every((v) => typeof v === "string")).toBe(true);
+        }
+      }
+      for (const r of p.required ?? []) expect(p.properties).toHaveProperty(r);
+    }
+  });
+});
+
+describe("the optional parameters of vault_stats and list_projects", () => {
+  it("vault_stats skips reading the sources when asked to", async () => {
+    globalThis.fetch = vi.fn((_url: string, init: RequestInit) => {
+      const { query } = JSON.parse(init.body as string) as { query: string };
+      expect(query).not.toContain("query Sources");
+      expect(query).not.toContain("DriveTree");
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ data: { knowledgeGraphStats: { nodeCount: 3, noteCount: 3, mocCount: 1, scopeCount: 0, edgeCount: 2, orphanCount: 0, openTensionCount: 0 }, knowledgeGraphDensity: 0.1 } }),
+      });
+    }) as unknown as typeof fetch;
+    const r = await executeTool("vault_stats", { sources: false }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data).not.toHaveProperty("sources");
+      expect(r.summary).toBe("vault: 3 notes, 1 maps, 0 scopes of work, 2 links, 0 orphans, 0 open tensions; sources not counted");
+    }
+  });
+
+  it("list_projects keeps only the projects in the state asked for, and says how many there are in all", async () => {
+    const scope = {
+      data: {
+        document: {
+          document: {
+            id: "sow-1",
+            name: "Platform 2027",
+            documentType: "powerhouse/scopeofwork",
+            state: {
+              global: {
+                title: "Platform 2027",
+                status: "IN_PROGRESS",
+                projects: [
+                  { id: "e1", code: "P1", title: "Search", scope: { status: "IN_PROGRESS", deliverables: [] }, knowledgeRefs: [] },
+                  { id: "e2", code: "P2", title: "Sync", scope: { status: "FINISHED", deliverables: [] }, knowledgeRefs: [] },
+                ],
+                deliverables: [],
+                roadmaps: [],
+                contributors: [],
+              },
+            },
+          },
+        },
+      },
+    };
+    globalThis.fetch = vi.fn((_url: string, init: RequestInit) => {
+      const { query } = JSON.parse(init.body as string) as { query: string };
+      const body = query.includes("findDocuments")
+        ? { data: { findDocuments: { items: [{ id: "sow-1", name: "Platform 2027" }] } } }
+        : query.includes("DriveTree")
+          ? driveTree("sow-1")
+          : scope;
+      return Promise.resolve({ ok: true, json: () => Promise.resolve(body) });
+    }) as unknown as typeof fetch;
+    const r = await executeTool("list_projects", { status: "finished" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect((r.data as { projects: { project: string }[] }).projects.map((p) => p.project)).toEqual(["Sync"]);
+      expect(r.summary).toBe("listed 1 FINISHED project of 2 across 1 scope — P2");
+    }
+    expect((await executeTool("list_projects", { status: "LATE" }, CTX)).ok).toBe(false);
+  });
+});
+
+describe("reading for an answer", () => {
+  type Handler = (variables: Record<string, unknown>, query: string) => unknown;
+  function byOperation(handlers: Partial<Record<string, Handler>>) {
+    globalThis.fetch = vi.fn((_url: string, init: RequestInit) => {
+      const { query, variables } = JSON.parse(init.body as string) as { query: string; variables: Record<string, unknown> };
+      const op = /query\s+(\w+)/.exec(query)?.[1] ?? "";
+      const handler = handlers[op];
+      if (!handler) throw new Error(`no handler for ${op}`);
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ data: handler(variables, query) }) });
+    }) as unknown as typeof fetch;
+  }
+
+  it("read_notes reads several notes in one request, says which were not found, and how many are left", async () => {
+    const ids = ["a", "b", "gone", "c", "d", "e", "f", "g", "h", "i"];
+    byOperation({
+      RN: (v) =>
+        Object.fromEntries(
+          Object.entries(v)
+            .filter(([k]) => k.startsWith("d"))
+            .map(([k, id]) => [`n${k.slice(1)}`, id === "gone" ? null : { documentId: id, title: `Note ${String(id)}`, content: `Body ${String(id)}` }]),
+        ),
+    });
+    const r = await executeTool("read_notes", { documentIds: [...ids, "[[a]]"] }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as { notes: { documentId: string; content: string }[]; missing: string[]; notRead: string[] };
+    expect(d.notes.map((n) => n.documentId)).toEqual(["a", "b", "c", "d", "e", "f", "g"]);
+    expect(d.notes[0].content).toBe("Body a");
+    expect(d.missing).toEqual(["gone"]);
+    // Eight per call; the [[a]] copied from prose was the same note, read once.
+    expect(d.notRead).toEqual(["h", "i"]);
+    expect(r.summary).toMatch(/^read 7 notes: "Note a", "Note b", .*; 1 not found; 2 left for another call$/);
+    expect((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls).toHaveLength(1);
+    expect((await executeTool("read_notes", { documentIds: [] }, CTX)).ok).toBe(false);
+  });
+
+  it("search_vault names the source each top hit was extracted from", async () => {
+    byOperation({
+      S: () => ({
+        knowledgeGraphSemanticSearch: [
+          { similarity: 0.9, matchedBy: ["semantic"], node: { documentId: "n1", title: "Batching raises throughput", content: "Body" } },
+          { similarity: 0.8, matchedBy: ["semantic"], node: { documentId: "n2", title: "Hand-written note" } },
+        ],
+      }),
+      FL: () => ({
+        l0: [
+          { targetDocumentId: "src-4", linkType: "DERIVED_FROM", targetTitle: null },
+          { targetDocumentId: "n9", linkType: "BUILDS_ON", targetTitle: "Other" },
+        ],
+        l1: [],
+      }),
+      DriveTree: () => ({
+        document: { document: { state: { global: { nodes: [{ id: "src-4", kind: "file", name: "Chapter 4 Software", documentType: "bai/source" }] } } } },
+      }),
+    });
+    const r = await executeTool("search_vault", { query: "how to start" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const hits = (r.data as { hits: Record<string, unknown>[] }).hits;
+    expect(hits[0].source).toEqual({ documentId: "src-4", title: "Chapter 4 Software", documentType: "bai/source" });
+    expect(hits[1]).not.toHaveProperty("source");
   });
 });
