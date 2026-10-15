@@ -261,7 +261,10 @@ export async function candidatesStage(llm: LlmClient, model: string, bundle: Rec
   const other = breakdown.rejected.filter((s) => s.gate === OTHER_GATE).length;
   const distinct = kept.length + breakdown.rejected.length;
   const parts = results.length + emptyParts.length + unreadable.length;
-  const notKnowledge = results.length > 0 && results.every((r) => r.sourceKind === "not_knowledge");
+  // "Not knowledge" only when every part was read and said so, and nothing in it was kept as a claim:
+  // a part that stayed empty or unreadable never said, and a kept claim means the source holds knowledge.
+  const notKnowledge =
+    results.length > 0 && emptyParts.length === 0 && unreadable.length === 0 && kept.length === 0 && results.every((r) => r.sourceKind === "not_knowledge");
   const usage = results.reduce((u, r) => ({ cost: u.cost + r.usage.cost, tokens: u.tokens + r.usage.prompt_tokens + r.usage.completion_tokens }), { cost: 0, tokens: 0 });
   return {
     summary:

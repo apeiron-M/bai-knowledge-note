@@ -273,6 +273,19 @@ describe("2. candidates", () => {
     const m = modelSays("{}");
     expect((await candidatesStage(m.llm, "m", {}, m.fetchImpl)).summary).toBe("0 distinct claims: 0 kept, 0 rejected on a gate.");
   });
+
+  it("never calls a source 'not knowledge' when a part stayed empty, could not be read, or kept a claim", async () => {
+    const references = JSON.stringify({ source_kind: "not_knowledge", source_kind_reason: "a list of references", kept: [], skipped: [], non_claims: 0 });
+    const text = [section("Refs", 6), section("Body", 6)].join("\n\n");
+    const withEmpty = gateway([references, "{}", "{}"]);
+    const a = await candidatesStage(withEmpty.llm, "m", { title: "T", text }, withEmpty.fetchImpl, { windowChars: 7_000 });
+    expect(a.empty_parts.length + a.windows.length).toBeGreaterThan(1);
+    expect(a.source_kind).toBe("knowledge");
+    const withUnreadable = gateway([references, "not json"]);
+    expect((await candidatesStage(withUnreadable.llm, "m", { title: "T", text }, withUnreadable.fetchImpl, { windowChars: 7_000 })).source_kind).toBe("knowledge");
+    const keptOne = gateway([JSON.stringify({ source_kind: "not_knowledge", source_kind_reason: "an index", kept: [{ claim: "Indexes hide the argument they point to", locus: "p", evidence: "e", disagreement: "an index is a map" }], skipped: [], non_claims: 0 })]);
+    expect((await candidatesStage(keptOne.llm, "m", { title: "T", text: section("Index", 3) }, keptOne.fetchImpl)).source_kind).toBe("knowledge");
+  });
 });
 
 describe("3. vault check", () => {
