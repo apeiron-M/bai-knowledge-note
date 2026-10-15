@@ -113,7 +113,7 @@ export function ChatConnectPanel({
     <div className="flex w-full max-w-md flex-col items-center gap-3 pt-6">
       {saved && saved.length > 0 && onUseSaved && (
         <div className="flex w-full flex-col gap-1.5">
-          <p className="text-[11px] uppercase tracking-wide" style={{ color: "var(--bai-text-faint)" }}>
+          <p className="text-[11px] uppercase tracking-wide" style={{ color: "var(--bai-text-muted)" }}>
             Saved connections
           </p>
           {saved.map((c) => (
@@ -200,7 +200,7 @@ export function ChatConnectPanel({
 
       <div
         className="my-2 flex w-full items-center gap-3 text-[11px] uppercase tracking-wide"
-        style={{ color: "var(--bai-text-faint)" }}
+        style={{ color: "var(--bai-text-muted)" }}
         aria-hidden
       >
         <span className="h-px flex-1" style={{ backgroundColor: "var(--bai-border)" }} />
@@ -257,14 +257,14 @@ export function ChatConnectPanel({
               style={inputStyle}
             />
             {resolvedBase && (
-              <span className="font-mono text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
+              <span className="font-mono text-[10px]" style={{ color: "var(--bai-text-muted)" }}>
                 → {resolvedBase}/chat/completions
               </span>
             )}
           </label>
           <div className="flex gap-2">
             <label className="flex flex-1 flex-col gap-1 text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
-              API key <span style={{ color: "var(--bai-text-faint)" }}>(if the server needs one)</span>
+              API key <span style={{ color: "var(--bai-text-muted)" }}>(if the server needs one)</span>
               <input
                 type="password"
                 value={apiKey}
@@ -277,7 +277,7 @@ export function ChatConnectPanel({
               />
             </label>
             <label className="flex flex-1 flex-col gap-1 text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
-              Model <span style={{ color: "var(--bai-text-faint)" }}>(or pick from its list)</span>
+              Model <span style={{ color: "var(--bai-text-muted)" }}>(or pick from its list)</span>
               <input
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
@@ -343,7 +343,7 @@ export function ChatConnectPanel({
               {plainError(customError)}
             </p>
           )}
-          <p className="text-[11px] leading-relaxed" style={{ color: "var(--bai-text-faint)" }}>
+          <p className="text-[11px] leading-relaxed" style={{ color: "var(--bai-text-muted)" }}>
             The request goes straight from this browser to your server, so the
             server has to allow the origin <span className="font-mono">{origin}</span>.
             Ollama: start it with{" "}
@@ -419,7 +419,7 @@ export function ChatConnectPanel({
 
         <p
           className="mt-3 text-[11px] leading-relaxed"
-          style={{ color: "var(--bai-text-faint)" }}
+          style={{ color: "var(--bai-text-muted)" }}
         >
           You sign in on openrouter.ai and come straight back. Keys and
           addresses are stored only in this browser and removed with Disconnect.

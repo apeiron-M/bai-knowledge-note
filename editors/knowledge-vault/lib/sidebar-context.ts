@@ -3,6 +3,15 @@ import type { GraphFocus } from "../components/GraphView.js";
 import type { VaultContextItem, VaultContextListProps } from "../components/VaultContextList.js";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
+import { contradictionLabel, type Contradiction } from "./contradictions.js";
+import { hubMap, plural, rankedTopics, topicSize } from "./vault-lookups.js";
+
+/**
+ * A note opened from a topic map (one of its core ideas) or from a
+ * contradiction (one of its claims): the sidebar keeps that place's list, and
+ * closing the note goes back to where it was opened from.
+ */
+export type ContextOrigin = { place: "topics" | "contradictions"; id: string };
 
 export type SidebarContextInput = {
   /** Every node in the drive: sources and the folders they sit in. */
@@ -20,9 +29,15 @@ export type SidebarContextInput = {
   sourceTitles?: Map<string, string>;
   selected: Node | undefined;
   graphFocus: GraphFocus | null;
+  /** Every contradiction, as the Contradictions place shows them. */
+  contradictions?: Contradiction[];
+  /** Where the open note was opened from, if from a topic map or a contradiction. */
+  origin?: ContextOrigin | null;
   open: (id: string) => void;
   close: () => void;
   clearGraph: () => void;
+  /** Back to a place's own page: "All topics", "All contradictions". */
+  showPlace?: (place: "topics" | "contradictions") => void;
 };
 
 /** Titles from source documents, by id; documents without one are left out. */
@@ -41,9 +56,6 @@ export function sourceTitleMap(
 const byFileName = (a: Node, b: Node) =>
   a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
 
-function plural(n: number, word: string): string {
-  return `${n} ${word}${n === 1 ? "" : "s"}`;
-}
 
 function documentTypeOf(node: Node | undefined): string | undefined {
   return node && "documentType" in node ? node.documentType : undefined;
@@ -51,16 +63,23 @@ function documentTypeOf(node: Node | undefined): string | undefined {
 
 /**
  * The one place that decides what the sidebar lists while you are in a place.
- * A graph selection wins, then an open topic map, then an open source.
- * Nothing else makes a context.
+ * A graph selection wins, then an open topic map or contradiction — or a note
+ * opened from one — then an open source. Nothing else makes a context.
  */
 export function buildSidebarContext(
   input: SidebarContextInput,
 ): VaultContextListProps | undefined {
   if (input.graphFocus) return graphContext(input, input.graphFocus);
   const docType = documentTypeOf(input.selected);
-  if (docType === "bai/moc" && input.selected) return topicContext(input, input.selected);
-  if (docType === "bai/source" && input.selected) return sourceContext(input, input.selected);
+  const selected = input.selected;
+  if (docType === "bai/moc" && selected) return topicContext(input, selected.id, selected.name);
+  if (docType === "bai/tension" && selected) return contradictionContext(input, selected.id, selected.name);
+  if (docType === "bai/knowledge-note" && input.origin) {
+    return input.origin.place === "topics"
+      ? topicContext(input, input.origin.id)
+      : contradictionContext(input, input.origin.id);
+  }
+  if (docType === "bai/source" && selected) return sourceContext(input, selected);
   return undefined;
 }
 
@@ -118,19 +137,69 @@ function graphContext(
   };
 }
 
+/**
+ * Inside a topic map: every topic, the overview first, then the Topics page's
+ * order (largest first), each with its count (design: "a topic map").
+ */
 function topicContext(
   input: SidebarContextInput,
-  selected: Node,
+  activeId: string,
+  fallbackName?: string,
 ): VaultContextListProps {
-  const current = input.mocMap.get(selected.id);
+  const hub = hubMap(input.mocs);
+  const topics = rankedTopics(input.mocs);
+  const items: VaultContextItem[] = [
+    ...(hub ? [{ id: hub.id, label: `${hub.title} overview`, detail: "every topic", marker: "hub" as const }] : []),
+    ...topics.map((m) => ({ id: m.id, label: m.title, detail: topicSize(m), marker: "map" as const })),
+  ];
+  // A map the index has not reached yet is still where you are.
+  if (!items.some((i) => i.id === activeId)) {
+    items.unshift({ id: activeId, label: fallbackName ?? "This topic", marker: "map" });
+  }
   return {
     place: "topics",
-    title: current?.title ?? selected.name,
-    subtitle: plural(input.mocs.length, "topic"),
-    items: input.mocs.map((m) => ({ id: m.id, label: m.title, detail: plural(m.noteCount, "note") })),
-    activeId: selected.id,
+    title: "Topics",
+    subtitle: hub ? `${plural(topics.length, "topic")} and the overview` : plural(topics.length, "topic"),
+    items,
+    activeId,
     onOpen: input.open,
-    onBack: input.close,
+    onBack: input.showPlace ? () => input.showPlace?.("topics") : input.close,
+    filterPlaceholder: "Filter topics",
+  };
+}
+
+/**
+ * Inside a contradiction: the open ones, each named by the claims it sets
+ * against each other (design: "a contradiction"). One already closed is listed
+ * while it is the one you are in.
+ */
+function contradictionContext(
+  input: SidebarContextInput,
+  activeId: string,
+  fallbackName?: string,
+): VaultContextListProps {
+  const all = input.contradictions ?? [];
+  const open = all.filter((c) => c.status === "OPEN");
+  const listed = open.some((c) => c.id === activeId)
+    ? open
+    : [...open, ...all.filter((c) => c.id === activeId)];
+  const items: VaultContextItem[] = listed.map((c) => ({
+    id: c.id,
+    label: contradictionLabel(c),
+    detail: c.status === "OPEN" ? "Open" : c.status === "RESOLVED" ? "Resolved" : "Dissolved",
+    marker: "warn",
+  }));
+  if (!items.some((i) => i.id === activeId)) {
+    items.unshift({ id: activeId, label: fallbackName ?? "This contradiction", marker: "warn" });
+  }
+  return {
+    place: "contradictions",
+    title: "Contradictions",
+    subtitle: `${open.length} open`,
+    items,
+    activeId,
+    onOpen: input.open,
+    onBack: input.showPlace ? () => input.showPlace?.("contradictions") : input.close,
   };
 }
 

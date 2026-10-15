@@ -19,7 +19,34 @@ import {
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
-import { buildSidebarContext, sourceTitleMap } from "../lib/sidebar-context.js";
+import {
+  buildSidebarContext,
+  sourceTitleMap,
+  type ContextOrigin,
+} from "../lib/sidebar-context.js";
+import { TopicsView } from "./TopicsView.js";
+import { ContradictionsView } from "./ContradictionsView.js";
+import { buildContradictions } from "../lib/contradictions.js";
+import {
+  hubMap,
+  noteTopicIndex,
+  notesPerSourceDocument,
+  rankedTopics,
+  sourceDocuments,
+} from "../lib/vault-lookups.js";
+import { SearchPalette } from "./SearchPalette.js";
+import type { PaletteData, PaletteRow, PaletteScope } from "../lib/palette-search.js";
+import { readCurrentThreadId, writeCurrentThreadId } from "../lib/chat/chat-storage.js";
+import { useRecentChats } from "../hooks/use-recent-chats.js";
+import { chatRun, stopChatRun } from "../hooks/chat-runs.js";
+import { formatLastModified } from "../lib/format-time.js";
+import { writeOpenFolder } from "../lib/source-tree.js";
+import { saveSearchQuery } from "../hooks/use-graph-search.js";
+import {
+  clearTensionClose,
+  requestTensionClose,
+  type TensionCloseKind,
+} from "../../shared/tension-intent.js";
 import { VaultShell } from "./VaultShell.js";
 import type { VaultPlace, VaultPlaceId } from "./VaultPlaces.js";
 import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
@@ -54,11 +81,21 @@ import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
 import { useKnowledgeTensions } from "../hooks/use-knowledge-tensions.js";
 
 /** Views a host may open a vault on (`takeOpenView`). */
-const OPENABLE_VIEWS = new Set<string>(["chat", "notes", "graph", "search", "sources"]);
+const OPENABLE_VIEWS = new Set<string>([
+  "chat",
+  "notes",
+  "topics",
+  "graph",
+  "search",
+  "sources",
+  "contradictions",
+]);
 
 type ViewMode =
   | "chat"
   | "notes"
+  | "topics"
+  | "contradictions"
   | "graph"
   | "sources"
   | "projects"
@@ -84,20 +121,17 @@ const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
 
 /**
  * The view each place opens. The places list never sees a view mode.
- *
- * A place with no entry is not listed (`buildPlaces`). `contradictions` is
- * withheld on purpose: the vault has no tensions view yet, so a row would land
- * on the notes list. The task that adds that view lights the place up with
- * one line here (`contradictions: "<its view>"`).
+ * A place with no entry is not listed (`buildPlaces`).
  */
 export const PLACE_VIEW: Partial<Record<VaultPlaceId, ViewMode>> = {
   ask: "chat",
   notes: "notes",
-  topics: "notes",
+  topics: "topics",
   sources: "sources",
   // Scopes of work first: a project lives inside one ("Create a scope of work first").
   work: "scope",
   graph: "graph",
+  contradictions: "contradictions",
 };
 
 export type PlaceCounts = {
@@ -105,6 +139,7 @@ export type PlaceCounts = {
   topics: number;
   sources: number;
   work: number;
+  /** Open contradictions: the place is listed only while there are any. */
   contradictions: number;
   /** Files the intake holds for the reader (ready for review, or failed). */
   sourcesWaiting?: number;
@@ -112,8 +147,13 @@ export type PlaceCounts = {
   sourcesBusy?: boolean;
 };
 
-/** The places the sidebar lists, in the design's order. */
-export function buildPlaces(counts: PlaceCounts): VaultPlace[] {
+/**
+ * The places the sidebar lists, in the design's order. Contradictions joins
+ * them only while the vault has open ones (design: "Contradictions") — and
+ * while you are in it, so resolving the last one does not pull the place out
+ * from under you.
+ */
+export function buildPlaces(counts: PlaceCounts, current?: VaultPlaceId): VaultPlace[] {
   // No count while it is 0 (or still loading): a bare "0" would be a false count.
   const shown = (n: number) => (n > 0 ? n : undefined);
   const all: VaultPlace[] = [
@@ -141,7 +181,11 @@ export function buildPlaces(counts: PlaceCounts): VaultPlace[] {
       tone: "warn",
     },
   ];
-  return all.filter((p) => PLACE_VIEW[p.id] !== undefined);
+  return all.filter(
+    (p) =>
+      PLACE_VIEW[p.id] !== undefined &&
+      (p.id !== "contradictions" || counts.contradictions > 0 || current === "contradictions"),
+  );
 }
 
 /**
@@ -152,6 +196,8 @@ export function buildPlaces(counts: PlaceCounts): VaultPlace[] {
  */
 export const RENDERED_VIEWS = [
   "notes",
+  "topics",
+  "contradictions",
   "graph",
   "chat",
   "search",
@@ -169,9 +215,12 @@ function isRenderedView(mode: ViewMode): mode is RenderedView {
   return RENDERED_VIEWS.some((view) => view === mode);
 }
 
-/** The place a view belongs to; `notes` is split in two by `notesPlace`. */
+/** The place a view belongs to. */
 const VIEW_PLACE: Partial<Record<ViewMode, VaultPlaceId>> = {
   chat: "ask",
+  notes: "notes",
+  topics: "topics",
+  contradictions: "contradictions",
   sources: "sources",
   projects: "work",
   scope: "work",
@@ -185,7 +234,6 @@ const SETTINGS_DOCUMENTS = new Set<string>(["bai/pipeline-queue", "bai/health-re
 const DOCUMENT_PLACE: Record<string, VaultPlaceId> = {
   "bai/knowledge-note": "notes",
   "bai/moc": "topics",
-  "bai/observation": "contradictions",
   "bai/tension": "contradictions",
   "bai/source": "sources",
   "powerhouse/scopeofwork": "work",
@@ -207,7 +255,6 @@ export function DriveExplorer({ children }: EditorProps) {
       setViewMode("chat");
     }
   }, [driveId]);
-  const [notesPlace, setNotesPlace] = useState<"notes" | "topics">("notes");
   const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
   const [graphClearNonce, setGraphClearNonce] = useState(0);
   const [sourcesHome, setSourcesHome] = useState(0);
@@ -276,6 +323,33 @@ export function DriveExplorer({ children }: EditorProps) {
   // layer on.
   const { mocs, mocMap } = useKnowledgeMocs();
   const { tensions } = useKnowledgeTensions();
+
+  // Contradictions as the reader sees them: each tension's notes as claims,
+  // with the reason recorded on the link between them — all from data the
+  // vault already holds (the projection and the drive tree).
+  const treeNodes = useStableList(allNodes, sameTreeNode);
+  const topicOf = useMemo(() => noteTopicIndex(mocs), [mocs]);
+  const sourceDocs = useMemo(() => sourceDocuments(treeNodes), [treeNodes]);
+  const contradictions = useMemo(
+    () => buildContradictions(tensions, { noteMap, topicOf, sourceOf: sourceDocs.bySource }),
+    [tensions, noteMap, topicOf, sourceDocs],
+  );
+  const openContradictions = contradictions.filter((c) => c.status === "OPEN").length;
+  const tensionById = useMemo(() => new Map(tensions.map((t) => [t.id, t] as const)), [tensions]);
+
+  // Where the open note was opened from — a topic map (one of its core ideas)
+  // or a contradiction (one of its claims). The sidebar keeps that place's
+  // list, and closing the note goes back there (design: "a claim opens its
+  // note and Esc returns to the contradiction").
+  const [origin, setOrigin] = useState<ContextOrigin | null>(null);
+  /** Set just before the vault itself deselects (a place, a view): no going back. */
+  const leavingOnPurpose = useRef(false);
+  /** A note about to open from the Contradictions list, with where it came from. */
+  const pendingOrigin = useRef<{ noteId: string; origin: ContextOrigin } | null>(null);
+  const previousDoc = useRef<{ id: string; type: string | undefined; driveId: string | undefined } | null>(null);
+  // The latest data, read when the selection moves (not a reason to re-run).
+  const lookups = useRef({ mocMap, tensionById, origin, driveId });
+  lookups.current = { mocMap, tensionById, origin, driveId };
 
   // Count doc types
   const allFiles = useMemo(() => fileNodes, [fileNodes]);
@@ -358,7 +432,10 @@ export function DriveExplorer({ children }: EditorProps) {
     if (mode === "sources" && viewMode === "sources" && !showDocumentEditor)
       setSourcesHome((n) => n + 1);
     // For list/custom views, deselect any open doc
-    if (showDocumentEditor) setSelectedNode(undefined);
+    if (showDocumentEditor) {
+      leavingOnPurpose.current = true;
+      setSelectedNode(undefined);
+    }
     setViewMode(mode);
   }
 
@@ -403,23 +480,28 @@ export function DriveExplorer({ children }: EditorProps) {
     if (view && OPENABLE_VIEWS.has(view)) setViewMode(view as ViewMode);
   }, [driveId]);
 
-  const places = buildPlaces({
-    notes: notes.length,
-    topics: mocs.length,
-    sources: sourceCount,
-    work: projectCount,
-    contradictions: tensions.length,
-    sourcesWaiting: intake.needsUser,
-    sourcesBusy: intake.working,
-  });
-
-  const viewPlace: VaultPlaceId | undefined =
-    viewMode === "notes" ? notesPlace : VIEW_PLACE[viewMode];
+  const viewPlace: VaultPlaceId | undefined = VIEW_PLACE[viewMode];
   const documentPlace = showDocumentEditor
-    ? DOCUMENT_PLACE[selectedDocumentType ?? ""]
+    ? // A note opened from a map or a contradiction is still in that place.
+      ((selectedDocumentType === "bai/knowledge-note" ? origin?.place : undefined) ??
+      DOCUMENT_PLACE[selectedDocumentType ?? ""])
     : undefined;
   // The place you are in: the open document's, else the view's.
   const currentPlace = documentPlace ?? viewPlace;
+
+  const places = buildPlaces(
+    {
+      notes: notes.length,
+      // The overview is the page every topic hangs from, not a topic.
+      topics: mocs.length - (hubMap(mocs) ? 1 : 0),
+      sources: sourceCount,
+      work: projectCount,
+      contradictions: openContradictions,
+      sourcesWaiting: intake.needsUser,
+      sourcesBusy: intake.working,
+    },
+    currentPlace,
+  );
   // The views that report on the vault (search, activity, access, health)
   // belong to no place: no place reads as current while one shows. The
   // settings among them light up Vault settings at the sidebar's foot.
@@ -428,10 +510,100 @@ export function DriveExplorer({ children }: EditorProps) {
     : viewMode === "access" || viewMode === "activity" || viewMode === "health";
 
   function handleSelectPlace(id: VaultPlaceId) {
-    if (id === "notes" || id === "topics") setNotesPlace(id);
     const view = PLACE_VIEW[id];
     if (view) handleSwitchView(view);
   }
+
+  // Follow the selection: remember where a note was opened from, and when its
+  // own close (×) leaves nothing selected, go back there.
+  const selectedId = selectedNode?.id;
+  useEffect(() => {
+    const previous = previousDoc.current;
+    previousDoc.current = selectedId
+      ? { id: selectedId, type: selectedDocumentType, driveId: lookups.current.driveId ?? undefined }
+      : null;
+    const onPurpose = leavingOnPurpose.current;
+    leavingOnPurpose.current = false;
+    const { mocMap: maps, tensionById: byId, origin: from, driveId: inDrive } = lookups.current;
+    const pending = pendingOrigin.current;
+    pendingOrigin.current = null;
+
+    // The note's own close (the toolbar's ×) selects the folder it sits in:
+    // that, and only that, goes back to where it was opened from. Nothing
+    // selected — Connect deselecting, Back, another vault, a new document not
+    // in the tree yet — is not a close, and leaves you where you are.
+    if (selectedId && selectedDocumentType === undefined) {
+      setOrigin(null);
+      if (
+        from &&
+        !onPurpose &&
+        inDrive &&
+        previous?.type === "bai/knowledge-note" &&
+        previous.driveId === inDrive
+      ) {
+        setSelectedNode(from.id);
+      }
+      return;
+    }
+    if (!selectedId) {
+      setOrigin(null);
+      return;
+    }
+    if (selectedDocumentType !== "bai/knowledge-note") {
+      setOrigin(null);
+      return;
+    }
+    const holds = (o: ContextOrigin) =>
+      o.place === "topics"
+        ? (maps.get(o.id)?.coreIdeas.some((idea) => idea.noteRef === selectedId) ?? false)
+        : (byId.get(o.id)?.involvedRefs.includes(selectedId) ?? false);
+    const fromPrevious: ContextOrigin | null =
+      previous?.type === "bai/moc"
+        ? { place: "topics", id: previous.id }
+        : previous?.type === "bai/tension"
+          ? { place: "contradictions", id: previous.id }
+          : null;
+    if (pending && pending.noteId === selectedId) setOrigin(pending.origin);
+    else if (fromPrevious && holds(fromPrevious)) setOrigin(fromPrevious);
+    // Moving on to another note keeps the place only while it holds that note too.
+    else if (from && holds(from)) setOrigin(from);
+    else setOrigin(null);
+  }, [selectedId, selectedDocumentType]);
+
+  // Esc in a note opened from a map or a contradiction goes back to it —
+  // unless the reader is typing, or something on top (a dialog, a menu) takes Esc.
+  useEffect(() => {
+    if (!origin || selectedDocumentType !== "bai/knowledge-note") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      const t = e.target;
+      if (t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (document.querySelector('[role="dialog"], [role="alertdialog"], [role="menu"]')) return;
+      setSelectedNode(origin.id);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [origin, selectedDocumentType]);
+
+  /** Back to a place's own page from inside it ("All topics", "All contradictions"). */
+  const showPlace = useRef<(place: "topics" | "contradictions") => void>(() => undefined);
+  showPlace.current = (place) => handleSwitchView(place);
+  const showPlaceStable = useCallback(
+    (place: "topics" | "contradictions") => showPlace.current(place),
+    [],
+  );
+
+  /** Open a contradiction — on its closing form when the card asked for one. */
+  const openContradiction = useCallback((id: string, closing?: TensionCloseKind) => {
+    if (closing) requestTensionClose(id, closing);
+    else clearTensionClose();
+    setSelectedNode(id);
+  }, []);
+  /** A claim on a card opens its note; closing the note comes back to the contradiction. */
+  const openClaim = useCallback((noteId: string, contradictionId: string) => {
+    pendingOrigin.current = { noteId, origin: { place: "contradictions", id: contradictionId } };
+    setSelectedNode(noteId);
+  }, []);
 
   // The open source's folder, by title. The tree knows file names only; the
   // title is in each source, read through the per-document cache the Sources
@@ -447,7 +619,11 @@ export function DriveExplorer({ children }: EditorProps) {
   const { docs: siblingSources } = useReactorDocsWithRefetch(sourceSiblingSpecs);
   const sourceTitles = useMemo(() => sourceTitleMap(siblingSources), [siblingSources]);
 
-  const openDocument = useCallback((id: string) => setSelectedNode(id), []);
+  const openDocument = useCallback((id: string) => {
+    // A row in the sidebar opens a document as it is, never on a closing form.
+    clearTensionClose();
+    setSelectedNode(id);
+  }, []);
   const closeDocument = useCallback(() => setSelectedNode(undefined), []);
   const sidebarContext = useMemo(
     () =>
@@ -459,9 +635,12 @@ export function DriveExplorer({ children }: EditorProps) {
         sourceTitles,
         selected: selectedNode,
         graphFocus,
+        contradictions,
+        origin,
         open: openDocument,
         close: closeDocument,
         clearGraph: handleClearGraphFocus,
+        showPlace: showPlaceStable,
       }),
     [
       allNodes,
@@ -471,15 +650,26 @@ export function DriveExplorer({ children }: EditorProps) {
       sourceTitles,
       selectedNode,
       graphFocus,
+      contradictions,
+      origin,
       openDocument,
       closeDocument,
       handleClearGraphFocus,
+      showPlaceStable,
     ],
   );
 
-  // Ctrl K (⌘ K) searches the vault from anywhere in it.
+  // Ctrl K (⌘ K): the palette, from anywhere in the vault; again, it closes.
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteScope, setPaletteScope] = useState<PaletteScope>("all");
+  const [paletteQuery, setPaletteQuery] = useState("");
+  const openPalette = (scope: PaletteScope) => {
+    if (scope !== paletteScope) setPaletteQuery("");
+    setPaletteScope(scope);
+    setPaletteOpen(true);
+  };
   const openSearch = useRef<() => void>(() => undefined);
-  openSearch.current = () => handleSwitchView("search");
+  openSearch.current = () => (paletteOpen ? setPaletteOpen(false) : openPalette("all"));
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() !== "k" || !(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
@@ -494,6 +684,105 @@ export function DriveExplorer({ children }: EditorProps) {
   // those who can use it. The server refuses a non-admin regardless — hiding
   // the entry means they are not invited into a dead end. `null`
   // (undetermined) hides it too, rather than flashing an entry about to go.
+  // What the palette searches: all already here, so every keystroke answers at
+  // once. Chats are read from the browser's store each time it opens.
+  const [chatMount, setChatMount] = useState(0);
+  const [chatAsk, setChatAsk] = useState<{ text: string; nonce: number } | null>(null);
+  // Asked once: coming back to the chat later must not ask it again.
+  const clearChatAsk = useCallback(() => setChatAsk(null), []);
+  const [sourcesMount, setSourcesMount] = useState(0);
+  const [searchMount, setSearchMount] = useState(0);
+  const notesPerSource = useMemo(
+    () => notesPerSourceDocument(notes, sourceDocs.bySource),
+    [notes, sourceDocs],
+  );
+  const recentChats = useRecentChats(driveId);
+  // The conversation on screen, for the sidebar to mark.
+  const activeChatId =
+    viewMode === "chat" && !showDocumentEditor && driveId ? readCurrentThreadId(driveId) : null;
+  const paletteData = useMemo<PaletteData>(
+    () => ({
+      notes,
+      topicOf,
+      sourceOf: sourceDocs.bySource,
+      topics: rankedTopics(mocs),
+      hub: hubMap(mocs),
+      sources: sourceDocs.documents,
+      notesPerSource,
+      chats: recentChats,
+      ago: formatLastModified,
+    }),
+    [notes, topicOf, sourceDocs, mocs, notesPerSource, recentChats],
+  );
+
+  /** The chat on a conversation (`null`: a new one), shown fresh. */
+  const showChat = (threadId: string | null) => {
+    if (driveId) {
+      // Another conversation's answer stops, as the chat's own New chat and
+      // history do: the vault streams one answer at a time.
+      if (chatRun(driveId)?.thread.id !== threadId) stopChatRun(driveId);
+      writeCurrentThreadId(driveId, threadId);
+    }
+    setChatMount((n) => n + 1);
+    handleSwitchView("chat");
+  };
+
+  function handlePaletteSelect(row: PaletteRow) {
+    setPaletteOpen(false);
+    switch (row.kind) {
+      case "ask":
+        setChatAsk({ text: row.query, nonce: Date.now() });
+        showChat(null);
+        return;
+      case "note":
+      case "topic":
+        openDocument(row.id);
+        return;
+      case "source":
+        if (row.document.kind === "folder") {
+          // The Sources list opens on the folder it remembers.
+          writeOpenFolder(row.document.id);
+          setSourcesMount((n) => n + 1);
+          handleSwitchView("sources");
+        } else {
+          openDocument(row.document.id);
+        }
+        return;
+      case "chat":
+        setChatAsk(null);
+        showChat(row.id);
+        return;
+      case "more":
+        saveSearchQuery(row.query);
+        setSearchMount((n) => n + 1);
+        handleSwitchView("search");
+        return;
+      case "goto":
+        switch (row.goto) {
+          case "add-sources":
+            intake.open();
+            handleSwitchView("sources");
+            return;
+          case "new-chat":
+            setChatAsk(null);
+            showChat(null);
+            return;
+          case "new-project":
+            handleSwitchView("projects");
+            return;
+          case "new-scope":
+            handleSwitchView("scope");
+            return;
+          case "vault-settings":
+            handleSwitchView("config");
+            return;
+          case "processing-queue":
+            handleSwitchView("pipeline");
+            return;
+        }
+    }
+  }
+
   const isVaultAdmin = useIsVaultAdmin(driveId);
   const vaultMenuItems = VAULT_MENU.filter(
     (item) => item.key !== "access" || isVaultAdmin === true,
@@ -519,6 +808,22 @@ export function DriveExplorer({ children }: EditorProps) {
   );
   const renderedViews: Record<RenderedView, ReactNode> = {
     notes: <NoteList notes={notes} isLoading={notesLoading} />,
+    topics: (
+      <TopicsView
+        mocs={mocs}
+        isLoading={notesLoading}
+        onOpen={openDocument}
+        onNewTopic={() => setCreating(CREATE_ITEMS.find((i) => i.key === "topic") ?? null)}
+      />
+    ),
+    contradictions: (
+      <ContradictionsView
+        contradictions={contradictions}
+        isLoading={notesLoading}
+        onOpen={openContradiction}
+        onOpenNote={openClaim}
+      />
+    ),
     graph: (
       <GraphView
         notes={notes}
@@ -529,11 +834,24 @@ export function DriveExplorer({ children }: EditorProps) {
         layoutKey={driveId ?? undefined}
       />
     ),
-    chat: <ChatView initialDraft={chatReturnDraft} notes={notes} />,
-    search: <SearchView isLoading={notesLoading} />,
+    chat: (
+      <ChatView
+        key={chatMount}
+        initialDraft={chatReturnDraft}
+        ask={chatAsk ?? undefined}
+        onAsked={clearChatAsk}
+        notes={notes}
+      />
+    ),
+    search: <SearchView key={searchMount} isLoading={notesLoading} />,
     activity: <ActivityView />,
     sources: (
-      <SourceList intake={intake} convert={convert} homeSignal={sourcesHome} />
+      <SourceList
+        key={sourcesMount}
+        intake={intake}
+        convert={convert}
+        homeSignal={sourcesHome}
+      />
     ),
     scope: (
       <>
@@ -570,6 +888,19 @@ export function DriveExplorer({ children }: EditorProps) {
           />
         ),
       }}
+      overlay={
+        paletteOpen && (
+          <SearchPalette
+            vaultName={vaultName}
+            data={paletteData}
+            scope={paletteScope}
+            query={paletteQuery}
+            onQueryChange={setPaletteQuery}
+            onSelect={handlePaletteSelect}
+            onClose={() => setPaletteOpen(false)}
+          />
+        )
+      }
       sidebar={
         <VaultSidebar
           notes={notes}
@@ -584,8 +915,15 @@ export function DriveExplorer({ children }: EditorProps) {
           glyphSeeds={glyphSeeds}
           menuItems={vaultMenuItems}
           onMenuSelect={(key) => handleSwitchView(key as ViewMode)}
-          onSearch={() => handleSwitchView("search")}
-          searchActive={viewMode === "search" && !showDocumentEditor}
+          onSearch={() => openPalette("all")}
+          searchActive={paletteOpen}
+          recentChats={recentChats}
+          activeChatId={activeChatId}
+          onOpenChat={(id) => {
+            setChatAsk(null);
+            showChat(id);
+          }}
+          onAllChats={() => openPalette("chats")}
           onAddSources={() => {
             intake.open();
             handleSwitchView("sources");
@@ -710,34 +1048,31 @@ function WorkTabs({
     { key: "projects", label: "Projects", count: projects },
   ];
   return (
-    <nav
-      className="vault-work-tabs flex items-center gap-1 px-4 pt-3"
-      aria-label="Work"
-    >
-      {tabs.map((tab) => {
-        const current = tab.key === active;
-        return (
-          <button
-            key={tab.key}
-            type="button"
-            aria-current={current ? "page" : undefined}
-            onClick={() => onSelect(tab.key)}
-            className="flex items-center gap-2 rounded-md px-3 py-1.5 text-[13px] transition-colors"
-            style={{
-              backgroundColor: current ? "var(--bai-hover)" : "transparent",
-              color: current ? "var(--bai-text)" : "var(--bai-text-tertiary)",
-              fontWeight: current ? 600 : 500,
-            }}
-          >
-            {tab.label}
-            {tab.count > 0 && (
-              <span style={{ color: "var(--bai-text-tertiary)", fontWeight: 400 }}>
-                {tab.count}
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </nav>
+    <div className="vault-work-tabs px-4 pt-3">
+      <nav className="vault-seg" aria-label="Work">
+        {tabs.map((tab) => {
+          const current = tab.key === active;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              aria-current={current ? "page" : undefined}
+              onClick={() => onSelect(tab.key)}
+            >
+              {tab.label}
+              {tab.count > 0 && <span className="c">{tab.count}</span>}
+            </button>
+          );
+        })}
+      </nav>
+    </div>
   );
+}
+
+/** A drive node unchanged for the vault's lookups: same name, type and folder. */
+function sameTreeNode(
+  a: { id: string; name?: string | null; documentType?: string | null; parentFolder?: string | null; kind?: string },
+  b: { id: string; name?: string | null; documentType?: string | null; parentFolder?: string | null; kind?: string },
+): boolean {
+  return sameDriveNode(a, b) && (a.parentFolder ?? null) === (b.parentFolder ?? null) && a.kind === b.kind;
 }

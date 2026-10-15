@@ -100,6 +100,25 @@ const PATHS = {
       <path d="M9 4v14M15 6l5-2v9M18 16v6M15 19h6" />
     </>
   ),
+  // The Ctrl K palette's rows (design: i-chatnew, i-layers, i-doc).
+  chatNew: (
+    <>
+      <path d="M20.5 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.4a8 8 0 1 1 15.1-4.1z" />
+      <path d="M12.5 8.5v6M9.5 11.5h6" />
+    </>
+  ),
+  layers: (
+    <>
+      <path d="m12 3 9 5-9 5-9-5z" />
+      <path d="m3 13 9 5 9-5" />
+    </>
+  ),
+  doc: (
+    <>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+      <path d="M14 3v5h5" />
+    </>
+  ),
   collapse: <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />,
   expand: <path d="M13 17l5-5-5-5M6 17l5-5-5-5" />,
 } as const;

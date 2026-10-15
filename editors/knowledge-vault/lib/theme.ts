@@ -16,6 +16,8 @@ export const ROLE = {
   line: "--v-line",
   review: "--v-review",
   field: "--v-field",
+  shadow: "--v-shadow",
+  scrim: "--v-scrim",
 } as const;
 
 /** `var(--name)` for a role. */

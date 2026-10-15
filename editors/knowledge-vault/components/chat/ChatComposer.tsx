@@ -54,14 +54,8 @@ export function ChatComposer({
   }
 
   return (
-    <div
-      className="flex items-end gap-2 rounded-[28px] py-3 pl-5 pr-3 transition-colors focus-within:border-[var(--bai-accent)]"
-      style={{
-        backgroundColor: "var(--bai-surface)",
-        border: "1px solid var(--bai-border)",
-        boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-      }}
-    >
+    <div className="vault-composer flex items-end gap-2 rounded-[28px] py-3 pl-5 pr-3">
+      <style aria-hidden="true">{COMPOSER_CSS}</style>
       <textarea
         ref={ref}
         rows={1}
@@ -125,3 +119,23 @@ export function ChatComposer({
     </div>
   );
 }
+
+/**
+ * The box you type in is the screen's next step (design: `.composer`): an
+ * accent-tinted edge and a soft lift say "type here" before it is focused, and
+ * focus adds a ring. In a stylesheet rather than inline, so focus can win.
+ */
+const COMPOSER_CSS = `
+.vault-composer {
+  background: var(--bai-surface);
+  border: 1px solid color-mix(in srgb, var(--bai-accent) 32%, var(--bai-border));
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 10px 28px -16px rgba(16, 24, 40, 0.22);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.vault-composer:focus-within {
+  border-color: var(--bai-accent);
+  box-shadow: 0 0 0 4px var(--bai-accent-soft), 0 10px 28px -16px rgba(16, 24, 40, 0.22);
+}
+.vault-composer textarea::placeholder { color: var(--bai-text-tertiary); opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .vault-composer { transition: none; } }
+`;

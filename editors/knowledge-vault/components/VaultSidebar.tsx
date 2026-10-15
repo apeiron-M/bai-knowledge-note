@@ -71,7 +71,17 @@ type VaultSidebarProps = {
   createItems?: VaultMenuItem[];
   onCreate?: (key: string) => void;
   onGettingStarted?: () => void;
+  /** The vault's latest chats, newest first; the sidebar shows four. */
+  recentChats?: { id: string; title: string }[];
+  /** The chat on screen, marked among them. */
+  activeChatId?: string | null;
+  onOpenChat?: (id: string) => void;
+  /** "All chats": the palette, on the chats. */
+  onAllChats?: () => void;
 };
+
+/** How many recent chats the sidebar lists (design: "Recent chats"). */
+const RECENT_CHATS = 4;
 
 /** What the sidebar body shows: a context's list, the drive tree, or the places. */
 export type SidebarBody = "context" | "folders" | "places";
@@ -150,6 +160,10 @@ export function VaultSidebar({
   createItems = [],
   onCreate,
   onGettingStarted,
+  recentChats = [],
+  activeChatId = null,
+  onOpenChat,
+  onAllChats,
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [treeOpen, setTreeOpen] = useState(false);
@@ -408,6 +422,30 @@ export function VaultSidebar({
           <VaultPlaces places={places} active={place} onSelect={selectPlace} variant="icons" />
         )}
 
+        {/* What you asked lately; the places' list only, not the rail or a context. */}
+        {!rail && body === "places" && onOpenChat && recentChats.length > 0 && (
+          <nav className="vs-chats" aria-label="Recent chats">
+            <h2>Recent chats</h2>
+            {recentChats.slice(0, RECENT_CHATS).map((chat) => (
+              <button
+                key={chat.id}
+                type="button"
+                className="vs-chat"
+                title={chat.title}
+                aria-current={chat.id === activeChatId ? "page" : undefined}
+                onClick={() => onOpenChat(chat.id)}
+              >
+                {chat.title}
+              </button>
+            ))}
+            {onAllChats && (
+              <button type="button" className="vs-chat vs-chat-all" onClick={onAllChats}>
+                All chats
+              </button>
+            )}
+          </nav>
+        )}
+
         {/* Refreshing hint: data is on screen but may be a cached snapshot. */}
         {!rail && body !== "context" && isRefreshing && (
           <div className="flex items-center gap-1.5 px-2">
@@ -418,7 +456,7 @@ export function VaultSidebar({
           </div>
         )}
 
-        {!rail && context && <VaultContextList {...context} />}
+        {!rail && context && <VaultContextList key={context.place} {...context} />}
 
         {!rail && body === "folders" && (
           <div className="flex flex-col gap-2">

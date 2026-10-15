@@ -312,6 +312,7 @@ export function SourceList({
             originalRef: text(global.originalFile),
             folderName: folderOf(d.header.id),
             addedAt: text(global.originalAttachedAt) ?? text(global.createdAt),
+            title: text(global.title),
           };
         }),
       root

@@ -242,12 +242,8 @@ export function ActivityView() {
             key={key}
             type="button"
             onClick={() => setFilter(key)}
-            className="rounded-full px-3 py-1 text-xs transition-colors"
-            style={{
-              backgroundColor:
-                filter === key ? "var(--bai-accent)" : "var(--bai-hover)",
-              color: filter === key ? "#fff" : "var(--bai-text-muted)",
-            }}
+            className="vault-chip"
+            aria-pressed={filter === key}
           >
             {FILTER_TYPES[key].label}
           </button>

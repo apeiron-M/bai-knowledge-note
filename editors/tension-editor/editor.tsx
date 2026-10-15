@@ -5,6 +5,7 @@ import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { clearTensionClose, pendingTensionClose } from "../shared/tension-intent.js";
 
 type View = "analysis" | "details";
 type CloseKind = "resolve" | "dissolve";
@@ -109,11 +110,22 @@ export default function Editor() {
   const [progress, setProgress] = useState(0);
   const reader = useRef<HTMLDivElement>(null);
 
+  // A document opens on its analysis — or, when the Contradictions list asked
+  // for it ("Resolve…" / "Dissolve…"), straight on that closing form.
   useEffect(() => {
-    setView("analysis");
-    setClosing(null);
+    const asked = pendingTensionClose(document.header.id);
+    setView(asked ? "details" : "analysis");
+    setClosing(asked);
     setResolution("");
   }, [document.header.id]);
+  // Once an open form closes (used, cancelled, Esc), the request is spent:
+  // coming back opens the analysis. Only a form that was open counts, so the
+  // first render — where nothing is open yet — never spends it.
+  const wasClosing = useRef<CloseKind | null>(null);
+  useEffect(() => {
+    if (wasClosing.current && !closing) clearTensionClose();
+    wasClosing.current = closing;
+  }, [closing]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

@@ -32,8 +32,8 @@ export function EndpointPicker({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex max-w-[240px] items-center gap-1.5 rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
-        style={{ color: "var(--bai-text-tertiary)" }}
+        className="vault-btn"
+        style={{ maxWidth: 240 }}
         title="Which model endpoint answers"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -67,7 +67,7 @@ export function EndpointPicker({
           >
             <p
               className="px-3 pb-1 pt-1.5 text-[10px] uppercase tracking-wide"
-              style={{ color: "var(--bai-text-faint)" }}
+              style={{ color: "var(--bai-text-muted)" }}
             >
               Answering with
             </p>
@@ -92,7 +92,7 @@ export function EndpointPicker({
                   {c.model && (
                     <span
                       className="max-w-[120px] shrink-0 truncate font-mono text-[10px]"
-                      style={{ color: "var(--bai-text-faint)" }}
+                      style={{ color: "var(--bai-text-muted)" }}
                     >
                       {c.model}
                     </span>
@@ -115,7 +115,7 @@ export function EndpointPicker({
                   className="rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide"
                   style={{
                     backgroundColor: thinkingDisabled ? "var(--bai-hover)" : "var(--bai-accent-soft)",
-                    color: thinkingDisabled ? "var(--bai-text-faint)" : "var(--bai-accent)",
+                    color: thinkingDisabled ? "var(--bai-text-muted)" : "var(--bai-accent)",
                   }}
                 >
                   {thinkingDisabled ? "off" : "on"}

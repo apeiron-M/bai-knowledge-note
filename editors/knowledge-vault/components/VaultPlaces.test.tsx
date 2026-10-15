@@ -92,9 +92,17 @@ describe("VaultPlaces", () => {
     });
   });
 
+  it("lists Contradictions only while some are open, or while you are in it", () => {
+    const counts = { notes: 1, topics: 1, sources: 1, work: 1, contradictions: 0 };
+    expect(buildPlaces(counts).map((p) => p.id)).not.toContain("contradictions");
+    expect(buildPlaces(counts, "contradictions").map((p) => p.id)).toContain("contradictions");
+    const open = buildPlaces({ ...counts, contradictions: 2 }).find((p) => p.id === "contradictions");
+    expect(open).toMatchObject({ count: 2, tone: "warn" });
+  });
+
   it("builds no place that points at a view with no render branch", () => {
     const places = buildPlaces({ notes: 1, topics: 1, sources: 1, work: 1, contradictions: 1 });
-    expect(places.map((p) => p.id)).toEqual(["ask", "notes", "topics", "sources", "work", "graph"]);
+    expect(places.map((p) => p.id)).toEqual(["ask", "notes", "topics", "sources", "work", "graph", "contradictions"]);
     for (const place of places) {
       const view = PLACE_VIEW[place.id];
       expect(view).toBeDefined();

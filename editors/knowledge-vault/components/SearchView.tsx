@@ -289,11 +289,8 @@ function EmptyState({
                     key={t.name}
                     type="button"
                     onClick={() => onTopicClick(t.name)}
-                    className="rounded-full px-3 py-1.5 text-xs transition-colors"
-                    style={{
-                      backgroundColor: "var(--bai-hover)",
-                      color: "var(--bai-accent)",
-                    }}
+                    className="vault-chip"
+                    data-tone="accent"
                   >
                     {t.name}
                     <span

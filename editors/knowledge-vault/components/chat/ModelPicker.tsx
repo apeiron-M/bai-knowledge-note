@@ -72,8 +72,9 @@ export function ModelPicker({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex max-w-[260px] items-center gap-1.5 rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
-        style={{ color: fellBack ? "#f59e0b" : "var(--bai-text-tertiary)" }}
+        className="vault-btn"
+        data-tone={fellBack ? "warn" : undefined}
+        style={{ maxWidth: 260 }}
         title={
           fellBack
             ? "Your previous model is no longer available; using the default."
@@ -169,7 +170,7 @@ export function ModelPicker({
               {shown.length === 0 && !offerTyped && (
                 <li
                   className="px-3 py-3 text-center text-xs"
-                  style={{ color: "var(--bai-text-faint)" }}
+                  style={{ color: "var(--bai-text-muted)" }}
                 >
                   {loading
                     ? "Loading…"
@@ -204,7 +205,7 @@ export function ModelPicker({
                       {metaLabel(m) && (
                         <span
                           className="shrink-0 font-mono text-[10px]"
-                          style={{ color: "var(--bai-text-faint)" }}
+                          style={{ color: "var(--bai-text-muted)" }}
                         >
                           {metaLabel(m)}
                         </span>

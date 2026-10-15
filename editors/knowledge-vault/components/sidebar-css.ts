@@ -109,6 +109,8 @@ export const SIDEBAR_CSS = `
 .vault-place-icons button:hover { background: ${role("railHover")}; color: var(--bai-text-secondary); }
 .vault-place-icons button[aria-current="page"] { background: ${role("railCurrent")}; box-shadow: ${role("railCurrentShadow")}; color: var(--bai-accent); }
 .vault-place-icons button[data-tone="warn"] { color: var(--bai-warn); }
+/* Where you are reads as where you are: the current place is the accent, even the amber one. */
+.vault-place-icons button[data-tone="warn"][aria-current="page"] { color: var(--bai-accent); }
 
 /* the list of what you are in: a source folder, the topics, a graph node, the files */
 .vault-sidebar .vs-list-head { display: flex; align-items: center; gap: 6px; padding: 0 2px; }
@@ -131,14 +133,43 @@ export const SIDEBAR_CSS = `
 .vault-sidebar .vs-ctx-step button:hover:not(:disabled) { background: var(--bai-hover); }
 .vault-sidebar .vs-ctx-step button:hover:not(:disabled) .vault-i { color: var(--bai-text); }
 .vault-sidebar .vs-ctx-list { display: flex; flex-direction: column; gap: 1px; flex: 1; min-height: 0; overflow-y: auto; margin: 0 -4px; padding: 0 4px 8px; }
-.vault-sidebar .vs-ctx-row {
-  display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 7px 10px; border-radius: 8px; text-align: left;
+.vault-sidebar .vs-ctx-filter {
+  display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 9px; border-radius: 7px;
+  border: 1px solid ${role("field")}; background: ${role("input")}; color: var(--bai-text-tertiary);
 }
+.vault-sidebar .vs-ctx-filter:focus-within { border-color: var(--bai-accent); }
+.vault-sidebar .vs-ctx-filter input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 12.5px; color: var(--bai-text); }
+.vault-sidebar .vs-ctx-filter input::placeholder { color: var(--bai-text-tertiary); }
+.vault-sidebar .vs-ctx-row {
+  position: relative; display: flex; flex-direction: column; gap: 1px; width: 100%; padding: 7px 8px; border-radius: 7px; text-align: left;
+}
+.vault-sidebar .vs-ctx-row[data-marker] { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 1px 8px; }
+.vault-sidebar .vs-ctx-row[data-marker] > :not(.vs-ctx-mk) { grid-column: 2; }
+.vault-sidebar .vs-ctx-mk { grid-row: 1 / 3; width: 7px; height: 7px; margin: 6px 0 0 3px; border-radius: 50%; background: ${role("map")}; }
+.vault-sidebar .vs-ctx-row[data-marker="hub"] .vs-ctx-mk { background: var(--bai-text); }
+.vault-sidebar .vs-ctx-row[data-marker="warn"] .vs-ctx-mk { background: var(--bai-warn); }
 .vault-sidebar .vs-ctx-row:hover { background: ${role("railHover")}; }
 .vault-sidebar .vs-ctx-row[aria-current="true"] { background: ${role("railCurrent")}; box-shadow: ${role("railCurrentShadow")}; }
-.vault-sidebar .vs-ctx-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 500; color: var(--bai-text-secondary); }
+.vault-sidebar .vs-ctx-row[aria-current="true"]::before {
+  content: ""; position: absolute; left: -3px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: var(--bai-accent);
+}
+.vault-sidebar .vs-ctx-label {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: 12.5px; line-height: 1.38; color: var(--bai-text-secondary);
+}
 .vault-sidebar .vs-ctx-row[aria-current="true"] .vs-ctx-label { color: var(--bai-text); }
-.vault-sidebar .vs-ctx-detail { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--bai-text-tertiary); }
+.vault-sidebar .vs-ctx-detail { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: var(--bai-text-tertiary); }
+
+/* recent chats, under the places */
+.vault-sidebar .vs-chats { display: flex; flex-direction: column; margin-top: 2px; }
+.vault-sidebar .vs-chats h2 { margin: 0 0 3px; padding: 0 10px; font-size: 12px; font-weight: 550; color: var(--bai-text-tertiary); }
+.vault-sidebar .vs-chat {
+  display: block; width: 100%; height: 30px; line-height: 30px; padding: 0 10px; border-radius: 7px; text-align: left;
+  color: var(--bai-text-tertiary); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.vault-sidebar .vs-chat:hover { background: ${role("railHover")}; color: var(--bai-text-secondary); }
+.vault-sidebar .vs-chat[aria-current="page"] { background: ${role("railCurrentSoft")}; box-shadow: ${role("railCurrentShadow")}; color: var(--bai-text); }
+.vault-sidebar .vs-chat-all { font-size: 12.5px; }
 
 /* the foot: this vault's settings and the guide */
 .vault-sidebar .vs-foot { display: flex; flex-direction: column; gap: 2px; padding-top: 8px; border-top: 1px solid var(--bai-border); }

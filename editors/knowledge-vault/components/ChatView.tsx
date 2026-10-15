@@ -22,14 +22,17 @@
  * from.
  */
 import {
+  useCallback,
   useEffect,
   useId,
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
+import { chatRun, subscribeChatRun } from "../hooks/chat-runs.js";
 import { useVaultName } from "../hooks/use-vault-name.js";
 import { useChatProvider } from "../hooks/use-chat-provider.js";
 import { useChat, type ChatFailure } from "../hooks/use-chat.js";
@@ -104,9 +107,19 @@ function useOrientation(
 
 export function ChatView({
   initialDraft = "",
+  ask,
+  onAsked,
   notes = [],
 }: {
   initialDraft?: string;
+  /**
+   * A question to ask at once, in a new conversation (the Ctrl K palette's
+   * "Ask <vault> about …"). While no model is connected, or another answer is
+   * still coming, it waits in the box instead. A new nonce asks again.
+   */
+  ask?: { text: string; nonce: number };
+  /** The question was asked (or left in the box): the vault forgets it, so coming back never asks again. */
+  onAsked?: () => void;
   /** The drive's notes, for marking cited documents that are superseded or archived. */
   notes?: KnowledgeNoteInfo[];
 }) {
@@ -166,6 +179,41 @@ export function ChatView({
     if (chat.failure?.kind === "model-unavailable")
       skipModel(chat.failure.model);
   }, [chat.routedFrom, chat.failure, openRouter, modelIsExplicit, skipModel]);
+
+  // The palette's question: asked once the vault's orientation is in the
+  // prompt (or after a short wait, so a slow index never swallows it).
+  const askedNonce = useRef<number | null>(null);
+  const [askWaited, setAskWaited] = useState(false);
+  useEffect(() => {
+    if (!ask) return;
+    const timer = setTimeout(() => setAskWaited(true), 4000);
+    return () => clearTimeout(timer);
+  }, [ask]);
+  // The vault streams one answer at a time, whichever conversation it is in.
+  const subscribeRun = useCallback((notify: () => void) => subscribeChatRun(driveId, notify), [driveId]);
+  const vaultAnswering = useSyncExternalStore(
+    subscribeRun,
+    () => chatRun(driveId)?.isStreaming ?? false,
+    () => false,
+  );
+  const { send } = chat;
+  useEffect(() => {
+    if (!ask || !driveId || askedNonce.current === ask.nonce) return;
+    if (!prov.isConnected) {
+      // No model yet: the question waits in the box.
+      askedNonce.current = ask.nonce;
+      setDraftState(ask.text);
+      if (draftKey) sessionStorage.setItem(draftKey, ask.text);
+      onAsked?.();
+      return;
+    }
+    // An answer still coming (the palette has stopped it) ends first.
+    if (vaultAnswering) return;
+    if (!orientation.loaded && !askWaited) return;
+    askedNonce.current = ask.nonce;
+    onAsked?.();
+    void send(ask.text);
+  }, [ask, driveId, draftKey, prov.isConnected, vaultAnswering, send, orientation.loaded, askWaited, onAsked]);
   const inConversation = chat.messages.length > 0 || chat.isStreaming;
 
   // Follow the stream, but only if the user is already near the bottom —
@@ -219,7 +267,7 @@ export function ChatView({
   const composer = (
     <ChatComposer
       initialDraft={draft}
-      placeholder={inConversation ? "Follow up…" : `Ask ${vaultName} anything`}
+      placeholder={inConversation ? "Ask a follow-up" : `Ask ${vaultName} anything`}
       streaming={chat.isStreaming}
       autoFocus
       onSend={(t) => void chat.send(t)}
@@ -245,8 +293,7 @@ export function ChatView({
           <button
             type="button"
             onClick={chat.newThread}
-            className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
-            style={{ color: "var(--bai-text-tertiary)" }}
+            className="vault-btn"
             title="Start a new chat"
           >
             <svg
@@ -277,8 +324,7 @@ export function ChatView({
                   type="button"
                   aria-describedby={modelChipId}
                   onClick={() => prov.openModelSettings?.()}
-                  className="whitespace-nowrap rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:var(--bai-accent)]"
-                  style={{ color: "var(--bai-text-tertiary)" }}
+                  className="vault-btn"
                 >
                   Change in Settings
                 </button>
@@ -306,8 +352,7 @@ export function ChatView({
               <button
                 type="button"
                 onClick={prov.disconnect}
-                className="rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
-                style={{ color: "var(--bai-text-muted)" }}
+                className="vault-btn"
                 title={`Forget the ${prov.providerLabel} connection in this browser`}
               >
                 Disconnect
@@ -319,12 +364,29 @@ export function ChatView({
 
       {inConversation ? (
         <>
-          <div ref={scrollRef} className="flex-1 overflow-auto px-4">
-            <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-6">
+          <div ref={scrollRef} className="flex-1 overflow-auto px-4 pt-5">
+            {/* The conversation is read like a document: on its own sheet, as
+                the source editor's content is (white in light, the reading
+                well in dark), so it never melts into the page. */}
+            <style aria-hidden="true">{CHAT_SHEET_CSS}</style>
+            <div className="vault-chat-sheet">
               {/* Persisted turns carry no trail by design — tool payloads are
                   not stored — so only the live turn below renders one. */}
               {chat.messages.map((m, i) => (
-                <ChatMessage key={i} message={m} currency={currency} />
+                <ChatMessage
+                  key={i}
+                  message={m}
+                  currency={currency}
+                  // The latest answer says how it was found, under what it used.
+                  searches={
+                    i === chat.messages.length - 1 &&
+                    m.role === "assistant" &&
+                    !chat.isStreaming &&
+                    chat.trail.length > 0
+                      ? chat.trail.length
+                      : undefined
+                  }
+                />
               ))}
               {chat.isStreaming && (
                 <ChatMessage
@@ -334,11 +396,6 @@ export function ChatView({
                   currency={currency}
                 />
               )}
-              {!chat.isStreaming &&
-                chat.trail.length > 0 &&
-                chat.messages.at(-1)?.role === "assistant" && (
-                  <TrailFooter count={chat.trail.length} />
-                )}
               {chat.failure && chat.failure.kind !== "aborted" && (
                 <FailureNotice
                   failure={chat.failure}
@@ -355,7 +412,7 @@ export function ChatView({
             </div>
           </div>
           <div className="px-4 pb-4 pt-2">
-            <div className="mx-auto w-full max-w-3xl">{composer}</div>
+            <div className="mx-auto w-full" style={{ maxWidth: "64rem" }}>{composer}</div>
           </div>
         </>
       ) : (
@@ -373,11 +430,8 @@ export function ChatView({
                   onClick={() =>
                     void chat.send(`What does the vault say about ${t.name}?`)
                   }
-                  className="rounded-full px-3 py-1.5 text-xs transition-colors hover:bg-[var(--bai-accent-soft)]"
-                  style={{
-                    backgroundColor: "var(--bai-hover)",
-                    color: "var(--bai-accent)",
-                  }}
+                  className="vault-chip"
+                  data-tone="accent"
                   title={`${t.noteCount} notes`}
                 >
                   #{t.name}
@@ -415,13 +469,41 @@ export function ChatView({
   );
 }
 
-function TrailFooter({ count }: { count: number }) {
-  return (
-    <p className="-mt-3 text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
-      {count} vault {count === 1 ? "query" : "queries"} behind this answer
-    </p>
-  );
+/**
+ * The conversation's sheet (design: the answer view, `.convo` and `.a`). It is
+ * read like a document — on its own surface, as the source editor's content
+ * is: white in light, the reading well in dark — with soft edges rather than
+ * a hard outline, and the answer set at reading size. Scoped to the sheet, so
+ * the shared markdown look elsewhere is untouched.
+ */
+const CHAT_SHEET_CSS = `
+.vault-chat-sheet {
+  display: flex; flex-direction: column; gap: 28px;
+  width: 100%; max-width: 64rem; min-height: 100%; margin: 0 auto;
+  padding: 28px 40px 36px; box-sizing: border-box;
+  border-radius: 20px; background: var(--bai-deep);
+  border: 1px solid color-mix(in srgb, var(--bai-border) 70%, transparent);
 }
+@media (max-width: 640px) { .vault-chat-sheet { padding: 22px 20px 28px; } }
+[data-bai-theme="light"] .vault-chat-sheet {
+  border-color: color-mix(in srgb, var(--bai-border) 60%, transparent);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px -14px rgba(16, 24, 40, 0.16);
+}
+.vault-chat-sheet .md-preview { font-size: 15.5px; line-height: 1.72; color: var(--bai-text-secondary); }
+.vault-chat-sheet .md-preview .md-p { margin: 0 0 12px; line-height: 1.72; }
+.vault-chat-sheet .md-preview > :last-child { margin-bottom: 0; }
+.vault-chat-sheet .md-preview b, .vault-chat-sheet .md-preview strong { color: var(--bai-text); }
+/* Lists keep their bullets: the page's CSS reset strips them, and a list
+   without markers reads as loose indented lines. */
+.vault-chat-sheet .md-preview .md-list { margin: 0 0 12px; padding-left: 1.4rem; list-style: disc; }
+.vault-chat-sheet .md-preview .md-list li { margin: 4px 0; line-height: 1.65; }
+.vault-chat-sheet .md-preview .md-list li::marker { color: var(--bai-text-muted); }
+/* Links and code had fixed dark-theme colours: about 2:1 and 1.5:1 on white. */
+.vault-chat-sheet .md-preview .md-link { color: var(--v-note); }
+.vault-chat-sheet .md-preview .md-code-block { background: color-mix(in srgb, var(--bai-hover) 70%, transparent); }
+.vault-chat-sheet .md-preview .md-code-block code { color: var(--bai-ok); }
+`;
+
 
 /**
  * One notice per failure kind, each ending in the thing the user can do.

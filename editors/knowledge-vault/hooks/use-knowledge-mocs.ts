@@ -9,6 +9,8 @@ export type MocTier = "HUB" | "DOMAIN" | "TOPIC";
 export type MocInfo = {
   id: string;
   title: string;
+  /** What the map covers, from the projection; null when it has none. */
+  description?: string | null;
   tier: MocTier | null;
   noteCount: number;
   coreIdeas: { noteRef: string; contextPhrase: string }[];
@@ -119,6 +121,7 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
       mocs.push({
         id: node.documentId,
         title: node.title ?? "(untitled)",
+        description: node.description,
         tier,
         noteCount: coreIdeas.length,
         coreIdeas,

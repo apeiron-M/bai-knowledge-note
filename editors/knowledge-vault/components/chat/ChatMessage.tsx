@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type MouseEvent, type FocusEvent } from "react";
+import { useId, useMemo, useRef, useState, type MouseEvent, type FocusEvent } from "react";
 import { MarkdownPreview } from "../../../shared/markdown-preview.js";
 import type { Citation, StoredMessage } from "../../lib/chat/chat-storage.js";
 import type { TrailEntry } from "../../hooks/use-chat.js";
@@ -24,10 +24,13 @@ export function ChatMessage({
   trail,
   streaming = false,
   currency,
+  searches,
 }: {
   message: StoredMessage;
   /** Only the latest assistant turn carries a live trail. */
   trail?: TrailEntry[];
+  /** How many searches of the vault found the latest answer; said under what it used. */
+  searches?: number;
   streaming?: boolean;
   /** Is a cited document still current? Marks superseded/archived chips. */
   currency?: (documentId: string) => CitationCurrency | null;
@@ -36,10 +39,12 @@ export function ChatMessage({
     return (
       <div className="flex justify-end">
         <div
-          className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-md px-4 py-2.5 text-sm leading-relaxed"
+          className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-md px-4 py-2.5"
           style={{
             backgroundColor: "var(--bai-hover)",
             color: "var(--bai-text)",
+            fontSize: 15,
+            lineHeight: 1.5,
           }}
         >
           {message.content}
@@ -53,6 +58,7 @@ export function ChatMessage({
       trail={trail}
       streaming={streaming}
       currency={currency}
+      searches={searches}
     />
   );
 }
@@ -76,12 +82,15 @@ function AssistantTurn({
   trail,
   streaming,
   currency,
+  searches,
 }: {
   message: StoredMessage;
   trail?: TrailEntry[];
   streaming: boolean;
   currency?: (documentId: string) => CitationCurrency | null;
+  searches?: number;
 }) {
+  const usedId = useId();
   // Depend on the stored arrays themselves (stable across renders), not a
   // fresh `?? []` fallback that would defeat the memo.
   const citations = message.citations;
@@ -158,6 +167,11 @@ function AssistantTurn({
     });
   };
 
+  // What the answer used, and how it was found: one block under the answer.
+  const used =
+    (citations?.length ?? 0) > 0 || (message.consulted?.length ?? 0) > 0;
+  const found = !streaming && searches !== undefined && searches > 0;
+
   const hovered = hover ? occurrences.at(hover.position) : undefined;
   const hoveredCitation: Citation | undefined = hovered
     ? (byId.get(hovered.documentId) ?? { documentId: hovered.documentId, title: hovered.documentId })
@@ -195,7 +209,7 @@ function AssistantTurn({
           )}
         </div>
       ) : streaming ? (
-        <p className="text-sm" style={{ color: "var(--bai-text-faint)" }}>
+        <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
           {trail && trail.length > 0 ? "Reading…" : "Thinking…"}
         </p>
       ) : null}
@@ -210,9 +224,32 @@ function AssistantTurn({
           cited inline (numbered to match the [n] chips) followed by the
           ones the model read in full but did not cite. One row, no
           sub-headings: a reader wants the list, not the taxonomy. */}
-      {((citations && citations.length > 0) ||
-        (message.consulted && message.consulted.length > 0)) && (
-        <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Sources">
+      {(used || found) && (
+        <div
+          role="group"
+          aria-labelledby={used ? usedId : undefined}
+          aria-label={used ? undefined : "How this answer was found"}
+          style={{
+            marginTop: 20,
+            paddingTop: 14,
+            borderTop: "1px solid var(--bai-border)",
+          }}
+        >
+          {used && (
+            <p
+              id={usedId}
+              style={{
+                margin: "0 0 10px",
+                fontSize: 12.5,
+                fontWeight: 600,
+                color: "var(--bai-text-tertiary)",
+              }}
+            >
+              From the vault
+            </p>
+          )}
+          {used && (
+          <div className="flex flex-wrap gap-1.5">
           {(citations ?? []).map((c, i) => (
             <ChatCitation
               key={c.documentId}
@@ -228,6 +265,20 @@ function AssistantTurn({
               currency={currency?.(c.documentId)}
             />
           ))}
+          </div>
+          )}
+          {found && (
+            <p
+              style={{
+                margin: used ? "16px 0 0" : 0,
+                fontSize: 12.5,
+                lineHeight: 1.5,
+                color: "var(--bai-text-muted)",
+              }}
+            >
+              Found with {searches} {searches === 1 ? "search" : "searches"} of the vault.
+            </p>
+          )}
         </div>
       )}
     </div>

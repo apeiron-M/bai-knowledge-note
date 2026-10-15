@@ -36,8 +36,7 @@ export function ChatHistoryMenu({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
-        style={{ color: "var(--bai-text-tertiary)" }}
+        className="vault-btn"
         title="Recent chats"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -87,7 +86,7 @@ export function ChatHistoryMenu({
                     <span className="truncate text-xs">{t.title}</span>
                     <span
                       className="text-[10px]"
-                      style={{ color: "var(--bai-text-faint)" }}
+                      style={{ color: "var(--bai-text-muted)" }}
                     >
                       {relativeTime(t.updatedAt)} · {t.messages.length} message
                       {t.messages.length === 1 ? "" : "s"}

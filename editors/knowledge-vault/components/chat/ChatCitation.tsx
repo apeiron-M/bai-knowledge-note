@@ -98,7 +98,7 @@ function KindBadge({ kind }: { kind: string }) {
       className="shrink-0 rounded px-1 text-[9px] font-medium uppercase tracking-wide"
       style={{
         backgroundColor: "var(--bai-bg)",
-        color: "var(--bai-text-faint)",
+        color: "var(--bai-text-muted)",
       }}
     >
       {kind}
@@ -162,7 +162,7 @@ export function CitationCard({
           “{quote}”
         </p>
       ) : (
-        <p className="mt-1.5" style={{ color: "var(--bai-text-faint)" }}>
+        <p className="mt-1.5" style={{ color: "var(--bai-text-muted)" }}>
           {anchor
             ? "Cites one item of this document."
             : "No passage identified — open to read."}
@@ -173,7 +173,7 @@ export function CitationCard({
           {stale.title}
         </p>
       )}
-      <p className="mt-1.5" style={{ color: "var(--bai-text-faint)" }}>
+      <p className="mt-1.5" style={{ color: "var(--bai-text-muted)" }}>
         {anchor ? "Click to open at this item ↗" : "Click to open ↗"}
       </p>
     </div>

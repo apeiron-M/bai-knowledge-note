@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { indexNotes, type KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { indexMocs, type MocInfo } from "../hooks/use-knowledge-mocs.js";
 import { buildSidebarContext, sourceTitleMap, type SidebarContextInput } from "./sidebar-context.js";
+import type { Contradiction } from "./contradictions.js";
 
 function file(id: string, name: string, documentType: string, parentFolder: string | null = null): Node {
   return { kind: "file", id, name, documentType, parentFolder } as unknown as Node;
@@ -93,21 +94,56 @@ describe("buildSidebarContext", () => {
     expect(ctx?.items.map((i) => i.id)).toEqual(["s3"]);
   });
 
-  it("builds a topics context: every map in the Topics list's order, with note counts", () => {
-    // In the order useKnowledgeMocs hands them over (the overview tier first);
-    // the context keeps it rather than sorting a second time.
+  it("builds a topics context: the overview first, then every topic largest first, with a filter", () => {
     const mocs = [
-      moc("m2", "Hub", "HUB", 40),
-      moc("m3", "Domain", "DOMAIN", 9),
+      moc("m2", "Liberuum", "HUB", 0),
       moc("m1", "Topic leaf", "TOPIC", 3),
+      moc("m3", "Domain", "DOMAIN", 9),
     ];
     const selected = file("m1", "Topic leaf", "bai/moc");
     const ctx = buildSidebarContext(input({ mocs, selected }));
     expect(ctx?.place).toBe("topics");
-    expect(ctx?.items.map((i) => i.id)).toEqual(["m2", "m3", "m1"]);
-    expect(ctx?.items[0]).toEqual({ id: "m2", label: "Hub", detail: "40 notes" });
+    expect(ctx?.title).toBe("Topics");
+    expect(ctx?.subtitle).toBe("2 topics and the overview");
+    expect(ctx?.filterPlaceholder).toBe("Filter topics");
+    expect(ctx?.items).toEqual([
+      { id: "m2", label: "Liberuum overview", detail: "every topic", marker: "hub" },
+      { id: "m3", label: "Domain", detail: "9 notes", marker: "map" },
+      { id: "m1", label: "Topic leaf", detail: "3 notes", marker: "map" },
+    ]);
     expect(ctx?.activeId).toBe("m1");
-    expect(ctx?.subtitle).toBe("3 topics");
+  });
+
+  it("lists the open contradictions inside one, and keeps a place's list for a note opened from it", () => {
+    const claim = (id: string): Contradiction["claims"][number] => ({
+      id, exists: true, title: `Claim ${id}`, description: null, kind: null, source: null, topic: null,
+    });
+    const contradictions: Contradiction[] = [
+      { id: "t1", title: "T1", status: "OPEN", observedAt: null, observedBy: null, claims: [claim("a"), claim("b")], why: null },
+      { id: "t2", title: "T2", status: "RESOLVED", observedAt: null, observedBy: null, claims: [], why: null },
+    ];
+    const showPlace = vi.fn();
+    const inTension = buildSidebarContext(
+      input({ contradictions, showPlace, selected: file("t1", "T1", "bai/tension") }),
+    );
+    expect(inTension?.place).toBe("contradictions");
+    expect(inTension?.subtitle).toBe("1 open");
+    expect(inTension?.items).toEqual([{ id: "t1", label: "Claim a / Claim b", detail: "Open", marker: "warn" }]);
+    inTension?.onBack();
+    expect(showPlace).toHaveBeenCalledWith("contradictions");
+
+    // A closed one is listed while it is the one you are in.
+    const inClosed = buildSidebarContext(input({ contradictions, selected: file("t2", "T2", "bai/tension") }));
+    expect(inClosed?.items.map((i) => i.id)).toEqual(["t1", "t2"]);
+
+    // A claim opened from the contradiction: its list stays, the contradiction current.
+    const inNote = buildSidebarContext(
+      input({ contradictions, selected: nodes[4], origin: { place: "contradictions", id: "t1" } }),
+    );
+    expect(inNote?.place).toBe("contradictions");
+    expect(inNote?.activeId).toBe("t1");
+    // Without an origin a note makes no context.
+    expect(buildSidebarContext(input({ contradictions, selected: nodes[4] }))).toBeUndefined();
   });
 
   it("builds a graph context: the selected node first, then its neighbours with the link", () => {

@@ -103,6 +103,11 @@ function loadSearchState(): { query: string } {
   return { query: "" };
 }
 
+/** Hand a query to the search page, which opens on it (the palette's "Search all notes"). */
+export function saveSearchQuery(query: string): void {
+  saveSearchState(query);
+}
+
 function saveSearchState(query: string): void {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ query }));

@@ -1,3 +1,4 @@
+import { VAULT_CONTROLS_CSS } from "./vault-controls-css.js";
 import {
   createContext,
   useContext,
@@ -33,6 +34,8 @@ export type VaultShellProps = {
   sidebarHidden?: boolean;
   /** Drop target for files dragged over the whole frame. */
   fileDrop?: { rootProps: Record<string, unknown>; overlay: ReactNode };
+  /** Above both columns, over the whole frame: the Ctrl K palette. */
+  overlay?: ReactNode;
 };
 
 /** The frame's width in px; 0 until it has been measured (and wherever nothing is laid out). */
@@ -45,6 +48,7 @@ export function VaultShell({
   sidebarWidth,
   sidebarHidden = false,
   fileDrop,
+  overlay,
 }: VaultShellProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const [frameWidth, setFrameWidth] = useState(0);
@@ -85,6 +89,7 @@ export function VaultShell({
         }}
         {...fileDrop?.rootProps}
       >
+        <style aria-hidden="true">{VAULT_CONTROLS_CSS}</style>
         {fileDrop?.overlay}
         {withSidebar && (
           <div className="vault-sidebar-col" style={columnStyle}>
@@ -103,6 +108,7 @@ export function VaultShell({
         >
           {children}
         </div>
+        {overlay}
       </div>
     </FrameWidth.Provider>
   );

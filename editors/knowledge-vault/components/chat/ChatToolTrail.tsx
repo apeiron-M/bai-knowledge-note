@@ -90,7 +90,7 @@ function TrailRow({ entry, pulse }: { entry: TrailEntry; pulse: boolean }) {
         onClick={() => expandable && setOpen((v) => !v)}
         disabled={!expandable}
         className="flex w-full items-center gap-2 rounded px-1.5 py-1 text-left font-mono text-[11px] leading-4 transition-colors enabled:hover:bg-[var(--bai-hover)] disabled:cursor-default"
-        style={{ color: entry.ok ? "var(--bai-text-faint)" : "#ef4444" }}
+        style={{ color: entry.ok ? "var(--bai-text-muted)" : "#ef4444" }}
       >
         <svg
           className={`h-3 w-3 shrink-0 transition-transform ${open ? "rotate-90" : ""} ${pulse ? "animate-pulse" : ""}`}
@@ -102,9 +102,9 @@ function TrailRow({ entry, pulse }: { entry: TrailEntry; pulse: boolean }) {
         >
           <path d="M9 18l6-6-6-6" />
         </svg>
-        <span className="truncate">{entry.summary}</span>
+        <span className="truncate">{readableTrail(entry.summary)}</span>
         {expandable && (
-          <span className="ml-auto shrink-0 opacity-60">{hits.length}</span>
+          <span className="ml-auto shrink-0">{hits.length}</span>
         )}
       </button>
 
@@ -154,4 +154,19 @@ function TrailRow({ entry, pulse }: { entry: TrailEntry; pulse: boolean }) {
       )}
     </li>
   );
+}
+
+const KIND_WORDS: [RegExp, string][] = [
+  [/\bbai\/knowledge-note\b/g, "note"],
+  [/\bbai\/source\b/g, "source"],
+  [/\bbai\/moc\b/g, "topic"],
+  [/\bbai\/tension\b/g, "contradiction"],
+  [/\bbai\/observation\b/g, "observation"],
+  [/\bbai\/wbs\b/g, "work breakdown"],
+  [/\bpowerhouse\/scopeofwork\b/g, "scope of work"],
+];
+
+/** A trail step in the reader's words: `read bai/source "…"` → `read source "…"`. */
+export function readableTrail(summary: string): string {
+  return KIND_WORDS.reduce((text, [pattern, word]) => text.replace(pattern, word), summary);
 }

@@ -83,6 +83,9 @@ export function loadThreads(driveId: string): Thread[] {
   }
 }
 
+/** Fired on `window` (detail: the drive id) whenever a vault's chats change in this tab. */
+export const THREADS_CHANGED = "bai-chat-threads";
+
 function write(driveId: string, threads: Thread[]): void {
   try {
     localStorage.setItem(key(driveId), JSON.stringify(threads));
@@ -98,6 +101,10 @@ function write(driveId: string, threads: Thread[]): void {
     } catch {
       /* give up silently */
     }
+  }
+  // The sidebar's recent chats follow without reading the store on every render.
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(THREADS_CHANGED, { detail: driveId }));
   }
 }
 
@@ -139,6 +146,10 @@ export function writeCurrentThreadId(
 ): void {
   if (threadId) sessionStorage.setItem(currentKey(driveId), threadId);
   else sessionStorage.removeItem(currentKey(driveId));
+  // The sidebar marks the conversation on screen.
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(THREADS_CHANGED, { detail: driveId }));
+  }
 }
 
 /** A thread's title is its opening question, first line, trimmed. */
