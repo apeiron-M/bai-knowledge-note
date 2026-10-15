@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage } from "../common/errors.js";
+import { madeBySource } from "./connect.js";
 import { checkProposal } from "./extract.js";
 import { completeJson, type LlmClient } from "./llm.js";
 
@@ -43,6 +44,7 @@ export async function readVerifyNotes(client: KnowledgeVaultClient, drive: strin
     const doc = await client.request<{ name?: string; state?: { global?: Record<string, unknown> }; edges?: Edge[] }>({ path: `notes/${encodeURIComponent(id)}`, query: { drive } });
     const g = doc.state?.global ?? {};
     if (g.status === "ARCHIVED") continue;
+    if (!madeBySource(doc.edges, sourceId)) continue;
     notes.push({
       id,
       title: str(g.title) || str(doc.name) || id,

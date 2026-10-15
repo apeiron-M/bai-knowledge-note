@@ -23,13 +23,23 @@ const rec = (v: unknown): Record<string, unknown> => (typeof v === "object" && v
 
 type NoteDoc = { name?: string; state?: { global?: { title?: string; description?: string; status?: string } }; edges?: { direction?: string; documentId?: string; linkType?: string }[] };
 
+/**
+ * True when every source this note derives from is `sourceId`. A note that also derives from another
+ * source was linked, placed and checked when that source made it; a later source that finds the same
+ * claim only lists it (convergence), so Connect, Place and Verify leave it alone.
+ */
+export function madeBySource(edges: { direction?: string; documentId?: string; linkType?: string }[] | undefined, sourceId: string): boolean {
+  return !(edges ?? []).some((e) => e.linkType === "DERIVED_FROM" && e.direction === "out" && !!e.documentId && e.documentId !== sourceId);
+}
+
 /** The notes a source produced, read from the source's own record of them. */
 export async function sourceNotes(client: KnowledgeVaultClient, drive: string, sourceId: string) {
   const src = await client.request<{ name: string; state?: { global?: { title?: string; status?: string; extractedClaims?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
   const title = src.state?.global?.title ?? src.name;
   const ids = arr(src.state?.global?.extractedClaims).map((c) => (typeof c === "string" ? c : str(rec(c).claimRef))).filter(Boolean);
-  // Extracted with zero claims is a finished source, not a missing step: a foreword or glossary can yield none.
-  if (ids.length === 0 && src.state?.global?.status === "EXTRACTED") return { sourceTitle: title, notes: [] as (NoteSummary & { edges: NoteDoc["edges"] })[] };
+  // Extracted, or archived as holding no knowledge, with zero claims: a finished source, not a missing step.
+  const status = src.state?.global?.status;
+  if (ids.length === 0 && (status === "EXTRACTED" || status === "ARCHIVED")) return { sourceTitle: title, notes: [] as (NoteSummary & { edges: NoteDoc["edges"] })[] };
   if (ids.length === 0) {
     throw new KnowledgeVaultApiError(`"${title}" has no extracted notes yet. Run Extract claims in write mode on it first.`, { category: "validation" });
   }
@@ -38,6 +48,8 @@ export async function sourceNotes(client: KnowledgeVaultClient, drive: string, s
     const doc = await client.request<NoteDoc>({ path: `notes/${encodeURIComponent(id)}`, query: { drive } });
     const g = doc.state?.global ?? {};
     if (g.status === "ARCHIVED") continue;
+    // A note the source found already in the vault was worked on when its own source made it.
+    if (!madeBySource(doc.edges, sourceId)) continue;
     notes.push({ id, title: g.title ?? doc.name ?? id, description: g.description ?? "", status: g.status ?? null, edges: doc.edges ?? [] });
   }
   return { sourceTitle: title, notes };
