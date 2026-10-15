@@ -39,8 +39,8 @@ export type SourceBundle = {
 const TOPIC_EXAMPLES = 60;
 
 export type Candidate = { id: string; claim: string; locus: string; evidence: string };
-export type VaultMatch = { id: string; title: string; similarity: number };
-export type CheckedCandidate = Candidate & { matches: VaultMatch[]; likely_duplicate: boolean };
+export type VaultMatch = { id: string; title: string; similarity: number; eligible: boolean };
+export type CheckedCandidate = Candidate & { window: string | null; matches: VaultMatch[]; likely_duplicate: boolean };
 
 const MAX_SOURCE_CHARS = 60_000;
 const round4 = (n: number) => Math.round(n * 10_000) / 10_000;
@@ -323,6 +323,19 @@ export function classifySkips(skipped: SkippedCandidate[]) {
 
 // ── 3. vault check ───────────────────────────────────────────────────────
 
+/** A claim may converge on an existing note only when the match is this close, live, and not replaced. */
+export const CONVERGE_FLOOR = 0.75;
+
+/** True when another note supersedes this one, or when the vault cannot say: a failed read never makes a note eligible. */
+async function isSuperseded(client: KnowledgeVaultClient, drive: string, id: string): Promise<boolean> {
+  try {
+    const doc = await client.request<{ edges?: { direction?: string; linkType?: string }[] }>({ path: `notes/${encodeURIComponent(id)}`, query: { drive } });
+    return (doc.edges ?? []).some((e) => e.linkType === "SUPERSEDES" && e.direction === "in");
+  } catch {
+    return true;
+  }
+}
+
 export async function checkVaultStage(client: KnowledgeVaultClient, drive: string, candidates: Record<string, unknown>, threshold = 0.9) {
   const kept = arr(candidates.kept).map(asRecord);
   // In parallel: a semantic search embeds its query, 3-4 s each on a remote vault.
@@ -331,8 +344,17 @@ export async function checkVaultStage(client: KnowledgeVaultClient, drive: strin
       path: "search",
       query: { drive, q: str(c.claim), mode: "semantic", limit: 3, related: 0 },
     });
-    const matches = body.hits.filter((h) => h.node.status !== "MOC").map((h) => ({ id: str(h.node.documentId), title: str(h.node.title), similarity: Math.round(h.similarity * 1000) / 1000 }));
-    return { id: str(c.id), claim: str(c.claim), locus: str(c.locus), evidence: str(c.evidence), matches, likely_duplicate: (matches[0]?.similarity ?? 0) >= threshold };
+    const matches: VaultMatch[] = await Promise.all(
+      body.hits
+        .filter((h) => h.node.status !== "MOC")
+        .map(async (h) => {
+          const id = str(h.node.documentId);
+          const similarity = Math.round(h.similarity * 1000) / 1000;
+          const eligible = similarity >= CONVERGE_FLOOR && h.node.status !== "ARCHIVED" && !(await isSuperseded(client, drive, id));
+          return { id, title: str(h.node.title), similarity, eligible };
+        }),
+    );
+    return { id: str(c.id), claim: str(c.claim), locus: str(c.locus), evidence: str(c.evidence), window: str(c.window) || null, matches, likely_duplicate: (matches[0]?.similarity ?? 0) >= threshold };
   });
   const dups = checked.filter((c) => c.likely_duplicate);
   return {

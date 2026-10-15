@@ -291,13 +291,30 @@ describe("2. candidates", () => {
 describe("3. vault check", () => {
   const search = (q: { q: string }) => ({ hits: q.q.startsWith("dup") ? [{ node: { documentId: "n1", title: "Old", status: "CANONICAL" }, similarity: 0.934 }, { node: { status: "MOC" }, similarity: 0.9 }] : [] });
   it("flags candidates the vault already holds", async () => {
-    const out = await checkVaultStage(vault({ search }), "d", { kept: [{ id: "c1", claim: "dup claim" }, { id: "c2", claim: "new claim" }] });
+    const out = await checkVaultStage(vault({ search, "notes/n1": { edges: [] } }), "d", { kept: [{ id: "c1", claim: "dup claim" }, { id: "c2", claim: "new claim" }] });
     expect(out.candidates.map((c) => c.likely_duplicate)).toEqual([true, false]);
-    expect(out.candidates[0].matches).toEqual([{ id: "n1", title: "Old", similarity: 0.934 }]);
+    expect(out.candidates[0].matches).toEqual([{ id: "n1", title: "Old", similarity: 0.934, eligible: true }]);
     expect(out.summary).toBe("Searched the vault for 2 candidates: 1 likely already there (similarity ≥ 0.9); best match 0.934.");
-    const none = await checkVaultStage(vault({ search }), "d", { kept: [{ id: "c1", claim: "x" }] }, 0.95);
+    const none = await checkVaultStage(vault({ search, "notes/n1": { edges: [] } }), "d", { kept: [{ id: "c1", claim: "x" }] }, 0.95);
     expect(none.summary).toBe("Searched the vault for 1 candidate: none already there; best match 0.");
-    expect((await checkVaultStage(vault({ search }), "d", {})).summary).toBe("Searched the vault for 0 candidates: none already there.");
+    expect((await checkVaultStage(vault({ search, "notes/n1": { edges: [] } }), "d", {})).summary).toBe("Searched the vault for 0 candidates: none already there.");
+  });
+  it("marks the matches a claim may converge on: close enough, live, and not replaced by another note", async () => {
+    const search = () => ({ hits: [
+      { node: { documentId: "live", title: "Live", status: "IN_REVIEW" }, similarity: 0.81 },
+      { node: { documentId: "replaced", title: "Replaced", status: "CANONICAL" }, similarity: 0.9 },
+      { node: { documentId: "far", title: "Far", status: "CANONICAL" }, similarity: 0.7 },
+    ] });
+    const reads: string[] = [];
+    const v = vault({
+      search,
+      "notes/live": () => { reads.push("live"); return { edges: [{ direction: "out", linkType: "DERIVED_FROM" }] }; },
+      "notes/replaced": () => { reads.push("replaced"); return { edges: [{ direction: "in", linkType: "SUPERSEDES" }] }; },
+    });
+    const out = await checkVaultStage(v, "d", { kept: [{ id: "c1", claim: "a claim", window: "w2" }] });
+    expect(out.candidates[0].matches.map((m) => [m.id, m.eligible])).toEqual([["live", true], ["replaced", false], ["far", false]]);
+    expect(out.candidates[0].window).toBe("w2");
+    expect(reads.sort()).toEqual(["live", "replaced"]); // nothing is read for a match below the floor
   });
 });
 
