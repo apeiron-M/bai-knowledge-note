@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { connectNotesAction } from "../lib/actions/connect-notes.js";
 import { placeInMocsAction } from "../lib/actions/place-in-mocs.js";
-import { checkLink, gatherCandidates, proposeLinksStage, sourceNotes, writeLinksStage } from "../lib/agent/connect.js";
+import { checkLink, CONNECT_SYSTEM, gatherCandidates, normaliseName, proposeLinksStage, resolveNoteRef, sourceNotes, writeLinksStage } from "../lib/agent/connect.js";
 import { LlmClient } from "../lib/agent/llm.js";
 import { advancePipeline, catchUp, claimPhase, findQueue, gateStep, passThrough, taskPosition } from "../lib/agent/pipeline.js";
 import { llmFor, stageRunner } from "../lib/agent/runner.js";
@@ -262,6 +262,19 @@ describe("connect", () => {
     const three = modelSays(JSON.stringify({ links: [{ from: "n1", to: "n2", type: "BUILDS_ON", reason }] }));
     expect((await proposeLinksStage(three.llm, "m", [...NOTES, { id: "n3", title: "T3", description: "", status: null }], { n1: [{ ...NOTES[1], similarity: null }] }, three.fetchImpl)).summary).toMatch(/Proposed 1 link for 3 notes in 1 call; 3 notes have fewer than 2\./);
   });
+  it("accepts a note named in words or as 'the new note <id>', only within what each end may name", async () => {
+    const reason = "The capital note extends the legacy note by naming what the drag costs.";
+    const cands = { n1: [{ ...NOTES[1], similarity: null }, { id: "x1", title: "Memory bandwidth limits decoding speed at small batch sizes", description: "dx", status: null, similarity: 0.9 }], n2: [{ ...NOTES[0], similarity: null }] };
+    const m = modelSays(JSON.stringify({ links: [
+      { from: "the new note n1", to: "Legacy drags returns", type: "BUILDS_ON", reason, confidence: "grounded" },
+      { from: "Capital is not the constraint note", to: "decoding speed at small batch sizes is limited by memory bandwidth", type: "RELATES_TO", reason, confidence: "grounded" },
+      { from: "a note about something else entirely", to: "n2", type: "RELATES_TO", reason },
+    ] }));
+    const out = await proposeLinksStage(m.llm, "m", NOTES, cands, m.fetchImpl);
+    expect(out.links.map((l) => [l.from, l.to])).toEqual([["n1", "n2"], ["n1", "x1"]]);
+    expect(out.dropped.map((d) => d.why)).toEqual(['from "a note about something else entirely" is not one of the new notes']);
+    expect(CONNECT_SYSTEM).toMatch(/"from" and "to" are ids, copied exactly as listed; words go only in "reason"\./);
+  });
   it("splits the notes across parallel calls and removes duplicates between them", async () => {
     const seven = Array.from({ length: 7 }, (_, i) => ({ id: `n${i + 1}`, title: `T${i + 1}`, description: "", status: null }));
     const cands = Object.fromEntries(seven.map((n) => [n.id, seven.filter((m) => m.id !== n.id).map((m) => ({ ...m, similarity: null }))]));
@@ -515,5 +528,33 @@ describe("the connect and place actions", () => {
       expect(String(dryP.summary)).toMatch(/^Dry run: "Tech" yielded no notes; nothing to place\. \d+ s\.$/);
       variant = "normal";
     });
+  });
+});
+
+describe("naming a note in a link", () => {
+  const allowed = [
+    { id: "Cin4RLx9", title: "Capital is not the constraint on technology investment" },
+    { id: "Kq7Pz2", title: "Memory bandwidth limits decoding speed at small batch sizes" },
+    { id: "Lw3Mn8", title: "Memory bandwidth limits training throughput on large clusters" },
+  ];
+  it("normalises a name: case, punctuation, a leading article or 'new note', a trailing 'note'", () => {
+    expect(normaliseName("The new note: Capital-is not the constraint note.")).toBe("capital is not the constraint");
+    expect(normaliseName("  A   note  ")).toBe("note");
+  });
+  it("takes the exact id, or the one allowed id written inside the text", () => {
+    expect(resolveNoteRef("Kq7Pz2", allowed)).toEqual({ id: "Kq7Pz2" });
+    expect(resolveNoteRef("the new note Cin4RLx9", allowed)).toEqual({ id: "Cin4RLx9" });
+    expect(resolveNoteRef("Cin4RLx9 and Kq7Pz2", allowed)).toEqual({ matches: 2 });
+  });
+  it("matches a title in the model's words: equal, a long shared start, or most of its words", () => {
+    expect(resolveNoteRef("The capital is not the constraint on technology investment note.", allowed)).toEqual({ id: "Cin4RLx9" });
+    expect(resolveNoteRef("Memory bandwidth limits decoding speed", allowed)).toEqual({ id: "Kq7Pz2" });
+    expect(resolveNoteRef("decoding speed at small batch sizes is limited by memory bandwidth", allowed)).toEqual({ id: "Kq7Pz2" });
+  });
+  it("refuses a name that could be several notes, or names none", () => {
+    expect(resolveNoteRef("memory bandwidth limits", allowed)).toEqual({ matches: 2 });
+    expect(resolveNoteRef("a note about something else entirely", allowed)).toEqual({ matches: 0 });
+    expect(resolveNoteRef("memory", allowed)).toEqual({ matches: 0 }); // one word is too little to name a note
+    expect(resolveNoteRef("", allowed)).toEqual({ matches: 0 });
   });
 });

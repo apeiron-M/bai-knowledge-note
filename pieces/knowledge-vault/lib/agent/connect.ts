@@ -76,6 +76,7 @@ export const CONNECT_SYSTEM = `You link atomic notes in a knowledge vault. Answe
 
 For each NEW note you get a list of candidate notes. Propose a link only when you can complete, specifically: "[from] connects to [to] because ...". A reason that restates the two titles, names the link type, or could fit any pair is not a reason.
 The reason is stored on the link and read on its own, so name each note by its subject in words ("the legacy-drag note", "the claim that capital is not the constraint"). Never refer to notes by letters (A, B, C) or ids.
+"from" and "to" are ids, copied exactly as listed; words go only in "reason".
 
 Types (from → to):
 - BUILDS_ON: from extends, applies or strengthens to's claim.
@@ -87,6 +88,56 @@ Confidence: grounded (the notes' evidence shows it), established (well accepted)
 Aim for 2-4 links per new note, including links among the new notes where one builds on another. Zero links for a note is allowed when nothing holds; never invent one to reach a count.
 
 Answer: {"links":[{"from":"<new note id>","to":"<candidate id>","type":"BUILDS_ON","reason":"...","confidence":"grounded"}]}`;
+
+/** Lower case, punctuation collapsed, a leading "the", "a" or "new note" and a trailing "note" dropped. */
+export function normaliseName(text: string): string {
+  let t = text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  for (let before = ""; before !== t; ) {
+    before = t;
+    t = t.replace(/^(the|a|new note) /, "");
+  }
+  return t.replace(/ note$/, "");
+}
+
+const nameWords = (t: string) => t.split(" ").filter((w) => w.length >= 3);
+/** At least 80% of the shorter text's words of 3+ characters appear in the other; the shorter needs two such words. */
+function wordsOverlap(a: string, b: string): boolean {
+  const [wa, wb] = [nameWords(a), nameWords(b)];
+  const [short, long] = wa.length <= wb.length ? [wa, new Set(wb)] : [wb, new Set(wa)];
+  return short.length >= 2 && short.filter((w) => long.has(w)).length / short.length >= 0.8;
+}
+
+/**
+ * The note a link's "from" or "to" names, among the notes it may name. The model is asked for ids,
+ * but a model on this computer often writes "the new note <id>" or the note's title in its own
+ * words. Those are matched here, only within the allowed notes; a name that could be several
+ * notes is refused rather than guessed.
+ */
+export function resolveNoteRef(text: string, allowed: { id: string; title: string }[]): { id: string } | { matches: number } {
+  const raw = text.trim();
+  if (!raw) return { matches: 0 };
+  if (allowed.some((n) => n.id === raw)) return { id: raw };
+  const inside = allowed.filter((n) => n.id && raw.includes(n.id));
+  if (inside.length === 1) return { id: inside[0].id };
+  if (inside.length > 1) return { matches: inside.length };
+  const name = normaliseName(raw);
+  if (!name) return { matches: 0 };
+  const titled = allowed.map((n) => ({ id: n.id, title: normaliseName(n.title) })).filter((n) => n.title);
+  const tiers: ((title: string) => boolean)[] = [
+    (title) => title === name,
+    (title) => {
+      const [short, long] = title.length <= name.length ? [title, name] : [name, title];
+      return short.length >= 24 && long.startsWith(short);
+    },
+    (title) => wordsOverlap(title, name),
+  ];
+  for (const fits of tiers) {
+    const hits = titled.filter((n) => fits(n.title));
+    if (hits.length === 1) return { id: hits[0].id };
+    if (hits.length > 1) return { matches: hits.length };
+  }
+  return { matches: 0 };
+}
 
 /** The articulation test the vault enforces on knowledge edges, applied before writing. */
 export function checkLink(link: Record<string, unknown>, allowed: Map<string, Set<string>>): string | null {
@@ -125,6 +176,7 @@ export async function proposeLinksStage(llm: LlmClient, model: string, notes: No
     batches.map((batch) => completeJson(llm, { model, system: CONNECT_SYSTEM, user: promptFor(batch, candidates), maxTokens: 24_000, reasoningEffort: "low" }, fetchImpl)),
   );
   const allowed = new Map(notes.map((n) => [n.id, new Set((candidates[n.id] ?? []).map((c) => c.id))]));
+  const newNotes = notes.map((n) => ({ id: n.id, title: n.title }));
   const accepted: ProposedLink[] = [];
   const dropped: { link: string; why: string }[] = [];
   const seen = new Set<string>();
@@ -132,14 +184,26 @@ export async function proposeLinksStage(llm: LlmClient, model: string, notes: No
   for (const { value, usage } of replies) {
     cost += usage.cost;
     for (const raw of arr(rec(value).links).map(rec)) {
-      const why = checkLink(raw, allowed);
-      const key = `${str(raw.from)}>${str(raw.to)}`;
-      if (why) dropped.push({ link: `${str(raw.from)} → ${str(raw.to)}`, why });
-      else if (seen.has(key) || seen.has(`${str(raw.to)}>${str(raw.from)}`)) dropped.push({ link: key.replace(">", " → "), why: "a link between these two is already proposed" });
+      const label = `${str(raw.from)} → ${str(raw.to)}`;
+      // A note named in words, or as "the new note <id>", is resolved within what each end may name.
+      const from = resolveNoteRef(str(raw.from), newNotes);
+      if (!("id" in from)) {
+        dropped.push({ link: label, why: from.matches ? `from "${str(raw.from)}" could be ${from.matches} of the new notes` : `from "${str(raw.from)}" is not one of the new notes` });
+        continue;
+      }
+      const to = resolveNoteRef(str(raw.to), (candidates[from.id] ?? []).map((c) => ({ id: c.id, title: c.title })));
+      if (!("id" in to)) {
+        dropped.push({ link: label, why: to.matches ? `to "${str(raw.to)}" could be ${to.matches} of the candidates for ${from.id}` : `to "${str(raw.to)}" was not a candidate for ${from.id}` });
+        continue;
+      }
+      const why = checkLink({ ...raw, from: from.id, to: to.id }, allowed);
+      const key = `${from.id}>${to.id}`;
+      if (why) dropped.push({ link: label, why });
+      else if (seen.has(key) || seen.has(`${to.id}>${from.id}`)) dropped.push({ link: key.replace(">", " → "), why: "a link between these two is already proposed" });
       else {
         seen.add(key);
         const confidence = (CONFIDENCE as readonly string[]).includes(str(raw.confidence)) ? str(raw.confidence) : "speculative";
-        accepted.push({ from: str(raw.from), to: str(raw.to), type: str(raw.type) as LinkType, reason: str(raw.reason).trim(), confidence });
+        accepted.push({ from: from.id, to: to.id, type: str(raw.type) as LinkType, reason: str(raw.reason).trim(), confidence });
       }
     }
   }
