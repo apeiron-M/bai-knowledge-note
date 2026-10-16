@@ -50,6 +50,25 @@ describe("ingesting a source", () => {
     expect((await ingestSource(v.client, undefined, { ...note, dedupeKey: "doc-1" })).skipped).toBe(false);
   });
 
+  it("keeps a long dedupe key within the runtime's 128-character store key, and still skips its repeat", async () => {
+    // A feed's guid is often a full URL; with the vault's 43-character drive id the plain key passed 128 and the
+    // runtime refused the put — after the source was made, so a rerun made it twice.
+    const v = vault();
+    const keys: string[] = [];
+    const m = new Map<string, unknown>();
+    const store = { get: async (k: string) => m.get(k), put: async (k: string, value: unknown) => (keys.push(k), m.set(k, value), value) };
+    const drive = "wWJg7gznFLZbGROSCKWpglMatyaOMpszlfC6H5cEGoY";
+    const guid = "http://simonwillison.net/2026/Oct/15/a-rather-long-post-slug-for-testing/#atom-everything";
+    await ingestSource(v.client, store, { ...note, drive, dedupeKey: guid });
+    expect(keys).toHaveLength(1);
+    expect(keys[0].length).toBeLessThanOrEqual(128);
+    expect((await ingestSource(v.client, store, { ...note, drive, dedupeKey: guid })).skipped).toBe(true);
+    // A different long key is a different source; a short key is stored as it is, so earlier keys still match.
+    expect((await ingestSource(v.client, store, { ...note, drive, dedupeKey: `${guid}?v=2` })).skipped).toBe(false);
+    await ingestSource(v.client, store, { ...note, drive, dedupeKey: "doc-1" });
+    expect(keys.at(-1)).toBe(`knowledge-vault:ingest:${drive}:doc-1`);
+  });
+
   it("says when it could not queue, and when asked not to", async () => {
     expect((await ingestSource(vault(false).client, undefined, note)).summary).toMatch(/has no pipeline queue, so it is not queued/);
     const off = await ingestSource(vault().client, undefined, { ...note, queue: false });

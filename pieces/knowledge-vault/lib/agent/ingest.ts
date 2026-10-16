@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import type { StoreLike } from "../common/context.js";
 import { KnowledgeVaultApiError } from "../common/errors.js";
@@ -39,6 +40,19 @@ export type IngestResult = {
 };
 
 const DEDUPE_PREFIX = "knowledge-vault:ingest:";
+/** The workflow runtime refuses a store key longer than this. */
+const STORE_KEY_MAX = 128;
+
+/**
+ * The store key for one delivery. A key that fits is kept as it is, so keys stored before stay valid. A longer one
+ * (a feed's guid is often a full URL) would be refused by the runtime — after the source was made, so a rerun made
+ * it twice — and is stored as the SHA-256 of the drive and the key instead.
+ */
+export function dedupeStoreKey(drive: string, dedupeKey: string): string {
+  const plain = `${DEDUPE_PREFIX}${drive}:${dedupeKey}`;
+  if (plain.length <= STORE_KEY_MAX) return plain;
+  return `${DEDUPE_PREFIX}sha256:${createHash("sha256").update(`${drive}:${dedupeKey}`).digest("hex")}`;
+}
 
 /** A date the vault accepts: an ISO instant in UTC. Anything unparsable is dropped, not guessed. */
 export function toUtcInstant(value: string | undefined): string | null {
@@ -58,7 +72,7 @@ export async function ingestSource(client: KnowledgeVaultClient, store: StoreLik
   if (!title) throw new KnowledgeVaultApiError("A source needs a title", { category: "validation" });
   if (!content) throw new KnowledgeVaultApiError(`"${title}" has no content to ingest`, { category: "validation" });
   const publishedAt = toUtcInstant(input.publishedAt);
-  const key = input.dedupeKey?.trim() ? `${DEDUPE_PREFIX}${input.drive}:${input.dedupeKey.trim()}` : null;
+  const key = input.dedupeKey?.trim() ? dedupeStoreKey(input.drive, input.dedupeKey.trim()) : null;
   if (key && store) {
     const seen = (await store.get(key)) as { source_id?: string } | null | undefined;
     if (seen?.source_id) {
