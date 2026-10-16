@@ -632,6 +632,54 @@ export function fitView(
   };
 }
 
+/** A node the find box lists. */
+export type FoundNode = { id: string; label: string; isMoc: boolean };
+
+/** The most nodes the find box lists. */
+export const FIND_LIMIT = 8;
+
+/**
+ * Nodes whose title contains `query` (case ignored), from its second
+ * character: titles that start with it first, then the rest, each in graph
+ * order. Hidden nodes are found too — choosing one shows its kind again.
+ */
+export function findNodes(
+  g: Pick<IndexedGraph, "nodes">,
+  query: string,
+  limit = FIND_LIMIT,
+): FoundNode[] {
+  const q = query.trim().toLowerCase();
+  if (q.length < 2) return [];
+  const starts: NodeSpec[] = [];
+  const contains: NodeSpec[] = [];
+  for (const node of g.nodes) {
+    const at = node.label.toLowerCase().indexOf(q);
+    if (at < 0) continue;
+    if (at === 0) {
+      starts.push(node);
+      if (starts.length >= limit) break;
+    } else if (contains.length < limit) {
+      contains.push(node);
+    }
+  }
+  return [...starts, ...contains]
+    .slice(0, limit)
+    .map((node) => ({ id: node.id, label: node.label, isMoc: node.isMoc }));
+}
+
+/** The view with world point (x, y) in the middle of the canvas, at `minScale` or closer. */
+export function centerOn(
+  view: { scale: number },
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  minScale = 1,
+): { scale: number; x: number; y: number } {
+  const scale = Math.max(view.scale, minScale);
+  return { scale, x: width / 2 - x * scale, y: height / 2 - y * scale };
+}
+
 /** The graph as a layout command: ids and radii in node order, positions where known (NaN where not), links as index pairs. */
 export function packGraph(
   g: IndexedGraph,

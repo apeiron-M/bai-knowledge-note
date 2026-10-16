@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   applyHighlight,
   buildGraphModel,
+  centerOn,
   computeVisibility,
   easeFactor,
   easeTowards,
   edgeAlpha,
   edgeAttributes,
   EMPTY_GRAPH_FILTER,
+  findNodes,
   fitView,
   hidesAnything,
   hitTest,
@@ -349,6 +351,53 @@ describe("fitView", () => {
     // A canvas smaller than its insets still yields a usable view.
     const tiny = fitView(g, xy([0, 0], [182, 0]), 50, 50, 40)!;
     expect(tiny.scale).toBeGreaterThan(0);
+  });
+});
+
+describe("find", () => {
+  const g = indexGraph(
+    buildGraphModel(
+      [
+        { ...note("x"), title: "Building agents" },
+        { ...note("y"), title: "Agents first" },
+        ...Array.from({ length: 12 }, (_, i) => note(`n${i}`)),
+      ],
+      [{ ...moc("t", []), title: "Agent topics" }],
+    ),
+  );
+
+  it("waits for the second character", () => {
+    expect(findNodes(g, "")).toEqual([]);
+    expect(findNodes(g, "a")).toEqual([]);
+    expect(findNodes(g, "  a ")).toEqual([]);
+  });
+
+  it("lists titles that start with the text first, then those that contain it, ignoring case, and marks maps of content", () => {
+    expect(findNodes(g, "AGENT")).toEqual([
+      { id: "y", label: "Agents first", isMoc: false },
+      { id: "t", label: "Agent topics", isMoc: true },
+      { id: "x", label: "Building agents", isMoc: false },
+    ]);
+  });
+
+  it("lists at most eight, and nothing when nothing matches", () => {
+    expect(findNodes(g, "note")).toHaveLength(8);
+    expect(findNodes(g, "zzz")).toEqual([]);
+  });
+});
+
+describe("centerOn", () => {
+  it("puts the point in the middle of the canvas, at 1× or closer", () => {
+    expect(centerOn({ scale: 0.5 }, 100, 50, 800, 600)).toEqual({
+      scale: 1,
+      x: 300,
+      y: 250,
+    });
+    expect(centerOn({ scale: 2 }, 100, 50, 800, 600)).toEqual({
+      scale: 2,
+      x: 200,
+      y: 200,
+    });
   });
 });
 
