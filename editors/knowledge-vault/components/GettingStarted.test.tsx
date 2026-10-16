@@ -8,6 +8,7 @@ import {
   VAULT_MENU,
 } from "./DriveExplorer.js";
 import {
+  absoluteEndpoint,
   GettingStartedModal,
   GUIDE_SECTIONS,
   GuideContent,
@@ -190,6 +191,16 @@ describe("Getting started guide", () => {
         expect(t2).toContain(`/powerhouse-knowledge:${c}`);
       }
     }
+  });
+
+  it("makes a same-origin endpoint absolute for the web's CLI command", () => {
+    expect(absoluteEndpoint("/graphql", "https://vault.example.org")).toBe(
+      "https://vault.example.org/graphql",
+    );
+    expect(absoluteEndpoint("https://sb.example/graphql", "https://other")).toBe(
+      "https://sb.example/graphql",
+    );
+    expect(absoluteEndpoint("/graphql", undefined)).toBe("/graphql");
   });
 
   it("no longer carries the stale passages", () => {

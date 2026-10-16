@@ -38,6 +38,21 @@ const PLACE_DESC: Record<string, string> = {
   contradictions: "Notes that disagree. Listed while any are open.",
 };
 
+/**
+ * An endpoint as a command a terminal can run: a same-origin "/graphql" gets
+ * the page's origin in front of it; anything absolute, or with no origin to
+ * use, comes back unchanged.
+ */
+export function absoluteEndpoint(
+  endpoint: string,
+  origin: string | undefined,
+): string {
+  if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
+    return endpoint;
+  }
+  return origin ? new URL(endpoint, origin).toString() : endpoint;
+}
+
 /** The guide, opened from the sidebar's foot ("Getting started"). */
 export function GettingStartedModal({
   onClose,
@@ -610,7 +625,7 @@ function PluginSection() {
         <>
           <P>Point the Switchboard CLI at this vault:</P>
           <Code>
-            {`switchboard init --url ${resolveReactorEndpoint()} --name `}
+            {`switchboard init --url ${absoluteEndpoint(resolveReactorEndpoint(), typeof window !== "undefined" ? window.location.origin : undefined)} --name `}
             {"<vault>"}
             {" --use-profile"}
           </Code>
