@@ -15,7 +15,7 @@ import {
   isIndexedLinkType,
 } from "./link-types.js";
 import { isIndexedDocumentType, projectNode } from "./project.js";
-import { summarizeOperation } from "./summarize.js";
+import { summarizeLink, summarizeOperation } from "./summarize.js";
 import {
   TensionAutomation,
   type TensionAutomationDeps,
@@ -279,6 +279,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         };
         if (!(await this.isOurs(input.sourceId))) continue;
         await this.applyAddRelationship(input);
+        await this.recordLinkActivity(entry);
         // A recorded contradiction implies an open tension. Fire and
         // forget: the write must never hold the indexing cursor, and its
         // failure is logged by the automation itself.
@@ -309,6 +310,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         };
         if (!(await this.isOurs(input.sourceId))) continue;
         await this.applyRemoveRelationship(input);
+        await this.recordLinkActivity(entry);
         continue;
       }
       // Articulation after the fact: the reactor's UPDATE_RELATIONSHIP
@@ -322,6 +324,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         };
         if (!(await this.isOurs(input.sourceId))) continue;
         await this.applyUpdateRelationship(input, operation.timestampUtcMs);
+        await this.recordLinkActivity(entry);
         continue;
       }
 
@@ -703,6 +706,71 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       .deleteFrom("graph_edges")
       .where("id", "=", edgeId)
       .execute();
+  }
+
+  /**
+   * A link change is activity on the note the link starts from. The
+   * reactor numbers `document`-scope operations separately from `global`
+   * ones, so the row id carries the scope: `<documentId>-document-<index>`
+   * cannot collide with the `<documentId>-<index>` of a global operation.
+   * The target's title comes from `graph_nodes`; with none, the id stands
+   * in. Non-critical like every other activity write: a failure here is
+   * swallowed so it can never stop the edge itself.
+   */
+  private async recordLinkActivity(
+    entry: OperationWithContext,
+  ): Promise<void> {
+    try {
+      const { operation, context } = entry;
+      const input = operation.action.input as Record<string, unknown>;
+      const sourceId = typeof input.sourceId === "string" ? input.sourceId : "";
+      const targetId = typeof input.targetId === "string" ? input.targetId : "";
+      if (!sourceId || !targetId) return;
+      const target = await this.relationalDb
+        .selectFrom("graph_nodes")
+        .select("title")
+        .where("document_id", "=", targetId)
+        .executeTakeFirst();
+      const summary = summarizeLink(
+        operation.action.type,
+        input,
+        target?.title ?? null,
+      );
+      const signer = operation.action.context?.signer as
+        | {
+            user?: { address?: string };
+            app?: { name?: string; key?: string };
+            signatures?: Array<string | string[]>;
+          }
+        | undefined;
+      const lastSignature = signer?.signatures?.at(-1);
+      const signature =
+        lastSignature === undefined
+          ? null
+          : Array.isArray(lastSignature)
+            ? lastSignature.join(", ")
+            : lastSignature;
+      await this.relationalDb
+        .insertInto("graph_operations")
+        .values({
+          id: `${sourceId}-document-${operation.index}`,
+          document_id: sourceId,
+          operation_type: operation.action.type,
+          timestamp: operation.timestampUtcMs ?? new Date().toISOString(),
+          index: operation.index,
+          scope: context.scope ?? "document",
+          summary,
+          input_json: JSON.stringify(input),
+          signer_address: signer?.user?.address || null,
+          signer_app: signer?.app?.name || null,
+          signer_key: signer?.app?.key || null,
+          signature,
+        })
+        .onConflict((oc) => oc.column("id").doNothing())
+        .execute();
+    } catch {
+      // non-critical — the edge write has already happened
+    }
   }
 
   async onDisconnect(): Promise<void> {

@@ -1030,6 +1030,7 @@ export function createGraphQuery(db: GraphReadDb) {
       const rows = await db
         .selectFrom("graph_operations")
         .where("document_id", "=", documentId)
+        .orderBy("timestamp", "desc")
         .orderBy("index", "desc")
         .selectAll()
         .limit(limit)
@@ -1041,6 +1042,7 @@ export function createGraphQuery(db: GraphReadDb) {
       let query = db
         .selectFrom("graph_operations")
         .orderBy("timestamp", "desc")
+        .orderBy("index", "desc")
         .selectAll()
         .limit(limit);
 
