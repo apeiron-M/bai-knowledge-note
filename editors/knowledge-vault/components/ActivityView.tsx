@@ -4,6 +4,10 @@ import {
   setSelectedNode,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
+import {
+  useVaultDocIndex,
+  type VaultDocIndex,
+} from "../../shared/use-vault-doc-index.js";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -24,22 +28,36 @@ type OperationRecord = {
   signature: string | null;
 };
 
-type FilterType = "all" | "content" | "links" | "lifecycle" | "topics";
+export type FilterType = "all" | "content" | "links" | "lifecycle" | "topics";
 
-const FILTER_TYPES: Record<FilterType, { label: string; ops: string[] }> = {
+export const FILTER_TYPES: Record<FilterType, { label: string; ops: string[] }> = {
   all: { label: "All", ops: [] },
   content: {
     label: "Content",
-    ops: ["SET_TITLE", "SET_DESCRIPTION", "SET_CONTENT", "SET_NOTE_TYPE"],
+    ops: [
+      "SET_TITLE",
+      "SET_DESCRIPTION",
+      "SET_CONTENT",
+      "PATCH_CONTENT",
+      "SET_NOTE_TYPE",
+    ],
   },
   links: {
     label: "Links",
-    ops: ["ADD_RELATIONSHIP", "REMOVE_RELATIONSHIP"],
+    // The first three are what the graph index records today; the last three
+    // are v1's, kept so older rows still match.
+    ops: [
+      "ADD_RELATIONSHIP",
+      "REMOVE_RELATIONSHIP",
+      "UPDATE_RELATIONSHIP",
+      "ADD_LINK",
+      "REMOVE_LINK",
+      "UPDATE_LINK_TYPE",
+    ],
   },
   lifecycle: {
     label: "Lifecycle",
     ops: [
-      "SET_STATUS",
       "SUBMIT_FOR_REVIEW",
       "APPROVE_NOTE",
       "REJECT_NOTE",
@@ -50,16 +68,23 @@ const FILTER_TYPES: Record<FilterType, { label: string; ops: string[] }> = {
   topics: { label: "Topics", ops: ["ADD_TOPIC", "REMOVE_TOPIC"] },
 };
 
-const OP_ICONS: Record<string, string> = {
+/** How many of the latest changes the view loads; the filter runs over these. */
+const ACTIVITY_WINDOW = 200;
+
+export const OP_ICONS: Record<string, string> = {
   SET_TITLE: "T",
   SET_DESCRIPTION: "D",
   SET_CONTENT: "C",
+  PATCH_CONTENT: "C+",
   SET_NOTE_TYPE: "N",
   ADD_RELATIONSHIP: "+L",
   REMOVE_RELATIONSHIP: "-L",
+  UPDATE_RELATIONSHIP: "~L",
+  ADD_LINK: "+L",
+  REMOVE_LINK: "-L",
+  UPDATE_LINK_TYPE: "~L",
   ADD_TOPIC: "+#",
   REMOVE_TOPIC: "-#",
-  SET_STATUS: "S",
   SUBMIT_FOR_REVIEW: "R",
   APPROVE_NOTE: "A",
   REJECT_NOTE: "X",
@@ -68,6 +93,44 @@ const OP_ICONS: Record<string, string> = {
   SET_PROVENANCE: "P",
   SET_METADATA_FIELD: "M",
 };
+
+/** "12 changes (Lifecycle) in the latest 200" — the filter runs over the window, not the whole history. */
+export function filterCountLine(count: number, filter: FilterType): string {
+  const base = `${count} change${count === 1 ? "" : "s"}`;
+  return filter === "all"
+    ? base
+    : `${base} (${FILTER_TYPES[filter].label}) in the latest ${ACTIVITY_WINDOW}`;
+}
+
+const KIND_LABELS: Record<string, string> = {
+  "bai/knowledge-note": "note",
+  "bai/moc": "topic",
+  "bai/source": "source",
+};
+
+/** The plain word for a document type: `bai/tension` -> "tension". */
+export function docKindLabel(documentType: string): string {
+  return KIND_LABELS[documentType] ?? documentType.split("/").pop() ?? documentType;
+}
+
+/** The row's second line: the document's title and kind, or its short id when the index lacks it. */
+export function ActivityRowLabel({
+  documentId,
+  byId,
+}: {
+  documentId: string;
+  byId: VaultDocIndex["byId"];
+}) {
+  const doc = byId.get(documentId);
+  return (
+    <p
+      className="truncate text-[10px]"
+      style={{ color: "var(--bai-text-faint)" }}
+    >
+      {doc ? `${doc.title} · ${docKindLabel(doc.documentType)}` : documentId.slice(0, 8)}
+    </p>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  GraphQL                                                           */
@@ -121,11 +184,12 @@ export function ActivityView() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterType>("all");
   const endpoint = useMemo(() => resolveKnowledgeGraphEndpoint(), []);
+  const { byId } = useVaultDocIndex();
 
   const loadActivity = useCallback(async () => {
     if (!driveId) return;
     setLoading(true);
-    const data = await fetchActivity(driveId, 200);
+    const data = await fetchActivity(driveId, ACTIVITY_WINDOW);
     setOperations(data);
     setLoading(false);
   }, [driveId]);
@@ -140,7 +204,7 @@ export function ActivityView() {
     if (!driveId) return;
     const reload = debounced(() => {
       if (!driveId) return;
-      void fetchActivity(driveId, 200).then(setOperations);
+      void fetchActivity(driveId, ACTIVITY_WINDOW).then(setOperations);
     }, 1_500);
     return onVaultRemoteChange((change) => {
       if (change.driveId === driveId) reload();
@@ -215,8 +279,7 @@ export function ActivityView() {
             Vault Activity
           </h2>
           <p className="text-xs" style={{ color: "var(--bai-text-muted)" }}>
-            {filtered.length} operation{filtered.length !== 1 ? "s" : ""}
-            {filter !== "all" ? ` (${FILTER_TYPES[filter].label})` : ""}
+            {filterCountLine(filtered.length, filter)}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -268,6 +331,7 @@ export function ActivityView() {
                 <OperationRow
                   key={op.id}
                   op={op}
+                  byId={byId}
                   verdict={verdicts.get(op.id)}
                 />
               ))}
@@ -285,9 +349,11 @@ export function ActivityView() {
 
 function OperationRow({
   op,
+  byId,
   verdict,
 }: {
   op: OperationRecord;
+  byId: VaultDocIndex["byId"];
   verdict: VerificationResult | undefined;
 }) {
   const icon = OP_ICONS[op.operationType] ?? "?";
@@ -315,12 +381,7 @@ function OperationRow({
         <p className="truncate text-xs" style={{ color: "var(--bai-text)" }}>
           {op.summary ?? op.operationType}
         </p>
-        <p
-          className="truncate text-[10px]"
-          style={{ color: "var(--bai-text-faint)" }}
-        >
-          {op.documentId.slice(0, 8)}...
-        </p>
+        <ActivityRowLabel documentId={op.documentId} byId={byId} />
         {(op.signerAddress || op.signerApp || op.signature) && (
           <div className="mt-0.5">
             <SignerBadge
@@ -363,11 +424,17 @@ function OperationRow({
 /* ------------------------------------------------------------------ */
 
 function opColor(type: string): string {
-  if (type.startsWith("SET_TITLE") || type.startsWith("SET_CONTENT"))
+  if (
+    type.startsWith("SET_TITLE") ||
+    type.startsWith("SET_CONTENT") ||
+    type === "PATCH_CONTENT"
+  )
     return "#f59e0b";
   if (
-    type === "ADD_RELATIONSHIP" ||
-    type === "REMOVE_RELATIONSHIP"
+    type.endsWith("_RELATIONSHIP") ||
+    type === "ADD_LINK" ||
+    type === "REMOVE_LINK" ||
+    type === "UPDATE_LINK_TYPE"
   )
     return "#3b82f6";
   if (type.startsWith("ADD_TOPIC") || type.startsWith("REMOVE_TOPIC"))
