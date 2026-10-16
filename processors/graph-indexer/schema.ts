@@ -1,3 +1,5 @@
+import type { Generated } from "kysely";
+
 export interface GraphNode {
   id: string;
   document_id: string;
@@ -9,6 +11,15 @@ export interface GraphNode {
   author: string | null;
   source_origin: string | null;
   created_at: string | null;
+  /**
+   * When the document entered the vault — its header's createdAtUtcIso — as
+   * opposed to `created_at`, when it was written (provenance). Imported
+   * notes differ by weeks. Rows written before the column existed start
+   * from their first recorded operation's time (migration); the live write
+   * keeps the earliest time any operation's header gives, so their next
+   * operation corrects it, as does a reindex. Null when nothing says.
+   */
+  added_at: string | null;
   updated_at: string;
   /**
    * The document's type — `bai/knowledge-note`, `bai/moc`, `bai/tension`,
@@ -77,8 +88,29 @@ export interface NoteEmbedding {
   updated_at: string;
 }
 
+/**
+ * One row per source document: what the source timeline reads of it (see
+ * `TimelineSourceRow` in source-timeline.ts), as JSON — never its text. The
+ * timeline reads this table instead of every source document in full.
+ * Sources are not graph nodes; this is their only trace in the index.
+ */
+export interface GraphSource {
+  document_id: string;
+  row_json: string;
+  /**
+   * The document's global revision the row was read at. A write never
+   * replaces a row of a higher revision, so a slow read (a reindex, the
+   * timeline's backfill) cannot undo the indexer's newer row. -1: unknown.
+   */
+  revision: Generated<number>;
+  /** `SOURCE_ROW_VERSION` of `row_json`. */
+  version: Generated<number>;
+  updated_at: string;
+}
+
 export interface DB {
   graph_nodes: GraphNode;
+  graph_sources: GraphSource;
   graph_edges: GraphEdge;
   graph_topics: GraphTopic;
   graph_operations: GraphOperation;

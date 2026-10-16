@@ -6,6 +6,8 @@
 import type { Kysely } from "kysely";
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getWritableDb } from "./db.js";
+import { rebuildSourceRows } from "./source-timeline.js";
+import { SOURCE_DOCUMENT_TYPE } from "../../../processors/graph-indexer/source-timeline.js";
 import type { DB } from "../../../processors/graph-indexer/schema.js";
 import {
   INDEXED_LINK_TYPE_LIST,
@@ -137,9 +139,15 @@ export async function reindexDrive(
         // time, never the indexer's wall clock. Stamping `now` here is what
         // flattened all 1,502 nodes to a single instant on every reindex,
         // which silently broke `knowledgeGraphRecent` and STALE_NOTES.
-        const documentUpdatedAt =
-          (doc as unknown as { header?: { lastModifiedAtUtcIso?: string } })
-            .header?.lastModifiedAtUtcIso ?? now;
+        const header = (
+          doc as unknown as {
+            header?: { lastModifiedAtUtcIso?: string; createdAtUtcIso?: string };
+          }
+        ).header;
+        const documentUpdatedAt = header?.lastModifiedAtUtcIso ?? now;
+        // When it entered the vault; the header is the authority, so a
+        // reindex corrects a value the live path could not know.
+        const addedAt = header?.createdAtUtcIso ?? null;
 
         // One projection for every kind, shared with the live processor
         // (processors/graph-indexer/project.ts) so reindexed and
@@ -157,11 +165,14 @@ export async function reindexDrive(
             id: node.id,
             document_id: node.id,
             ...row,
+            added_at: addedAt,
             updated_at: documentUpdatedAt,
           })
           .onConflict((oc) =>
             oc.column("document_id").doUpdateSet({
               ...row,
+              added_at: (eb) =>
+                eb.fn.coalesce(eb.ref("excluded.added_at"), "graph_nodes.added_at"),
               updated_at: documentUpdatedAt,
             }),
           )
@@ -502,6 +513,16 @@ export async function reindexDrive(
       // reindex, but it must be reported rather than swallowed.
       const msg = err instanceof Error ? err.message : String(err);
       errors.push(`backfill-edge-titles: ${msg}`);
+    }
+
+    // The source timeline's rows (graph_sources): one per source, from its
+    // document, and none for a source the drive no longer holds.
+    try {
+      const sourceIds = nodes.filter((n) => n.kind === "file" && n.documentType === SOURCE_DOCUMENT_TYPE).map((n) => n.id);
+      const written = await rebuildSourceRows(db, subgraph.reactorClient, sourceIds);
+      console.log(`[KnowledgeGraphSubgraph] Rebuilt ${written} source rows`);
+    } catch (err: unknown) {
+      errors.push(`source-rows: ${err instanceof Error ? err.message : String(err)}`);
     }
 
     console.log(

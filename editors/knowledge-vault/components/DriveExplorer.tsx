@@ -40,7 +40,9 @@ import { readCurrentThreadId, writeCurrentThreadId } from "../lib/chat/chat-stor
 import { useRecentChats } from "../hooks/use-recent-chats.js";
 import { chatRun, stopChatRun } from "../hooks/chat-runs.js";
 import { formatLastModified } from "../lib/format-time.js";
-import { writeOpenFolder } from "../lib/source-tree.js";
+import { readSourcesTab, writeOpenFolder, writeSourcesTab } from "../lib/source-tree.js";
+import { SourceTimelineView } from "./timeline/SourceTimelineView.js";
+import type { TimelineGraphData } from "../hooks/use-source-timeline.js";
 import { saveSearchQuery } from "../hooks/use-graph-search.js";
 import {
   clearTensionClose,
@@ -54,7 +56,8 @@ import { VaultLoader } from "../../shared/vault-loader.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import GraphView, { type GraphFocus } from "./GraphView.js";
 import { EMPTY_GRAPH_FILTER, type GraphFilter } from "./graph/model.js";
-import { NoteList } from "./NoteList.js";
+import type { OverTime } from "./GraphView.js";
+import { NoteList, type NoteScope } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { ProjectsView } from "./ProjectsView.js";
 import { ScopeOfWorkView } from "./ScopeOfWorkView.js";
@@ -99,6 +102,7 @@ type ViewMode =
   | "contradictions"
   | "graph"
   | "sources"
+  | "timeline"
   | "projects"
   | "scope"
   | "search"
@@ -217,6 +221,7 @@ export const RENDERED_VIEWS = [
   "search",
   "activity",
   "sources",
+  "timeline",
   "scope",
   "projects",
   "access",
@@ -236,6 +241,8 @@ const VIEW_PLACE: Partial<Record<ViewMode, VaultPlaceId>> = {
   topics: "topics",
   contradictions: "contradictions",
   sources: "sources",
+  // Sources holds two views over the same documents: the folders, and when each thing arrived.
+  timeline: "sources",
   projects: "work",
   scope: "work",
   graph: "graph",
@@ -274,12 +281,30 @@ export function DriveExplorer({ children }: EditorProps) {
   // The graph's legend filter: kept while the vault is open, never saved.
   const [graphFilter, setGraphFilter] =
     useState<GraphFilter>(EMPTY_GRAPH_FILTER);
+  // Graph › Over time, and the addition the timeline's Show in graph lit. Held here so it survives an open document.
+  const [graphTime, setGraphTime] = useState<OverTime>({ on: false, pick: null });
   const [sourcesHome, setSourcesHome] = useState(0);
   // `notesLoading` is true until the first metadata fetch settles. It has
   // to be threaded into every note-derived view: without it they render
   // their "empty vault" state during the several seconds the fetch takes,
   // which reads as "there is nothing here" rather than "not yet loaded".
-  const { notes, noteMap, isLoading: notesLoading } = useKnowledgeNotes();
+  const {
+    notes,
+    noteMap,
+    isLoading: notesLoading,
+    serverAllNodes,
+    graphNodes,
+    graphEdges,
+    error: graphError,
+    refetch: refetchGraph,
+  } = useKnowledgeNotes();
+  // The source timeline's fallback reads this graph rather than loading its own.
+  /** The Notes list narrowed to one addition's notes (See its notes, in Sources › Timeline). */
+  const [notesScope, setNotesScope] = useState<NoteScope | null>(null);
+  const timelineGraph = useMemo<TimelineGraphData>(
+    () => ({ allNodes: serverAllNodes, nodes: graphNodes, edges: graphEdges, isLoading: notesLoading, error: graphError, refetch: refetchGraph }),
+    [serverAllNodes, graphNodes, graphEdges, notesLoading, graphError, refetchGraph],
+  );
   // The intake batch lives here, above the view switch, so a tab switch never
   // unmounts a conversion in flight and the Sources tab badge can read it.
   const attachments = useAttachmentPort();
@@ -455,13 +480,19 @@ export function DriveExplorer({ children }: EditorProps) {
       setSelectedNode(vaultConfigDocId);
       return;
     }
-    // Leaving the graph restores the default sidebar list.
+    // Any navigation shows the whole Notes list again; See its notes narrows it after this.
+    setNotesScope(null);
+    // Leaving the graph restores the default sidebar list, and puts out the lit addition.
     if (mode !== "graph") {
       setGraphFocus(null);
+      setGraphTime((t) => (t.pick ? { ...t, pick: null } : t));
     }
     // The Sources tab clicked while its list is showing: back to all sources.
     if (mode === "sources" && viewMode === "sources" && !showDocumentEditor)
       setSourcesHome((n) => n + 1);
+    // The place reopens on the Sources view last looked at.
+    if (mode === "sources") writeSourcesTab("folders");
+    if (mode === "timeline") writeSourcesTab("timeline");
     // For list/custom views, deselect any open doc
     if (showDocumentEditor) {
       leavingOnPurpose.current = true;
@@ -542,7 +573,8 @@ export function DriveExplorer({ children }: EditorProps) {
 
   function handleSelectPlace(id: VaultPlaceId) {
     const view = PLACE_VIEW[id];
-    if (view) handleSwitchView(view);
+    if (view === "sources" && readSourcesTab() === "timeline") handleSwitchView("timeline");
+    else if (view) handleSwitchView(view);
   }
 
   // Follow the selection: remember where a note was opened from, and when its
@@ -829,6 +861,14 @@ export function DriveExplorer({ children }: EditorProps) {
     [mocs],
   );
 
+  const sourcesTabs = <SourcesTabs active={viewMode === "timeline" ? "timeline" : "sources"} onSelect={handleSwitchView} />;
+  /** Open a source folder in the Folders view, the way the palette does. */
+  const openSourcesFolder = (folderId: string) => {
+    writeOpenFolder(folderId);
+    setSourcesMount((n) => n + 1);
+    handleSwitchView("sources");
+  };
+
   const workTabs = (
     <WorkTabs
       active={viewMode === "scope" ? "scope" : "projects"}
@@ -838,7 +878,15 @@ export function DriveExplorer({ children }: EditorProps) {
     />
   );
   const renderedViews: Record<RenderedView, ReactNode> = {
-    notes: <NoteList notes={notes} isLoading={notesLoading} />,
+    notes: (
+      <NoteList
+        key={notesScope ? `scope:${notesScope.label}` : "all"}
+        notes={notes}
+        isLoading={notesLoading}
+        scope={notesScope}
+        onClearScope={() => setNotesScope(null)}
+      />
+    ),
     topics: (
       <TopicsView
         mocs={mocs}
@@ -865,6 +913,10 @@ export function DriveExplorer({ children }: EditorProps) {
         layoutKey={driveId ?? undefined}
         filter={graphFilter}
         onFilterChange={setGraphFilter}
+        overTime={graphTime}
+        onOverTimeChange={setGraphTime}
+        driveId={driveId ?? undefined}
+        timelineGraph={timelineGraph}
       />
     ),
     chat: (
@@ -879,12 +931,40 @@ export function DriveExplorer({ children }: EditorProps) {
     search: <SearchView key={searchMount} isLoading={notesLoading} />,
     activity: <ActivityView />,
     sources: (
-      <SourceList
-        key={sourcesMount}
-        intake={intake}
-        convert={convert}
-        homeSignal={sourcesHome}
-      />
+      <>
+        {sourcesTabs}
+        <SourceList
+          key={sourcesMount}
+          intake={intake}
+          convert={convert}
+          homeSignal={sourcesHome}
+        />
+      </>
+    ),
+    timeline: (
+      <>
+        {sourcesTabs}
+        <SourceTimelineView
+          driveId={driveId ?? undefined}
+          graph={timelineGraph}
+          onAddSources={() => {
+            // The intake lives in the Folders view.
+            intake.open();
+            handleSwitchView("sources");
+          }}
+          onPasteText={() => setCreating(CREATE_ITEMS.find((i) => i.key === "paste") ?? null)}
+          onSeeNotes={(title, ids) => {
+            handleSwitchView("notes");
+            setNotesScope({ label: title, ids: new Set(ids) });
+          }}
+          onShowInGraph={(additionId) => {
+            handleSwitchView("graph");
+            setGraphTime({ on: true, pick: additionId });
+          }}
+          onOpenSources={openSourcesFolder}
+          onOpenDocument={openDocument}
+        />
+      </>
     ),
     scope: (
       <>
@@ -1104,6 +1184,39 @@ function WorkTabs({
             </button>
           );
         })}
+      </nav>
+    </div>
+  );
+}
+
+/**
+ * Sources holds two views over the same documents (WorkTabs is the pattern):
+ * the folders as they are, and the timeline of when each thing arrived.
+ */
+function SourcesTabs({
+  active,
+  onSelect,
+}: {
+  active: "sources" | "timeline";
+  onSelect: (mode: ViewMode) => void;
+}) {
+  const tabs: { key: "sources" | "timeline"; label: string }[] = [
+    { key: "sources", label: "Folders" },
+    { key: "timeline", label: "Timeline" },
+  ];
+  return (
+    <div className="vault-sources-tabs px-4 pt-3">
+      <nav className="vault-seg" aria-label="Sources">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            aria-current={tab.key === active ? "page" : undefined}
+            onClick={() => onSelect(tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </nav>
     </div>
   );

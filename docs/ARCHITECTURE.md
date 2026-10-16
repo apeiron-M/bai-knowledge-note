@@ -110,7 +110,7 @@ const filter: ProcessorFilter = {
 
 1. **Deduplicates** — keeps only the last operation per document in a batch
 2. **Handles deletions** — `DELETE_NODE` on the drive removes the node + all edges from the index
-3. **Filters** — skips anything that isn't an indexed type
+3. **Filters** — skips anything that isn't an indexed type; on the server, a `bai/source` is kept only as one small row in `graph_sources` (what the source timeline reads of it, never its text) — sources are not graph nodes, and their operations (relationship actions included) leave no edges and no activity. Widening the filter does not replay history (the reactor keeps a processor's cursor per slot): sources from before the table get their rows from the timeline's first load, or a reindex
 4. **Reconciles** — for each changed document, reads `context.resultingState` and calls `projectNode()`:
    - Upserts into `graph_nodes` (id, title, description, content, note_type, status, author, source_origin, document_type, timestamps)
    - Deletes old edges for that source document
@@ -120,7 +120,13 @@ const filter: ProcessorFilter = {
 
 ```
 graph_nodes       id, document_id, document_type, title, description, content,
-                  note_type, status, author, source_origin, created_at, updated_at
+                  note_type, status, author, source_origin, created_at, added_at,
+                  updated_at
+                  (created_at: when it was written; added_at: when it entered
+                  the vault — the earliest header createdAtUtcIso any operation
+                  gives, rewritten by a reindex; rows older than the column
+                  start from their first recorded operation's time, which
+                  their next operation corrects)
 graph_edges       id, source_document_id, target_document_id, link_type,
                   target_title, metadata, updated_at
 graph_topics      id, document_id, name, updated_at
@@ -128,6 +134,11 @@ graph_operations  id, document_id, operation_type, timestamp, index, scope,
                   summary, input_json, signer_address, signer_app, signer_key,
                   signature
 note_embeddings   document_id, embedding, dims, model, content_hash, updated_at
+graph_sources     document_id, row_json, revision, version, updated_at
+                  (one row per bai/source: title, status, file, who and when,
+                  its claims — what the source timeline reads — as JSON;
+                  server only. A write never replaces a row of a higher
+                  document revision; a row of an older `version` is re-read)
 ```
 
 Indexes on `source_document_id`, `target_document_id`, `status`, `document_type`, topic `document_id`/`name`, and operation `document_id`/`timestamp`/`operation_type`.
@@ -181,6 +192,7 @@ Every query takes `driveId` as its first argument; it is omitted below.
 | `knowledgeGraphRelatedByTopic(documentId, limit?)` | Notes sharing topics, ranked by overlap |
 | `knowledgeGraphByAuthor(author)` / `knowledgeGraphByOrigin(origin)` | Provenance |
 | `knowledgeGraphRecent(limit?, since?)` / `knowledgeGraphStale(since, limit?)` | Recency |
+| `knowledgeGraphSourceTimeline` | What was added and when: every addition (a file's folder, a paste, a workflow's burst, an agent's session) with what it became, and each note's and topic's arrival. Reads sources from the reactor; mirrored by `GET timeline` |
 
 **Structure**
 

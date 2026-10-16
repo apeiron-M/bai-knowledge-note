@@ -225,3 +225,24 @@ export function writeOpenFolder(folderId: string | null): void {
     // Private mode or a full quota only costs the remembered position.
   }
 }
+
+const SOURCES_TAB_KEY = "bai:sources-tab";
+
+/** The Sources place's two views; Folders unless Timeline was the last one chosen. */
+export type SourcesTab = "folders" | "timeline";
+
+export function readSourcesTab(): SourcesTab {
+  try {
+    return sessionStorage.getItem(SOURCES_TAB_KEY) === "timeline" ? "timeline" : "folders";
+  } catch {
+    return "folders";
+  }
+}
+
+export function writeSourcesTab(tab: SourcesTab): void {
+  try {
+    sessionStorage.setItem(SOURCES_TAB_KEY, tab);
+  } catch {
+    // Without storage the place simply opens on Folders.
+  }
+}

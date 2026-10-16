@@ -1,6 +1,8 @@
 import {
   startTransition,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -40,6 +42,9 @@ import {
   type Visibility,
 } from "./graph/model.js";
 import { GraphFind } from "./graph/GraphFind.js";
+import { useSourceTimeline, type TimelineGraphData } from "../hooks/use-source-timeline.js";
+import { additionMembers, arrivalArray, arrivalsOf, arrivedWithin, maskByTime } from "./graph/over-time.js";
+import { TimeDock } from "./graph/TimeDock.js";
 import { GraphLegend } from "./graph/GraphLegend.js";
 import {
   createRenderer,
@@ -113,7 +118,18 @@ type GraphViewProps = {
   /** What the legend hides. Held by the vault (DriveExplorer) while it is open; never saved. */
   filter: GraphFilter;
   onFilterChange: (filter: GraphFilter) => void;
+  /** Graph › Over time: the dock is shown, and the addition opened from the timeline (Show in graph). Held by the vault. */
+  overTime?: OverTime;
+  onOverTimeChange?: (next: OverTime) => void;
+  /** The drive whose source timeline Over time reads. */
+  driveId?: string;
+  /** The vault's graph, for the timeline's fallback against an older server; the view never loads its own. */
+  timelineGraph?: TimelineGraphData;
 };
+
+const NO_GRAPH: TimelineGraphData = { allNodes: [], nodes: [], edges: [], isLoading: false, error: null, refetch: () => undefined };
+
+export type OverTime = { on: boolean; pick: string | null };
 
 type HoverInfo = {
   id: string;
@@ -171,6 +187,16 @@ type Scene = {
   visible: Visibility | null;
   /** The last mask's arrays, kept while nothing is hidden so the next toggle reuses them (updateVisibility). */
   spare: Visibility | null;
+  /** Over time: each node's arrival (ms; NaN when the timeline does not know it), in graph order. */
+  arrivedAt: Float64Array | null;
+  /** Over time: the moment shown, or null when no time narrows the graph. */
+  moment: number | null;
+  /** Arrays for the time mask when the legend hides nothing. */
+  timeSpare: Visibility | null;
+  /** Show in graph: an addition's notes and topics, lit when nothing is hovered or selected. */
+  spotlightSet: number[] | null;
+  /** The overlay the arrival rings are drawn on (Over time). */
+  rings: HTMLCanvasElement | null;
   nodeIds: Set<string>;
   linkIds: Set<string>;
   /** Bumped with every graph sent to the layout; frames of an older graph are dropped. */
@@ -307,6 +333,27 @@ export default function GraphView(props: GraphViewProps) {
   const filterRef = useRef(props.filter);
   filterRef.current = props.filter;
 
+  // Graph › Over time: the timeline is read only while the dock is shown.
+  const overTimeOn = props.overTime?.on ?? false;
+  const pick = props.overTime?.pick ?? null;
+  const {
+    timeline,
+    error: timelineError,
+    refetch: refetchTimeline,
+  } = useSourceTimeline(overTimeOn ? props.driveId : undefined, props.timelineGraph ?? NO_GRAPH);
+  const arrivalsRef = useRef<Map<string, number> | null>(null);
+  /** The ring overlay; it can mount before the scene exists (Show in graph opens the graph in Over time). */
+  const ringsRef = useRef<HTMLCanvasElement | null>(null);
+  const spotlightRef = useRef<Set<string> | null>(null);
+  // The dock's "now": fixed while it is open, so a replay never chases a moving end; a new timeline moves it.
+  const [dockNow, setDockNow] = useState(() => Date.now());
+  useEffect(() => setDockNow(Date.now()), [timeline]);
+  const dockNowRef = useRef(dockNow);
+  dockNowRef.current = dockNow;
+  // The legend sits above the dock, however tall the dock's caption makes it.
+  const [dockSpace, setDockSpace] = useState(DOCK_SPACE);
+  const onDockHeight = useCallback((px: number) => setDockSpace(Math.ceil(px) + DOCK_MARGIN), []);
+
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
@@ -384,7 +431,7 @@ export default function GraphView(props: GraphViewProps) {
     const scene = sceneRef.current;
     if (!ready || !scene) return;
     const g = scene.graph;
-    if (g) updateVisibility(scene, g, props.filter);
+    if (g) updateMasks(scene, g, props.filter);
     else scene.visible = null;
     // What is under a resting pointer may now be hidden.
     scene.hoverStale = true;
@@ -392,6 +439,38 @@ export default function GraphView(props: GraphViewProps) {
     dropHiddenSelection(scene);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, props.filter]);
+
+  // Over time on or off, a new timeline, another addition lit: arrivals, the
+  // lit addition and the masks follow. Turning it off shows everything again.
+  useEffect(() => {
+    arrivalsRef.current = overTimeOn && timeline ? arrivalsOf(timeline) : null;
+    spotlightRef.current = overTimeOn && timeline && pick ? additionMembers(timeline, pick) : null;
+    const scene = sceneRef.current;
+    if (!ready || !scene) return;
+    const g = scene.graph;
+    if (!overTimeOn) scene.moment = null;
+    scene.arrivedAt = g && arrivalsRef.current ? arrivalArray(g, arrivalsRef.current, dockNow) : null;
+    scene.spotlightSet = g ? spotlightOf(g, spotlightRef.current) : null;
+    if (g) updateMasks(scene, g, filterRef.current);
+    scene.hoverStale = true;
+    refreshHighlight(scene);
+    dropHiddenSelection(scene);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, overTimeOn, timeline, pick, dockNow]);
+
+  /** The dock moved to a moment: show what existed then. */
+  const showMoment = useRef<(t: number) => void>(() => undefined);
+  showMoment.current = (t: number) => {
+    const scene = sceneRef.current;
+    const g = scene?.graph;
+    if (!scene || !g) return;
+    scene.moment = t;
+    updateMasks(scene, g, filterRef.current);
+    scene.hoverStale = true;
+    refreshHighlight(scene);
+    dropHiddenSelection(scene);
+  };
+  const onMoment = useMemo(() => (t: number) => showMoment.current(t), []);
 
   /** A selected node that is now hidden cannot stay selected. */
   function dropHiddenSelection(scene: Scene) {
@@ -409,11 +488,17 @@ export default function GraphView(props: GraphViewProps) {
     if (!scene || !g || !draw) return;
     const i = g.index.get(id);
     if (i === undefined) return;
+    // Under Over time, a node that had not arrived at the moment shown: back to the whole graph.
+    if (scene.moment !== null && scene.arrivedAt && scene.arrivedAt[i] > scene.moment) {
+      scene.moment = null;
+      updateMasks(scene, g, filterRef.current);
+      props.onOverTimeChange?.({ on: false, pick: null });
+    }
     if (scene.visible && scene.visible.node[i] === 0) {
       const next = showNodeKind(filterRef.current, g.nodes[i]);
       filterRef.current = next;
       // Drawn at once; the parent's state catches up on its next render.
-      updateVisibility(scene, g, next);
+      updateMasks(scene, g, next);
       props.onFilterChange(next);
     }
     const x = draw.pos[i * 2];
@@ -494,6 +579,11 @@ export default function GraphView(props: GraphViewProps) {
       highlight: new Uint8Array(0),
       visible: null,
       spare: null,
+      arrivedAt: null,
+      moment: null,
+      timeSpare: null,
+      spotlightSet: null,
+      rings: ringsRef.current,
       nodeIds: new Set(),
       linkIds: new Set(),
       version: 0,
@@ -694,6 +784,7 @@ export default function GraphView(props: GraphViewProps) {
       }
       if (scene.dirty) {
         renderer.render(scene.view);
+        drawRings(scene);
         scene.dirty = false;
       }
     };
@@ -998,7 +1089,7 @@ export default function GraphView(props: GraphViewProps) {
       // A status or a link type can change without the structure changing:
       // sort them into the legend's kinds again, so the filter follows.
       refreshKinds(prev, model);
-      updateVisibility(scene, prev, filterRef.current);
+      updateMasks(scene, prev, filterRef.current);
       scene.hoverStale = true;
       refreshHighlight(scene);
       dropHiddenSelection(scene);
@@ -1043,7 +1134,10 @@ export default function GraphView(props: GraphViewProps) {
     };
     scene.edgePrimary = edgeAttrs.primary;
     scene.highlight = new Uint8Array(g.nodes.length);
-    updateVisibility(scene, g, filterRef.current);
+    // Indices have changed: Over time's arrivals and the lit addition follow them.
+    scene.arrivedAt = arrivalsRef.current ? arrivalArray(g, arrivalsRef.current, dockNowRef.current) : null;
+    scene.spotlightSet = spotlightOf(g, spotlightRef.current);
+    updateMasks(scene, g, filterRef.current);
     scene.nodeIds = new Set(g.nodes.map((n) => n.id));
     const linkIds = new Set(model.links.map((l) => l.id));
     let linkDelta = 0;
@@ -1157,7 +1251,23 @@ export default function GraphView(props: GraphViewProps) {
       className="relative h-full w-full overflow-hidden"
       style={{ touchAction: "none" }}
     >
-      {/* Toolbar: zoom in/out + fit + re-layout */}
+      {/* The arrival rings of Over time, drawn over the graph. */}
+      {overTimeOn && (
+        <canvas
+          ref={(el) => {
+            ringsRef.current = el;
+            const scene = sceneRef.current;
+            if (scene) {
+              scene.rings = el;
+              scene.dirty = true;
+            }
+          }}
+          className="pointer-events-none absolute inset-0 z-[1] h-full w-full"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Toolbar: zoom in/out + fit + re-layout, and Over time */}
       <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5">
         <ToolbarButton title="Zoom in" onClick={() => zoomByRef.current?.(1.2)}>
           <svg
@@ -1214,11 +1324,61 @@ export default function GraphView(props: GraphViewProps) {
             <path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" />
           </svg>
         </ToolbarButton>
+        <ToolbarButton
+          title="Over time: replay how the vault grew"
+          pressed={overTimeOn}
+          onClick={() => props.onOverTimeChange?.({ on: !overTimeOn, pick: null })}
+        >
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+        </ToolbarButton>
       </div>
 
       <GraphFind search={findOnGraph} onChoose={chooseFound} />
 
-      <GraphLegend filter={props.filter} onChange={props.onFilterChange} />
+      {/* Over time's dock takes the bottom edge; the legend sits above it. */}
+      <div style={overTimeOn ? { position: "absolute", left: 0, right: 0, bottom: dockSpace, height: 0 } : undefined}>
+        <GraphLegend filter={props.filter} onChange={props.onFilterChange} />
+      </div>
+
+      {overTimeOn &&
+        (timeline ? (
+          <TimeDock
+            timeline={timeline}
+            now={dockNow}
+            pick={pick}
+            onMoment={onMoment}
+            onShowEverything={() => props.onOverTimeChange?.({ on: true, pick: null })}
+            onHeight={onDockHeight}
+          />
+        ) : timelineError ? (
+          <div
+            className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm"
+            style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)", color: "var(--bai-text-secondary)" }}
+            role="alert"
+          >
+            <span>Couldn&apos;t read the vault&apos;s history. The graph shows everything as it is now.</span>
+            <button type="button" className="vault-btn" onClick={refetchTimeline}>
+              Try again
+            </button>
+          </div>
+        ) : (
+          <div
+            className="absolute bottom-3 left-3 right-3 z-20 rounded-xl px-4 py-3 text-sm"
+            style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)", color: "var(--bai-text-tertiary)" }}
+            role="status"
+          >
+            Reading the vault&apos;s history…
+          </div>
+        ))}
 
       {/* Hover tooltip — only when nothing is selected (the metacard
           covers that role for selected nodes) */}
@@ -1323,12 +1483,77 @@ function sendGraph(scene: Scene, heat: Heat | null) {
   scene.engine.send(cmd);
 }
 
+/** Room the time dock takes at the bottom edge until it has measured itself; the legend sits above it. */
+const DOCK_SPACE = 132;
+/** The dock's offset from the bottom edge plus a gap above it. */
+const DOCK_MARGIN = 20;
+/** A node is ringed for this long after it arrived, at the moment shown. */
+const RING_WINDOW_MS = 30 * 60_000;
+
+/** The legend's mask, then — under Over time — narrowed to what existed at the moment shown. */
+function updateMasks(scene: Scene, g: IndexedGraph, filter: GraphFilter) {
+  updateVisibility(scene, g, filter);
+  if (scene.moment === null || !scene.arrivedAt || scene.arrivedAt.length !== g.nodes.length) return;
+  const v = maskByTime(g, scene.visible, scene.arrivedAt, scene.moment, scene.timeSpare);
+  if (v !== scene.visible) scene.timeSpare = v;
+  scene.visible = v;
+}
+
+/**
+ * The lit addition's members as indices of this graph — none when it has
+ * nothing here yet, since an empty highlight would dim the whole graph.
+ */
+function spotlightOf(g: IndexedGraph, ids: Set<string> | null): number[] | null {
+  if (!ids) return null;
+  const out: number[] = [];
+  for (const id of ids) {
+    const i = g.index.get(id);
+    if (i !== undefined) out.push(i);
+  }
+  return out.length > 0 ? out : null;
+}
+
+/** Rings around what arrived in the half hour before the moment shown, over the graph. */
+function drawRings(scene: Scene) {
+  const c = scene.rings;
+  if (!c) return;
+  const ctx = c.getContext("2d");
+  if (!ctx) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.round(scene.width * dpr);
+  const h = Math.round(scene.height * dpr);
+  if (c.width !== w || c.height !== h) {
+    c.width = w;
+    c.height = h;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, scene.width, scene.height);
+  const draw = scene.draw;
+  if (scene.moment === null || !scene.arrivedAt || !draw) return;
+  const arrived = arrivedWithin(scene.arrivedAt, scene.moment, RING_WINDOW_MS, scene.visible);
+  if (arrived.length === 0) return;
+  ctx.strokeStyle = getComputedStyle(c).getPropertyValue("--bai-accent").trim() || "#cba6f7";
+  ctx.lineWidth = 1.6;
+  const { scale, x: ox, y: oy } = scene.view;
+  for (const i of arrived) {
+    const x = draw.pos[i * 2];
+    const y = draw.pos[i * 2 + 1];
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    const age = (scene.moment - scene.arrivedAt[i]) / RING_WINDOW_MS;
+    ctx.globalAlpha = 0.15 + 0.7 * (1 - age);
+    ctx.beginPath();
+    ctx.arc(x * scale + ox, y * scale + oy, draw.meta[i * 2] * scale + 3 + 7 * age, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+
 /** Recompute what is highlighted (hover wins over selection) into the colours' alpha. */
 function refreshHighlight(scene: Scene) {
   const g = scene.graph;
   const draw = scene.draw;
   if (!g || !draw) return;
-  const set = scene.hoverSet ?? scene.selectedSet;
+  const set = scene.hoverSet ?? scene.selectedSet ?? scene.spotlightSet;
   const flags = scene.highlight;
   flags.fill(0);
   if (set) for (const i of set) flags[i] = 1;
@@ -1347,6 +1572,8 @@ function refreshHighlight(scene: Scene) {
 function ToolbarButton(props: {
   title: string;
   onClick: () => void;
+  /** A toggle: shown pressed, in the accent. */
+  pressed?: boolean;
   children: ReactNode;
 }) {
   return (
@@ -1354,12 +1581,17 @@ function ToolbarButton(props: {
       type="button"
       onClick={props.onClick}
       title={props.title}
+      aria-label={props.title}
+      aria-pressed={props.pressed}
       className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
       style={{
-        backgroundColor:
-          "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
-        color: "var(--bai-text-secondary, #d4d4d8)",
-        border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
+        backgroundColor: props.pressed
+          ? "color-mix(in srgb, var(--bai-accent) 18%, var(--bai-bg, #11111b))"
+          : "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
+        color: props.pressed ? "var(--bai-accent)" : "var(--bai-text-secondary, #d4d4d8)",
+        border: props.pressed
+          ? "1px solid color-mix(in srgb, var(--bai-accent) 55%, transparent)"
+          : "1px solid var(--bai-border, rgba(255,255,255,0.1))",
       }}
     >
       {props.children}

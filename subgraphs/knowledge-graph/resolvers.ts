@@ -1,7 +1,8 @@
 import type { BaseSubgraph } from "@powerhousedao/reactor-api";
 import { GraphQLError } from "graphql";
-import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
+import { getDb, getQuery, getWritableDb, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
+import { loadSourceTimeline, sourceRowStore } from "./helpers/source-timeline.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import {
   searchSimilar,
@@ -261,6 +262,11 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
         const query = getQuery(subgraph, args.driveId);
         return query.allEdges();
       },
+
+      knowledgeGraphSourceTimeline: async (_: unknown, args: { driveId: string }) =>
+        loadSourceTimeline(subgraph.reactorClient, getQuery(subgraph, args.driveId), args.driveId, {
+          store: sourceRowStore(() => getWritableDb(subgraph, args.driveId)),
+        }),
 
       knowledgeGraphStats: async (_: unknown, args: { driveId: string }) => {
         const query = getQuery(subgraph, args.driveId);

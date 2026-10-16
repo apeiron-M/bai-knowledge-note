@@ -4,6 +4,8 @@ import {
   useGraphMetadata,
   type DriveFileNode,
   type DriveTreeNode,
+  type GraphEdgeMetadata,
+  type GraphNodeMetadata,
 } from "./use-graph-metadata.js";
 import { sameDriveNode, useStableList } from "../../shared/use-stable-list.js";
 
@@ -56,6 +58,9 @@ export type UseKnowledgeNotesResult = {
   serverFileNodes: DriveFileNode[];
   /** Authoritative full drive tree (folders + files) from the reactor. */
   serverAllNodes: DriveTreeNode[];
+  /** The graph index's nodes and edges, as fetched — for views that need them raw. */
+  graphNodes: GraphNodeMetadata[];
+  graphEdges: GraphEdgeMetadata[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -82,6 +87,7 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
     sameDriveNode,
   );
   const {
+    nodes: graphNodes,
     nodeMap,
     edges,
     fileNodes: serverFileNodes,
@@ -173,6 +179,8 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
     noteMap,
     serverFileNodes,
     serverAllNodes,
+    graphNodes,
+    graphEdges: edges,
     isLoading,
     error,
     refetch,

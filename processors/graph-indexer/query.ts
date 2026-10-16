@@ -8,6 +8,7 @@ import {
 } from "./link-types.js";
 import { KNOWLEDGE_NODE_TYPE_LIST } from "./project.js";
 import { parseEdgeMetadata, type EdgeConfidence } from "./edge-metadata.js";
+import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
 
 /**
  * `graph_edges` holds only knowledge edges going forward (the processor stopped
@@ -102,6 +103,11 @@ export function normalizeFusedScore(score: number, legs = 2): number {
   return Math.min(1, score / max);
 }
 
+/** A node as the source timeline reads it (see `timelineNodes`). */
+export type TimelineNodeRow = Pick<GraphNodeResult, "documentId" | "documentType" | "title" | "status" | "noteType" | "createdAt" | "sourceOrigin"> & {
+  addedAt: string | null;
+};
+
 export interface GraphNodeResult {
   id: string;
   documentId: string;
@@ -113,6 +119,9 @@ export interface GraphNodeResult {
   author: string | null;
   sourceOrigin: string | null;
   createdAt: string | null;
+  /** When the document entered the vault (header creation time); `createdAt`
+   * is when it was written. Null on rows that predate the column. */
+  addedAt?: string | null;
   updatedAt: string;
   /** `bai/knowledge-note`, `bai/moc`, `bai/tension`, `bai/observation`,
    * `bai/research-claim`. Null only on rows that predate the column AND
@@ -225,6 +234,7 @@ function rowToNode(row: GraphNode): GraphNodeResult {
     author: row.author,
     sourceOrigin: row.source_origin,
     createdAt: row.created_at,
+    addedAt: row.added_at ?? null,
     updatedAt: row.updated_at,
     documentType: row.document_type,
   };
@@ -835,6 +845,54 @@ export function createGraphQuery(db: GraphReadDb) {
         name: r.name,
         noteCount: Number(r.note_count),
       }));
+    },
+
+    /** Every node with the columns the source timeline reads — not its content, which would multiply the payload. */
+    async timelineNodes(): Promise<TimelineNodeRow[]> {
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .select(["document_id", "document_type", "title", "status", "note_type", "added_at", "created_at", "source_origin"])
+        // A fixed order, so ties in the timeline never depend on how the database returned rows.
+        .orderBy("document_id")
+        .execute();
+      return rows.map((r) => ({
+        documentId: r.document_id,
+        documentType: r.document_type,
+        title: r.title,
+        status: r.status,
+        noteType: r.note_type,
+        addedAt: r.added_at ?? null,
+        createdAt: r.created_at,
+        sourceOrigin: r.source_origin,
+      }));
+    },
+
+    /** The source timeline's row per source document (`graph_sources`), by document id. */
+    async timelineSources(): Promise<Map<string, TimelineSourceRow>> {
+      const rows = await db.selectFrom("graph_sources").select(["document_id", "row_json", "version"]).execute();
+      const out = new Map<string, TimelineSourceRow>();
+      for (const r of rows) {
+        // A row of an older shape is read again from its document.
+        if (r.version !== SOURCE_ROW_VERSION) continue;
+        try {
+          out.set(r.document_id, JSON.parse(r.row_json) as TimelineSourceRow);
+        } catch {
+          // An unreadable row is read again from its document.
+        }
+      }
+      return out;
+    },
+
+    /** Every node's topic names in one query, for views that need them all. */
+    async topicsByDocument(): Promise<Map<string, string[]>> {
+      const rows = await db.selectFrom("graph_topics").select(["document_id", "name"]).execute();
+      const out = new Map<string, string[]>();
+      for (const r of rows) {
+        const list = out.get(r.document_id) ?? [];
+        list.push(r.name);
+        out.set(r.document_id, list);
+      }
+      return out;
     },
 
     async topicsForNode(documentId: string): Promise<string[]> {

@@ -3,8 +3,10 @@ import {
   describeStatuses,
   folderContents,
   readOpenFolder,
+  readSourcesTab,
   sourceView,
   writeOpenFolder,
+  writeSourcesTab,
   type TreeNode,
 } from "./source-tree.js";
 import type { SourceRow } from "./source-search.js";
@@ -236,5 +238,22 @@ describe("folderContents", () => {
       { id: "n-1", name: "a note", kind: "file" as const, documentType: "bai/knowledge-note", parentFolder: "f-book" },
     ];
     expect(folderContents(withNote, "f-book").sourceIds).not.toContain("n-1");
+  });
+});
+
+describe("remembering the Sources tab", () => {
+  beforeEach(() => sessionStorage.clear());
+
+  it("starts on Folders and remembers Timeline once chosen", () => {
+    expect(readSourcesTab()).toBe("folders");
+    writeSourcesTab("timeline");
+    expect(readSourcesTab()).toBe("timeline");
+    writeSourcesTab("folders");
+    expect(readSourcesTab()).toBe("folders");
+  });
+
+  it("reads Folders from anything it does not know", () => {
+    sessionStorage.setItem("bai:sources-tab", "graph");
+    expect(readSourcesTab()).toBe("folders");
   });
 });

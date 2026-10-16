@@ -35,6 +35,7 @@ route that reads the index takes `drive` (a document UUID).
 | `GET` | `stats` / `density` / `topics` | `renown` | `drive` (required) | the graph aggregate, as `createGraphQuery` produces it |
 | `GET` | `topics/:name` | `renown` | `drive` | notes tagged with the topic |
 | `GET` | `orphans` / `triangles?limit=` / `graph.json` | `renown` | `drive`; `triangles` defaults 20, max 100 | nodes with no incoming edge / synthesis opportunities / `{ nodes, edges }` |
+| `GET` | `timeline` | `renown` | `drive` (required, id or slug) | the source timeline, as `knowledgeGraphSourceTimeline` returns it: `{ additions[], notes[], topics[], totals }` — each addition (a file's folder, a paste or `sources/batch` call, a workflow's burst, an agent's session, or notes with no recorded source) with when it arrived and what it became; see [The source timeline](#the-source-timeline) |
 | `GET` | `embeddings/missing` | `renown` | `drive` | document ids without an embedding |
 | `GET` | `notes/:id/similar?limit=` / `links` / `backlinks` / `connections?depth=` | `renown` | `drive`, `id` | semantic neighbours / forward edges / back edges / BFS, each with edge reasons |
 | `GET` | `activity?since=&limit=` / `notes/:id/history` | `renown` | `drive`; **requires `canWrite`** | the audit log (`inputJson`, signer, signature) |
@@ -297,6 +298,18 @@ callers get MoC titles when the drive is anonymously readable and a `401` hint o
 
 The vault-native MCP endpoint (`mcp`, planned in `docs/plans/http-surface.md` slice 4) and
 webhooks (slice 3, plus its GitHub/Slack/generic-token presets and the Integrations screen).
+
+## The source timeline
+
+`GET timeline?drive=<id or slug>` answers "what was added, when, and what did each thing become". It reads each source's small row from the index (`graph_sources`, which the graph indexer keeps — sources are not graph nodes; a source with no row yet is read from the reactor once and its row kept) and joins them with the index's notes, topics and links. The editor's Sources › Timeline and Graph › Over time draw from the same data, through `knowledgeGraphSourceTimeline(driveId)`.
+
+```bash
+curl -s -H "$AUTH" "$BASE/timeline?drive=$DRIVE" | jq '.additions[] | {title, kind, addedAt, sources, waiting, notes, linksToEarlier}'
+```
+
+- **An addition** is what was added at once: a folder under `/sources` (split where arrivals are more than an hour apart, so a workflow's feed folder gives one addition per burst); a source directly in `/sources`, or every source of one `sources/batch` call; notes that arrived without a source, grouped by origin (`written` for `MANUAL`/`SESSION_MINE`, `imported` for `IMPORT`, `unsourced` otherwise).
+- **Times are arrival times:** a source's header `createdAtUtcIso`; a note's `graph_nodes.added_at` (its header's creation time). Rows that predate the column take their first recorded operation's time until their next operation or a reindex; a note with neither falls back to its written date (`createdAt`).
+- **What it became:** its notes (by `DERIVED_FROM`, then the source's `extractedClaims`), the topics it started (MoCs most of whose notes it supplied and that did not exist before it; a MoC with no such majority goes to the latest addition at or before it), links among its notes and to notes of earlier additions, its top tags and most linked notes.
 
 ## Operational notes
 

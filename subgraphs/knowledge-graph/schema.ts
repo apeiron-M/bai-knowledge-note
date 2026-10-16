@@ -13,6 +13,13 @@ export const schema: DocumentNode = gql`
     author: String
     sourceOrigin: String
     createdAt: String
+    """
+    When the document entered this vault: its header's creation time.
+    createdAt is when it was written, which for an imported note can be
+    weeks earlier. Null until the document's next operation or a reindex
+    on an index that predates the field.
+    """
+    addedAt: String
     topics: [String!]!
     updatedAt: String!
     """
@@ -216,9 +223,110 @@ export const schema: DocumentNode = gql`
     errors: [String!]!
   }
 
+  """
+  One addition to the vault: what a person added at once — a file's folder,
+  a pasted source or a sources/batch call, a workflow's burst, an agent's
+  session — or notes that arrived without a source (written here, imported,
+  or with no recorded source), grouped the same way.
+  """
+  type KnowledgeGraphTimelineAddition {
+    id: String!
+    "file, text, feed, agent; or, for notes without a source: written (made in the vault), imported (an import), unsourced (no source recorded)"
+    kind: String!
+    "The folder's name, or the source's title"
+    title: String!
+    folderId: String
+    "When its first source entered the vault (header creation time)"
+    addedAt: String!
+    lastAddedAt: String!
+    "Who added its first source: the source's createdBy, which any reader of the source document already sees"
+    addedBy: String
+    fileName: String
+    mimeType: String
+    sizeBytes: Float
+    method: String
+    tool: String
+    url: String
+    sourceType: String
+    sources: Int!
+    extracted: Int!
+    "INBOX and EXTRACTING: still to be read"
+    waiting: Int!
+    archived: Int!
+    sourceIds: [String!]!
+    notes: Int!
+    firstNoteAt: String
+    lastNoteAt: String
+    "The earliest written date of its notes, when a day or more before it was added"
+    writtenFrom: String
+    "The topics it started: MoCs most of whose notes came from it and that did not exist before it; a MoC with no such majority goes to the latest addition at or before it"
+    topicIds: [String!]!
+    "Knowledge links (relates to, builds on, contradicts, supersedes) among its own notes"
+    linksWithin: Int!
+    "Knowledge links between its notes and notes of earlier additions"
+    linksToEarlier: Int!
+    earlier: [KnowledgeGraphTimelineEarlier!]!
+    tags: [KnowledgeGraphTimelineTag!]!
+    "Its most linked notes"
+    topNotes: [KnowledgeGraphTimelineNoteRef!]!
+  }
+
+  type KnowledgeGraphTimelineEarlier {
+    additionId: String!
+    links: Int!
+  }
+
+  type KnowledgeGraphTimelineTag {
+    name: String!
+    count: Int!
+  }
+
+  type KnowledgeGraphTimelineNoteRef {
+    documentId: String!
+    title: String!
+  }
+
+  "A note's arrival: addedAt falls back to writtenAt on an index that predates added_at"
+  type KnowledgeGraphTimelineArrival {
+    documentId: String!
+    addedAt: String
+    writtenAt: String
+    additionId: String
+  }
+
+  type KnowledgeGraphTimelineTopic {
+    documentId: String!
+    title: String!
+    addedAt: String
+    writtenAt: String
+    additionId: String
+  }
+
+  type KnowledgeGraphTimelineTotals {
+    sources: Int!
+    notes: Int!
+    topics: Int!
+    links: Int!
+  }
+
+  "What was added to the vault, when, and what each addition became."
+  type KnowledgeGraphSourceTimeline {
+    additions: [KnowledgeGraphTimelineAddition!]!
+    notes: [KnowledgeGraphTimelineArrival!]!
+    topics: [KnowledgeGraphTimelineTopic!]!
+    totals: KnowledgeGraphTimelineTotals!
+  }
+
   extend type Query {
     knowledgeGraphNodes(driveId: ID!): [KnowledgeGraphNode!]!
     knowledgeGraphEdges(driveId: ID!): [KnowledgeGraphEdge!]!
+    """
+    The source timeline: every addition (a file's folder, a paste, a
+    workflow's burst, an agent's session) with when it arrived and what it
+    became, plus each note's and topic's arrival. Sources are read from the
+    reactor; notes, topics and links from the index.
+    """
+    knowledgeGraphSourceTimeline(driveId: ID!): KnowledgeGraphSourceTimeline!
     knowledgeGraphStats(driveId: ID!): GraphStats!
     knowledgeGraphNodeByDocumentId(
       driveId: ID!
