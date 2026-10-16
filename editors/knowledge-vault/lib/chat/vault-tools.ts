@@ -45,7 +45,7 @@ import {
 } from "../../../../processors/graph-indexer/work-outline.js";
 import type { ScopeOfWorkState } from "document-models/scope-of-work";
 import type { TreeNode } from "../source-tree.js";
-import { WBS_TYPE, checkProposal, formToChanges, isNewRef, workCatalog, type CheckResult, type LoadedDocument } from "./work-changes.js";
+import { SCOPE_TYPE, WBS_TYPE, checkProposal, formToChanges, isNewRef, workCatalog, type CheckResult, type LoadedDocument } from "./work-changes.js";
 import {
   buildTopicMap,
   findMatch,
@@ -1049,7 +1049,7 @@ export const WORK_TOOLS: ToolSchema[] = [
 
 /**
  * A proposal of changes to work, checked: the documents its form names read
- * from the vault — and the scope holding any breakdown it deletes — then the
+ * from the vault — the scope holding any breakdown it deletes, and the breakdowns of any scope it deletes — then the
  * form checked and rehearsed against them. What propose_work_changes runs on
  * the model's form, and what the card runs again on the person's edit of it,
  * so an edit is held to the same rules. `keep` keeps an edited proposal's
@@ -1091,11 +1091,22 @@ export async function checkWorkProposal(
     );
   await load(wanted);
   // A breakdown to delete is unlinked from its project first: read the scope that holds it.
+  // A scope to delete has its breakdowns unlinked first: read its projects' breakdowns, and every
+  // breakdown in the vault — one may name the scope without a project holding it.
   const holders = new Set<string>();
+  let deletesScope = false;
   for (const c of changes) {
     const d = c.kind === "delete_document" && typeof c.document === "string" ? docs.get(c.document.trim()) : undefined;
     const sowRef = (d?.state as { sowRef?: unknown } | null | undefined)?.sowRef;
     if (d?.documentType === WBS_TYPE && typeof sowRef === "string" && !docs.has(sowRef)) holders.add(sowRef);
+    if (d?.documentType === SCOPE_TYPE) {
+      deletesScope = true;
+      const projects = (d.state as { projects?: { wbsRef?: string | null }[] } | null)?.projects ?? [];
+      for (const p of projects) if (p.wbsRef && !docs.has(p.wbsRef)) holders.add(p.wbsRef);
+    }
+  }
+  if (deletesScope && members) {
+    for (const [id, m] of members) if (m.documentType === WBS_TYPE && !docs.has(id)) holders.add(id);
   }
   if (holders.size) await load(holders);
   const checked = keep

@@ -158,6 +158,21 @@ describe("propose_work_changes", () => {
     ]);
   });
 
+  it("reads the breakdowns of a scope to delete, so each is unlinked first", async () => {
+    const linked = linkedWorkDocs();
+    const reads = fakeEngine({
+      ...VAULT,
+      "scope-1": { ...VAULT["scope-1"], global: linked.get("scope-1")!.state! },
+      "wbs-1": { ...VAULT["wbs-1"], global: linked.get("wbs-1")!.state! },
+    });
+    const r = await executeTool("propose_work_changes", { summary: "Drop the scope", deletions: [{ document: "scope-1" }] }, CTX);
+    expect(reads).toEqual(["scope-1", "wbs-1"]);
+    expect(r.ok && (r.data as { proposal: WorkProposal }).proposal.changes.map((c) => c.says)).toEqual([
+      "Unlink work breakdown “Knowledge Vault breakdown” — it stays, outside any scope",
+      "Delete scope of work “Powerhouse 2026”",
+    ]);
+  });
+
   it("refuses to change anything but work", async () => {
     fakeEngine();
     const r = await executeTool("propose_work_changes", { summary: "x", operations: [{ document: "note-1", type: "EDIT_SCOPE_OF_WORK", input: "{}" }] }, CTX);
