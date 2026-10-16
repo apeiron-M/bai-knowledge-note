@@ -179,6 +179,13 @@ export type UseReactorDocsResult = {
    * has content.
    */
   isLoading: boolean;
+  /**
+   * True once every requested document has been read for the current spec
+   * set — a whole pass resolved, or the cache already held them all. Unlike
+   * `isLoading`, which turns false as soon as the first streamed document
+   * paints, this is what a consumer that needs the whole list waits for.
+   */
+  complete: boolean;
   /** Force an immediate re-fetch (e.g. right after a local write). */
   refetch: () => void;
 };
@@ -202,6 +209,8 @@ export function useReactorDocsWithRefetch(
   const [fetched, setFetched] = useState<{
     key: string;
     docs: PHDocument[];
+    /** A whole pass resolved for `key` (false while it streams). */
+    complete: boolean;
   } | null>(null);
   const [fetchTick, setFetchTick] = useState(0);
   const lastKeyRef = useRef<string>("");
@@ -294,7 +303,7 @@ export function useReactorDocsWithRefetch(
                   ? prev.docs.map((d) => (d.header.id === id ? outcome.doc : d))
                   : [...prev.docs, outcome.doc]
                 : prev.docs.filter((d) => d.header.id !== id);
-            return { key: prev.key, docs };
+            return { key: prev.key, docs, complete: prev.complete };
           });
         },
       );
@@ -358,7 +367,7 @@ export function useReactorDocsWithRefetch(
       } else {
         landed.delete(spec.id);
       }
-      setFetched({ key, docs: [...landed.values()] });
+      setFetched({ key, docs: [...landed.values()], complete: false });
     };
     void pMap(specs, FETCH_CONCURRENCY, (spec) =>
       fetchThroughCache(spec.id, () => fetchDocOutcome(spec), Date.now, maxAgeMs).then(
@@ -384,7 +393,7 @@ export function useReactorDocsWithRefetch(
             if (cached) next.push(cached.doc);
           }
         });
-        setFetched({ key, docs: next });
+        setFetched({ key, docs: next, complete: true });
       })
       .catch(() => {
         // Never leave a dead pass recorded as running, or the list waits
@@ -397,6 +406,7 @@ export function useReactorDocsWithRefetch(
   return {
     docs: fetched?.key === key ? fetched.docs : seeded,
     isLoading: specs.length > 0 && fetched?.key !== key && !seedComplete,
+    complete: specs.length === 0 || (fetched?.key === key ? fetched.complete : seedComplete),
     refetch,
   };
 }

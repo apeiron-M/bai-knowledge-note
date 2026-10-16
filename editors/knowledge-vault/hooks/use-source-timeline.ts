@@ -140,9 +140,11 @@ export function useSourceTimeline(driveId: string | undefined, graph: TimelineGr
   );
   const sourceDocs = useReactorDocsWithRefetch(specs, { pollMs: 20_000, retainKey: "source-list" });
   // Build only from a complete read: a half-read list would file every note
-  // whose source is still loading under "no recorded source".
+  // whose source is still loading under "no recorded source" — and rebuild on
+  // every document that lands. `isLoading` turns false at the first streamed
+  // document; `complete` waits for the whole pass.
   const ready =
-    fallback && browserTimelineReady({ graphLoading: graph.isLoading, graphHasNodes: graph.nodes.length > 0, docsLoading: sourceDocs.isLoading });
+    fallback && browserTimelineReady({ graphLoading: graph.isLoading, graphHasNodes: graph.nodes.length > 0, docsLoading: !sourceDocs.complete });
   const built = useMemo(() => {
     if (!ready) return null;
     return buildSourceTimeline(
