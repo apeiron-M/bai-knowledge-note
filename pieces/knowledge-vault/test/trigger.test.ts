@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveSource } from "../lib/common/props.js";
-import { HELD_TOO_LONG_MS, HOSTED_IN_PROGRESS_MAX, MAX_ATTEMPTS, newPipelineTaskTrigger, oneAtATimeFor, pollTasks, RESUME_AFTER_MS, toItem } from "../lib/triggers/new-pipeline-task.js";
+import { HELD_TOO_LONG_MS, HOSTED_IN_PROGRESS_MAX, MAX_ATTEMPTS, newPipelineTaskTrigger, oneAtATimeFor, pollTasks, RESUME_AFTER_MS, toItem, UNCLAIMED_HOLD_MS } from "../lib/triggers/new-pipeline-task.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
 
 const task = (id: string, extra: Record<string, unknown> = {}) => ({ id, taskType: "claim", status: "PENDING", documentRef: `src-${id}`, target: `Source ${id}`, currentPhase: "create", createdAt: "2026-09-28T10:00:00Z", ...extra });
@@ -55,8 +55,22 @@ describe("the new-pipeline-task trigger", () => {
     let clock = 1_000_000;
     const v = vault(tasks);
     expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 1, oneAtATime: true }, () => clock)).map((i) => i.task_id)).toEqual(["t1"]);
-    clock += 11 * 60_000; // t1 still pending: its run failed on the way
+    clock += UNCLAIMED_HOLD_MS + 60_000; // t1 still pending: its run failed on the way
     expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 1, oneAtATime: true }, () => clock)).map((i) => i.task_id)).toEqual(["t2"]);
+  });
+
+  it("does not fire a task again after a restart clears what it has seen, while the run it fired may still be waiting", async () => {
+    const tasks = [task("t1"), task("t2")];
+    const store = memoryStore();
+    let clock = 1_000_000;
+    const v = vault(tasks);
+    const props = { drive: "d", phase: "create", per_poll: 3 };
+    expect((await pollTasks(v.client, store, props, () => clock)).map((i) => i.task_id)).toEqual(["t1", "t2"]);
+    // A restart re-enables the trigger, and with the backlog wanted onEnable clears what it has seen;
+    // the runtime then starts the runs it had queued, which have not claimed their tasks yet.
+    await store.put("knowledge-vault:new-pipeline-task:seen", []);
+    clock += 5 * 60_000;
+    expect(await pollTasks(v.client, store, props, () => clock)).toEqual([]);
   });
 
   it("with a hosted model, starts up to per_poll at once, as before", async () => {

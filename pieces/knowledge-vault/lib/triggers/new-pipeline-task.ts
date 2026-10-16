@@ -33,7 +33,10 @@ const MAX_SEEN = 5000;
 const FIRED_KEY = "knowledge-vault:new-pipeline-task:fired";
 type Fired = Partial<Record<string, { n: number; at: number }>>;
 /** A task untouched this long after its run started is taken to have stopped. */
-export const RESUME_AFTER_MS = 10 * 60_000;
+// 30 min, not 10: since Powerhouse 6.2.3-dev.56 a fired run can wait in the runtime's queue (its
+// cross-workflow gate holds runs while the engine is busy, and keeps them across a restart), so an
+// unclaimed task is usually still on its way, and firing it again would work one source twice.
+export const RESUME_AFTER_MS = 30 * 60_000;
 /** Starts per task and phase, the first included: a source that fails every time stops costing runs. */
 export const MAX_ATTEMPTS = 3;
 /** A step runs for an hour at most (the template's timeout); a task held far longer has lost its run. */
@@ -91,7 +94,7 @@ async function readFired(store: StoreLike): Promise<Fired> {
 /** The task this trigger last started, until its run claims it. */
 const STARTED_KEY = "knowledge-vault:new-pipeline-task:started";
 /** A started task its run never claimed (it failed before) stops holding the queue after this long. */
-export const UNCLAIMED_HOLD_MS = 10 * 60_000;
+export const UNCLAIMED_HOLD_MS = 30 * 60_000;
 /**
  * With a hosted model, at most this many sources are worked on at once. The pipeline checks the queue
  * every 15 s (its trigger's pollEverySeconds, on the runtime's 15 s wake-ups), so a backlog would otherwise start four runs a minute,
@@ -118,7 +121,10 @@ export async function pollTasks(
   const known = new Set(seen);
   const fired = await readFired(store);
   const later = laterThan(props.phase);
-  const waiting = tasks.filter((t) => t.status === "PENDING" && t.currentPhase === props.phase && !known.has(seenKey(t)));
+  // Fired lately counts as seen whatever onEnable cleared: after a restart the runtime starts the
+  // runs it had queued, and a task they have not claimed yet is not new.
+  const firedLately = (k: string) => fired[k] !== undefined && t0 - fired[k].at < UNCLAIMED_HOLD_MS;
+  const waiting = tasks.filter((t) => t.status === "PENDING" && t.currentPhase === props.phase && !known.has(seenKey(t)) && !firedLately(seenKey(t)));
   // Stopped on the way: waiting where this trigger left it, or at a later phase nothing went on from.
   const quiet = (t: Task) => !(t0 - touchedAt(t) < RESUME_AFTER_MS);
   const mayRetry = (k: string) => {
