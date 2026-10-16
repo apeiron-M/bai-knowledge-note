@@ -13,6 +13,7 @@ import {
   type EdgeConfidence,
   type LinkArticulation,
 } from "../../shared/edge-articulation.js";
+import { linkedTargets } from "./link-targets.js";
 
 export type RelationshipAction = {
   id: string;
@@ -72,4 +73,30 @@ export function retargetLinkActions(
     input: { sourceId: noteId, targetId: old, relationshipType: linkType },
   };
   return [remove, ...addLinkActions(noteId, target, linkType, articulation, clock)];
+}
+
+/**
+ * REMOVE the old kind and ADD the new one, carrying the articulation — or
+ * nothing: without a target, for the same kind, or when the target already has
+ * a link of the new kind (the change would duplicate it).
+ */
+export function retypeLinkActions(
+  noteId: string,
+  link: { targetDocumentId: string | null; linkType: string | null },
+  newType: LinkType,
+  links: readonly { targetDocumentId: string | null; linkType: string | null }[],
+  articulation: LinkArticulation,
+  clock: LinkClock,
+): RelationshipAction[] {
+  const target = link.targetDocumentId;
+  if (!target || (link.linkType ?? "RELATES_TO") === newType) return [];
+  if (linkedTargets(links, newType).has(target)) return [];
+  const remove: RelationshipAction = {
+    id: clock.newId(),
+    type: "REMOVE_RELATIONSHIP",
+    scope: "document",
+    timestampUtcMs: clock.now,
+    input: { sourceId: noteId, targetId: target, relationshipType: link.linkType ?? "RELATES_TO" },
+  };
+  return [remove, ...addLinkActions(noteId, target, newType, articulation, clock)];
 }

@@ -34,7 +34,7 @@ import { IncomingLinks, WhereThisSits } from "./components/graph-position.js";
 import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { VaultLoader } from "../shared/vault-loader.js";
 import { useKnowledgeNotes } from "../knowledge-vault/hooks/use-knowledge-notes.js";
-import { addLinkActions, retargetLinkActions } from "./lib/link-actions.js";
+import { addLinkActions, retargetLinkActions, retypeLinkActions } from "./lib/link-actions.js";
 
 type NoteLinkLite = {
   id: string;
@@ -574,41 +574,23 @@ export default function Editor() {
                     // articulation travels with the pair.
                     const link = links.find((l) => l.id === id);
                     if (!link?.targetDocumentId) return;
-                    const now = timestamp();
-                    const metadata = articulationToMetadata({
-                      reason: link.reason ?? "",
-                      confidence: isEdgeConfidence(link.confidence)
-                        ? link.confidence
-                        : null,
-                    });
-                    void dispatchActions(
-                      [
-                        {
-                          id: generateId(),
-                          type: "REMOVE_RELATIONSHIP",
-                          scope: "document",
-                          timestampUtcMs: now,
-                          input: {
-                            sourceId: document.header.id,
-                            targetId: link.targetDocumentId,
-                            relationshipType: link.linkType ?? "RELATES_TO",
-                          },
-                        } as never,
-                        {
-                          id: generateId(),
-                          type: "ADD_RELATIONSHIP",
-                          scope: "document",
-                          timestampUtcMs: now,
-                          input: {
-                            sourceId: document.header.id,
-                            targetId: link.targetDocumentId,
-                            relationshipType: linkType,
-                            ...(metadata ? { metadata } : {}),
-                          },
-                        } as never,
-                      ],
+                    const acts = retypeLinkActions(
                       document.header.id,
+                      link,
+                      linkType,
+                      links,
+                      {
+                        reason: link.reason ?? "",
+                        confidence: isEdgeConfidence(link.confidence)
+                          ? link.confidence
+                          : null,
+                      },
+                      { now: timestamp(), newId: generateId },
                     );
+                    // Nothing when the target already has a link of this kind.
+                    if (acts.length > 0) {
+                      void dispatchActions(acts as never, document.header.id);
+                    }
                   }}
                   onChangeTarget={(id, targetDocumentId, articulation) => {
                     // The target is part of the relationship's identity, so a

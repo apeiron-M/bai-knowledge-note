@@ -4,7 +4,7 @@
  * without a target, or with the note itself as the target.
  */
 import { describe, expect, it } from "vitest";
-import { addLinkActions, retargetLinkActions } from "./link-actions.js";
+import { addLinkActions, retargetLinkActions, retypeLinkActions } from "./link-actions.js";
 
 const NOW = "2026-10-16T09:00:00.000Z";
 const clock = () => {
@@ -66,5 +66,28 @@ describe("changing a link's target", () => {
     expect(retargetLinkActions("note-1", link, "note-1", WHY, clock())).toEqual([]);
     expect(retargetLinkActions("note-1", link, "note-2", WHY, clock())).toEqual([]);
     expect(retargetLinkActions("note-1", { targetDocumentId: null, linkType: "BUILDS_ON" }, "note-3", WHY, clock())).toEqual([]);
+  });
+});
+
+describe("changing a link's kind", () => {
+  const link = { targetDocumentId: "note-2", linkType: "BUILDS_ON" };
+
+  it("removes the old kind and adds the new one with the reason, in one batch", () => {
+    expect(retypeLinkActions("note-1", link, "CONTRADICTS", [link], WHY, clock()).map((a) => [a.type, a.input.relationshipType])).toEqual([
+      ["REMOVE_RELATIONSHIP", "BUILDS_ON"],
+      ["ADD_RELATIONSHIP", "CONTRADICTS"],
+    ]);
+  });
+
+  it("sends nothing when the target already has a link of the new kind — it would duplicate it", () => {
+    const other = { targetDocumentId: "note-2", linkType: "CONTRADICTS" };
+    expect(retypeLinkActions("note-1", link, "CONTRADICTS", [link, other], WHY, clock())).toEqual([]);
+    // No kind is "Relates to".
+    expect(retypeLinkActions("note-1", link, "RELATES_TO", [link, { targetDocumentId: "note-2", linkType: null }], WHY, clock())).toEqual([]);
+  });
+
+  it("sends nothing for the same kind, or a link without a target", () => {
+    expect(retypeLinkActions("note-1", link, "BUILDS_ON", [link], WHY, clock())).toEqual([]);
+    expect(retypeLinkActions("note-1", { targetDocumentId: null, linkType: null }, "BUILDS_ON", [], WHY, clock())).toEqual([]);
   });
 });
