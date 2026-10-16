@@ -12,8 +12,8 @@ import { completeJson, type LlmClient } from "./llm.js";
  * are reported, never rewritten: a person decides. A confirmed duplicate is
  * retired the way the vault retires one while it is still in review: the
  * surviving note SUPERSEDES it (with the reason on the edge) and the
- * duplicate is rejected back to DRAFT with a comment. Nothing is approved
- * and the task stays at verify, whose advance completes it after review.
+ * duplicate is rejected back to DRAFT with a comment.
+ * Nothing is approved: the notes stay in review for a person, and this step's advance completes the task.
  */
 
 const str = (v: unknown): string => (typeof v === "string" ? v : v == null ? "" : JSON.stringify(v));

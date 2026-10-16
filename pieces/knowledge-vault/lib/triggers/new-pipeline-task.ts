@@ -206,7 +206,7 @@ export const newPipelineTaskTrigger = createTrigger({
           { label: "create: queued for extraction", value: "create" },
           { label: "reflect: extracted, to connect", value: "reflect" },
           { label: "reweave: connected, to place in MoCs", value: "reweave" },
-          { label: "verify: waiting for review", value: "verify" },
+          { label: "verify: placed, to check", value: "verify" },
         ],
       },
     }),

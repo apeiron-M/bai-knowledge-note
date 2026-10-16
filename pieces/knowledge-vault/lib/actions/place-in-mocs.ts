@@ -14,7 +14,7 @@ export const placeInMocsAction = createAction({
   name: "place-in-mocs",
   displayName: "Place notes in MoCs",
   description:
-    "Makes each note a source produced a core idea of a Map of Content, creating a TOPIC MoC under a domain only when three or more notes share a theme no MoC covers. Write mode links them and advances the pipeline task to verify, where it waits for your review. Set the step's timeout to 300 s.",
+    "Makes each note a source produced a core idea of a Map of Content, creating a TOPIC MoC under a domain only when three or more notes share a theme no MoC covers. Write mode links them and advances the pipeline task to verify, the next step. Set the step's timeout to 300 s.",
   audience: "both",
   props: { drive: driveProp, source: sourceProp, source_id: sourceIdProp, model: modelProp, mode: modeProp("Write: add the notes to MoCs") },
   outputSchema: {
@@ -50,7 +50,7 @@ export const placeInMocsAction = createAction({
     }
     if (read.notes.length === 0) {
       const pipeline = write
-        ? await stage("pipeline", () => advancePipeline(client, { drive, sourceId, phase: "reweave", workDone: "The source yielded no notes, so there was nothing to place. Ready for review.", filesModified: [], completedBy: `place-in-mocs · ${model}` }))
+        ? await stage("pipeline", () => advancePipeline(client, { drive, sourceId, phase: "reweave", workDone: "The source yielded no notes, so there was nothing to place. Next: verify.", filesModified: [], completedBy: `place-in-mocs · ${model}` }))
         : null;
       const { stages, seconds } = await finish();
       return { summary: `${write ? "" : "Dry run: "}"${read.sourceTitle}" yielded no notes; nothing to place.${pipeline ? ` ${pipeline.summary}` : ""} ${seconds} s.`, stages, dry_run: !write, model, placements: [], new_mocs: [], unplaced: [], created_mocs: [], problems: [], pipeline, cost_usd: 0, seconds };
@@ -63,7 +63,7 @@ export const placeInMocsAction = createAction({
             drive,
             sourceId,
             phase: "reweave",
-            workDone: `Placed ${plan.placements.length} of ${read.notes.length} notes in MoCs${plan.new_mocs.length ? ` (${plan.new_mocs.length} new TOPIC MoC)` : ""}. Ready for review.`,
+            workDone: `Placed ${plan.placements.length} of ${read.notes.length} notes in MoCs${plan.new_mocs.length ? ` (${plan.new_mocs.length} new TOPIC MoC)` : ""}. Next: verify.`,
             filesModified: [...read.notes.map((n) => n.id), ...written.created_mocs],
             completedBy: `place-in-mocs · ${model}`,
             incomplete: written.problems.length ? `${written.problems.length} placement${written.problems.length === 1 ? "" : "s"} did not land (${written.problems[0]})` : null,
