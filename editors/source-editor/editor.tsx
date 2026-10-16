@@ -27,6 +27,9 @@ import {
 } from "../shared/revision-history.js";
 import { useRevisionHistory } from "../shared/use-revision-history.js";
 import { SOURCE_REVISION_MODEL } from "./lib/revision-model.js";
+import { isDesktopHost } from "../shared/host-config.js";
+import { QueueStatusLine } from "./components/queue-status-line.js";
+import { openTaskFor } from "./lib/queue-status.js";
 
 const SOURCE_TYPES = [
   "ARTICLE",
@@ -212,7 +215,12 @@ export default function Editor() {
   )?.id;
   const [pipelineDoc, pipelineDispatch] =
     usePipelineQueueDocumentById(pipelineNodeId);
-  const [queued, setQueued] = useState(false);
+  // Re-read once a minute so the web "nothing has started it yet" line appears without a reload.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(timer);
+  }, []);
   const [view, setView] = useState<View>("content");
   const [detailTab, setDetailTab] = useState<DetailTab>("claims");
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -302,16 +310,10 @@ export default function Editor() {
   const claims = state.extractedClaims ?? [];
   const attachments = state.attachments ?? [];
 
-  // Check if a pipeline task already exists for this source
+  // The source's newest open claim task, read from the queue the editor already loads
   const pipelineState = pipelineDoc?.state?.global;
-  const existingTask = pipelineState?.tasks?.find(
-    (t: { documentRef?: string | null; status?: string }) =>
-      t.documentRef === document.header.id,
-  );
-  const hasActiveTask =
-    existingTask &&
-    existingTask.status !== "DONE" &&
-    existingTask.status !== "FAILED";
+  const openTask = openTaskFor(pipelineState?.tasks ?? [], document.header.id);
+  const hasActiveTask = !!openTask;
 
   function handleQueueForProcessing() {
     if (!pipelineDispatch || !document.header.id) return;
@@ -319,7 +321,6 @@ export default function Editor() {
     if (hasActiveTask) {
       // Task already exists — just reset status so the agent re-processes the latest state
       dispatch(actions.setSourceStatus({ status: "EXTRACTING" }));
-      setQueued(true);
       return;
     }
 
@@ -334,10 +335,9 @@ export default function Editor() {
       }),
     );
     dispatch(actions.setSourceStatus({ status: "EXTRACTING" }));
-    setQueued(true);
   }
 
-  const canQueue = status === "INBOX" && !!pipelineDispatch && !queued;
+  const canQueue = status === "INBOX" && !!pipelineDispatch;
 
   const onScroll = () => {
     const el = reader.current;
@@ -400,11 +400,7 @@ export default function Editor() {
                     Queue for processing
                   </button>
                 )}
-                {queued && (
-                  <span className="queued">
-                    Queued — run /pipeline in Claude Code
-                  </span>
-                )}
+                <QueueStatusLine task={openTask} desktop={isDesktopHost()} now={now} />
               </div>
 
               <h1>{state.title}</h1>
