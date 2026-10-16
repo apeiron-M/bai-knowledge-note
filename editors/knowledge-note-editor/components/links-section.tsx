@@ -45,6 +45,15 @@ type LinksSectionProps = {
   onUpdateLinkType: (id: string, linkType: LinkType) => void;
   /** Set or replace the edge's reason / confidence (UPDATE_RELATIONSHIP). */
   onArticulate: (id: string, articulation: LinkArticulation) => void;
+  /**
+   * Point a link at another document, its reason restated: REMOVE the old
+   * pair and ADD the new one in one dispatch.
+   */
+  onChangeTarget: (
+    id: string,
+    targetDocumentId: string,
+    articulation: LinkArticulation,
+  ) => void;
 };
 
 const CONFIDENCE_COLORS: Record<EdgeConfidence, string> = {
@@ -118,6 +127,7 @@ export function LinksSection({
   onRemoveLink,
   onUpdateLinkType,
   onArticulate,
+  onChangeTarget,
 }: LinksSectionProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
@@ -184,10 +194,8 @@ export function LinksSection({
           onUpdateLinkType={onUpdateLinkType}
           onRemoveLink={onRemoveLink}
           onArticulate={onArticulate}
-          onChangeTarget={(targetId) => {
-            // Interim until F4: remove and re-add. F4 carries the reason across.
-            onRemoveLink(link.id);
-            onAddLink(targetId, kindOf(link), { reason: "", confidence: null });
+          onChangeTarget={(targetId, articulation) => {
+            onChangeTarget(link.id, targetId, articulation);
             setEditingLinkId(null);
           }}
         />
@@ -234,15 +242,21 @@ function LinkCard({
   onUpdateLinkType: (id: string, linkType: LinkType) => void;
   onRemoveLink: (id: string) => void;
   onArticulate: (id: string, articulation: LinkArticulation) => void;
-  onChangeTarget: (targetId: string) => void;
+  onChangeTarget: (targetId: string, articulation: LinkArticulation) => void;
 }) {
   const editRef = useRef<HTMLDivElement>(null);
   const [isArticulating, setIsArticulating] = useState(false);
+  // The target picked, while the person says why the note links to it.
+  const [newTarget, setNewTarget] = useState<LinkCandidate | null>(null);
+  const confidence = isEdgeConfidence(link.confidence) ? link.confidence : null;
 
   // The parent supplies `onCancelEdit` as an inline arrow, so this
   // click-outside listener was re-subscribed on every render — once per link
-  // card on the page.
-  const cancelEdit = useEventCallback(onCancelEdit);
+  // card on the page. Leaving also drops a target picked but not saved.
+  const cancelEdit = useEventCallback(() => {
+    setNewTarget(null);
+    onCancelEdit();
+  });
   useEffect(() => {
     if (!isEditing) return;
     function handleClickOutside(e: MouseEvent) {
@@ -261,22 +275,34 @@ function LinkCard({
         ref={editRef}
         className="rounded-lg border border-[var(--bai-accent)]/20 bg-[var(--bai-accent-soft)] p-2"
       >
-        <p className="mb-1.5 text-[10px] font-medium uppercase text-[var(--bai-text-muted)]">
-          Change target document
-        </p>
-        <DocumentSearch
-          candidates={targets.candidates(kind)}
-          pasted={(q) => targets.pasted(q, kind)}
-          noun={kind === "DERIVED_FROM" ? "sources" : "notes"}
-          onSelect={(doc) => onChangeTarget(doc.id)}
-          onCancel={onCancelEdit}
-          autoFocus
-        />
+        {newTarget ? (
+          <RetargetReason
+            target={newTarget}
+            initial={{ reason: link.reason ?? "", confidence }}
+            onSave={(articulation) => {
+              onChangeTarget(newTarget.id, articulation);
+              setNewTarget(null);
+            }}
+            onCancel={cancelEdit}
+          />
+        ) : (
+          <>
+            <p className="mb-1.5 text-[10px] font-medium uppercase text-[var(--bai-text-muted)]">
+              Change target document
+            </p>
+            <DocumentSearch
+              candidates={targets.candidates(kind)}
+              pasted={(q) => targets.pasted(q, kind)}
+              noun={kind === "DERIVED_FROM" ? "sources" : "notes"}
+              onSelect={setNewTarget}
+              onCancel={cancelEdit}
+              autoFocus
+            />
+          </>
+        )}
       </div>
     );
   }
-
-  const confidence = isEdgeConfidence(link.confidence) ? link.confidence : null;
 
   return (
     <div className="group rounded-lg border border-[var(--bai-border)] bg-[var(--bai-deep)] px-3 py-2">
@@ -389,6 +415,37 @@ function LinkCard({
         + why does this link exist?
       </button>
     )}
+    </div>
+  );
+}
+
+/**
+ * The reason for a link's new target. The old reason and confidence are
+ * filled in — they may still hold — and Save is the only way the new target
+ * lands: REMOVE and ADD go together, so the edge is never without a reason.
+ */
+export function RetargetReason({
+  target,
+  initial,
+  onSave,
+  onCancel,
+}: {
+  target: LinkCandidate;
+  initial: LinkArticulation;
+  onSave: (articulation: LinkArticulation) => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div>
+      <p className="text-[12px] font-medium text-[var(--bai-text-secondary)]">
+        {`Why does this note link to “${target.title}”?`}
+      </p>
+      <ArticulationForm
+        initial={initial}
+        submitLabel="Save"
+        onSubmit={onSave}
+        onCancel={onCancel}
+      />
     </div>
   );
 }

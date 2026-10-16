@@ -34,7 +34,7 @@ import { IncomingLinks, WhereThisSits } from "./components/graph-position.js";
 import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { VaultLoader } from "../shared/vault-loader.js";
 import { useKnowledgeNotes } from "../knowledge-vault/hooks/use-knowledge-notes.js";
-import { addLinkActions } from "./lib/link-actions.js";
+import { addLinkActions, retargetLinkActions } from "./lib/link-actions.js";
 
 type NoteLinkLite = {
   id: string;
@@ -609,6 +609,23 @@ export default function Editor() {
                       ],
                       document.header.id,
                     );
+                  }}
+                  onChangeTarget={(id, targetDocumentId, articulation) => {
+                    // The target is part of the relationship's identity, so a
+                    // new target is remove + add — in one dispatch, as a type
+                    // change is, carrying the reason the person restated.
+                    const link = links.find((l) => l.id === id);
+                    if (!link) return;
+                    const acts = retargetLinkActions(
+                      document.header.id,
+                      link,
+                      targetDocumentId,
+                      articulation,
+                      { now: timestamp(), newId: generateId },
+                    );
+                    if (acts.length > 0) {
+                      void dispatchActions(acts as never, document.header.id);
+                    }
                   }}
                 />
                 <IncomingLinks graph={graph} />

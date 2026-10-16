@@ -6,7 +6,7 @@
 import "../../shared/test/browser-globals.js";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { AddLinkForm, type TargetFinder } from "./links-section.js";
+import { AddLinkForm, RetargetReason, type TargetFinder } from "./links-section.js";
 import type { LinkCandidate } from "../lib/link-targets.js";
 
 const noop = () => {};
@@ -32,5 +32,31 @@ describe("adding a link", () => {
     expect(chosen).toContain("Chapter 3 Hardware · source");
     expect(addButton(chosen)).toContain('disabled=""');
     expect(addButton(chosen)).toContain("Say why this link exists first");
+  });
+});
+
+describe("changing a link's target", () => {
+  const NOTE: LinkCandidate = { id: "note-3", title: "Memory walls slow training", kind: "note" };
+
+  it("asks why the note links to the new target, with the current reason and confidence filled in", () => {
+    const html = renderToStaticMarkup(
+      <RetargetReason
+        target={NOTE}
+        initial={{ reason: "Both measure the same chip", confidence: "established" }}
+        onSave={noop}
+        onCancel={noop}
+      />,
+    );
+    expect(html).toContain("Why does this note link to “Memory walls slow training”?");
+    expect(html).toMatch(/<textarea[^>]*>Both measure the same chip<\/textarea>/);
+    expect(html).toContain('<option value="established" selected="">');
+    expect(/<button[^>]*>Save<\/button>/.exec(html)?.[0]).not.toContain('disabled=""');
+  });
+
+  it("will not save the new target without a reason", () => {
+    const html = renderToStaticMarkup(
+      <RetargetReason target={NOTE} initial={{ reason: "", confidence: null }} onSave={noop} onCancel={noop} />,
+    );
+    expect(/<button[^>]*>Save<\/button>/.exec(html)?.[0]).toContain('disabled=""');
   });
 });
