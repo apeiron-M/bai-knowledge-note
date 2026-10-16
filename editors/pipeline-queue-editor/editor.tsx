@@ -7,11 +7,10 @@ import { TaskTable } from "./components/task-table.js";
 import { claimPhases, countGroups, filterTasks, inView, openByPhase, sortTasks, VIEW_LABEL, type View } from "./lib/tasks.js";
 import { PIPELINE_QUEUE_STYLES } from "./styles.js";
 
-const VIEWS: View[] = ["open", "review", "problems", "finished", "all"];
+const VIEWS: View[] = ["open", "problems", "finished", "all"];
 
 const EMPTY: Record<View, string> = {
   open: "Nothing is waiting. Queue a source in the vault and it shows up here.",
-  review: "No source is waiting for review.",
   problems: "No task is blocked or failed.",
   finished: "No task has finished yet.",
   all: "The queue is empty. Queue a source in the vault to start the pipeline.",
@@ -32,9 +31,8 @@ export default function Editor() {
   const viewCounts = useMemo(() => Object.fromEntries(VIEWS.map((v) => [v, tasks.filter((t) => inView(t, v)).length])) as Record<View, number>, [tasks]);
   const visible = useMemo(() => sortTasks(filterTasks(tasks, { view, phase, query })), [tasks, view, phase, query]);
 
-  const open = groups.review + groups.blocked + groups.working + groups.queued;
+  const open = groups.blocked + groups.working + groups.queued;
   const summary = [
-    groups.review ? `${groups.review} waiting for your review` : null,
     groups.blocked ? `${groups.blocked} blocked` : null,
     groups.working ? `${groups.working} working` : null,
     groups.queued ? `${groups.queued} queued` : null,

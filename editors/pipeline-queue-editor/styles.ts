@@ -20,7 +20,6 @@ export const PIPELINE_QUEUE_STYLES = `
 .pq-editor .pq-flow-button.is-selected { border-color: var(--bai-accent); background: var(--bai-accent-soft); }
 .pq-editor .pq-flow-count { font-size: 1.75rem; font-weight: 650; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .pq-editor .pq-flow-button.is-empty .pq-flow-count { color: var(--bai-text-faint); }
-.pq-editor .pq-flow-button.is-human:not(.is-empty) .pq-flow-count { color: var(--bai-accent); }
 .pq-editor .pq-flow-name { font-size: 0.875rem; font-weight: 600; color: var(--bai-text-secondary); }
 .pq-editor .pq-flow-hint { font-size: 0.75rem; color: var(--bai-text-muted); }
 .pq-editor .pq-flow-arrow { width: 22px; flex: 0 0 22px; height: 1px; background: var(--bai-border); position: relative; }
@@ -63,7 +62,6 @@ export const PIPELINE_QUEUE_STYLES = `
 .pq-editor .pq-seg.is-stopped { background: var(--bai-danger); }
 
 .pq-editor .pq-status { font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
-.pq-editor .pq-status.is-review { color: var(--bai-accent); }
 .pq-editor .pq-status.is-blocked, .pq-editor .pq-status.is-failed { color: var(--bai-danger); }
 .pq-editor .pq-status.is-working { color: var(--bai-status-review); }
 .pq-editor .pq-status.is-queued { color: var(--bai-text-tertiary); }

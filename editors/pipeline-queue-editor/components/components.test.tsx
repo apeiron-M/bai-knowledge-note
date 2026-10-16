@@ -11,10 +11,11 @@ const task = (i: number, extra: Partial<PipelineTask> = {}): PipelineTask => ({
 });
 
 describe("the phase strip", () => {
-  it("shows open tasks per phase, marks the one that waits for a person, and the selected one", () => {
+  it("shows open tasks per phase, what the last step does, and the selected one", () => {
     const html = renderToStaticMarkup(<PhaseFlow phases={PHASES} counts={{ create: 12, reflect: 0, reweave: 2, verify: 3 }} active="reweave" onSelect={() => undefined} />);
     expect(html).toMatch(/<span class="pq-flow-count">12<\/span><span class="pq-flow-name">create<\/span><span class="pq-flow-hint">queued sources<\/span>/);
-    expect(html).toMatch(/is-human[^>]*>(?:(?!<\/button>).)*waits for you/);
+    expect(html).not.toMatch(/waits for you|is-human/);
+    expect(html).toMatch(/<span class="pq-flow-hint">checks the notes<\/span>/);
     expect(html).toMatch(/aria-pressed="true" class="pq-flow-button is-selected"/);
     expect(html).toMatch(/is-empty/);
     expect(html.match(/pq-flow-arrow/g)).toHaveLength(3);
@@ -30,7 +31,8 @@ describe("the task table", () => {
     ];
     const html = renderToStaticMarkup(<TaskTable tasks={tasks} phases={PHASES} now={Date.parse("2026-09-28T12:00:00Z")} emptyText="empty" />);
     expect(html).toMatch(/<thead>.*Source.*Progress.*Status.*Assigned to.*Updated/);
-    expect(html).toMatch(/pq-status is-review">Waiting for review/);
+    expect(html).toMatch(/pq-status is-queued">Queued/);
+    expect(html).not.toMatch(/Waiting for review/);
     expect(html).toMatch(/pq-status is-working">Working/);
     expect(html).toMatch(/title="Open &quot;Source 1&quot;"/);
     expect(html).toMatch(/pq-plain">Source 3/);
@@ -48,6 +50,6 @@ describe("the task table", () => {
     expect(html).toMatch(/Show 200 more/);
   });
   it("says what to do when there is nothing to show", () => {
-    expect(renderToStaticMarkup(<TaskTable tasks={[]} phases={PHASES} now={0} emptyText="No source is waiting for review." />)).toBe('<p class="pq-empty">No source is waiting for review.</p>');
+    expect(renderToStaticMarkup(<TaskTable tasks={[]} phases={PHASES} now={0} emptyText="Nothing is queued." />)).toBe('<p class="pq-empty">Nothing is queued.</p>');
   });
 });

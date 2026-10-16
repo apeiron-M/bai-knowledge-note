@@ -2,14 +2,13 @@ import type { PipelineTask } from "document-models/pipeline-queue";
 
 /**
  * How the pipeline queue editor reads a task: which group it belongs to,
- * whether it is still open, and the order that puts what needs a person
- * first. Pure, so the table's behaviour is tested without rendering it.
+ * whether it is still open, and the order that puts what is stuck first.
+ * Pure, so the table's behaviour is tested without rendering it.
  */
 
-export type TaskGroup = "review" | "blocked" | "working" | "queued" | "done" | "failed";
+export type TaskGroup = "blocked" | "working" | "queued" | "done" | "failed";
 
 export const GROUP_LABEL: Record<TaskGroup, string> = {
-  review: "Waiting for review",
   blocked: "Blocked",
   working: "Working",
   queued: "Queued",
@@ -17,8 +16,8 @@ export const GROUP_LABEL: Record<TaskGroup, string> = {
   failed: "Failed",
 };
 
-/** Attention order: what waits on a person, then what is stuck, then routine work, then history. */
-const GROUP_RANK: Record<TaskGroup, number> = { review: 0, blocked: 1, working: 2, queued: 3, failed: 4, done: 5 };
+/** Attention order: what is stuck, then routine work, then history. */
+const GROUP_RANK: Record<TaskGroup, number> = { blocked: 0, working: 1, queued: 2, failed: 3, done: 4 };
 
 export const DEFAULT_PHASES = ["create", "reflect", "reweave", "verify"];
 
@@ -31,7 +30,6 @@ export function groupOf(task: Pick<PipelineTask, "status" | "currentPhase">): Ta
     case "BLOCKED":
       return "blocked";
     default:
-      if (task.currentPhase === "verify") return "review";
       return task.status === "IN_PROGRESS" ? "working" : "queued";
   }
 }
@@ -41,11 +39,10 @@ export const isOpen = (task: Pick<PipelineTask, "status" | "currentPhase">) => {
   return g !== "done" && g !== "failed";
 };
 
-export type View = "open" | "review" | "problems" | "finished" | "all";
+export type View = "open" | "problems" | "finished" | "all";
 
 export const VIEW_LABEL: Record<View, string> = {
   open: "Open",
-  review: "Needs review",
   problems: "Blocked & failed",
   finished: "Finished",
   all: "All",
@@ -56,8 +53,6 @@ export function inView(task: Pick<PipelineTask, "status" | "currentPhase">, view
   switch (view) {
     case "open":
       return isOpen(task);
-    case "review":
-      return g === "review";
     case "problems":
       return g === "blocked" || g === "failed";
     case "finished":
@@ -81,7 +76,7 @@ export function filterTasks<T extends Pick<PipelineTask, "status" | "currentPhas
 
 const when = (t: Pick<PipelineTask, "updatedAt" | "createdAt">) => Date.parse(t.updatedAt ?? t.createdAt) || 0;
 
-/** What needs a person first; within a group, the most recently touched. Stable for equal keys. */
+/** What is stuck first; within a group, the most recently touched. Stable for equal keys. */
 export function sortTasks<T extends Pick<PipelineTask, "status" | "currentPhase" | "updatedAt" | "createdAt">>(tasks: T[]): T[] {
   return tasks
     .map((t, i) => ({ t, i }))
@@ -90,7 +85,7 @@ export function sortTasks<T extends Pick<PipelineTask, "status" | "currentPhase"
 }
 
 export function countGroups(tasks: Pick<PipelineTask, "status" | "currentPhase">[]): Record<TaskGroup, number> {
-  const out: Record<TaskGroup, number> = { review: 0, blocked: 0, working: 0, queued: 0, done: 0, failed: 0 };
+  const out: Record<TaskGroup, number> = { blocked: 0, working: 0, queued: 0, done: 0, failed: 0 };
   for (const t of tasks) out[groupOf(t)]++;
   return out;
 }

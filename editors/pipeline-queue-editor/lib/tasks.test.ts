@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { claimPhases, countGroups, DEFAULT_PHASES, filterTasks, groupOf, inView, isOpen, openByPhase, phaseStates, relativeTime, sortTasks, type View } from "./tasks.js";
+import { claimPhases, countGroups, DEFAULT_PHASES, filterTasks, GROUP_LABEL, groupOf, inView, isOpen, openByPhase, phaseStates, relativeTime, sortTasks, type View, VIEW_LABEL } from "./tasks.js";
 
 type T = { id: string; status: "PENDING" | "IN_PROGRESS" | "BLOCKED" | "DONE" | "FAILED"; currentPhase: string | null; completedPhases: string[]; target: string; assignedTo: string | null; createdAt: string; updatedAt: string | null };
 const task = (id: string, status: T["status"], currentPhase: string | null, extra: Partial<T> = {}): T => ({ id, status, currentPhase, completedPhases: [], target: `Source ${id}`, assignedTo: null, createdAt: "2026-09-28T10:00:00Z", updatedAt: null, ...extra });
@@ -15,12 +15,13 @@ const QUEUE = [
 
 describe("reading a task", () => {
   it("puts each task in the group a person would name it by", () => {
-    expect(QUEUE.map(groupOf)).toEqual(["queued", "working", "review", "blocked", "done", "failed"]);
-    expect(groupOf({ status: "IN_PROGRESS", currentPhase: "verify" })).toBe("review");
+    expect(QUEUE.map(groupOf)).toEqual(["queued", "working", "queued", "blocked", "done", "failed"]);
+    expect(groupOf({ status: "IN_PROGRESS", currentPhase: "verify" })).toBe("working");
+    expect(groupOf({ status: "PENDING", currentPhase: "verify" })).toBe("queued");
     expect(QUEUE.filter(isOpen).map((t) => t.id)).toEqual(["q", "w", "r", "b"]);
   });
   it("counts groups and open tasks per phase", () => {
-    expect(countGroups(QUEUE)).toEqual({ review: 1, blocked: 1, working: 1, queued: 1, done: 1, failed: 1 });
+    expect(countGroups(QUEUE)).toEqual({ blocked: 1, working: 1, queued: 2, done: 1, failed: 1 });
     expect(openByPhase([...QUEUE, task("x", "PENDING", "enrich"), task("y", "PENDING", null)], DEFAULT_PHASES)).toEqual({ create: 1, reflect: 1, reweave: 1, verify: 1 });
   });
   it("shows each phase as done, current, to do, or where it stopped", () => {
@@ -37,7 +38,7 @@ describe("the views", () => {
   const ids = (v: View) => QUEUE.filter((t) => inView(t, v)).map((t) => t.id);
   it("hide what is finished by default, and show it on request", () => {
     expect(ids("open")).toEqual(["q", "w", "r", "b"]);
-    expect(ids("review")).toEqual(["r"]);
+    expect(VIEW_LABEL).not.toHaveProperty("review");
     expect(ids("problems")).toEqual(["b", "f"]);
     expect(ids("finished")).toEqual(["d", "f"]);
     expect(ids("all")).toHaveLength(6);
@@ -48,11 +49,17 @@ describe("the views", () => {
     expect(filterTasks(QUEUE, { view: "open", phase: null, query: "0XADBA" }).map((t) => t.id)).toEqual(["w"]);
     expect(filterTasks(QUEUE, { view: "open", phase: "verify", query: "nothing" })).toEqual([]);
   });
-  it("put what needs a person first, then the most recently touched", () => {
+  it("put what is stuck first, then routine work by most recently touched", () => {
     const later = task("q2", "PENDING", "create", { updatedAt: "2026-09-28T13:00:00Z" });
     const tie = task("q3", "PENDING", "create");
     const bad = task("q4", "PENDING", "create", { createdAt: "not a date" });
-    expect(sortTasks([...QUEUE, later, tie, bad]).map((t) => t.id)).toEqual(["r", "b", "w", "q2", "q", "q3", "q4", "f", "d"]);
+    expect(sortTasks([...QUEUE, later, tie, bad]).map((t) => t.id)).toEqual(["b", "w", "q2", "q", "r", "q3", "q4", "f", "d"]);
+  });
+});
+
+describe("groups", () => {
+  it("has no review group or label", () => {
+    expect(Object.keys(GROUP_LABEL)).toEqual(["blocked", "working", "queued", "done", "failed"]);
   });
 });
 
