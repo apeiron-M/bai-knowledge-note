@@ -189,6 +189,49 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .ifNotExists()
     .execute();
 
+  // When the document entered the vault: its header's createdAtUtcIso.
+  // `created_at` is when it was written (provenance) — weeks earlier for an
+  // imported note — so the source timeline needs both. Rows that predate the
+  // column stay null until their next operation or a reindex: nothing in the
+  // index knows the header's time.
+  await db.schema
+    .alterTable("graph_nodes")
+    .addColumn("added_at", "varchar(50)", (col) => col.ifNotExists())
+    .execute();
+  // Rows that predate the column: the document's first recorded operation is
+  // the best the index knows of when it arrived. Its next operation replaces
+  // the estimate with the header's own time (the live write keeps the
+  // earliest), as does a reindex. Only nulls are touched, and only ISO times
+  // are trusted — anything else would not sort with them.
+  await db
+    .updateTable("graph_nodes")
+    .set((eb) => ({
+      added_at: eb
+        .selectFrom("graph_operations")
+        .select((o) => o.fn.min<string>("graph_operations.timestamp").as("first"))
+        .whereRef("graph_operations.document_id", "=", "graph_nodes.document_id")
+        .where("graph_operations.timestamp", "like", "____-__-__T%"),
+    }))
+    .where("added_at", "is", null)
+    .execute();
+
+  // A small row per source document — see `GraphSource` in schema.ts.
+  await db.schema
+    .createTable("graph_sources")
+    .ifNotExists()
+    .addColumn("document_id", "varchar(255)", (col) => col.primaryKey())
+    .addColumn("row_json", "text", (col) => col.notNull())
+    .addColumn("revision", "integer", (col) => col.notNull().defaultTo(-1))
+    .addColumn("version", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("updated_at", "varchar(50)", (col) => col.notNull())
+    .execute();
+  for (const [name, fallback] of [["revision", -1], ["version", 1]] as const) {
+    await db.schema
+      .alterTable("graph_sources")
+      .addColumn(name, "integer", (col) => col.notNull().defaultTo(fallback).ifNotExists())
+      .execute();
+  }
+
   // Durable embedding store — replaces the separate memory:// PGlite that
   // lost every vector on restart. Lives in the same per-drive namespace as
   // graph_nodes, so it persists wherever graph_nodes provably persists.
@@ -208,6 +251,7 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
 }
 
 export async function down(db: IRelationalDb<any>): Promise<void> {
+  await db.schema.dropTable("graph_sources").ifExists().execute();
   await db.schema.dropTable("note_embeddings").ifExists().execute();
   await db.schema.dropTable("graph_operations").ifExists().execute();
   await db.schema.dropTable("graph_topics").ifExists().execute();

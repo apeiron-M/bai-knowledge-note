@@ -15,6 +15,7 @@ import {
   isIndexedLinkType,
 } from "./link-types.js";
 import { isIndexedDocumentType, projectNode } from "./project.js";
+import { revisionOf, SOURCE_DOCUMENT_TYPE, SOURCE_ROW_VERSION, sourceRowOf } from "./source-timeline.js";
 import { summarizeLink, summarizeOperation } from "./summarize.js";
 import {
   TensionAutomation,
@@ -248,6 +249,9 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     // are applied individually as they arrive — edges aren't a reduction
     // of doc state.
     const lastByDocument = new Map<string, OperationWithContext>();
+    // Sources: the last state per source, kept as a small row for the
+    // source timeline (graph_sources) — never a node, never activity.
+    const lastBySource = new Map<string, OperationWithContext>();
 
     // Membership first, for the whole batch: the containment edge that
     // makes a new document "ours" travels in the same job as its initial
@@ -265,6 +269,17 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     for (const entry of operations) {
       const { operation, context } = entry;
       const documentId = context.documentId;
+
+      // A source is kept only as its row — no edges, no activity. Its
+      // deletion still goes through the deletion branch below.
+      if (
+        context.documentType === SOURCE_DOCUMENT_TYPE &&
+        operation.action.type !== "DELETE_DOCUMENT" &&
+        operation.action.type !== "PURGE_DOCUMENT"
+      ) {
+        if (context.resultingState && (await this.isOurs(documentId))) lastBySource.set(documentId, entry);
+        continue;
+      }
 
       // Handle reactor-native relationship system actions first. These
       // fire in `document` scope on the SOURCE document of the edge and
@@ -285,8 +300,9 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         // failure is logged by the automation itself.
         //
         // LIVE operations only. A processor created with `startFrom:
-        // "beginning"` — every new instance, and every instance whose
-        // filter changed — is fed the whole history first, and history
+        // "beginning"` — every new instance — is fed the whole history
+        // first (a changed filter does not: the reactor keeps the cursor
+        // per processor slot, so widening it replays nothing), and history
         // must never cause writes: it already happened, the tensions it
         // implies are the agent's backlog, and writes during boot are
         // rolled back by the reactor while consuming ordinals. Observed
@@ -346,6 +362,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         const deleteInput = operation.action.input as { id: string };
         await this.deleteNode(deleteInput.id);
         lastByDocument.delete(deleteInput.id);
+        lastBySource.delete(deleteInput.id);
         continue;
       }
       if (
@@ -371,6 +388,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         // had is a no-op.
         await this.deleteNode(target);
         lastByDocument.delete(target);
+        lastBySource.delete(target);
         continue;
       }
 
@@ -429,6 +447,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       }
     }
 
+    await this.reconcileSources(lastBySource);
+
     // Reconcile each changed document from its resulting state
     for (const [documentId, entry] of lastByDocument) {
       try {
@@ -437,8 +457,16 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
 
         const parsed = JSON.parse(stateJson) as {
           global?: Record<string, unknown>;
+          header?: { createdAtUtcIso?: unknown };
         };
         const global = (parsed.global ?? parsed) as Record<string, unknown>;
+        // When the document entered the vault. The reactor serialises the
+        // resulting state with its header; without one, null — never a guess
+        // from the written date, which is what `created_at` already holds.
+        const addedAt =
+          typeof parsed.header?.createdAtUtcIso === "string"
+            ? parsed.header.createdAtUtcIso
+            : null;
         // `updated_at` must be the time the DOCUMENT changed, not the time
         // the indexer happened to touch the row. Using wall-clock here made
         // every reindex stamp all nodes with one identical instant, which
@@ -462,11 +490,16 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             id: documentId,
             document_id: documentId,
             ...row,
+            added_at: addedAt,
             updated_at: documentUpdatedAt,
           })
           .onConflict((oc) =>
             oc.column("document_id").doUpdateSet({
               ...row,
+              // A document enters the vault once: keep the earliest time any
+              // operation's header gives. LEAST skips NULL, so a row the
+              // migration could only estimate takes the header's own time.
+              added_at: (eb) => eb.fn<string | null>("least", [eb.ref("graph_nodes.added_at"), eb.ref("excluded.added_at")]),
               updated_at: documentUpdatedAt,
             }),
           )
@@ -777,8 +810,54 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     // Intentionally no-op: preserve indexed data across restarts.
   }
 
+  /**
+   * Each changed source's row, from its last resulting state. The row is
+   * what the timeline reads — title, status, file, who and when, its claims —
+   * never the source's text, so a 921-chapter book costs 921 small rows.
+   */
+  private async reconcileSources(lastBySource: Map<string, OperationWithContext>): Promise<void> {
+    for (const [documentId, entry] of lastBySource) {
+      try {
+        const stateJson = entry.context.resultingState;
+        if (!stateJson) continue;
+        const parsed = JSON.parse(stateJson) as { global?: Record<string, unknown>; header?: Record<string, unknown> };
+        const row = sourceRowOf({ header: { ...parsed.header, id: documentId }, state: { global: parsed.global ?? parsed } });
+        if (!row) continue;
+        const values = {
+          row_json: JSON.stringify(row),
+          revision: revisionOf(parsed),
+          version: SOURCE_ROW_VERSION,
+          updated_at: entry.operation.timestampUtcMs,
+        };
+        await this.relationalDb
+          .insertInto("graph_sources")
+          .values({ document_id: documentId, ...values })
+          .onConflict((oc) =>
+            oc
+              .column("document_id")
+              .doUpdateSet(values)
+              // Never back to an older state: an operation delivered late, or a row a reindex read newer.
+              .where((eb) =>
+                eb.or([
+                  eb("graph_sources.revision", "<=", eb.ref("excluded.revision")),
+                  eb("excluded.revision", "<", 0),
+                  eb("graph_sources.version", "<", SOURCE_ROW_VERSION),
+                ]),
+              ),
+          )
+          .execute();
+      } catch (err) {
+        console.warn(`[GraphIndexer] Source row failed for ${documentId}:`, err instanceof Error ? err.message : err);
+      }
+    }
+  }
+
   private async deleteNode(documentId: string): Promise<void> {
     try {
+      await this.relationalDb
+        .deleteFrom("graph_sources")
+        .where("document_id", "=", documentId)
+        .execute();
       await this.relationalDb
         .deleteFrom("graph_topics")
         .where("document_id", "=", documentId)

@@ -13,6 +13,7 @@ import type { PHDocumentHeader } from "document-model";
 import type { IReactorClient } from "@powerhousedao/reactor";
 import { GraphIndexerProcessor } from "./index.js";
 import { INDEXED_DOCUMENT_TYPES } from "./project.js";
+import { SOURCE_DOCUMENT_TYPE } from "./source-timeline.js";
 
 /** The drive-app whose drives this processor indexes and embeds. */
 const KNOWLEDGE_VAULT_APP = "knowledge-vault";
@@ -146,13 +147,17 @@ export const graphIndexerFactoryBuilder = (module: IProcessorHostModule) => {
     // the filter, our indexer is blind to every edge change and
     // graph_edges never updates.
     //
-    // `documentType` is every kind the projection indexes (see project.ts)
-    // plus the drive document itself, whose DELETE_NODE is how a deleted
-    // document leaves the projection.
+    // `documentType` is every kind the projection indexes (see project.ts),
+    // sources — kept only as small rows for the source timeline, never as
+    // nodes, and only on the server: nothing in the browser reads them, and
+    // each would cost a parse of the source's full text — and the drive
+    // document itself, whose DELETE_NODE is how a deleted document leaves
+    // the projection.
+    const serverSide = module.processorApp !== "connect" && typeof window === "undefined";
     const filter: ProcessorFilter = {
       branch: ["main"],
       documentId: ["*"],
-      documentType: [...INDEXED_DOCUMENT_TYPES, "powerhouse/document-drive"],
+      documentType: [...INDEXED_DOCUMENT_TYPES, ...(serverSide ? [SOURCE_DOCUMENT_TYPE] : []), "powerhouse/document-drive"],
       scope: ["global", "document"],
     };
 

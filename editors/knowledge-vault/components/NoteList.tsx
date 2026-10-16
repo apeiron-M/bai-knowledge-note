@@ -1,13 +1,22 @@
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { prefetchOnHover } from "../lib/prefetch.js";
-import { memo, useState, type CSSProperties } from "react";
+import { memo, useMemo, useState, type CSSProperties } from "react";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
+import { countOf } from "../lib/timeline/additions.js";
 import { LoadingPanel } from "./LoadingStates.js";
+
+/** The list narrowed to some notes — one addition's, opened from Sources › Timeline. */
+export interface NoteScope {
+  label: string;
+  ids: ReadonlySet<string>;
+}
 
 type NoteListProps = {
   notes: KnowledgeNoteInfo[];
   /** True until the first vault metadata fetch settles. */
   isLoading?: boolean;
+  scope?: NoteScope | null;
+  onClearScope?: () => void;
 };
 
 const PAGE_SIZE = 30;
@@ -91,19 +100,44 @@ const noteTypeStyle = (type: string | undefined): CSSProperties => {
   };
 };
 
-export function NoteList({ notes, isLoading = false }: NoteListProps) {
+export function NoteList({ notes: all, isLoading = false, scope = null, onClearScope }: NoteListProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const notes = useMemo(() => (scope ? all.filter((n) => scope.ids.has(n.id)) : all), [all, scope]);
+  const banner = scope && (
+    <div
+      role="status"
+      className="mb-3 flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm"
+      style={{ borderColor: "var(--bai-border)", background: "var(--bai-surface)", color: "var(--bai-text-secondary)" }}
+    >
+      <span>
+        {notes.length > 0 ? (
+          <>
+            {countOf(notes.length, "note")} from <b>{scope.label}</b>.
+          </>
+        ) : (
+          <>
+            No notes from <b>{scope.label}</b> are in the list yet.
+          </>
+        )}
+      </span>
+      <button type="button" className="vault-btn" onClick={onClearScope}>
+        Show all notes
+      </button>
+    </div>
+  );
 
   // Distinct from the empty state below: nothing has arrived *yet*. The
   // vault metadata query takes seconds on a large vault, and claiming
   // "no knowledge notes yet" during that window is simply wrong.
-  if (isLoading && notes.length === 0) {
+  if (isLoading && all.length === 0) {
     return (
       <div className="p-4">
         <LoadingPanel label="Loading notes…" />
       </div>
     );
   }
+
+  if (scope && notes.length === 0) return <div className="p-4">{banner}</div>;
 
   if (notes.length === 0) {
     return (
@@ -127,6 +161,7 @@ export function NoteList({ notes, isLoading = false }: NoteListProps) {
 
   return (
     <div className="p-4">
+      {banner}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {notes.slice(0, visibleCount).map((note) => (
           <NoteCard key={note.id} note={note} />

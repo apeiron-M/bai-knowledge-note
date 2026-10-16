@@ -1,7 +1,8 @@
 import { currentUser } from "./lib/authorize.js";
 import { BaseSubgraph } from "@powerhousedao/reactor-api";
 import type { DocumentNode } from "graphql";
-import { getQuery } from "../knowledge-graph/helpers/db.js";
+import { getQuery, getWritableDb } from "../knowledge-graph/helpers/db.js";
+import { sourceRowStore } from "../knowledge-graph/helpers/source-timeline.js";
 import { searchVault } from "../knowledge-graph/helpers/search.js";
 import { buildNeighbourhood } from "../knowledge-graph/helpers/neighbourhood.js";
 import { buildHttpRouteDeps, buildStructureRouteDeps } from "./live-deps.js";
@@ -20,6 +21,7 @@ import { createSourceFolderRoute } from "./routes/source-folders.js";
 import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
 import { createReconcileRoute } from "./routes/reconcile.js";
+import { createTimelineRoute } from "./routes/timeline.js";
 import { createSearchRoute } from "./routes/search.js";
 import { timedRoute } from "./lib/slow.js";
 import { schema } from "./schema.js";
@@ -169,6 +171,18 @@ export class HttpSubgraph extends BaseSubgraph {
         timedRoute("POST tasks/:id/claim", createClaimRoute(deps)),
       );
       registerStructureRoutes(this.http, buildStructureRouteDeps(this));
+      this.http.get(
+        "timeline",
+        { auth: "renown" },
+        timedRoute(
+          "GET timeline",
+          createTimelineRoute({
+            ...deps,
+            getQuery: (driveId: string) => getQuery(this, driveId),
+            getStore: (driveId: string) => sourceRowStore(() => getWritableDb(this, driveId)),
+          }),
+        ),
+      );
       const llmsDeps = {
         ...deps,
         getQuery: (driveId: string) => getQuery(this, driveId),

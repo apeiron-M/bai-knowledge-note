@@ -37,3 +37,24 @@ export function useMeasuredHeight(
   }, [ref, enabled]);
   return height;
 }
+
+/** An element's border-box width, updated as it changes; 0 when disabled or not yet measured. */
+export function useMeasuredWidth(
+  ref: RefObject<HTMLElement | null>,
+  enabled = true,
+): number {
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!enabled || !el || typeof ResizeObserver === "undefined") {
+      setWidth(0);
+      return;
+    }
+    const measure = () => setWidth(el.getBoundingClientRect().width);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref, enabled]);
+  return width;
+}
