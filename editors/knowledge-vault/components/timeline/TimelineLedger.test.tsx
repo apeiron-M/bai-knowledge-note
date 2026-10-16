@@ -12,7 +12,7 @@ function addition(over: Partial<TimelineAddition>): TimelineAddition {
   return {
     id: "a", kind: "file", title: "Machine-Learning-Systems-Vol1", folderId: "f", addedAt: "2026-10-15T19:04:00.000Z", lastAddedAt: "2026-10-15T19:11:04.000Z",
     addedBy: "0x1234567890abcdef1234567890abcdef12345678", fileName: "Machine-Learning-Systems-Vol1.pdf", mimeType: "application/pdf", sizeBytes: 12_197_035,
-    method: "converted", tool: "docling.rs", url: null, sourceType: "ARTICLE", sources: 921, extracted: 70, waiting: 851, archived: 0, sourceIds: [],
+    method: "converted", tool: "docling.rs", url: null, sourceType: "ARTICLE", sources: 921, extracted: 70, waiting: 851, archived: 0, sourceIds: [], firstSources: [],
     notes: 283, firstNoteAt: null, lastNoteAt: "2026-10-16T10:01:00.000Z", writtenFrom: null, topicIds: ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"],
     linksWithin: 391, linksToEarlier: 19, earlier: [{ additionId: "e", links: 16 }, { additionId: "g", links: 3 }], tags: [{ name: "ML systems engineering", count: 160 }],
     topNotes: [{ documentId: "n1", title: "ML system optimization must treat data, algorithms, and hardware as coupled choices." }],

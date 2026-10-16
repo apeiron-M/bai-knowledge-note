@@ -28,9 +28,10 @@ export function AdditionDetail(props: AdditionDetailProps) {
   const additions = new Map(props.timeline.additions.map((x) => [x.id, x.title]));
   const topics = a.topicIds.map((id) => ({ id, title: titles.get(id) ?? id }));
   const rest = topics.length - SHOWN_TOPICS;
-  // A folder's addition opens the folder; a lone source at the root opens itself.
-  const folder = isNoteGroup(a) ? null : a.folderId;
-  const lone = !folder && a.sources === 1 ? a.sourceIds[0] : undefined;
+  // One source opens itself, wherever it is; several open their folder, and each can be opened from the list.
+  const lone = a.sources === 1 ? a.sourceIds[0] : undefined;
+  const folder = isNoteGroup(a) || lone ? null : a.folderId;
+  const more = a.sources - a.firstSources.length;
   return (
     <div className="tl-detail">
       <p className="tl-facts">{factsLine(a, props.now, { ...props.words, me: props.me, who: props.showWho ?? true })}</p>
@@ -80,6 +81,25 @@ export function AdditionDetail(props: AdditionDetailProps) {
           <p className="tl-none">{countOf(a.linksWithin, "link")} among its own notes.</p>
         </section>
       </div>
+      {a.sources > 1 && a.firstSources.length > 0 && (
+        <>
+          <h4>Its sources</h4>
+          <ul className="tl-sample tl-sources">
+            {a.firstSources.map((s) => (
+              <li key={s.documentId}>
+                <button type="button" onClick={() => props.onOpenDocument(s.documentId)}>
+                  {s.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+          {more > 0 && a.folderId && (
+            <button type="button" className="tl-more-sources" onClick={() => props.onOpenSources(a.folderId as string)}>
+              and {countOf(more, "more source", "more sources")} in its folder
+            </button>
+          )}
+        </>
+      )}
       {a.topNotes.length > 0 && (
         <>
           <h4>Its most linked notes</h4>

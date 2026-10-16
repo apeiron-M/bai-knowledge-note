@@ -28,7 +28,7 @@ function addition(over: Partial<TimelineAddition> = {}): TimelineAddition {
     fileName: "Machine-Learning-Systems-Vol1.pdf", mimeType: "application/pdf", sizeBytes: 12_197_035, method: "converted",
     tool: "docling.rs", url: null, sourceType: "ARTICLE", sources: 921, extracted: 70, waiting: 851, archived: 0, sourceIds: [],
     notes: 283, firstNoteAt: "2026-10-15T19:06:00.000Z", lastNoteAt: "2026-10-16T10:01:00.000Z", writtenFrom: null,
-    topicIds: Array.from({ length: 18 }, (_, i) => `t${i}`), linksWithin: 391, linksToEarlier: 25, earlier: [], tags: [], topNotes: [],
+    topicIds: Array.from({ length: 18 }, (_, i) => `t${i}`), linksWithin: 391, linksToEarlier: 25, earlier: [], tags: [], topNotes: [], firstSources: [],
     ...over,
   };
 }

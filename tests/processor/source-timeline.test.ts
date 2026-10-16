@@ -305,6 +305,8 @@ describe("reading the vault's tree and documents the same way everywhere", () =>
       id: "s1", parentFolder: "f", addedAt: "2026-10-15T19:04:00.000Z", batchAt: "2026-10-15T19:04:00.000Z", title: "Chapter 1",
       status: "EXTRACTING", addedBy: "did:key:me", sourceType: "BOOK_CHAPTER", fileName: "book.pdf", mimeType: "application/pdf",
       sizeBytes: 1000, method: "converted", tool: "docling.rs", url: "https://example.org", claimIds: ["n1", "n2"],
+      // What the Sources list shows besides (bbbec448).
+      name: "chapter-1", description: null, author: null, publishedAt: null, extractedAt: null, originalFile: null, originalAttachedAt: null, updatedAt: null,
     });
   });
 
@@ -469,5 +471,18 @@ describe("second review", () => {
     const byKind = new Map(t.additions.map((a) => [a.kind, a]));
     expect(byKind.get("imported")?.topicIds).toEqual(["m-import"]);
     expect(t.additions.find((a) => a.title === "Old book")?.topicIds).toEqual([]);
+  });
+});
+
+describe("an addition's own sources", () => {
+  it("names its first five, in arrival order, for opening one directly", () => {
+    const ss = Array.from({ length: 7 }, (_, i) => source(`c${i}`, { parentFolder: "f", title: `Chapter ${i}`, addedAt: at(`12T10:0${i}:00.000`) }));
+    const t = buildSourceTimeline(input({ folders: [{ id: "f", name: "Book", parentFolder: ROOT }], sources: [...ss].reverse() }));
+    expect(t.additions[0].firstSources).toEqual(ss.slice(0, 5).map((s) => ({ documentId: s.id, title: s.title })));
+  });
+
+  it("has none for notes that arrived without a source", () => {
+    const t = buildSourceTimeline(input({ nodes: [note("w", { sourceOrigin: "MANUAL" })] }));
+    expect(t.additions[0].firstSources).toEqual([]);
   });
 });

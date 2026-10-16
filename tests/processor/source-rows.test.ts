@@ -80,6 +80,15 @@ describe("graph_sources: a small row per source", () => {
       tool: "docling.rs",
       url: null,
       claimIds: [],
+      // What the Sources list shows besides (bbbec448); updatedAt is the operation's time.
+      name: "chapter-1",
+      description: null,
+      author: null,
+      publishedAt: null,
+      extractedAt: null,
+      originalFile: null,
+      originalAttachedAt: null,
+      updatedAt: "2026-10-15T19:05:00.000Z",
     });
     const raw = await harness.db.selectFrom("graph_sources").select("row_json").executeTakeFirstOrThrow();
     expect(raw.row_json).not.toContain("A very long chapter");

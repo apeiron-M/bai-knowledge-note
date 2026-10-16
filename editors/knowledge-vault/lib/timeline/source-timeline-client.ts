@@ -5,6 +5,7 @@
  * documents the Sources view loads, the graph).
  */
 import {
+  FIRST_SOURCES,
   findSourcesRoot,
   sourceFromDocument,
   type SourceTimeline,
@@ -13,18 +14,32 @@ import {
 } from "../../../../processors/graph-indexer/source-timeline.js";
 import type { DriveTreeNode, GraphEdgeMetadata, GraphNodeMetadata } from "../../hooks/use-graph-metadata.js";
 
-export const SOURCE_TIMELINE_QUERY = `query SourceTimeline($driveId: ID!) {
+/**
+ * Fields added after the query first shipped, with the value an older server
+ * implies. A server a release behind rejects the whole query over one of
+ * them, so the client asks again without them rather than fail.
+ */
+const NEWER_ADDITION_FIELDS = { firstSources: "firstSources { documentId title }" } as const;
+
+function timelineQuery(withNewer: boolean): string {
+  const newer = withNewer ? ` ${Object.values(NEWER_ADDITION_FIELDS).join(" ")}` : "";
+  return `query SourceTimeline($driveId: ID!) {
   knowledgeGraphSourceTimeline(driveId: $driveId) {
     additions {
       id kind title folderId addedAt lastAddedAt addedBy fileName mimeType sizeBytes method tool url sourceType
       sources extracted waiting archived sourceIds notes firstNoteAt lastNoteAt writtenFrom topicIds
-      linksWithin linksToEarlier earlier { additionId links } tags { name count } topNotes { documentId title }
+      linksWithin linksToEarlier earlier { additionId links } tags { name count } topNotes { documentId title }${newer}
     }
     notes { documentId addedAt writtenAt additionId }
     topics { documentId title addedAt writtenAt additionId }
     totals { sources notes topics links }
   }
 }`;
+}
+
+export const SOURCE_TIMELINE_QUERY = timelineQuery(true);
+
+const NEWER_FIELD = new RegExp(`Cannot query field "(${Object.keys(NEWER_ADDITION_FIELDS).join("|")})" on type "KnowledgeGraphTimelineAddition"`);
 
 export type TimelineAnswer = { kind: "timeline"; timeline: SourceTimeline } | { kind: "unsupported" };
 
@@ -43,10 +58,21 @@ export function readTimelineAnswer(json: unknown): TimelineAnswer {
 
 /** Ask the knowledge-graph subgraph; `post` sends the body (authedGraphQLFetch in the app). */
 export async function fetchSourceTimeline(driveId: string, post: (body: unknown) => Promise<Response>): Promise<TimelineAnswer> {
-  const res = await post({ query: SOURCE_TIMELINE_QUERY, variables: { driveId } });
-  // GraphQL servers answer a query they cannot validate with 400 and the reason in the body.
-  if (!res.ok && res.status !== 400) throw new Error(`HTTP ${res.status} from the knowledge graph`);
-  return readTimelineAnswer((await res.json()) as unknown);
+  const ask = async (query: string): Promise<unknown> => {
+    const res = await post({ query, variables: { driveId } });
+    // GraphQL servers answer a query they cannot validate with 400 and the reason in the body.
+    if (!res.ok && res.status !== 400) throw new Error(`HTTP ${res.status} from the knowledge graph`);
+    return (await res.json()) as unknown;
+  };
+  const first = await ask(SOURCE_TIMELINE_QUERY);
+  const errors = ((first ?? {}) as { errors?: { message?: string }[] }).errors ?? [];
+  if (!errors.some((e) => NEWER_FIELD.test(e.message ?? ""))) return readTimelineAnswer(first);
+  // A server a release behind: ask without the newer fields, and fill them in empty.
+  const answer = readTimelineAnswer(await ask(timelineQuery(false)));
+  if (answer.kind !== "timeline") return answer;
+  // Older servers send no firstSources: `as` because the type cannot know that.
+  const additions = answer.timeline.additions.map((a) => ({ ...a, firstSources: (a.firstSources as typeof a.firstSources | undefined) ?? [] }));
+  return { kind: "timeline", timeline: { ...answer.timeline, additions } };
 }
 
 export interface BrowserTimelineData {
@@ -119,4 +145,21 @@ export interface HeldTimeline<T> {
 export function shownBrowserTimeline<T>(fresh: T | null, held: HeldTimeline<T> | null, driveId: string): T | null {
   if (fresh) return fresh;
   return held && held.driveId === driveId ? held.timeline : null;
+}
+
+/**
+ * A server a release behind sends no `firstSources`; the drive tree the
+ * editor already holds has every source's name, so the open row can still
+ * list them. What the server did send is kept, and an unchanged timeline is
+ * returned as is.
+ */
+export function withSourceNames(timeline: SourceTimeline | null, tree: readonly DriveTreeNode[]): SourceTimeline | null {
+  if (!timeline || !timeline.additions.some((a) => a.firstSources.length === 0 && a.sourceIds.length > 0)) return timeline;
+  const names = new Map(tree.map((n) => [n.id, n.name]));
+  const additions = timeline.additions.map((a) =>
+    a.firstSources.length > 0 || a.sourceIds.length === 0
+      ? a
+      : { ...a, firstSources: a.sourceIds.slice(0, FIRST_SOURCES).map((id) => ({ documentId: id, title: names.get(id) ?? id })) },
+  );
+  return { ...timeline, additions };
 }

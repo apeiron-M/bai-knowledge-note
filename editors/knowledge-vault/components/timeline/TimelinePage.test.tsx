@@ -124,3 +124,15 @@ describe("TimelinePage", () => {
     expect(failed).toContain("HTTP 502 from the knowledge graph");
   });
 });
+
+describe("TimelinePage, an addition's sources", () => {
+  it("lists them to open directly, and opens a single source itself even inside a folder", () => {
+    const book = timeline.additions.find((a) => a.title === "Machine-Learning-Systems-Vol1")?.id;
+    const html = render({ initialSelected: book });
+    expect(html).toContain("Its sources");
+    expect(html).toContain(">sb<");
+    expect(html).toContain(">sb2<");
+    const report = timeline.additions.find((a) => a.title === "State-of-AI-Report-2026")?.id;
+    expect(render({ initialSelected: report })).toContain("Open the source");
+  });
+});

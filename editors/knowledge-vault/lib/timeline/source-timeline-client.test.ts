@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { browserTimelineReady, shownBrowserTimeline, fetchSourceTimeline, readTimelineAnswer, timelineInputFromBrowser } from "./source-timeline-client.js";
+import { browserTimelineReady, shownBrowserTimeline, fetchSourceTimeline, readTimelineAnswer, timelineInputFromBrowser, withSourceNames } from "./source-timeline-client.js";
 
 const timeline = { additions: [], notes: [], topics: [], totals: { sources: 0, notes: 0, topics: 0, links: 0 } };
 const OLD_SERVER = { errors: [{ message: 'Cannot query field "knowledgeGraphSourceTimeline" on type "Query". Did you mean "knowledgeGraphStats"?' }] };
@@ -89,5 +89,38 @@ describe("shownBrowserTimeline", () => {
   it("never shows another vault's timeline", () => {
     expect(shownBrowserTimeline(null, { driveId: "d2", timeline: b }, "d1")).toBeNull();
     expect(shownBrowserTimeline(null, null, "d1")).toBeNull();
+  });
+});
+
+describe("fetchSourceTimeline against a server a release behind", () => {
+  it("asks again without the newer fields, and fills them in empty", async () => {
+    const older = { additions: [{ id: "a", sources: 3 }], notes: [], topics: [], totals: { sources: 3, notes: 0, topics: 0, links: 0 } };
+    const post = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ errors: [{ message: 'Cannot query field "firstSources" on type "KnowledgeGraphTimelineAddition". Did you mean "sources"?' }] }), { status: 400 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: { knowledgeGraphSourceTimeline: older } }), { status: 200 }));
+    const answer = await fetchSourceTimeline("d1", post);
+    expect(post).toHaveBeenCalledTimes(2);
+    const second = post.mock.calls[1][0] as { query: string };
+    expect(second.query).not.toContain("firstSources");
+    expect(answer).toEqual({ kind: "timeline", timeline: { ...older, additions: [{ id: "a", sources: 3, firstSources: [] }] } });
+  });
+});
+
+describe("withSourceNames", () => {
+  const base = { id: "a", sources: 7, sourceIds: ["s1", "s2", "s3", "s4", "s5", "s6", "s7"], firstSources: [] as { documentId: string; title: string }[] };
+  const tree = [1, 2, 3, 4, 5, 6, 7].map((i) => ({ id: `s${i}`, name: `Chapter ${i}`, kind: "file", documentType: "bai/source", parentFolder: "f" }));
+
+  it("names an addition's first sources from the drive tree when the server did not", () => {
+    const t = { additions: [base], notes: [], topics: [], totals: { sources: 7, notes: 0, topics: 0, links: 0 } };
+    const named = withSourceNames(t as never, tree as never);
+    expect(named?.additions[0].firstSources).toEqual([1, 2, 3, 4, 5].map((i) => ({ documentId: `s${i}`, title: `Chapter ${i}` })));
+  });
+
+  it("keeps what the server sent, and the same timeline when nothing is missing", () => {
+    const sent = { ...base, firstSources: [{ documentId: "s1", title: "From the server" }] };
+    const t = { additions: [sent], notes: [], topics: [], totals: { sources: 7, notes: 0, topics: 0, links: 0 } };
+    expect(withSourceNames(t as never, tree as never)).toBe(t);
+    expect(withSourceNames(null, tree as never)).toBeNull();
   });
 });

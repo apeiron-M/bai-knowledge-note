@@ -149,6 +149,9 @@ export const TIMELINE_CSS = `
   .tl-strata .livering { animation: none; opacity: 0; }
   .tl-strata .layer { transition: none; }
 }
+.tl-detail .tl-sources button { font-family: inherit; font-size: 13.5px; }
+.tl-more-sources { margin: -4px 0 14px; font-size: 13px; color: var(--bai-accent); }
+.tl-more-sources:hover { text-decoration: underline; }
 .tl-more { display: flex; justify-content: center; margin: 4px 0 28px; }
 `;
 

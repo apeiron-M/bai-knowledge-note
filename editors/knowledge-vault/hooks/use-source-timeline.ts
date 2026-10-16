@@ -20,6 +20,7 @@ import {
   fetchSourceTimeline,
   shownBrowserTimeline,
   timelineInputFromBrowser,
+  withSourceNames,
   type HeldTimeline,
 } from "../lib/timeline/source-timeline-client.js";
 import type { DriveTreeNode, GraphEdgeMetadata, GraphNodeMetadata } from "./use-graph-metadata.js";
@@ -156,10 +157,13 @@ export function useSourceTimeline(driveId: string | undefined, graph: TimelineGr
     if (built && driveId) setHeld({ driveId, timeline: built });
   }, [built, driveId]);
 
+  // A server a release behind names no sources; the drive tree does.
+  const named = useMemo(() => withSourceNames(timeline, graph.allNodes), [timeline, graph.allNodes]);
+
   if (!driveId) return { timeline: null, isLoading: false, error: null, mode: null, refetch };
   if (browser) {
     const shown = shownBrowserTimeline(built, held, driveId);
     return { timeline: shown, isLoading: shown === null && graph.error === null, error: graph.error, mode: "browser", refetch: graph.refetch };
   }
-  return { timeline, isLoading: timeline === null && error === null, error, mode: timeline ? "server" : null, refetch };
+  return { timeline: named, isLoading: timeline === null && error === null, error, mode: timeline ? "server" : null, refetch };
 }

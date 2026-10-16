@@ -269,6 +269,13 @@ export const schema: DocumentNode = gql`
     tags: [KnowledgeGraphTimelineTag!]!
     "Its most linked notes"
     topNotes: [KnowledgeGraphTimelineNoteRef!]!
+    "Its first sources by arrival (at most 5), to open one directly; the rest are in its folder"
+    firstSources: [KnowledgeGraphTimelineSourceRef!]!
+  }
+
+  type KnowledgeGraphTimelineSourceRef {
+    documentId: String!
+    title: String!
   }
 
   type KnowledgeGraphTimelineEarlier {

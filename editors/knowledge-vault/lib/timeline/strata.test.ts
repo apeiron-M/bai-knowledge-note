@@ -13,7 +13,7 @@ function addition(id: string, at: number, over: Partial<TimelineAddition> = {}):
     id, kind: "file", title: `Addition ${id}`, folderId: null, addedAt: iso(at), lastAddedAt: iso(at), addedBy: null,
     fileName: null, mimeType: null, sizeBytes: null, method: null, tool: null, url: null, sourceType: null,
     sources: 1, extracted: 1, waiting: 0, archived: 0, sourceIds: [], notes: 0, firstNoteAt: null, lastNoteAt: null,
-    writtenFrom: null, topicIds: [], linksWithin: 0, linksToEarlier: 0, earlier: [], tags: [], topNotes: [], ...over,
+    writtenFrom: null, topicIds: [], linksWithin: 0, linksToEarlier: 0, earlier: [], tags: [], topNotes: [], firstSources: [], ...over,
   };
 }
 const arrivals = (additionId: string, from: number, count: number, every = 60_000): TimelineArrival[] =>

@@ -133,6 +133,8 @@ export interface TimelineAddition {
   earlier: { additionId: string; links: number }[];
   tags: { name: string; count: number }[];
   topNotes: { documentId: string; title: string }[];
+  /** Its first sources by arrival (at most FIRST_SOURCES), to open one directly. */
+  firstSources: { documentId: string; title: string }[];
 }
 
 export interface TimelineArrival {
@@ -171,6 +173,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const WRITTEN_HERE = new Set(["MANUAL", "SESSION_MINE"]);
 const TOP_TAGS = 5;
 const TOP_NOTES = 3;
+/** Sources an addition names, to open one directly; the rest are in its folder. */
+export const FIRST_SOURCES = 5;
 
 const time = (iso: string | null | undefined): number => {
   if (!iso) return Number.NaN;
@@ -233,6 +237,7 @@ function sourceAddition(id: string, title: string, folderId: string | null, grou
     waiting: count("INBOX") + count("EXTRACTING"),
     archived: count("ARCHIVED"),
     sourceIds: group.map((s) => s.id),
+    firstSources: group.slice(0, FIRST_SOURCES).map((s) => ({ documentId: s.id, title: s.title })),
   };
 }
 
@@ -272,6 +277,7 @@ function noteGroup(kind: NoteGroupKind, group: readonly TimelineNode[], at: (n: 
     waiting: 0,
     archived: 0,
     sourceIds: [],
+    firstSources: [],
   };
 }
 
