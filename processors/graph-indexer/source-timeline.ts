@@ -38,6 +38,19 @@ export interface TimelineSource {
   url: string | null;
   /** The source's extractedClaims: the notes it says it became. */
   claimIds: string[];
+  /** The rest is what the Sources list shows; optional, as a timeline source built elsewhere may not carry it. */
+  /** The drive node's name. */
+  name?: string | null;
+  description?: string | null;
+  author?: string | null;
+  publishedAt?: string | null;
+  /** When extraction finished (extractionStats.extractedAt). */
+  extractedAt?: string | null;
+  /** The original file's attachment ref, by which a re-added file is recognised. */
+  originalFile?: string | null;
+  originalAttachedAt?: string | null;
+  /** The document's last change. */
+  updatedAt?: string | null;
 }
 
 /** A node of the graph index. */
@@ -467,7 +480,7 @@ export const SOURCE_DOCUMENT_TYPE = "bai/source";
 export type TimelineSourceRow = Omit<TimelineSource, "parentFolder">;
 
 /** The shape of `graph_sources.row_json`. A row of another version is read again from its document. */
-export const SOURCE_ROW_VERSION = 1;
+export const SOURCE_ROW_VERSION = 2;
 
 /**
  * A document's global revision, from its header — the indexer's resulting
@@ -488,13 +501,14 @@ export function sourceFromDocument(doc: unknown, parentFolder: string | null): T
 /** A bai/source document (header + state) as the timeline reads it; null for anything that is not one. */
 export function sourceRowOf(doc: unknown): TimelineSourceRow | null {
   const d = doc as {
-    header?: { id?: unknown; name?: unknown; createdAtUtcIso?: unknown };
+    header?: { id?: unknown; name?: unknown; createdAtUtcIso?: unknown; lastModifiedAtUtcIso?: unknown };
     state?: { global?: Record<string, unknown> };
   } | null;
   const id = str(d?.header?.id);
   const g = d?.state?.global;
   if (!id || !g) return null;
   const provenance = (g.provenance && typeof g.provenance === "object" ? g.provenance : {}) as Record<string, unknown>;
+  const stats = (g.extractionStats && typeof g.extractionStats === "object" ? g.extractionStats : {}) as Record<string, unknown>;
   const batchAt = str(g.createdAt);
   const addedAt = str(d.header?.createdAtUtcIso) ?? batchAt;
   // A source with no time at all cannot be placed on a timeline.
@@ -514,5 +528,13 @@ export function sourceRowOf(doc: unknown): TimelineSourceRow | null {
     tool: str(provenance.tool),
     url: str(provenance.url),
     claimIds: claimIdsOf(g.extractedClaims),
+    name: str(d.header?.name),
+    description: str(g.description),
+    author: str(provenance.author),
+    publishedAt: str(provenance.publishedAt),
+    extractedAt: str(stats.extractedAt),
+    originalFile: str(g.originalFile),
+    originalAttachedAt: str(g.originalAttachedAt),
+    updatedAt: str(d.header?.lastModifiedAtUtcIso),
   };
 }

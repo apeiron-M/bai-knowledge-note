@@ -309,6 +309,35 @@ export const schema: DocumentNode = gql`
     links: Int!
   }
 
+  "A source as the Sources list shows it: its row in the index, never its text."
+  type KnowledgeGraphSourceRow {
+    documentId: ID!
+    "The drive folder it sits in."
+    parentFolder: ID
+    name: String
+    title: String!
+    description: String
+    status: String!
+    sourceType: String
+    author: String
+    url: String
+    "When it entered the vault."
+    addedAt: String!
+    "The state's createdAt: one instant for every source of a batch."
+    createdAt: String
+    createdBy: String
+    updatedAt: String
+    extractedAt: String
+    publishedAt: String
+    "The original file's attachment ref."
+    originalFile: String
+    originalFileName: String
+    originalAttachedAt: String
+    originalSizeBytes: Float
+    "How many notes it says it became."
+    claimCount: Int!
+  }
+
   "What was added to the vault, when, and what each addition became."
   type KnowledgeGraphSourceTimeline {
     additions: [KnowledgeGraphTimelineAddition!]!
@@ -327,6 +356,13 @@ export const schema: DocumentNode = gql`
     reactor; notes, topics and links from the index.
     """
     knowledgeGraphSourceTimeline(driveId: ID!): KnowledgeGraphSourceTimeline!
+    """
+    Every source of the vault as a list row, in one answer: read from the
+    index's kept rows, so the Sources view paints at once instead of reading
+    each source document. Sources the index has no current row for are read
+    once and kept.
+    """
+    knowledgeGraphSources(driveId: ID!): [KnowledgeGraphSourceRow!]!
     knowledgeGraphStats(driveId: ID!): GraphStats!
     knowledgeGraphNodeByDocumentId(
       driveId: ID!

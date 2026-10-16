@@ -22,7 +22,8 @@ import {
 } from "../lib/remote-reactor.js";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
-import { filterSources, toSourceRow, SOURCE_SORT_OPTIONS, sortSources } from "../lib/source-search.js";
+import { filterSources, toSourceRow, SOURCE_SORT_OPTIONS, sortSources, type SourceRow } from "../lib/source-search.js";
+import { useSourceRows } from "../hooks/use-source-rows.js";
 import { vaultIndexOf } from "../lib/intake-model.js";
 import {
   describeStatuses,
@@ -249,17 +250,25 @@ export function SourceList({
     serverAllNodes,
     isLoading: treeLoading,
   } = useKnowledgeNotes();
+  // The list's rows, all in one server answer from the index. Only a server
+  // that predates the query makes the list read each source document.
+  const server = useSourceRows(driveId);
+  const readDocuments = server.unsupported;
+  const treeSources = useMemo(
+    () => serverFileNodes.filter((n) => n.documentType === "bai/source"),
+    [serverFileNodes],
+  );
   const sourceSpecs = useMemo<ReactorDocSpec[]>(
     () =>
-      serverFileNodes
-        .filter((n) => n.documentType === "bai/source")
-        .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
-    [serverFileNodes],
+      readDocuments
+        ? treeSources.map((n) => ({ id: n.id, documentType: n.documentType, name: n.name }))
+        : [],
+    [readDocuments, treeSources],
   );
   const {
     docs: documents,
     isLoading: docsLoading,
-    refetch,
+    refetch: refetchDocs,
   } = useReactorDocsWithRefetch(sourceSpecs, {
     pollMs: 20_000,
     // Switching tabs unmounts this view. `retainKey` lets the hook paint
@@ -272,19 +281,41 @@ export function SourceList({
   // but only when we have NOTHING to show: under stale-while-revalidate
   // `docsLoading` stays true while a partially cached list is already on
   // screen, and a spinner over real content would be a regression.
-  const isLoading = (treeLoading && sourceSpecs.length === 0) || docsLoading;
+  const isLoading = readDocuments
+    ? (treeLoading && sourceSpecs.length === 0) || docsLoading
+    : server.rows === null && server.error === null;
+  const refetch = readDocuments ? refetchDocs : server.refetch;
 
-  const sources = useMemo(
+  // The tree decides which sources exist (a delete shows at once); a source
+  // the rows do not carry yet is asked for again.
+  const treeIds = useMemo(() => new Set(treeSources.map((n) => n.id)), [treeSources]);
+  const serverRows = useMemo(
+    () => (server.rows ?? []).filter((r) => treeLoading || treeIds.has(r.id)),
+    [server.rows, treeIds, treeLoading],
+  );
+  const { refetch: refetchRows, rows: rowsNow } = server;
+  useEffect(() => {
+    if (readDocuments || !rowsNow || treeLoading) return;
+    const have = new Set(rowsNow.map((r) => r.id));
+    if ([...treeIds].some((id) => !have.has(id))) {
+      const t = setTimeout(refetchRows, 1_500);
+      return () => clearTimeout(t);
+    }
+  }, [readDocuments, rowsNow, treeIds, treeLoading, refetchRows]);
+
+  const sources = useMemo<SourceRow[]>(
     () =>
-      documents
-        .filter((d) => d.header.documentType === "bai/source")
-        .map((d) =>
-          toSourceRow(
-            d.header,
-            (d.state as unknown as { global: Record<string, unknown> }).global,
-          ),
-        ),
-    [documents],
+      readDocuments
+        ? documents
+            .filter((d) => d.header.documentType === "bai/source")
+            .map((d) =>
+              toSourceRow(
+                d.header,
+                (d.state as unknown as { global: Record<string, unknown> }).global,
+              ),
+            )
+        : serverRows,
+    [readDocuments, documents, serverRows],
   );
 
   // What the vault already holds, for the intake: each original by its content
@@ -302,26 +333,34 @@ export function SourceList({
       return parent && parent.id !== root?.id ? parent.name : null;
     };
     const text = (value: unknown) => (typeof value === "string" ? value : null);
+    const held = readDocuments
+      ? documents
+          .filter((d) => d.header.documentType === "bai/source")
+          .map((d) => {
+            const global = (d.state as unknown as { global: Record<string, unknown> })
+              .global;
+            return {
+              originalRef: text(global.originalFile),
+              folderName: folderOf(d.header.id),
+              addedAt: text(global.originalAttachedAt) ?? text(global.createdAt),
+              title: text(global.title),
+            };
+          })
+      : serverRows.map((r) => ({
+          originalRef: r.originalFile,
+          folderName: folderOf(r.id),
+          addedAt: r.originalAttachedAt ?? r.createdAt,
+          title: r.title,
+        }));
     return vaultIndexOf(
-      documents
-        .filter((d) => d.header.documentType === "bai/source")
-        .map((d) => {
-          const global = (d.state as unknown as { global: Record<string, unknown> })
-            .global;
-          return {
-            originalRef: text(global.originalFile),
-            folderName: folderOf(d.header.id),
-            addedAt: text(global.originalAttachedAt) ?? text(global.createdAt),
-            title: text(global.title),
-          };
-        }),
+      held,
       root
         ? serverAllNodes
             .filter((n) => n.kind === "folder" && n.parentFolder === root.id)
             .map((n) => n.name)
         : [],
     );
-  }, [documents, serverAllNodes, isLoading]);
+  }, [readDocuments, documents, serverRows, serverAllNodes, isLoading]);
   const { setVault } = intake;
   useEffect(() => {
     setVault(vaultIndex);

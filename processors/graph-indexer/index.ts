@@ -823,6 +823,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         const parsed = JSON.parse(stateJson) as { global?: Record<string, unknown>; header?: Record<string, unknown> };
         const row = sourceRowOf({ header: { ...parsed.header, id: documentId }, state: { global: parsed.global ?? parsed } });
         if (!row) continue;
+        // The resulting state's header may not carry the change time; the operation's is it.
+        if (!row.updatedAt) row.updatedAt = String(entry.operation.timestampUtcMs);
         const values = {
           row_json: JSON.stringify(row),
           revision: revisionOf(parsed),

@@ -102,33 +102,39 @@ function keptFrom(docs: readonly unknown[], wanted: (id: string) => boolean): Ke
   return out;
 }
 
-export async function loadSourceTimeline(
+/** The drive's sources placed in its tree, each from its kept row (or read once and kept). */
+export interface PlacedSources {
+  folders: TimelineFolder[];
+  /** The vault's /sources folder. */
+  sourcesFolderId: string | null;
+  sources: TimelineSource[];
+}
+
+/**
+ * Every source of a drive as a small row: the drive tree once for placement,
+ * the rows from the index, and only the sources the index has no current row
+ * for read from the reactor (and kept, so the next load reads one table).
+ */
+export async function loadPlacedSources(
   reader: TimelineReader,
-  graph: TimelineGraph,
+  graph: Pick<TimelineGraph, "timelineSources">,
   driveId: string,
   opts: { pageSize?: number; store?: TimelineSourceStore } = {},
-): Promise<SourceTimeline> {
+): Promise<PlacedSources> {
   const drive = (await reader.get(driveId)) as { state?: { global?: { nodes?: DriveNode[] } } } | null;
   const tree = drive?.state?.global?.nodes ?? [];
   const folders: TimelineFolder[] = tree
     .filter((n) => n.kind === "folder")
     .map((n) => ({ id: n.id, name: n.name ?? "", parentFolder: n.parentFolder ?? null }));
-  const root = findSourcesRoot(folders);
   const placed = new Map(tree.filter((n) => n.documentType === "bai/source").map((n) => [n.id, n.parentFolder ?? null]));
-
-  const [kept, nodes, edges, topics] = await Promise.all([
-    // An index that cannot list rows (a namespace older than the table) means reading every source.
-    placed.size > 0 ? graph.timelineSources().catch(() => new Map<string, TimelineSourceRow>()) : Promise.resolve(new Map<string, TimelineSourceRow>()),
-    graph.timelineNodes(),
-    graph.allEdges(),
-    graph.topicsByDocument(),
-  ]);
+  // An index that cannot list rows (a namespace older than the table) means reading every source.
+  const kept = placed.size > 0 ? await graph.timelineSources().catch(() => new Map<string, TimelineSourceRow>()) : new Map<string, TimelineSourceRow>();
   const missing = [...placed.keys()].filter((id) => !kept.has(id));
   const read = missing.length > 0 ? keptFrom(await readAll(reader, missing, opts.pageSize ?? PAGE), (id) => placed.has(id)) : [];
-  if (missing.length > 0) console.log(`[sourceTimeline] ${driveId}: read ${missing.length} source(s) the index had no row for`);
+  if (missing.length > 0) console.log(`[sources] ${driveId}: read ${missing.length} source(s) the index had no current row for`);
   if (read.length > 0 && opts.store) {
     // Best effort: a failed save costs the next load a read, never this answer.
-    await opts.store.save(read).catch((err: unknown) => console.warn("[sourceTimeline] could not keep source rows:", err instanceof Error ? err.message : err));
+    await opts.store.save(read).catch((err: unknown) => console.warn("[sources] could not keep source rows:", err instanceof Error ? err.message : err));
   }
   const rows = new Map(kept);
   for (const { row } of read) rows.set(row.id, row);
@@ -137,6 +143,47 @@ export async function loadSourceTimeline(
     const row = rows.get(id);
     if (row) sources.push({ ...row, parentFolder });
   }
+  return { folders, sourcesFolderId: findSourcesRoot(folders), sources };
+}
+
+/** A placed source as the `KnowledgeGraphSourceRow` the Sources list reads. */
+export function sourceListRow(s: TimelineSource) {
+  return {
+    documentId: s.id,
+    parentFolder: s.parentFolder,
+    name: s.name ?? null,
+    title: s.title,
+    description: s.description ?? null,
+    status: s.status,
+    sourceType: s.sourceType,
+    author: s.author ?? null,
+    url: s.url,
+    addedAt: s.addedAt,
+    createdAt: s.batchAt,
+    createdBy: s.addedBy,
+    updatedAt: s.updatedAt ?? null,
+    extractedAt: s.extractedAt ?? null,
+    publishedAt: s.publishedAt ?? null,
+    originalFile: s.originalFile ?? null,
+    originalFileName: s.fileName,
+    originalAttachedAt: s.originalAttachedAt ?? null,
+    originalSizeBytes: s.sizeBytes,
+    claimCount: s.claimIds.length,
+  };
+}
+
+export async function loadSourceTimeline(
+  reader: TimelineReader,
+  graph: TimelineGraph,
+  driveId: string,
+  opts: { pageSize?: number; store?: TimelineSourceStore } = {},
+): Promise<SourceTimeline> {
+  const [{ folders, sourcesFolderId: root, sources }, nodes, edges, topics] = await Promise.all([
+    loadPlacedSources(reader, graph, driveId, opts),
+    graph.timelineNodes(),
+    graph.allEdges(),
+    graph.topicsByDocument(),
+  ]);
 
   return buildSourceTimeline({
     sourcesFolderId: root,

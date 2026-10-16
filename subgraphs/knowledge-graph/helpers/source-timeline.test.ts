@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../../../tests/helpers/create-test-db.js";
 import { createGraphQuery } from "../../../processors/graph-indexer/query.js";
-import { sourceRowOf } from "../../../processors/graph-indexer/source-timeline.js";
-import { loadSourceTimeline, rebuildSourceRows, sourceRowStore, type TimelineReader, type TimelineSourceStore } from "./source-timeline.js";
+import { SOURCE_ROW_VERSION, sourceRowOf } from "../../../processors/graph-indexer/source-timeline.js";
+import { loadPlacedSources, loadSourceTimeline, rebuildSourceRows, sourceListRow, sourceRowStore, type TimelineReader, type TimelineSourceStore } from "./source-timeline.js";
 
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
@@ -128,7 +128,7 @@ describe("loadSourceTimeline", () => {
     const s2 = sourceRowOf(docs.get("s2"));
     await harness.db
       .insertInto("graph_sources")
-      .values([s1, s2].map((row) => ({ document_id: row!.id, row_json: JSON.stringify(row), updated_at: row!.addedAt })))
+      .values([s1, s2].map((row) => ({ document_id: row!.id, row_json: JSON.stringify(row), updated_at: row!.addedAt, version: SOURCE_ROW_VERSION })))
       .execute();
     const saved: string[] = [];
     const store: TimelineSourceStore = { save: (rows) => Promise.resolve(void saved.push(...rows.map((r) => r.row.id))) };
@@ -199,8 +199,8 @@ describe("rebuildSourceRows (reindex)", () => {
     await harness.db
       .insertInto("graph_sources")
       .values([
-        { document_id: "s2", row_json: JSON.stringify(stale), updated_at: "2026-10-15T19:05:00.000Z" },
-        { document_id: "removed", row_json: JSON.stringify({ ...stale, id: "removed" }), updated_at: "2026-10-15T19:05:00.000Z" },
+        { document_id: "s2", row_json: JSON.stringify(stale), updated_at: "2026-10-15T19:05:00.000Z", version: SOURCE_ROW_VERSION },
+        { document_id: "removed", row_json: JSON.stringify({ ...stale, id: "removed" }), updated_at: "2026-10-15T19:05:00.000Z", version: SOURCE_ROW_VERSION },
       ])
       .execute();
     const { r } = reader();
@@ -212,7 +212,7 @@ describe("rebuildSourceRows (reindex)", () => {
   });
 
   it("empties the table for a drive with no sources", async () => {
-    await harness.db.insertInto("graph_sources").values({ document_id: "x", row_json: "{}", updated_at: "2026-10-15T19:05:00.000Z" }).execute();
+    await harness.db.insertInto("graph_sources").values({ document_id: "x", row_json: "{}", updated_at: "2026-10-15T19:05:00.000Z", version: SOURCE_ROW_VERSION }).execute();
     const { r, find } = reader();
     expect(await rebuildSourceRows(harness.db, r, [])).toBe(0);
     expect(find).not.toHaveBeenCalled();
@@ -232,7 +232,7 @@ describe("sourceRowStore", () => {
   it("saves thousands of rows in chunks, and replaces only a row of an older shape", async () => {
     const base = sourceRowOf(docs.get("s1"))!;
     await harness.db.insertInto("graph_sources").values([
-      { document_id: "x0", row_json: JSON.stringify({ ...base, id: "x0", status: "FROM-INDEXER" }), updated_at: "2026-10-15T20:00:00.000Z", version: 1 },
+      { document_id: "x0", row_json: JSON.stringify({ ...base, id: "x0", status: "FROM-INDEXER" }), updated_at: "2026-10-15T20:00:00.000Z", version: SOURCE_ROW_VERSION },
       { document_id: "x1", row_json: JSON.stringify({ id: "x1" }), updated_at: "2026-10-15T20:00:00.000Z", version: 0 },
     ]).execute();
     const rows = Array.from({ length: 2500 }, (_, i) => ({ row: { ...base, id: `x${i}`, status: "FROM-READ" }, revision: 1, modifiedAt: "2026-10-15T19:00:00.000Z" }));
@@ -255,11 +255,51 @@ describe("rebuildSourceRows, racing the indexer", () => {
 
   it("does not write a read older than the indexer's row", async () => {
     const newer = { ...sourceRowOf(docs.get("s2"))!, status: "EXTRACTED" };
-    await harness.db.insertInto("graph_sources").values({ document_id: "s2", row_json: JSON.stringify(newer), updated_at: "2026-10-15T21:00:00.000Z", version: 1, revision: 9 }).execute();
+    await harness.db.insertInto("graph_sources").values({ document_id: "s2", row_json: JSON.stringify(newer), updated_at: "2026-10-15T21:00:00.000Z", version: SOURCE_ROW_VERSION, revision: 9 }).execute();
     const original = docs.get("s2") as { header: Record<string, unknown> };
     const stale = { ...original, header: { ...original.header, lastModifiedAtUtcIso: "2026-10-15T19:05:00.000Z", revision: { global: 3 } } };
     const r: TimelineReader = { get: () => Promise.reject(new Error("unused")), find: () => Promise.resolve({ results: [stale] }) };
     await rebuildSourceRows(harness.db, r, ["s2"]);
     expect((await createGraphQuery(harness.db).timelineSources()).get("s2")?.status).toBe("EXTRACTED");
+  });
+});
+
+describe("the Sources list rows (knowledgeGraphSources)", () => {
+  let harness: TestDb;
+  beforeEach(async () => {
+    harness = await createTestDb();
+  });
+  afterEach(async () => {
+    await harness.cleanup();
+  });
+
+  it("answers every source from the index's rows, reading only those it has no current row for", async () => {
+    const s1 = sourceRowOf({ ...(docs.get("s1") as object), header: { id: "s1", name: "Chapter 1", createdAtUtcIso: "2026-10-15T19:04:00.000Z", lastModifiedAtUtcIso: "2026-10-15T19:10:00.000Z" } })!;
+    await harness.db
+      .insertInto("graph_sources")
+      .values([
+        { document_id: "s1", row_json: JSON.stringify({ ...s1, description: "From the index" }), updated_at: s1.addedAt, version: SOURCE_ROW_VERSION },
+        // an older row shape is read again
+        { document_id: "s2", row_json: JSON.stringify(sourceRowOf(docs.get("s2"))), updated_at: s1.addedAt, version: SOURCE_ROW_VERSION - 1 },
+      ])
+      .execute();
+    const { r, find } = reader();
+    const { sources } = await loadPlacedSources(r, createGraphQuery(harness.db), DRIVE);
+    expect(find.mock.calls.flatMap(([q]) => q.ids)).toEqual(["s2", "s3", "pasted", "gone"]);
+
+    const rows = sources.map(sourceListRow);
+    expect(rows.map((x) => x.documentId)).toEqual(["s1", "s2", "s3", "pasted"]);
+    expect(rows[0]).toMatchObject({
+      parentFolder: "f-book",
+      name: "Chapter 1",
+      title: "Title s1",
+      description: "From the index",
+      status: "EXTRACTED",
+      claimCount: 1,
+      updatedAt: "2026-10-15T19:10:00.000Z",
+      originalFileName: "Machine-Learning-Systems-Vol1.pdf",
+      originalSizeBytes: 12_197_035,
+    });
+    expect(rows[1]).toMatchObject({ status: "EXTRACTING", parentFolder: "f-book" });
   });
 });
