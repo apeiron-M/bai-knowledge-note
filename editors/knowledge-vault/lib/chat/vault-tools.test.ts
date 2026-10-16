@@ -970,7 +970,7 @@ describe("recent_changes — every document in the vault by last edit", () => {
       contained,
       indexed,
       // one per returned row, in order
-      lastOp("SET_STATUS", { status: "CANONICAL" }, A, "switchboard"),
+      lastOp("SUBMIT_FOR_REVIEW", {}, A, "switchboard"),
       lastOp("SET_TITLE", { title: "Board minutes" }, A, "connect"),
       lastOp("SET_CONTENT", { content: "x".repeat(40) }, null, "switchboard"),
       lastOp("ADD_TOPIC", { name: "ingestion" }, A, "connect"),
@@ -990,8 +990,8 @@ describe("recent_changes — every document in the vault by last edit", () => {
     // Each row answers who / what / when / where in one call.
     expect(d.items[0]).toMatchObject({
       documentType: "bai/health-report",
-      change: "Status changed to CANONICAL",
-      action: "SET_STATUS",
+      change: "Submitted for review",
+      action: "SUBMIT_FOR_REVIEW",
       by: A,
       byName: "liberuum.eth",
       byShort: "0xadbA…BcA4",
@@ -1004,7 +1004,7 @@ describe("recent_changes — every document in the vault by last edit", () => {
     expect(d.undated).toBe(1);
     // The summary alone answers who and what for the newest change.
     expect(r.summary).toBe(
-      "listed the 4 most recently edited documents of 4 (1 more has no recorded edit time); newest: liberuum.eth — Status changed to CANONICAL",
+      "listed the 4 most recently edited documents of 4 (1 more has no recorded edit time); newest: liberuum.eth — Submitted for review",
     );
     // Membership came from the tree, times from the two listings.
     expect(requestAt(0).body.query).toContain("document(idOrSlug");
@@ -1020,7 +1020,7 @@ describe("recent_changes — every document in the vault by last edit", () => {
       lastOp("INGEST_SOURCE", {}, A, "switchboard"),
       lastOp("INGEST_SOURCE", {}, A, "switchboard"),
       ens("liberuum.eth"),
-      lastOp("SET_STATUS", { status: "CANONICAL" }, A, "switchboard"),
+      lastOp("SUBMIT_FOR_REVIEW", {}, A, "switchboard"),
     );
     const sources = await executeTool("recent_changes", { documentType: "bai/source" }, CTX);
     if (!sources.ok) throw new Error(sources.error);

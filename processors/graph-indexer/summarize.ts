@@ -29,8 +29,6 @@ export function summarizeOperation(
     }
     case "SET_NOTE_TYPE":
       return `Type set to ${String(input.noteType)}`;
-    case "SET_STATUS":
-      return `Status changed to ${String(input.status)}`;
     case "ADD_LINK":
       return `Linked to "${truncate(input.targetTitle)}" (${s(input.linkType, "RELATES_TO")})`;
     case "REMOVE_LINK":
@@ -133,6 +131,34 @@ export function summarizeOperation(
         : `Unlinked from its scope of work`;
     default:
       return type;
+  }
+}
+
+/**
+ * The phrase for a link operation. A link's target is a document id, so the
+ * caller passes the target's title (from `graph_nodes`); with none known the
+ * id stands in. Null for any other operation type, which keeps the caller's
+ * own phrase.
+ */
+export function summarizeLink(
+  type: string,
+  input: Record<string, unknown>,
+  targetTitle: string | null,
+): string | null {
+  const target = truncate(targetTitle ?? s(input.targetId));
+  switch (type) {
+    case "ADD_RELATIONSHIP": {
+      const kind = s(input.relationshipType, "RELATES_TO")
+        .replace(/_/g, " ")
+        .toLowerCase();
+      return `Linked to “${target}” (${kind})`;
+    }
+    case "REMOVE_RELATIONSHIP":
+      return `Removed the link to “${target}”`;
+    case "UPDATE_RELATIONSHIP":
+      return `Changed why it links to “${target}”`;
+    default:
+      return null;
   }
 }
 
