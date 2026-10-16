@@ -34,6 +34,7 @@ import { IncomingLinks, WhereThisSits } from "./components/graph-position.js";
 import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { VaultLoader } from "../shared/vault-loader.js";
 import { useKnowledgeNotes } from "../knowledge-vault/hooks/use-knowledge-notes.js";
+import { addLinkActions } from "./lib/link-actions.js";
 
 type NoteLinkLite = {
   id: string;
@@ -501,36 +502,23 @@ export default function Editor() {
                 <LinksSection
                   links={links}
                   currentDocId={document.header.id}
-                  onAddLink={(
-                    _id,
-                    targetDocumentId,
-                    _targetTitle,
-                    linkType,
-                    articulation,
-                  ) => {
+                  onAddLink={(targetDocumentId, linkType, articulation) => {
                     // ADD_RELATIONSHIP is a reactor system action (scope:
                     // "document") on the SOURCE document. The reactor
                     // writes one row to DocumentRelationship — with the
                     // articulation as its `metadata` — and the
                     // graph-indexer mirrors both into graph_edges.
-                    const metadata = articulationToMetadata(articulation);
-                    void dispatchActions(
-                      [
-                        {
-                          id: generateId(),
-                          type: "ADD_RELATIONSHIP",
-                          scope: "document",
-                          timestampUtcMs: timestamp(),
-                          input: {
-                            sourceId: document.header.id,
-                            targetId: targetDocumentId,
-                            relationshipType: linkType,
-                            ...(metadata ? { metadata } : {}),
-                          },
-                        } as never,
-                      ],
+                    // Guarded: nothing goes without a target, or to the note itself.
+                    const acts = addLinkActions(
                       document.header.id,
+                      targetDocumentId,
+                      linkType,
+                      articulation,
+                      { now: timestamp(), newId: generateId },
                     );
+                    if (acts.length > 0) {
+                      void dispatchActions(acts as never, document.header.id);
+                    }
                   }}
                   onArticulate={(id, articulation) => {
                     // UPDATE_RELATIONSHIP replaces the edge's metadata in
