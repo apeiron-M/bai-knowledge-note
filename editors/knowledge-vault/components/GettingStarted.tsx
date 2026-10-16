@@ -1,19 +1,51 @@
 import { useState } from "react";
 import { isDesktopHost } from "../../shared/host-config.js";
-import { resolveMcpEndpoint } from "../../shared/subgraph-endpoint.js";
+import { resolveReactorEndpoint } from "../../shared/subgraph-endpoint.js";
+import type { VaultMenuItem } from "./VaultMenu.js";
+import type { VaultPlace } from "./VaultPlaces.js";
+
+/**
+ * The lists the guide is printed from. `DriveExplorer` passes its own
+ * `GUIDE_PLACES`, `VAULT_MENU` and `CREATE_ITEMS`, so a renamed place or menu
+ * entry renames itself here. This file imports only types from the vault's
+ * views: importing `DriveExplorer` would be a cycle.
+ */
+export type GuideLists = {
+  places: VaultPlace[];
+  menu: VaultMenuItem[];
+  createItems: ReadonlyArray<VaultMenuItem>;
+};
+
+export const GUIDE_SECTIONS = [
+  { id: "overview", label: "Overview" },
+  { id: "sources", label: "Adding sources" },
+  { id: "notes", label: "Notes" },
+  { id: "pipeline", label: "Processing" },
+  { id: "graph", label: "Graph and links" },
+  { id: "plugin", label: "AI agent" },
+] as const;
+
+export type GuideSectionId = (typeof GUIDE_SECTIONS)[number]["id"];
+
+/** What each place holds, by place id. The place's name comes from the list it is given. */
+const PLACE_DESC: Record<string, string> = {
+  ask: "Ask the vault a question; the answer names the notes it used.",
+  notes: "Every note: one idea each, with its links and its source.",
+  topics: "Maps of your topics, from the vault's top map down.",
+  sources: "What you added, and what became of each.",
+  work: "Scopes of work, their projects, and the breakdowns that deliver them.",
+  graph: "How notes connect. Find a note, or hide kinds of notes from the legend.",
+  contradictions: "Notes that disagree. Listed while any are open.",
+};
 
 /** The guide, opened from the sidebar's foot ("Getting started"). */
-export function GettingStartedModal({ onClose }: { onClose: () => void }) {
-  const [activeSection, setActiveSection] = useState<string>("overview");
-
-  const sections = [
-    { id: "overview", label: "Overview" },
-    { id: "sources", label: "Adding Sources" },
-    { id: "notes", label: "Notes & Claims" },
-    { id: "pipeline", label: "Processing Pipeline" },
-    { id: "graph", label: "Graph & Links" },
-    { id: "plugin", label: "AI Agent" },
-  ];
+export function GettingStartedModal({
+  onClose,
+  places,
+  menu,
+  createItems,
+}: { onClose: () => void } & GuideLists) {
+  const [activeSection, setActiveSection] = useState<GuideSectionId>("overview");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -35,7 +67,7 @@ export function GettingStartedModal({ onClose }: { onClose: () => void }) {
               className="text-lg font-bold"
               style={{ color: "var(--bai-text)" }}
             >
-              Getting Started
+              Getting started
             </h2>
             <p className="text-xs" style={{ color: "var(--bai-text-muted)" }}>
               Learn how to use the Knowledge Vault
@@ -44,6 +76,7 @@ export function GettingStartedModal({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close"
             className="rounded-lg p-2 transition-colors"
             style={{ color: "var(--bai-text-muted)" }}
           >
@@ -65,7 +98,7 @@ export function GettingStartedModal({ onClose }: { onClose: () => void }) {
             className="w-44 shrink-0 py-3"
             style={{ borderRight: "1px solid var(--bai-border)" }}
           >
-            {sections.map((s) => (
+            {GUIDE_SECTIONS.map((s) => (
               <button
                 key={s.id}
                 type="button"
@@ -90,17 +123,40 @@ export function GettingStartedModal({ onClose }: { onClose: () => void }) {
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto px-6 py-5">
-            {activeSection === "overview" && <OverviewSection />}
-            {activeSection === "sources" && <SourcesSection />}
-            {activeSection === "notes" && <NotesSection />}
-            {activeSection === "pipeline" && <PipelineSection />}
-            {activeSection === "graph" && <GraphSection />}
-            {activeSection === "plugin" && <PluginSection />}
+            <GuideContent
+              section={activeSection}
+              places={places}
+              menu={menu}
+              createItems={createItems}
+            />
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+/** One section's body, without the modal's frame. */
+export function GuideContent({
+  section,
+  places,
+  menu,
+  createItems,
+}: { section: GuideSectionId } & GuideLists) {
+  switch (section) {
+    case "overview":
+      return <OverviewSection places={places} menu={menu} createItems={createItems} />;
+    case "sources":
+      return <SourcesSection />;
+    case "notes":
+      return <NotesSection createItems={createItems} />;
+    case "pipeline":
+      return <ProcessingSection menu={menu} />;
+    case "graph":
+      return <GraphSection menu={menu} />;
+    case "plugin":
+      return <PluginSection />;
+  }
 }
 
 const H = ({ children }: { children: React.ReactNode }) => (
@@ -119,6 +175,7 @@ const P = ({ children }: { children: React.ReactNode }) => (
     {children}
   </p>
 );
+/** One numbered line: "Title — what to do". */
 const Step = ({
   n,
   title,
@@ -138,14 +195,11 @@ const Step = ({
     >
       {n}
     </span>
-    <div>
-      <p className="text-xs font-medium" style={{ color: "var(--bai-text)" }}>
-        {title}
-      </p>
-      <p className="mt-0.5 text-xs" style={{ color: "var(--bai-text-muted)" }}>
-        {children}
-      </p>
-    </div>
+    <p className="text-xs" style={{ color: "var(--bai-text-muted)" }}>
+      <b style={{ color: "var(--bai-text)", fontWeight: 500 }}>{title}</b>
+      {" — "}
+      {children}
+    </p>
   </div>
 );
 const Tip = ({ children }: { children: React.ReactNode }) => (
@@ -161,8 +215,89 @@ const Tip = ({ children }: { children: React.ReactNode }) => (
     </p>
   </div>
 );
+const Row = ({
+  name,
+  nameWidth,
+  mono,
+  children,
+}: {
+  name: string;
+  nameWidth: string;
+  mono?: boolean;
+  children: React.ReactNode;
+}) => (
+  <div
+    className="flex gap-2 rounded px-3 py-1.5"
+    style={{ backgroundColor: "var(--bai-bg)" }}
+  >
+    <span
+      className={`shrink-0 text-[10px] font-medium ${nameWidth}${mono ? " font-mono" : ""}`}
+      style={{ color: "var(--bai-accent)" }}
+    >
+      {name}
+    </span>
+    <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>
+      {children}
+    </span>
+  </div>
+);
+const Code = ({ children }: { children: React.ReactNode }) => (
+  <div
+    className="mb-4 break-all rounded-lg px-4 py-3 font-mono text-[11px]"
+    style={{
+      backgroundColor: "var(--bai-bg)",
+      color: "var(--bai-text-secondary)",
+    }}
+  >
+    {children}
+  </div>
+);
 
-function OverviewSection() {
+/** An entry's name as printed in prose. `data-ref` is what the guide's test checks against the real lists. */
+function Ref({ kind, id, label }: { kind: "menu" | "create"; id: string; label: string }) {
+  return (
+    <b data-ref={`${kind}:${id}`} style={{ color: "var(--bai-text)", fontWeight: 500 }}>
+      {label}
+    </b>
+  );
+}
+
+/** "A, B and C" over entries. */
+function Entries({
+  kind,
+  items,
+}: {
+  kind: "menu" | "create";
+  items: ReadonlyArray<VaultMenuItem>;
+}) {
+  return (
+    <>
+      {items.map((item, i) => (
+        <span key={item.key}>
+          {i === 0 ? "" : i === items.length - 1 ? " and " : ", "}
+          <Ref kind={kind} id={item.key} label={item.label} />
+        </span>
+      ))}
+    </>
+  );
+}
+
+/** One named entry, found by key; nothing when the key does not exist. */
+function Entry({
+  kind,
+  items,
+  k,
+}: {
+  kind: "menu" | "create";
+  items: ReadonlyArray<VaultMenuItem>;
+  k: string;
+}) {
+  const item = items.find((i) => i.key === k);
+  return item ? <Ref kind={kind} id={item.key} label={item.label} /> : null;
+}
+
+function OverviewSection({ places, menu, createItems }: GuideLists) {
+  const desktop = isDesktopHost();
   return (
     <div>
       <H>What is the Knowledge Vault?</H>
@@ -172,73 +307,57 @@ function OverviewSection() {
         knowledge graph, and maintained over time.
       </P>
 
-      <H>The Navigation Tabs</H>
-      <div className="space-y-2 mb-4">
-        {[
-          {
-            tab: "Notes",
-            desc: "All your extracted knowledge claims. Each note makes one point with a declarative title.",
-          },
-          {
-            tab: "Graph",
-            desc: "Visual map of how notes connect. Nodes are notes, edges are typed links.",
-          },
-          {
-            tab: "Sources",
-            desc: "Raw input material (articles, papers, transcripts) waiting to be processed.",
-          },
-          {
-            tab: "Pipeline",
-            desc: "Processing queue tracking tasks through extract, connect, reweave, and verify phases.",
-          },
-          {
-            tab: "Health",
-            desc: "Live vault diagnostics: orphan detection, link density, schema compliance.",
-          },
-          {
-            tab: "Config",
-            desc: "Vault settings: name, dimensions, vocabulary, pipeline configuration.",
-          },
-        ].map((item) => (
+      <H>Find your way</H>
+      <div className="mb-4 space-y-2">
+        {places.map((p) => (
           <div
-            key={item.tab}
+            key={p.id}
+            data-guide-place={p.id}
             className="flex gap-2 rounded-lg px-3 py-2"
             style={{ backgroundColor: "var(--bai-bg)" }}
           >
             <span
-              className="shrink-0 text-xs font-semibold w-16"
+              className="w-28 shrink-0 text-xs font-semibold"
               style={{ color: "var(--bai-accent)" }}
             >
-              {item.tab}
+              {p.label}
             </span>
-            <span
-              className="text-xs"
-              style={{ color: "var(--bai-text-tertiary)" }}
-            >
-              {item.desc}
+            <span className="text-xs" style={{ color: "var(--bai-text-tertiary)" }}>
+              {PLACE_DESC[p.id] ?? ""}
             </span>
           </div>
         ))}
       </div>
 
-      <H>Quick Start Flow</H>
-      <Step n={1} title="Add a source">
-        Open Sources and click &quot;Add sources&quot;: drop a PDF, a Word file,
-        a web page or a book. The vault converts it and shows you the sources it
-        would create before anything is written. Or &quot;Paste text&quot; if it
-        is short.
+      <H>The vault menu</H>
+      <P>
+        {"Under the vault's name, and at the foot (Vault settings): "}
+        <Entries kind="menu" items={menu} />.
+      </P>
+
+      <H>Search</H>
+      <P>Search (Ctrl K, or ⌘ K on a Mac) finds notes, topics, sources and chats.</P>
+
+      <H>Adding</H>
+      <P>
+        {"Add sources takes files; the arrow beside it offers "}
+        <Entries kind="create" items={createItems} />.
+      </P>
+
+      <H>{desktop ? "Quick start on the desktop" : "Quick start on the web"}</H>
+      <Step n={1} title="Add sources">
+        drop files on the window or press Add sources.
       </Step>
-      <Step n={2} title="Queue for processing">
-        In the source editor, click &quot;Queue for Processing&quot;. This adds
-        a task to the pipeline.
+      <Step n={2} title="Processing">
+        {desktop
+          ? "the app reads each source in the background and writes its notes; the status at the top of the window says how it is going."
+          : "if this vault's server runs the pipeline, sources are processed on their own; otherwise an AI agent processes them (see AI agent)."}
       </Step>
-      <Step n={3} title="Run the AI agent">
-        In Claude Code with the powerhouse-knowledge plugin, run /pipeline to
-        extract claims, connect them, and verify quality.
+      <Step n={3} title="Review">
+        new notes wait in review; open one, check it, and Approve it.
       </Step>
-      <Step n={4} title="Explore your knowledge">
-        Check the Notes tab for extracted claims, Graph tab for connections, and
-        Health tab for quality metrics.
+      <Step n={4} title="Ask">
+        the answer names the notes it used.
       </Step>
     </div>
   );
@@ -247,82 +366,36 @@ function OverviewSection() {
 function SourcesSection() {
   return (
     <div>
-      <H>Adding Source Material</H>
+      <H>Adding sources</H>
       <P>
-        Sources are the raw input for your knowledge vault. Everything enters as
-        a source first, then gets processed into atomic claims.
+        Add sources converts a PDF, a Word file, a web page or a book, and shows
+        the sources it would create before anything is written. Each one is
+        queued for processing.
       </P>
+      <P>Paste text as a source, which is queued when added.</P>
 
-      <H>How to add a source</H>
-      <Step n={1} title="Click '+ Add Source'">
-        In the sidebar header or use New &gt; Add Source in the top bar.
-      </Step>
-      <Step n={2} title="Fill in the details">
-        Give it a title, select the type (Article, Paper, Transcript, etc.),
-        paste the full content.
-      </Step>
-      <Step n={3} title="Save">
-        Click &quot;Ingest Source&quot;. The source is now in /sources/ with
-        status INBOX.
-      </Step>
+      <H>What happens to a source</H>
+      <P>Inbox → Extracting → Extracted, or Archived.</P>
 
-      <H>Source Types</H>
-      <div className="mb-4 grid grid-cols-2 gap-1">
-        {[
-          "ARTICLE",
-          "PAPER",
-          "TRANSCRIPT",
-          "DOCUMENTATION",
-          "CONVERSATION",
-          "WEB_PAGE",
-          "BOOK_CHAPTER",
-          "MANUAL_ENTRY",
-        ].map((t) => (
-          <span
-            key={t}
-            className="rounded px-2 py-1 text-[10px]"
-            style={{
-              backgroundColor: "var(--bai-bg)",
-              color: "var(--bai-text-tertiary)",
-            }}
-          >
-            {t}
-          </span>
-        ))}
-      </div>
+      <Tip>Editing a source returns it to Inbox.</Tip>
 
-      <H>Source Lifecycle</H>
-      <P>
-        INBOX (new) &rarr; EXTRACTING (queued for AI) &rarr; EXTRACTED (claims
-        created) &rarr; ARCHIVED (done)
-      </P>
-
-      <Tip>
-        You can edit a source after creating it. Click &quot;Edit&quot; in the
-        source viewer. Saving resets the status to INBOX so it can be
-        re-processed with the updated content.
-      </Tip>
-
-      <H>Deleting Sources</H>
-      <P>
-        In the Sources tab, hover over a source and click the trash icon. A
-        confirmation dialog will appear before deletion.
-      </P>
+      <H>Deleting a source</H>
+      <P>{"\"Delete source\" is on each source's row."}</P>
     </div>
   );
 }
 
-function NotesSection() {
+function NotesSection({ createItems }: { createItems: ReadonlyArray<VaultMenuItem> }) {
   return (
     <div>
-      <H>Knowledge Notes</H>
+      <H>Knowledge notes</H>
       <P>
         Each note is an atomic claim — one idea, one point. Notes have
         declarative titles that read as complete sentences.
       </P>
 
-      <H>Note Structure</H>
-      <div className="space-y-1 mb-4">
+      <H>Note structure</H>
+      <div className="mb-4 space-y-1">
         {[
           {
             field: "Title",
@@ -342,143 +415,132 @@ function NotesSection() {
           },
           {
             field: "Status",
-            desc: "DRAFT \u2192 IN_REVIEW \u2192 CANONICAL \u2192 ARCHIVED",
+            desc: "DRAFT → IN_REVIEW → CANONICAL → ARCHIVED",
           },
           {
             field: "Links",
-            desc: "Typed connections to other notes (RELATES_TO, BUILDS_ON, CONTRADICTS, etc.)",
+            desc: "Typed connections to other notes (RELATES_TO, BUILDS_ON, CONTRADICTS, etc.). A link needs a reason.",
           },
           { field: "Topics", desc: "Tags for navigation and MOC grouping" },
         ].map((item) => (
-          <div
-            key={item.field}
-            className="flex gap-2 rounded px-3 py-1.5"
-            style={{ backgroundColor: "var(--bai-bg)" }}
-          >
-            <span
-              className="shrink-0 text-[10px] font-semibold w-20"
-              style={{ color: "var(--bai-text-secondary)" }}
-            >
-              {item.field}
-            </span>
-            <span
-              className="text-[10px]"
-              style={{ color: "var(--bai-text-muted)" }}
-            >
-              {item.desc}
-            </span>
-          </div>
+          <Row key={item.field} name={item.field} nameWidth="w-20">
+            {item.desc}
+          </Row>
         ))}
       </div>
 
       <Tip>
-        Most notes are created by the AI agent during source extraction. You can
-        also create notes directly via New &gt; Knowledge Note for claims you
-        already have in mind.
+        Most notes are written while a source is processed. To write one
+        yourself, use <Entry kind="create" items={createItems} k="note" />,
+        under the arrow beside Add sources.
       </Tip>
 
-      <H>Creating a Note Manually</H>
-      <Step n={1} title="New > Knowledge Note">
-        Use the top bar menu. Give it a declarative title.
+      <H>Writing a note</H>
+      <Step n={1} title="Open the arrow beside Add sources">
+        choose <Entry kind="create" items={createItems} k="note" /> and give the
+        note a declarative title.
       </Step>
       <Step n={2} title="Fill in the editor">
-        Add description, content, type, and topics in the note editor.
+        add description, content, type, and topics.
       </Step>
       <Step n={3} title="Add links">
-        Use the Links section to connect it to related notes.
+        use the Links section to connect it to a related note, and say why.
       </Step>
     </div>
   );
 }
 
-function PipelineSection() {
+function ProcessingSection({ menu }: { menu: ReadonlyArray<VaultMenuItem> }) {
+  const desktop = isDesktopHost();
   return (
     <div>
-      <H>Processing Pipeline</H>
+      <H>Processing</H>
       <P>
-        The pipeline tracks how sources get transformed into connected
-        knowledge. Each task moves through 4 phases.
+        Processing turns a source into connected notes. Each source goes
+        through four steps.
       </P>
 
-      <H>The 4 Phases</H>
-      <div className="space-y-2 mb-4">
+      <div className="mb-4 space-y-2">
         {[
           {
-            phase: "Create",
+            step: "Extract",
+            phase: "create",
             color: "bg-amber-400",
-            desc: "Extract atomic claims from the source into individual knowledge notes",
+            desc: "Write atomic notes from the source",
           },
           {
-            phase: "Reflect",
+            step: "Connect",
+            phase: "reflect",
             color: "bg-blue-400",
-            desc: "Find connections between the new notes and existing knowledge",
+            desc: "Find connections between the new notes and existing ones",
           },
           {
-            phase: "Reweave",
+            step: "Place in topics",
+            phase: "reweave",
             color: "bg-purple-400",
-            desc: "Update older notes with new context from the fresh extraction",
+            desc: "Add the new notes to your topics' maps",
           },
           {
-            phase: "Verify",
+            step: "Verify",
+            phase: "verify",
             color: "bg-emerald-400",
-            desc: "Quality check: schema compliance, link density, description quality",
+            desc: "Check schema, links and descriptions",
           },
         ].map((item) => (
           <div
-            key={item.phase}
+            key={item.step}
             className="flex items-center gap-3 rounded-lg px-3 py-2"
             style={{ backgroundColor: "var(--bai-bg)" }}
           >
-            <span className={`h-2.5 w-8 rounded-full ${item.color}`} />
+            <span className={`h-2.5 w-8 shrink-0 rounded-full ${item.color}`} />
             <span
-              className="text-xs font-medium w-16"
+              className="w-28 shrink-0 text-xs font-medium"
               style={{ color: "var(--bai-text)" }}
+            >
+              {item.step}
+            </span>
+            <span
+              className="w-14 shrink-0 font-mono text-[10px]"
+              style={{ color: "var(--bai-text-muted)" }}
             >
               {item.phase}
             </span>
-            <span
-              className="text-[10px]"
-              style={{ color: "var(--bai-text-muted)" }}
-            >
+            <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>
               {item.desc}
             </span>
           </div>
         ))}
       </div>
 
-      <H>How It Works</H>
-      <Step n={1} title="Source gets queued">
-        Click &quot;Queue for Processing&quot; in the source editor, or the AI
-        agent queues it automatically.
-      </Step>
-      <Step n={2} title="Agent processes each phase">
-        The AI agent picks up PENDING tasks and works through the phases,
-        recording handoff notes at each step.
-      </Step>
-      <Step n={3} title="Track progress">
-        Open the Pipeline tab to see task status, completed phases, and handoff
-        details.
-      </Step>
+      <P>
+        {desktop
+          ? "It runs on its own; See runs, at the top of the window, opens each run in Workflows."
+          : "It runs where this vault's server runs the pipeline, or from an AI agent."}
+      </P>
+      <P>
+        <Entry kind="menu" items={menu} k="pipeline" /> is in the vault menu.
+      </P>
 
       <Tip>
-        Click on a task name in the Pipeline view to jump directly to the source
-        document.
+        The Verify step finishes a source&apos;s task; its notes stay in review for
+        you.
       </Tip>
     </div>
   );
 }
 
-function GraphSection() {
+function GraphSection({ menu }: { menu: ReadonlyArray<VaultMenuItem> }) {
   return (
     <div>
-      <H>Knowledge Graph</H>
+      <H>Knowledge graph</H>
       <P>
-        The Graph tab shows how your notes are connected. Each node is a note,
-        each edge is a typed link.
+        The graph shows how your notes are connected. Each node is a note, each
+        edge is a typed link. Find a note, or hide kinds of notes from the
+        legend.
       </P>
 
-      <H>Link Types</H>
-      <div className="space-y-1 mb-4">
+      <H>Link types</H>
+      <div className="mb-4 space-y-1">
         {[
           {
             type: "RELATES_TO",
@@ -495,191 +557,86 @@ function GraphSection() {
             desc: "This note was extracted from the target source",
           },
         ].map((item) => (
-          <div
-            key={item.type}
-            className="flex gap-2 rounded px-3 py-1.5"
-            style={{ backgroundColor: "var(--bai-bg)" }}
-          >
-            <span
-              className="shrink-0 text-[10px] font-mono font-medium w-28"
-              style={{ color: "var(--bai-accent)" }}
-            >
-              {item.type}
-            </span>
-            <span
-              className="text-[10px]"
-              style={{ color: "var(--bai-text-muted)" }}
-            >
-              {item.desc}
-            </span>
-          </div>
+          <Row key={item.type} name={item.type} nameWidth="w-28" mono>
+            {item.desc}
+          </Row>
         ))}
       </div>
 
-      <H>Graph Health Metrics</H>
-      <P>The Health tab shows quality metrics computed from the graph:</P>
-      <div className="space-y-1 mb-4">
-        {[
-          {
-            metric: "Orphans",
-            desc: "Notes with zero incoming links \u2014 disconnected from the graph",
-          },
-          {
-            metric: "Density",
-            desc: "How interconnected the graph is (edges / possible edges)",
-          },
-          {
-            metric: "Avg Links",
-            desc: "Average connections per note \u2014 target is 2+",
-          },
-          {
-            metric: "Bridges",
-            desc: "Critical nodes whose removal would disconnect the graph",
-          },
-        ].map((item) => (
-          <div
-            key={item.metric}
-            className="flex gap-2 rounded px-3 py-1.5"
-            style={{ backgroundColor: "var(--bai-bg)" }}
-          >
-            <span
-              className="shrink-0 text-[10px] font-medium w-20"
-              style={{ color: "var(--bai-text-secondary)" }}
-            >
-              {item.metric}
-            </span>
-            <span
-              className="text-[10px]"
-              style={{ color: "var(--bai-text-muted)" }}
-            >
-              {item.desc}
-            </span>
-          </div>
-        ))}
-      </div>
+      <H>Health</H>
+      <P>
+        <Entry kind="menu" items={menu} k="health" /> (in the vault menu) shows
+        orphans, link density and dangling links.
+      </P>
 
-      <Tip>
-        The graph auto-syncs when notes change. If you add a link in the note
-        editor, the graph view updates on the next tab switch.
-      </Tip>
+      <Tip>The graph updates on its own when notes change.</Tip>
     </div>
   );
 }
 
+const PLUGIN_COMMANDS: { cmd: string; desc: string }[] = [
+  { cmd: "setup", desc: "Point the plugin at this vault" },
+  { cmd: "seed", desc: "Ingest source material for processing" },
+  { cmd: "extract", desc: "Extract atomic claims from a source" },
+  { cmd: "connect", desc: "Find and create links between notes" },
+  { cmd: "verify", desc: "Run quality checks on notes" },
+  {
+    cmd: "pipeline",
+    desc: "Run the full extract → connect → reweave → verify flow",
+  },
+  { cmd: "health", desc: "Get vault health diagnostics" },
+  { cmd: "graph", desc: "Structural analysis (triangles, bridges, clusters)" },
+  { cmd: "search", desc: "Find notes by content, title, or topic" },
+];
+
 function PluginSection() {
+  const desktop = isDesktopHost();
   return (
     <div>
-      <H>AI Agent (Claude Plugin)</H>
+      <H>AI agent (optional)</H>
       <P>
         The powerhouse-knowledge plugin connects Claude Code to your vault. The
         AI agent can extract claims, find connections, verify quality, and
         analyze the graph.
       </P>
 
-      <H>Setup — Local</H>
-      {isDesktopHost() ? (
-        <Step n={1} title="Use the app's engine">
-          Knowledge Vault runs the engine for you while it is open. MCP is
-          served at {resolveMcpEndpoint()} (Settings › Diagnostics shows it too).
-        </Step>
+      <H>Connect it to this vault</H>
+      {desktop ? (
+        <P>
+          Settings › Diagnostics shows the two things an agent needs: the
+          Switchboard CLI command for this vault and the MCP address.
+        </P>
       ) : (
-        <Step n={1} title="Start the reactor locally">
-          Run ph vetra --watch in your project directory. MCP is served at{" "}
-          {resolveMcpEndpoint()}
-        </Step>
+        <>
+          <P>Point the Switchboard CLI at this vault:</P>
+          <Code>
+            {`switchboard init --url ${resolveReactorEndpoint()} --name `}
+            {"<vault>"}
+            {" --use-profile"}
+          </Code>
+        </>
       )}
-      <Step n={2} title="Open Claude Code with the plugin">
-        claude --plugin-dir ~/path/to/powerhouse-knowledge
-      </Step>
-      <Step n={3} title="Run /setup">
-        This imports the Ars Contexta methodology (249 research claims) if not
-        already present.
-      </Step>
 
-      <H>Setup — Remote Vault</H>
-      <P>
-        You can also connect to any remote Switchboard instance instead of
-        running locally. Edit .mcp.json in the plugin directory to point to the
-        remote reactor:
-      </P>
-      <div
-        className="mb-4 rounded-lg px-4 py-3 font-mono text-[11px]"
-        style={{
-          backgroundColor: "var(--bai-bg)",
-          color: "var(--bai-text-secondary)",
-        }}
-      >
-        <span style={{ color: "var(--bai-text-muted)" }}>{`{`}</span>
+      <H>Install the plugin</H>
+      <Code>
+        claude plugin marketplace add liberuum/powerhouse-knowledge
         <br />
-        <span
-          style={{ color: "var(--bai-text-muted)" }}
-        >{`  "mcpServers": { "reactor-mcp": {`}</span>
-        <br />
-        <span style={{ color: "var(--bai-text-muted)" }}>{`    "url": "`}</span>
-        <span className="text-emerald-400">
-          https://your-switchboard.example.com/mcp
-        </span>
-        <span style={{ color: "var(--bai-text-muted)" }}>{`"`}</span>
-        <br />
-        <span style={{ color: "var(--bai-text-muted)" }}>{`  }}`}</span>
-        <br />
-        <span style={{ color: "var(--bai-text-muted)" }}>{`}`}</span>
-      </div>
-      <Tip>
-        No local reactor needed when connecting remotely. The plugin talks to
-        the remote Switchboard via MCP over HTTPS. All skills work the same way
-        — the only difference is the endpoint URL.
-      </Tip>
+        claude plugin install powerhouse-knowledge@powerhouse-knowledge
+      </Code>
 
-      <H>Key Commands</H>
-      <div className="space-y-1 mb-4">
-        {[
-          { cmd: "/seed", desc: "Ingest source material for processing" },
-          { cmd: "/extract", desc: "Extract atomic claims from a source" },
-          { cmd: "/connect", desc: "Find and create links between notes" },
-          { cmd: "/verify", desc: "Run quality checks on notes" },
-          {
-            cmd: "/pipeline",
-            desc: "Run the full extract \u2192 connect \u2192 reweave \u2192 verify flow",
-          },
-          { cmd: "/health", desc: "Get vault health diagnostics" },
-          {
-            cmd: "/graph",
-            desc: "Structural analysis (triangles, bridges, clusters)",
-          },
-          { cmd: "/search", desc: "Find notes by content, title, or topic" },
-        ].map((item) => (
-          <div
+      <H>Commands</H>
+      <div className="mb-4 space-y-1">
+        {PLUGIN_COMMANDS.map((item) => (
+          <Row
             key={item.cmd}
-            className="flex gap-2 rounded px-3 py-1.5"
-            style={{ backgroundColor: "var(--bai-bg)" }}
+            name={`/powerhouse-knowledge:${item.cmd}`}
+            nameWidth="w-52"
+            mono
           >
-            <span className="shrink-0 text-[10px] font-mono font-medium text-emerald-400 w-20">
-              {item.cmd}
-            </span>
-            <span
-              className="text-[10px]"
-              style={{ color: "var(--bai-text-muted)" }}
-            >
-              {item.desc}
-            </span>
-          </div>
+            {item.desc}
+          </Row>
         ))}
       </div>
-
-      <H>Typical Workflow</H>
-      <P>
-        1. Add a source in the app (paste article/transcript) &rarr; 2. Click
-        &quot;Queue for Processing&quot; &rarr; 3. In Claude Code, run /pipeline
-        &rarr; 4. Agent extracts claims, connects them, verifies quality &rarr;
-        5. See results in the app (Notes, Graph, Health tabs)
-      </P>
-
-      <Tip>
-        The AI agent references the 249 Ars Contexta methodology claims in
-        /research/ when making design decisions. These explain WHY the vault
-        works the way it does.
-      </Tip>
     </div>
   );
 }
