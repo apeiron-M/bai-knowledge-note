@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { buildSourceTimeline, type TimelineNode, type TimelineSource } from "../../../../processors/graph-indexer/source-timeline.js";
 import { naturalWidth } from "../../lib/timeline/axis.js";
-import { StrataChart, tipBox } from "./StrataChart.js";
+import { StrataChart, tipBox, wheelScroll } from "./StrataChart.js";
 
 const words = { locale: "en-US", timeZone: "UTC" };
 const NOW = Date.parse("2026-10-16T10:18:00.000Z");
@@ -91,7 +91,7 @@ describe("StrataChart, a long history", () => {
   const html = renderToStaticMarkup(<StrataChart timeline={year} now={Date.UTC(2026, 9, 16, 12)} width={900} words={words} label="Notes over time" />);
 
   it("gives every day room and scrolls, rather than crushing a year into the panel", () => {
-    expect(html).toContain('class="tl-scroll"');
+    expect(html).toContain('class="tl-scroll can-scroll"');
     const drawn = Number(html.match(/<svg class="tl-strata[^"]*" viewBox="0 0 (\d+)/)?.[1]);
     expect(drawn).toBeGreaterThanOrEqual(365 * 80);
   });
@@ -111,5 +111,25 @@ describe("naturalWidth", () => {
     const d = (n: number, h = 9) => Date.UTC(2026, 9, n, h);
     expect(naturalWidth([d(1), d(1, 15), d(2)], 900, { timeZone: "UTC" })).toBe(900);
     expect(naturalWidth(Array.from({ length: 30 }, (_, i) => d(1 + i)), 900, { timeZone: "UTC" })).toBe(30 * 80);
+  });
+});
+
+describe("wheelScroll", () => {
+  it("turns a vertical wheel into a sideways scroll while there is history that way", () => {
+    expect(wheelScroll(100, 500, 0, 40, 0)).toBe(140);
+    expect(wheelScroll(100, 500, 0, -40, 0)).toBe(60);
+    expect(wheelScroll(100, 500, 0, 3, 1)).toBe(148);
+  });
+
+  it("lets the page scroll at either end, and leaves sideways trackpad gestures to the browser", () => {
+    expect(wheelScroll(0, 500, 0, -40, 0)).toBeNull();
+    expect(wheelScroll(500, 500, 0, 40, 0)).toBeNull();
+    expect(wheelScroll(100, 500, 30, 5, 0)).toBeNull();
+    expect(wheelScroll(100, 0, 0, 40, 0)).toBeNull();
+  });
+
+  it("stops at the ends rather than overshooting", () => {
+    expect(wheelScroll(480, 500, 0, 40, 0)).toBe(500);
+    expect(wheelScroll(10, 500, 0, -40, 0)).toBe(0);
   });
 });

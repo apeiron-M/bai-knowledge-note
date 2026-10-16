@@ -1,4 +1,4 @@
-import { useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SourceTimeline } from "../../../../processors/graph-indexer/source-timeline.js";
 import { clock, countOf, dayLabel } from "../../lib/timeline/additions.js";
 import { axisMarks, foldedAxis, naturalWidth, type TimeWords } from "../../lib/timeline/axis.js";
@@ -70,6 +70,22 @@ export function tipBox(pointerLeft: number, chartWidth: number): { left: number;
   return { left: 0, width: Math.min(TIP_WIDTH, chartWidth) };
 }
 
+/** A wheel line, in px. */
+const LINE_PX = 16;
+
+/**
+ * The chart's scroll position after a wheel turn, or null to leave the event
+ * to the browser: a sideways trackpad gesture (it scrolls natively), a chart
+ * that does not scroll, or one already at the end the wheel points to — so
+ * the page scrolls on instead of the wheel being swallowed.
+ */
+export function wheelScroll(left: number, max: number, deltaX: number, deltaY: number, deltaMode: number): number | null {
+  if (max <= 0 || Math.abs(deltaX) >= Math.abs(deltaY)) return null;
+  const dy = deltaMode === 1 ? deltaY * LINE_PX : deltaY;
+  if ((dy < 0 && left <= 0) || (dy > 0 && left >= max)) return null;
+  return Math.max(0, Math.min(max, left + dy));
+}
+
 export function StrataChart(props: StrataChartProps) {
   const { timeline, now, width, compact = false } = props;
   const locale = props.words?.locale;
@@ -84,6 +100,9 @@ export function StrataChart(props: StrataChartProps) {
   /** Follow "Now" as the chart grows, until the reader scrolls back. */
   const atEnd = useRef(true);
   const [awayFromNow, setAwayFromNow] = useState(false);
+  /** A mouse drag that pans the chart; `moved` keeps it from also opening an addition. */
+  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   const model = useMemo(() => {
     if (width <= 0) return null;
@@ -120,6 +139,21 @@ export function StrataChart(props: StrataChartProps) {
   useLayoutEffect(() => {
     const el = scroller.current;
     if (el && atEnd.current) el.scrollLeft = el.scrollWidth;
+  }, [drawn]);
+
+  // The wheel scrolls through time while the pointer is over the chart. React's
+  // wheel handler is passive, so it could not keep the page from scrolling too.
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      const next = wheelScroll(el.scrollLeft, el.scrollWidth - el.clientWidth, e.deltaX, e.deltaY, e.deltaMode);
+      if (next === null) return;
+      e.preventDefault();
+      el.scrollLeft = next;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
   }, [drawn]);
 
   if (!model) return <div className="tl-chart" ref={box} />;
@@ -162,17 +196,46 @@ export function StrataChart(props: StrataChartProps) {
     <div
       className="tl-chart"
       ref={box}
+      onPointerDown={(e) => {
+        const el = scroller.current;
+        if (!scrolls || !el || e.pointerType === "touch" || e.button !== 0) return;
+        drag.current = { x: e.clientX, left: el.scrollLeft, moved: false };
+      }}
       onPointerMove={(e) => {
+        const d = drag.current;
+        if (d && e.buttons & 1) {
+          const dx = e.clientX - d.x;
+          if (!d.moved && Math.abs(dx) > 4) {
+            d.moved = true;
+            setDragging(true);
+            setHover(null);
+            e.currentTarget.setPointerCapture(e.pointerId);
+          }
+          if (d.moved) {
+            if (scroller.current) scroller.current.scrollLeft = d.left - dx;
+            return;
+          }
+        }
         const h = at(e);
         if (!h || compact) return;
         setHover(h);
         props.onHover?.(h.layer?.additionIds ?? null);
+      }}
+      onPointerUp={() => {
+        if (drag.current && !drag.current.moved) drag.current = null;
+        setDragging(false);
       }}
       onPointerLeave={() => {
         setHover(null);
         props.onHover?.(null);
       }}
       onClick={(e) => {
+        // The end of a drag is not a pick.
+        if (drag.current?.moved) {
+          drag.current = null;
+          return;
+        }
+        drag.current = null;
         const h = at(e);
         if (!h?.layer || !props.onPick) return;
         // A merged run opens the member nearest the moment clicked.
@@ -182,7 +245,7 @@ export function StrataChart(props: StrataChartProps) {
       }}
     >
       <div
-        className="tl-scroll"
+        className={cls("tl-scroll", scrolls && "can-scroll", dragging && "dragging")}
         ref={scroller}
         tabIndex={scrolls ? 0 : undefined}
         aria-label={scrolls ? "Scroll through time" : undefined}

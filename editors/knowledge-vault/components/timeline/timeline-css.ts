@@ -29,7 +29,14 @@ export const TIMELINE_CSS = `
 /* the strata */
 .vault-tl .tl-panel { position: relative; margin-top: 18px; padding: 14px 18px 8px; border-radius: 14px; border: 1px solid var(--bai-border); background: var(--bai-surface); box-shadow: ${role("raise")}; }
 .tl-chart { position: relative; }
-.tl-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--bai-text) 22%, transparent) transparent; }
+.tl-scroll { overflow-x: auto; overflow-y: hidden; }
+/* Its own lane under the dates, not over them; thick enough to grab. */
+.tl-scroll.can-scroll { padding-bottom: 14px; cursor: grab; }
+.tl-scroll.dragging { cursor: grabbing; user-select: none; }
+.tl-scroll::-webkit-scrollbar { height: 10px; }
+.tl-scroll::-webkit-scrollbar-track { background: color-mix(in srgb, var(--bai-text) 6%, transparent); border-radius: 999px; }
+.tl-scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--bai-text) 28%, transparent); border-radius: 999px; }
+.tl-scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--bai-text) 42%, transparent); }
 .tl-scroll:focus-visible { outline: 2px solid var(--bai-accent); outline-offset: 2px; border-radius: 6px; }
 .tl-strata { display: block; max-width: none; height: auto; overflow: visible; touch-action: pan-x; }
 .tl-yaxis { position: absolute; left: 0; top: 0; pointer-events: none; }
