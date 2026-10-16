@@ -6,17 +6,27 @@ import {
   easeTowards,
   edgeAlpha,
   edgeAttributes,
+  EMPTY_GRAPH_FILTER,
   fitView,
+  hidesAnything,
   hitTest,
   indexGraph,
   jitter,
+  LINK_KIND_LABEL,
+  LINK_KINDS,
   mergePositions,
   MOC_EDGE_COLOR,
   neighbourhood,
+  NODE_KIND_LABEL,
+  NODE_KINDS,
   nodeAlpha,
   nodeAttributes,
+  OTHER_KIND,
   packGraph,
   sameStructure,
+  showNodeKind,
+  toggleLinkKind,
+  toggleNodeKind,
   type GraphMocInput,
   type GraphNoteInput,
 } from "./model.js";
@@ -151,6 +161,60 @@ describe("indexGraph and neighbourhood", () => {
       2, 4,
     ]);
     expect([...g.isMoc]).toEqual([0, 0, 0, 1, 1]);
+  });
+});
+
+describe("legend kinds and the filter", () => {
+  it("codes each node and link by the legend entry that hides it; anything else is never hidden", () => {
+    const g = indexGraph(
+      buildGraphModel(
+        [
+          note("a", [{ target: "b" }]),
+          note("b", [], "DRAFT"),
+          note("odd", [], "WEIRD"),
+        ],
+        [moc("m", ["a"])],
+      ),
+    );
+    expect([...g.nodeKind]).toEqual([2, 0, OTHER_KIND, 4]); // CANONICAL, DRAFT, unknown, MOC
+    expect([...g.linkKind]).toEqual([5, 0]); // m→a core idea, a→b relates to
+  });
+
+  it("names the entries in the spec's words, in the legend's order", () => {
+    expect(NODE_KINDS.map((k) => NODE_KIND_LABEL[k])).toEqual([
+      "Draft",
+      "In review",
+      "Canonical",
+      "Archived",
+      "MOC",
+    ]);
+    expect(LINK_KINDS.map((k) => LINK_KIND_LABEL[k])).toEqual([
+      "relates to",
+      "builds on",
+      "contradicts",
+      "supersedes",
+      "derived from",
+      "core idea",
+    ]);
+  });
+
+  it("toggles an entry, keeps the legend's order, and shows a node's kind again", () => {
+    expect(hidesAnything(EMPTY_GRAPH_FILTER)).toBe(false);
+    let f = toggleNodeKind(EMPTY_GRAPH_FILTER, "MOC");
+    f = toggleNodeKind(f, "DRAFT");
+    expect(f.hiddenNodes).toEqual(["DRAFT", "MOC"]);
+    expect(hidesAnything(f)).toBe(true);
+    f = toggleLinkKind(f, "CORE_IDEA");
+    expect(f.hiddenLinks).toEqual(["CORE_IDEA"]);
+    expect(toggleNodeKind(f, "DRAFT").hiddenNodes).toEqual(["MOC"]);
+    expect(toggleLinkKind(f, "CORE_IDEA").hiddenLinks).toEqual([]);
+
+    const shown = showNodeKind(f, { isMoc: true, status: null });
+    expect(shown.hiddenNodes).toEqual(["DRAFT"]);
+    expect(shown.hiddenLinks).toEqual(["CORE_IDEA"]); // links are left as they were
+    expect(showNodeKind(f, { isMoc: false, status: "CANONICAL" })).toBe(f); // not hidden: unchanged
+    expect(showNodeKind(f, { isMoc: false, status: "WEIRD" })).toBe(f);
+    expect(EMPTY_GRAPH_FILTER.hiddenNodes).toEqual([]); // never mutated
   });
 });
 

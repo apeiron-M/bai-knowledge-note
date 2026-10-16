@@ -116,7 +116,11 @@ export function isLightGraphTheme(): boolean {
 /** Theme-aware canvas background, for the renderers. */
 export function graphBackgroundColor(): [number, number, number] {
   const hex = isLightGraphTheme() ? 0xf8f9fc : BG_COLOR;
-  return [((hex >> 16) & 0xff) / 255, ((hex >> 8) & 0xff) / 255, (hex & 0xff) / 255];
+  return [
+    ((hex >> 16) & 0xff) / 255,
+    ((hex >> 8) & 0xff) / 255,
+    (hex & 0xff) / 255,
+  ];
 }
 
 /** Theme-aware node outline colour: light on a dark canvas, dark on a light one. */
@@ -124,7 +128,11 @@ export function graphOutlineColor(): string {
   return isLightGraphTheme() ? "rgb(31, 41, 55)" : "rgb(250, 245, 255)";
 }
 
-export const GRAPH_OUTLINE_LIGHT: [number, number, number] = [31 / 255, 41 / 255, 55 / 255];
+export const GRAPH_OUTLINE_LIGHT: [number, number, number] = [
+  31 / 255,
+  41 / 255,
+  55 / 255,
+];
 export const GRAPH_OUTLINE_DARK: [number, number, number] = [
   250 / 255,
   245 / 255,
@@ -245,6 +253,122 @@ export function sameStructure(
 }
 
 /* ------------------------------------------------------------------ */
+/*  Legend kinds and the filter                                         */
+/* ------------------------------------------------------------------ */
+
+/** The node entries of the legend, in its order; each can be hidden. */
+export const NODE_KINDS = [
+  "DRAFT",
+  "IN_REVIEW",
+  "CANONICAL",
+  "ARCHIVED",
+  "MOC",
+] as const;
+export type NodeKind = (typeof NODE_KINDS)[number];
+export const NODE_KIND_LABEL: Record<NodeKind, string> = {
+  DRAFT: "Draft",
+  IN_REVIEW: "In review",
+  CANONICAL: "Canonical",
+  ARCHIVED: "Archived",
+  MOC: "MOC",
+};
+
+/** The link entries of the legend, in its order; each can be hidden. */
+export const LINK_KINDS = [
+  "RELATES_TO",
+  "BUILDS_ON",
+  "CONTRADICTS",
+  "SUPERSEDES",
+  "DERIVED_FROM",
+  "CORE_IDEA",
+] as const;
+export type LinkKind = (typeof LINK_KINDS)[number];
+export const LINK_KIND_LABEL: Record<LinkKind, string> = {
+  RELATES_TO: "relates to",
+  BUILDS_ON: "builds on",
+  CONTRADICTS: "contradicts",
+  SUPERSEDES: "supersedes",
+  DERIVED_FROM: "derived from",
+  CORE_IDEA: "core idea",
+};
+
+/**
+ * The kind code of anything the legend does not list (an unknown status or
+ * link type): a bit no filter sets, so it is never hidden.
+ */
+export const OTHER_KIND = 31;
+
+/** A node's legend entry as an index into NODE_KINDS, or OTHER_KIND. */
+export function nodeKindCode(node: Pick<NodeSpec, "isMoc" | "status">): number {
+  const kind = node.isMoc ? "MOC" : node.status;
+  const i = (NODE_KINDS as readonly (string | null)[]).indexOf(kind);
+  return i < 0 ? OTHER_KIND : i;
+}
+
+/** A link's legend entry as an index into LINK_KINDS, or OTHER_KIND. */
+export function linkKindCode(link: Pick<LinkSpec, "linkType">): number {
+  const i = (LINK_KINDS as readonly (string | null)[]).indexOf(link.linkType);
+  return i < 0 ? OTHER_KIND : i;
+}
+
+/**
+ * What the legend hides. Held by the vault while it is open and never saved;
+ * the order of each list follows the legend.
+ */
+export type GraphFilter = {
+  hiddenNodes: readonly NodeKind[];
+  hiddenLinks: readonly LinkKind[];
+};
+
+export const EMPTY_GRAPH_FILTER: GraphFilter = {
+  hiddenNodes: [],
+  hiddenLinks: [],
+};
+
+export function hidesAnything(filter: GraphFilter): boolean {
+  return filter.hiddenNodes.length > 0 || filter.hiddenLinks.length > 0;
+}
+
+export function toggleNodeKind(
+  filter: GraphFilter,
+  kind: NodeKind,
+): GraphFilter {
+  const hidden = filter.hiddenNodes.includes(kind);
+  return {
+    ...filter,
+    hiddenNodes: NODE_KINDS.filter((k) =>
+      k === kind ? !hidden : filter.hiddenNodes.includes(k),
+    ),
+  };
+}
+
+export function toggleLinkKind(
+  filter: GraphFilter,
+  kind: LinkKind,
+): GraphFilter {
+  const hidden = filter.hiddenLinks.includes(kind);
+  return {
+    ...filter,
+    hiddenLinks: LINK_KINDS.filter((k) =>
+      k === kind ? !hidden : filter.hiddenLinks.includes(k),
+    ),
+  };
+}
+
+/** The filter with this node's kind shown again; the same object when it was not hidden. */
+export function showNodeKind(
+  filter: GraphFilter,
+  node: Pick<NodeSpec, "isMoc" | "status">,
+): GraphFilter {
+  const code = nodeKindCode(node);
+  if (code === OTHER_KIND) return filter;
+  const kind = NODE_KINDS[code];
+  return filter.hiddenNodes.includes(kind)
+    ? toggleNodeKind(filter, kind)
+    : filter;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Indexed graph                                                       */
 /* ------------------------------------------------------------------ */
 
@@ -260,6 +384,10 @@ export type IndexedGraph = {
   adj: Uint32Array;
   radius: Float32Array;
   isMoc: Uint8Array;
+  /** The legend entry of each node (nodeKindCode), so a filter is a pass of bit tests. */
+  nodeKind: Uint8Array;
+  /** The legend entry of each link (linkKindCode), in `links` order. */
+  linkKind: Uint8Array;
 };
 
 export function indexGraph(model: GraphModel): IndexedGraph {
@@ -268,14 +396,17 @@ export function indexGraph(model: GraphModel): IndexedGraph {
   const index = new Map<string, number>();
   const radius = new Float32Array(n);
   const isMoc = new Uint8Array(n);
+  const nodeKind = new Uint8Array(n);
   nodes.forEach((node, i) => {
     index.set(node.id, i);
     radius[i] = node.radius;
     isMoc[i] = node.isMoc ? 1 : 0;
+    nodeKind[i] = nodeKindCode(node);
   });
   const links: LinkSpec[] = [];
   const src: number[] = [];
   const dst: number[] = [];
+  const linkKind: number[] = [];
   for (const l of model.links) {
     const s = index.get(l.source);
     const t = index.get(l.target);
@@ -283,6 +414,7 @@ export function indexGraph(model: GraphModel): IndexedGraph {
     links.push(l);
     src.push(s);
     dst.push(t);
+    linkKind.push(linkKindCode(l));
   }
   const adjStart = new Uint32Array(n + 1);
   for (let k = 0; k < src.length; k++) {
@@ -306,6 +438,8 @@ export function indexGraph(model: GraphModel): IndexedGraph {
     adj,
     radius,
     isMoc,
+    nodeKind,
+    linkKind: Uint8Array.from(linkKind),
   };
 }
 
