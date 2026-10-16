@@ -47,3 +47,18 @@ export function queueStatusLine(task: QueueTask | undefined, opts: { desktop: bo
   const words = task.currentPhase ? PHASE_WORDS[task.currentPhase] : undefined;
   return words ? `Processing — ${words}` : "Processing";
 }
+
+/** The paste form's lede, by host. */
+export function pasteLede(desktop: boolean): string {
+  return desktop
+    ? "Paste the text. Once added, the app turns it into notes in the background."
+    : "Paste the text. Once added, it is queued to be turned into notes.";
+}
+
+/** "Add source": the source is added, and when the vault has a processing queue it is queued in the same press. */
+export function ingestAndQueue(steps: { ingest: () => void; queue?: { addTask: () => void; markQueued: () => void } }): void {
+  steps.ingest();
+  if (!steps.queue) return;
+  steps.queue.addTask();
+  steps.queue.markQueued();
+}

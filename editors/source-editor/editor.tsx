@@ -29,7 +29,7 @@ import { useRevisionHistory } from "../shared/use-revision-history.js";
 import { SOURCE_REVISION_MODEL } from "./lib/revision-model.js";
 import { isDesktopHost } from "../shared/host-config.js";
 import { QueueStatusLine } from "./components/queue-status-line.js";
-import { openTaskFor } from "./lib/queue-status.js";
+import { ingestAndQueue, openTaskFor, pasteLede } from "./lib/queue-status.js";
 
 const SOURCE_TYPES = [
   "ARTICLE",
@@ -302,7 +302,13 @@ export default function Editor() {
   }, [viewerOpen]);
 
   if (!initialized) {
-    return <IngestForm dispatch={dispatch} />;
+    return (
+      <IngestForm
+        dispatch={dispatch}
+        sourceId={document.header.id}
+        pipelineDispatch={pipelineDispatch}
+      />
+    );
   }
 
   const stats = state.extractionStats;
@@ -933,8 +939,19 @@ function EditInPlace({
 /** Initial form for new (empty) source documents */
 function IngestForm({
   dispatch,
+  sourceId,
+  pipelineDispatch,
 }: {
-  dispatch: (action: ReturnType<typeof actions.ingestSource>) => void;
+  dispatch: (
+    action:
+      | ReturnType<typeof actions.ingestSource>
+      | ReturnType<typeof actions.setSourceStatus>,
+  ) => void;
+  sourceId: string | undefined;
+  /** Present when the drive has a processing queue. */
+  pipelineDispatch:
+    | ((action: ReturnType<typeof pipelineActions.addTask>) => void)
+    | undefined;
 }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -951,10 +968,7 @@ function IngestForm({
         <main className="src-reader">
           <div className="iform">
             <h2>Add Source Material</h2>
-            <p className="lede">
-              Paste raw content here — articles, notes, transcripts. The AI
-              agent will extract atomic claims from it.
-            </p>
+            <p className="lede">{pasteLede(isDesktopHost())}</p>
             <div className="two">
               <div>
                 <label htmlFor="in-title">Title</label>
@@ -1024,20 +1038,40 @@ function IngestForm({
                 className="submit"
                 disabled={!title.trim() || !content.trim()}
                 onClick={() =>
-                  dispatch(
-                    actions.ingestSource({
-                      title,
-                      content,
-                      sourceType: sourceType as "ARTICLE",
-                      description: desc || undefined,
-                      author: author || undefined,
-                      url: url || undefined,
-                      createdAt: ts(),
-                    }),
-                  )
+                  ingestAndQueue({
+                    ingest: () =>
+                      dispatch(
+                        actions.ingestSource({
+                          title,
+                          content,
+                          sourceType: sourceType as "ARTICLE",
+                          description: desc || undefined,
+                          author: author || undefined,
+                          url: url || undefined,
+                          createdAt: ts(),
+                        }),
+                      ),
+                    queue:
+                      pipelineDispatch && sourceId
+                        ? {
+                            addTask: () =>
+                              pipelineDispatch(
+                                pipelineActions.addTask({
+                                  id: generateId(),
+                                  taskType: "claim",
+                                  target: title,
+                                  documentRef: sourceId,
+                                  createdAt: ts(),
+                                }),
+                              ),
+                            markQueued: () =>
+                              dispatch(actions.setSourceStatus({ status: "EXTRACTING" })),
+                          }
+                        : undefined,
+                  })
                 }
               >
-                Ingest Source
+                Add source
               </button>
               <span className="hint">Title and content are required.</span>
             </div>

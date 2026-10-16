@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { openTaskFor, queueStatusLine, STUCK_AFTER_MS, type QueueTask } from "./queue-status.js";
+import { ingestAndQueue, openTaskFor, pasteLede, queueStatusLine, STUCK_AFTER_MS, type QueueTask } from "./queue-status.js";
 
 const T0 = Date.parse("2026-10-16T10:00:00Z");
 const task = (extra: Partial<QueueTask> = {}): QueueTask => ({
@@ -56,5 +56,22 @@ describe("the status line", () => {
     for (const desktop of [true, false]) {
       expect(queueStatusLine(task({ status: "BLOCKED" }), { desktop, ...at(0) })).toBe("Processing is blocked — see Processing queue");
     }
+  });
+});
+
+describe("the paste form", () => {
+  it("words the lede for the desktop and the web", () => {
+    expect(pasteLede(true)).toBe("Paste the text. Once added, the app turns it into notes in the background.");
+    expect(pasteLede(false)).toBe("Paste the text. Once added, it is queued to be turned into notes.");
+  });
+  it("adds the source first, then the queue task, then moves the source to extracting", () => {
+    const log: string[] = [];
+    ingestAndQueue({ ingest: () => log.push("ingest"), queue: { addTask: () => log.push("addTask"), markQueued: () => log.push("markQueued") } });
+    expect(log).toEqual(["ingest", "addTask", "markQueued"]);
+  });
+  it("only adds the source when the vault has no processing queue", () => {
+    const log: string[] = [];
+    ingestAndQueue({ ingest: () => log.push("ingest") });
+    expect(log).toEqual(["ingest"]);
   });
 });
