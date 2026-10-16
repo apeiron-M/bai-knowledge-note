@@ -932,3 +932,41 @@ export function computeVisibility(
         : 1;
   return v;
 }
+
+/**
+ * The mask on screen and the arrays kept for the next one. computeVisibility
+ * returns null when nothing is hidden; `spare` still holds the last arrays, so
+ * hiding a kind again fills them instead of allocating at the graph's size.
+ */
+export type VisibilityHolder = {
+  visible: Visibility | null;
+  spare: Visibility | null;
+};
+
+/** Recompute the holder's mask for this graph and filter, reusing its arrays where they fit. */
+export function updateVisibility(
+  holder: VisibilityHolder,
+  g: IndexedGraph,
+  filter: GraphFilter,
+): void {
+  const v = computeVisibility(g, filter, holder.visible ?? holder.spare);
+  if (v) holder.spare = v;
+  holder.visible = v;
+}
+
+/**
+ * A refresh with the same nodes and links (sameStructure) can still change a
+ * note's status or a link's type: sort them into the legend's kinds again, so
+ * the filter follows. Takes the model's nodes and links by id.
+ */
+export function refreshKinds(g: IndexedGraph, model: GraphModel): void {
+  for (const spec of model.nodes) {
+    const i = g.index.get(spec.id);
+    if (i !== undefined) g.nodeKind[i] = nodeKindCode(spec);
+  }
+  const byId = new Map(model.links.map((l) => [l.id, l]));
+  g.links.forEach((l, k) => {
+    const next = byId.get(l.id);
+    if (next) g.linkKind[k] = linkKindCode(next);
+  });
+}

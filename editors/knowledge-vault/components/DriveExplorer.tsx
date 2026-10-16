@@ -53,6 +53,7 @@ import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
 import { VaultLoader } from "../../shared/vault-loader.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import GraphView, { type GraphFocus } from "./GraphView.js";
+import { EMPTY_GRAPH_FILTER, type GraphFilter } from "./graph/model.js";
 import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { ProjectsView } from "./ProjectsView.js";
@@ -257,6 +258,9 @@ export function DriveExplorer({ children }: EditorProps) {
   }, [driveId]);
   const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
   const [graphClearNonce, setGraphClearNonce] = useState(0);
+  // The graph's legend filter: kept while the vault is open, never saved.
+  const [graphFilter, setGraphFilter] =
+    useState<GraphFilter>(EMPTY_GRAPH_FILTER);
   const [sourcesHome, setSourcesHome] = useState(0);
   // `notesLoading` is true until the first metadata fetch settles. It has
   // to be threaded into every note-derived view: without it they render
@@ -846,6 +850,8 @@ export function DriveExplorer({ children }: EditorProps) {
         onGraphFocusChange={handleGraphFocusChange}
         clearFocusNonce={graphClearNonce}
         layoutKey={driveId ?? undefined}
+        filter={graphFilter}
+        onFilterChange={setGraphFilter}
       />
     ),
     chat: (

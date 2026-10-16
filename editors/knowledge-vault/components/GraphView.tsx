@@ -18,23 +18,29 @@ import { layoutStore, type LayoutStore } from "./graph/layout-store.js";
 import {
   applyHighlight,
   buildGraphModel,
+  centerOn,
   easeFactor,
   easeTowards,
   edgeAttributes,
+  findNodes,
   fitView,
   hitTest,
   indexGraph,
-  LINK_TYPE_COLOR_HEX,
   mergePositions,
-  MOC_COLOR_HEX,
   neighbourhood,
   nodeAttributes,
   packGraph,
+  refreshKinds,
   sameStructure,
-  STATUS_COLOR_HEX,
+  showNodeKind,
+  updateVisibility,
+  type GraphFilter,
   type IndexedGraph,
   type Point,
+  type Visibility,
 } from "./graph/model.js";
+import { GraphFind } from "./graph/GraphFind.js";
+import { GraphLegend } from "./graph/GraphLegend.js";
 import {
   createRenderer,
   type GraphRenderer,
@@ -104,6 +110,9 @@ type GraphViewProps = {
   renderer?: RendererKind;
   /** Lay out on the main thread instead of a worker (to try the fallback). */
   inlineLayout?: boolean;
+  /** What the legend hides. Held by the vault (DriveExplorer) while it is open; never saved. */
+  filter: GraphFilter;
+  onFilterChange: (filter: GraphFilter) => void;
 };
 
 type HoverInfo = {
@@ -158,6 +167,10 @@ type Scene = {
   draw: RenderGraph | null;
   edgePrimary: Uint8Array;
   highlight: Uint8Array;
+  /** The legend's mask (computeVisibility), or null when nothing is hidden. Applied with the highlight. */
+  visible: Visibility | null;
+  /** The last mask's arrays, kept while nothing is hidden so the next toggle reuses them (updateVisibility). */
+  spare: Visibility | null;
   nodeIds: Set<string>;
   linkIds: Set<string>;
   /** Bumped with every graph sent to the layout; frames of an older graph are dropped. */
@@ -250,7 +263,8 @@ const MAX_ZOOM = 4;
  * a small vault at 2× was a few huge nodes. It reads as a map to explore
  * rather than a wall of nodes to scroll.
  */
-const FIT_INSETS = { top: 40, right: 72, bottom: 96, left: 40 };
+// top clears the find box (12 px down, 32 px tall).
+const FIT_INSETS = { top: 56, right: 72, bottom: 96, left: 40 };
 const FIT_ROOM = 0.88;
 const FIT_MAX_SCALE = 1.5;
 
@@ -290,6 +304,8 @@ export default function GraphView(props: GraphViewProps) {
   onGraphFocusChangeRef.current = props.onGraphFocusChange;
   const layoutKeyRef = useRef(props.layoutKey);
   layoutKeyRef.current = props.layoutKey;
+  const filterRef = useRef(props.filter);
+  filterRef.current = props.filter;
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -362,6 +378,63 @@ export default function GraphView(props: GraphViewProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.clearFocusNonce]);
 
+  // The legend changed: one pass to rebuild the mask, the highlight pass to
+  // draw it. The layout is not told: hidden nodes keep their places.
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!ready || !scene) return;
+    const g = scene.graph;
+    if (g) updateVisibility(scene, g, props.filter);
+    else scene.visible = null;
+    // What is under a resting pointer may now be hidden.
+    scene.hoverStale = true;
+    refreshHighlight(scene);
+    dropHiddenSelection(scene);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, props.filter]);
+
+  /** A selected node that is now hidden cannot stay selected. */
+  function dropHiddenSelection(scene: Scene) {
+    const id = selectedIdRef.current;
+    const i = id && scene.graph ? scene.graph.index.get(id) : undefined;
+    if (i !== undefined && scene.visible && scene.visible.node[i] === 0)
+      select(-1, null);
+  }
+
+  /** The find box chose a node: show its kind if hidden, move to it, select it. */
+  function chooseFound(id: string) {
+    const scene = sceneRef.current;
+    const g = scene?.graph;
+    const draw = scene?.draw;
+    if (!scene || !g || !draw) return;
+    const i = g.index.get(id);
+    if (i === undefined) return;
+    if (scene.visible && scene.visible.node[i] === 0) {
+      const next = showNodeKind(filterRef.current, g.nodes[i]);
+      filterRef.current = next;
+      // Drawn at once; the parent's state catches up on its next render.
+      updateVisibility(scene, g, next);
+      props.onFilterChange(next);
+    }
+    const x = draw.pos[i * 2];
+    const y = draw.pos[i * 2 + 1];
+    let at: Point | null = null;
+    // A node the layout has not placed yet (NaN) is selected without moving the view.
+    if (Number.isFinite(x) && Number.isFinite(y)) {
+      // The user chose where to look: no auto-fit takes the view back.
+      userInteractedRef.current = true;
+      scene.view = centerOn(scene.view, x, y, scene.width, scene.height, 1);
+      scene.dirty = true;
+      at = { x: scene.width / 2, y: scene.height / 2 };
+    }
+    select(i, at);
+  }
+
+  function findOnGraph(query: string) {
+    const g = sceneRef.current?.graph;
+    return g ? findNodes(g, query) : [];
+  }
+
   /* ---------------------------------------------------------------- */
   /*  Scene: built once per mount                                      */
   /* ---------------------------------------------------------------- */
@@ -419,6 +492,8 @@ export default function GraphView(props: GraphViewProps) {
       draw: null,
       edgePrimary: new Uint8Array(0),
       highlight: new Uint8Array(0),
+      visible: null,
+      spare: null,
       nodeIds: new Set(),
       linkIds: new Set(),
       version: 0,
@@ -512,7 +587,17 @@ export default function GraphView(props: GraphViewProps) {
           const at = scene.pendingHover;
           scene.pendingHover = null;
           const p = toWorld(at);
-          setHover(hitTest(g, draw.pos, p.x, p.y, hitPad(scene.view)), at);
+          setHover(
+            hitTest(
+              g,
+              draw.pos,
+              p.x,
+              p.y,
+              hitPad(scene.view),
+              scene.visible?.node ?? null,
+            ),
+            at,
+          );
           scene.hoverView = scene.view;
           scene.hoverStale = false;
         }
@@ -592,7 +677,16 @@ export default function GraphView(props: GraphViewProps) {
         const p = toWorld(at);
         // A drag can end with the pointer outside the canvas: nothing there is hovered.
         setHover(
-          over ? hitTest(g, draw.pos, p.x, p.y, hitPad(scene.view)) : -1,
+          over
+            ? hitTest(
+                g,
+                draw.pos,
+                p.x,
+                p.y,
+                hitPad(scene.view),
+                scene.visible?.node ?? null,
+              )
+            : -1,
           at,
         );
         scene.hoverView = scene.view;
@@ -652,7 +746,14 @@ export default function GraphView(props: GraphViewProps) {
       }
       const at = toScreen(e);
       const p = toWorld(at);
-      const hit = hitTest(g, draw.pos, p.x, p.y, hitPad(scene.view));
+      const hit = hitTest(
+        g,
+        draw.pos,
+        p.x,
+        p.y,
+        hitPad(scene.view),
+        scene.visible?.node ?? null,
+      );
       if (hit >= 0) {
         scene.drag = {
           index: hit,
@@ -894,6 +995,13 @@ export default function GraphView(props: GraphViewProps) {
         scene.draw.nodeColor[i * 4 + 1] = (spec.color >> 8) & 0xff;
         scene.draw.nodeColor[i * 4 + 2] = spec.color & 0xff;
       }
+      // A status or a link type can change without the structure changing:
+      // sort them into the legend's kinds again, so the filter follows.
+      refreshKinds(prev, model);
+      updateVisibility(scene, prev, filterRef.current);
+      scene.hoverStale = true;
+      refreshHighlight(scene);
+      dropHiddenSelection(scene);
       if (resized) {
         // A new radius changes collisions: tell the layout, and redraw sizes.
         scene.renderer.setGraph(scene.draw);
@@ -935,6 +1043,7 @@ export default function GraphView(props: GraphViewProps) {
     };
     scene.edgePrimary = edgeAttrs.primary;
     scene.highlight = new Uint8Array(g.nodes.length);
+    updateVisibility(scene, g, filterRef.current);
     scene.nodeIds = new Set(g.nodes.map((n) => n.id));
     const linkIds = new Set(model.links.map((l) => l.id));
     let linkDelta = 0;
@@ -1107,65 +1216,9 @@ export default function GraphView(props: GraphViewProps) {
         </ToolbarButton>
       </div>
 
-      {/* Legend */}
-      <div
-        className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 rounded-lg px-3 py-2.5 text-[10px] backdrop-blur-sm"
-        style={{
-          backgroundColor:
-            "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
-          border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
-        }}
-      >
-        {/* Node types */}
-        <div className="flex flex-wrap items-center gap-3">
-          {Object.entries(STATUS_COLOR_HEX).map(([status, color]) => (
-            <div key={status} className="flex items-center gap-1.5">
-              <span
-                className="inline-block h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: color }}
-              />
-              <span style={{ color: "var(--bai-text-tertiary, #9ca3af)" }}>
-                {status.replace("_", " ")}
-              </span>
-            </div>
-          ))}
-          <div className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-3 w-3"
-              style={{
-                backgroundColor: MOC_COLOR_HEX,
-                clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
-              }}
-            />
-            <span style={{ color: "var(--bai-text-tertiary, #9ca3af)" }}>
-              MOC
-            </span>
-          </div>
-        </div>
-        {/* Edge types */}
-        <div className="flex flex-wrap items-center gap-3">
-          {Object.entries(LINK_TYPE_COLOR_HEX).map(([type, color]) => (
-            <div key={type} className="flex items-center gap-1.5">
-              <span
-                className="inline-block h-0 w-3 border-t-2"
-                style={{ borderColor: color }}
-              />
-              <span style={{ color: "var(--bai-text-muted, #6b7280)" }}>
-                {type.replace(/_/g, " ").toLowerCase()}
-              </span>
-            </div>
-          ))}
-          <div className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-0 w-3 border-t-2"
-              style={{ borderColor: MOC_COLOR_HEX }}
-            />
-            <span style={{ color: "var(--bai-text-muted, #6b7280)" }}>
-              core idea
-            </span>
-          </div>
-        </div>
-      </div>
+      <GraphFind search={findOnGraph} onChoose={chooseFound} />
+
+      <GraphLegend filter={props.filter} onChange={props.onFilterChange} />
 
       {/* Hover tooltip — only when nothing is selected (the metacard
           covers that role for selected nodes) */}
@@ -1285,6 +1338,7 @@ function refreshHighlight(scene: Scene) {
     draw.nodeColor,
     draw.edgeColor,
     scene.edgePrimary,
+    scene.visible,
   );
   scene.renderer.markStyles();
   scene.dirty = true;

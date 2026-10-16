@@ -26,11 +26,14 @@ import {
   nodeAttributes,
   OTHER_KIND,
   packGraph,
+  refreshKinds,
   sameStructure,
   showNodeKind,
   toggleLinkKind,
   toggleNodeKind,
+  updateVisibility,
   type GraphMocInput,
+  type VisibilityHolder,
   type GraphNoteInput,
 } from "./model.js";
 import {
@@ -547,6 +550,71 @@ describe("the legend filter on screen", () => {
     applyHighlight(g, null, nodeColor, e.color, e.primary, null);
     expect(nodeColor[3 * 4 + 3]).toBe(255); // shown again
     expect(e.color[0 * 4 + 3]).toBe(140);
+  });
+});
+
+describe("the filter across refreshes and toggles", () => {
+  it("keeps the mask's arrays while nothing is hidden, and fills them again on the next hide", () => {
+    const g = indexGraph(sample());
+    const holder: VisibilityHolder = { visible: null, spare: null };
+    updateVisibility(holder, g, toggleNodeKind(EMPTY_GRAPH_FILTER, "MOC"));
+    const first = holder.visible!;
+    expect([...first.node]).toEqual([1, 1, 1, 0, 0]);
+    updateVisibility(holder, g, EMPTY_GRAPH_FILTER);
+    expect(holder.visible).toBeNull();
+    expect(holder.spare).toBe(first);
+    updateVisibility(
+      holder,
+      g,
+      toggleLinkKind(EMPTY_GRAPH_FILTER, "RELATES_TO"),
+    );
+    expect(holder.visible).toBe(first);
+    expect([...first.node]).toEqual([1, 1, 1, 1, 1]);
+    expect([...first.edge]).toEqual([1, 1, 1, 1, 1, 0]);
+  });
+
+  it("allocates for a graph of another size and keeps the new arrays", () => {
+    const holder: VisibilityHolder = { visible: null, spare: null };
+    const hideMocs = toggleNodeKind(EMPTY_GRAPH_FILTER, "MOC");
+    updateVisibility(holder, indexGraph(sample()), hideMocs);
+    const old = holder.visible;
+    updateVisibility(
+      holder,
+      indexGraph(buildGraphModel([note("x")], [])),
+      hideMocs,
+    );
+    expect(holder.visible).not.toBe(old);
+    expect(holder.spare).toBe(holder.visible);
+    expect([...holder.visible!.node]).toEqual([1]);
+  });
+
+  it("sorts a changed status and a changed link type into their kinds again", () => {
+    const g = indexGraph(
+      buildGraphModel([note("a", [{ target: "b" }]), note("b")], []),
+    );
+    const next = buildGraphModel(
+      [note("a", [{ target: "b", type: "BUILDS_ON" }]), note("b", [], "DRAFT")],
+      [],
+    );
+    expect(
+      sameStructure(
+        new Set(["a", "b"]),
+        new Set(g.links.map((l) => l.id)),
+        next,
+      ),
+    ).toBe(true);
+    const hideDraftsAndBuildsOn = toggleLinkKind(
+      toggleNodeKind(EMPTY_GRAPH_FILTER, "DRAFT"),
+      "BUILDS_ON",
+    );
+    expect(computeVisibility(g, hideDraftsAndBuildsOn)).not.toBeNull();
+    expect([...computeVisibility(g, hideDraftsAndBuildsOn)!.node]).toEqual([
+      1, 1,
+    ]);
+    refreshKinds(g, next);
+    const v = computeVisibility(g, hideDraftsAndBuildsOn)!;
+    expect([...v.node]).toEqual([1, 0]);
+    expect([...v.edge]).toEqual([0]);
   });
 });
 
