@@ -190,6 +190,19 @@ export function buildPlaces(counts: PlaceCounts, current?: VaultPlaceId): VaultP
 }
 
 /**
+ * Every place the vault can list, for the Getting started guide: Contradictions
+ * is in it (the sidebar shows it only while some are open). The guide prints
+ * these labels, so a renamed place renames itself there.
+ */
+export const GUIDE_PLACES: VaultPlace[] = buildPlaces({
+  notes: 0,
+  topics: 0,
+  sources: 0,
+  work: 0,
+  contradictions: 1,
+});
+
+/**
  * Every view mode the content area renders. Views not listed here (pipeline,
  * config) fall back to `notes`. A place can only be listed if its view is
  * here (`buildPlaces`), and the content record in the component must have an
@@ -990,7 +1003,14 @@ export function DriveExplorer({ children }: EditorProps) {
       ) : (
         renderedViews.notes
       )}
-      {guideOpen && <GettingStartedModal onClose={() => setGuideOpen(false)} />}
+      {guideOpen && (
+        <GettingStartedModal
+          places={GUIDE_PLACES}
+          menu={VAULT_MENU}
+          createItems={CREATE_ITEMS}
+          onClose={() => setGuideOpen(false)}
+        />
+      )}
       <CreateDocumentDialog
         open={creating !== null}
         documentType={creating?.type ?? ""}
@@ -1021,7 +1041,7 @@ export const VAULT_MENU: VaultMenuItem[] = [
  * Beside "Add sources": the other things a person adds by hand. Files go
  * through Add sources itself (the intake); these open the create dialog.
  */
-const CREATE_ITEMS = [
+export const CREATE_ITEMS = [
   {
     key: "note",
     label: "Write a note",
