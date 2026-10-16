@@ -1,6 +1,6 @@
 # App polish — design
 
-**Date:** 2026-10-15 · **Status:** draft; awaits review
+**Date:** 2026-10-15 · **Status:** approved 2026-10-16 — every recommended option in "Decisions for review"; decision 7: the checkbox starts checked, the chat only unlinks, the "outside any scope" list ships, and Liberuum's two left-over work breakdowns are deleted
 **Repos:** `knowledge-vault-app` (the processing chip, Update, the control API, the built-in guide source, comments) and `bai-knowledge-note` (the vault app's views and guide, the source, note, queue and scope screens, the graph index, the workflow piece's wording)
 
 ## Why
