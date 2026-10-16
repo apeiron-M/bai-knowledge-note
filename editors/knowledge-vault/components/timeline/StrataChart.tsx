@@ -50,9 +50,24 @@ interface Hover {
 const TIP_WIDTH = 300;
 
 /** Where the hover card goes: beside the pointer, kept inside the chart however narrow it is. */
+const TIP_GAP = 16;
+const TIP_MIN = 140;
+
+/**
+ * Where the hover card goes: beside the pointer, never over it — to its
+ * right, or to its left when the right is short of room, narrowing to the
+ * roomier side if neither fits a full card. Only a chart too narrow for even
+ * that gets the card across its width.
+ */
 export function tipBox(pointerLeft: number, chartWidth: number): { left: number; width: number } {
-  const width = Math.min(TIP_WIDTH, chartWidth);
-  return { left: Math.max(0, Math.min(pointerLeft + 14, chartWidth - width)), width };
+  const right = chartWidth - pointerLeft - TIP_GAP;
+  const left = pointerLeft - TIP_GAP;
+  if (right >= TIP_WIDTH) return { left: pointerLeft + TIP_GAP, width: TIP_WIDTH };
+  if (left >= TIP_WIDTH) return { left: pointerLeft - TIP_GAP - TIP_WIDTH, width: TIP_WIDTH };
+  if (Math.max(right, left) >= TIP_MIN) {
+    return right >= left ? { left: pointerLeft + TIP_GAP, width: Math.floor(right) } : { left: 0, width: Math.floor(left) };
+  }
+  return { left: 0, width: Math.min(TIP_WIDTH, chartWidth) };
 }
 
 export function StrataChart(props: StrataChartProps) {
@@ -235,7 +250,7 @@ export function StrataChart(props: StrataChartProps) {
         {hover && <line className="cursor" x1={hover.px} x2={hover.px} y1={top - 14} y2={height} />}
       </svg>
       {hover && (
-        <div className="tl-tip" style={{ left: tipBox(hover.left, width).left, maxWidth: tipBox(hover.left, width).width, top: Math.max(0, hover.top - 96) }}>
+        <div className="tl-tip" style={{ left: tipBox(hover.left, width).left, width: tipBox(hover.left, width).width, maxWidth: "none", top: Math.max(0, hover.top - 96) }}>
           <b>{hover.text.when}</b>
           {hover.text.quiet && <div>{hover.text.quiet}: nothing was added.</div>}
           {hover.layer && (

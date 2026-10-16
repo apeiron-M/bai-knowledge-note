@@ -68,9 +68,11 @@ describe("StrataChart", () => {
 });
 
 describe("tipBox", () => {
-  it("follows the pointer, flips back before the right edge, and fits a narrow chart", () => {
-    expect(tipBox(100, 900)).toEqual({ left: 114, width: 300 });
-    expect(tipBox(850, 900)).toEqual({ left: 600, width: 300 });
+  it("sits beside the pointer, never on it: right of it, or left of it near the right edge", () => {
+    expect(tipBox(100, 900)).toEqual({ left: 116, width: 300 });
+    expect(tipBox(850, 900)).toEqual({ left: 534, width: 300 });
+    expect(tipBox(300, 600)).toEqual({ left: 316, width: 284 });
+    expect(tipBox(420, 600)).toEqual({ left: 104, width: 300 });
     expect(tipBox(120, 240)).toEqual({ left: 0, width: 240 });
   });
 });
