@@ -61,14 +61,25 @@ export function breakdownProgress(b: BreakdownRow): string {
 }
 
 /**
- * The breakdowns that deliver a scope: each project's breakdown, in project
- * order, then any other whose `sowRef` names the scope — once each, and only
- * those still in the vault.
+ * Whether a project's `wbsRef` to a breakdown counts for scope `scopeId`: the
+ * breakdown's own `sowRef` is empty, is this scope, or names no scope of work
+ * in the vault. One re-linked to another scope is that scope's, whatever a
+ * stale project reference still says.
+ */
+export function projectRefCounts(sowRef: string | null | undefined, scopeId: string, scopeIds: ReadonlySet<string>): boolean {
+  return !sowRef || sowRef === scopeId || !scopeIds.has(sowRef);
+}
+
+/**
+ * The breakdowns that deliver a scope: each project's breakdown (unless it was
+ * re-linked to another scope), in project order, then any other whose `sowRef`
+ * names the scope — once each, and only those still in the vault.
  */
 export function breakdownsOfScope(
   scopeId: string,
   projectWbsRefs: readonly (string | null | undefined)[],
   breakdowns: readonly BreakdownRow[],
+  scopeIds: ReadonlySet<string>,
 ): BreakdownRow[] {
   const byId = new Map(breakdowns.map((b) => [b.id, b] as const));
   const out: BreakdownRow[] = [];
@@ -79,7 +90,10 @@ export function breakdownsOfScope(
       out.push(b);
     }
   };
-  for (const ref of projectWbsRefs) if (ref) add(byId.get(ref));
+  for (const ref of projectWbsRefs) {
+    const b = ref ? byId.get(ref) : undefined;
+    if (b && projectRefCounts(b.sowRef, scopeId, scopeIds)) add(b);
+  }
   for (const b of breakdowns) if (b.sowRef === scopeId) add(b);
   return out;
 }

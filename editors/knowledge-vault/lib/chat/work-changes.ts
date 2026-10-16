@@ -41,6 +41,7 @@ import {
   utils as scopeUtils,
   type ScopeOfWorkState,
 } from "document-models/scope-of-work";
+import { projectRefCounts } from "../scope-breakdowns.js";
 import * as scopeModel from "document-models/scope-of-work";
 import {
   actions as wbsActions,
@@ -1183,7 +1184,14 @@ export function checkProposal(
       // They are its projects' wbsRef and any breakdown whose sowRef names it; one the proposal deletes by name is
       // left to that deletion. The chat never deletes a breakdown it was not asked to.
       const held = (d.state as ScopeOfWorkState | null)?.projects;
-      const fromProjects = Array.isArray(held) ? held.flatMap((x) => (typeof x.wbsRef === "string" && x.wbsRef ? [x.wbsRef] : [])) : [];
+      const scopeIds = new Set([...docs.values()].filter((x) => x.documentType === SCOPE_TYPE).map((x) => x.documentId));
+      const fromProjects = Array.isArray(held)
+        ? held.flatMap((x) => {
+            if (typeof x.wbsRef !== "string" || !x.wbsRef) return [];
+            const own = (docs.get(x.wbsRef)?.state as { sowRef?: unknown } | null)?.sowRef;
+            return projectRefCounts(typeof own === "string" ? own : null, document, scopeIds) ? [x.wbsRef] : [];
+          })
+        : [];
       const naming = [...docs.values()]
         .filter((w) => w.documentType === WBS_TYPE && (w.state as { sowRef?: unknown } | null)?.sowRef === document)
         .map((w) => w.documentId);

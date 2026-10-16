@@ -53,12 +53,21 @@ describe("the breakdowns that deliver a scope", () => {
   const c = row("wbs-c", "C", "scope-2");
 
   it("takes each project's breakdown, then any that names the scope — once each", () => {
-    expect(breakdownsOfScope("scope-1", ["wbs-b", null, "wbs-a", undefined], [a, b, c]).map((x) => x.id)).toEqual(["wbs-b", "wbs-a"]);
-    expect(breakdownsOfScope("scope-1", [], [a, b, c]).map((x) => x.id)).toEqual(["wbs-a"]);
+    expect(breakdownsOfScope("scope-1", ["wbs-b", null, "wbs-a", undefined], [a, b, c], new Set(["scope-1"])).map((x) => x.id)).toEqual(["wbs-b", "wbs-a"]);
+    expect(breakdownsOfScope("scope-1", [], [a, b, c], new Set(["scope-1"])).map((x) => x.id)).toEqual(["wbs-a"]);
+  });
+
+  it("leaves out a project's breakdown re-linked to another scope — keeps null and dangling ones", () => {
+    const moved = row("wbs-m", "Moved", "scope-2");
+    const loose = row("wbs-l", "Loose", null);
+    const dangling = row("wbs-d", "Dangling", "scope-gone");
+    const scopes = new Set(["scope-1", "scope-2"]);
+    expect(breakdownsOfScope("scope-1", ["wbs-m", "wbs-l", "wbs-d"], [moved, loose, dangling], scopes).map((x) => x.id)).toEqual(["wbs-l", "wbs-d"]);
+    expect(breakdownsOfScope("scope-2", [], [moved, loose, dangling], scopes).map((x) => x.id)).toEqual(["wbs-m"]);
   });
 
   it("leaves out a project's breakdown that is no longer in the vault", () => {
-    expect(breakdownsOfScope("scope-1", ["wbs-gone"], [b, c])).toEqual([]);
+    expect(breakdownsOfScope("scope-1", ["wbs-gone"], [b, c], new Set(["scope-1"]))).toEqual([]);
   });
 });
 

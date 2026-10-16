@@ -241,6 +241,25 @@ describe("the form", () => {
     ]);
   });
 
+  it("leaves a breakdown re-linked to another scope alone, but still unlinks a null or dangling one", () => {
+    const relinked = (sowRef: string | null, other = true) => {
+      const docs = linkedWorkDocs();
+      const wbsDoc = docs.get("wbs-1")!;
+      docs.set("wbs-1", { ...wbsDoc, state: { ...wbsDoc.state, sowRef } });
+      if (other) docs.set("scope-2", { ...docs.get("scope-1")!, documentId: "scope-2", state: { ...docs.get("scope-1")!.state, projects: [] } });
+      return docs;
+    };
+    const r = checkForm({ deletions: [{ document: "scope-1" }] }, relinked("scope-2"));
+    expect(r.ok && says(r.proposal)).toEqual(["Delete scope of work “Powerhouse 2026”"]);
+    for (const sowRef of [null, "scope-gone"]) {
+      const kept = checkForm({ deletions: [{ document: "scope-1" }] }, relinked(sowRef));
+      expect(kept.ok && says(kept.proposal)).toEqual([
+        "Unlink work breakdown “Knowledge Vault breakdown” — it stays, outside any scope",
+        "Delete scope of work “Powerhouse 2026”",
+      ]);
+    }
+  });
+
   it("never deletes a breakdown it was not asked to — one named for deletion is deleted, not unlinked", () => {
     for (const order of [["scope-1", "wbs-1"], ["wbs-1", "scope-1"]]) {
       const r = checkForm({ deletions: order.map((document) => ({ document })) }, linkedWorkDocs());

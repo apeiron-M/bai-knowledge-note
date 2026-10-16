@@ -450,17 +450,17 @@ export function ScopeOfWorkView() {
         ),
     [docs, gone],
   );
-  const deletingBreakdowns = useMemo(
-    () => (deleting ? breakdownsOfScope(deleting.id, deleting.wbsRefs, breakdowns) : []),
-    [deleting, breakdowns],
-  );
-
   // Outside any scope: the scope ids come from the tree, so a scope still
   // loading never makes its breakdowns look left over.
   const scopeIds = useMemo(
     () => new Set(serverFileNodes.filter((n) => n.documentType === SCOPE_DOC && !gone.has(n.id)).map((n) => n.id)),
     [serverFileNodes, gone],
   );
+  const deletingBreakdowns = useMemo(
+    () => (deleting ? breakdownsOfScope(deleting.id, deleting.wbsRefs, breakdowns, scopeIds) : []),
+    [deleting, breakdowns, scopeIds],
+  );
+
   const outside = useMemo(
     () => breakdownsOutsideScopes(breakdowns, scopeIds, new Set(sows.flatMap((s) => s.wbsRefs))),
     [breakdowns, scopeIds, sows],
