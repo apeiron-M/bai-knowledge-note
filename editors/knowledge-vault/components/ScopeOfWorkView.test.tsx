@@ -5,7 +5,7 @@
  */
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { DeleteScopeBody } from "./ScopeOfWorkView.js";
+import { DeleteBreakdownBody, DeleteScopeBody, OutsideScopeList } from "./ScopeOfWorkView.js";
 import { breakdownRow } from "../lib/scope-breakdowns.js";
 
 const noop = () => {};
@@ -49,5 +49,29 @@ describe("the dialog for deleting a scope of work", () => {
     const html = body([]);
     expect(html).not.toContain('type="checkbox"');
     expect(text(html)).toContain("This deletes the whole scope of work");
+  });
+});
+
+describe("work breakdowns outside any scope", () => {
+  const STRATEGY = breakdownRow("wbs-s", "Knowledge Vault Go-to-Market Strategy — Work Breakdown", { goals: todo(6), sowRef: "scope-gone" });
+
+  it("lists each with its progress, Open and Delete, under its heading", () => {
+    const html = renderToStaticMarkup(<OutsideScopeList breakdowns={[PLAN, STRATEGY]} onOpen={noop} onDelete={noop} />);
+    const t = text(html);
+    expect(t).toContain("Work breakdowns outside any scope");
+    expect(t).toContain("Knowledge Vault Go-to-Market Plan");
+    expect(t).toContain("3 goals, none done");
+    expect(t).toContain("6 goals, none done");
+    expect(html).toContain("aria-label=\"Open work breakdown “Knowledge Vault Go-to-Market Plan”\"");
+    expect(html).toContain("aria-label=\"Delete work breakdown “Knowledge Vault Go-to-Market Plan”\"");
+  });
+
+  it("shows nothing when every breakdown is in a scope", () => {
+    expect(renderToStaticMarkup(<OutsideScopeList breakdowns={[]} onOpen={noop} onDelete={noop} />)).toBe("");
+  });
+
+  it("says what deleting one takes", () => {
+    expect(text(renderToStaticMarkup(<DeleteBreakdownBody breakdown={PLAN} />))).toContain("This deletes the whole work breakdown — its goals and their notes. It cannot be undone.");
+    expect(text(renderToStaticMarkup(<DeleteBreakdownBody breakdown={WORKED} />))).toContain("2 goals done and 1 note would be deleted with it.");
   });
 });

@@ -11,6 +11,7 @@ import {
   breakdownProgress,
   breakdownRow,
   breakdownsOfScope,
+  breakdownsOutsideScopes,
   deleteScopeOfWork,
   recordedWorkLine,
   unlinkBreakdownAction,
@@ -213,6 +214,76 @@ export function DeleteScopeBody({
   );
 }
 
+/**
+ * Work breakdowns outside any scope — no `sowRef`, or one naming a scope that
+ * is gone — so a left-over breakdown is found here, not only in search.
+ */
+export function OutsideScopeList({
+  breakdowns,
+  onOpen,
+  onDelete,
+}: {
+  breakdowns: readonly BreakdownRow[];
+  onOpen: (id: string) => void;
+  onDelete: (b: BreakdownRow) => void;
+}) {
+  if (breakdowns.length === 0) return null;
+  return (
+    <section aria-labelledby="kv-outside-scope" className="space-y-2 pt-2">
+      <h3 id="kv-outside-scope" className="text-xs font-semibold" style={{ color: "var(--bai-text-tertiary)" }}>
+        Work breakdowns outside any scope
+      </h3>
+      <ul className="space-y-1">
+        {breakdowns.map((b) => (
+          <li
+            key={b.id}
+            className="flex items-center gap-2 rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] py-2.5 pl-4 pr-2"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium" style={{ color: "var(--bai-text-secondary)" }}>
+                {b.name}
+              </p>
+              <p className="mt-0.5 text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
+                {breakdownProgress(b)}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onOpen(b.id)}
+              aria-label={`Open work breakdown “${b.name}”`}
+              className="rounded-md px-2.5 py-1 text-xs font-medium transition-colors hover:bg-[var(--bai-hover)]"
+              style={{ color: "var(--bai-text-secondary)" }}
+            >
+              Open
+            </button>
+            <button
+              type="button"
+              onClick={() => onDelete(b)}
+              aria-label={`Delete work breakdown “${b.name}”`}
+              title="Delete work breakdown"
+              className="rounded-md p-1.5 transition-colors hover:bg-[var(--bai-danger-soft)] hover:text-[var(--bai-danger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bai-danger)]"
+              style={{ color: "var(--bai-text-muted)" }}
+            >
+              <TrashIcon />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** What goes with a work breakdown — the dialog's body. */
+export function DeleteBreakdownBody({ breakdown }: { breakdown: BreakdownRow }) {
+  const recorded = recordedWorkLine([breakdown], "it");
+  return (
+    <>
+      <p>This deletes the whole work breakdown — its goals and their notes. It cannot be undone.</p>
+      {recorded && <p style={{ color: "var(--bai-danger)" }}>{recorded}</p>}
+    </>
+  );
+}
+
 
 function NewScopeDialog({
   open,
@@ -321,6 +392,8 @@ export function ScopeOfWorkView() {
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [gone, setGone] = useState<ReadonlySet<string>>(() => new Set());
+  // The left-over breakdown being deleted, while its dialog is open.
+  const [deletingBreakdown, setDeletingBreakdown] = useState<BreakdownRow | null>(null);
   const driveId = useSelectedDriveId();
   const projectsFolderId = useFolderMap().get("projects");
   const { serverFileNodes, isLoading: treeLoading } = useKnowledgeNotes();
@@ -382,6 +455,17 @@ export function ScopeOfWorkView() {
     [deleting, breakdowns],
   );
 
+  // Outside any scope: the scope ids come from the tree, so a scope still
+  // loading never makes its breakdowns look left over.
+  const scopeIds = useMemo(
+    () => new Set(serverFileNodes.filter((n) => n.documentType === SCOPE_DOC && !gone.has(n.id)).map((n) => n.id)),
+    [serverFileNodes, gone],
+  );
+  const outside = useMemo(
+    () => breakdownsOutsideScopes(breakdowns, scopeIds, new Set(sows.flatMap((s) => s.wbsRefs))),
+    [breakdowns, scopeIds, sows],
+  );
+
   const markGone = (id: string) => setGone((prev) => new Set(prev).add(id));
 
   const confirmDelete = async () => {
@@ -400,6 +484,23 @@ export function ScopeOfWorkView() {
         },
       );
       setDeleting(null);
+    } catch (err) {
+      setDeleteError(writeErrorText([err]));
+    } finally {
+      setDeleteBusy(false);
+      triggerVaultPull();
+      refetch();
+    }
+  };
+
+  const confirmDeleteBreakdown = async () => {
+    if (!deletingBreakdown || !driveId || deleteBusy) return;
+    setDeleteBusy(true);
+    setDeleteError(null);
+    try {
+      await deleteDocumentRemote(deletingBreakdown.id, driveId);
+      markGone(deletingBreakdown.id);
+      setDeletingBreakdown(null);
     } catch (err) {
       setDeleteError(writeErrorText([err]));
     } finally {
@@ -462,6 +563,17 @@ export function ScopeOfWorkView() {
         </div>
       )}
 
+      {!docsLoading && (
+        <OutsideScopeList
+          breakdowns={outside}
+          onOpen={(id) => setSelectedNode(id)}
+          onDelete={(b) => {
+            setDeleteError(null);
+            setDeletingBreakdown(b);
+          }}
+        />
+      )}
+
       <NewScopeDialog
         open={createOpen}
         driveId={driveId}
@@ -487,6 +599,22 @@ export function ScopeOfWorkView() {
             onAlsoDelete={setAlsoDeleteBreakdowns}
             busy={deleteBusy}
           />
+        </TypeToConfirmDialog>
+      )}
+
+      {deletingBreakdown && (
+        <TypeToConfirmDialog
+          title={`Delete “${deletingBreakdown.name}”?`}
+          name={deletingBreakdown.name}
+          nameLabel="the work breakdown's name"
+          confirmLabel="Delete work breakdown"
+          busyLabel="Deleting…"
+          busy={deleteBusy}
+          error={deleteError}
+          onConfirm={() => void confirmDeleteBreakdown()}
+          onCancel={() => setDeletingBreakdown(null)}
+        >
+          <DeleteBreakdownBody breakdown={deletingBreakdown} />
         </TypeToConfirmDialog>
       )}
     </div>
