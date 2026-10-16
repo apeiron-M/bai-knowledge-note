@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   applyHighlight,
   buildGraphModel,
+  computeVisibility,
   easeFactor,
   easeTowards,
   edgeAlpha,
@@ -302,6 +303,16 @@ describe("hitTest", () => {
     expect(hitTest(g, beside, 15, 15, 0)).toBe(0);
     expect(hitTest(g, beside, 5, 5, 0)).toBe(3); // over the diamond, the MoC still wins
   });
+
+  it("passes over hidden nodes, as if they were not drawn", () => {
+    // (-3, 0) is inside a (nearer) and on b's edge.
+    expect(hitTest(g, noMoc, -3, 0, 4)).toBe(0);
+    const aHidden = Uint8Array.from([0, 1, 1, 1]);
+    expect(hitTest(g, noMoc, -3, 0, 4, aHidden)).toBe(1);
+    expect(hitTest(g, noMoc, -12, 0, 4, aHidden)).toBe(-1); // only a was within the pad
+    // A hidden MoC no longer covers the notes under it.
+    expect(hitTest(g, pos, 5, 0, 4, Uint8Array.from([1, 1, 1, 0]))).toBe(1);
+  });
 });
 
 describe("fitView", () => {
@@ -418,6 +429,75 @@ describe("render attributes and highlight", () => {
     expect(e.color[4 * 4 + 3]).toBe(230); // m2→c, inside: 0.9
     expect(e.color[3 * 4 + 3]).toBe(10); // m2→b, secondary but touching m2: 0.04
     expect(e.color[5 * 4 + 3]).toBe(10); // a→b, outside: 0.04
+  });
+});
+
+describe("the legend filter on screen", () => {
+  // sample(): a, b, c are CANONICAL notes; m1, m2 MoCs. Edges 0–4 are core
+  // ideas (m1→a, m1→b, m1→m2, m2→b, m2→c); edge 5 is a→b, relates to.
+  const g = indexGraph(sample());
+
+  it("hides nodes of a hidden kind, links of a hidden kind, and links that touch a hidden node", () => {
+    expect(computeVisibility(g, EMPTY_GRAPH_FILTER)).toBeNull();
+    const noMocs = computeVisibility(
+      g,
+      toggleNodeKind(EMPTY_GRAPH_FILTER, "MOC"),
+    )!;
+    expect([...noMocs.node]).toEqual([1, 1, 1, 0, 0]);
+    expect([...noMocs.edge]).toEqual([0, 0, 0, 0, 0, 1]);
+    const noRelates = computeVisibility(
+      g,
+      toggleLinkKind(EMPTY_GRAPH_FILTER, "RELATES_TO"),
+    )!;
+    expect([...noRelates.node]).toEqual([1, 1, 1, 1, 1]);
+    expect([...noRelates.edge]).toEqual([1, 1, 1, 1, 1, 0]);
+  });
+
+  it("reuses its arrays while the graph keeps its size", () => {
+    const first = computeVisibility(
+      g,
+      toggleNodeKind(EMPTY_GRAPH_FILTER, "MOC"),
+    )!;
+    const again = computeVisibility(
+      g,
+      toggleLinkKind(EMPTY_GRAPH_FILTER, "RELATES_TO"),
+      first,
+    )!;
+    expect(again).toBe(first);
+    expect([...again.node]).toEqual([1, 1, 1, 1, 1]);
+    const other = indexGraph(buildGraphModel([note("x")], []));
+    expect(
+      computeVisibility(other, toggleNodeKind(EMPTY_GRAPH_FILTER, "MOC"), first),
+    ).not.toBe(first);
+  });
+
+  it("writes hidden as transparent in the highlight's own pass, whatever is highlighted", () => {
+    const { color: nodeColor } = nodeAttributes(g);
+    const e = edgeAttributes(g);
+    const visible = computeVisibility(
+      g,
+      toggleNodeKind(EMPTY_GRAPH_FILTER, "MOC"),
+    );
+    applyHighlight(g, null, nodeColor, e.color, e.primary, visible);
+    expect([0, 1, 2, 3, 4].map((i) => nodeColor[i * 4 + 3])).toEqual([
+      255, 255, 255, 0, 0,
+    ]);
+    expect([0, 1, 2, 3, 4, 5].map((k) => e.color[k * 4 + 3])).toEqual([
+      0, 0, 0, 0, 0, 140,
+    ]);
+
+    const flags = new Uint8Array(5);
+    for (const i of neighbourhood(g, g.index.get("c")!)) flags[i] = 1; // c, m2
+    applyHighlight(g, flags, nodeColor, e.color, e.primary, visible);
+    expect(nodeColor[4 * 4 + 3]).toBe(0); // m2 is in the highlight but hidden
+    expect(nodeColor[2 * 4 + 3]).toBe(255); // c
+    expect(nodeColor[0 * 4 + 3]).toBe(38); // a, dimmed
+    expect(e.color[4 * 4 + 3]).toBe(0); // m2→c touches a hidden node
+    expect(e.color[5 * 4 + 3]).toBe(10); // a→b, outside the highlight
+
+    applyHighlight(g, null, nodeColor, e.color, e.primary, null);
+    expect(nodeColor[3 * 4 + 3]).toBe(255); // shown again
+    expect(e.color[0 * 4 + 3]).toBe(140);
   });
 });
 

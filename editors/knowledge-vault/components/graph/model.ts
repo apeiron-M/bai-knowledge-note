@@ -532,7 +532,7 @@ export function jitter(id: string, spread = 40): Point {
  * within `pad` — which the view sets to a few screen pixels, so a dot in a
  * zoomed-out vault can still be grabbed without a MoC nearby stealing it. A
  * linear scan: well under a millisecond at 100,000 nodes, and exact for
- * varying radii.
+ * varying radii. Nodes the legend hides (`visible`) are passed over.
  */
 export function hitTest(
   g: IndexedGraph,
@@ -540,6 +540,8 @@ export function hitTest(
   x: number,
   y: number,
   pad = 4,
+  /** The node mask of `computeVisibility`: a hidden node (0) cannot be hovered or clicked. */
+  visible: Uint8Array | null = null,
 ): number {
   let inside = -1;
   let insideDist = Infinity;
@@ -547,6 +549,7 @@ export function hitTest(
   let nearGap = Infinity;
   const { radius, isMoc } = g;
   for (let i = 0; i < radius.length; i++) {
+    if (visible && visible[i] === 0) continue;
     const dx = pos[i * 2] - x;
     const dy = pos[i * 2 + 1] - y;
     const r = radius[i];
@@ -787,6 +790,9 @@ export function edgeAlpha(
 /**
  * Write the highlight into the alpha bytes of the node and edge colours.
  * `highlight` flags the highlighted nodes (1), or is null for none.
+ * `visible` is the legend's mask (computeVisibility), or null when nothing is
+ * hidden: a hidden node or edge gets alpha 0, which the renderers skip. Both
+ * are applied in this one pass.
  */
 export function applyHighlight(
   g: IndexedGraph,
@@ -794,11 +800,21 @@ export function applyHighlight(
   nodeColor: Uint8Array,
   edgeColor: Uint8Array,
   edgePrimary: Uint8Array,
+  visible: Visibility | null = null,
 ): void {
   const n = g.nodes.length;
   const dim = Math.round(nodeAlpha(false) * 255);
+  const shownNode = visible?.node ?? null;
+  const shownEdge = visible?.edge ?? null;
   for (let i = 0; i < n; i++)
-    nodeColor[i * 4 + 3] = highlight ? (highlight[i] ? 255 : dim) : 255;
+    nodeColor[i * 4 + 3] =
+      shownNode && shownNode[i] === 0
+        ? 0
+        : highlight
+          ? highlight[i]
+            ? 255
+            : dim
+          : 255;
   // Six possible values; computed once.
   const table = new Uint8Array(8);
   for (let p = 0; p < 2; p++)
@@ -813,8 +829,58 @@ export function applyHighlight(
   ];
   for (let k = 0; k < g.links.length; k++) {
     const p = edgePrimary[k];
-    edgeColor[k * 4 + 3] = highlight
-      ? table[(p << 2) | (highlight[g.src[k]] << 1) | highlight[g.dst[k]]]
-      : none[p];
+    edgeColor[k * 4 + 3] =
+      shownEdge && shownEdge[k] === 0
+        ? 0
+        : highlight
+          ? table[(p << 2) | (highlight[g.src[k]] << 1) | highlight[g.dst[k]]]
+          : none[p];
   }
+}
+
+/** A filter list as bits over its kind codes. */
+function kindBits(hidden: readonly string[], all: readonly string[]): number {
+  let bits = 0;
+  for (const kind of hidden) {
+    const i = all.indexOf(kind);
+    if (i >= 0) bits |= 1 << i;
+  }
+  return bits;
+}
+
+/** What the legend leaves on screen: per node and per edge, 1 drawn, 0 hidden. */
+export type Visibility = { node: Uint8Array; edge: Uint8Array };
+
+/**
+ * The legend's mask for this graph, or null when it hides nothing. A node is
+ * hidden when its kind is; an edge when its kind is or either end is hidden.
+ * One pass over the nodes and one over the edges, all bit tests on the kind
+ * codes, so a toggle at 100,000 nodes costs what a highlight does. `reuse` is
+ * filled in place when it has the graph's sizes.
+ */
+export function computeVisibility(
+  g: IndexedGraph,
+  filter: GraphFilter,
+  reuse: Visibility | null = null,
+): Visibility | null {
+  const hiddenNodes = kindBits(filter.hiddenNodes, NODE_KINDS);
+  const hiddenLinks = kindBits(filter.hiddenLinks, LINK_KINDS);
+  if (hiddenNodes === 0 && hiddenLinks === 0) return null;
+  const n = g.nodes.length;
+  const m = g.links.length;
+  const v =
+    reuse && reuse.node.length === n && reuse.edge.length === m
+      ? reuse
+      : { node: new Uint8Array(n), edge: new Uint8Array(m) };
+  const { nodeKind, linkKind, src, dst } = g;
+  for (let i = 0; i < n; i++)
+    v.node[i] = ((hiddenNodes >>> nodeKind[i]) & 1) === 1 ? 0 : 1;
+  for (let k = 0; k < m; k++)
+    v.edge[k] =
+      ((hiddenLinks >>> linkKind[k]) & 1) === 1 ||
+      v.node[src[k]] === 0 ||
+      v.node[dst[k]] === 0
+        ? 0
+        : 1;
+  return v;
 }
