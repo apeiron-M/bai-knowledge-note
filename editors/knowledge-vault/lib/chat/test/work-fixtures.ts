@@ -57,6 +57,16 @@ export function linkedWorkDocs(): Map<string, LoadedDocument> {
   return docs;
 }
 
+/** wbs-1 names scope-1 as its scope, but no project of scope-1 holds it — a one-way link. */
+export function pointingWorkDocs(): Map<string, LoadedDocument> {
+  const docs = loadedWorkDocs();
+  let w = wbsUtils.createDocument({ global: docs.get("wbs-1")!.state } as never);
+  w = wbsReducer(w, wbs.setSowProjectRef({ sowRef: "scope-1", sowProjectId: "proj-kv" }));
+  expect(w.operations.global.every((op) => !op.error)).toBe(true);
+  docs.set("wbs-1", { ...docs.get("wbs-1")!, state: w.state.global as unknown as Record<string, unknown> });
+  return docs;
+}
+
 /** The documents a proposal check sees: the scope, the breakdown, and a note it may not touch. */
 export function loadedWorkDocs(): Map<string, LoadedDocument> {
   return new Map<string, LoadedDocument>([

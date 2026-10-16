@@ -10,7 +10,7 @@
 import { describe, expect, it } from "vitest";
 import { actions as sow } from "document-models/scope-of-work";
 import { actions as wbs } from "document-models/work-breakdown-structure";
-import { linkedWorkDocs, loadedWorkDocs } from "./test/work-fixtures.js";
+import { linkedWorkDocs, loadedWorkDocs, pointingWorkDocs } from "./test/work-fixtures.js";
 import {
   FORM_EXAMPLE,
   FORM_LISTS,
@@ -218,9 +218,36 @@ describe("the form", () => {
     expect(says(proposalOf({ deletions: [{ document: "wbs-1" }] }))).toEqual(["Delete work breakdown “Knowledge Vault breakdown”"]);
   });
 
-  it("says a deleted scope's breakdowns stay, so the person can delete them too", () => {
+  it("unlinks a deleted scope's breakdowns first, one line each — they stay, outside any scope", () => {
     const r = checkForm({ deletions: [{ document: "scope-1" }] }, linkedWorkDocs());
-    expect(r.ok && r.proposal.changes[0].warning).toBe("deletes the whole document — its project's work breakdown stays, linked to nothing");
+    if (!r.ok) throw new Error(r.errors.join(" | "));
+    expect(r.proposal.changes.map((c) => [c.says, c.warning, c.derived ?? false])).toEqual([
+      ["Unlink work breakdown “Knowledge Vault breakdown” — it stays, outside any scope", undefined, true],
+      ["Delete scope of work “Powerhouse 2026”", "deletes the whole document", false],
+    ]);
+    expect(r.proposal.changes[0]).toMatchObject({
+      document: "wbs-1",
+      documentType: WBS_TYPE,
+      steps: [{ type: "SET_SOW_PROJECT_REF", input: { sowRef: null, sowProjectId: null } }],
+    });
+    expect(r.proposal.deletions).toBe(1);
+  });
+
+  it("unlinks a breakdown that names the scope even when no project holds it", () => {
+    const r = checkForm({ deletions: [{ document: "scope-1" }] }, pointingWorkDocs());
+    expect(r.ok && says(r.proposal)).toEqual([
+      "Unlink work breakdown “Knowledge Vault breakdown” — it stays, outside any scope",
+      "Delete scope of work “Powerhouse 2026”",
+    ]);
+  });
+
+  it("never deletes a breakdown it was not asked to — one named for deletion is deleted, not unlinked", () => {
+    for (const order of [["scope-1", "wbs-1"], ["wbs-1", "scope-1"]]) {
+      const r = checkForm({ deletions: order.map((document) => ({ document })) }, linkedWorkDocs());
+      if (!r.ok) throw new Error(r.errors.join(" | "));
+      expect(says(r.proposal).sort()).toEqual(["Delete scope of work “Powerhouse 2026”", "Delete work breakdown “Knowledge Vault breakdown”"]);
+      expect(r.proposal.deletions).toBe(2);
+    }
   });
 
   it("names the documents it touches, for the card's Open links", () => {

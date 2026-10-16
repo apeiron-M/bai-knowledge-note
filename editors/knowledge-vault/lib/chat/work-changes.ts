@@ -318,7 +318,7 @@ export interface ProposedChange {
   kind: ChangeKind;
   /** Where the model wrote it — "goals[1]" — for the rehearsal's report, and what an edit on the card changes. */
   at?: string;
-  /** Added by the checker, not written by the model — the unlink before a breakdown's deletion: not edited on its own. */
+  /** Added by the checker, not written by the model — an unlink before a breakdown's or a scope's deletion: not edited on its own. */
   derived?: boolean;
   /** The sentence the person reads. */
   says: string;
@@ -829,6 +829,8 @@ export function checkProposal(
   const createdScopes = list.filter((c) => c.kind === "create_scope").map((c) => refOf(c.ref, str(c.title))).filter((r): r is string => r !== undefined);
   const createdBreakdowns = list.filter((c) => c.kind === "create_wbs").map((c) => refOf(c.ref, str(c.name) ?? str(c.title))).filter((r): r is string => r !== undefined);
   const willCreate = new Set([...createdScopes, ...createdBreakdowns]);
+  // The documents the proposal deletes by name: no unlink is proposed for one that goes anyway.
+  const deletesByName = new Set(list.filter((c) => c.kind === "delete_document").map((c) => str(c.document)).filter((v): v is string => v !== undefined));
   /** Every name the proposal makes, by its lower case: "new:ops" is "new:OPS". */
   const canonical = new Map<string, string>();
   for (const r of willCreate) canonical.set(r.toLowerCase(), r);
@@ -1166,7 +1168,8 @@ export function checkProposal(
         const scopeId = typeof w?.sowRef === "string" ? w.sowRef : null;
         const scope = scopeId ? (docs.get(scopeId)?.state as ScopeOfWorkState | null | undefined) : null;
         const project = Array.isArray(scope?.projects) ? scope.projects.find((x) => x.id === w?.sowProjectId && x.wbsRef === document) : undefined;
-        if (scopeId && project) {
+        // A scope deleted in the same proposal needs no unlink — and could not take one after it is gone.
+        if (scopeId && project && !deletesByName.has(scopeId)) {
           push({
             kind: "operation", document: scopeId, documentType: SCOPE_TYPE, derived: true,
             steps: [{ type: "LINK_PROJECT_WBS", input: { projectId: project.id, wbsRef: null } }],
@@ -1176,14 +1179,23 @@ export function checkProposal(
         push({ kind, document, documentType: WBS_TYPE, says: `Delete work breakdown ${names.doc(document)}`, warning: "deletes the whole document" });
         return;
       }
-      // A scope's breakdowns are documents of their own: say they stay, so the person can delete them too.
+      // A scope's breakdowns stay: each is unlinked first, as its own line, so none points at a scope that is gone.
+      // They are its projects' wbsRef and any breakdown whose sowRef names it; one the proposal deletes by name is
+      // left to that deletion. The chat never deletes a breakdown it was not asked to.
       const held = (d.state as ScopeOfWorkState | null)?.projects;
-      const linked = Array.isArray(held) ? held.filter((x) => x.wbsRef).length : 0;
-      push({
-        kind, document, documentType: SCOPE_TYPE,
-        says: `Delete scope of work ${names.doc(document)}`,
-        warning: `deletes the whole document${linked === 1 ? " — its project's work breakdown stays, linked to nothing" : linked > 1 ? ` — the ${linked} work breakdowns of its projects stay, linked to nothing` : ""}`,
-      });
+      const fromProjects = Array.isArray(held) ? held.flatMap((x) => (typeof x.wbsRef === "string" && x.wbsRef ? [x.wbsRef] : [])) : [];
+      const naming = [...docs.values()]
+        .filter((w) => w.documentType === WBS_TYPE && (w.state as { sowRef?: unknown } | null)?.sowRef === document)
+        .map((w) => w.documentId);
+      for (const id of new Set([...fromProjects, ...naming])) {
+        if (docs.get(id)?.documentType !== WBS_TYPE || deletesByName.has(id)) continue;
+        push({
+          kind: "operation", document: id, documentType: WBS_TYPE, derived: true,
+          steps: [{ type: "SET_SOW_PROJECT_REF", input: { sowRef: null, sowProjectId: null } }],
+          says: `Unlink work breakdown ${names.doc(id)} — it stays, outside any scope`,
+        });
+      }
+      push({ kind, document, documentType: SCOPE_TYPE, says: `Delete scope of work ${names.doc(document)}`, warning: "deletes the whole document" });
       return;
     }
 
