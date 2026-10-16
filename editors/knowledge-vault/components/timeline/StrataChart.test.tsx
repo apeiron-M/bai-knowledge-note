@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { buildSourceTimeline, type TimelineNode, type TimelineSource } from "../../../../processors/graph-indexer/source-timeline.js";
+import { naturalWidth } from "../../lib/timeline/axis.js";
 import { StrataChart, tipBox } from "./StrataChart.js";
 
 const words = { locale: "en-US", timeZone: "UTC" };
@@ -74,5 +75,41 @@ describe("tipBox", () => {
     expect(tipBox(300, 600)).toEqual({ left: 316, width: 284 });
     expect(tipBox(420, 600)).toEqual({ left: 104, width: 300 });
     expect(tipBox(120, 240)).toEqual({ left: 0, width: 240 });
+  });
+});
+
+describe("StrataChart, a long history", () => {
+  // A feed every day for a year.
+  const days = Array.from({ length: 365 }, (_, i) => new Date(Date.UTC(2025, 9, 16 + i, 9)).toISOString());
+  const year = buildSourceTimeline({
+    sourcesFolderId: "root",
+    folders: [{ id: "root", name: "sources", parentFolder: null }],
+    sources: days.map((at, i) => source(`s${i}`, "root", at)),
+    nodes: days.map((at, i) => note(`n${i}`, at)),
+    edges: days.map((_, i) => ({ source: `n${i}`, target: `s${i}`, type: "DERIVED_FROM" })),
+  });
+  const html = renderToStaticMarkup(<StrataChart timeline={year} now={Date.UTC(2026, 9, 16, 12)} width={900} words={words} label="Notes over time" />);
+
+  it("gives every day room and scrolls, rather than crushing a year into the panel", () => {
+    expect(html).toContain('class="tl-scroll"');
+    const drawn = Number(html.match(/<svg class="tl-strata[^"]*" viewBox="0 0 (\d+)/)?.[1]);
+    expect(drawn).toBeGreaterThanOrEqual(365 * 80);
+  });
+
+  it("keeps the note counts readable while it scrolls", () => {
+    expect(html).toContain('class="tl-yaxis"');
+  });
+
+  it("fits a short history in the panel, without scrolling", () => {
+    const short = renderToStaticMarkup(<StrataChart timeline={timeline} now={NOW} width={900} words={words} label="Notes over time" />);
+    expect(short).toMatch(/viewBox="0 0 900 /);
+  });
+});
+
+describe("naturalWidth", () => {
+  it("asks for room per day with arrivals, never less than the view", () => {
+    const d = (n: number, h = 9) => Date.UTC(2026, 9, n, h);
+    expect(naturalWidth([d(1), d(1, 15), d(2)], 900, { timeZone: "UTC" })).toBe(900);
+    expect(naturalWidth(Array.from({ length: 30 }, (_, i) => d(1 + i)), 900, { timeZone: "UTC" })).toBe(30 * 80);
   });
 });

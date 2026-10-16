@@ -1,7 +1,7 @@
-import { useId, useMemo, useRef, useState } from "react";
+import { useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SourceTimeline } from "../../../../processors/graph-indexer/source-timeline.js";
 import { clock, countOf, dayLabel } from "../../lib/timeline/additions.js";
-import { axisMarks, foldedAxis, type TimeWords } from "../../lib/timeline/axis.js";
+import { axisMarks, foldedAxis, naturalWidth, type TimeWords } from "../../lib/timeline/axis.js";
 import { bandAt, bandPaths, HEADROOM, scaleY, stackStrata, strataLabels, strataLayers, type StrataLayer } from "../../lib/timeline/strata.js";
 
 export interface StrataChartProps {
@@ -80,6 +80,10 @@ export function StrataChart(props: StrataChartProps) {
   const pattern = `tl-fold-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const box = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<Hover | null>(null);
+  const scroller = useRef<HTMLDivElement>(null);
+  /** Follow "Now" as the chart grows, until the reader scrolls back. */
+  const atEnd = useRef(true);
+  const [awayFromNow, setAwayFromNow] = useState(false);
 
   const model = useMemo(() => {
     if (width <= 0) return null;
@@ -90,12 +94,15 @@ export function StrataChart(props: StrataChartProps) {
       ...timeline.notes.map((n) => Date.parse(n.addedAt ?? "")),
       ...timeline.topics.map((t) => Date.parse(t.addedAt ?? "")),
     ].filter(Number.isFinite);
-    const ax = foldedAxis(times, width, now, { gapPx: compact ? 18 : 40 });
+    // The dock squeezes all of time into its track; the page gives every active day room and scrolls.
+    const w = compact ? width : naturalWidth(times, width, words);
+    const ax = foldedAxis(times, w, now, { gapPx: compact ? 18 : 40 });
     const stack = stackStrata(layers, ax, compact ? 4 : 3);
     const y = scaleY(stack, height, top);
     const keyOf = new Map<string, string>();
     for (const l of layers) for (const id of l.additionIds) keyOf.set(id, l.key);
     return {
+      w,
       layers,
       ax,
       stack,
@@ -108,8 +115,16 @@ export function StrataChart(props: StrataChartProps) {
     };
   }, [timeline, now, width, height, top, compact, locale, timeZone]);
 
+  // Open at Now, and stay there as the chart grows — unless the reader scrolled back.
+  const drawn = model?.w ?? 0;
+  useLayoutEffect(() => {
+    const el = scroller.current;
+    if (el && atEnd.current) el.scrollLeft = el.scrollWidth;
+  }, [drawn]);
+
   if (!model) return <div className="tl-chart" ref={box} />;
-  const { ax, stack, y, keyOf } = model;
+  const { ax, stack, y, keyOf, w } = model;
+  const scrolls = w > width;
   const selectedKey = props.selected ? keyOf.get(props.selected) : undefined;
   const hoverKey = hover?.layer?.key ?? (props.hovered ? keyOf.get(props.hovered) : undefined);
   const live = props.live ? keyOf.get(props.live) : undefined;
@@ -119,7 +134,7 @@ export function StrataChart(props: StrataChartProps) {
     const svg = box.current?.querySelector("svg");
     if (!svg) return null;
     const r = svg.getBoundingClientRect();
-    const px = ((e.clientX - r.left) / r.width) * width;
+    const px = ((e.clientX - r.left) / r.width) * w;
     const py = ((e.clientY - r.top) / r.height) * (height + axisH);
     const value = Math.max(1, stack.max * HEADROOM) * (1 - (py - top) / (height - top));
     const band = bandAt(stack, px, value);
@@ -166,7 +181,18 @@ export function StrataChart(props: StrataChartProps) {
         props.onPick((before.at(-1) ?? members[0]).id);
       }}
     >
-      <svg className={selectedKey ? "tl-strata picking" : "tl-strata"} viewBox={`0 0 ${width} ${height + axisH}`} width={width} height={height + axisH} role="img" aria-label={props.label}>
+      <div
+        className="tl-scroll"
+        ref={scroller}
+        tabIndex={scrolls ? 0 : undefined}
+        aria-label={scrolls ? "Scroll through time" : undefined}
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          atEnd.current = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+          setAwayFromNow(!atEnd.current);
+        }}
+      >
+      <svg className={selectedKey ? "tl-strata picking" : "tl-strata"} viewBox={`0 0 ${w} ${height + axisH}`} width={w} height={height + axisH} role="img" aria-label={props.label}>
         <defs>
           <pattern id={pattern} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <line x1="0" y1="0" x2="0" y2="6" className="hatch" />
@@ -175,10 +201,12 @@ export function StrataChart(props: StrataChartProps) {
         {model.ticks.map((v) =>
           y(v) > top + 10 ? (
             <g key={v}>
-              <line className="grid" x1={0} x2={width} y1={y(v)} y2={y(v)} />
-              <text className="gridlabel" x={4} y={y(v) - 4}>
-                {v.toLocaleString("en-US")}
-              </text>
+              <line className="grid" x1={0} x2={w} y1={y(v)} y2={y(v)} />
+              {!scrolls && (
+                <text className="gridlabel" x={4} y={y(v) - 4}>
+                  {v.toLocaleString("en-US")}
+                </text>
+              )}
             </g>
           ) : null,
         )}
@@ -194,7 +222,7 @@ export function StrataChart(props: StrataChartProps) {
           <rect key={`f-${g.x0}`} className="fold" x={g.x0} y={top - 2} width={g.x1 - g.x0} height={height - top + 2} fill={`url(#${pattern})`} />
         ))}
         {model.labels.map((l) => (
-          <text key={`l-${l.key}`} className={cls("label", l.key === selectedKey && "on")} x={width - 10} y={l.y} textAnchor="end">
+          <text key={`l-${l.key}`} className={cls("label", l.key === selectedKey && "on")} x={w - 10} y={l.y} textAnchor="end">
             {l.title.length > 40 ? `${l.title.slice(0, 39)}…` : l.title} <tspan className="v">{l.count.toLocaleString("en-US")}</tspan>
           </text>
         ))}
@@ -213,14 +241,14 @@ export function StrataChart(props: StrataChartProps) {
             const cy = y(stack.bands[j].hi[last]);
             return (
               <g>
-                <circle className="live" cx={width - 3} cy={cy} r={4} />
-                <circle className="livering" cx={width - 3} cy={cy} r={4} />
+                <circle className="live" cx={w - 3} cy={cy} r={4} />
+                <circle className="livering" cx={w - 3} cy={cy} r={4} />
               </g>
             );
           })()}
         {model.marks && (
           <g>
-            <line className="base" x1={0} x2={width} y1={height} y2={height} />
+            <line className="base" x1={0} x2={w} y1={height} y2={height} />
             {model.marks.days.map((d) => (
               <text key={`d-${d.x}`} className="day" x={d.x + 2} y={height + 32}>
                 {d.label}
@@ -242,13 +270,38 @@ export function StrataChart(props: StrataChartProps) {
                 </text>
               </g>
             ))}
-            <text className="now" x={width} y={height + 32} textAnchor="end">
+            <text className="now" x={w} y={height + 32} textAnchor="end">
               {model.marks.now.label}
             </text>
           </g>
         )}
         {hover && <line className="cursor" x1={hover.px} x2={hover.px} y1={top - 14} y2={height} />}
       </svg>
+      </div>
+      {scrolls && (
+        // The counts stay put while the history scrolls under them.
+        <div className="tl-yaxis" aria-hidden="true">
+          {model.ticks.map((v) =>
+            y(v) > top + 10 ? (
+              <span key={v} style={{ top: y(v) - 17 }}>
+                {v.toLocaleString("en-US")}
+              </span>
+            ) : null,
+          )}
+        </div>
+      )}
+      {scrolls && awayFromNow && (
+        <button
+          type="button"
+          className="tl-tonow"
+          onClick={() => {
+            const el = scroller.current;
+            if (el) el.scrollTo({ left: el.scrollWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+          }}
+        >
+          Now →
+        </button>
+      )}
       {hover && (
         <div className="tl-tip" style={{ left: tipBox(hover.left, width).left, width: tipBox(hover.left, width).width, maxWidth: "none", top: Math.max(0, hover.top - 96) }}>
           <b>{hover.text.when}</b>

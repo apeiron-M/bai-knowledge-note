@@ -29,7 +29,13 @@ export const TIMELINE_CSS = `
 /* the strata */
 .vault-tl .tl-panel { position: relative; margin-top: 18px; padding: 14px 18px 8px; border-radius: 14px; border: 1px solid var(--bai-border); background: var(--bai-surface); box-shadow: ${role("raise")}; }
 .tl-chart { position: relative; }
-.tl-strata { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+.tl-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--bai-text) 22%, transparent) transparent; }
+.tl-scroll:focus-visible { outline: 2px solid var(--bai-accent); outline-offset: 2px; border-radius: 6px; }
+.tl-strata { display: block; max-width: none; height: auto; overflow: visible; touch-action: pan-x; }
+.tl-yaxis { position: absolute; left: 0; top: 0; pointer-events: none; }
+.tl-yaxis span { position: absolute; left: 2px; padding: 0 4px; border-radius: 4px; font: 11px "Inter Variable", Inter, sans-serif; color: var(--bai-text-tertiary); background: color-mix(in srgb, var(--bai-surface) 85%, transparent); font-variant-numeric: tabular-nums; }
+.tl-tonow { position: absolute; right: 0; top: -2px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--bai-border); background: var(--bai-surface); color: var(--bai-accent); font-size: 12px; font-weight: 600; }
+.tl-tonow:focus-visible { outline: 2px solid var(--bai-accent); outline-offset: 2px; }
 .tl-strata .layer { stroke: none; transition: fill .12s ease, opacity .12s ease; }
 .tl-strata .layer[data-alt="0"] { fill: color-mix(in srgb, ${role("note")} 30%, transparent); }
 .tl-strata .layer[data-alt="1"] { fill: color-mix(in srgb, ${role("note")} 17%, transparent); }

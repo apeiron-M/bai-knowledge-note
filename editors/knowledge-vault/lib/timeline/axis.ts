@@ -223,3 +223,16 @@ export function axisMarks(ax: FoldedAxis, now: number, o: TimeWords = {}): AxisM
   const folds = ax.gaps.map((g) => ({ x: (g.x0 + g.x1) / 2, label: foldLength(g.t1 - g.t0) }));
   return { days, ticks, folds, now: { x: ax.width, label: "Now" } };
 }
+
+/** Room each day with arrivals gets: enough for its day label and the shape of its additions. */
+export const PX_PER_ACTIVE_DAY = 80;
+
+/**
+ * The width the timeline chart wants: room for every day something arrived,
+ * never less than the view. Past the view, the chart scrolls — a year of
+ * daily feeds stays readable instead of shrinking to a pixel a day.
+ */
+export function naturalWidth(times: readonly number[], viewWidth: number, o: TimeWords = {}): number {
+  const days = new Set(times.filter(Number.isFinite).map((t) => dayKey(t, o))).size;
+  return Math.max(viewWidth, days * PX_PER_ACTIVE_DAY);
+}
