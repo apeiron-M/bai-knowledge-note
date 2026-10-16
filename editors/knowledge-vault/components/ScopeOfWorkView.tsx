@@ -6,12 +6,24 @@ import {
   useReactorDocsWithRefetch,
   type ReactorDocSpec,
 } from "../hooks/use-reactor-docs.js";
-import { createDocumentRemote, deleteDocumentRemote } from "../lib/remote-reactor.js";
+import { createDocumentRemote, deleteDocumentRemote, mutateDocumentRemote } from "../lib/remote-reactor.js";
+import {
+  breakdownProgress,
+  breakdownRow,
+  breakdownsOfScope,
+  deleteScopeOfWork,
+  recordedWorkLine,
+  unlinkBreakdownAction,
+  type BreakdownRow,
+} from "../lib/scope-breakdowns.js";
 import { writeErrorText } from "../../shared/use-doc-write.js";
 import { TrashIcon, TypeToConfirmDialog } from "./TypeToConfirmDialog.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { useFolderMap } from "../hooks/use-drive-init.js";
 import { formatLastModified } from "../lib/format-time.js";
+
+const SCOPE_DOC = "powerhouse/scopeofwork";
+const WBS_DOC = "bai/wbs";
 
 /**
  * The Scope tab: every scope-of-work document in the drive. A SoW is the
@@ -21,8 +33,11 @@ import { formatLastModified } from "../lib/format-time.js";
  * vault sidebar steps aside (EDITORS_WITH_OWN_SIDEBAR in DriveExplorer).
  *
  * Each card can delete its scope of work — the whole document, so the person
- * types its title to confirm (TypeToConfirmDialog). The work breakdowns of its
- * projects are documents of their own and stay; the dialog says so.
+ * types its title to confirm (TypeToConfirmDialog). The dialog lists the work
+ * breakdowns that deliver it; "Also delete these work breakdowns" starts
+ * checked. Checked, they are deleted first; unchecked, each is unlinked first
+ * (SET_SOW_PROJECT_REF, both fields null). The scope goes last, so nothing is
+ * left pointing at it (lib/scope-breakdowns.ts).
  */
 
 // A scope of work carries its own lifecycle, unrelated to ProjectStatus.
@@ -46,8 +61,8 @@ type SowRow = {
   delivered: number;
   milestones: number;
   contributors: number;
-  /** Projects linked to a work breakdown — breakdowns that stay when the scope goes. */
-  breakdowns: number;
+  /** Its projects' work breakdowns (`wbsRef`), in project order. */
+  wbsRefs: string[];
   lastModified: string;
 };
 
@@ -138,20 +153,61 @@ const SowCard = memo(function SowCard({ sow, onDelete }: { sow: SowRow; onDelete
   );
 });
 
-/** What goes with a scope of work, and what stays — the dialog's body. */
-function DeleteScopeBody({ sow }: { sow: SowRow }) {
+/**
+ * What goes with a scope of work — the dialog's body. The work breakdowns
+ * that deliver it are listed with their progress, and go too unless the box
+ * is cleared; then they stay, outside any scope.
+ */
+export function DeleteScopeBody({
+  breakdowns,
+  alsoDelete,
+  onAlsoDelete,
+  busy = false,
+}: {
+  breakdowns: readonly BreakdownRow[];
+  alsoDelete: boolean;
+  onAlsoDelete: (v: boolean) => void;
+  busy?: boolean;
+}) {
+  const one = breakdowns.length === 1;
+  const recorded = alsoDelete ? recordedWorkLine(breakdowns, one ? "it" : "them") : null;
   return (
     <>
       <p>
         This deletes the whole scope of work — its envelopes, deliverables,
         milestones and contributors. It cannot be undone.
       </p>
-      {sow.breakdowns > 0 && (
-        <p style={{ color: "var(--bai-text-muted)" }}>
-          {sow.breakdowns === 1
-            ? "Its project's work breakdown stays, as a document of its own."
-            : `The work breakdowns of its ${sow.breakdowns} projects stay, as documents of their own.`}
-        </p>
+      {breakdowns.length > 0 && (
+        <>
+          <p>{one ? "One work breakdown delivers it:" : `${breakdowns.length} work breakdowns deliver it:`}</p>
+          <ul
+            className="space-y-1 rounded-lg px-3 py-2"
+            style={{ backgroundColor: "var(--bai-deep)", border: "1px solid var(--bai-border)" }}
+          >
+            {breakdowns.map((b) => (
+              <li key={b.id} className="text-[12.5px]">
+                <span style={{ color: "var(--bai-text)" }}>{b.name}</span>
+                <span style={{ color: "var(--bai-text-muted)" }}>{` — ${breakdownProgress(b)}`}</span>
+              </li>
+            ))}
+          </ul>
+          <label className="flex items-center gap-2 text-[12.5px]" style={{ color: "var(--bai-text)" }}>
+            <input
+              type="checkbox"
+              checked={alsoDelete}
+              disabled={busy}
+              onChange={(e) => onAlsoDelete(e.target.checked)}
+            />
+            Also delete these work breakdowns
+          </label>
+          {alsoDelete
+            ? recorded && <p style={{ color: "var(--bai-danger)" }}>{recorded}</p>
+            : (
+              <p style={{ color: "var(--bai-text-muted)" }}>
+                {one ? "It stays, outside any scope." : "They stay, outside any scope."}
+              </p>
+            )}
+        </>
       )}
     </>
   );
@@ -258,22 +314,26 @@ function NewScopeDialog({
 
 export function ScopeOfWorkView() {
   const [createOpen, setCreateOpen] = useState(false);
-  // The scope being deleted, while the dialog is open; and the ones gone, kept out of the list until the tree catches up.
+  // The scope being deleted, while the dialog is open; and the documents gone, kept out of the lists until the tree catches up.
   const [deleting, setDeleting] = useState<SowRow | null>(null);
+  // Checked by default: a scope's breakdowns go with it unless the person keeps them.
+  const [alsoDeleteBreakdowns, setAlsoDeleteBreakdowns] = useState(true);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [gone, setGone] = useState<ReadonlySet<string>>(() => new Set());
   const driveId = useSelectedDriveId();
   const projectsFolderId = useFolderMap().get("projects");
   const { serverFileNodes, isLoading: treeLoading } = useKnowledgeNotes();
+  // Scopes and breakdowns in one read: the dialog lists a scope's breakdowns,
+  // and the list below the cards the ones outside any scope.
   const specs = useMemo<ReactorDocSpec[]>(
     () =>
       serverFileNodes
-        .filter((n) => n.documentType === "powerhouse/scopeofwork")
+        .filter((n) => n.documentType === SCOPE_DOC || n.documentType === WBS_DOC)
         .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
     [serverFileNodes],
   );
-  const { docs, isLoading: docsLoading } = useReactorDocsWithRefetch(specs, {
+  const { docs, isLoading: docsLoading, refetch } = useReactorDocsWithRefetch(specs, {
     pollMs: 30_000,
     retainKey: "scope-view",
   });
@@ -281,21 +341,22 @@ export function ScopeOfWorkView() {
 
   const sows = useMemo<SowRow[]>(() => {
     return docs
-      .filter((d) => d.header.documentType === "powerhouse/scopeofwork")
+      .filter((d) => d.header.documentType === SCOPE_DOC)
       .map((d) => {
         const g = (d.state as unknown as { global: Record<string, unknown> }).global;
         const deliverables = (g.deliverables as { status?: string }[] | undefined) ?? [];
         const roadmaps = (g.roadmaps as { milestones?: unknown[] }[] | undefined) ?? [];
+        const projects = (g.projects as { wbsRef?: string | null }[] | undefined) ?? [];
         return {
           id: d.header.id,
           title: (g.title as string | undefined) || d.header.name,
           status: (g.status as string | undefined) ?? "DRAFT",
-          projects: ((g.projects as unknown[] | undefined) ?? []).length,
+          projects: projects.length,
           deliverables: deliverables.length,
           delivered: deliverables.filter((x) => x.status === "DELIVERED").length,
           milestones: roadmaps.reduce((n, r) => n + (r.milestones?.length ?? 0), 0),
           contributors: ((g.contributors as unknown[] | undefined) ?? []).length,
-          breakdowns: ((g.projects as { wbsRef?: string | null }[] | undefined) ?? []).filter((p) => p.wbsRef).length,
+          wbsRefs: projects.flatMap((p) => (p.wbsRef ? [p.wbsRef] : [])),
           lastModified: d.header.lastModifiedAtUtcIso,
         };
       })
@@ -303,20 +364,48 @@ export function ScopeOfWorkView() {
       .sort((a, b) => a.title.localeCompare(b.title));
   }, [docs, gone]);
 
+  const breakdowns = useMemo<BreakdownRow[]>(
+    () =>
+      docs
+        .filter((d) => d.header.documentType === WBS_DOC && !gone.has(d.header.id))
+        .map((d) =>
+          breakdownRow(
+            d.header.id,
+            d.header.name,
+            (d.state as unknown as { global?: Record<string, unknown> }).global,
+          ),
+        ),
+    [docs, gone],
+  );
+  const deletingBreakdowns = useMemo(
+    () => (deleting ? breakdownsOfScope(deleting.id, deleting.wbsRefs, breakdowns) : []),
+    [deleting, breakdowns],
+  );
+
+  const markGone = (id: string) => setGone((prev) => new Set(prev).add(id));
+
   const confirmDelete = async () => {
     if (!deleting || !driveId || deleteBusy) return;
     setDeleteBusy(true);
     setDeleteError(null);
     try {
-      await deleteDocumentRemote(deleting.id, driveId);
-      const id = deleting.id;
-      setGone((prev) => new Set(prev).add(id));
+      await deleteScopeOfWork(
+        deleting.id,
+        deletingBreakdowns.map((b) => b.id),
+        alsoDeleteBreakdowns,
+        {
+          deleteDocument: (id) => deleteDocumentRemote(id, driveId),
+          unlinkBreakdown: (id) => mutateDocumentRemote(id, [unlinkBreakdownAction()]),
+          onDeleted: markGone,
+        },
+      );
       setDeleting(null);
-      triggerVaultPull();
     } catch (err) {
       setDeleteError(writeErrorText([err]));
     } finally {
       setDeleteBusy(false);
+      triggerVaultPull();
+      refetch();
     }
   };
 
@@ -365,6 +454,7 @@ export function ScopeOfWorkView() {
               sow={sow}
               onDelete={(row) => {
                 setDeleteError(null);
+                setAlsoDeleteBreakdowns(true);
                 setDeleting(row);
               }}
             />
@@ -391,7 +481,12 @@ export function ScopeOfWorkView() {
           onConfirm={() => void confirmDelete()}
           onCancel={() => setDeleting(null)}
         >
-          <DeleteScopeBody sow={deleting} />
+          <DeleteScopeBody
+            breakdowns={deletingBreakdowns}
+            alsoDelete={alsoDeleteBreakdowns}
+            onAlsoDelete={setAlsoDeleteBreakdowns}
+            busy={deleteBusy}
+          />
         </TypeToConfirmDialog>
       )}
     </div>
