@@ -363,6 +363,20 @@ export function DriveExplorer({ children }: EditorProps) {
   // fetch settled, and both notes and sources genuinely absent. Decided once,
   // so a user who navigates away is not dragged back.
   const landedOnIntake = useRef(false);
+  // Only before the person does anything: the tree and the notes can finish
+  // loading after they have clicked a place or typed a question, and landing
+  // then would pull them away mid-question.
+  useEffect(() => {
+    const touched = () => {
+      landedOnIntake.current = true;
+    };
+    window.addEventListener("pointerdown", touched, { capture: true, once: true });
+    window.addEventListener("keydown", touched, { capture: true, once: true });
+    return () => {
+      window.removeEventListener("pointerdown", touched, { capture: true });
+      window.removeEventListener("keydown", touched, { capture: true });
+    };
+  }, []);
   useEffect(() => {
     if (landedOnIntake.current) return;
     if (
