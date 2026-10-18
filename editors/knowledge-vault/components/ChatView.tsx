@@ -60,15 +60,10 @@ import { EndpointPicker } from "./chat/EndpointPicker.js";
 import { LandingStage } from "./chat/LandingStage.js";
 import { HostModelMissing } from "./chat/HostModelMissing.js";
 import { plainError } from "../../shared/plain-error.js";
+import { orientationStats, type OrientationStats } from "../lib/chat/orientation.js";
 
 interface Orientation {
-  stats: {
-    nodeCount: number;
-    noteCount?: number;
-    mocCount?: number;
-    openTensionCount?: number;
-    edgeCount: number;
-  } | null;
+  stats: OrientationStats | null;
   topics: { name: string; noteCount: number }[];
   loaded: boolean;
 }
@@ -100,8 +95,8 @@ function useOrientation(
     ]).then(([s, t]) => {
       if (cancelled) return;
       setO({
-        stats: s.ok ? (s.data as Orientation["stats"]) : null,
-        topics: t.ok ? (t.data as Orientation["topics"]) : [],
+        stats: s.ok ? orientationStats(s.data) : null,
+        topics: t.ok && Array.isArray(t.data) ? (t.data as Orientation["topics"]) : [],
         loaded: true,
       });
     });
