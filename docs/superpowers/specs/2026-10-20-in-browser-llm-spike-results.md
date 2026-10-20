@@ -226,3 +226,149 @@ The harness can do both without code changes beyond the model id and the descrip
 - **Ref-ids:** these need document state at generation time. The chat tab covers only topic and link ids on the selected note.
 - **Prompt-throughput figures are approximate:** wllama prompt caching (`cache_n`) changes `prompt_n` between calls.
 - **Packaging:** jsdelivr pinning, self-hosting for COEP, and packaging are unchanged and out of scope.
+
+## Round 2: op descriptions (2026-10-20)
+
+**Question:** does giving every op a real description move op selection on LFM2.5-350M?
+
+**Short answer: no, not by itself.** The description text did not help when the model saw the same five candidates. What moved accuracy was the *order* of the candidates in the step-1 prompt, and even the best configuration is still below a plain "take BM25's top hit" rule.
+
+### What changed
+
+- **Descriptions:** `editors/knowledge-vault/chat/core/op-descriptions.ts` holds a description for all 100 ops, keyed `<model>:<OP>`. Project and wbs had none; the rest averaged about 38 characters. Each one says what the op does to the document, when a user would want it, and what sets it apart from its siblings.
+  - **Opt-in:** they are applied with `buildVaultCatalog({ descriptionOverrides: OP_DESCRIPTIONS })`. The default stays the models' own text, because the overrides lowered retrieval recall (below) and did not help selection on the same candidates. `tests/unit/chat-catalog.test.ts` checks that every op has an override and that there are no stray keys.
+  - **Not durable:** `<m>.json`, `schema.graphql` and `gen/` were not touched. The durable fix is `SET_OPERATION_DESCRIPTION` on each document model document through reactor-mcp, which was not reachable in this session.
+- **Harness:** `evalSeed(backend, scoped, variant, order)`.
+  - `variant` controls which text each stage sees:
+    - `original`: the models' text everywhere.
+    - `override`: the new descriptions for BM25 retrieval and both prompts.
+    - `prompt-only`: the original text for retrieval, the new descriptions in the prompts. This keeps the candidate set identical to `original`, so any change comes from the text alone.
+  - `order: "reversed"` lists the step-1 candidates with BM25's lowest-ranked hit first and its top hit last.
+  - A dev-only `POST /__save` route writes results into `spike/llm-harness/eval/`.
+- **Step-1 prompt:** it already included each candidate's description, so the "add the description text to step 1" run was not needed as a separate experiment. `prompt-only` is the closest equivalent. Note that the step-2 prompt also renders the op's description, so a variant can change the args as well as the op choice.
+
+### How the descriptions were written
+
+- **Sources used:** each op's name, its input SDL, and its reducer in `document-models/<m>/v1/src/reducers/`. Nothing else.
+- **What I had seen beforehand:** the 30 eval utterances appear in the round-1 per-utterance table above, so I had read them before writing.
+- **What I did about it:**
+  - I did not open `seed-utterances.json` while writing.
+  - I then removed any wording that matched a round-1 failure utterance unless the schema or an enum backed it: "heading", "label", "file under", "untag", "finished drafting", "on hold" in BLOCK_TASK, and the example task types "extract"/"reflect". "On hold" stayed in SET_PROJECT_STATUS because `ON_HOLD` is an enum value.
+- **Ordering:** the descriptions were committed (`2181d4d1`) before any eval was run.
+
+### Setup
+
+- **Configuration:** identical to round 1. Same 30-item seed set, k=5, scoped and unscoped, WebGPU, temperature 0, same model and wllama/libllama versions. CPU was not rerun.
+- **Baseline reproduced:** the same-session `original` runs matched round 1 item for item, op and args, on 30/30 items in both modes. After a page reload, a rerun of scoped `original` gave the same summary metrics again. The before/after comparison is therefore like for like.
+- **Raw data:** `spike/llm-harness/eval/`:
+  - `results-webgpu-r2-original.json`
+  - `results-webgpu-r2-override.json`
+  - `results-webgpu-r2-prompt-only.json`
+  - `results-webgpu-r2-reversed.json`
+
+### Retrieval
+
+BM25 recall on the seed set, from `tests/unit/chat-retriever.test.ts`:
+
+| Retrieval text | Scoped r@1 / r@5 / r@10 | Unscoped r@1 / r@5 / r@10 |
+|---|---|---|
+| Models' own (round 1) | 73.3 / **90.0** / 93.3 | 66.7 / 83.3 / 86.7 |
+| Overrides | 66.7 / **86.7** / 90.0 | 66.7 / 80.0 / 80.0 |
+
+- **Why it dropped:** the longer descriptions dilute BM25. "change the heading of the note to Why caches lie" fell out of the scoped top 5 (rank 12), and "tag this note…", "send it to review…", "add a team member named Bob" and "new goal: ship the beta" fell from rank 1 to rank 2.
+- **Effect on the gate:** with the overrides, scoped recall@5 is below the 90% gate. That is the second reason they are opt-in.
+
+### Seed eval, WebGPU
+
+- **Rank order:** BM25's top hit is listed first (the round-1 layout).
+- **Reversed:** the top hit is listed last.
+- **"BM25 top-1":** no LLM at all; the action is BM25's rank-1 op. The n for args exact changes from row to row, because args are scored only when the op is right.
+
+**Scoped (the doc's model only):**
+
+| Configuration | Recall@5 | Op overall | Op given in-candidates | Args exact | Args loose | Step 1 median / p95 |
+|---|---|---|---|---|---|---|
+| original, rank order (= round 1) | 90.0% | 43.3% (13/30) | 48.1% (13/27) | 44.4% (4/9) | 66.7% | 202 / 367 ms |
+| override, rank order | 86.7% | 50.0% (15/30) | 57.7% (15/26) | 44.4% (4/9) | 66.7% | 209 / 394 ms |
+| prompt-only, rank order | 90.0% | 40.0% (12/30) | 44.4% (12/27) | 37.5% (3/8) | 62.5% | 209 / 396 ms |
+| original, reversed | 90.0% | 56.7% (17/30) | 63.0% (17/27) | 45.5% (5/11) | 63.6% | 215 / 377 ms |
+| override, reversed | 86.7% | **63.3%** (19/30) | **73.1%** (19/26) | 50.0% (6/12) | 66.7% | 256 / 419 ms |
+| BM25 top-1, original text | n/a | **73.3%** (22/30) | n/a | n/a | n/a | n/a |
+| BM25 top-1, override text | n/a | 66.7% (20/30) | n/a | n/a | n/a | n/a |
+
+**Unscoped (all 99 global ops):**
+
+| Configuration | Recall@5 | Op overall | Op given in-candidates | Args exact | Args loose | Step 1 median / p95 |
+|---|---|---|---|---|---|---|
+| original, rank order (= round 1) | 83.3% | 33.3% (10/30) | 40.0% (10/25) | 37.5% (3/8) | 62.5% | 324 / 372 ms |
+| override, rank order | 80.0% | 40.0% (12/30) | 50.0% (12/24) | 28.6% (2/7) | 57.1% | 311 / 434 ms |
+| prompt-only, rank order | 83.3% | 30.0% (9/30) | 36.0% (9/25) | 50.0% (3/6) | 50.0% | 267 / 407 ms |
+| original, reversed | 83.3% | 40.0% (12/30) | 48.0% (12/25) | 12.5% (1/8) | 50.0% | 220 / 439 ms |
+| override, reversed | 80.0% | 50.0% (15/30) | 62.5% (15/24) | 44.4% (4/9) | 66.7% | 317 / 494 ms |
+| BM25 top-1 (either text) | n/a | 66.7% (20/30) | n/a | n/a | n/a | n/a |
+
+- **Args valid:** zod-valid stayed at 100% in every run.
+- **Latency:** the step-1 median barely moved even though the prompt now carries more description text.
+
+### Per-item flips (op correct ↔ incorrect, rank order, against `original`)
+
+**override, scoped (+4 / −2, plus one item lost from the candidates):**
+- Gains:
+  - #4 "file this note under productivity": SET_NOTE_TYPE → ADD_TOPIC
+  - #12 "send it to review, it's ready": REJECT_NOTE → SUBMIT_FOR_REVIEW
+  - #16 "add an open question…": ADD_CHILD_MOC → ADD_OPEN_QUESTION
+  - #20 "queue a new extraction task…": UNBLOCK_TASK → ADD_TASK
+- Losses:
+  - #28 "create a goal…": CREATE_GOAL → UPDATE_GOAL_DESCRIPTION
+  - #29 "new goal: ship the beta": CREATE_GOAL → UPDATE_GOAL_DESCRIPTION
+- Already wrong, now also out of the candidates: #7 "change the heading…" (UPDATE_LINK_TYPE → REJECT_NOTE).
+
+**override, unscoped (+5 / −3):**
+- Gains: #11 and #12 (→ SUBMIT_FOR_REVIEW), #16 (→ ADD_OPEN_QUESTION), #20 (→ ADD_TASK), #24 "add Alice to the team…" (→ ADD_MEMBER).
+- Losses:
+  - #5 "rename this note…": SET_TITLE → SET_NOTE_TYPE
+  - #28 and #29: CREATE_GOAL → UPDATE_GOAL_DESCRIPTION
+
+**prompt-only (same candidates as original, so the text is the only change):**
+- Scoped, +1 / −2:
+  - Gain: #16.
+  - Losses: #28 and #29.
+- Unscoped, +2 / −3:
+  - Gains: #8 (→ SET_DESCRIPTION) and #11 (→ SUBMIT_FOR_REVIEW).
+  - Losses: #1 "tag this note…" (→ REMOVE_TOPIC), #28 and #29.
+
+### Reading the per-item data
+
+1. **Most override gains come from a different candidate set, not from the text.**
+   - #4: SET_TITLE left the top 5.
+   - #12: SUBMIT_FOR_REVIEW and REJECT_NOTE swapped positions.
+   - #20: UNBLOCK_TASK left the top 5.
+   - With the candidates held fixed (`prompt-only`), the same descriptions came out net negative in both modes.
+2. **The model is strongly order-sensitive.**
+   - Reversing the candidate list, with nothing else changed, took scoped `original` from 13/30 to 17/30.
+   - Under reversal it chose the last-listed op (BM25's top hit) 12 to 17 times out of 30, across the four reversed runs. In rank order it chose that same op, then listed first, 9 to 14 times, across the six rank-order runs.
+   - Flips under reversal follow position, not meaning:
+     - Gains: "mark the task as blocked" now gives BLOCK_TASK, and "mark the project as completed" now gives SET_PROJECT_STATUS.
+     - Losses: "tag this note…" and "add the topic machine learning" now give REMOVE_TOPIC.
+3. **Field-name pull outweighs description text.**
+   - The only effect that can be pinned on the text is CREATE_GOAL → UPDATE_GOAL_DESCRIPTION (#28, #29). It appears in both override and prompt-only. CREATE_GOAL's only semantic field is `description`, and the sibling's name now sits next to a description that talks about rewording a goal.
+   - In rank order, "put the project on hold" still picked SET_OWNER, even though SET_PROJECT_STATUS's description now names "on hold" explicitly.
+4. **The args move with the variant too,** because the step-2 prompt renders `entry.description`.
+   - ADD_MEMBER "add Alice to the team as designer" went from exact (`role: "designer"`) to wrong (`role: "HUMAN"`, `kind: "AGENT"`) under override.
+   - Unscoped original-reversed exact fell to 1/8.
+   - The args-exact sample is 6–12 items, which is too small to read a trend from.
+5. **No LLM configuration beat BM25's own top-1.**
+   - BM25's rank-1 op is correct for 22/30 scoped (73.3%) and 20/30 unscoped (66.7%).
+   - The best LLM configuration (override, reversed) reached 19/30 scoped and 15/30 unscoped.
+   - That best figure was chosen after trying five LLM configurations (ten runs) on the same 30 items, so it is optimistic.
+
+### Verdict after round 2
+
+- **Descriptions alone:** they do not close the gap. The fine-tune trigger still stands.
+- **What step 1 must beat:** the honest baseline for any step-1 change is now "BM25 top-1", at 73.3% scoped, not round 1's 43.3%.
+- **What I'd try next, cheapest first:**
+  1. Use BM25 top-1 when its score margin over rank 2 is large, and call the LLM only for near-ties.
+  2. Randomize or score each candidate independently, for example by comparing per-candidate log-likelihood, so that list position stops driving the pick.
+  3. Run the same harness on LFM2.5-1.2B-Instruct.
+  4. Fine-tune.
+- **Before tuning on this seed set again:** a held-out utterance set is needed. Twelve LLM runs (two in round 1, ten in round 2) have now been made against these same 30 items.

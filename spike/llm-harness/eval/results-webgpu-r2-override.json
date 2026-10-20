@@ -1,0 +1,2683 @@
+{
+  "load:\"webgpu\"": {
+    "libllamaVersion": "b11364-46ca246",
+    "wllamaVersion": "3.8.1",
+    "backend": "webgpu",
+    "webgpu": true,
+    "multithread": false,
+    "threads": 1,
+    "loadMs": 688.7999999523163,
+    "downloadBytes": 229312224,
+    "nCtx": 4096,
+    "jinja": false,
+    "model": {
+      "repo": "LiquidAI/LFM2.5-350M-GGUF",
+      "file": "LFM2.5-350M-Q4_K_M.gguf"
+    },
+    "hasChatTemplate": true,
+    "nativeLogTail": [
+      "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: apple | architecture: metal-3 | device_id: 0 | name:  | device_desc: "
+    ]
+  },
+  "evalSeed:\"webgpu\":true:\"override\"": {
+    "summary": {
+      "backend": "webgpu",
+      "scoped": true,
+      "variant": "override",
+      "n": 30,
+      "recallAt5": 86.7,
+      "opAccuracy": 50,
+      "opAccuracyGivenInCandidates": 57.7,
+      "inCandidates": 26,
+      "argsValidPct": 100,
+      "argsValidN": 30,
+      "argsExactPct": 44.4,
+      "argsLoosePct": 66.7,
+      "argsExactN": 9,
+      "step1Ms": {
+        "median": 209,
+        "p95": 394
+      },
+      "step2Ms": {
+        "median": 133,
+        "p95": 350,
+        "n": 29
+      }
+    },
+    "rows": [
+      {
+        "utterance": "tag this note with distributed systems",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "args": {
+          "name": "distributed_systems"
+        },
+        "expectedArgs": {
+          "name": "distributed systems"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:ADD_TOPIC\"\n}",
+          "step2": "{\"name\": \"distributed_systems\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 200.59999990463257,
+            "promptN": 239,
+            "promptPerSecond": 3029.1508238276297,
+            "predictedN": 19,
+            "predictedPerSecond": 156.52173913043478
+          },
+          "step2": {
+            "wallMs": 115.5,
+            "promptN": 91,
+            "promptPerSecond": 1688.280365855921,
+            "predictedN": 11,
+            "predictedPerSecond": 180.50867344175887
+          }
+        }
+      },
+      {
+        "utterance": "add the topic machine learning",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_DESCRIPTION"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "args": {
+          "name": "machine learning"
+        },
+        "expectedArgs": {
+          "name": "machine learning"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": true,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\"op\":\"knowledge-note:ADD_TOPIC\"}",
+          "step2": "{\"name\": \"machine learning\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 198.70000004768372,
+            "promptN": 262,
+            "promptPerSecond": 3025.4390928301714,
+            "predictedN": 17,
+            "predictedPerSecond": 149.81133135457532
+          },
+          "step2": {
+            "wallMs": 110.89999997615814,
+            "promptN": 90,
+            "promptPerSecond": 1688.5870278992102,
+            "predictedN": 10,
+            "predictedPerSecond": 172.7447216890595
+          }
+        }
+      },
+      {
+        "utterance": "label this as epistemology",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:PATCH_CONTENT"
+        ],
+        "inCandidates": false,
+        "selectedKey": "knowledge-note:SET_CONTENT",
+        "opCorrect": false,
+        "args": {
+          "content": "Epistemology"
+        },
+        "expectedArgs": {
+          "name": "epistemology"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SET_CONTENT\"}",
+          "step2": "{\"content\": \"Epistemology\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 185.5,
+            "promptN": 265,
+            "promptPerSecond": 3147.3057874796614,
+            "predictedN": 16,
+            "predictedPerSecond": 156.0857847472971
+          },
+          "step2": {
+            "wallMs": 103,
+            "promptN": 85,
+            "promptPerSecond": 1597.7443609022555,
+            "predictedN": 10,
+            "predictedPerSecond": 203.16485699451457
+          }
+        }
+      },
+      {
+        "utterance": "file this note under productivity",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:ADD_TOPIC"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "args": {
+          "name": "productivity"
+        },
+        "expectedArgs": {
+          "name": "productivity"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": true,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:ADD_TOPIC\"\n}",
+          "step2": "{\"name\": \"productivity\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 201.09999990463257,
+            "promptN": 245,
+            "promptPerSecond": 3085.642317380353,
+            "predictedN": 19,
+            "predictedPerSecond": 156.11448395490027
+          },
+          "step2": {
+            "wallMs": 105.5,
+            "promptN": 90,
+            "promptPerSecond": 1669.7588126159555,
+            "predictedN": 9,
+            "predictedPerSecond": 173.16017316017314
+          }
+        }
+      },
+      {
+        "utterance": "rename this note to Spaced repetition beats cramming",
+        "expectedKey": "knowledge-note:SET_TITLE",
+        "candidates": [
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "The note was outdated and no longer relevant to current study methods."
+        },
+        "expectedArgs": {
+          "title": "Spaced repetition beats cramming"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:ARCHIVE_NOTE\"}",
+          "step2": "{\"comment\": \"The note was outdated and no longer relevant to current study methods.\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 189.59999990463257,
+            "promptN": 242,
+            "promptPerSecond": 3055.5941362895996,
+            "predictedN": 17,
+            "predictedPerSecond": 152.23451727386038
+          },
+          "step2": {
+            "wallMs": 201.40000009536743,
+            "promptN": 96,
+            "promptPerSecond": 1784.3534506793553,
+            "predictedN": 19,
+            "predictedPerSecond": 127.02983083860859
+          }
+        }
+      },
+      {
+        "utterance": "set the title to CAP theorem tradeoffs",
+        "expectedKey": "knowledge-note:SET_TITLE",
+        "candidates": [
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_PROVENANCE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SET_TITLE",
+        "opCorrect": true,
+        "args": {
+          "title": "CAP Tradeoffs"
+        },
+        "expectedArgs": {
+          "title": "CAP theorem tradeoffs"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": false,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SET_TITLE\"}",
+          "step2": "{\"title\": \"CAP Tradeoffs\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 209.19999992847443,
+            "promptN": 299,
+            "promptPerSecond": 3147.3684210526317,
+            "predictedN": 17,
+            "predictedPerSecond": 149.53271028037383
+          },
+          "step2": {
+            "wallMs": 113.40000009536743,
+            "promptN": 85,
+            "promptPerSecond": 1579.9550177512594,
+            "predictedN": 11,
+            "predictedPerSecond": 189.74972011916282
+          }
+        }
+      },
+      {
+        "utterance": "change the heading of the note to Why caches lie",
+        "expectedKey": "knowledge-note:SET_TITLE",
+        "candidates": [
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:REMOVE_LINK"
+        ],
+        "inCandidates": false,
+        "selectedKey": "knowledge-note:REJECT_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "Why caches lie"
+        },
+        "expectedArgs": {
+          "title": "Why caches lie"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:REJECT_NOTE\"}",
+          "step2": "{\"comment\": \"Why caches lie\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 195,
+            "promptN": 269,
+            "promptPerSecond": 3172.169811320755,
+            "predictedN": 17,
+            "predictedPerSecond": 154.14258188824664
+          },
+          "step2": {
+            "wallMs": 111.29999995231628,
+            "promptN": 97,
+            "promptPerSecond": 1789.6678966789668,
+            "predictedN": 11,
+            "predictedPerSecond": 193.42733902009712
+          }
+        }
+      },
+      {
+        "utterance": "set the description to A short argument for writing every day",
+        "expectedKey": "knowledge-note:SET_DESCRIPTION",
+        "candidates": [
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_METADATA_LIST_FIELD"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SET_DESCRIPTION",
+        "opCorrect": true,
+        "args": {
+          "description": "Write a short daily note"
+        },
+        "expectedArgs": {
+          "description": "A short argument for writing every day"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": false,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SET_DESCRIPTION\"}",
+          "step2": "{\"description\": \"Write a short daily note\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 225.59999990463257,
+            "promptN": 329,
+            "promptPerSecond": 3247.7788746298124,
+            "predictedN": 18,
+            "predictedPerSecond": 142.85714285714286
+          },
+          "step2": {
+            "wallMs": 117.80000007152557,
+            "promptN": 107,
+            "promptPerSecond": 1959.7069597069597,
+            "predictedN": 12,
+            "predictedPerSecond": 192.9824561403509
+          }
+        }
+      },
+      {
+        "utterance": "update the summary: explains how consensus protocols tolerate faults",
+        "expectedKey": "knowledge-note:SET_DESCRIPTION",
+        "candidates": [
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_NOTE_TYPE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:UPDATE_LINK_TYPE",
+        "opCorrect": false,
+        "args": {
+          "linkType": "BUILDS_ON"
+        },
+        "expectedArgs": {
+          "description": "explains how consensus protocols tolerate faults"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:UPDATE_LINK_TYPE\"}",
+          "step2": "{\"linkType\": \"BUILDS_ON\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 203.5,
+            "promptN": 286,
+            "promptPerSecond": 3276.0970916047145,
+            "predictedN": 19,
+            "predictedPerSecond": 162.89592760180994
+          },
+          "step2": {
+            "wallMs": 133,
+            "promptN": 138,
+            "promptPerSecond": 2215.123838263856,
+            "predictedN": 12,
+            "predictedPerSecond": 167.93636738370407
+          }
+        }
+      },
+      {
+        "utterance": "describe this note as notes from the Raft paper",
+        "expectedKey": "knowledge-note:SET_DESCRIPTION",
+        "candidates": [
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:ADD_TOPIC"
+        ],
+        "inCandidates": false,
+        "selectedKey": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "This note was outdated and no longer relevant to the current project timeline."
+        },
+        "expectedArgs": {
+          "description": "notes from the Raft paper"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:ARCHIVE_NOTE\"\n}",
+          "step2": "{\n  \"comment\": \"This note was outdated and no longer relevant to the current project timeline.\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 198.5,
+            "promptN": 250,
+            "promptPerSecond": 3144.654088050315,
+            "predictedN": 19,
+            "predictedPerSecond": 159.4345388355964
+          },
+          "step2": {
+            "wallMs": 179.89999997615814,
+            "promptN": 96,
+            "promptPerSecond": 1758.2417582417581,
+            "predictedN": 23,
+            "predictedPerSecond": 184.71872376154494
+          }
+        }
+      },
+      {
+        "utterance": "submit this note for review",
+        "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "args": {
+          "comment": null
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:SUBMIT_FOR_REVIEW\"\n  }",
+          "step2": "{\"comment\": null}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 230.39999997615814,
+            "promptN": 260,
+            "promptPerSecond": 3198.031980319803,
+            "predictedN": 24,
+            "predictedPerSecond": 160.83916083916085
+          },
+          "step2": {
+            "wallMs": 94.20000004768372,
+            "promptN": 101,
+            "promptPerSecond": 1759.581881533101,
+            "predictedN": 6,
+            "predictedPerSecond": 162.86644951140065
+          }
+        }
+      },
+      {
+        "utterance": "send it to review, it's ready",
+        "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "candidates": [
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_DESCRIPTION"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "args": {
+          "comment": null
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SUBMIT_FOR_REVIEW\"}",
+          "step2": "{\"comment\": null}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 209,
+            "promptN": 278,
+            "promptPerSecond": 3148.357870894677,
+            "predictedN": 21,
+            "predictedPerSecond": 174.0644038294169
+          },
+          "step2": {
+            "wallMs": 89.20000004768372,
+            "promptN": 104,
+            "promptPerSecond": 1863.799283154122,
+            "predictedN": 6,
+            "predictedPerSecond": 179.84964569619797
+          }
+        }
+      },
+      {
+        "utterance": "I'm done drafting, request a review",
+        "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_TITLE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:REJECT_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "Please review the draft for any improvements"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:REJECT_NOTE\"\n  }",
+          "step2": "{\"comment\": \"Please review the draft for any improvements\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 216.79999995231628,
+            "promptN": 267,
+            "promptPerSecond": 3034.090909090909,
+            "predictedN": 20,
+            "predictedPerSecond": 155.61143006904234
+          },
+          "step2": {
+            "wallMs": 134.70000004768372,
+            "promptN": 94,
+            "promptPerSecond": 1747.2443725719809,
+            "predictedN": 14,
+            "predictedPerSecond": 172.87234042553192
+          }
+        }
+      },
+      {
+        "utterance": "remove the topic tag",
+        "expectedKey": "knowledge-note:REMOVE_TOPIC",
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_TITLE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:REMOVE_TOPIC",
+        "opCorrect": true,
+        "args": {},
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:REMOVE_TOPIC\"}",
+          "step2": null
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 194.40000009536743,
+            "promptN": 243,
+            "promptPerSecond": 3064.35137895812,
+            "predictedN": 18,
+            "predictedPerSecond": 155.82034830430797
+          },
+          "step2": null
+        }
+      },
+      {
+        "utterance": "untag this note",
+        "expectedKey": "knowledge-note:REMOVE_TOPIC",
+        "candidates": [
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:ADD_TOPIC"
+        ],
+        "inCandidates": false,
+        "selectedKey": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "obsolete note"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:ARCHIVE_NOTE\"}",
+          "step2": "{\"comment\": \"obsolete note\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 195.29999995231628,
+            "promptN": 244,
+            "promptPerSecond": 3080.808080808081,
+            "predictedN": 17,
+            "predictedPerSecond": 146.6544454628781
+          },
+          "step2": {
+            "wallMs": 128,
+            "promptN": 90,
+            "promptPerSecond": 1672.8624535315987,
+            "predictedN": 10,
+            "predictedPerSecond": 130.43289227692352
+          }
+        }
+      },
+      {
+        "utterance": "add an open question: does spacing help procedural memory?",
+        "expectedKey": "moc:ADD_OPEN_QUESTION",
+        "candidates": [
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:ADD_CORE_IDEA",
+          "moc:ADD_CHILD_MOC",
+          "moc:ADD_TENSION"
+        ],
+        "inCandidates": true,
+        "selectedKey": "moc:ADD_OPEN_QUESTION",
+        "opCorrect": true,
+        "args": {
+          "question": "Does spacing help procedural memory?"
+        },
+        "expectedArgs": {
+          "question": "does spacing help procedural memory?"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"moc:ADD_OPEN_QUESTION\"\n  }",
+          "step2": "{\"question\": \"Does spacing help procedural memory?\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 209.89999997615814,
+            "promptN": 283,
+            "promptPerSecond": 3197.7401129943505,
+            "predictedN": 19,
+            "predictedPerSecond": 155.44175683727838
+          },
+          "step2": {
+            "wallMs": 122.29999995231628,
+            "promptN": 98,
+            "promptPerSecond": 1873.8049713193118,
+            "predictedN": 13,
+            "predictedPerSecond": 187.5
+          }
+        }
+      },
+      {
+        "utterance": "note an unexplored direction: how do CRDTs handle deletes",
+        "expectedKey": "moc:ADD_OPEN_QUESTION",
+        "candidates": [
+          "moc:ADD_OPEN_QUESTION",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_CORE_IDEA",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:UPDATE_CORE_IDEA"
+        ],
+        "inCandidates": true,
+        "selectedKey": "moc:ADD_CORE_IDEA",
+        "opCorrect": false,
+        "args": {
+          "noteRef": "CRDT_example",
+          "contextPhrase": "Handling deletions in distributed systems",
+          "sortOrder": 1
+        },
+        "expectedArgs": {
+          "question": "how do CRDTs handle deletes"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"moc:ADD_CORE_IDEA\"\n\n \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"noteRef\": \"CRDT_example\",\n  \"contextPhrase\": \"Handling deletions in distributed systems\",\n  \"sortOrder\": 1\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 365.6999999284744,
+            "promptN": 288,
+            "promptPerSecond": 3175.3382065954424,
+            "predictedN": 38,
+            "predictedPerSecond": 138.36896645861458
+          },
+          "step2": {
+            "wallMs": 248.80000007152557,
+            "promptN": 128,
+            "promptPerSecond": 2210.7462995906667,
+            "predictedN": 38,
+            "predictedPerSecond": 200.21536679996322
+          }
+        }
+      },
+      {
+        "utterance": "rewrite the synthesis paragraph to say memory is reconstructive",
+        "expectedKey": "moc:UPDATE_ORIENTATION",
+        "candidates": [
+          "moc:UPDATE_ORIENTATION",
+          "moc:CREATE_MOC",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_CORE_IDEA"
+        ],
+        "inCandidates": true,
+        "selectedKey": "moc:CREATE_MOC",
+        "opCorrect": false,
+        "args": {
+          "title": "Memory as a Reconstructive Process",
+          "description": "Memory is not a fixed entity but is continuously reshaped through experiences, learning, and emotional engagement.",
+          "orientation": "portrait",
+          "tier": "DOMAIN",
+          "parentRef": "unknown"
+        },
+        "expectedArgs": {
+          "orientation": "memory is reconstructive"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"moc:CREATE_MOC\"}",
+          "step2": "{\n  \"title\": \"Memory as a Reconstructive Process\",\n  \"description\": \"Memory is not a fixed entity but is continuously reshaped through experiences, learning, and emotional engagement.\",\n  \"orientation\": \"portrait\",\n  \"tier\": \"DOMAIN\",\n  \"parentRef\": \"unknown\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 183.5,
+            "promptN": 306,
+            "promptPerSecond": 3238.095238095238,
+            "predictedN": 14,
+            "predictedPerSecond": 155.6904873112253
+          },
+          "step2": {
+            "wallMs": 411.89999997615814,
+            "promptN": 142,
+            "promptPerSecond": 2268.4068435598015,
+            "predictedN": 68,
+            "predictedPerSecond": 194.8240767665019
+          }
+        }
+      },
+      {
+        "utterance": "update the orientation of this map",
+        "expectedKey": "moc:UPDATE_ORIENTATION",
+        "candidates": [
+          "moc:UPDATE_ORIENTATION",
+          "moc:CREATE_MOC",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_CHILD_MOC"
+        ],
+        "inCandidates": true,
+        "selectedKey": "moc:UPDATE_ORIENTATION",
+        "opCorrect": true,
+        "args": {
+          "orientation": "landscape"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"moc:UPDATE_ORIENTATION\"\n}",
+          "step2": "{\"orientation\": \"landscape\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 208.5,
+            "promptN": 278,
+            "promptPerSecond": 3109.5849039719915,
+            "predictedN": 19,
+            "predictedPerSecond": 162.16362309570357
+          },
+          "step2": {
+            "wallMs": 103.90000009536743,
+            "promptN": 90,
+            "promptPerSecond": 1691.761123329386,
+            "predictedN": 9,
+            "predictedPerSecond": 175.05087416030284
+          }
+        }
+      },
+      {
+        "utterance": "queue a new extraction task for the Raft paper",
+        "expectedKey": "pipeline-queue:ADD_TASK",
+        "candidates": [
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:BLOCK_TASK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "pipeline-queue:ADD_TASK",
+        "opCorrect": true,
+        "args": {
+          "taskType": "extraction",
+          "target": "paper",
+          "documentRef": "doc123",
+          "currentPhase": "draft"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"pipeline-queue:ADD_TASK\"\n\n  }",
+          "step2": "{\n  \"taskType\": \"extraction\",\n  \"target\": \"paper\",\n  \"documentRef\": \"doc123\",\n  \"currentPhase\": \"draft\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 205.79999995231628,
+            "promptN": 255,
+            "promptPerSecond": 3195.4486785879876,
+            "predictedN": 19,
+            "predictedPerSecond": 148.88460615885987
+          },
+          "step2": {
+            "wallMs": 254.90000009536743,
+            "promptN": 124,
+            "promptPerSecond": 2160.241110782042,
+            "predictedN": 36,
+            "predictedPerSecond": 183.05439330543933
+          }
+        }
+      },
+      {
+        "utterance": "add a task to reflect on the CRDT notes",
+        "expectedKey": "pipeline-queue:ADD_TASK",
+        "candidates": [
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:BLOCK_TASK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "pipeline-queue:ADD_TASK",
+        "opCorrect": true,
+        "args": {
+          "taskType": "CRDT",
+          "target": "CRDT_notes",
+          "documentRef": "CRDT_notes",
+          "currentPhase": "reflection"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"pipeline-queue:ADD_TASK\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"taskType\": \"CRDT\",\n  \"target\": \"CRDT_notes\",\n  \"documentRef\": \"CRDT_notes\",\n  \"currentPhase\": \"reflection\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 354.7999999523163,
+            "promptN": 255,
+            "promptPerSecond": 3148.1481481481483,
+            "predictedN": 38,
+            "predictedPerSecond": 138.37000138370001
+          },
+          "step2": {
+            "wallMs": 332.39999997615814,
+            "promptN": 124,
+            "promptPerSecond": 2149.0095492279165,
+            "predictedN": 42,
+            "predictedPerSecond": 152.75764812834623
+          }
+        }
+      },
+      {
+        "utterance": "mark the task as blocked because the source is missing",
+        "expectedKey": "pipeline-queue:BLOCK_TASK",
+        "candidates": [
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "pipeline-queue:FAIL_TASK",
+        "opCorrect": false,
+        "args": {
+          "reason": "source missing"
+        },
+        "expectedArgs": {
+          "reason": "the source is missing"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"pipeline-queue:FAIL_TASK\"}",
+          "step2": "{\"reason\": \"source missing\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 181.20000004768372,
+            "promptN": 239,
+            "promptPerSecond": 3153.0343007915567,
+            "predictedN": 16,
+            "predictedPerSecond": 149.7005988023952
+          },
+          "step2": {
+            "wallMs": 108.10000002384186,
+            "promptN": 91,
+            "promptPerSecond": 1704.1198501872661,
+            "predictedN": 10,
+            "predictedPerSecond": 180.35710707200255
+          }
+        }
+      },
+      {
+        "utterance": "the task is stuck waiting on review, block it",
+        "expectedKey": "pipeline-queue:BLOCK_TASK",
+        "candidates": [
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "pipeline-queue:FAIL_TASK",
+        "opCorrect": false,
+        "args": {
+          "reason": "The task is blocked due to a high priority and requires additional resources"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"pipeline-queue:FAIL_TASK\"}",
+          "step2": "{\"reason\": \"The task is blocked due to a high priority and requires additional resources\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 180.5,
+            "promptN": 239,
+            "promptPerSecond": 2995.025000313287,
+            "predictedN": 16,
+            "predictedPerSecond": 158.73015873015873
+          },
+          "step2": {
+            "wallMs": 160.60000002384186,
+            "promptN": 91,
+            "promptPerSecond": 1678.9667896678968,
+            "predictedN": 21,
+            "predictedPerSecond": 197.82393669634024
+          }
+        }
+      },
+      {
+        "utterance": "add Alice to the team as designer",
+        "expectedKey": "project:ADD_MEMBER",
+        "candidates": [
+          "project:ADD_MEMBER",
+          "project:REMOVE_MEMBER",
+          "project:UPDATE_MEMBER",
+          "project:ADD_DELIVERABLE",
+          "project:ADD_KNOWLEDGE_REF"
+        ],
+        "inCandidates": true,
+        "selectedKey": "project:ADD_MEMBER",
+        "opCorrect": true,
+        "args": {
+          "name": "Alice",
+          "role": "HUMAN",
+          "kind": "AGENT"
+        },
+        "expectedArgs": {
+          "name": "Alice",
+          "role": "designer"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": false,
+        "raw": {
+          "step1": "{\n  \"op\": \"project:ADD_MEMBER\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"name\": \"Alice\",\n  \"role\": \"HUMAN\",\n  \"kind\": \"AGENT\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 336,
+            "promptN": 247,
+            "promptPerSecond": 3110.831234256927,
+            "predictedN": 36,
+            "predictedPerSecond": 139.11025083565517
+          },
+          "step2": {
+            "wallMs": 198.90000009536743,
+            "promptN": 114,
+            "promptPerSecond": 2000.0000000000002,
+            "predictedN": 28,
+            "predictedPerSecond": 199.85344081007264
+          }
+        }
+      },
+      {
+        "utterance": "add a team member named Bob",
+        "expectedKey": "project:ADD_MEMBER",
+        "candidates": [
+          "project:REMOVE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:UPDATE_MEMBER",
+          "project:ADD_DELIVERABLE",
+          "project:ADD_KNOWLEDGE_REF"
+        ],
+        "inCandidates": true,
+        "selectedKey": "project:ADD_MEMBER",
+        "opCorrect": true,
+        "args": {
+          "name": "Bob",
+          "role": "HUMAN",
+          "kind": "AGENT"
+        },
+        "expectedArgs": {
+          "name": "Bob"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": true,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"project:ADD_MEMBER\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"name\": \"Bob\",\n  \"role\": \"HUMAN\",\n  \"kind\": \"AGENT\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 358.39999997615814,
+            "promptN": 246,
+            "promptPerSecond": 3098.1977556957722,
+            "predictedN": 36,
+            "predictedPerSecond": 127.78432926005571
+          },
+          "step2": {
+            "wallMs": 206.69999992847443,
+            "promptN": 113,
+            "promptPerSecond": 1948.2758620689658,
+            "predictedN": 27,
+            "predictedPerSecond": 183.2263338524746
+          }
+        }
+      },
+      {
+        "utterance": "put the project on hold",
+        "expectedKey": "project:SET_PROJECT_STATUS",
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:UPDATE_PROJECT_INFO",
+          "project:CREATE_PROJECT",
+          "project:SET_OWNER",
+          "project:SET_TARGET_DATE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "project:SET_OWNER",
+        "opCorrect": false,
+        "args": {
+          "owner": null
+        },
+        "expectedArgs": {
+          "status": "ON_HOLD"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"project:SET_OWNER\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"owner\": null}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 379.3000000715256,
+            "promptN": 238,
+            "promptPerSecond": 2963.8854296388545,
+            "predictedN": 38,
+            "predictedPerSecond": 126.06430642485036
+          },
+          "step2": {
+            "wallMs": 98.39999997615814,
+            "promptN": 86,
+            "promptPerSecond": 1595.5769123731422,
+            "predictedN": 6,
+            "predictedPerSecond": 131.23359580052494
+          }
+        }
+      },
+      {
+        "utterance": "mark the project as completed",
+        "expectedKey": "project:SET_PROJECT_STATUS",
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:UPDATE_PROJECT_INFO",
+          "project:CREATE_PROJECT",
+          "project:SET_OWNER",
+          "project:SET_TARGET_DATE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "project:SET_OWNER",
+        "opCorrect": false,
+        "args": {
+          "owner": "new_owner_1"
+        },
+        "expectedArgs": {
+          "status": "COMPLETED"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"project:SET_OWNER\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"owner\": \"new_owner_1\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 389.5,
+            "promptN": 238,
+            "promptPerSecond": 2956.521739130435,
+            "predictedN": 36,
+            "predictedPerSecond": 116.20185922974768
+          },
+          "step2": {
+            "wallMs": 349.60000002384186,
+            "promptN": 86,
+            "promptPerSecond": 1583.7645715548517,
+            "predictedN": 35,
+            "predictedPerSecond": 117.68818860570649
+          }
+        }
+      },
+      {
+        "utterance": "create a goal to write the onboarding guide",
+        "expectedKey": "wbs:CREATE_GOAL",
+        "candidates": [
+          "wbs:CREATE_GOAL",
+          "wbs:SET_OUTCOME",
+          "wbs:DELETE_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:REORDER"
+        ],
+        "inCandidates": true,
+        "selectedKey": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "opCorrect": false,
+        "args": {
+          "description": "Write a comprehensive onboarding guide for new users to ensure they understand the process and expectations."
+        },
+        "expectedArgs": {
+          "description": "write the onboarding guide"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"wbs:UPDATE_GOAL_DESCRIPTION\"\n  }",
+          "step2": "{\n  \"description\": \"Write a comprehensive onboarding guide for new users to ensure they understand the process and expectations.\"\n\n  }"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 233.69999992847443,
+            "promptN": 259,
+            "promptPerSecond": 3177.87511809671,
+            "predictedN": 23,
+            "predictedPerSecond": 150.99623195766614
+          },
+          "step2": {
+            "wallMs": 311.8000000715256,
+            "promptN": 90,
+            "promptPerSecond": 1654.3813532839467,
+            "predictedN": 30,
+            "predictedPerSecond": 115.58389796731765
+          }
+        }
+      },
+      {
+        "utterance": "new goal: ship the beta",
+        "expectedKey": "wbs:CREATE_GOAL",
+        "candidates": [
+          "wbs:REORDER",
+          "wbs:CREATE_GOAL",
+          "wbs:DELETE_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ASSIGN_GOAL"
+        ],
+        "inCandidates": true,
+        "selectedKey": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "opCorrect": false,
+        "args": {
+          "description": "Ship the beta version of the product to a target market"
+        },
+        "expectedArgs": {
+          "description": "ship the beta"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"wbs:UPDATE_GOAL_DESCRIPTION\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"description\": \"Ship the beta version of the product to a target market\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 401.10000002384186,
+            "promptN": 258,
+            "promptPerSecond": 2955.2926083320926,
+            "predictedN": 42,
+            "predictedPerSecond": 133.1605494009399
+          },
+          "step2": {
+            "wallMs": 172.19999992847443,
+            "promptN": 86,
+            "promptPerSecond": 1592.6220855941776,
+            "predictedN": 19,
+            "predictedPerSecond": 161.28887733980878
+          }
+        }
+      },
+      {
+        "utterance": "set the goal status to in progress",
+        "expectedKey": "wbs:SET_GOAL_STATUS",
+        "candidates": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ADD_NOTE",
+          "wbs:SET_OUTCOME",
+          "wbs:CREATE_GOAL",
+          "wbs:DELETE_GOAL"
+        ],
+        "inCandidates": true,
+        "selectedKey": "wbs:SET_GOAL_STATUS",
+        "opCorrect": true,
+        "args": {
+          "status": "IN_PROGRESS",
+          "outcome": "completed"
+        },
+        "expectedArgs": {
+          "status": "IN_PROGRESS"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": true,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"wbs:SET_GOAL_STATUS\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"status\": \"IN_PROGRESS\",\n  \"outcome\": \"completed\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 393.7999999523163,
+            "promptN": 287,
+            "promptPerSecond": 3171.270718232044,
+            "predictedN": 38,
+            "predictedPerSecond": 124.62108454024924
+          },
+          "step2": {
+            "wallMs": 192.80000007152557,
+            "promptN": 159,
+            "promptPerSecond": 2416.376650810778,
+            "predictedN": 22,
+            "predictedPerSecond": 174.41860465116278
+          }
+        }
+      }
+    ]
+  },
+  "evalSeed:\"webgpu\":false:\"override\"": {
+    "summary": {
+      "backend": "webgpu",
+      "scoped": false,
+      "variant": "override",
+      "n": 30,
+      "recallAt5": 80,
+      "opAccuracy": 40,
+      "opAccuracyGivenInCandidates": 50,
+      "inCandidates": 24,
+      "argsValidPct": 100,
+      "argsValidN": 30,
+      "argsExactPct": 28.6,
+      "argsLoosePct": 57.1,
+      "argsExactN": 7,
+      "step1Ms": {
+        "median": 311,
+        "p95": 434
+      },
+      "step2Ms": {
+        "median": 122,
+        "p95": 274,
+        "n": 27
+      }
+    },
+    "rows": [
+      {
+        "utterance": "tag this note with distributed systems",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_TOPIC",
+          "observation:IMPLEMENT_OBSERVATION",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "args": {
+          "name": "distributed_systems"
+        },
+        "expectedArgs": {
+          "name": "distributed systems"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:ADD_TOPIC\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"name\": \"distributed_systems\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 393.89999997615814,
+            "promptN": 238,
+            "promptPerSecond": 2967.581047381546,
+            "predictedN": 39,
+            "predictedPerSecond": 124.42698100851344
+          },
+          "step2": {
+            "wallMs": 119.10000002384186,
+            "promptN": 91,
+            "promptPerSecond": 1660.5839416058395,
+            "predictedN": 11,
+            "predictedPerSecond": 171.52364453439904
+          }
+        }
+      },
+      {
+        "utterance": "add the topic machine learning",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_TOPIC",
+          "research-claim:CREATE_CLAIM",
+          "observation:CREATE_OBSERVATION",
+          "vault-config:UPDATE_VOCABULARY"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "args": {
+          "name": "machine learning"
+        },
+        "expectedArgs": {
+          "name": "machine learning"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": true,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:ADD_TOPIC\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"name\": \"machine learning\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 413.7999999523163,
+            "promptN": 290,
+            "promptPerSecond": 3155.569580309246,
+            "predictedN": 39,
+            "predictedPerSecond": 120.98057943330149
+          },
+          "step2": {
+            "wallMs": 113.80000007152557,
+            "promptN": 90,
+            "promptPerSecond": 1654.4117647058824,
+            "predictedN": 10,
+            "predictedPerSecond": 169.49152542372883
+          }
+        }
+      },
+      {
+        "utterance": "label this as epistemology",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "knowledge-note:SET_NOTE_TYPE",
+          "derivation:INITIALIZE_DERIVATION",
+          "derivation:ADD_SIGNAL",
+          "derivation:ADD_RESEED_ENTRY",
+          "derivation:UPDATE_DIMENSION_RATIONALE"
+        ],
+        "inCandidates": false,
+        "selectedKey": "knowledge-note:SET_NOTE_TYPE",
+        "opCorrect": false,
+        "args": {
+          "noteType": "epistemology"
+        },
+        "expectedArgs": {
+          "name": "epistemology"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SET_NOTE_TYPE\"}",
+          "step2": "{\"noteType\": \"epistemology\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 212.09999990463257,
+            "promptN": 302,
+            "promptPerSecond": 3165.6184486373163,
+            "predictedN": 17,
+            "predictedPerSecond": 146.2522851919561
+          },
+          "step2": {
+            "wallMs": 115.5,
+            "promptN": 89,
+            "promptPerSecond": 1731.5175097276267,
+            "predictedN": 11,
+            "predictedPerSecond": 171.52658662092625
+          }
+        }
+      },
+      {
+        "utterance": "file this note under productivity",
+        "expectedKey": "knowledge-note:ADD_TOPIC",
+        "candidates": [
+          "pipeline-queue:ADVANCE_PHASE",
+          "wbs:REORDER",
+          "moc:ADD_CHILD_MOC",
+          "moc:REMOVE_CHILD_MOC",
+          "wbs:CREATE_GOAL"
+        ],
+        "inCandidates": false,
+        "selectedKey": "moc:ADD_CHILD_MOC",
+        "opCorrect": false,
+        "args": {
+          "childRef": "child1"
+        },
+        "expectedArgs": {
+          "name": "productivity"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"moc:ADD_CHILD_MOC\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"childRef\": \"child1\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 391.6999999284744,
+            "promptN": 275,
+            "promptPerSecond": 3055.5216053154963,
+            "predictedN": 38,
+            "predictedPerSecond": 124.91601929783693
+          },
+          "step2": {
+            "wallMs": 116.60000002384186,
+            "promptN": 89,
+            "promptPerSecond": 1612.3188405797102,
+            "predictedN": 10,
+            "predictedPerSecond": 163.63636363636365
+          }
+        }
+      },
+      {
+        "utterance": "rename this note to Spaced repetition beats cramming",
+        "expectedKey": "knowledge-note:SET_TITLE",
+        "candidates": [
+          "knowledge-note:SET_TITLE",
+          "vault-config:UPDATE_VOCABULARY",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "project:UPDATE_PROJECT_INFO",
+          "knowledge-note:SET_NOTE_TYPE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SET_NOTE_TYPE",
+        "opCorrect": false,
+        "args": {
+          "noteType": "spaced repetition"
+        },
+        "expectedArgs": {
+          "title": "Spaced repetition beats cramming"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:SET_NOTE_TYPE\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"noteType\": \"spaced repetition\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 382.60000002384186,
+            "promptN": 251,
+            "promptPerSecond": 3106.4356435643567,
+            "predictedN": 39,
+            "predictedPerSecond": 128.29126167703686
+          },
+          "step2": {
+            "wallMs": 120.80000007152557,
+            "promptN": 93,
+            "promptPerSecond": 1781.6091954022986,
+            "predictedN": 11,
+            "predictedPerSecond": 162.60162601626018
+          }
+        }
+      },
+      {
+        "utterance": "set the title to CAP theorem tradeoffs",
+        "expectedKey": "knowledge-note:SET_TITLE",
+        "candidates": [
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "project:UPDATE_DELIVERABLE",
+          "project:ADD_DELIVERABLE",
+          "tension:CREATE_TENSION"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SET_TITLE",
+        "opCorrect": true,
+        "args": {
+          "title": "CAP Tradeoffs"
+        },
+        "expectedArgs": {
+          "title": "CAP theorem tradeoffs"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": false,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SET_TITLE\"}",
+          "step2": "{\"title\": \"CAP Tradeoffs\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 215.60000002384186,
+            "promptN": 288,
+            "promptPerSecond": 3127.069783602428,
+            "predictedN": 17,
+            "predictedPerSecond": 137.455863781239
+          },
+          "step2": {
+            "wallMs": 122.29999995231628,
+            "promptN": 85,
+            "promptPerSecond": 1542.6497277676951,
+            "predictedN": 11,
+            "predictedPerSecond": 164.47368421052633
+          }
+        }
+      },
+      {
+        "utterance": "change the heading of the note to Why caches lie",
+        "expectedKey": "knowledge-note:SET_TITLE",
+        "candidates": [
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_CORE_IDEA",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_DESCRIPTION"
+        ],
+        "inCandidates": false,
+        "selectedKey": "moc:ADD_CORE_IDEA",
+        "opCorrect": false,
+        "args": {
+          "noteRef": "Why caches lie",
+          "contextPhrase": "Why does caching improve performance in distributed systems?",
+          "sortOrder": 1
+        },
+        "expectedArgs": {
+          "title": "Why caches lie"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"moc:ADD_CORE_IDEA\"}",
+          "step2": "{\n  \"noteRef\": \"Why caches lie\",\n  \"contextPhrase\": \"Why does caching improve performance in distributed systems?\",\n  \"sortOrder\": 1\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 198.10000002384186,
+            "promptN": 303,
+            "promptPerSecond": 3143.186132636231,
+            "predictedN": 15,
+            "predictedPerSecond": 146.75052410901466
+          },
+          "step2": {
+            "wallMs": 300.7000000476837,
+            "promptN": 125,
+            "promptPerSecond": 2083.3333333333335,
+            "predictedN": 41,
+            "predictedPerSecond": 171.1588739457683
+          }
+        }
+      },
+      {
+        "utterance": "set the description to A short argument for writing every day",
+        "expectedKey": "knowledge-note:SET_DESCRIPTION",
+        "candidates": [
+          "knowledge-note:SET_DESCRIPTION",
+          "moc:UPDATE_DESCRIPTION",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "knowledge-note:SET_METADATA_FIELD",
+          "wbs:UPDATE_GOAL_DESCRIPTION"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SET_METADATA_FIELD",
+        "opCorrect": false,
+        "args": {
+          "field": "description",
+          "value": "A short argument for writing every day"
+        },
+        "expectedArgs": {
+          "description": "A short argument for writing every day"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SET_METADATA_FIELD\"}",
+          "step2": "{\"field\": \"description\", \"value\": \"A short argument for writing every day\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 247.70000004768372,
+            "promptN": 308,
+            "promptPerSecond": 3195.053890600525,
+            "predictedN": 21,
+            "predictedPerSecond": 137.83597518952448
+          },
+          "step2": {
+            "wallMs": 173.29999995231628,
+            "promptN": 125,
+            "promptPerSecond": 2118.64406779661,
+            "predictedN": 20,
+            "predictedPerSecond": 175.92755488476746
+          }
+        }
+      },
+      {
+        "utterance": "update the summary: explains how consensus protocols tolerate faults",
+        "expectedKey": "knowledge-note:SET_DESCRIPTION",
+        "candidates": [
+          "moc:UPDATE_ORIENTATION",
+          "moc:UPDATE_DESCRIPTION",
+          "vault-config:UPDATE_DIMENSION",
+          "derivation:UPDATE_DIMENSION_RATIONALE",
+          "research-claim:CREATE_CLAIM"
+        ],
+        "inCandidates": false,
+        "selectedKey": "moc:UPDATE_DESCRIPTION",
+        "opCorrect": false,
+        "args": {
+          "description": "A consensus protocol designed to maintain system reliability despite occasional failures"
+        },
+        "expectedArgs": {
+          "description": "explains how consensus protocols tolerate faults"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"moc:UPDATE_DESCRIPTION\"}",
+          "step2": "{\"description\": \"A consensus protocol designed to maintain system reliability despite occasional failures\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 223.40000009536743,
+            "promptN": 320,
+            "promptPerSecond": 3248.7639468421003,
+            "predictedN": 17,
+            "predictedPerSecond": 136.63535439795046
+          },
+          "step2": {
+            "wallMs": 154.29999995231628,
+            "promptN": 95,
+            "promptPerSecond": 1789.0772128060264,
+            "predictedN": 18,
+            "predictedPerSecond": 179.70401691331926
+          }
+        }
+      },
+      {
+        "utterance": "describe this note as notes from the Raft paper",
+        "expectedKey": "knowledge-note:SET_DESCRIPTION",
+        "candidates": [
+          "source:INGEST_SOURCE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "wbs:ADD_NOTE"
+        ],
+        "inCandidates": false,
+        "selectedKey": "knowledge-note:RESTORE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "This note provides a summary of the Raft paper's key findings and insights into the design choices made during the event."
+        },
+        "expectedArgs": {
+          "description": "notes from the Raft paper"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:RESTORE_NOTE\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"comment\": \"This note provides a summary of the Raft paper's key findings and insights into the design choices made during the event.\"\n\n  }"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 413.39999997615814,
+            "promptN": 280,
+            "promptPerSecond": 3104.212860310421,
+            "predictedN": 40,
+            "predictedPerSecond": 122.95081967213115
+          },
+          "step2": {
+            "wallMs": 268.10000002384186,
+            "promptN": 98,
+            "promptPerSecond": 1737.5886524822695,
+            "predictedN": 34,
+            "predictedPerSecond": 161.36840406648378
+          }
+        }
+      },
+      {
+        "utterance": "submit this note for review",
+        "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:APPROVE_NOTE",
+          "wbs:SET_GOAL_STATUS",
+          "knowledge-note:SET_NOTE_TYPE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "args": {
+          "comment": null
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:SUBMIT_FOR_REVIEW\"\n\n \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"comment\": null}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 517,
+            "promptN": 288,
+            "promptPerSecond": 3100.141013358594,
+            "predictedN": 43,
+            "predictedPerSecond": 100.91278012306553
+          },
+          "step2": {
+            "wallMs": 108.10000002384186,
+            "promptN": 101,
+            "promptPerSecond": 1532.6251896813353,
+            "predictedN": 6,
+            "predictedPerSecond": 145.7725947521866
+          }
+        }
+      },
+      {
+        "utterance": "send it to review, it's ready",
+        "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "candidates": [
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:APPROVE_NOTE",
+          "wbs:SET_GOAL_STATUS",
+          "derivation:INITIALIZE_DERIVATION"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "args": {
+          "comment": null
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:SUBMIT_FOR_REVIEW\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"comment\": null}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 433.5,
+            "promptN": 298,
+            "promptPerSecond": 3100.936524453694,
+            "predictedN": 43,
+            "predictedPerSecond": 127.42718446601941
+          },
+          "step2": {
+            "wallMs": 96.39999997615814,
+            "promptN": 104,
+            "promptPerSecond": 1808.695652173913,
+            "predictedN": 6,
+            "predictedPerSecond": 154.79876160990713
+          }
+        }
+      },
+      {
+        "utterance": "I'm done drafting, request a review",
+        "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:COMPLETE_TASK",
+          "knowledge-note:RESTORE_NOTE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:RESTORE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": null
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:RESTORE_NOTE\"\n   \t  \t  \t  \t  \t  \t\t}",
+          "step2": "{\n  \"comment\": null\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 355.39999997615814,
+            "promptN": 278,
+            "promptPerSecond": 3075.187221380295,
+            "predictedN": 34,
+            "predictedPerSecond": 128.25545377168197
+          },
+          "step2": {
+            "wallMs": 114.5,
+            "promptN": 96,
+            "promptPerSecond": 1717.3524150268338,
+            "predictedN": 9,
+            "predictedPerSecond": 154.73887814313346
+          }
+        }
+      },
+      {
+        "utterance": "remove the topic tag",
+        "expectedKey": "knowledge-note:REMOVE_TOPIC",
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_TOPIC",
+          "research-claim:CREATE_CLAIM",
+          "wbs:REMOVE_NOTE",
+          "project:REMOVE_MEMBER"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:REMOVE_TOPIC",
+        "opCorrect": true,
+        "args": {},
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:REMOVE_TOPIC\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": null
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 402.59999990463257,
+            "promptN": 239,
+            "promptPerSecond": 2943.349753694581,
+            "predictedN": 40,
+            "predictedPerSecond": 124.0454069802577
+          },
+          "step2": null
+        }
+      },
+      {
+        "utterance": "untag this note",
+        "expectedKey": "knowledge-note:REMOVE_TOPIC",
+        "candidates": [
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "wbs:ADD_NOTE",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "inCandidates": false,
+        "selectedKey": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "obsolete note"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:ARCHIVE_NOTE\"\n}",
+          "step2": "{\"comment\": \"obsolete note\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 213.29999995231628,
+            "promptN": 243,
+            "promptPerSecond": 3003.6711536322173,
+            "predictedN": 19,
+            "predictedPerSecond": 142.2936149692883
+          },
+          "step2": {
+            "wallMs": 140.39999997615814,
+            "promptN": 90,
+            "promptPerSecond": 1627.4570080107048,
+            "predictedN": 10,
+            "predictedPerSecond": 115.53421738404857
+          }
+        }
+      },
+      {
+        "utterance": "add an open question: does spacing help procedural memory?",
+        "expectedKey": "moc:ADD_OPEN_QUESTION",
+        "candidates": [
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "tension:DISSOLVE_TENSION",
+          "tension:RESOLVE_TENSION",
+          "derivation:UPDATE_DIMENSION_RATIONALE"
+        ],
+        "inCandidates": true,
+        "selectedKey": "moc:ADD_OPEN_QUESTION",
+        "opCorrect": true,
+        "args": {
+          "question": "Does spacing help procedural memory?"
+        },
+        "expectedArgs": {
+          "question": "does spacing help procedural memory?"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"moc:ADD_OPEN_QUESTION\"\n}",
+          "step2": "{\"question\": \"Does spacing help procedural memory?\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 212.39999997615814,
+            "promptN": 288,
+            "promptPerSecond": 3171.7712359996035,
+            "predictedN": 18,
+            "predictedPerSecond": 147.57072544032502
+          },
+          "step2": {
+            "wallMs": 127.70000004768372,
+            "promptN": 98,
+            "promptPerSecond": 1859.5472571677956,
+            "predictedN": 13,
+            "predictedPerSecond": 176.73308885256043
+          }
+        }
+      },
+      {
+        "utterance": "note an unexplored direction: how do CRDTs handle deletes",
+        "expectedKey": "moc:ADD_OPEN_QUESTION",
+        "candidates": [
+          "moc:ADD_OPEN_QUESTION",
+          "wbs:REMOVE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:DELETE_GOAL"
+        ],
+        "inCandidates": true,
+        "selectedKey": "wbs:REMOVE_NOTE",
+        "opCorrect": false,
+        "args": {},
+        "expectedArgs": {
+          "question": "how do CRDTs handle deletes"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"wbs:REMOVE_NOTE\"\n}",
+          "step2": null
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 207.10000002384186,
+            "promptN": 263,
+            "promptPerSecond": 2941.8015458440063,
+            "predictedN": 17,
+            "predictedPerSecond": 144.0156977110505
+          },
+          "step2": null
+        }
+      },
+      {
+        "utterance": "rewrite the synthesis paragraph to say memory is reconstructive",
+        "expectedKey": "moc:UPDATE_ORIENTATION",
+        "candidates": [
+          "moc:UPDATE_ORIENTATION",
+          "research-claim:UPDATE_CLAIM_CONTENT",
+          "moc:CREATE_MOC",
+          "wbs:ASSIGN_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION"
+        ],
+        "inCandidates": true,
+        "selectedKey": "moc:UPDATE_ORIENTATION",
+        "opCorrect": true,
+        "args": {
+          "orientation": "memory"
+        },
+        "expectedArgs": {
+          "orientation": "memory is reconstructive"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": false,
+        "raw": {
+          "step1": "{\n  \"op\": \"moc:UPDATE_ORIENTATION\"\n\n \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"orientation\": \"memory\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 381.2000000476837,
+            "promptN": 264,
+            "promptPerSecond": 2953.020134228188,
+            "predictedN": 39,
+            "predictedPerSecond": 133.1931300385559
+          },
+          "step2": {
+            "wallMs": 111.70000004768372,
+            "promptN": 94,
+            "promptPerSecond": 1681.5441584229263,
+            "predictedN": 9,
+            "predictedPerSecond": 164.61244058519725
+          }
+        }
+      },
+      {
+        "utterance": "update the orientation of this map",
+        "expectedKey": "moc:UPDATE_ORIENTATION",
+        "candidates": [
+          "moc:UPDATE_ORIENTATION",
+          "moc:CREATE_MOC",
+          "moc:UPDATE_DESCRIPTION",
+          "vault-config:UPDATE_VOCABULARY",
+          "moc:UPDATE_CORE_IDEA"
+        ],
+        "inCandidates": true,
+        "selectedKey": "moc:UPDATE_ORIENTATION",
+        "opCorrect": true,
+        "args": {
+          "orientation": "landscape"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"moc:UPDATE_ORIENTATION\"}",
+          "step2": "{\"orientation\": \"landscape\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 209.29999995231628,
+            "promptN": 291,
+            "promptPerSecond": 3163.0434782608695,
+            "predictedN": 17,
+            "predictedPerSecond": 144.014401440144
+          },
+          "step2": {
+            "wallMs": 109.10000002384186,
+            "promptN": 90,
+            "promptPerSecond": 1624.5780609758299,
+            "predictedN": 9,
+            "predictedPerSecond": 166.31670859233697
+          }
+        }
+      },
+      {
+        "utterance": "queue a new extraction task for the Raft paper",
+        "expectedKey": "pipeline-queue:ADD_TASK",
+        "candidates": [
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:BLOCK_TASK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "pipeline-queue:ADD_TASK",
+        "opCorrect": true,
+        "args": {
+          "taskType": "extraction",
+          "target": "paper",
+          "documentRef": "doc123",
+          "currentPhase": "draft"
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"pipeline-queue:ADD_TASK\"\n\n  }",
+          "step2": "{\n  \"taskType\": \"extraction\",\n  \"target\": \"paper\",\n  \"documentRef\": \"doc123\",\n  \"currentPhase\": \"draft\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 219.5,
+            "promptN": 255,
+            "promptPerSecond": 3083.3968150324663,
+            "predictedN": 19,
+            "predictedPerSecond": 139.96998421449624
+          },
+          "step2": {
+            "wallMs": 273.60000002384186,
+            "promptN": 124,
+            "promptPerSecond": 2073.578595317726,
+            "predictedN": 36,
+            "predictedPerSecond": 169.73811833171678
+          }
+        }
+      },
+      {
+        "utterance": "add a task to reflect on the CRDT notes",
+        "expectedKey": "pipeline-queue:ADD_TASK",
+        "candidates": [
+          "pipeline-queue:ADD_TASK",
+          "vault-config:UPDATE_VOCABULARY",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "pipeline-queue:COMPLETE_TASK",
+        "opCorrect": false,
+        "args": {},
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"pipeline-queue:COMPLETE_TASK\"\n}",
+          "step2": null
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 207,
+            "promptN": 271,
+            "promptPerSecond": 3024.5535714285716,
+            "predictedN": 18,
+            "predictedPerSecond": 154.12651066646114
+          },
+          "step2": null
+        }
+      },
+      {
+        "utterance": "mark the task as blocked because the source is missing",
+        "expectedKey": "pipeline-queue:BLOCK_TASK",
+        "candidates": [
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK"
+        ],
+        "inCandidates": true,
+        "selectedKey": "pipeline-queue:FAIL_TASK",
+        "opCorrect": false,
+        "args": {
+          "reason": "source missing"
+        },
+        "expectedArgs": {
+          "reason": "the source is missing"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"pipeline-queue:FAIL_TASK\"}",
+          "step2": "{\"reason\": \"source missing\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 190.5,
+            "promptN": 239,
+            "promptPerSecond": 3091.849935316947,
+            "predictedN": 16,
+            "predictedPerSecond": 140.18691588785046
+          },
+          "step2": {
+            "wallMs": 113.70000004768372,
+            "promptN": 91,
+            "promptPerSecond": 1651.5426497277676,
+            "predictedN": 10,
+            "predictedPerSecond": 171.4253061846441
+          }
+        }
+      },
+      {
+        "utterance": "the task is stuck waiting on review, block it",
+        "expectedKey": "pipeline-queue:BLOCK_TASK",
+        "candidates": [
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "wbs:SET_GOAL_STATUS",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "wbs:REMOVE_DEPENDENCIES"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": false,
+        "args": {
+          "comment": null
+        },
+        "expectedArgs": null,
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\"op\": \"knowledge-note:SUBMIT_FOR_REVIEW\"}",
+          "step2": "{\"comment\": null}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 280.5,
+            "promptN": 281,
+            "promptPerSecond": 3094.7477395125497,
+            "predictedN": 21,
+            "predictedPerSecond": 109.8297638660077
+          },
+          "step2": {
+            "wallMs": 100.29999995231628,
+            "promptN": 106,
+            "promptPerSecond": 1815.0684931506848,
+            "predictedN": 6,
+            "predictedPerSecond": 140.84507042253523
+          }
+        }
+      },
+      {
+        "utterance": "add Alice to the team as designer",
+        "expectedKey": "project:ADD_MEMBER",
+        "candidates": [
+          "project:ADD_MEMBER",
+          "project:REMOVE_MEMBER",
+          "project:UPDATE_MEMBER",
+          "source:ADD_EXTRACTED_CLAIM",
+          "tension:ADD_INVOLVED_REF"
+        ],
+        "inCandidates": true,
+        "selectedKey": "project:ADD_MEMBER",
+        "opCorrect": true,
+        "args": {
+          "name": "Alice",
+          "role": "HUMAN",
+          "kind": "AGENT"
+        },
+        "expectedArgs": {
+          "name": "Alice",
+          "role": "designer"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": false,
+        "argsLoose": false,
+        "raw": {
+          "step1": "{\n  \"op\": \"project:ADD_MEMBER\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"name\": \"Alice\",\n  \"role\": \"HUMAN\",\n  \"kind\": \"AGENT\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 373.10000002384186,
+            "promptN": 247,
+            "promptPerSecond": 3019.5968165869995,
+            "predictedN": 36,
+            "predictedPerSecond": 123.23943661971832
+          },
+          "step2": {
+            "wallMs": 216.20000004768372,
+            "promptN": 114,
+            "promptPerSecond": 1935.4838709677422,
+            "predictedN": 28,
+            "predictedPerSecond": 179.52127659574467
+          }
+        }
+      },
+      {
+        "utterance": "add a team member named Bob",
+        "expectedKey": "project:ADD_MEMBER",
+        "candidates": [
+          "project:REMOVE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:UPDATE_MEMBER",
+          "vault-config:TOGGLE_FEATURE",
+          "knowledge-note:SET_METADATA_LIST_FIELD"
+        ],
+        "inCandidates": true,
+        "selectedKey": "knowledge-note:SET_METADATA_LIST_FIELD",
+        "opCorrect": false,
+        "args": {
+          "field": "models",
+          "values": [
+            "projectA",
+            "moduleB"
+          ]
+        },
+        "expectedArgs": {
+          "name": "Bob"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"knowledge-note:SET_METADATA_LIST_FIELD\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"field\": \"models\", \"values\": [\"projectA\", \"moduleB\"]}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 413.89999997615814,
+            "promptN": 262,
+            "promptPerSecond": 2924.0745080970078,
+            "predictedN": 44,
+            "predictedPerSecond": 135.60433807738278
+          },
+          "step2": {
+            "wallMs": 167.79999995231628,
+            "promptN": 112,
+            "promptPerSecond": 1917.8082191780823,
+            "predictedN": 19,
+            "predictedPerSecond": 176.12696797424633
+          }
+        }
+      },
+      {
+        "utterance": "put the project on hold",
+        "expectedKey": "project:SET_PROJECT_STATUS",
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:UPDATE_PROJECT_INFO",
+          "wbs:SET_PROJECT_REF",
+          "project:CREATE_PROJECT",
+          "project:SET_OWNER"
+        ],
+        "inCandidates": true,
+        "selectedKey": "project:SET_OWNER",
+        "opCorrect": false,
+        "args": {
+          "owner": null
+        },
+        "expectedArgs": {
+          "status": "ON_HOLD"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"project:SET_OWNER\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"owner\": null}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 389.8000000715256,
+            "promptN": 242,
+            "promptPerSecond": 2962.020048714214,
+            "predictedN": 38,
+            "predictedPerSecond": 123.12811980033278
+          },
+          "step2": {
+            "wallMs": 101.69999992847443,
+            "promptN": 86,
+            "promptPerSecond": 1575.091575091575,
+            "predictedN": 6,
+            "predictedPerSecond": 125.6281407035176
+          }
+        }
+      },
+      {
+        "utterance": "mark the project as completed",
+        "expectedKey": "project:SET_PROJECT_STATUS",
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "pipeline-queue:FAIL_TASK",
+          "project:UPDATE_PROJECT_INFO",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_GOAL_STATUS"
+        ],
+        "inCandidates": true,
+        "selectedKey": "project:UPDATE_PROJECT_INFO",
+        "opCorrect": false,
+        "args": {
+          "name": "Project Alpha",
+          "description": "A comprehensive project for developing new software solutions"
+        },
+        "expectedArgs": {
+          "status": "COMPLETED"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"project:UPDATE_PROJECT_INFO\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"name\": \"Project Alpha\",\n  \"description\": \"A comprehensive project for developing new software solutions\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 372.40000009536743,
+            "promptN": 263,
+            "promptPerSecond": 2945.095799599109,
+            "predictedN": 38,
+            "predictedPerSecond": 134.2043315354789
+          },
+          "step2": {
+            "wallMs": 180.70000004768372,
+            "promptN": 95,
+            "promptPerSecond": 1746.3235294117646,
+            "predictedN": 25,
+            "predictedPerSecond": 199.17012448132783
+          }
+        }
+      },
+      {
+        "utterance": "create a goal to write the onboarding guide",
+        "expectedKey": "wbs:CREATE_GOAL",
+        "candidates": [
+          "wbs:CREATE_GOAL",
+          "wbs:SET_OUTCOME",
+          "wbs:DELETE_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:REORDER"
+        ],
+        "inCandidates": true,
+        "selectedKey": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "opCorrect": false,
+        "args": {
+          "description": "Write a comprehensive onboarding guide for new users to ensure they understand the process and expectations."
+        },
+        "expectedArgs": {
+          "description": "write the onboarding guide"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"wbs:UPDATE_GOAL_DESCRIPTION\"\n  }",
+          "step2": "{\n  \"description\": \"Write a comprehensive onboarding guide for new users to ensure they understand the process and expectations.\"\n\n  }"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 150.39999997615814,
+            "promptN": 4,
+            "promptPerSecond": 287.7490827997986,
+            "predictedN": 23,
+            "predictedPerSecond": 169.3623507494284
+          },
+          "step2": {
+            "wallMs": 226.5,
+            "promptN": 90,
+            "promptPerSecond": 1675.977653631285,
+            "predictedN": 30,
+            "predictedPerSecond": 173.86091127098322
+          }
+        }
+      },
+      {
+        "utterance": "new goal: ship the beta",
+        "expectedKey": "wbs:CREATE_GOAL",
+        "candidates": [
+          "wbs:REORDER",
+          "wbs:CREATE_GOAL",
+          "wbs:DELETE_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ASSIGN_GOAL"
+        ],
+        "inCandidates": true,
+        "selectedKey": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "opCorrect": false,
+        "args": {
+          "description": "Ship the beta version of the product to a target market"
+        },
+        "expectedArgs": {
+          "description": "ship the beta"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": null,
+        "argsLoose": null,
+        "raw": {
+          "step1": "{\n  \"op\": \"wbs:UPDATE_GOAL_DESCRIPTION\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\"description\": \"Ship the beta version of the product to a target market\"}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 311.10000002384186,
+            "promptN": 4,
+            "promptPerSecond": 273.95383877816585,
+            "predictedN": 42,
+            "predictedPerSecond": 141.57458563535909
+          },
+          "step2": {
+            "wallMs": 166.20000004768372,
+            "promptN": 86,
+            "promptPerSecond": 1589.6487985212568,
+            "predictedN": 19,
+            "predictedPerSecond": 170.61449654505643
+          }
+        }
+      },
+      {
+        "utterance": "set the goal status to in progress",
+        "expectedKey": "wbs:SET_GOAL_STATUS",
+        "candidates": [
+          "wbs:SET_GOAL_STATUS",
+          "project:SET_DELIVERABLE_STATUS",
+          "wbs:ADD_NOTE",
+          "project:SET_PROJECT_STATUS",
+          "source:SET_SOURCE_STATUS"
+        ],
+        "inCandidates": true,
+        "selectedKey": "wbs:SET_GOAL_STATUS",
+        "opCorrect": true,
+        "args": {
+          "status": "IN_PROGRESS",
+          "outcome": "completed"
+        },
+        "expectedArgs": {
+          "status": "IN_PROGRESS"
+        },
+        "argsValid": true,
+        "argsError": null,
+        "argsExact": true,
+        "argsLoose": true,
+        "raw": {
+          "step1": "{\n  \"op\": \"wbs:SET_GOAL_STATUS\"\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t}",
+          "step2": "{\n  \"status\": \"IN_PROGRESS\",\n  \"outcome\": \"completed\"\n}"
+        },
+        "timings": {
+          "step1": {
+            "wallMs": 377.10000002384186,
+            "promptN": 280,
+            "promptPerSecond": 3142.571746035309,
+            "predictedN": 38,
+            "predictedPerSecond": 131.85982943752873
+          },
+          "step2": {
+            "wallMs": 125.20000004768372,
+            "promptN": 4,
+            "promptPerSecond": 279.7398419469893,
+            "predictedN": 22,
+            "predictedPerSecond": 203.48837209302326
+          }
+        }
+      }
+    ]
+  }
+}
