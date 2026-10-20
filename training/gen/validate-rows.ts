@@ -3,9 +3,9 @@
  * `buildAction` (the generated creator), then reducer replay on a fresh
  * document after any `fixture` steps; a row fails on `operation.error`.
  *
- *   npx --no-install tsx training/gen/validate-rows.ts <rows.jsonl> [out.json]
+ *   npx --no-install tsx training/gen/validate-rows.ts <rows.jsonl> <out.json> [valid.jsonl]
  *
- * Exits 1 when any row fails.
+ * Failing rows are dropped from `valid.jsonl`; exits 1 only if none pass.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import type { Action, PHDocument } from "document-model";
@@ -79,7 +79,7 @@ function apply(
 }
 
 function main(): void {
-  const [inFile, outFile] = process.argv.slice(2);
+  const [inFile, outFile, validFile] = process.argv.slice(2);
   const catalog = new Map(buildTrainingCatalog().map((e) => [e.key, e]));
   const reps = replayers();
   const rows = readFileSync(inFile, "utf8")
@@ -135,7 +135,17 @@ function main(): void {
       JSON.stringify({ summary, results }, null, 2) + "\n",
     );
   console.log(JSON.stringify(summary, null, 2));
-  process.exit(failed.length ? 1 : 0);
+  if (validFile) {
+    const bad = new Set(failed.map((r) => r.id));
+    writeFileSync(
+      validFile,
+      rows
+        .filter((r) => !bad.has(r.id))
+        .map((r) => JSON.stringify(r) + "\n")
+        .join(""),
+    );
+  }
+  process.exit(results.length > failed.length ? 0 : 1);
 }
 
 main();

@@ -72,8 +72,17 @@ def strip_unsupported(schema: object) -> object:
 
 def gen_schema(model_schema: dict) -> dict:
     args = strip_unsupported(model_schema)
-    if not args.get("properties"):
-        args = {"type": "object", "properties": {}, "additionalProperties": False}
+    item_props = {"utterance": {"type": "string"}, "style": {"type": "string"}}
+    if args.get("properties"):  # ops with no semantic fields get no args object
+        item_props["args"] = args
+    item_props["evidence"] = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {"field": {"type": "string"}, "span": {"type": "string"}},
+            "required": ["field", "span"], "additionalProperties": False,
+        },
+    }
     return {
         "type": "object",
         "properties": {
@@ -81,20 +90,8 @@ def gen_schema(model_schema: dict) -> dict:
                 "type": "array",
                 "items": {
                     "type": "object",
-                    "properties": {
-                        "utterance": {"type": "string"},
-                        "style": {"type": "string"},
-                        "args": args,
-                        "evidence": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {"field": {"type": "string"}, "span": {"type": "string"}},
-                                "required": ["field", "span"], "additionalProperties": False,
-                            },
-                        },
-                    },
-                    "required": ["utterance", "style", "args", "evidence"], "additionalProperties": False,
+                    "properties": item_props,
+                    "required": list(item_props), "additionalProperties": False,
                 },
             }
         },
@@ -111,6 +108,25 @@ NO_ACTION_SCHEMA = {
         "required": ["utterance", "kind"], "additionalProperties": False}}},
     "required": ["items"], "additionalProperties": False,
 }
+
+
+def schema_load(schema: object) -> tuple[int, int]:
+    """(optional params, union-typed params): structured outputs allow 24 / 16 per request."""
+    opt = uni = 0
+    if isinstance(schema, dict):
+        props = schema.get("properties")
+        if isinstance(props, dict):
+            req = set(schema.get("required", []))
+            opt += sum(1 for k in props if k not in req)
+            uni += sum(1 for v in props.values() if isinstance(v, dict) and ("anyOf" in v or isinstance(v.get("type"), list)))
+        for v in schema.values():
+            o, u = schema_load(v)
+            opt, uni = opt + o, uni + u
+    elif isinstance(schema, list):
+        for v in schema:
+            o, u = schema_load(v)
+            opt, uni = opt + o, uni + u
+    return opt, uni
 
 
 def op_brief(op: dict) -> str:
@@ -173,7 +189,9 @@ def cmd_plan(a) -> int:
     est = {"label": "ESTIMATE (chars/4 input, guessed output incl. thinking); not measured",
            "requests": len(reqs), "itemsRequested": items, "inputTokens": in_tok,
            "outputTokensRange": [out_lo, out_hi], "batchCostUsdRange": [cost(in_tok, out_lo), cost(in_tok, out_hi)],
-           "sha256": hashlib.sha256(out.read_bytes()).hexdigest()}
+           "sha256": hashlib.sha256(out.read_bytes()).hexdigest(),
+           "overSchemaLimits": sorted({r["custom_id"].rsplit("-", 1)[0] for r in reqs
+                                       if (lambda o, u: o > 24 or u > 16)(*schema_load(r["params"]["output_config"]["format"]["schema"]))})}
     Path(str(out) + ".estimate.json").write_text(json.dumps(est, indent=2) + "\n")
     print(json.dumps(est))
     return 0
@@ -273,7 +291,7 @@ def cmd_rows(a) -> int:
                 continue
             key = r["custom_id"][4:].rsplit("-", 1)[0].replace("--", ":")
             op = ctx[key]
-            args = {k: v for k, v in it["args"].items() if v is not None}
+            args = {k: v for k, v in it.get("args", {}).items() if v is not None}
             why = grounded(args, it["utterance"], op["modelSchema"], it["evidence"])
             if why:
                 dropped.append({"id": rid, "reason": why, "utterance": it["utterance"]})
@@ -298,6 +316,11 @@ def cmd_label(a) -> int:
         if s["step"] != 1:
             continue
         cands = s["candidates"]
+        if s.get("skip") == "gold-not-retrieved":
+            # Gold is outside BM25's top k: label over every op of the document type
+            # so the blind pass can still confirm the op and args (for step 2).
+            doc_type = ctx[s["op"]]["docType"]
+            cands = [k for k, o in ctx.items() if o["docType"] == doc_type]
         utt = s["messages"][-1]["content"].rsplit("Request: ", 1)[-1]
         listing = "\n".join(f"- {k}: {ctx[k]['description'] or ctx[k]['opName']} args={json.dumps(ctx[k]['modelSchema'].get('properties', {}))}" for k in cands)
         schema = {"type": "object", "properties": {

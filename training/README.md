@@ -43,7 +43,7 @@ The plan is the scratchpad `lora-plan.md` from the spike session. Spike results 
 | `py/render_template.py` | Renders prompts through llama-server, with template and token parity checks against HF. |
 | `py/train_lora.py`, `py/merge.py`, `py/smoke_infer.py` | Train, merge, and run grammar-constrained inference. |
 | `py/teacher.py` | The teacher pipeline (`plan`, `submit`, `collect`, `rows`, `label`, `agree`). |
-| `scripts/render.sh` | **One command to re-render with the current format:** dedup, render, validate, then parity. |
+| `scripts/render.sh` | **One command to re-render with the current format:** dedup, then validate (rows that fail zod or replay are dropped and listed in `validate.json`), render, and parity. |
 | `scripts/export-gguf.sh`, `scripts/smoke.sh` | GGUF export, and the full smoke run. |
 | `data/smoke-rows.jsonl`, `data/smoke-probe-rows.jsonl` | 50 + 4 hand-written rows. None come from an eval set. |
 | `results/smoke-2026-10-20.json` | The observed smoke numbers. |
@@ -84,6 +84,7 @@ Source row: `{"id", "utterance", "docType", "op": "<model>:<OP>" | null, "args"?
   - Each row has exactly one BOS.
   - 0 prompt/target token merges.
   - 86/86 targets are accepted by the runtime grammar.
+  - The *exported* smoke Q4_K_M, with the carried-over template, also renders and tokenizes all 86 prompts identically (`template-report-exported.json`).
 
 | Stage | Wall | Max RSS | Notes |
 |---|---|---|---|
@@ -96,6 +97,8 @@ Source row: `{"id", "utterance", "docType", "op": "<model>:<OP>" | null, "args"?
 | Carry over chat template | 1.6 s | 1.00 GB | |
 | Quantize to Q4_K_M | 1.7 s | 0.56 GB | **229,312,224 B**, byte-for-byte the same size as Liquid's published Q4_K_M |
 | Inference: 2 GGUFs × 8 prompts | 1.8 s | 0.45 GB | Metal, temperature 0 |
+
+A second `smoke.sh` run, after the render/validate reorder, reproduced the same GGUF sizes and probe scores, with stage times within 2 s (render 17.4 s, train 18.1 s, export 8.7 s). The table and `results/smoke-2026-10-20.json` are from the first run.
 
 **Inference** ran on 4 utterances that were not trained on. Step 1 used a GBNF enum over the 5 candidate keys. Step 2 used the runtime json-schema grammar.
 - The base Q4_K_M got 3/4 ops and 1/4 args exact. Its step-2 outputs carry the spike's newline and tab runs.
@@ -131,7 +134,9 @@ The generator is `py/teacher.py`:
 1. `teacher.py rows` checks grounding. Free-text values must be utterance substrings, and an optional field needs an evidence span. Truncated (`max_tokens`) responses are dropped.
 2. `render.sh` runs dedup and the leak filter, renders with the chat core, checks targets against the grammar, runs zod plus reducer replay, and checks template and token parity.
 3. `teacher.py label` builds a blind second pass. It sees only the utterance and the real BM25 candidates plus `none`, at low effort.
-4. `teacher.py agree` keeps a row only when the blind op and args match.
+4. `teacher.py agree` keeps a row only when the blind op and args match. When BM25 missed gold, the label pass lists every op of the document type instead of the top 5. That keeps gold-at-rank->5 rows, whose step-2 rows are still trained, from being dropped automatically.
+
+`plan` also checks each output schema against the structured-outputs limits (24 optional and 16 union-typed parameters per request): 0 of 1,200 full-run requests exceed them. Ops with no semantic fields get no `args` object, because the docs do not say whether an empty `properties: {}` is accepted.
 
 To run the pilot:
 
@@ -181,5 +186,8 @@ The first real pilot replaces this table with `collect`'s `.usage.json`.
 
 **Not done here:**
 - The in-browser wllama parity check (`createCompletion(prompt, grammar)` against `createChatCompletion`), because Chrome was off-limits.
+  - Offline evidence only: in `vendor/wllama/3.8.1/wllama.js`, both calls go through the same wasm `completion` action, and the wasm contains llama.cpp's `common_chat_templates_init`.
+  - That is consistent with the server path used here, including BOS added by the tokenizer, but it is **[U]** until the 20-row in-browser check runs.
+- `scripts/setup.sh` was put together from steps that were each run by hand here. It has not been re-run end to end from a clean state.
 - Hosting.
 - Checking the license for redistributing a derivative.
