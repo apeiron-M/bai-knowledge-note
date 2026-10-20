@@ -1,0 +1,11 @@
+.venv/
+artifacts/
+models/
+data/generated/
+*.gguf
+*.safetensors
+__pycache__/
+# Native tools (llama.cpp b11364, schema2gbnf) live in $BAI_TRAINING_TOOLS
+# (default ~/.cache/bai-training), outside the repo: the root tsconfig
+# includes "**/*" and llama.cpp ships ~750 .ts files.
+vendor-tools/
