@@ -6,6 +6,8 @@ import type { IReactorClient } from "@powerhousedao/reactor";
 import {
   DocumentCache,
   ensurePHEventHandlers,
+  extractDriveSlugFromPath,
+  findDriveBySlug,
   setPHGlobalConfig,
   syncSelectionFromPath,
   setDocumentCache,
@@ -217,15 +219,20 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     return drive;
   };
   // The vault writes its own URLs (/d/<drive>/<node>); keep them under the page's path, and
-  // reopen what a reloaded or shared URL names.
+  // reopen what a reloaded or shared URL names — when it names this vault's drive. A URL from
+  // before a reset, from a reload while the guide was still being written (that vault never
+  // reached the disk), or from someone else's vault names a drive that is not here: selected,
+  // it left the app on "Opening your vault…" for good. Open the vault and drop the stale URL.
   const basePath = options.basePath ?? "/";
   setPHGlobalConfig({ basePath });
   const drive = await publishDrive();
-  const below = window.location.pathname.startsWith(basePath)
-    ? `/${window.location.pathname.slice(basePath.length)}`
-    : window.location.pathname;
-  if (below.startsWith("/d/")) syncSelectionFromPath(window.location.pathname);
-  else setSelectedDrive(drive);
+  const named = extractDriveSlugFromPath(window.location.pathname);
+  if (named && findDriveBySlug([drive], named)) {
+    syncSelectionFromPath(window.location.pathname);
+  } else {
+    if (named) window.history.replaceState(window.history.state, "", basePath);
+    setSelectedDrive(drive);
+  }
 
   let pending: ReturnType<typeof setTimeout> | undefined;
   const stopFeed = startLiveFeed(client, vaultDriveId, () => {
@@ -269,7 +276,11 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
       if (pending) clearTimeout(pending);
       stopFeed();
       uninstallOrigin();
-      setHostConfig(undefined);
+      // Still a browser host, without the engine's writes: the page never becomes Connect.
+      // Cleared, the declaration let the vault app — mounted until a reset's reload —
+      // wire its drive to a remote client for a Switchboard guessed from the page's
+      // address: a WebSocket to localhost:4001 here, to switchboard.oskv.vetra.io on the site.
+      setHostConfig({ kind: "browser", switchboardOrigin: LOCAL_ORIGIN });
       await engine.close();
     },
   };
