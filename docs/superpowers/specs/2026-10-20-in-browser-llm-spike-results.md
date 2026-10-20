@@ -371,4 +371,4 @@ BM25 recall on the seed set, from `tests/unit/chat-retriever.test.ts`:
   2. Randomize or score each candidate independently, for example by comparing per-candidate log-likelihood, so that list position stops driving the pick.
   3. Run the same harness on LFM2.5-1.2B-Instruct.
   4. Fine-tune.
-- **Before tuning on this seed set again:** a held-out utterance set is needed. Twelve LLM runs (two in round 1, ten in round 2) have now been made against these same 30 items.
+- **Before tuning on this seed set again:** a held-out utterance set is needed. Fifteen LLM runs have now been made against these same 30 items: four in round 1 (WebGPU and CPU), and eleven in round 2 (including the reload check).
