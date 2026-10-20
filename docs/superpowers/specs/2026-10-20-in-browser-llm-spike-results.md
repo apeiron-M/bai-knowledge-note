@@ -983,7 +983,7 @@ Assistant target: compact JSON in that key order, with ref fields as labels, e.g
 
 ### Remaining error types (held-out-2, after these fixes)
 
-**Op selection** (O5's 51 scoped misses; the gold op is gte-small's rank 2–3 in 26 of them):
+**Op selection** (O5's 51 scoped misses; the gold op is gte-small's scoped rank 2–3 in 32 of them, and rank 1 in 5 that the LLM term overturned):
 
 - **Polarity and sibling confusion:**
   - ADD ↔ REMOVE: moc2-04, moc2-08, moc2-09, pq2-06 BLOCK → UNBLOCK, prj2-16.
