@@ -211,35 +211,44 @@ function choicesOf(labeled: Record<string, RefCandidate[]>) {
   );
 }
 
-export async function fillArgsStep(
+/**
+ * The step-2 prompt and grammar inputs, with no model call: labeled refs,
+ * the gated schema in `step2Order`, the `requireOneOf` set and the
+ * messages. The runtime (`fillArgsStep`) and the training renderer both
+ * build step 2 through this, so their prompt bytes are the same.
+ */
+export interface PreparedArgsStep {
+  labeled: Record<string, RefCandidate[]>;
+  /** Ref labels per path, in document order. */
+  choices: Record<string, string[]>;
+  /** The schema after the optional-field gate, in schema order. */
+  schema: JsonSchema;
+  /** `schema` with properties in `step2Order`. */
+  ordered: JsonSchema;
+  order: string[];
+  rootRefs: string[];
+  /** Ref and required-enum fields, emitted first. */
+  first: string[];
+  oneOf: string[];
+  exactlyOne: boolean;
+  /** Null when the gated op has no field (no step 2). */
+  messages: WllamaChatMessage[] | null;
+}
+
+export function prepareArgsStep(
   utterance: string,
   entry: CatalogEntry,
   refCandidates: Record<string, { id: string; label?: string | null }[]>,
-  opts: ArgsStepOptions,
-): Promise<ArgsStepResult> {
+  gate: GateMode,
+): PreparedArgsStep {
   const labeled = labelRefCandidates(refCandidates);
   const refPaths = Object.keys(labeled);
   const full = buildModelSchema(entry, {
     refCandidates: refEnumValues(labeled),
   });
-  const schema = gateOptional(full, utterance, opts.gate, new Set(refPaths));
+  const schema = gateOptional(full, utterance, gate, new Set(refPaths));
   const choices = choicesOf(labeled);
-  const base: ArgsStepResult = {
-    args: null,
-    raw: null,
-    error: null,
-    schema,
-    grammar: null,
-    messages: null,
-    refField: null,
-    refScores: null,
-    refMs: 0,
-    refCfMs: 0,
-    genMs: 0,
-    refRequests: [],
-  };
   const props = isRecord(schema.properties) ? schema.properties : {};
-  if (Object.keys(props).length === 0) return { ...base, args: {} };
   const rootRefs = Object.keys(props).filter((k) => refPaths.includes(k));
   const oneOf = requireOneOf(schema, refPaths);
   // No field named: the request most plausibly sets exactly one of them.
@@ -254,7 +263,60 @@ export async function fillArgsStep(
   const first = order.filter(
     (k) => rootRefs.includes(k) || requiredEnum(ordered, k),
   );
-  const messages = argsMessages(utterance, entry, ordered, choices);
+  const messages =
+    order.length > 0 ? argsMessages(utterance, entry, ordered, choices) : null;
+  return {
+    labeled,
+    choices,
+    schema,
+    ordered,
+    order,
+    rootRefs,
+    first,
+    oneOf,
+    exactlyOne,
+    messages,
+  };
+}
+
+/** The unscored step-2 grammar of a prepared step (no field fixed). */
+export function preparedGrammar(
+  p: PreparedArgsStep,
+  utterance: string,
+  schema: JsonSchema = p.ordered,
+): string {
+  return argsGrammar(schema, utterance, {
+    spans: true,
+    first: p.first,
+    requireOneOf: p.oneOf,
+    exactlyOne: p.exactlyOne,
+  });
+}
+
+export async function fillArgsStep(
+  utterance: string,
+  entry: CatalogEntry,
+  refCandidates: Record<string, { id: string; label?: string | null }[]>,
+  opts: ArgsStepOptions,
+): Promise<ArgsStepResult> {
+  const p = prepareArgsStep(utterance, entry, refCandidates, opts.gate);
+  const { labeled, choices, schema, ordered, order, rootRefs } = p;
+  const base: ArgsStepResult = {
+    args: null,
+    raw: null,
+    error: null,
+    schema,
+    grammar: null,
+    messages: null,
+    refField: null,
+    refScores: null,
+    refMs: 0,
+    refCfMs: 0,
+    genMs: 0,
+    refRequests: [],
+  };
+  if (!p.messages) return { ...base, args: {} };
+  const messages = p.messages;
   let fixed: JsonSchema = ordered;
   const head = order[0];
   const refField =
@@ -321,12 +383,7 @@ export async function fillArgsStep(
       },
     };
   }
-  const grammar = argsGrammar(fixed, utterance, {
-    spans: true,
-    first,
-    requireOneOf: oneOf,
-    exactlyOne,
-  });
+  const grammar = preparedGrammar(p, utterance, fixed);
   const r = await opts.completeJson(
     messages,
     { kind: "grammar", grammar },
