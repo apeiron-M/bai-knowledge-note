@@ -478,3 +478,69 @@ Goal: serve wllama from the package's own origin instead of jsdelivr, and drop t
   - a `blob:http://localhost:5199/…` worker [200]
   - `/@fs/…/vendor/wllama/3.8.1/wllama.wasm` [200]
 - No request went to `cdn.jsdelivr.net`.
+
+## Round 5: scoring & constrained content (held-out) (2026-10-20)
+
+**Question:** can decoding-time techniques (likelihood scoring, calibration, order averaging, readable labels, BM25 fusion, copy-span args) get LFM2.5-350M to the 90–95% bar on a fresh held-out set, or is a LoRA fine-tune needed?
+
+### What was built
+
+- `llm-client.ts`: `scoreText(messages, grammar)`, a non-streaming greedy completion with `logprobs: true` (llama.cpp `n_probs`). `wllama-types.ts` gained the non-streaming request/response types.
+- `op-scorer.ts`: forces each candidate's answer `{"op": "<label>"}` with a one-literal GBNF grammar and sums its token logprobs; content-free calibration (`N/A`), rotation averaging, readable labels, a "none" pseudo-candidate, and `fuse` (LLM score + λ × BM25 / max BM25).
+- `args-grammar.ts`: per-request GBNF for args. Free-text strings must be a contiguous word span of the utterance (original casing; the first word may drop leading quotes, the last may drop trailing quotes or punctuation); optional fields the utterance does not mention are dropped; ref-id fields are an enum of candidate labels, mapped back to ids.
+- Harness: `spike/llm-harness/r5.ts` (`r5Ops`, `r5Args`, `probeLogprobs`). Every op-scoring method comes from the same forced-literal requests of one pass, so S1/S2/S3/H1 differ only in arithmetic; each method's latency is the summed wall time of the requests it needs.
+- Tests: `tests/unit/chat-scorer.test.ts`, `tests/unit/chat-args-grammar.test.ts`, and a test-only GBNF recognizer (`tests/unit/gbnf-recognizer.ts`) so grammar tests assert accept/reject.
+- Held-out set: `spike/llm-harness/eval/heldout-eval.json`, committed unchanged (`35bf2b70`, sha256 `e71ce178…`). Its own validator reported 0 errors and every item passed the generated zod input schemas.
+
+### Logprob probe (dev utterance "tag this note with distributed systems", WebGPU)
+
+- **Pre-grammar, confirmed.** Under a single-literal grammar the forced tokens have negative logprobs, and each position's `top_logprobs` lists tokens the grammar forbids (e.g. "```" at −0.02 when `{"` is forced at −4.86).
+- **Forcing the greedy text reproduces the greedy logprobs** token for token (24/24 identical).
+- **Deterministic.** The shared prefix `{"op": "knowledge-note:` has identical per-token logprobs across all five candidates, and re-scoring a candidate gives identical numbers.
+- **EOS is reported** as an empty-text token at the end (e.g. −0.003). It is included in every score.
+- **The prompt KV is reused:** forced requests after the first show `cache_n` 147, `prompt_n` 4, and take 123–160 ms for 17–18 forced tokens.
+- **Assistant prefill was tried and dropped.** Putting `{"op": "` in an assistant prefill saved about 30 ms per request but changed the scores at the token boundary (the label's first token became `k` at −19.0 instead of `know`, and `}` moved by about 3 nats).
+- **Surface-form noise is large.** After `knowledge-note:ADD_TOPIC` the closing `"` costs −4.98 (the model expects `:` as in the list lines), against −0.30 after `REMOVE_TOPIC`. Raw sums therefore pick REMOVE_TOPIC here, which is the case calibration is meant to fix.
+
+### Development on the dev (seed) set
+
+All choices below were made on the 30-item seed set only (now used about 25 times; treat every dev number as optimistic). WebGPU, k=5, models' own descriptions.
+
+| Dev, op correct /30 | Scoped key | Unscoped key | Scoped readable | Unscoped readable |
+|---|---|---|---|---|
+| B0 BM25 top-1 | 22 | 20 | 22 | 20 |
+| B1 enum (reproduces round 1) | 13 | 10 | – | – |
+| S1 raw, sum / mean | 7 / 5 | 6 / 4 | 10 / 6 | 4 / 4 |
+| S2 calibrated, sum / mean | 18 / 18 | 13 / 11 | 11 / 12 | 10 / 10 |
+| S3 calibrated, 3 rotations, sum / mean | 23 / 23 | 17 / 19 | 14 / 16 | 10 / 13 |
+| H1 = S3-mean + 5 × BM25 | 23 | 22 | 22 | 20 |
+
+- **Aggregate:** sum and mean are within 2 items everywhere; mean is better on S3 and on the fusion grid, so **mean** is primary. Sum is reported too, from the same requests.
+- **Labels:** readable labels (`add topic`) were worse than catalog keys in every LLM-only row, so S4 is run on held-out only because it is pre-registered.
+- **λ grid** {0, 0.5, 1, 2, 3, 5, 8, 13, 20, ∞} for S2/S3 × sum/mean × key/readable, scored on scoped + unscoped (60 items). The best was S3-mean-key at λ = 5 (23 + 22 = 45/60), against 42/60 for BM25 alone (λ = ∞). That is a 3-item margin picked from 40 grid points.
+- **None candidate (dev, scoped, H1):** 0/30 action items were sent to "none"; op accuracy 22/30.
+- **Args (dev, oracle op, 21 items with expected args):** A0 5/21 exact; A1 with no gating 11/21, gating enum/boolean fields only 12/21, gating every optional field 15/21. Gating every optional field is pre-registered.
+
+### Pre-registration (written and committed before any held-out run)
+
+Each configuration runs **once** on the held-out set, WebGPU, temperature 0, BM25 k=5 over the models' own descriptions, scoped (the item's `context.docType`) and unscoped unless noted.
+
+| # | Config | Definition |
+|---|---|---|
+| 1 | B0 | BM25 rank-1 op. |
+| 2 | B1 | Round-1 `selectOp` (json_schema enum over the 5 keys), rank order. |
+| 3 | S1 | Forced-literal likelihood, catalog-key labels, rank order, **mean** token logprob (sum also reported). |
+| 4 | S2 | S1 minus the same option's score under the content-free input `N/A`. |
+| 5 | S3 | S2 averaged over 3 rotations of the list (offsets 0, 2, 3). |
+| 6 | S4 | S3 with readable labels (op name in words; `(model)` appended on duplicates) in the list and the forced answer. |
+| 7 | H1 | S3 (mean, key labels) + **λ = 5** × BM25 / max BM25 over the candidates. |
+| 8 | None | Run 7 with a "none (no document change)" option appended to the list (BM25 term 0). Scoped: all 68 action items (false-positive rate) and the 6 `noAction` items. Unscoped: the 6 `noAction` items. S3-with-none is reported from the same requests. |
+| 9 | A0 | Round-1 `fillArgs` (json_schema; ref-id fields as an enum of candidate ids). |
+| 10 | A1 | Copy-span GBNF + drop every optional field not mentioned (field-name token or a full enum value) + ref-id fields as an enum of candidate labels mapped back to ids. |
+
+- **N1 (native tool-call format):** not tested.
+- **Args are scored with the oracle op** on all 68 items, so they do not depend on op selection. The subset where H1 scoped picked the right op is also reported.
+- **Args exact** = every `expected.args` field matches under its `argMatch` comparator, **and** no non-empty semantic field appears outside `args`, `ambiguousArgs` and the ref paths (the README's "omitted or null" rule). "Fields match" (without the extras rule), `requiredPresent`, ref-id exact and zod validity are reported separately.
+- **Latency:** median and p90 per utterance, summed over the requests each method needs.
+- **Disclosure:** while checking the file structure I saw the utterances of kn-01 and kn-02 and the `refCandidates` of kn-08. I read no other held-out item before these runs.
+- **If a run breaks** (for example, a grammar llama.cpp rejects), the bug is fixed, both numbers are reported, and nothing else changes.
