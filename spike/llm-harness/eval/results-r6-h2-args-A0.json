@@ -1,0 +1,2837 @@
+{
+  "r6Args:\"webgpu\":{\"mode\":\"r5\",\"gate\":\"all\",\"scoreRefs\":false,\"refAggregate\":\"mean\",\"sets\":[\"h2\"],\"desc\":\"own\"}": {
+    "summary": {
+      "config": {
+        "mode": "r5",
+        "gate": "all",
+        "scoreRefs": false,
+        "refAggregate": "mean",
+        "sets": [
+          "h2"
+        ],
+        "desc": "own"
+      },
+      "n": 91,
+      "exact": "25/65",
+      "fieldsMatch": "25/65",
+      "withExtras": 0,
+      "requiredPresent": "22/22",
+      "refExact": "10/32",
+      "zodOk": "91/91",
+      "emptyArgs": 3,
+      "genMedianMs": 158,
+      "genP90Ms": 254,
+      "refMedianMs": null,
+      "refP90Ms": null,
+      "refCfMedianMs": null,
+      "exactByStyle": {
+        "all": "25/65",
+        "style=natural": "16/36",
+        "natural/easy": "13/23",
+        "style=paraphrase": "9/29",
+        "paraphrase/medium": "9/25",
+        "paraphrase/hard": "0/4",
+        "natural/hard": "1/5",
+        "natural/medium": "2/8"
+      },
+      "refByStyle": {
+        "all": "10/32",
+        "style=paraphrase": "5/19",
+        "paraphrase/hard": "1/4",
+        "style=natural": "5/13",
+        "natural/hard": "2/4",
+        "natural/easy": "3/7",
+        "paraphrase/medium": "4/15",
+        "natural/medium": "0/2"
+      }
+    },
+    "rows": [
+      {
+        "id": "kn2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "change the title to \"Write-ahead logs make crash recovery boring\"",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "Write-ahead logs make crash recovery boring"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Write-ahead logs make crash recovery boring"
+        },
+        "raw": "{\"title\": \"Write-ahead logs make crash recovery boring\"}",
+        "genMs": 166.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the one-liner under the heading should read: Batching fsyncs trades a few milliseconds of latency for an order of magnitude more throughput.",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "Batching fsyncs trades a few milliseconds of latency for an order of magnitude more throughput."
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "Batching fsyncs trades a few milliseconds of latency for an order of magnitude more throughput"
+        },
+        "raw": "{\"description\": \"Batching fsyncs trades a few milliseconds of latency for an order of magnitude more throughput\"}",
+        "genMs": 192.80000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "set the note type to decision",
+        "op": "knowledge-note:SET_NOTE_TYPE",
+        "expected": {
+          "args": {
+            "noteType": "decision"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "noteType": "decision"
+        },
+        "raw": "{\"noteType\": \"decision\"}",
+        "genMs": 110.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "wipe what's written here and put this in its place: Compaction debt grows faster than write volume once L0 has more than eight files.",
+        "op": "knowledge-note:SET_CONTENT",
+        "expected": {
+          "args": {
+            "content": "Compaction debt grows faster than write volume once L0 has more than eight files."
+          },
+          "refArgs": null
+        },
+        "args": {
+          "content": "wipe"
+        },
+        "raw": "{\"content\": \"wipe\"}",
+        "genMs": 104.79999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "content"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add the topic \"storage engines\" to this",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "storage engines"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "storage engines"
+        },
+        "raw": "{\"name\": \"storage engines\"}",
+        "genMs": 96,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "we're arguing the opposite of \"LSM trees always win on writes\" here, point at it from this one",
+        "op": "knowledge-note:ADD_LINK",
+        "expected": {
+          "args": {
+            "linkType": "CONTRADICTS"
+          },
+          "refArgs": {
+            "targetDocumentId": "doc-lsm"
+          }
+        },
+        "args": {
+          "targetDocumentId": "doc-bloom",
+          "linkType": "BUILDS_ON"
+        },
+        "raw": "{\"targetDocumentId\": \"Bloom filters cut point-read IO\", \"linkType\": \"BUILDS_ON\"}",
+        "genMs": 212.30000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "linkType"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-07",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "change the link to \"B-tree page splits\" so it says this supersedes it",
+        "op": "knowledge-note:UPDATE_LINK_TYPE",
+        "expected": {
+          "args": {
+            "linkType": "SUPERSEDES"
+          },
+          "refArgs": {
+            "id": "lk-2"
+          }
+        },
+        "args": {
+          "id": "lk-1",
+          "linkType": "BUILDS_ON"
+        },
+        "raw": "{\"id\": \"Write amplification basics (RELATES_TO)\", \"linkType\": \"BUILDS_ON\"}",
+        "genMs": 209.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "linkType"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "drop the connection to the Postgres vacuum writeup, it's not relevant anymore",
+        "op": "knowledge-note:REMOVE_LINK",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "lk-b"
+          }
+        },
+        "args": {
+          "id": "lk-b"
+        },
+        "raw": "{\"id\": \"link: Postgres vacuum tuning\"}",
+        "genMs": 134.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-09",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove the databases topic",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "t-db"
+          }
+        },
+        "args": {
+          "id": "t-db"
+        },
+        "raw": "{\"id\": \"databases\"}",
+        "genMs": 103.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-10",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we're not very sure about this one yet, only a single benchmark backs it, so call our certainty low",
+        "op": "knowledge-note:SET_METADATA_FIELD",
+        "expected": {
+          "args": {
+            "field": "confidence",
+            "value": "low"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "field": "context"
+        },
+        "raw": "{\"field\": \"context\"}",
+        "genMs": 116.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "field",
+          "value"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "set the consequences to: slower cold start, roughly 2x disk usage",
+        "op": "knowledge-note:SET_METADATA_LIST_FIELD",
+        "expected": {
+          "args": {
+            "field": "consequences",
+            "values": [
+              "slower cold start",
+              "roughly 2x disk usage"
+            ]
+          },
+          "refArgs": null
+        },
+        "args": {
+          "field": "consequences",
+          "values": [
+            "slower",
+            "2x",
+            "disk"
+          ]
+        },
+        "raw": "{\"field\": \"consequences\", \"values\": [\"slower\", \"2x\", \"disk\"]}",
+        "genMs": 189.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "values"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-12",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "submit this for review",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-13",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "reads well to me, ship it as canonical",
+        "op": "knowledge-note:APPROVE_NOTE",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-14",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "pull this one back out of cold storage, we need it again for the migration",
+        "op": "knowledge-note:RESTORE_NOTE",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "kn2-15",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "archive this note, the newer compaction writeup replaces it",
+        "op": "knowledge-note:ARCHIVE_NOTE",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {
+          "comment": "the newer compaction writeup"
+        },
+        "raw": "{\"comment\": \"the newer compaction writeup\"}",
+        "genMs": 119.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a domain-level map called \"Observability\". Description: everything about logs, metrics and traces. Orientation: start with the three pillars, then read the cost notes.",
+        "op": "moc:CREATE_MOC",
+        "expected": {
+          "args": {
+            "title": "Observability",
+            "tier": "DOMAIN"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Observability",
+          "description": "everything about logs, metrics and traces",
+          "orientation": "start with the three pillars",
+          "tier": "DOMAIN"
+        },
+        "raw": "{\"title\": \"Observability\", \"description\": \"everything about logs, metrics and traces\", \"orientation\": \"start with the three pillars\", \"tier\": \"DOMAIN\"}",
+        "genMs": 260.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "the bit at the top that tells readers where to begin should say: Read the incident reviews first, then the alerting notes.",
+        "op": "moc:UPDATE_ORIENTATION",
+        "expected": {
+          "args": {
+            "orientation": "Read the incident reviews first, then the alerting notes."
+          },
+          "refArgs": null
+        },
+        "args": {
+          "orientation": "Read the incident reviews first"
+        },
+        "raw": "{\"orientation\": \"Read the incident reviews first\"}",
+        "genMs": 111.19999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "orientation"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "update the description to \"Notes on alert fatigue and on-call health\"",
+        "op": "moc:UPDATE_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "Notes on alert fatigue and on-call health"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "Notes on alert fatigue and on-call health"
+        },
+        "raw": "{\"description\": \"Notes on alert fatigue and on-call health\"}",
+        "genMs": 135.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-04",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add \"SLOs beat static thresholds\" as a core idea, it's the reason we moved off fixed CPU alerts",
+        "op": "moc:ADD_CORE_IDEA",
+        "expected": {
+          "args": {
+            "noteRef": "SLOs beat static thresholds"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "noteRef": "SLOs",
+          "contextPhrase": "moved off fixed CPU alerts",
+          "sortOrder": 1
+        },
+        "raw": "{\"noteRef\": \"SLOs\", \"contextPhrase\": \"moved off fixed CPU alerts\", \"sortOrder\": 1}",
+        "genMs": 193.79999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "noteRef"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "for the cardinality entry, the blurb next to it should be \"why per-user labels blow up Prometheus\"",
+        "op": "moc:UPDATE_CORE_IDEA",
+        "expected": {
+          "args": {
+            "contextPhrase": "why per-user labels blow up Prometheus"
+          },
+          "refArgs": {
+            "id": "ci-2"
+          }
+        },
+        "args": {
+          "id": "ci-1"
+        },
+        "raw": "{\"id\": \"Tracing sampling\"}",
+        "genMs": 113,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "contextPhrase"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove \"Dashboards nobody reads\" from the core ideas",
+        "op": "moc:REMOVE_CORE_IDEA",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "ci-3"
+          }
+        },
+        "args": {
+          "id": "ci-1"
+        },
+        "raw": "{\"id\": \"Tracing sampling\"}",
+        "genMs": 118.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-07",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "put the SLO one first, then tracing, then cardinality",
+        "op": "moc:REORDER_CORE_IDEAS",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "ids": [
+              "ci-3",
+              "ci-1",
+              "ci-2"
+            ]
+          }
+        },
+        "args": {
+          "ids": [
+            "ci-3"
+          ]
+        },
+        "raw": "{\"ids\": [\"SLOs beat static thresholds\"]}",
+        "genMs": 126.79999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-08",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add an open question: do we page on error-budget burn or on raw symptoms?",
+        "op": "moc:ADD_OPEN_QUESTION",
+        "expected": {
+          "args": {
+            "question": "Do we page on error-budget burn or on raw symptoms?"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "question": "do we page on error-budget burn or on raw symptoms?"
+        },
+        "raw": "{\"question\": \"do we page on error-budget burn or on raw symptoms?\"}",
+        "genMs": 157.59999990463257,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-09",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "the \"Alert routing\" map should sit underneath this one",
+        "op": "moc:ADD_CHILD_MOC",
+        "expected": {
+          "args": {
+            "childRef": "Alert routing"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "childRef": "Alert"
+        },
+        "raw": "{\"childRef\": \"Alert\"}",
+        "genMs": 115.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "childRef"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-10",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "that disagreement about trace sampling rates is settled, take it off this map",
+        "op": "moc:REMOVE_TENSION",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "tn-2"
+          }
+        },
+        "args": {
+          "id": "tn-1"
+        },
+        "raw": "{\"id\": \"Log retention cost vs. audit needs\"}",
+        "genMs": 131.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "set the version to 2.1",
+        "op": "moc:SET_METADATA_FIELD",
+        "expected": {
+          "args": {
+            "field": "version",
+            "value": "2.1"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "field": "version"
+        },
+        "raw": "{\"field\": \"version\"}",
+        "genMs": 104.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "value"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "src2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "ingest this paper: \"The Tail at Scale\" by Jeffrey Dean and Luiz Barroso, https://research.google/pubs/the-tail-at-scale/ - content: Latency variability across many servers dominates request latency at scale; hedged and tied requests reduce the tail.",
+        "op": "source:INGEST_SOURCE",
+        "expected": {
+          "args": {
+            "title": "The Tail at Scale",
+            "sourceType": "PAPER",
+            "url": "https://research.google/pubs/the-tail-at-scale/"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "The Tail at Scale",
+          "content": "Latency variability across many servers dominates request latency at scale; hedged and tied requests reduce the tail",
+          "sourceType": "ARTICLE"
+        },
+        "raw": "{\"title\": \"The Tail at Scale\", \"content\": \"Latency variability across many servers dominates request latency at scale; hedged and tied requests reduce the tail\", \"sourceType\": \"ARTICLE\"}",
+        "genMs": 287.7999999523163,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "sourceType",
+          "url"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "src2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "here's the transcript from Tuesday's architecture call, file it as \"Arch sync 2026-10-13\": Sam: we keep the old queue until the backfill ends. Priya: agreed, and we cut over shard by shard.",
+        "op": "source:INGEST_SOURCE",
+        "expected": {
+          "args": {
+            "title": "Arch sync 2026-10-13",
+            "sourceType": "TRANSCRIPT"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Arch sync 2026-10-13",
+          "content": "Sam: we keep the old queue until the backfill ends. Priya: agreed, and we cut over shard by shard.",
+          "sourceType": "TRANSCRIPT"
+        },
+        "raw": "{\"title\": \"Arch sync 2026-10-13\", \"content\": \"Sam: we keep the old queue until the backfill ends. Priya: agreed, and we cut over shard by shard.\", \"sourceType\": \"TRANSCRIPT\"}",
+        "genMs": 328.59999990463257,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "src2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "mark this source as extracted",
+        "op": "source:SET_SOURCE_STATUS",
+        "expected": {
+          "args": {
+            "status": "EXTRACTED"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "EXTRACTING"
+        },
+        "raw": "{\"status\": \"EXTRACTING\"}",
+        "genMs": 114.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "status"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "src2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "I'm starting to pull claims out of this one now",
+        "op": "source:SET_SOURCE_STATUS",
+        "expected": {
+          "args": {
+            "status": "EXTRACTING"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "EXTRACTING"
+        },
+        "raw": "{\"status\": \"EXTRACTING\"}",
+        "genMs": 109.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "src2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add the extracted claim \"Hedged requests cut p99 latency by 40%\"",
+        "op": "source:ADD_EXTRACTED_CLAIM",
+        "expected": {
+          "args": {
+            "claimRef": "Hedged requests cut p99 latency by 40%"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "claimRef": "Hedged requests"
+        },
+        "raw": "{\"claimRef\": \"Hedged requests\"}",
+        "genMs": 117.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "claimRef"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "src2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "final tally on this one: 12 claims pulled, 3 thrown out",
+        "op": "source:RECORD_EXTRACTION_STATS",
+        "expected": {
+          "args": {
+            "claimCount": 12,
+            "skippedCount": 3
+          },
+          "refArgs": null
+        },
+        "args": {
+          "claimCount": 12,
+          "skippedCount": 3,
+          "skipRate": 0
+        },
+        "raw": "{\"claimCount\": 12, \"skippedCount\": 3, \"skipRate\": 0.0}",
+        "genMs": 188.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "create a project called \"Search relevance revamp\", Priya owns it and we're still planning",
+        "op": "project:CREATE_PROJECT",
+        "expected": {
+          "args": {
+            "name": "Search relevance revamp",
+            "owner": "Priya",
+            "status": "PLANNING"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Search relevance revamp",
+          "status": "ARCHIVED"
+        },
+        "raw": "{\"name\": \"Search relevance revamp\", \"status\": \"ARCHIVED\"}",
+        "genMs": 147.59999990463257,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "owner",
+          "status"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the blurb up top should say: Replace BM25 with hybrid retrieval by Q1.",
+        "op": "project:UPDATE_PROJECT_INFO",
+        "expected": {
+          "args": {
+            "description": "Replace BM25 with hybrid retrieval by Q1."
+          },
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "everything shipped, we're wrapped up here",
+        "op": "project:SET_PROJECT_STATUS",
+        "expected": {
+          "args": {
+            "status": "COMPLETED"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "COMPLETED"
+        },
+        "raw": "{\"status\": \"COMPLETED\"}",
+        "genMs": 112.80000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "Tomas is taking over running this from Priya",
+        "op": "project:SET_OWNER",
+        "expected": {
+          "args": {
+            "owner": "Tomas"
+          },
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "owner"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "set the target date to March 31",
+        "op": "project:SET_TARGET_DATE",
+        "expected": {
+          "args": {
+            "targetDate": "2027-03-31T00:00:00Z"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "targetDate": "2023-03-31T00:00:00Z"
+        },
+        "raw": "{\"targetDate\": \"2023-03-31T00:00:00Z\"}",
+        "genMs": 158.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "targetDate"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-07",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add Lena to the team as a data engineer",
+        "op": "project:ADD_MEMBER",
+        "expected": {
+          "args": {
+            "name": "Lena",
+            "role": "data engineer"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Lena"
+        },
+        "raw": "{\"name\": \"Lena\"}",
+        "genMs": 93.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the eval bot should be on this too, it's the agent that runs the nightly benchmarks",
+        "op": "project:ADD_MEMBER",
+        "expected": {
+          "args": {
+            "name": "eval bot",
+            "kind": "AGENT"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "eval",
+          "kind": "AGENT"
+        },
+        "raw": "{\"name\": \"eval\", \"kind\": \"AGENT\"}",
+        "genMs": 128.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "name"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-09",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "Lena's actually the tech lead now",
+        "op": "project:UPDATE_MEMBER",
+        "expected": {
+          "args": {
+            "role": "tech lead"
+          },
+          "refArgs": {
+            "id": "m-l"
+          }
+        },
+        "args": {
+          "id": "m-p"
+        },
+        "raw": "{\"id\": \"Priya (PM)\"}",
+        "genMs": 128.09999990463257,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-10",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove Marco from the team",
+        "op": "project:REMOVE_MEMBER",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "m-m"
+          }
+        },
+        "args": {
+          "id": "m-p"
+        },
+        "raw": "{\"id\": \"Priya\"}",
+        "genMs": 112.19999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a deliverable: \"Offline eval dashboard\"",
+        "op": "project:ADD_DELIVERABLE",
+        "expected": {
+          "args": {
+            "title": "Offline eval dashboard"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Offline eval dashboard"
+        },
+        "raw": "{\"title\": \"Offline eval dashboard\"}",
+        "genMs": 112.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-12",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the reranker prototype is out the door",
+        "op": "project:SET_DELIVERABLE_STATUS",
+        "expected": {
+          "args": {
+            "status": "DELIVERED"
+          },
+          "refArgs": {
+            "id": "d-2"
+          }
+        },
+        "args": {
+          "id": "d-2",
+          "status": "CANCELLED"
+        },
+        "raw": "{\"id\": \"Reranker prototype\", \"status\": \"CANCELLED\"}",
+        "genMs": 159.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "status"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-13",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "scrap the A/B harness item entirely, we're not doing it and I don't want it listed at all",
+        "op": "project:REMOVE_DELIVERABLE",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "d-3"
+          }
+        },
+        "args": {
+          "id": "d-1"
+        },
+        "raw": "{\"id\": \"Offline eval dashboard\"}",
+        "genMs": 128,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-14",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "change the link for the offline eval dashboard deliverable to https://grafana.example.com/d/offline-eval",
+        "op": "project:UPDATE_DELIVERABLE",
+        "expected": {
+          "args": {
+            "url": "https://grafana.example.com/d/offline-eval"
+          },
+          "refArgs": {
+            "id": "d-2"
+          }
+        },
+        "args": {
+          "id": "d-1"
+        },
+        "raw": "{\"id\": \"Reranker prototype\"}",
+        "genMs": 124.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "url"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-15",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "our reading list for this is https://arxiv.org/abs/2104.08663 and https://www.elastic.co/blog/hybrid-retrieval",
+        "op": "project:SET_REFERENCES",
+        "expected": {
+          "args": {
+            "references": [
+              "https://arxiv.org/abs/2104.08663",
+              "https://www.elastic.co/blog/hybrid-retrieval"
+            ]
+          },
+          "refArgs": null
+        },
+        "args": {
+          "references": [
+            "https://arxiv.org/abs/2104.08663",
+            "https://www.elastic.co/blog/hybrid-retrieval"
+          ]
+        },
+        "raw": "{\"references\": [\"https://arxiv.org/abs/2104.08663\", \"https://www.elastic.co/blog/hybrid-retrieval\"]}",
+        "genMs": 249.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a goal: migrate the ingestion workers to the new queue",
+        "op": "wbs:CREATE_GOAL",
+        "expected": {
+          "args": {
+            "description": "migrate the ingestion workers to the new queue"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "migrate the ingestion workers to the new queue"
+        },
+        "raw": "{\"description\": \"migrate the ingestion workers to the new queue\"}",
+        "genMs": 139.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "as part of shipping hybrid search we also need to tune the fusion weights",
+        "op": "wbs:CREATE_GOAL",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "parentId": "g-hybrid"
+          }
+        },
+        "args": {
+          "description": "tune the fusion weights",
+          "parentId": "g-eval"
+        },
+        "raw": "{\"description\": \"tune the fusion weights\", \"parentId\": \"Build eval set\"}",
+        "genMs": 167,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "mark \"Rebuild the index\" as in progress",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "IN_PROGRESS"
+          },
+          "refArgs": {
+            "id": "g-index"
+          }
+        },
+        "args": {
+          "id": "g-index",
+          "status": "IN_PROGRESS"
+        },
+        "raw": "{\"id\": \"Rebuild the index\", \"status\": \"IN_PROGRESS\"}",
+        "genMs": 168.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the eval set is finished, we ended up with 14 query categories",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "COMPLETED"
+          },
+          "refArgs": {
+            "id": "g-eval"
+          }
+        },
+        "args": {
+          "id": "g-eval",
+          "status": "BLOCKED"
+        },
+        "raw": "{\"id\": \"Build eval set\", \"status\": \"BLOCKED\"}",
+        "genMs": 182.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "status"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the index rebuild is done on my end, just waiting on Sam to look it over",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "IN_REVIEW"
+          },
+          "refArgs": {
+            "id": "g-index"
+          }
+        },
+        "args": {
+          "id": "g-eval",
+          "status": "BLOCKED"
+        },
+        "raw": "{\"id\": \"Build eval set\", \"status\": \"BLOCKED\"}",
+        "genMs": 181.79999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "status"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "assign the rollout to Sam",
+        "op": "wbs:ASSIGN_GOAL",
+        "expected": {
+          "args": {
+            "assignee": "Sam"
+          },
+          "refArgs": {
+            "id": "g-roll"
+          }
+        },
+        "args": {
+          "id": "g-index"
+        },
+        "raw": "{\"id\": \"Rebuild the index\"}",
+        "genMs": 120.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "assignee"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-07",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "nobody is on the eval set work anymore, clear whoever had it",
+        "op": "wbs:ASSIGN_GOAL",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-eval"
+          }
+        },
+        "args": {
+          "id": "g-eval"
+        },
+        "raw": "{\"id\": \"Build eval set (Lena)\"}",
+        "genMs": 129.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "we can't start the rollout until both the eval set and the index rebuild are done",
+        "op": "wbs:ADD_DEPENDENCIES",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-roll",
+            "dependencies": [
+              "g-eval",
+              "g-index"
+            ]
+          }
+        },
+        "args": {
+          "id": "g-eval",
+          "dependencies": [
+            "g-index",
+            "g-hybrid",
+            "g-roll"
+          ]
+        },
+        "raw": "{\"id\": \"Build eval set\", \"dependencies\": [\"Rebuild the index\", \"Ship hybrid search\", \"Roll out to 100%\"]}",
+        "genMs": 254.09999990463257,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-09",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "remove the dependency of the rollout on the index rebuild",
+        "op": "wbs:REMOVE_DEPENDENCIES",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-roll",
+            "dependencies": [
+              "g-index"
+            ]
+          }
+        },
+        "args": {
+          "id": "g-index",
+          "dependencies": [
+            "g-eval",
+            "g-index"
+          ]
+        },
+        "raw": "{\"id\": \"Rebuild the index\", \"dependencies\": [\"Build eval set\", \"Rebuild the index\"]}",
+        "genMs": 206.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-10",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a note to the eval set goal: we need at least 200 queries per locale",
+        "op": "wbs:ADD_NOTE",
+        "expected": {
+          "args": {
+            "note": "we need at least 200 queries per locale"
+          },
+          "refArgs": {
+            "goalId": "g-eval"
+          }
+        },
+        "args": {
+          "goalId": "g-eval",
+          "note": "we need at least 200 queries per locale"
+        },
+        "raw": "{\"goalId\": \"Build eval set\", \"note\": \"we need at least 200 queries per locale\"}",
+        "genMs": 215.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-11",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "get rid of the \"Evaluate Vespa\" item, it was a duplicate of the hybrid search one",
+        "op": "wbs:DELETE_GOAL",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-vespa"
+          }
+        },
+        "args": {
+          "id": "g-hybrid"
+        },
+        "raw": "{\"id\": \"Ship hybrid search\"}",
+        "genMs": 116.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-12",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "move \"Tune fusion weights\" so it sits under \"Build eval set\"",
+        "op": "wbs:REORDER",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-fuse",
+            "parentId": "g-eval"
+          }
+        },
+        "args": {
+          "id": "g-eval",
+          "parentId": "g-eval"
+        },
+        "raw": "{\"id\": \"Build eval set\", \"parentId\": \"Build eval set\"}",
+        "genMs": 169.30000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-13",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "set the owner of this breakdown to Priya",
+        "op": "wbs:SET_OWNER",
+        "expected": {
+          "args": {
+            "owner": "Priya"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "owner": "Priya"
+        },
+        "raw": "{\"owner\": \"Priya\"}",
+        "genMs": 100.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "rc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a claim: \"Hybrid retrieval beats BM25 on long-tail queries\". kind: empirical. methodology: offline eval on 500 queries. source: internal benchmark, Oct 2026. topics: search, retrieval.",
+        "op": "research-claim:CREATE_CLAIM",
+        "expected": {
+          "args": {
+            "title": "Hybrid retrieval beats BM25 on long-tail queries",
+            "kind": "empirical",
+            "methodology": [
+              "offline eval on 500 queries"
+            ],
+            "sources": [
+              "internal benchmark, Oct 2026"
+            ],
+            "topics": [
+              "search",
+              "retrieval"
+            ]
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Hybrid retrieval beats BM25 on long-tail queries",
+          "description": "Hybrid retrieval beats BM25 on long-tail queries",
+          "content": "Hybrid retrieval",
+          "kind": "methodology",
+          "methodology": [
+            "offline eval",
+            "500 queries"
+          ],
+          "sources": [
+            "internal benchmark",
+            "Oct 2026"
+          ],
+          "topics": [
+            "search",
+            "retrieval"
+          ]
+        },
+        "raw": "{\"title\": \"Hybrid retrieval beats BM25 on long-tail queries\", \"description\": \"Hybrid retrieval beats BM25 on long-tail queries\", \"content\": \"Hybrid retrieval\", \"kind\": \"methodology\", \"methodology\": [\"offline eval\", \"500 queries\"], \"sources\": [\"internal benchmark\", \"Oct 2026\"], \"topics\": [\"search\", \"retrieval\"]}",
+        "genMs": 539.7999999523163,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "kind",
+          "methodology",
+          "sources"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "rc2-02",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "connect this to \"Rerankers need calibrated scores\", it's why the fusion step works at all",
+        "op": "research-claim:ADD_RESEARCH_CONNECTION",
+        "expected": {
+          "args": {
+            "targetRef": "Rerankers need calibrated scores"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "targetRef": "Rerankers",
+          "contextPhrase": "fusion step"
+        },
+        "raw": "{\"targetRef\": \"Rerankers\", \"contextPhrase\": \"fusion step\"}",
+        "genMs": 158,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "targetRef"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "rc2-03",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "this leans on the \"Query logs over-represent head terms\" finding",
+        "op": "research-claim:ADD_RESEARCH_CONNECTION",
+        "expected": {
+          "args": {
+            "targetRef": "Query logs over-represent head terms"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "targetRef": "Query logs over-represent head terms",
+          "contextPhrase": "this leans on the"
+        },
+        "raw": "{\"targetRef\": \"Query logs over-represent head terms\", \"contextPhrase\": \"this leans on the\"}",
+        "genMs": 182.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "rc2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "unhook it from the click-model claim, that pairing was a mistake",
+        "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "cx-3"
+          }
+        },
+        "args": {
+          "id": "cx-1"
+        },
+        "raw": "{\"id\": \"Rerankers need calibrated scores\"}",
+        "genMs": 137.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "rc2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "update the claim content to: On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52.",
+        "op": "research-claim:UPDATE_CLAIM_CONTENT",
+        "expected": {
+          "args": {
+            "content": "On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52."
+          },
+          "refArgs": null
+        },
+        "args": {
+          "content": "On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52"
+        },
+        "raw": "{\"content\": \"On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52\"}",
+        "genMs": 212.19999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "content"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "rc2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "rewrite the body: the gain vanishes on head queries, where BM25 is already near its ceiling.",
+        "op": "research-claim:UPDATE_CLAIM_CONTENT",
+        "expected": {
+          "args": {
+            "content": "the gain vanishes on head queries, where BM25 is already near its ceiling."
+          },
+          "refArgs": null
+        },
+        "args": {
+          "content": "BM25 is already near its ceiling"
+        },
+        "raw": "{\"content\": \"BM25 is already near its ceiling\"}",
+        "genMs": 132.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "content"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "obs2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "log an observation, friction: reviewers keep missing the provenance panel because it's collapsed by default",
+        "op": "observation:CREATE_OBSERVATION",
+        "expected": {
+          "args": {
+            "category": "FRICTION"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "friction",
+          "description": "reviewers keep missing the provenance panel because it's collapsed by default",
+          "category": "FRICTION"
+        },
+        "raw": "{\"title\": \"friction\", \"description\": \"reviewers keep missing the provenance panel because it's collapsed by default\", \"category\": \"FRICTION\"}",
+        "genMs": 253.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "obs2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "jot this down, it caught me off guard: notes drafted from voice transcripts get approved faster than typed ones",
+        "op": "observation:CREATE_OBSERVATION",
+        "expected": {
+          "args": {
+            "category": "SURPRISE"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "notes drafted from voice transcripts",
+          "description": "notes drafted from voice transcripts",
+          "category": "QUALITY"
+        },
+        "raw": "{\"title\": \"notes drafted from voice transcripts\", \"description\": \"notes drafted from voice transcripts\", \"category\": \"QUALITY\"}",
+        "genMs": 206.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "category"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "obs2-03",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "this one earned a proper write-up, I turned it into \"Collapsed panels hide provenance\"",
+        "op": "observation:PROMOTE_OBSERVATION",
+        "expected": {
+          "args": {
+            "promotedTo": "Collapsed panels hide provenance"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "promotedTo": "Collapsed panels"
+        },
+        "raw": "{\"promotedTo\": \"Collapsed panels\"}",
+        "genMs": 112.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "promotedTo"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "obs2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we acted on this, the panel has been expanded by default since yesterday's release",
+        "op": "observation:IMPLEMENT_OBSERVATION",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "obs2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "archive this observation, it's stale",
+        "op": "observation:ARCHIVE_OBSERVATION",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "ten2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a tension \"Freshness vs. stability\": reindexing nightly keeps results fresh but makes rankings jumpy. It involves the nightly reindex note and the ranking stability note.",
+        "op": "tension:CREATE_TENSION",
+        "expected": {
+          "args": {
+            "title": "Freshness vs. stability"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Freshness vs. stability",
+          "description": "reindexing nightly keeps results fresh but makes rankings jumpy",
+          "involvedRefs": [
+            "nightly reindex note",
+            "ranking stability note"
+          ]
+        },
+        "raw": "{\"title\": \"Freshness vs. stability\", \"description\": \"reindexing nightly keeps results fresh but makes rankings jumpy\", \"involvedRefs\": [\"nightly reindex note\", \"ranking stability note\"]}",
+        "genMs": 344.2000000476837,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "ten2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we settled it: reindex nightly, but only swap the ranking model weekly",
+        "op": "tension:RESOLVE_TENSION",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {
+          "resolution": "reindex nightly"
+        },
+        "raw": "{\"resolution\": \"reindex nightly\"}",
+        "genMs": 124.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "ten2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "dissolve this tension, turns out the two notes were measuring different things",
+        "op": "tension:DISSOLVE_TENSION",
+        "expected": {
+          "args": {},
+          "refArgs": null
+        },
+        "args": {
+          "resolution": "dissolve"
+        },
+        "raw": "{\"resolution\": \"dissolve\"}",
+        "genMs": 117.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "ten2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the \"Cache warmup after deploy\" note is part of this conflict too",
+        "op": "tension:ADD_INVOLVED_REF",
+        "expected": {
+          "args": {
+            "ref": "Cache warmup after deploy"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "ref": "Cache warmup after deploy"
+        },
+        "raw": "{\"ref\": \"Cache warmup after deploy\"}",
+        "genMs": 118.30000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "pq2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add an extract task for \"Database Internals ch. 7\"",
+        "op": "pipeline-queue:ADD_TASK",
+        "expected": {
+          "args": {
+            "taskType": "extract",
+            "target": "Database Internals ch. 7"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "taskType": "claim",
+          "target": "Database Internals ch. 7"
+        },
+        "raw": "{\"taskType\": \"claim\", \"target\": \"Database Internals ch. 7\"}",
+        "genMs": 180.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "taskType"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "pq2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "give the arch sync transcript job to Nadia",
+        "op": "pipeline-queue:ASSIGN_TASK",
+        "expected": {
+          "args": {
+            "assignedTo": "Nadia"
+          },
+          "refArgs": {
+            "taskId": "tk-2"
+          }
+        },
+        "args": {
+          "taskId": "tk-1",
+          "assignedTo": "Nadia"
+        },
+        "raw": "{\"taskId\": \"extract: The Tail at Scale (PENDING)\", \"assignedTo\": \"Nadia\"}",
+        "genMs": 203.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "pq2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "unblock the dedupe task",
+        "op": "pipeline-queue:UNBLOCK_TASK",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "taskId": "tk-3"
+          }
+        },
+        "args": {
+          "taskId": "tk-1"
+        },
+        "raw": "{\"taskId\": \"extract: The Tail at Scale (PENDING)\"}",
+        "genMs": 163.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "pq2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "just close out the Tail at Scale job, skip whatever phases are left",
+        "op": "pipeline-queue:COMPLETE_TASK",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "taskId": "tk-1"
+          }
+        },
+        "args": {
+          "taskId": "tk-1"
+        },
+        "raw": "{\"taskId\": \"extract: The Tail at Scale (PENDING)\"}",
+        "genMs": 165.30000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "pq2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the arch sync job is dead, the transcript file is corrupted so it can't go anywhere",
+        "op": "pipeline-queue:FAIL_TASK",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "taskId": "tk-2"
+          }
+        },
+        "args": {
+          "taskId": "tk-1",
+          "reason": "transcript file is corrupted"
+        },
+        "raw": "{\"taskId\": \"extract: The Tail at Scale (PENDING)\", \"reason\": \"transcript file is corrupted\"}",
+        "genMs": 224.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "moc2-12",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "add a tension between \"SLOs beat static thresholds\" and \"Dashboards nobody reads\": SLO alerts hide the per-host detail the dashboards were built to show",
+        "op": "moc:ADD_TENSION",
+        "expected": {
+          "args": {
+            "involvedRefs": [
+              "SLOs beat static thresholds",
+              "Dashboards nobody reads"
+            ]
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "SLOs beat static thresholds",
+          "involvedRefs": [
+            "SLOs",
+            "static thresholds"
+          ]
+        },
+        "raw": "{\"description\": \"SLOs beat static thresholds\", \"involvedRefs\": [\"SLOs\", \"static thresholds\"]}",
+        "genMs": 219,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "involvedRefs"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "prj2-16",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "cancel the A/B harness deliverable",
+        "op": "project:SET_DELIVERABLE_STATUS",
+        "expected": {
+          "args": {
+            "status": "CANCELLED"
+          },
+          "refArgs": {
+            "id": "d-3"
+          }
+        },
+        "args": {
+          "id": "d-3",
+          "status": "CANCELLED"
+        },
+        "raw": "{\"id\": \"A/B harness\", \"status\": \"CANCELLED\"}",
+        "genMs": 159.90000009536743,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "wbs2-14",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "set the outcome of \"Build eval set\" to: 14 query categories, 3,200 queries total",
+        "op": "wbs:SET_OUTCOME",
+        "expected": {
+          "args": {
+            "outcome": "14 query categories, 3,200 queries total"
+          },
+          "refArgs": {
+            "id": "g-eval"
+          }
+        },
+        "args": {
+          "id": "g-index",
+          "outcome": "14"
+        },
+        "raw": "{\"id\": \"Rebuild the index\", \"outcome\": \"14\"}",
+        "genMs": 160.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "outcome"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "pq2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "block the Tail at Scale task, we're waiting on the PDF from the library",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "taskId": "tk-1"
+          }
+        },
+        "args": {
+          "taskId": "tk-1",
+          "reason": "PDF from the library"
+        },
+        "raw": "{\"taskId\": \"extract: The Tail at Scale (PENDING)\", \"reason\": \"PDF from the library\"}",
+        "genMs": 218.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "vc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "turn on the semantic-search feature",
+        "op": "vault-config:TOGGLE_FEATURE",
+        "expected": {
+          "args": {
+            "feature": "semantic-search",
+            "enabled": true
+          },
+          "refArgs": null
+        },
+        "args": {
+          "feature": "semantic-search",
+          "enabled": true
+        },
+        "raw": "{\"feature\": \"semantic-search\", \"enabled\": true}",
+        "genMs": 135.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "vc2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "only nag me once a map gets past 60 entries instead of 40",
+        "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "expected": {
+          "args": {
+            "condition": "mocOversize",
+            "threshold": 60
+          },
+          "refArgs": null
+        },
+        "args": {
+          "condition": "orphanThreshold",
+          "threshold": 60
+        },
+        "raw": "{\"condition\": \"orphanThreshold\", \"threshold\": 60}",
+        "genMs": 176.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "condition"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "vc2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "in the vocabulary, call the inbox \"landing zone\"",
+        "op": "vault-config:UPDATE_VOCABULARY",
+        "expected": {
+          "args": {
+            "key": "inbox",
+            "value": "landing zone"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "key": "inbox",
+          "value": "landing zone"
+        },
+        "raw": "{\"key\": \"inbox\", \"value\": \"landing zone\"}",
+        "genMs": 147.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "vc2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "start pulling \"open problems\" out of what we read too, anything the author flags as unsolved",
+        "op": "vault-config:ADD_EXTRACTION_CATEGORY",
+        "expected": {
+          "args": {
+            "name": "open problems",
+            "active": true
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "open problems",
+          "description": "anything the author flags as unsolved",
+          "active": true
+        },
+        "raw": "{\"name\": \"open problems\", \"description\": \"anything the author flags as unsolved\", \"active\": true}",
+        "genMs": 188.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "vc2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "let the phases run back to back without me kicking off each one",
+        "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "expected": {
+          "args": {
+            "autoChain": true
+          },
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "autoChain"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "der2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add a signal: the user said \"I never browse, I only search\", which pushes navigation down and linking up",
+        "op": "derivation:ADD_SIGNAL",
+        "expected": {
+          "args": {
+            "utterance": "I never browse, I only search",
+            "influencedDimensions": [
+              "navigation",
+              "linking"
+            ]
+          },
+          "refArgs": null
+        },
+        "args": {
+          "utterance": "I never browse, I only search",
+          "influencedDimensions": [
+            "navigation",
+            "search"
+          ],
+          "interpretation": "the user said \"I never browse, I only search\", which pushes navigation down and linking up"
+        },
+        "raw": "{\"utterance\": \"I never browse, I only search\", \"influencedDimensions\": [\"navigation\", \"search\"], \"interpretation\": \"the user said \\\"I never browse, I only search\\\", which pushes navigation down and linking up\"}",
+        "genMs": 415.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "influencedDimensions"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "hr2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a warning check for link health: \"Cache warmup after deploy\" and \"Tune fusion weights\" both have dangling links",
+        "op": "health-report:ADD_CHECK",
+        "expected": {
+          "args": {
+            "category": "LINK_HEALTH",
+            "status": "WARN",
+            "affectedItems": [
+              "Cache warmup after deploy",
+              "Tune fusion weights"
+            ]
+          },
+          "refArgs": null
+        },
+        "args": {
+          "category": "ORPHAN_DETECTION",
+          "status": "FAIL",
+          "message": "Cache warmup after deploy",
+          "affectedItems": [
+            "link"
+          ]
+        },
+        "raw": "{\"category\": \"ORPHAN_DETECTION\", \"status\": \"FAIL\", \"message\": \"Cache warmup after deploy\", \"affectedItems\": [\"link\"]}",
+        "genMs": 326,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "category",
+          "status",
+          "affectedItems"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "hr2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "log that stale notes pass, nothing is older than the limit",
+        "op": "health-report:ADD_CHECK",
+        "expected": {
+          "args": {
+            "category": "STALE_NOTES",
+            "status": "PASS",
+            "affectedItems": []
+          },
+          "refArgs": null
+        },
+        "args": {
+          "category": "STALE_NOTES",
+          "status": "FAIL",
+          "message": "nothing is older than the limit",
+          "affectedItems": []
+        },
+        "raw": "{\"category\": \"STALE_NOTES\", \"status\": \"FAIL\", \"message\": \"nothing is older than the limit\", \"affectedItems\": []}",
+        "genMs": 261.59999990463257,
+        "refMs": 0,
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "status"
+        ],
+        "zodOk": true
+      }
+    ]
+  }
+}

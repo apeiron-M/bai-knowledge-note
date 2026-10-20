@@ -1,0 +1,3717 @@
+{
+  "r6Retrieval:{\"sets\":[\"h2\"]}": {
+    "summary": {
+      "sets": [
+        "h2"
+      ],
+      "n": 91,
+      "embedderLoadMs": 455,
+      "opEmbedMs": 11524,
+      "queryEmbedMedianMs": 40,
+      "queryEmbedP90Ms": 71,
+      "bm25AllZeroScoped": 33,
+      "bm25@1": "30/91 (33%)",
+      "bm25@3": "42/91 (46.2%)",
+      "bm25@5": "44/91 (48.4%)",
+      "bm25@10": "47/91 (51.6%)",
+      "emb@1": "24/91 (26.4%)",
+      "emb@3": "41/91 (45.1%)",
+      "emb@5": "49/91 (53.8%)",
+      "emb@10": "58/91 (63.7%)",
+      "hybrid@1": "29/91 (31.9%)",
+      "hybrid@3": "46/91 (50.5%)",
+      "hybrid@5": "50/91 (54.9%)",
+      "hybrid@10": "56/91 (61.5%)",
+      "bm25Scoped@1": "41/91 (45.1%)",
+      "bm25Scoped@5": "75/91 (82.4%)",
+      "embScoped@1": "43/91 (47.3%)",
+      "embScoped@5": "81/91 (89%)",
+      "model@1": "36/91",
+      "model@2": "57/91",
+      "byStyle": {
+        "emb@5": {
+          "all": "49/91",
+          "style=natural": "35/46",
+          "natural/easy": "25/31",
+          "style=paraphrase": "14/45",
+          "paraphrase/medium": "10/38",
+          "paraphrase/hard": "4/7",
+          "natural/hard": "3/6",
+          "natural/medium": "7/9"
+        },
+        "hybrid@5": {
+          "all": "50/91",
+          "style=natural": "43/46",
+          "natural/easy": "29/31",
+          "style=paraphrase": "7/45",
+          "paraphrase/medium": "6/38",
+          "paraphrase/hard": "1/7",
+          "natural/hard": "5/6",
+          "natural/medium": "9/9"
+        },
+        "bm25@5": {
+          "all": "44/91",
+          "style=natural": "42/46",
+          "natural/easy": "29/31",
+          "style=paraphrase": "2/45",
+          "paraphrase/medium": "2/38",
+          "paraphrase/hard": "0/7",
+          "natural/hard": "5/6",
+          "natural/medium": "8/9"
+        },
+        "model@1": {
+          "all": "36/91",
+          "style=natural": "28/46",
+          "natural/easy": "21/31",
+          "style=paraphrase": "8/45",
+          "paraphrase/medium": "7/38",
+          "paraphrase/hard": "1/7",
+          "natural/hard": "3/6",
+          "natural/medium": "4/9"
+        }
+      }
+    },
+    "rows": [
+      {
+        "id": "kn2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:SET_NOTE_TYPE",
+            "derivation:ADD_RESEED_ENTRY",
+            "project:ADD_DELIVERABLE"
+          ],
+          "emb": [
+            "knowledge-note:SET_TITLE",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_CORE_IDEA",
+            "knowledge-note:RESTORE_NOTE",
+            "vault-config:UPDATE_VOCABULARY"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_TITLE",
+            "moc:CREATE_MOC",
+            "knowledge-note:RESTORE_NOTE",
+            "project:UPDATE_DELIVERABLE",
+            "moc:REORDER_CORE_IDEAS"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "kn2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "rank": {
+          "bm25": 11,
+          "emb": 37,
+          "hybrid": 12,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 8,
+        "top5": {
+          "bm25": [
+            "moc:UPDATE_CORE_IDEA",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:ADD_CORE_IDEA",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL"
+          ],
+          "emb": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:ASSIGN_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "vault-config:UPDATE_PIPELINE_CONFIG"
+          ],
+          "hybrid": [
+            "moc:REORDER_CORE_IDEAS",
+            "moc:ADD_CORE_IDEA",
+            "derivation:ADD_SIGNAL",
+            "moc:UPDATE_CORE_IDEA",
+            "pipeline-queue:ADVANCE_PHASE"
+          ]
+        },
+        "embedMs": 80
+      },
+      {
+        "id": "kn2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "knowledge-note:SET_NOTE_TYPE",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_NOTE_TYPE",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:ADD_LINK",
+            "knowledge-note:SET_DESCRIPTION"
+          ],
+          "emb": [
+            "knowledge-note:SET_NOTE_TYPE",
+            "knowledge-note:SET_METADATA_FIELD",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:SET_CONTENT"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_NOTE_TYPE",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:SET_DESCRIPTION",
+            "wbs:ADD_NOTE"
+          ]
+        },
+        "embedMs": 22
+      },
+      {
+        "id": "kn2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "knowledge-note:SET_CONTENT",
+        "rank": {
+          "bm25": 10,
+          "emb": 29,
+          "hybrid": 11,
+          "bm25Scoped": 4,
+          "embScoped": 6
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 5,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "vault-config:UPDATE_VOCABULARY",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:ADD_CORE_IDEA",
+            "source:INGEST_SOURCE",
+            "vault-config:UPDATE_DIMENSION"
+          ],
+          "hybrid": [
+            "health-report:GENERATE_REPORT",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:SET_METADATA_FIELD",
+            "moc:ADD_CORE_IDEA"
+          ]
+        },
+        "embedMs": 69
+      },
+      {
+        "id": "kn2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "rank": {
+          "bm25": 1,
+          "emb": 5,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 4,
+        "top5": {
+          "bm25": [
+            "knowledge-note:ADD_TOPIC",
+            "knowledge-note:REMOVE_TOPIC",
+            "derivation:INITIALIZE_DERIVATION",
+            "research-claim:CREATE_CLAIM",
+            "wbs:ADD_DEPENDENCIES"
+          ],
+          "emb": [
+            "vault-config:ADD_EXTRACTION_CATEGORY",
+            "pipeline-queue:ADD_TASK",
+            "project:ADD_KNOWLEDGE_REF",
+            "vault-config:UPDATE_VOCABULARY",
+            "knowledge-note:ADD_TOPIC"
+          ],
+          "hybrid": [
+            "knowledge-note:ADD_TOPIC",
+            "vault-config:ADD_EXTRACTION_CATEGORY",
+            "project:ADD_KNOWLEDGE_REF",
+            "pipeline-queue:ADD_TASK",
+            "derivation:INITIALIZE_DERIVATION"
+          ]
+        },
+        "embedMs": 31
+      },
+      {
+        "id": "kn2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "expectedOp": "knowledge-note:ADD_LINK",
+        "rank": {
+          "bm25": 15,
+          "emb": 19,
+          "hybrid": 6,
+          "bm25Scoped": 9,
+          "embScoped": 5
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "wbs:SET_OUTCOME",
+            "wbs:REORDER",
+            "wbs:REMOVE_NOTE",
+            "knowledge-note:ARCHIVE_NOTE",
+            "tension:CREATE_TENSION"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:SET_PROVENANCE",
+            "derivation:ADD_SIGNAL"
+          ]
+        },
+        "embedMs": 60
+      },
+      {
+        "id": "kn2-07",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "expectedOp": "knowledge-note:UPDATE_LINK_TYPE",
+        "rank": {
+          "bm25": 1,
+          "emb": 7,
+          "hybrid": 4,
+          "bm25Scoped": 1,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:ADD_LINK",
+            "project:LINK_WBS",
+            "knowledge-note:SET_NOTE_TYPE"
+          ],
+          "emb": [
+            "project:LINK_WBS",
+            "knowledge-note:ADD_LINK",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "wbs:SET_REFERENCES",
+            "knowledge-note:REMOVE_LINK"
+          ],
+          "hybrid": [
+            "project:LINK_WBS",
+            "knowledge-note:ADD_LINK",
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:REMOVE_TOPIC"
+          ]
+        },
+        "embedMs": 48
+      },
+      {
+        "id": "kn2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "expectedOp": "knowledge-note:REMOVE_LINK",
+        "rank": {
+          "bm25": 19,
+          "emb": 2,
+          "hybrid": 2,
+          "bm25Scoped": 10,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "tension:DISSOLVE_TENSION",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL"
+          ],
+          "emb": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "knowledge-note:REMOVE_LINK",
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "project:REMOVE_KNOWLEDGE_REF",
+            "moc:REMOVE_CHILD_MOC"
+          ],
+          "hybrid": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "health-report:GENERATE_REPORT"
+          ]
+        },
+        "embedMs": 45
+      },
+      {
+        "id": "kn2-09",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:REMOVE_TOPIC",
+            "knowledge-note:ADD_TOPIC",
+            "knowledge-note:REMOVE_LINK",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "moc:REMOVE_TENSION"
+          ],
+          "emb": [
+            "knowledge-note:REMOVE_TOPIC",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "moc:REMOVE_OPEN_QUESTION",
+            "project:REMOVE_KNOWLEDGE_REF",
+            "moc:REMOVE_CORE_IDEA"
+          ],
+          "hybrid": [
+            "knowledge-note:REMOVE_TOPIC",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "knowledge-note:REMOVE_LINK",
+            "moc:REMOVE_OPEN_QUESTION",
+            "moc:REMOVE_CORE_IDEA"
+          ]
+        },
+        "embedMs": 20
+      },
+      {
+        "id": "kn2-10",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "knowledge-note:SET_METADATA_FIELD",
+        "rank": {
+          "bm25": 14,
+          "emb": 25,
+          "hybrid": 7,
+          "bm25Scoped": 6,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 7,
+        "top5": {
+          "bm25": [
+            "tension:DISSOLVE_TENSION",
+            "derivation:ADD_RESEED_ENTRY",
+            "moc:SET_METADATA_FIELD",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL"
+          ],
+          "emb": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "source:RECORD_EXTRACTION_STATS",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "pipeline-queue:FAIL_TASK",
+            "pipeline-queue:UNBLOCK_TASK"
+          ],
+          "hybrid": [
+            "health-report:GENERATE_REPORT",
+            "pipeline-queue:ADVANCE_PHASE",
+            "moc:UPDATE_DESCRIPTION",
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:SET_DESCRIPTION"
+          ]
+        },
+        "embedMs": 59
+      },
+      {
+        "id": "kn2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "expectedOp": "knowledge-note:SET_METADATA_LIST_FIELD",
+        "rank": {
+          "bm25": 13,
+          "emb": 31,
+          "hybrid": 15,
+          "bm25Scoped": 5,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 5,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_NOTE_TYPE",
+            "project:SET_OWNER",
+            "project:SET_REFERENCES"
+          ],
+          "emb": [
+            "wbs:ADD_DEPENDENCIES",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "wbs:REMOVE_DEPENDENCIES",
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "pipeline-queue:ADVANCE_PHASE"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_DESCRIPTION",
+            "wbs:SET_OUTCOME",
+            "wbs:SET_OWNER",
+            "project:SET_DELIVERABLE_STATUS",
+            "derivation:INITIALIZE_DERIVATION"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "kn2-12",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:APPROVE_NOTE",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL"
+          ],
+          "emb": [
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:APPROVE_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "wbs:ADD_NOTE",
+            "observation:PROMOTE_OBSERVATION"
+          ],
+          "hybrid": [
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:APPROVE_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "derivation:ADD_SIGNAL",
+            "health-report:ADD_CHECK"
+          ]
+        },
+        "embedMs": 20
+      },
+      {
+        "id": "kn2-13",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "knowledge-note:APPROVE_NOTE",
+        "rank": {
+          "bm25": 2,
+          "emb": 4,
+          "hybrid": 2,
+          "bm25Scoped": 2,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:APPROVE_NOTE",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY"
+          ],
+          "emb": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "source:INGEST_SOURCE",
+            "knowledge-note:SET_PROVENANCE",
+            "knowledge-note:APPROVE_NOTE",
+            "project:ADD_KNOWLEDGE_REF"
+          ],
+          "hybrid": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:APPROVE_NOTE",
+            "knowledge-note:SET_PROVENANCE",
+            "knowledge-note:SET_METADATA_FIELD",
+            "derivation:ADD_RESEED_ENTRY"
+          ]
+        },
+        "embedMs": 31
+      },
+      {
+        "id": "kn2-14",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "knowledge-note:RESTORE_NOTE",
+        "rank": {
+          "bm25": 24,
+          "emb": 1,
+          "hybrid": 2,
+          "bm25Scoped": 18,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "knowledge-note:RESTORE_NOTE",
+            "derivation:ADD_RESEED_ENTRY",
+            "wbs:REORDER",
+            "knowledge-note:ARCHIVE_NOTE",
+            "project:REMOVE_KNOWLEDGE_REF"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "knowledge-note:RESTORE_NOTE",
+            "knowledge-note:ARCHIVE_NOTE",
+            "moc:REORDER_CORE_IDEAS",
+            "derivation:INITIALIZE_DERIVATION"
+          ]
+        },
+        "embedMs": 44
+      },
+      {
+        "id": "kn2-15",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "knowledge-note:ARCHIVE_NOTE",
+        "rank": {
+          "bm25": 1,
+          "emb": 5,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "observation:ARCHIVE_OBSERVATION",
+            "knowledge-note:SET_CONTENT",
+            "wbs:ADD_NOTE",
+            "knowledge-note:SET_NOTE_TYPE"
+          ],
+          "emb": [
+            "knowledge-note:RESTORE_NOTE",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_CORE_IDEA",
+            "moc:UPDATE_DESCRIPTION",
+            "knowledge-note:ARCHIVE_NOTE"
+          ],
+          "hybrid": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:SET_CONTENT",
+            "knowledge-note:RESTORE_NOTE",
+            "wbs:ADD_NOTE",
+            "moc:ADD_CORE_IDEA"
+          ]
+        },
+        "embedMs": 36
+      },
+      {
+        "id": "moc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "moc:CREATE_MOC",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "moc:CREATE_MOC",
+            "wbs:CREATE_GOAL",
+            "vault-config:INITIALIZE_CONFIG",
+            "moc:UPDATE_ORIENTATION",
+            "project:CREATE_PROJECT"
+          ],
+          "emb": [
+            "moc:CREATE_MOC",
+            "observation:CREATE_OBSERVATION",
+            "moc:UPDATE_ORIENTATION",
+            "moc:ADD_CORE_IDEA",
+            "moc:ADD_TENSION"
+          ],
+          "hybrid": [
+            "moc:CREATE_MOC",
+            "moc:UPDATE_ORIENTATION",
+            "observation:CREATE_OBSERVATION",
+            "health-report:GENERATE_REPORT",
+            "moc:ADD_CORE_IDEA"
+          ]
+        },
+        "embedMs": 88
+      },
+      {
+        "id": "moc2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "expectedOp": "moc:UPDATE_ORIENTATION",
+        "rank": {
+          "bm25": 32,
+          "emb": 29,
+          "hybrid": 28,
+          "bm25Scoped": 4,
+          "embScoped": 6
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:APPROVE_NOTE",
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "wbs:ADD_NOTE",
+            "knowledge-note:SET_NOTE_TYPE"
+          ],
+          "emb": [
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:APPROVE_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "moc:UPDATE_CORE_IDEA",
+            "wbs:ADD_NOTE"
+          ],
+          "hybrid": [
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:APPROVE_NOTE",
+            "wbs:ADD_NOTE",
+            "knowledge-note:ADD_TOPIC"
+          ]
+        },
+        "embedMs": 60
+      },
+      {
+        "id": "moc2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "moc:UPDATE_DESCRIPTION",
+        "rank": {
+          "bm25": 2,
+          "emb": 5,
+          "hybrid": 3,
+          "bm25Scoped": 1,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "wbs:UPDATE_GOAL_DESCRIPTION",
+            "moc:UPDATE_DESCRIPTION",
+            "knowledge-note:SET_DESCRIPTION",
+            "project:UPDATE_PROJECT_INFO",
+            "project:UPDATE_DELIVERABLE"
+          ],
+          "emb": [
+            "knowledge-note:SET_DESCRIPTION",
+            "wbs:ADD_NOTE",
+            "moc:UPDATE_CORE_IDEA",
+            "health-report:ADD_CHECK",
+            "moc:UPDATE_DESCRIPTION"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_DESCRIPTION",
+            "wbs:UPDATE_GOAL_DESCRIPTION",
+            "moc:UPDATE_DESCRIPTION",
+            "wbs:ADD_NOTE",
+            "health-report:ADD_CHECK"
+          ]
+        },
+        "embedMs": 40
+      },
+      {
+        "id": "moc2-04",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "moc:ADD_CORE_IDEA",
+        "rank": {
+          "bm25": 2,
+          "emb": 6,
+          "hybrid": 3,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "moc:REMOVE_CORE_IDEA",
+            "moc:ADD_CORE_IDEA",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_CORE_IDEA",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD"
+          ],
+          "emb": [
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "moc:REMOVE_CORE_IDEA",
+            "pipeline-queue:BLOCK_TASK",
+            "wbs:REMOVE_DEPENDENCIES",
+            "pipeline-queue:FAIL_TASK"
+          ],
+          "hybrid": [
+            "moc:REMOVE_CORE_IDEA",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "moc:ADD_CORE_IDEA",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:FAIL_TASK"
+          ]
+        },
+        "embedMs": 60
+      },
+      {
+        "id": "moc2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "moc:UPDATE_CORE_IDEA",
+        "rank": {
+          "bm25": 31,
+          "emb": 12,
+          "hybrid": 15,
+          "bm25Scoped": 5,
+          "embScoped": 4
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "derivation:ADD_RESEED_ENTRY",
+            "pipeline-queue:ASSIGN_TASK",
+            "derivation:ADD_SIGNAL",
+            "derivation:INITIALIZE_DERIVATION"
+          ],
+          "emb": [
+            "source:INGEST_SOURCE",
+            "moc:REORDER_CORE_IDEAS",
+            "knowledge-note:ADD_TOPIC",
+            "source:RECORD_EXTRACTION_STATS",
+            "knowledge-note:SET_METADATA_LIST_FIELD"
+          ],
+          "hybrid": [
+            "health-report:GENERATE_REPORT",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:SET_METADATA_FIELD",
+            "derivation:ADD_RESEED_ENTRY",
+            "knowledge-note:ADD_TOPIC"
+          ]
+        },
+        "embedMs": 61
+      },
+      {
+        "id": "moc2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "moc:REMOVE_CORE_IDEA",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "moc:REMOVE_CORE_IDEA",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_CORE_IDEA",
+            "moc:ADD_CORE_IDEA",
+            "knowledge-note:REMOVE_LINK"
+          ],
+          "emb": [
+            "moc:REMOVE_CORE_IDEA",
+            "moc:UPDATE_CORE_IDEA",
+            "moc:ADD_CORE_IDEA",
+            "wbs:REMOVE_NOTE",
+            "moc:REORDER_CORE_IDEAS"
+          ],
+          "hybrid": [
+            "moc:REMOVE_CORE_IDEA",
+            "moc:UPDATE_CORE_IDEA",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:ADD_CORE_IDEA",
+            "wbs:REMOVE_NOTE"
+          ]
+        },
+        "embedMs": 32
+      },
+      {
+        "id": "moc2-07",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "moc:REORDER_CORE_IDEAS",
+        "rank": {
+          "bm25": 31,
+          "emb": 1,
+          "hybrid": 5,
+          "bm25Scoped": 7,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "moc:REORDER_CORE_IDEAS",
+            "wbs:ADD_DEPENDENCIES",
+            "moc:ADD_CORE_IDEA",
+            "pipeline-queue:ADVANCE_PHASE",
+            "derivation:ADD_SIGNAL"
+          ],
+          "hybrid": [
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "knowledge-note:SET_PROVENANCE",
+            "moc:REORDER_CORE_IDEAS"
+          ]
+        },
+        "embedMs": 39
+      },
+      {
+        "id": "moc2-08",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "moc:ADD_OPEN_QUESTION",
+        "rank": {
+          "bm25": 1,
+          "emb": 2,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "moc:ADD_OPEN_QUESTION",
+            "moc:REMOVE_OPEN_QUESTION",
+            "wbs:ADD_DEPENDENCIES",
+            "tension:ADD_INVOLVED_REF",
+            "moc:ADD_TENSION"
+          ],
+          "emb": [
+            "health-report:ADD_CHECK",
+            "moc:ADD_OPEN_QUESTION",
+            "health-report:GENERATE_REPORT",
+            "moc:ADD_TENSION",
+            "knowledge-note:ADD_TOPIC"
+          ],
+          "hybrid": [
+            "moc:ADD_OPEN_QUESTION",
+            "moc:ADD_TENSION",
+            "health-report:ADD_CHECK",
+            "moc:REMOVE_OPEN_QUESTION",
+            "project:ADD_KNOWLEDGE_REF"
+          ]
+        },
+        "embedMs": 45
+      },
+      {
+        "id": "moc2-09",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "expectedOp": "moc:ADD_CHILD_MOC",
+        "rank": {
+          "bm25": 36,
+          "emb": 2,
+          "hybrid": 7,
+          "bm25Scoped": 12,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "moc:CREATE_MOC",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "moc:REMOVE_CHILD_MOC",
+            "moc:ADD_CHILD_MOC",
+            "moc:ADD_CORE_IDEA",
+            "moc:REMOVE_CORE_IDEA",
+            "project:LINK_WBS"
+          ],
+          "hybrid": [
+            "moc:CREATE_MOC",
+            "moc:ADD_CORE_IDEA",
+            "moc:REMOVE_CORE_IDEA",
+            "moc:REMOVE_CHILD_MOC",
+            "moc:UPDATE_DESCRIPTION"
+          ]
+        },
+        "embedMs": 32
+      },
+      {
+        "id": "moc2-10",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "moc:REMOVE_TENSION",
+        "rank": {
+          "bm25": 34,
+          "emb": 3,
+          "hybrid": 5,
+          "bm25Scoped": 9,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "moc:CREATE_MOC",
+            "source:RECORD_EXTRACTION_STATS",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY"
+          ],
+          "emb": [
+            "source:RECORD_EXTRACTION_STATS",
+            "moc:REMOVE_CORE_IDEA",
+            "moc:REMOVE_TENSION",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "moc:REMOVE_OPEN_QUESTION"
+          ],
+          "hybrid": [
+            "source:RECORD_EXTRACTION_STATS",
+            "derivation:ADD_SIGNAL",
+            "health-report:GENERATE_REPORT",
+            "moc:REMOVE_CORE_IDEA",
+            "moc:REMOVE_TENSION"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "moc2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "moc:SET_METADATA_FIELD",
+        "rank": {
+          "bm25": 2,
+          "emb": 2,
+          "hybrid": 2,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "moc:SET_METADATA_FIELD",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_NOTE_TYPE"
+          ],
+          "emb": [
+            "derivation:INITIALIZE_DERIVATION",
+            "moc:SET_METADATA_FIELD",
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "knowledge-note:SET_METADATA_FIELD"
+          ],
+          "hybrid": [
+            "derivation:INITIALIZE_DERIVATION",
+            "moc:SET_METADATA_FIELD",
+            "knowledge-note:SET_NOTE_TYPE",
+            "knowledge-note:SET_METADATA_FIELD",
+            "source:SET_SOURCE_STATUS"
+          ]
+        },
+        "embedMs": 25
+      },
+      {
+        "id": "src2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "source:INGEST_SOURCE",
+        "rank": {
+          "bm25": 1,
+          "emb": 18,
+          "hybrid": 2,
+          "bm25Scoped": 1,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "source:INGEST_SOURCE",
+            "research-claim:CREATE_CLAIM",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "knowledge-note:SET_CONTENT"
+          ],
+          "emb": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "moc:ADD_TENSION",
+            "source:RECORD_EXTRACTION_STATS",
+            "moc:REMOVE_TENSION",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD"
+          ],
+          "hybrid": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "source:INGEST_SOURCE",
+            "moc:CREATE_MOC",
+            "tension:CREATE_TENSION",
+            "research-claim:ADD_RESEARCH_CONNECTION"
+          ]
+        },
+        "embedMs": 137
+      },
+      {
+        "id": "src2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "source:INGEST_SOURCE",
+        "rank": {
+          "bm25": 70,
+          "emb": 89,
+          "hybrid": 91,
+          "bm25Scoped": 1,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 11,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:FAIL_TASK",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:ASSIGN_TASK"
+          ],
+          "emb": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "knowledge-note:ARCHIVE_NOTE",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:ASSIGN_TASK",
+            "vault-config:UPDATE_PIPELINE_CONFIG"
+          ],
+          "hybrid": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:ASSIGN_TASK",
+            "pipeline-queue:COMPLETE_TASK"
+          ]
+        },
+        "embedMs": 120
+      },
+      {
+        "id": "src2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "source:SET_SOURCE_STATUS",
+        "rank": {
+          "bm25": 2,
+          "emb": 2,
+          "hybrid": 2,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "source:SET_SOURCE_STATUS",
+            "source:INGEST_SOURCE",
+            "knowledge-note:SET_PROVENANCE",
+            "observation:IMPLEMENT_OBSERVATION"
+          ],
+          "emb": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "source:SET_SOURCE_STATUS",
+            "source:RECORD_EXTRACTION_STATS",
+            "source:INGEST_SOURCE",
+            "vault-config:ADD_EXTRACTION_CATEGORY"
+          ],
+          "hybrid": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "source:SET_SOURCE_STATUS",
+            "source:INGEST_SOURCE",
+            "knowledge-note:SET_PROVENANCE",
+            "source:RECORD_EXTRACTION_STATS"
+          ]
+        },
+        "embedMs": 23
+      },
+      {
+        "id": "src2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "source:SET_SOURCE_STATUS",
+        "rank": {
+          "bm25": 73,
+          "emb": 15,
+          "hybrid": 31,
+          "bm25Scoped": 4,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:CREATE_CLAIM",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "research-claim:REMOVE_RESEARCH_CONNECTION"
+          ],
+          "emb": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:CREATE_CLAIM",
+            "source:RECORD_EXTRACTION_STATS"
+          ],
+          "hybrid": [
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "research-claim:CREATE_CLAIM",
+            "source:RECORD_EXTRACTION_STATS"
+          ]
+        },
+        "embedMs": 36
+      },
+      {
+        "id": "src2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "source:ADD_EXTRACTED_CLAIM",
+        "rank": {
+          "bm25": 1,
+          "emb": 2,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "research-claim:CREATE_CLAIM",
+            "research-claim:REMOVE_RESEARCH_CONNECTION"
+          ],
+          "emb": [
+            "source:RECORD_EXTRACTION_STATS",
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "vault-config:ADD_EXTRACTION_CATEGORY"
+          ],
+          "hybrid": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "source:RECORD_EXTRACTION_STATS",
+            "research-claim:CREATE_CLAIM"
+          ]
+        },
+        "embedMs": 45
+      },
+      {
+        "id": "src2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "source:RECORD_EXTRACTION_STATS",
+        "rank": {
+          "bm25": 6,
+          "emb": 1,
+          "hybrid": 3,
+          "bm25Scoped": 2,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:CREATE_CLAIM",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "research-claim:REMOVE_RESEARCH_CONNECTION"
+          ],
+          "emb": [
+            "source:RECORD_EXTRACTION_STATS",
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "wbs:SET_OUTCOME"
+          ],
+          "hybrid": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "source:RECORD_EXTRACTION_STATS",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "research-claim:CREATE_CLAIM"
+          ]
+        },
+        "embedMs": 39
+      },
+      {
+        "id": "prj2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "project:CREATE_PROJECT",
+        "rank": {
+          "bm25": 1,
+          "emb": 18,
+          "hybrid": 4,
+          "bm25Scoped": 1,
+          "embScoped": 8
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "project:CREATE_PROJECT",
+            "wbs:SET_PROJECT_REF",
+            "derivation:ADD_RESEED_ENTRY",
+            "project:SET_PROJECT_STATUS",
+            "project:UPDATE_PROJECT_INFO"
+          ],
+          "emb": [
+            "project:UPDATE_DELIVERABLE",
+            "project:UPDATE_PROJECT_INFO",
+            "moc:UPDATE_CORE_IDEA",
+            "wbs:UPDATE_GOAL_DESCRIPTION",
+            "project:ADD_KNOWLEDGE_REF"
+          ],
+          "hybrid": [
+            "project:UPDATE_PROJECT_INFO",
+            "project:SET_PROJECT_STATUS",
+            "wbs:SET_PROJECT_REF",
+            "project:CREATE_PROJECT",
+            "moc:CREATE_MOC"
+          ]
+        },
+        "embedMs": 55
+      },
+      {
+        "id": "prj2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "project:UPDATE_PROJECT_INFO",
+        "rank": {
+          "bm25": 51,
+          "emb": 71,
+          "hybrid": 69,
+          "bm25Scoped": 2,
+          "embScoped": 7
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 6,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_CONTENT",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "vault-config:UPDATE_VOCABULARY",
+            "moc:REMOVE_OPEN_QUESTION",
+            "moc:REORDER_CORE_IDEAS",
+            "wbs:UPDATE_GOAL_DESCRIPTION",
+            "moc:UPDATE_DESCRIPTION"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:SET_CONTENT"
+          ]
+        },
+        "embedMs": 48
+      },
+      {
+        "id": "prj2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "project:SET_PROJECT_STATUS",
+        "rank": {
+          "bm25": 52,
+          "emb": 34,
+          "hybrid": 45,
+          "bm25Scoped": 3,
+          "embScoped": 6
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "wbs:REORDER",
+            "pipeline-queue:COMPLETE_TASK",
+            "project:SET_DELIVERABLE_STATUS",
+            "pipeline-queue:ADVANCE_PHASE",
+            "source:INGEST_SOURCE"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "health-report:GENERATE_REPORT",
+            "knowledge-note:PATCH_CONTENT",
+            "derivation:INITIALIZE_DERIVATION",
+            "health-report:ADD_CHECK"
+          ]
+        },
+        "embedMs": 31
+      },
+      {
+        "id": "prj2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "expectedOp": "project:SET_OWNER",
+        "rank": {
+          "bm25": 53,
+          "emb": 4,
+          "hybrid": 10,
+          "bm25Scoped": 4,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "wbs:SET_OWNER",
+            "moc:UPDATE_CORE_IDEA",
+            "wbs:REORDER",
+            "project:SET_OWNER",
+            "pipeline-queue:ADVANCE_PHASE"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:INITIALIZE_DERIVATION",
+            "moc:UPDATE_CORE_IDEA",
+            "moc:ADD_CORE_IDEA",
+            "moc:REORDER_CORE_IDEAS"
+          ]
+        },
+        "embedMs": 31
+      },
+      {
+        "id": "prj2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "project:SET_TARGET_DATE",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "project:SET_TARGET_DATE",
+            "knowledge-note:ADD_LINK",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "pipeline-queue:ADD_TASK",
+            "knowledge-note:SET_TITLE"
+          ],
+          "emb": [
+            "project:SET_TARGET_DATE",
+            "wbs:SET_GOAL_STATUS",
+            "project:SET_DELIVERABLE_STATUS",
+            "wbs:ASSIGN_GOAL",
+            "project:SET_PROJECT_STATUS"
+          ],
+          "hybrid": [
+            "project:SET_TARGET_DATE",
+            "project:SET_DELIVERABLE_STATUS",
+            "wbs:SET_GOAL_STATUS",
+            "project:SET_PROJECT_STATUS",
+            "wbs:SET_OUTCOME"
+          ]
+        },
+        "embedMs": 25
+      },
+      {
+        "id": "prj2-07",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "project:ADD_MEMBER",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "project:ADD_MEMBER",
+            "project:REMOVE_MEMBER",
+            "project:UPDATE_MEMBER",
+            "wbs:ADD_DEPENDENCIES",
+            "moc:ADD_OPEN_QUESTION"
+          ],
+          "emb": [
+            "project:ADD_MEMBER",
+            "project:UPDATE_MEMBER",
+            "knowledge-note:SET_METADATA_FIELD",
+            "wbs:ADD_DEPENDENCIES",
+            "moc:SET_METADATA_FIELD"
+          ],
+          "hybrid": [
+            "project:ADD_MEMBER",
+            "project:UPDATE_MEMBER",
+            "wbs:ADD_DEPENDENCIES",
+            "project:REMOVE_MEMBER",
+            "pipeline-queue:ADD_TASK"
+          ]
+        },
+        "embedMs": 32
+      },
+      {
+        "id": "prj2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "project:ADD_MEMBER",
+        "rank": {
+          "bm25": 56,
+          "emb": 15,
+          "hybrid": 20,
+          "bm25Scoped": 7,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 4,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:ASSIGN_TASK",
+            "pipeline-queue:ADVANCE_PHASE",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:BLOCK_TASK"
+          ],
+          "hybrid": [
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "derivation:INITIALIZE_DERIVATION",
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:ASSIGN_TASK",
+            "derivation:ADD_RESEED_ENTRY"
+          ]
+        },
+        "embedMs": 56
+      },
+      {
+        "id": "prj2-09",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "project:UPDATE_MEMBER",
+        "rank": {
+          "bm25": 57,
+          "emb": 2,
+          "hybrid": 15,
+          "bm25Scoped": 8,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "project:UPDATE_MEMBER",
+            "moc:SET_METADATA_FIELD",
+            "knowledge-note:SET_METADATA_FIELD",
+            "wbs:REORDER"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_METADATA_FIELD",
+            "derivation:INITIALIZE_DERIVATION",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "moc:REORDER_CORE_IDEAS"
+          ]
+        },
+        "embedMs": 28
+      },
+      {
+        "id": "prj2-10",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "project:REMOVE_MEMBER",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "project:REMOVE_MEMBER",
+            "project:ADD_MEMBER",
+            "project:UPDATE_MEMBER",
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:REMOVE_TOPIC"
+          ],
+          "emb": [
+            "project:REMOVE_MEMBER",
+            "moc:REMOVE_CORE_IDEA",
+            "project:REMOVE_DELIVERABLE",
+            "moc:REMOVE_CHILD_MOC",
+            "wbs:REMOVE_NOTE"
+          ],
+          "hybrid": [
+            "project:REMOVE_MEMBER",
+            "project:REMOVE_DELIVERABLE",
+            "moc:REMOVE_CORE_IDEA",
+            "project:UPDATE_MEMBER",
+            "wbs:REMOVE_NOTE"
+          ]
+        },
+        "embedMs": 24
+      },
+      {
+        "id": "prj2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "project:ADD_DELIVERABLE",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "project:ADD_DELIVERABLE",
+            "project:REMOVE_DELIVERABLE",
+            "project:SET_DELIVERABLE_STATUS",
+            "project:UPDATE_DELIVERABLE",
+            "wbs:ADD_DEPENDENCIES"
+          ],
+          "emb": [
+            "project:ADD_DELIVERABLE",
+            "project:UPDATE_DELIVERABLE",
+            "project:SET_DELIVERABLE_STATUS",
+            "project:REMOVE_DELIVERABLE",
+            "moc:ADD_OPEN_QUESTION"
+          ],
+          "hybrid": [
+            "project:ADD_DELIVERABLE",
+            "project:UPDATE_DELIVERABLE",
+            "project:REMOVE_DELIVERABLE",
+            "project:SET_DELIVERABLE_STATUS",
+            "moc:ADD_OPEN_QUESTION"
+          ]
+        },
+        "embedMs": 36
+      },
+      {
+        "id": "prj2-12",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "project:SET_DELIVERABLE_STATUS",
+        "rank": {
+          "bm25": 61,
+          "emb": 48,
+          "hybrid": 70,
+          "bm25Scoped": 12,
+          "embScoped": 11
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 7,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "wbs:REORDER",
+            "moc:REORDER_CORE_IDEAS",
+            "derivation:ADD_RESEED_ENTRY",
+            "wbs:UPDATE_GOAL_DESCRIPTION",
+            "wbs:REMOVE_DEPENDENCIES"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "health-report:GENERATE_REPORT",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_CORE_IDEA"
+          ]
+        },
+        "embedMs": 31
+      },
+      {
+        "id": "prj2-13",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "expectedOp": "project:REMOVE_DELIVERABLE",
+        "rank": {
+          "bm25": 63,
+          "emb": 2,
+          "hybrid": 9,
+          "bm25Scoped": 13,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "tension:DISSOLVE_TENSION",
+            "derivation:ADD_RESEED_ENTRY",
+            "health-report:ADD_CHECK",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "derivation:INITIALIZE_DERIVATION"
+          ],
+          "emb": [
+            "moc:REMOVE_CHILD_MOC",
+            "project:REMOVE_DELIVERABLE",
+            "project:REMOVE_MEMBER",
+            "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+            "wbs:REMOVE_DEPENDENCIES"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:REMOVE_TOPIC",
+            "moc:REMOVE_CHILD_MOC",
+            "derivation:ADD_RESEED_ENTRY"
+          ]
+        },
+        "embedMs": 63
+      },
+      {
+        "id": "prj2-14",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "project:UPDATE_DELIVERABLE",
+        "rank": {
+          "bm25": 5,
+          "emb": 3,
+          "hybrid": 2,
+          "bm25Scoped": 4,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "project:REMOVE_DELIVERABLE",
+            "project:SET_DELIVERABLE_STATUS",
+            "project:ADD_DELIVERABLE",
+            "project:UPDATE_DELIVERABLE"
+          ],
+          "emb": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "project:LINK_WBS",
+            "project:UPDATE_DELIVERABLE",
+            "moc:REMOVE_CHILD_MOC",
+            "knowledge-note:REMOVE_LINK"
+          ],
+          "hybrid": [
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "project:UPDATE_DELIVERABLE",
+            "project:LINK_WBS",
+            "knowledge-note:REMOVE_LINK",
+            "project:ADD_DELIVERABLE"
+          ]
+        },
+        "embedMs": 72
+      },
+      {
+        "id": "prj2-15",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "project:SET_REFERENCES",
+        "rank": {
+          "bm25": 65,
+          "emb": 37,
+          "hybrid": 54,
+          "bm25Scoped": 16,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 6,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "source:RECORD_EXTRACTION_STATS",
+            "source:INGEST_SOURCE",
+            "health-report:GENERATE_REPORT",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "knowledge-note:UPDATE_LINK_TYPE"
+          ],
+          "hybrid": [
+            "health-report:GENERATE_REPORT",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:ADD_LINK",
+            "knowledge-note:ARCHIVE_NOTE"
+          ]
+        },
+        "embedMs": 92
+      },
+      {
+        "id": "wbs2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "rank": {
+          "bm25": 3,
+          "emb": 4,
+          "hybrid": 2,
+          "bm25Scoped": 2,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:ADD_TASK",
+            "wbs:DELETE_GOAL",
+            "wbs:CREATE_GOAL",
+            "wbs:UPDATE_GOAL_DESCRIPTION",
+            "wbs:REORDER"
+          ],
+          "emb": [
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:ADVANCE_PHASE",
+            "pipeline-queue:ASSIGN_TASK",
+            "wbs:CREATE_GOAL",
+            "source:INGEST_SOURCE"
+          ],
+          "hybrid": [
+            "pipeline-queue:ADD_TASK",
+            "wbs:CREATE_GOAL",
+            "wbs:UPDATE_GOAL_DESCRIPTION",
+            "source:INGEST_SOURCE",
+            "wbs:REORDER"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "wbs2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "rank": {
+          "bm25": 86,
+          "emb": 54,
+          "hybrid": 82,
+          "bm25Scoped": 1,
+          "embScoped": 10
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "moc:ADD_TENSION",
+            "wbs:ADD_DEPENDENCIES",
+            "pipeline-queue:ADVANCE_PHASE"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:ADD_SIGNAL",
+            "derivation:INITIALIZE_DERIVATION",
+            "health-report:GENERATE_REPORT",
+            "moc:ADD_TENSION"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "wbs2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "rank": {
+          "bm25": 90,
+          "emb": 49,
+          "hybrid": 79,
+          "bm25Scoped": 5,
+          "embScoped": 11
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "observation:IMPLEMENT_OBSERVATION",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:FAIL_TASK",
+            "pipeline-queue:BLOCK_TASK",
+            "tension:RESOLVE_TENSION"
+          ],
+          "emb": [
+            "knowledge-note:RESTORE_NOTE",
+            "moc:REORDER_CORE_IDEAS",
+            "wbs:SET_PROJECT_REF",
+            "derivation:ADD_RESEED_ENTRY",
+            "wbs:UPDATE_GOAL_DESCRIPTION"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "knowledge-note:RESTORE_NOTE",
+            "observation:IMPLEMENT_OBSERVATION",
+            "pipeline-queue:COMPLETE_TASK",
+            "knowledge-note:ADD_LINK"
+          ]
+        },
+        "embedMs": 32
+      },
+      {
+        "id": "wbs2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "rank": {
+          "bm25": 16,
+          "emb": 45,
+          "hybrid": 25,
+          "bm25Scoped": 5,
+          "embScoped": 9
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_NOTE_TYPE",
+            "project:SET_OWNER",
+            "project:SET_REFERENCES"
+          ],
+          "emb": [
+            "vault-config:ADD_EXTRACTION_CATEGORY",
+            "wbs:SET_OUTCOME",
+            "source:RECORD_EXTRACTION_STATS",
+            "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+            "health-report:ADD_CHECK"
+          ],
+          "hybrid": [
+            "wbs:SET_OUTCOME",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "wbs:SET_OWNER",
+            "health-report:ADD_CHECK"
+          ]
+        },
+        "embedMs": 38
+      },
+      {
+        "id": "wbs2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "rank": {
+          "bm25": 90,
+          "emb": 54,
+          "hybrid": 86,
+          "bm25Scoped": 5,
+          "embScoped": 10
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:COMPLETE_TASK",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "knowledge-note:RESTORE_NOTE",
+            "wbs:SET_PROJECT_REF",
+            "moc:REORDER_CORE_IDEAS",
+            "derivation:ADD_RESEED_ENTRY",
+            "health-report:GENERATE_REPORT"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "health-report:GENERATE_REPORT",
+            "knowledge-note:RESTORE_NOTE",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_ORIENTATION"
+          ]
+        },
+        "embedMs": 47
+      },
+      {
+        "id": "wbs2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "wbs:ASSIGN_GOAL",
+        "rank": {
+          "bm25": 2,
+          "emb": 7,
+          "hybrid": 2,
+          "bm25Scoped": 1,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:ASSIGN_TASK",
+            "wbs:ASSIGN_GOAL",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY"
+          ],
+          "emb": [
+            "pipeline-queue:ASSIGN_TASK",
+            "wbs:ADD_DEPENDENCIES",
+            "vault-config:UPDATE_VOCABULARY",
+            "vault-config:UPDATE_DIMENSION",
+            "vault-config:UPDATE_PIPELINE_CONFIG"
+          ],
+          "hybrid": [
+            "pipeline-queue:ASSIGN_TASK",
+            "wbs:ASSIGN_GOAL",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_RESEED_ENTRY",
+            "knowledge-note:SET_METADATA_LIST_FIELD"
+          ]
+        },
+        "embedMs": 22
+      },
+      {
+        "id": "wbs2-07",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "wbs:ASSIGN_GOAL",
+        "rank": {
+          "bm25": 95,
+          "emb": 6,
+          "hybrid": 32,
+          "bm25Scoped": 10,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_NOTE_TYPE",
+            "project:SET_OWNER",
+            "project:SET_REFERENCES"
+          ],
+          "emb": [
+            "wbs:SET_OWNER",
+            "project:SET_OWNER",
+            "wbs:SET_OUTCOME",
+            "project:REMOVE_MEMBER",
+            "moc:REMOVE_OPEN_QUESTION"
+          ],
+          "hybrid": [
+            "project:SET_OWNER",
+            "wbs:SET_OWNER",
+            "wbs:SET_OUTCOME",
+            "wbs:SET_PROJECT_REF",
+            "knowledge-note:SET_DESCRIPTION"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "wbs2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "expectedOp": "wbs:ADD_DEPENDENCIES",
+        "rank": {
+          "bm25": 96,
+          "emb": 10,
+          "hybrid": 39,
+          "bm25Scoped": 11,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 4,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:COMPLETE_TASK",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_NOTE_TYPE",
+            "project:SET_OWNER"
+          ],
+          "emb": [
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "derivation:INITIALIZE_DERIVATION",
+            "moc:SET_METADATA_FIELD",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "wbs:REMOVE_DEPENDENCIES"
+          ],
+          "hybrid": [
+            "wbs:SET_PROJECT_REF",
+            "moc:SET_METADATA_FIELD",
+            "derivation:INITIALIZE_DERIVATION",
+            "pipeline-queue:COMPLETE_TASK",
+            "knowledge-note:SET_METADATA_LIST_FIELD"
+          ]
+        },
+        "embedMs": 52
+      },
+      {
+        "id": "wbs2-09",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "wbs:REMOVE_DEPENDENCIES",
+        "rank": {
+          "bm25": 7,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:REMOVE_TOPIC",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "moc:REMOVE_TENSION",
+            "project:REMOVE_MEMBER"
+          ],
+          "emb": [
+            "wbs:REMOVE_DEPENDENCIES",
+            "project:REMOVE_DELIVERABLE",
+            "project:REMOVE_KNOWLEDGE_REF",
+            "moc:REMOVE_TENSION",
+            "moc:REMOVE_CORE_IDEA"
+          ],
+          "hybrid": [
+            "wbs:REMOVE_DEPENDENCIES",
+            "project:REMOVE_DELIVERABLE",
+            "moc:REMOVE_TENSION",
+            "knowledge-note:REMOVE_LINK",
+            "project:REMOVE_MEMBER"
+          ]
+        },
+        "embedMs": 32
+      },
+      {
+        "id": "wbs2-10",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "wbs:ADD_NOTE",
+        "rank": {
+          "bm25": 3,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_NOTE_TYPE",
+            "wbs:ADD_NOTE",
+            "wbs:DELETE_GOAL",
+            "wbs:SET_GOAL_STATUS"
+          ],
+          "emb": [
+            "wbs:ADD_NOTE",
+            "moc:ADD_OPEN_QUESTION",
+            "knowledge-note:ADD_LINK",
+            "knowledge-note:SET_DESCRIPTION",
+            "moc:ADD_CORE_IDEA"
+          ],
+          "hybrid": [
+            "wbs:ADD_NOTE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:ADD_LINK",
+            "moc:ADD_CORE_IDEA",
+            "moc:ADD_OPEN_QUESTION"
+          ]
+        },
+        "embedMs": 52
+      },
+      {
+        "id": "wbs2-11",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "wbs:DELETE_GOAL",
+        "rank": {
+          "bm25": 88,
+          "emb": 25,
+          "hybrid": 58,
+          "bm25Scoped": 3,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "health-report:ADD_CHECK",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "moc:REMOVE_OPEN_QUESTION",
+            "moc:REMOVE_CHILD_MOC",
+            "moc:REMOVE_CORE_IDEA",
+            "wbs:REMOVE_DEPENDENCIES"
+          ],
+          "hybrid": [
+            "derivation:ADD_SIGNAL",
+            "moc:REMOVE_CORE_IDEA",
+            "moc:REMOVE_OPEN_QUESTION",
+            "moc:REMOVE_CHILD_MOC",
+            "knowledge-note:REMOVE_LINK"
+          ]
+        },
+        "embedMs": 55
+      },
+      {
+        "id": "wbs2-12",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "wbs:REORDER",
+        "rank": {
+          "bm25": 94,
+          "emb": 27,
+          "hybrid": 54,
+          "bm25Scoped": 9,
+          "embScoped": 5
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 3,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION",
+            "knowledge-note:SET_NOTE_TYPE",
+            "project:SET_OWNER",
+            "project:SET_REFERENCES"
+          ],
+          "emb": [
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "knowledge-note:ADD_LINK",
+            "wbs:ADD_DEPENDENCIES",
+            "source:SET_SOURCE_STATUS",
+            "knowledge-note:SET_METADATA_LIST_FIELD"
+          ],
+          "hybrid": [
+            "project:SET_REFERENCES",
+            "wbs:SET_REFERENCES",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "source:SET_SOURCE_STATUS",
+            "knowledge-note:SET_CONTENT"
+          ]
+        },
+        "embedMs": 44
+      },
+      {
+        "id": "wbs2-13",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "wbs:SET_OWNER",
+        "rank": {
+          "bm25": 2,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "project:SET_OWNER",
+            "wbs:SET_OWNER",
+            "project:CREATE_PROJECT",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_DESCRIPTION"
+          ],
+          "emb": [
+            "wbs:SET_OWNER",
+            "project:SET_OWNER",
+            "knowledge-note:SET_PROVENANCE",
+            "wbs:ASSIGN_GOAL",
+            "wbs:SET_REFERENCES"
+          ],
+          "hybrid": [
+            "wbs:SET_OWNER",
+            "project:SET_OWNER",
+            "wbs:SET_REFERENCES",
+            "wbs:SET_PROJECT_REF",
+            "knowledge-note:SET_DESCRIPTION"
+          ]
+        },
+        "embedMs": 31
+      },
+      {
+        "id": "rc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "research-claim:CREATE_CLAIM",
+        "rank": {
+          "bm25": 1,
+          "emb": 2,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "research-claim:CREATE_CLAIM",
+            "source:ADD_EXTRACTED_CLAIM",
+            "knowledge-note:ADD_TOPIC",
+            "knowledge-note:REMOVE_TOPIC",
+            "source:SET_SOURCE_STATUS"
+          ],
+          "emb": [
+            "source:RECORD_EXTRACTION_STATS",
+            "research-claim:CREATE_CLAIM",
+            "source:ADD_EXTRACTED_CLAIM",
+            "moc:ADD_OPEN_QUESTION",
+            "research-claim:REMOVE_RESEARCH_CONNECTION"
+          ],
+          "hybrid": [
+            "research-claim:CREATE_CLAIM",
+            "source:ADD_EXTRACTED_CLAIM",
+            "source:RECORD_EXTRACTION_STATS",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "research-claim:ADD_RESEARCH_CONNECTION"
+          ]
+        },
+        "embedMs": 109
+      },
+      {
+        "id": "rc2-02",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "research-claim:ADD_RESEARCH_CONNECTION",
+        "rank": {
+          "bm25": 67,
+          "emb": 47,
+          "hybrid": 69,
+          "bm25Scoped": 2,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 11,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "wbs:REORDER",
+            "wbs:ADD_DEPENDENCIES",
+            "derivation:ADD_RESEED_ENTRY",
+            "wbs:SET_OUTCOME",
+            "wbs:REMOVE_DEPENDENCIES"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:ADD_SIGNAL",
+            "health-report:ADD_CHECK",
+            "health-report:GENERATE_REPORT",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ]
+        },
+        "embedMs": 60
+      },
+      {
+        "id": "rc2-03",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "research-claim:ADD_RESEARCH_CONNECTION",
+        "rank": {
+          "bm25": 68,
+          "emb": 17,
+          "hybrid": 38,
+          "bm25Scoped": 2,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 9,
+        "top5": {
+          "bm25": [
+            "vault-config:UPDATE_VOCABULARY",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "source:RECORD_EXTRACTION_STATS",
+            "derivation:ADD_SIGNAL",
+            "vault-config:ADD_EXTRACTION_CATEGORY",
+            "vault-config:UPDATE_VOCABULARY",
+            "moc:ADD_TENSION"
+          ],
+          "hybrid": [
+            "vault-config:UPDATE_VOCABULARY",
+            "derivation:ADD_SIGNAL",
+            "health-report:ADD_CHECK",
+            "health-report:GENERATE_REPORT",
+            "knowledge-note:SET_DESCRIPTION"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "rc2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "rank": {
+          "bm25": 5,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 4,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "source:ADD_EXTRACTED_CLAIM",
+            "research-claim:CREATE_CLAIM",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "research-claim:REMOVE_RESEARCH_CONNECTION"
+          ],
+          "emb": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "knowledge-note:REMOVE_LINK",
+            "project:REMOVE_KNOWLEDGE_REF",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "knowledge-note:UPDATE_LINK_TYPE"
+          ],
+          "hybrid": [
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "research-claim:ADD_RESEARCH_CONNECTION",
+            "source:ADD_EXTRACTED_CLAIM",
+            "knowledge-note:REMOVE_LINK",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ]
+        },
+        "embedMs": 43
+      },
+      {
+        "id": "rc2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "research-claim:UPDATE_CLAIM_CONTENT",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "research-claim:CREATE_CLAIM",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "source:ADD_EXTRACTED_CLAIM",
+            "knowledge-note:SET_CONTENT"
+          ],
+          "emb": [
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "source:RECORD_EXTRACTION_STATS",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "moc:UPDATE_DESCRIPTION",
+            "research-claim:CREATE_CLAIM"
+          ],
+          "hybrid": [
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "research-claim:CREATE_CLAIM",
+            "source:ADD_EXTRACTED_CLAIM",
+            "moc:UPDATE_DESCRIPTION",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD"
+          ]
+        },
+        "embedMs": 71
+      },
+      {
+        "id": "rc2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "research-claim:UPDATE_CLAIM_CONTENT",
+        "rank": {
+          "bm25": 69,
+          "emb": 11,
+          "hybrid": 31,
+          "bm25Scoped": 4,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 5,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_CONTENT",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "wbs:REORDER",
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "wbs:REMOVE_DEPENDENCIES",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "moc:REMOVE_TENSION"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "knowledge-note:PATCH_CONTENT",
+            "derivation:ADD_SIGNAL",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "moc:REMOVE_TENSION"
+          ]
+        },
+        "embedMs": 59
+      },
+      {
+        "id": "obs2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "observation:CREATE_OBSERVATION",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "observation:CREATE_OBSERVATION",
+            "observation:ARCHIVE_OBSERVATION",
+            "knowledge-note:SET_PROVENANCE",
+            "observation:IMPLEMENT_OBSERVATION",
+            "observation:PROMOTE_OBSERVATION"
+          ],
+          "emb": [
+            "observation:CREATE_OBSERVATION",
+            "observation:ARCHIVE_OBSERVATION",
+            "observation:PROMOTE_OBSERVATION",
+            "knowledge-note:SET_PROVENANCE",
+            "observation:IMPLEMENT_OBSERVATION"
+          ],
+          "hybrid": [
+            "observation:CREATE_OBSERVATION",
+            "observation:ARCHIVE_OBSERVATION",
+            "knowledge-note:SET_PROVENANCE",
+            "observation:PROMOTE_OBSERVATION",
+            "observation:IMPLEMENT_OBSERVATION"
+          ]
+        },
+        "embedMs": 52
+      },
+      {
+        "id": "obs2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "observation:CREATE_OBSERVATION",
+        "rank": {
+          "bm25": 43,
+          "emb": 76,
+          "hybrid": 55,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 12,
+        "top5": {
+          "bm25": [
+            "knowledge-note:RESTORE_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:ADD_LINK",
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "wbs:ADD_NOTE"
+          ],
+          "emb": [
+            "wbs:ADD_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:APPROVE_NOTE",
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:RESTORE_NOTE"
+          ],
+          "hybrid": [
+            "knowledge-note:REJECT_NOTE",
+            "wbs:ADD_NOTE",
+            "knowledge-note:RESTORE_NOTE",
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "wbs:REMOVE_NOTE"
+          ]
+        },
+        "embedMs": 56
+      },
+      {
+        "id": "obs2-03",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "observation:PROMOTE_OBSERVATION",
+        "rank": {
+          "bm25": 40,
+          "emb": 5,
+          "hybrid": 12,
+          "bm25Scoped": 2,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 4,
+        "top5": {
+          "bm25": [
+            "knowledge-note:SET_PROVENANCE",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "knowledge-note:SET_PROVENANCE",
+            "knowledge-note:RESTORE_NOTE",
+            "derivation:ADD_SIGNAL",
+            "research-claim:UPDATE_CLAIM_CONTENT",
+            "observation:PROMOTE_OBSERVATION"
+          ],
+          "hybrid": [
+            "knowledge-note:SET_PROVENANCE",
+            "derivation:ADD_SIGNAL",
+            "derivation:INITIALIZE_DERIVATION",
+            "health-report:GENERATE_REPORT",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ]
+        },
+        "embedMs": 52
+      },
+      {
+        "id": "obs2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "observation:IMPLEMENT_OBSERVATION",
+        "rank": {
+          "bm25": 41,
+          "emb": 56,
+          "hybrid": 57,
+          "bm25Scoped": 3,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 12,
+        "top5": {
+          "bm25": [
+            "moc:SET_METADATA_FIELD",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "vault-config:UPDATE_DIMENSION",
+            "moc:REORDER_CORE_IDEAS",
+            "pipeline-queue:ADVANCE_PHASE",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_RESEED_ENTRY"
+          ],
+          "hybrid": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:ADD_SIGNAL",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "moc:SET_METADATA_FIELD"
+          ]
+        },
+        "embedMs": 47
+      },
+      {
+        "id": "obs2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "observation:ARCHIVE_OBSERVATION",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "observation:ARCHIVE_OBSERVATION",
+            "observation:IMPLEMENT_OBSERVATION",
+            "observation:PROMOTE_OBSERVATION",
+            "knowledge-note:ARCHIVE_NOTE",
+            "observation:CREATE_OBSERVATION"
+          ],
+          "emb": [
+            "observation:ARCHIVE_OBSERVATION",
+            "observation:CREATE_OBSERVATION",
+            "observation:PROMOTE_OBSERVATION",
+            "observation:IMPLEMENT_OBSERVATION",
+            "knowledge-note:ARCHIVE_NOTE"
+          ],
+          "hybrid": [
+            "observation:ARCHIVE_OBSERVATION",
+            "observation:IMPLEMENT_OBSERVATION",
+            "observation:PROMOTE_OBSERVATION",
+            "observation:CREATE_OBSERVATION",
+            "knowledge-note:ARCHIVE_NOTE"
+          ]
+        },
+        "embedMs": 28
+      },
+      {
+        "id": "ten2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "tension:CREATE_TENSION",
+        "rank": {
+          "bm25": 1,
+          "emb": 2,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "tension:CREATE_TENSION",
+            "tension:ADD_INVOLVED_REF",
+            "knowledge-note:ADD_LINK",
+            "moc:REMOVE_TENSION",
+            "tension:RESOLVE_TENSION"
+          ],
+          "emb": [
+            "knowledge-note:RESTORE_NOTE",
+            "tension:CREATE_TENSION",
+            "tension:ADD_INVOLVED_REF",
+            "tension:RESOLVE_TENSION",
+            "moc:REORDER_CORE_IDEAS"
+          ],
+          "hybrid": [
+            "tension:CREATE_TENSION",
+            "tension:ADD_INVOLVED_REF",
+            "tension:RESOLVE_TENSION",
+            "moc:ADD_TENSION",
+            "moc:REMOVE_TENSION"
+          ]
+        },
+        "embedMs": 84
+      },
+      {
+        "id": "ten2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "tension:RESOLVE_TENSION",
+        "rank": {
+          "bm25": 75,
+          "emb": 84,
+          "hybrid": 95,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 12,
+        "top5": {
+          "bm25": [
+            "moc:SET_METADATA_FIELD",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "wbs:REORDER",
+            "moc:REORDER_CORE_IDEAS",
+            "wbs:REMOVE_DEPENDENCIES",
+            "derivation:ADD_RESEED_ENTRY",
+            "wbs:UPDATE_GOAL_DESCRIPTION"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "moc:REORDER_CORE_IDEAS",
+            "knowledge-note:RESTORE_NOTE",
+            "moc:SET_METADATA_FIELD",
+            "health-report:GENERATE_REPORT"
+          ]
+        },
+        "embedMs": 43
+      },
+      {
+        "id": "ten2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "tension:DISSOLVE_TENSION",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "tension:DISSOLVE_TENSION",
+            "tension:ADD_INVOLVED_REF",
+            "moc:REMOVE_TENSION",
+            "tension:RESOLVE_TENSION",
+            "moc:ADD_TENSION"
+          ],
+          "emb": [
+            "tension:DISSOLVE_TENSION",
+            "tension:CREATE_TENSION",
+            "tension:ADD_INVOLVED_REF",
+            "moc:ADD_TENSION",
+            "moc:REMOVE_TENSION"
+          ],
+          "hybrid": [
+            "tension:DISSOLVE_TENSION",
+            "tension:ADD_INVOLVED_REF",
+            "tension:CREATE_TENSION",
+            "moc:REMOVE_TENSION",
+            "moc:ADD_TENSION"
+          ]
+        },
+        "embedMs": 39
+      },
+      {
+        "id": "ten2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "tension:ADD_INVOLVED_REF",
+        "rank": {
+          "bm25": 13,
+          "emb": 86,
+          "hybrid": 39,
+          "bm25Scoped": 1,
+          "embScoped": 4
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 12,
+        "top5": {
+          "bm25": [
+            "wbs:ADD_NOTE",
+            "knowledge-note:SET_NOTE_TYPE",
+            "wbs:REMOVE_NOTE",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:ADD_TOPIC"
+          ],
+          "emb": [
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "knowledge-note:ARCHIVE_NOTE",
+            "project:SET_PROJECT_STATUS",
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "moc:REMOVE_TENSION"
+          ],
+          "hybrid": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:RESTORE_NOTE",
+            "moc:ADD_CORE_IDEA",
+            "moc:REMOVE_TENSION",
+            "moc:ADD_TENSION"
+          ]
+        },
+        "embedMs": 40
+      },
+      {
+        "id": "pq2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "pipeline-queue:ADD_TASK",
+        "rank": {
+          "bm25": 2,
+          "emb": 2,
+          "hybrid": 2,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:FAIL_TASK"
+          ],
+          "emb": [
+            "vault-config:ADD_EXTRACTION_CATEGORY",
+            "pipeline-queue:ADD_TASK",
+            "source:ADD_EXTRACTED_CLAIM",
+            "source:SET_SOURCE_STATUS",
+            "source:RECORD_EXTRACTION_STATS"
+          ],
+          "hybrid": [
+            "source:ADD_EXTRACTED_CLAIM",
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "vault-config:ADD_EXTRACTION_CATEGORY",
+            "pipeline-queue:ASSIGN_TASK"
+          ]
+        },
+        "embedMs": 39
+      },
+      {
+        "id": "pq2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "pipeline-queue:ASSIGN_TASK",
+        "rank": {
+          "bm25": 44,
+          "emb": 15,
+          "hybrid": 23,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 6,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_CORE_IDEA",
+            "wbs:ADD_NOTE",
+            "knowledge-note:ARCHIVE_NOTE",
+            "source:SET_SOURCE_STATUS"
+          ],
+          "hybrid": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:SET_PROVENANCE",
+            "moc:REORDER_CORE_IDEAS",
+            "moc:UPDATE_CORE_IDEA",
+            "knowledge-note:SET_METADATA_FIELD"
+          ]
+        },
+        "embedMs": 28
+      },
+      {
+        "id": "pq2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "pipeline-queue:UNBLOCK_TASK",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:FAIL_TASK",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:ASSIGN_TASK"
+          ],
+          "emb": [
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:BLOCK_TASK",
+            "wbs:REMOVE_DEPENDENCIES",
+            "project:REMOVE_DELIVERABLE",
+            "wbs:REMOVE_NOTE"
+          ],
+          "hybrid": [
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:FAIL_TASK",
+            "pipeline-queue:ASSIGN_TASK"
+          ]
+        },
+        "embedMs": 24
+      },
+      {
+        "id": "pq2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "pipeline-queue:COMPLETE_TASK",
+        "rank": {
+          "bm25": 47,
+          "emb": 2,
+          "hybrid": 7,
+          "bm25Scoped": 4,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "source:RECORD_EXTRACTION_STATS",
+            "pipeline-queue:ADD_TASK",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL"
+          ],
+          "emb": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "pipeline-queue:COMPLETE_TASK",
+            "vault-config:UPDATE_PIPELINE_CONFIG",
+            "wbs:REMOVE_DEPENDENCIES",
+            "pipeline-queue:UNBLOCK_TASK"
+          ],
+          "hybrid": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "pipeline-queue:ADD_TASK",
+            "source:RECORD_EXTRACTION_STATS",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:INITIALIZE_DERIVATION"
+          ]
+        },
+        "embedMs": 37
+      },
+      {
+        "id": "pq2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "pipeline-queue:FAIL_TASK",
+        "rank": {
+          "bm25": 47,
+          "emb": 7,
+          "hybrid": 12,
+          "bm25Scoped": 5,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 6,
+        "top5": {
+          "bm25": [
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE",
+            "health-report:GENERATE_REPORT"
+          ],
+          "emb": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "knowledge-note:RESTORE_NOTE",
+            "source:SET_SOURCE_STATUS",
+            "observation:ARCHIVE_OBSERVATION"
+          ],
+          "hybrid": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:PATCH_CONTENT",
+            "knowledge-note:RESTORE_NOTE",
+            "moc:UPDATE_ORIENTATION",
+            "health-report:GENERATE_REPORT"
+          ]
+        },
+        "embedMs": 48
+      },
+      {
+        "id": "moc2-12",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "expectedOp": "moc:ADD_TENSION",
+        "rank": {
+          "bm25": 3,
+          "emb": 10,
+          "hybrid": 3,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 5,
+        "top5": {
+          "bm25": [
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "tension:ADD_INVOLVED_REF",
+            "moc:ADD_TENSION",
+            "moc:REMOVE_TENSION",
+            "tension:RESOLVE_TENSION"
+          ],
+          "emb": [
+            "wbs:SET_OWNER",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "project:LINK_WBS",
+            "wbs:ADD_DEPENDENCIES",
+            "wbs:SET_GOAL_STATUS"
+          ],
+          "hybrid": [
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "wbs:ADD_DEPENDENCIES",
+            "moc:ADD_TENSION",
+            "wbs:ADD_NOTE",
+            "derivation:ADD_SIGNAL"
+          ]
+        },
+        "embedMs": 86
+      },
+      {
+        "id": "prj2-16",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "expectedOp": "project:SET_DELIVERABLE_STATUS",
+        "rank": {
+          "bm25": 2,
+          "emb": 2,
+          "hybrid": 2,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "project:REMOVE_DELIVERABLE",
+            "project:SET_DELIVERABLE_STATUS",
+            "project:ADD_DELIVERABLE",
+            "project:UPDATE_DELIVERABLE",
+            "derivation:INITIALIZE_DERIVATION"
+          ],
+          "emb": [
+            "project:REMOVE_DELIVERABLE",
+            "project:SET_DELIVERABLE_STATUS",
+            "research-claim:REMOVE_RESEARCH_CONNECTION",
+            "wbs:REMOVE_DEPENDENCIES",
+            "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+          ],
+          "hybrid": [
+            "project:REMOVE_DELIVERABLE",
+            "project:SET_DELIVERABLE_STATUS",
+            "project:ADD_DELIVERABLE",
+            "project:UPDATE_DELIVERABLE",
+            "derivation:ADD_SIGNAL"
+          ]
+        },
+        "embedMs": 27
+      },
+      {
+        "id": "wbs2-14",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "expectedOp": "wbs:SET_OUTCOME",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "wbs:SET_OUTCOME",
+            "knowledge-note:SET_DESCRIPTION",
+            "wbs:SET_GOAL_STATUS",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:SET_NOTE_TYPE"
+          ],
+          "emb": [
+            "wbs:SET_OUTCOME",
+            "wbs:ADD_DEPENDENCIES",
+            "moc:CREATE_MOC",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "wbs:UPDATE_GOAL_DESCRIPTION"
+          ],
+          "hybrid": [
+            "wbs:SET_OUTCOME",
+            "knowledge-note:SET_DESCRIPTION",
+            "wbs:SET_GOAL_STATUS",
+            "wbs:SET_REFERENCES",
+            "knowledge-note:SET_METADATA_LIST_FIELD"
+          ]
+        },
+        "embedMs": 51
+      },
+      {
+        "id": "pq2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "rank": {
+          "bm25": 1,
+          "emb": 2,
+          "hybrid": 2,
+          "bm25Scoped": 1,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:FAIL_TASK",
+            "derivation:ADD_RESEED_ENTRY"
+          ],
+          "emb": [
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:ADVANCE_PHASE",
+            "wbs:REMOVE_DEPENDENCIES"
+          ],
+          "hybrid": [
+            "pipeline-queue:UNBLOCK_TASK",
+            "pipeline-queue:BLOCK_TASK",
+            "pipeline-queue:COMPLETE_TASK",
+            "pipeline-queue:ADD_TASK",
+            "pipeline-queue:FAIL_TASK"
+          ]
+        },
+        "embedMs": 46
+      },
+      {
+        "id": "vc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "vault-config:TOGGLE_FEATURE",
+        "rank": {
+          "bm25": 1,
+          "emb": 6,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 3
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "vault-config:TOGGLE_FEATURE",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+            "moc:REMOVE_OPEN_QUESTION",
+            "vault-config:UPDATE_VOCABULARY",
+            "moc:UPDATE_CORE_IDEA",
+            "knowledge-note:UPDATE_LINK_TYPE"
+          ],
+          "hybrid": [
+            "vault-config:TOGGLE_FEATURE",
+            "knowledge-note:UPDATE_LINK_TYPE",
+            "knowledge-note:SET_METADATA_LIST_FIELD",
+            "knowledge-note:SET_TITLE",
+            "moc:UPDATE_CORE_IDEA"
+          ]
+        },
+        "embedMs": 24
+      },
+      {
+        "id": "vc2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "rank": {
+          "bm25": 82,
+          "emb": 3,
+          "hybrid": 22,
+          "bm25Scoped": 5,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 2,
+        "top5": {
+          "bm25": [
+            "moc:CREATE_MOC",
+            "moc:SET_METADATA_FIELD",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY"
+          ],
+          "emb": [
+            "moc:REMOVE_CORE_IDEA",
+            "moc:REMOVE_OPEN_QUESTION",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "moc:REMOVE_TENSION",
+            "moc:REORDER_CORE_IDEAS"
+          ],
+          "hybrid": [
+            "derivation:ADD_RESEED_ENTRY",
+            "moc:SET_METADATA_FIELD",
+            "moc:CREATE_MOC",
+            "moc:REMOVE_CORE_IDEA",
+            "moc:REMOVE_OPEN_QUESTION"
+          ]
+        },
+        "embedMs": 36
+      },
+      {
+        "id": "vc2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "vault-config:UPDATE_VOCABULARY",
+        "rank": {
+          "bm25": 1,
+          "emb": 8,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 6,
+        "top5": {
+          "bm25": [
+            "vault-config:UPDATE_VOCABULARY",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:UPDATE_DIMENSION_RATIONALE"
+          ],
+          "emb": [
+            "tension:RESOLVE_TENSION",
+            "tension:DISSOLVE_TENSION",
+            "project:SET_DELIVERABLE_STATUS",
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "knowledge-note:REJECT_NOTE"
+          ],
+          "hybrid": [
+            "vault-config:UPDATE_VOCABULARY",
+            "knowledge-note:SUBMIT_FOR_REVIEW",
+            "derivation:ADD_SIGNAL",
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:SET_DESCRIPTION"
+          ]
+        },
+        "embedMs": 34
+      },
+      {
+        "id": "vc2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "vault-config:ADD_EXTRACTION_CATEGORY",
+        "rank": {
+          "bm25": 84,
+          "emb": 19,
+          "hybrid": 49,
+          "bm25Scoped": 6,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 6,
+        "top5": {
+          "bm25": [
+            "moc:REMOVE_OPEN_QUESTION",
+            "wbs:ADD_NOTE",
+            "knowledge-note:SET_PROVENANCE",
+            "moc:ADD_OPEN_QUESTION",
+            "knowledge-note:APPROVE_NOTE"
+          ],
+          "emb": [
+            "moc:ADD_OPEN_QUESTION",
+            "moc:REMOVE_OPEN_QUESTION",
+            "tension:DISSOLVE_TENSION",
+            "moc:ADD_TENSION",
+            "moc:REMOVE_CORE_IDEA"
+          ],
+          "hybrid": [
+            "moc:REMOVE_OPEN_QUESTION",
+            "moc:ADD_OPEN_QUESTION",
+            "source:INGEST_SOURCE",
+            "health-report:GENERATE_REPORT",
+            "derivation:ADD_SIGNAL"
+          ]
+        },
+        "embedMs": 53
+      },
+      {
+        "id": "vc2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "rank": {
+          "bm25": 81,
+          "emb": 14,
+          "hybrid": 37,
+          "bm25Scoped": 4,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 4,
+        "top5": {
+          "bm25": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "pipeline-queue:ADD_TASK",
+            "derivation:INITIALIZE_DERIVATION",
+            "derivation:ADD_SIGNAL",
+            "derivation:ADD_RESEED_ENTRY"
+          ],
+          "emb": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "wbs:REMOVE_DEPENDENCIES",
+            "moc:REMOVE_CORE_IDEA",
+            "pipeline-queue:COMPLETE_TASK",
+            "wbs:REORDER"
+          ],
+          "hybrid": [
+            "pipeline-queue:ADVANCE_PHASE",
+            "derivation:ADD_RESEED_ENTRY",
+            "derivation:INITIALIZE_DERIVATION",
+            "moc:REMOVE_CORE_IDEA",
+            "pipeline-queue:ADD_TASK"
+          ]
+        },
+        "embedMs": 38
+      },
+      {
+        "id": "der2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "expectedOp": "derivation:ADD_SIGNAL",
+        "rank": {
+          "bm25": 1,
+          "emb": 1,
+          "hybrid": 1,
+          "bm25Scoped": 1,
+          "embScoped": 1
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "derivation:ADD_SIGNAL",
+            "knowledge-note:ADD_LINK",
+            "moc:SET_METADATA_FIELD",
+            "knowledge-note:ADD_TOPIC",
+            "knowledge-note:REMOVE_LINK"
+          ],
+          "emb": [
+            "derivation:ADD_SIGNAL",
+            "moc:ADD_OPEN_QUESTION",
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:ADD_LINK",
+            "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+          ],
+          "hybrid": [
+            "derivation:ADD_SIGNAL",
+            "knowledge-note:ADD_LINK",
+            "knowledge-note:REMOVE_LINK",
+            "moc:ADD_OPEN_QUESTION",
+            "knowledge-note:ADD_TOPIC"
+          ]
+        },
+        "embedMs": 61
+      },
+      {
+        "id": "hr2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "expectedOp": "health-report:ADD_CHECK",
+        "rank": {
+          "bm25": 1,
+          "emb": 5,
+          "hybrid": 2,
+          "bm25Scoped": 1,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": false,
+        "modelRank": 1,
+        "top5": {
+          "bm25": [
+            "health-report:ADD_CHECK",
+            "knowledge-note:ADD_LINK",
+            "knowledge-note:ADD_TOPIC",
+            "knowledge-note:REMOVE_LINK",
+            "knowledge-note:UPDATE_LINK_TYPE"
+          ],
+          "emb": [
+            "health-report:GENERATE_REPORT",
+            "knowledge-note:ADD_LINK",
+            "project:LINK_WBS",
+            "knowledge-note:REMOVE_LINK",
+            "health-report:ADD_CHECK"
+          ],
+          "hybrid": [
+            "knowledge-note:ADD_LINK",
+            "health-report:ADD_CHECK",
+            "knowledge-note:REMOVE_LINK",
+            "health-report:GENERATE_REPORT",
+            "project:LINK_WBS"
+          ]
+        },
+        "embedMs": 62
+      },
+      {
+        "id": "hr2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "expectedOp": "health-report:ADD_CHECK",
+        "rank": {
+          "bm25": 21,
+          "emb": 29,
+          "hybrid": 23,
+          "bm25Scoped": 2,
+          "embScoped": 2
+        },
+        "bm25AllZeroScoped": true,
+        "modelRank": 7,
+        "top5": {
+          "bm25": [
+            "wbs:ADD_NOTE",
+            "knowledge-note:SET_NOTE_TYPE",
+            "wbs:REMOVE_NOTE",
+            "knowledge-note:SET_TITLE",
+            "knowledge-note:ADD_TOPIC"
+          ],
+          "emb": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+            "knowledge-note:RESTORE_NOTE",
+            "observation:PROMOTE_OBSERVATION"
+          ],
+          "hybrid": [
+            "knowledge-note:ARCHIVE_NOTE",
+            "wbs:ADD_NOTE",
+            "knowledge-note:REJECT_NOTE",
+            "knowledge-note:RESTORE_NOTE",
+            "wbs:REMOVE_NOTE"
+          ]
+        },
+        "embedMs": 35
+      }
+    ]
+  }
+}

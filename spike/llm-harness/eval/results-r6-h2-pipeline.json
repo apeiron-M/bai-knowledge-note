@@ -1,0 +1,4480 @@
+{
+  "r6Pipeline:\"webgpu\":{\"sets\":[\"h2\",\"h2na\",\"h2multi\"],\"scoped\":true,\"ops\":{\"format\":\"ops\",\"style\":\"key\",\"desc\":\"own\",\"orders\":1,\"includeNone\":false},\"pick\":\"S2-mean+emb\",\"noAction\":\"none\",\"args\":{\"mode\":\"r6\",\"gate\":\"safe\",\"scoreRefs\":true,\"refAggregate\":\"mean\"}}": {
+    "summary": {
+      "config": {
+        "sets": [
+          "h2",
+          "h2na",
+          "h2multi"
+        ],
+        "scoped": true,
+        "ops": {
+          "format": "ops",
+          "style": "key",
+          "desc": "own",
+          "orders": 1,
+          "includeNone": false
+        },
+        "pick": "S2-mean+emb",
+        "noAction": "none",
+        "args": {
+          "mode": "r6",
+          "gate": "safe",
+          "scoreRefs": true,
+          "refAggregate": "mean"
+        }
+      },
+      "n": 106,
+      "opAcc": "40/91",
+      "opAccGivenIn": "40/91",
+      "opByStyle": {
+        "all": "40/91",
+        "style=natural": "30/46",
+        "natural/easy": "23/31",
+        "style=paraphrase": "10/45",
+        "paraphrase/medium": "8/38",
+        "paraphrase/hard": "2/7",
+        "natural/hard": "1/6",
+        "natural/medium": "6/9"
+      },
+      "argsGivenCorrectOp": {
+        "n": 40,
+        "exact": "15/27",
+        "fieldsMatch": "15/27",
+        "withExtras": 1,
+        "requiredPresent": "11/11",
+        "refExact": "8/12",
+        "zodOk": "40/40",
+        "emptyArgs": 0,
+        "genMedianMs": null,
+        "genP90Ms": null,
+        "refMedianMs": null,
+        "refP90Ms": null,
+        "refCfMedianMs": null,
+        "exactByStyle": {
+          "all": "15/27",
+          "style=natural": "12/21",
+          "natural/easy": "10/15",
+          "natural/medium": "2/5",
+          "style=paraphrase": "3/6",
+          "paraphrase/medium": "2/5",
+          "paraphrase/hard": "1/1",
+          "natural/hard": "0/1"
+        },
+        "refByStyle": {
+          "all": "8/12",
+          "style=paraphrase": "4/5",
+          "paraphrase/hard": "1/1",
+          "style=natural": "4/7",
+          "natural/easy": "3/5",
+          "paraphrase/medium": "3/4",
+          "natural/medium": "1/1",
+          "natural/hard": "0/1"
+        }
+      },
+      "noAction": {
+        "tp": 0,
+        "fn": 8,
+        "fp": 0,
+        "precision": null,
+        "recall": 0
+      },
+      "multi": {
+        "n": 7,
+        "none": 0,
+        "firstPlausible": 5,
+        "firstIsFirst": 2
+      },
+      "latency": {
+        "gate": {
+          "median": 0,
+          "p90": 0
+        },
+        "embed": {
+          "median": 38,
+          "p90": 68
+        },
+        "op": {
+          "median": 1675,
+          "p90": 2552
+        },
+        "args": {
+          "median": 143,
+          "p90": 527
+        },
+        "total": {
+          "median": 1950,
+          "p90": 2740
+        }
+      }
+    },
+    "rows": [
+      {
+        "id": "kn2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "change the title to \"Write-ahead logs make crash recovery boring\"",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": 0.6024014968987359,
+          "knowledge-note:SET_DESCRIPTION": 0.24975058070286016,
+          "knowledge-note:SET_NOTE_TYPE": 0.6220768407147403,
+          "knowledge-note:SET_CONTENT": 0.506933779310945,
+          "knowledge-note:PATCH_CONTENT": 0.41004678930586635,
+          "knowledge-note:SET_METADATA_FIELD": 0.31659167406437994,
+          "knowledge-note:SET_METADATA_LIST_FIELD": 0.21534546591960013,
+          "knowledge-note:SET_PROVENANCE": -0.18597738864847058,
+          "knowledge-note:ADD_LINK": 0.4150189677913205,
+          "knowledge-note:REMOVE_LINK": 0.31351108843888653,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.4065358858694361,
+          "knowledge-note:ADD_TOPIC": 0.40905774976387477,
+          "knowledge-note:REMOVE_TOPIC": 0.2921964630472089,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.2826552211251592,
+          "knowledge-note:APPROVE_NOTE": 0.3742685321828154,
+          "knowledge-note:REJECT_NOTE": 0.27260806147388905,
+          "knowledge-note:ARCHIVE_NOTE": 0.5569375862079253,
+          "knowledge-note:RESTORE_NOTE": -0.26692719774168383
+        },
+        "pick": "knowledge-note:SET_TITLE",
+        "opCorrect": true,
+        "args": {
+          "title": "Write-ahead logs make crash recovery boring"
+        },
+        "argsRaw": "{\"title\": \"Write-ahead logs make crash recovery boring\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 37,
+          "op": 4991,
+          "args": 112,
+          "total": 5139
+        }
+      },
+      {
+        "id": "kn2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the one-liner under the heading should read: Batching fsyncs trades a few milliseconds of latency for an order of magnitude more throughput.",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": 0.04627560597890579,
+          "knowledge-note:SET_DESCRIPTION": -0.09458787425136084,
+          "knowledge-note:SET_NOTE_TYPE": 0.050425812849667295,
+          "knowledge-note:SET_CONTENT": 0.11526562690780029,
+          "knowledge-note:PATCH_CONTENT": 0.11214388318343538,
+          "knowledge-note:SET_METADATA_FIELD": -0.14535620944382965,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.09080914607787749,
+          "knowledge-note:SET_PROVENANCE": -0.7108598507032173,
+          "knowledge-note:ADD_LINK": -0.11766930966427935,
+          "knowledge-note:REMOVE_LINK": -0.8208470257866463,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.09576976917922853,
+          "knowledge-note:ADD_TOPIC": -0.038564779520399384,
+          "knowledge-note:REMOVE_TOPIC": -0.5906950800957487,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.09959288148698975,
+          "knowledge-note:APPROVE_NOTE": 0.11767931906445694,
+          "knowledge-note:REJECT_NOTE": 0.05074704685979725,
+          "knowledge-note:ARCHIVE_NOTE": 0.8623435755257889,
+          "knowledge-note:RESTORE_NOTE": -1.4374286177632212
+        },
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 80,
+          "op": 2597,
+          "args": 0,
+          "total": 2677
+        }
+      },
+      {
+        "id": "kn2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "set the note type to decision",
+        "expectedOp": "knowledge-note:SET_NOTE_TYPE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": 0.19358363171023285,
+          "knowledge-note:SET_DESCRIPTION": 0.20657025794474415,
+          "knowledge-note:SET_NOTE_TYPE": 0.6277866887060028,
+          "knowledge-note:SET_CONTENT": 0.07498116607153715,
+          "knowledge-note:PATCH_CONTENT": 0.2471865496444181,
+          "knowledge-note:SET_METADATA_FIELD": -0.14603419472348378,
+          "knowledge-note:SET_METADATA_LIST_FIELD": 0.02267714550116917,
+          "knowledge-note:SET_PROVENANCE": 0.08435588277252326,
+          "knowledge-note:ADD_LINK": -0.15136177995119238,
+          "knowledge-note:REMOVE_LINK": -0.8987548165869885,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.29274138344032963,
+          "knowledge-note:ADD_TOPIC": 0.013582494849622151,
+          "knowledge-note:REMOVE_TOPIC": -0.5254299513158862,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.5542375770607388,
+          "knowledge-note:APPROVE_NOTE": 0.05135377317994605,
+          "knowledge-note:REJECT_NOTE": -0.11962431859058853,
+          "knowledge-note:ARCHIVE_NOTE": 0.3117121903750282,
+          "knowledge-note:RESTORE_NOTE": -1.0763545621554935
+        },
+        "pick": "knowledge-note:SET_NOTE_TYPE",
+        "opCorrect": true,
+        "args": {
+          "noteType": "decision"
+        },
+        "argsRaw": "{\"noteType\": \"decision\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 21,
+          "op": 2575,
+          "args": 76,
+          "total": 2671
+        }
+      },
+      {
+        "id": "kn2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "wipe what's written here and put this in its place: Compaction debt grows faster than write volume once L0 has more than eight files.",
+        "expectedOp": "knowledge-note:SET_CONTENT",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.2109715071263718,
+          "knowledge-note:SET_DESCRIPTION": -0.12384091976168321,
+          "knowledge-note:SET_NOTE_TYPE": -0.1685296597069783,
+          "knowledge-note:SET_CONTENT": 0.06995466928957983,
+          "knowledge-note:PATCH_CONTENT": -0.1215754750983109,
+          "knowledge-note:SET_METADATA_FIELD": -0.09103283721720667,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.14756897659078838,
+          "knowledge-note:SET_PROVENANCE": -0.6610139968645816,
+          "knowledge-note:ADD_LINK": -0.3563866261191009,
+          "knowledge-note:REMOVE_LINK": -0.049923878534158916,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.1206919894539682,
+          "knowledge-note:ADD_TOPIC": -0.22449416830293956,
+          "knowledge-note:REMOVE_TOPIC": 0.0611323519427327,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.1709759411190388,
+          "knowledge-note:APPROVE_NOTE": -0.011090711307984336,
+          "knowledge-note:REJECT_NOTE": -0.11079425599750081,
+          "knowledge-note:ARCHIVE_NOTE": 0.9580340701298664,
+          "knowledge-note:RESTORE_NOTE": -0.6183133496166966
+        },
+        "pick": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "Compaction debt grows faster than write volume once L0 has more than eight files"
+        },
+        "argsRaw": "{\"comment\": \"Compaction debt grows faster than write volume once L0 has more than eight files\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 68,
+          "op": 2653,
+          "args": 165,
+          "total": 2886
+        }
+      },
+      {
+        "id": "kn2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add the topic \"storage engines\" to this",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.0449700146015104,
+          "knowledge-note:SET_DESCRIPTION": -0.8839262243161121,
+          "knowledge-note:SET_NOTE_TYPE": -0.22573009308343472,
+          "knowledge-note:SET_CONTENT": -0.07358385329784278,
+          "knowledge-note:PATCH_CONTENT": 0.24952189617879839,
+          "knowledge-note:SET_METADATA_FIELD": 0.03447453134005585,
+          "knowledge-note:SET_METADATA_LIST_FIELD": 0.002805675086722914,
+          "knowledge-note:SET_PROVENANCE": -0.5418818957139768,
+          "knowledge-note:ADD_LINK": 0.21890321904337884,
+          "knowledge-note:REMOVE_LINK": -0.9422753780937807,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.22924740683271572,
+          "knowledge-note:ADD_TOPIC": 0.35381648130219645,
+          "knowledge-note:REMOVE_TOPIC": -0.4051138449411307,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.4817722616628115,
+          "knowledge-note:APPROVE_NOTE": -0.04725083545712794,
+          "knowledge-note:REJECT_NOTE": -0.17670046323809885,
+          "knowledge-note:ARCHIVE_NOTE": 0.8655261360602369,
+          "knowledge-note:RESTORE_NOTE": -0.6789720293543327
+        },
+        "pick": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "args": {
+          "name": "storage engines"
+        },
+        "argsRaw": "{\"name\": \"storage engines\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 2517,
+          "args": 113,
+          "total": 2660
+        }
+      },
+      {
+        "id": "kn2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "we're arguing the opposite of \"LSM trees always win on writes\" here, point at it from this one",
+        "expectedOp": "knowledge-note:ADD_LINK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": 0.0470923768200322,
+          "knowledge-note:SET_DESCRIPTION": 0.22577472171329815,
+          "knowledge-note:SET_NOTE_TYPE": 0.2550338935535166,
+          "knowledge-note:SET_CONTENT": 0.1334343942325631,
+          "knowledge-note:PATCH_CONTENT": 0.35748830012705923,
+          "knowledge-note:SET_METADATA_FIELD": 0.1805331225396123,
+          "knowledge-note:SET_METADATA_LIST_FIELD": 0.16199724478403943,
+          "knowledge-note:SET_PROVENANCE": 0.0800941734242262,
+          "knowledge-note:ADD_LINK": 0.14062291704790364,
+          "knowledge-note:REMOVE_LINK": 0.17859085794709983,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.2965604516989382,
+          "knowledge-note:ADD_TOPIC": 0.2556216317305626,
+          "knowledge-note:REMOVE_TOPIC": 0.3077638184834086,
+          "knowledge-note:SUBMIT_FOR_REVIEW": 0.0804813979376604,
+          "knowledge-note:APPROVE_NOTE": 0.3364687256996335,
+          "knowledge-note:REJECT_NOTE": 0.3036106305256254,
+          "knowledge-note:ARCHIVE_NOTE": 1.2599248112195176,
+          "knowledge-note:RESTORE_NOTE": -0.37690908682428725
+        },
+        "pick": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "we're arguing the opposite of"
+        },
+        "argsRaw": "{\"comment\": \"we're arguing the opposite of\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 58,
+          "op": 2461,
+          "args": 138,
+          "total": 2657
+        }
+      },
+      {
+        "id": "kn2-07",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "change the link to \"B-tree page splits\" so it says this supersedes it",
+        "expectedOp": "knowledge-note:UPDATE_LINK_TYPE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.08808000069900856,
+          "knowledge-note:SET_DESCRIPTION": -0.7368904287400135,
+          "knowledge-note:SET_NOTE_TYPE": 0.25288515329877725,
+          "knowledge-note:SET_CONTENT": 0.5486914136732441,
+          "knowledge-note:PATCH_CONTENT": 0.527783787467726,
+          "knowledge-note:SET_METADATA_FIELD": 0.12199041915591557,
+          "knowledge-note:SET_METADATA_LIST_FIELD": 0.11332445918784684,
+          "knowledge-note:SET_PROVENANCE": 0.13462718342545,
+          "knowledge-note:ADD_LINK": -0.008335755596711625,
+          "knowledge-note:REMOVE_LINK": -0.1902348647258263,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.02079126885456284,
+          "knowledge-note:ADD_TOPIC": -0.11087412150625653,
+          "knowledge-note:REMOVE_TOPIC": -0.2930653973065305,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.42766922339781366,
+          "knowledge-note:APPROVE_NOTE": 0.1410030684833814,
+          "knowledge-note:REJECT_NOTE": 0.15508182253726943,
+          "knowledge-note:ARCHIVE_NOTE": 1.0514066887159332,
+          "knowledge-note:RESTORE_NOTE": -0.43206292849611616
+        },
+        "pick": "knowledge-note:ADD_LINK",
+        "opCorrect": false,
+        "args": {
+          "linkType": "DERIVED_FROM"
+        },
+        "argsRaw": "{\"linkType\": \"DERIVED_FROM\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 48,
+          "op": 2550,
+          "args": 143,
+          "total": 2740
+        }
+      },
+      {
+        "id": "kn2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "drop the connection to the Postgres vacuum writeup, it's not relevant anymore",
+        "expectedOp": "knowledge-note:REMOVE_LINK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.2379572627012081,
+          "knowledge-note:SET_DESCRIPTION": -0.5953137974344216,
+          "knowledge-note:SET_NOTE_TYPE": 0.14778101285936174,
+          "knowledge-note:SET_CONTENT": 0.29448544770809804,
+          "knowledge-note:PATCH_CONTENT": 0.23072859365107234,
+          "knowledge-note:SET_METADATA_FIELD": 0.0426431732672774,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.008691098349502324,
+          "knowledge-note:SET_PROVENANCE": 0.06737551468299507,
+          "knowledge-note:ADD_LINK": 0.1658682298029286,
+          "knowledge-note:REMOVE_LINK": 0.4771227618686069,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.2166828280689368,
+          "knowledge-note:ADD_TOPIC": -0.07071595289993837,
+          "knowledge-note:REMOVE_TOPIC": 0.09761455917075912,
+          "knowledge-note:SUBMIT_FOR_REVIEW": 0.13230702264161787,
+          "knowledge-note:APPROVE_NOTE": 0.20660450697516786,
+          "knowledge-note:REJECT_NOTE": 0.3649319318522046,
+          "knowledge-note:ARCHIVE_NOTE": 1.143296712946463,
+          "knowledge-note:RESTORE_NOTE": 0.34752613906549046
+        },
+        "pick": "knowledge-note:REMOVE_LINK",
+        "opCorrect": true,
+        "args": {
+          "id": "lk-b"
+        },
+        "argsRaw": "{\"id\": \"link: Postgres vacuum tuning\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 44,
+          "op": 2410,
+          "args": 301,
+          "total": 2755
+        }
+      },
+      {
+        "id": "kn2-09",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove the databases topic",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.8445235914456646,
+          "knowledge-note:SET_DESCRIPTION": -1.1165255977334212,
+          "knowledge-note:SET_NOTE_TYPE": -0.6647858110499385,
+          "knowledge-note:SET_CONTENT": -0.5658479601735658,
+          "knowledge-note:PATCH_CONTENT": -0.1696209775410864,
+          "knowledge-note:SET_METADATA_FIELD": -0.3737653068650568,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.3475935079184074,
+          "knowledge-note:SET_PROVENANCE": -0.5309427916129552,
+          "knowledge-note:ADD_LINK": -0.4119237155562889,
+          "knowledge-note:REMOVE_LINK": -0.17587862064763726,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.4043311043964797,
+          "knowledge-note:ADD_TOPIC": -0.5658985060644284,
+          "knowledge-note:REMOVE_TOPIC": 0.06996458272054529,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.4270190199442141,
+          "knowledge-note:APPROVE_NOTE": -0.4935625646562585,
+          "knowledge-note:REJECT_NOTE": -0.2842756598503513,
+          "knowledge-note:ARCHIVE_NOTE": 0.7266028372141085,
+          "knowledge-note:RESTORE_NOTE": -0.914142493971053
+        },
+        "pick": "knowledge-note:REMOVE_TOPIC",
+        "opCorrect": true,
+        "args": {
+          "id": "t-db"
+        },
+        "argsRaw": "{\"id\": \"databases\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 20,
+          "op": 2467,
+          "args": 281,
+          "total": 2768
+        }
+      },
+      {
+        "id": "kn2-10",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we're not very sure about this one yet, only a single benchmark backs it, so call our certainty low",
+        "expectedOp": "knowledge-note:SET_METADATA_FIELD",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": 0.11421870361807862,
+          "knowledge-note:SET_DESCRIPTION": 0.25688963818186705,
+          "knowledge-note:SET_NOTE_TYPE": 0.2583168838414309,
+          "knowledge-note:SET_CONTENT": 0.2251251179276399,
+          "knowledge-note:PATCH_CONTENT": 0.08312522866482652,
+          "knowledge-note:SET_METADATA_FIELD": 0.09999087268262263,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.01936316106209568,
+          "knowledge-note:SET_PROVENANCE": -0.5132209543719899,
+          "knowledge-note:ADD_LINK": 0.07773460538642207,
+          "knowledge-note:REMOVE_LINK": 0.13733345992297075,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.12808297475268837,
+          "knowledge-note:ADD_TOPIC": -0.04686482688292415,
+          "knowledge-note:REMOVE_TOPIC": 0.029897306507778332,
+          "knowledge-note:SUBMIT_FOR_REVIEW": 0.0012134932493381712,
+          "knowledge-note:APPROVE_NOTE": 0.10857538344521322,
+          "knowledge-note:REJECT_NOTE": 0.1350723215278009,
+          "knowledge-note:ARCHIVE_NOTE": 0.2319300612205364,
+          "knowledge-note:RESTORE_NOTE": -0.5094764482211649
+        },
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 58,
+          "op": 2434,
+          "args": 0,
+          "total": 2492
+        }
+      },
+      {
+        "id": "kn2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "set the consequences to: slower cold start, roughly 2x disk usage",
+        "expectedOp": "knowledge-note:SET_METADATA_LIST_FIELD",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.19975764310218835,
+          "knowledge-note:SET_DESCRIPTION": 0.12092112596793836,
+          "knowledge-note:SET_NOTE_TYPE": 0.22152128600127696,
+          "knowledge-note:SET_CONTENT": -0.4938128970377278,
+          "knowledge-note:PATCH_CONTENT": 0.24491744329229448,
+          "knowledge-note:SET_METADATA_FIELD": 0.020973815778700722,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.0759062265136825,
+          "knowledge-note:SET_PROVENANCE": -0.2934808111106313,
+          "knowledge-note:ADD_LINK": -0.12840839532674786,
+          "knowledge-note:REMOVE_LINK": -0.6036097156801685,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.04748445229989451,
+          "knowledge-note:ADD_TOPIC": -0.24692915167879903,
+          "knowledge-note:REMOVE_TOPIC": -0.470626470908621,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.6106460631855166,
+          "knowledge-note:APPROVE_NOTE": -0.030988599930384275,
+          "knowledge-note:REJECT_NOTE": 0.040740429036347336,
+          "knowledge-note:ARCHIVE_NOTE": 0.9141207566863319,
+          "knowledge-note:RESTORE_NOTE": -1.109471071248207
+        },
+        "pick": "knowledge-note:SET_DESCRIPTION",
+        "opCorrect": false,
+        "args": {
+          "description": "slower cold start, roughly 2x disk usage"
+        },
+        "argsRaw": "{\"description\": \"slower cold start, roughly 2x disk usage\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 2530,
+          "args": 153,
+          "total": 2719
+        }
+      },
+      {
+        "id": "kn2-12",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "submit this for review",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.7000482742607517,
+          "knowledge-note:SET_DESCRIPTION": -0.47373113199872785,
+          "knowledge-note:SET_NOTE_TYPE": -0.6135765785113279,
+          "knowledge-note:SET_CONTENT": -0.580257439922419,
+          "knowledge-note:PATCH_CONTENT": -0.5506877668296681,
+          "knowledge-note:SET_METADATA_FIELD": -0.6190726772443715,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.519212167834948,
+          "knowledge-note:SET_PROVENANCE": -0.3552460976225924,
+          "knowledge-note:ADD_LINK": -0.49409732393029704,
+          "knowledge-note:REMOVE_LINK": -1.252340536946348,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.32816974053123293,
+          "knowledge-note:ADD_TOPIC": -0.3970687734591536,
+          "knowledge-note:REMOVE_TOPIC": -1.0033091987222924,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.11170837502759245,
+          "knowledge-note:APPROVE_NOTE": -0.8534576005405161,
+          "knowledge-note:REJECT_NOTE": -0.5902605321318504,
+          "knowledge-note:ARCHIVE_NOTE": -0.23503291813786786,
+          "knowledge-note:RESTORE_NOTE": -1.3037904239975862
+        },
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 20,
+          "op": 2552,
+          "args": 0,
+          "total": 2572
+        }
+      },
+      {
+        "id": "kn2-13",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "reads well to me, ship it as canonical",
+        "expectedOp": "knowledge-note:APPROVE_NOTE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.11037909284964087,
+          "knowledge-note:SET_DESCRIPTION": -0.14756544496901158,
+          "knowledge-note:SET_NOTE_TYPE": -0.15039759124768182,
+          "knowledge-note:SET_CONTENT": -0.04471680563991276,
+          "knowledge-note:PATCH_CONTENT": -0.14003525170944897,
+          "knowledge-note:SET_METADATA_FIELD": -0.12947029258589282,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.07568405728580885,
+          "knowledge-note:SET_PROVENANCE": -0.09578473531380105,
+          "knowledge-note:ADD_LINK": -0.16609462879334091,
+          "knowledge-note:REMOVE_LINK": -0.7634699402259248,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.06521993687062921,
+          "knowledge-note:ADD_TOPIC": -0.1867550356897283,
+          "knowledge-note:REMOVE_TOPIC": -0.5882514225077518,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.0690581108213677,
+          "knowledge-note:APPROVE_NOTE": -0.0699303042887256,
+          "knowledge-note:REJECT_NOTE": -0.0882810023627627,
+          "knowledge-note:ARCHIVE_NOTE": 0.07967221493999865,
+          "knowledge-note:RESTORE_NOTE": -0.9287087442011965
+        },
+        "pick": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "reads well"
+        },
+        "argsRaw": "{\"comment\": \"reads well\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 2601,
+          "args": 107,
+          "total": 2739
+        }
+      },
+      {
+        "id": "kn2-14",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "pull this one back out of cold storage, we need it again for the migration",
+        "expectedOp": "knowledge-note:RESTORE_NOTE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": 0.19640390898479154,
+          "knowledge-note:SET_DESCRIPTION": -0.37215110952033514,
+          "knowledge-note:SET_NOTE_TYPE": 0.28356682220392315,
+          "knowledge-note:SET_CONTENT": 0.637075490205901,
+          "knowledge-note:PATCH_CONTENT": 0.4927085515095797,
+          "knowledge-note:SET_METADATA_FIELD": 0.23014336048308182,
+          "knowledge-note:SET_METADATA_LIST_FIELD": 0.18503367764888679,
+          "knowledge-note:SET_PROVENANCE": 0.3074707425911958,
+          "knowledge-note:ADD_LINK": 0.3873374823572553,
+          "knowledge-note:REMOVE_LINK": 0.4104063806991718,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.16650345272839395,
+          "knowledge-note:ADD_TOPIC": 0.10893424482124203,
+          "knowledge-note:REMOVE_TOPIC": 0.24677546580060428,
+          "knowledge-note:SUBMIT_FOR_REVIEW": 0.16225992832390834,
+          "knowledge-note:APPROVE_NOTE": 0.350259673214556,
+          "knowledge-note:REJECT_NOTE": 0.33327041434286286,
+          "knowledge-note:ARCHIVE_NOTE": 1.2533569159956288,
+          "knowledge-note:RESTORE_NOTE": -0.15797606127881547
+        },
+        "pick": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": false,
+        "args": {
+          "comment": "we need it again for the migration"
+        },
+        "argsRaw": "{\"comment\": \"we need it again for the migration\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 43,
+          "op": 2481,
+          "args": 143,
+          "total": 2667
+        }
+      },
+      {
+        "id": "kn2-15",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "archive this note, the newer compaction writeup replaces it",
+        "expectedOp": "knowledge-note:ARCHIVE_NOTE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.7097932965544924,
+          "knowledge-note:SET_DESCRIPTION": -0.5355982227110752,
+          "knowledge-note:SET_NOTE_TYPE": -0.5363166764618645,
+          "knowledge-note:SET_CONTENT": -0.3001065544587713,
+          "knowledge-note:PATCH_CONTENT": -0.026244118330694732,
+          "knowledge-note:SET_METADATA_FIELD": -0.3328211980571687,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.282699247415763,
+          "knowledge-note:SET_PROVENANCE": -0.5333733622293897,
+          "knowledge-note:ADD_LINK": -0.29027190964923943,
+          "knowledge-note:REMOVE_LINK": -1.027203165497693,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.19574845832268206,
+          "knowledge-note:ADD_TOPIC": -0.2577980828936717,
+          "knowledge-note:REMOVE_TOPIC": -0.634373421703146,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.5704096751451455,
+          "knowledge-note:APPROVE_NOTE": -0.0610423191878775,
+          "knowledge-note:REJECT_NOTE": -0.1691599104963899,
+          "knowledge-note:ARCHIVE_NOTE": 1.352196534519412,
+          "knowledge-note:RESTORE_NOTE": -0.6096856010254332
+        },
+        "pick": "knowledge-note:ARCHIVE_NOTE",
+        "opCorrect": true,
+        "args": {
+          "comment": "the newer compaction writeup"
+        },
+        "argsRaw": "{\"comment\": \"the newer compaction writeup\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 35,
+          "op": 2580,
+          "args": 135,
+          "total": 2750
+        }
+      },
+      {
+        "id": "moc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a domain-level map called \"Observability\". Description: everything about logs, metrics and traces. Orientation: start with the three pillars, then read the cost notes.",
+        "expectedOp": "moc:CREATE_MOC",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": 0.35532417228676283,
+          "moc:UPDATE_ORIENTATION": 0.18564262117021713,
+          "moc:UPDATE_DESCRIPTION": 0.06273200260002909,
+          "moc:ADD_CORE_IDEA": 0.08190484362933903,
+          "moc:UPDATE_CORE_IDEA": 0.20095135494173633,
+          "moc:REMOVE_CORE_IDEA": 0.48272032506474716,
+          "moc:REORDER_CORE_IDEAS": -0.10223518178803292,
+          "moc:ADD_TENSION": -0.056163673342358056,
+          "moc:REMOVE_TENSION": 0.5287559859605437,
+          "moc:ADD_OPEN_QUESTION": 0.5201241144743409,
+          "moc:REMOVE_OPEN_QUESTION": 1.429601187205865,
+          "moc:ADD_CHILD_MOC": -0.929058927802555,
+          "moc:REMOVE_CHILD_MOC": 0.2933640808294564,
+          "moc:SET_METADATA_FIELD": -0.025147061789940528
+        },
+        "pick": "moc:CREATE_MOC",
+        "opCorrect": true,
+        "args": {
+          "tier": "DOMAIN",
+          "title": "Observability",
+          "description": "everything about logs, metrics and traces",
+          "orientation": "start with the three pillars"
+        },
+        "argsRaw": "{\"tier\": \"DOMAIN\", \"title\": \"Observability\", \"description\": \"everything about logs, metrics and traces\", \"orientation\": \"start with the three pillars\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 87,
+          "op": 3631,
+          "args": 229,
+          "total": 3946
+        }
+      },
+      {
+        "id": "moc2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "the bit at the top that tells readers where to begin should say: Read the incident reviews first, then the alerting notes.",
+        "expectedOp": "moc:UPDATE_ORIENTATION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -0.4212153254760065,
+          "moc:UPDATE_ORIENTATION": 0.25576619299383196,
+          "moc:UPDATE_DESCRIPTION": 0.23232916218270816,
+          "moc:ADD_CORE_IDEA": -0.43410278332767116,
+          "moc:UPDATE_CORE_IDEA": -1.1513897949041438,
+          "moc:REMOVE_CORE_IDEA": 0.2638184866777382,
+          "moc:REORDER_CORE_IDEAS": 0.19562502325903974,
+          "moc:ADD_TENSION": 0.02665879223289802,
+          "moc:REMOVE_TENSION": 0.49296166631367555,
+          "moc:ADD_OPEN_QUESTION": 0.2547983364044133,
+          "moc:REMOVE_OPEN_QUESTION": 1.2489732314170903,
+          "moc:ADD_CHILD_MOC": -0.38537262197317723,
+          "moc:REMOVE_CHILD_MOC": 0.29714971425404535,
+          "moc:SET_METADATA_FIELD": -0.11586057111309644
+        },
+        "pick": "moc:REORDER_CORE_IDEAS",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 59,
+          "op": 1853,
+          "args": 0,
+          "total": 1913
+        }
+      },
+      {
+        "id": "moc2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "update the description to \"Notes on alert fatigue and on-call health\"",
+        "expectedOp": "moc:UPDATE_DESCRIPTION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -0.29751848663631475,
+          "moc:UPDATE_ORIENTATION": 0.31659562406603925,
+          "moc:UPDATE_DESCRIPTION": 0.6079020166541085,
+          "moc:ADD_CORE_IDEA": -0.12542137118460528,
+          "moc:UPDATE_CORE_IDEA": -1.0182972594979947,
+          "moc:REMOVE_CORE_IDEA": 0.13325737884394373,
+          "moc:REORDER_CORE_IDEAS": 0.1603104996677569,
+          "moc:ADD_TENSION": 0.32686035700809124,
+          "moc:REMOVE_TENSION": 0.2855358166755053,
+          "moc:ADD_OPEN_QUESTION": 0.4057146362722506,
+          "moc:REMOVE_OPEN_QUESTION": 0.15506686315727958,
+          "moc:ADD_CHILD_MOC": -1.1742657493965083,
+          "moc:REMOVE_CHILD_MOC": 0.13686007294441227,
+          "moc:SET_METADATA_FIELD": 0.14936615443287482
+        },
+        "pick": "moc:UPDATE_DESCRIPTION",
+        "opCorrect": true,
+        "args": {
+          "description": "Notes on alert fatigue and on-call health"
+        },
+        "argsRaw": "{\"description\": \"Notes on alert fatigue and on-call health\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 39,
+          "op": 1815,
+          "args": 129,
+          "total": 1984
+        }
+      },
+      {
+        "id": "moc2-04",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add \"SLOs beat static thresholds\" as a core idea, it's the reason we moved off fixed CPU alerts",
+        "expectedOp": "moc:ADD_CORE_IDEA",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": 0.010394559811597093,
+          "moc:UPDATE_ORIENTATION": 0.4113124018776375,
+          "moc:UPDATE_DESCRIPTION": 0.3677107621309972,
+          "moc:ADD_CORE_IDEA": 0.5894423213058871,
+          "moc:UPDATE_CORE_IDEA": 0.404454709333919,
+          "moc:REMOVE_CORE_IDEA": 0.7080002161048522,
+          "moc:REORDER_CORE_IDEAS": 0.17558217045138114,
+          "moc:ADD_TENSION": 0.4482929400628889,
+          "moc:REMOVE_TENSION": 1.00749973860448,
+          "moc:ADD_OPEN_QUESTION": 0.7733669496848656,
+          "moc:REMOVE_OPEN_QUESTION": 1.5533058718730093,
+          "moc:ADD_CHILD_MOC": -0.6102188721964807,
+          "moc:REMOVE_CHILD_MOC": 0.39833203020793917,
+          "moc:SET_METADATA_FIELD": 0.09764336981919874
+        },
+        "pick": "moc:REMOVE_CORE_IDEA",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 60,
+          "op": 1697,
+          "args": 0,
+          "total": 1757
+        }
+      },
+      {
+        "id": "moc2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "for the cardinality entry, the blurb next to it should be \"why per-user labels blow up Prometheus\"",
+        "expectedOp": "moc:UPDATE_CORE_IDEA",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": 0.37302542512030157,
+          "moc:UPDATE_ORIENTATION": 0.44974250481490685,
+          "moc:UPDATE_DESCRIPTION": 0.5654320001992801,
+          "moc:ADD_CORE_IDEA": 0.023684742681143733,
+          "moc:UPDATE_CORE_IDEA": -0.8027587101522631,
+          "moc:REMOVE_CORE_IDEA": 0.9200385510871187,
+          "moc:REORDER_CORE_IDEAS": 0.38434113214230714,
+          "moc:ADD_TENSION": 0.5280045816238532,
+          "moc:REMOVE_TENSION": 1.3747076723230975,
+          "moc:ADD_OPEN_QUESTION": 0.6047706750316137,
+          "moc:REMOVE_OPEN_QUESTION": 1.866779829075894,
+          "moc:ADD_CHILD_MOC": -0.8489147700330875,
+          "moc:REMOVE_CHILD_MOC": 0.7259369574833019,
+          "moc:SET_METADATA_FIELD": 0.1618986454297342
+        },
+        "pick": "moc:REORDER_CORE_IDEAS",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 60,
+          "op": 1890,
+          "args": 0,
+          "total": 1950
+        }
+      },
+      {
+        "id": "moc2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove \"Dashboards nobody reads\" from the core ideas",
+        "expectedOp": "moc:REMOVE_CORE_IDEA",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -0.154786823078374,
+          "moc:UPDATE_ORIENTATION": 0.3918663923227257,
+          "moc:UPDATE_DESCRIPTION": 0.43145711049484703,
+          "moc:ADD_CORE_IDEA": 0.2226485111478722,
+          "moc:UPDATE_CORE_IDEA": 0.4030312939730436,
+          "moc:REMOVE_CORE_IDEA": 2.051716582861452,
+          "moc:REORDER_CORE_IDEAS": 0.3475006176549066,
+          "moc:ADD_TENSION": 0.583775070501588,
+          "moc:REMOVE_TENSION": 2.152737588136273,
+          "moc:ADD_OPEN_QUESTION": 0.8530315742157046,
+          "moc:REMOVE_OPEN_QUESTION": 1.604287007209011,
+          "moc:ADD_CHILD_MOC": -0.8185247764668702,
+          "moc:REMOVE_CHILD_MOC": 1.615468152159954,
+          "moc:SET_METADATA_FIELD": 0.29764963695314184
+        },
+        "pick": "moc:REMOVE_CORE_IDEA",
+        "opCorrect": true,
+        "args": {
+          "id": "ci-3"
+        },
+        "argsRaw": "{\"id\": \"Dashboards nobody reads\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 32,
+          "op": 1780,
+          "args": 342,
+          "total": 2155
+        }
+      },
+      {
+        "id": "moc2-07",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "put the SLO one first, then tracing, then cardinality",
+        "expectedOp": "moc:REORDER_CORE_IDEAS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -2.1472899964891456,
+          "moc:UPDATE_ORIENTATION": -1.323270046899839,
+          "moc:UPDATE_DESCRIPTION": -1.4813996094687587,
+          "moc:ADD_CORE_IDEA": -1.3949106442726125,
+          "moc:UPDATE_CORE_IDEA": -2.128146196586109,
+          "moc:REMOVE_CORE_IDEA": -1.100888068434522,
+          "moc:REORDER_CORE_IDEAS": -1.1287862912858027,
+          "moc:ADD_TENSION": -1.6939940175466208,
+          "moc:REMOVE_TENSION": -1.165083661337592,
+          "moc:ADD_OPEN_QUESTION": -1.1392034445633548,
+          "moc:REMOVE_OPEN_QUESTION": -0.8676101500134896,
+          "moc:ADD_CHILD_MOC": -2.547695281979112,
+          "moc:REMOVE_CHILD_MOC": -1.0735427779335418,
+          "moc:SET_METADATA_FIELD": -1.1459172662384733
+        },
+        "pick": "moc:REORDER_CORE_IDEAS",
+        "opCorrect": true,
+        "args": {
+          "ids": [
+            "ci-3"
+          ]
+        },
+        "argsRaw": "{\"ids\": [\"SLOs beat static thresholds\"]}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 38,
+          "op": 2105,
+          "args": 218,
+          "total": 2362
+        }
+      },
+      {
+        "id": "moc2-08",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add an open question: do we page on error-budget burn or on raw symptoms?",
+        "expectedOp": "moc:ADD_OPEN_QUESTION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -2.3732087144789733,
+          "moc:UPDATE_ORIENTATION": -2.0703305676704877,
+          "moc:UPDATE_DESCRIPTION": -3.123651156822083,
+          "moc:ADD_CORE_IDEA": -2.8533657837306543,
+          "moc:UPDATE_CORE_IDEA": -1.784200330869393,
+          "moc:REMOVE_CORE_IDEA": 0.32276445862806424,
+          "moc:REORDER_CORE_IDEAS": -0.9452360421814465,
+          "moc:ADD_TENSION": -1.5487060766826548,
+          "moc:REMOVE_TENSION": 0.8332428278888444,
+          "moc:ADD_OPEN_QUESTION": -0.7252194367525466,
+          "moc:REMOVE_OPEN_QUESTION": 1.7686829010559046,
+          "moc:ADD_CHILD_MOC": -2.3538974606653227,
+          "moc:REMOVE_CHILD_MOC": -0.22590471044376592,
+          "moc:SET_METADATA_FIELD": -1.4964015854482122
+        },
+        "pick": "moc:REMOVE_OPEN_QUESTION",
+        "opCorrect": false,
+        "args": {
+          "question": "do we page on error-budget burn or on raw symptoms?"
+        },
+        "argsRaw": "{\"question\": \"do we page on error-budget burn or on raw symptoms?\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 44,
+          "op": 2167,
+          "args": 166,
+          "total": 2378
+        }
+      },
+      {
+        "id": "moc2-09",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "the \"Alert routing\" map should sit underneath this one",
+        "expectedOp": "moc:ADD_CHILD_MOC",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": 0.4169805296895511,
+          "moc:UPDATE_ORIENTATION": 0.39418017423346896,
+          "moc:UPDATE_DESCRIPTION": 0.30784974967332346,
+          "moc:ADD_CORE_IDEA": 0.5458801610978601,
+          "moc:UPDATE_CORE_IDEA": 0.48423007805979523,
+          "moc:REMOVE_CORE_IDEA": 1.703421749677012,
+          "moc:REORDER_CORE_IDEAS": 0.4156440615395909,
+          "moc:ADD_TENSION": 0.4456728543764258,
+          "moc:REMOVE_TENSION": 1.828803191377235,
+          "moc:ADD_OPEN_QUESTION": 0.7845647990981282,
+          "moc:REMOVE_OPEN_QUESTION": 2.3543832296288434,
+          "moc:ADD_CHILD_MOC": -0.5582197978775809,
+          "moc:REMOVE_CHILD_MOC": 1.3466232016035615,
+          "moc:SET_METADATA_FIELD": 0.30113626810549143
+        },
+        "pick": "moc:REMOVE_CHILD_MOC",
+        "opCorrect": false,
+        "args": {
+          "childRef": "Alert"
+        },
+        "argsRaw": "{\"childRef\": \"Alert\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 32,
+          "op": 1768,
+          "args": 127,
+          "total": 1927
+        }
+      },
+      {
+        "id": "moc2-10",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "that disagreement about trace sampling rates is settled, take it off this map",
+        "expectedOp": "moc:REMOVE_TENSION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -0.019488048317108708,
+          "moc:UPDATE_ORIENTATION": 0.42830784700262825,
+          "moc:UPDATE_DESCRIPTION": 0.31371514160898073,
+          "moc:ADD_CORE_IDEA": 0.25559883573353837,
+          "moc:UPDATE_CORE_IDEA": -0.8329278729965477,
+          "moc:REMOVE_CORE_IDEA": 1.7684299458623012,
+          "moc:REORDER_CORE_IDEAS": 0.2957272092252531,
+          "moc:ADD_TENSION": 0.24386283774255668,
+          "moc:REMOVE_TENSION": 1.6695927149415126,
+          "moc:ADD_OPEN_QUESTION": 0.44626449822835634,
+          "moc:REMOVE_OPEN_QUESTION": 1.1795965657400003,
+          "moc:ADD_CHILD_MOC": -0.8719701227571022,
+          "moc:REMOVE_CHILD_MOC": 1.3778652666780613,
+          "moc:SET_METADATA_FIELD": 0.20257709520244438
+        },
+        "pick": "moc:REMOVE_CORE_IDEA",
+        "opCorrect": false,
+        "args": {
+          "id": "tn-2"
+        },
+        "argsRaw": "{\"id\": \"Head-based vs. tail-based trace sampling rates\"}",
+        "refCfMs": 267.39999997615814,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 1742,
+          "args": 449,
+          "total": 2227
+        }
+      },
+      {
+        "id": "moc2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "set the version to 2.1",
+        "expectedOp": "moc:SET_METADATA_FIELD",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -0.1647276410949743,
+          "moc:UPDATE_ORIENTATION": 0.25153401013361076,
+          "moc:UPDATE_DESCRIPTION": 0.3010305626227989,
+          "moc:ADD_CORE_IDEA": -0.16295916156817225,
+          "moc:UPDATE_CORE_IDEA": 0.29182464372544814,
+          "moc:REMOVE_CORE_IDEA": 0.2909269955155329,
+          "moc:REORDER_CORE_IDEAS": -0.07612805902405917,
+          "moc:ADD_TENSION": 0.08902213388289848,
+          "moc:REMOVE_TENSION": 0.5692176622187333,
+          "moc:ADD_OPEN_QUESTION": 0.035188708116250744,
+          "moc:REMOVE_OPEN_QUESTION": 0.23860627652120936,
+          "moc:ADD_CHILD_MOC": -0.010510957907808871,
+          "moc:REMOVE_CHILD_MOC": 0.3453974406313085,
+          "moc:SET_METADATA_FIELD": 0.5928708719751044
+        },
+        "pick": "moc:SET_METADATA_FIELD",
+        "opCorrect": true,
+        "args": {
+          "field": "version"
+        },
+        "argsRaw": "{\"field\": \"version\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "value"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 24,
+          "op": 1940,
+          "args": 84,
+          "total": 2047
+        }
+      },
+      {
+        "id": "src2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "ingest this paper: \"The Tail at Scale\" by Jeffrey Dean and Luiz Barroso, https://research.google/pubs/the-tail-at-scale/ - content: Latency variability across many servers dominates request latency at scale; hedged and tied requests reduce the tail.",
+        "expectedOp": "source:INGEST_SOURCE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "source:INGEST_SOURCE": 0.041019701423395505,
+          "source:SET_SOURCE_STATUS": -0.35880302322332747,
+          "source:ADD_EXTRACTED_CLAIM": -0.25244583613146143,
+          "source:RECORD_EXTRACTION_STATS": -0.3096728708220219
+        },
+        "pick": "source:RECORD_EXTRACTION_STATS",
+        "opCorrect": false,
+        "args": {
+          "claimCount": 3,
+          "skippedCount": 1,
+          "skipRate": 0.5
+        },
+        "argsRaw": "{\"claimCount\": 3, \"skippedCount\": 1, \"skipRate\": 0.5}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 135,
+          "op": 931,
+          "args": 191,
+          "total": 1258
+        }
+      },
+      {
+        "id": "src2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "here's the transcript from Tuesday's architecture call, file it as \"Arch sync 2026-10-13\": Sam: we keep the old queue until the backfill ends. Priya: agreed, and we cut over shard by shard.",
+        "expectedOp": "source:INGEST_SOURCE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "source:INGEST_SOURCE": -0.32838571409739914,
+          "source:SET_SOURCE_STATUS": -0.1680077073039612,
+          "source:ADD_EXTRACTED_CLAIM": -0.33357484887199673,
+          "source:RECORD_EXTRACTION_STATS": -0.13569887454931473
+        },
+        "pick": "source:SET_SOURCE_STATUS",
+        "opCorrect": false,
+        "args": {
+          "status": "EXTRACTING"
+        },
+        "argsRaw": "{\"status\": \"EXTRACTING\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 119,
+          "op": 516,
+          "args": 128,
+          "total": 763
+        }
+      },
+      {
+        "id": "src2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "mark this source as extracted",
+        "expectedOp": "source:SET_SOURCE_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "source:INGEST_SOURCE": -0.577556360169043,
+          "source:SET_SOURCE_STATUS": -0.16920425516274484,
+          "source:ADD_EXTRACTED_CLAIM": -0.30799401366044443,
+          "source:RECORD_EXTRACTION_STATS": -0.17589943202494174
+        },
+        "pick": "source:ADD_EXTRACTED_CLAIM",
+        "opCorrect": false,
+        "args": {
+          "claimRef": "extracted"
+        },
+        "argsRaw": "{\"claimRef\": \"extracted\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 23,
+          "op": 458,
+          "args": 112,
+          "total": 593
+        }
+      },
+      {
+        "id": "src2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "I'm starting to pull claims out of this one now",
+        "expectedOp": "source:SET_SOURCE_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "source:INGEST_SOURCE": -0.044949553501282935,
+          "source:SET_SOURCE_STATUS": -0.10769685794548423,
+          "source:ADD_EXTRACTED_CLAIM": -0.12856248860974606,
+          "source:RECORD_EXTRACTION_STATS": -0.010735747055953038
+        },
+        "pick": "source:ADD_EXTRACTED_CLAIM",
+        "opCorrect": false,
+        "args": {
+          "claimRef": "claims"
+        },
+        "argsRaw": "{\"claimRef\": \"claims\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 35,
+          "op": 462,
+          "args": 119,
+          "total": 616
+        }
+      },
+      {
+        "id": "src2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add the extracted claim \"Hedged requests cut p99 latency by 40%\"",
+        "expectedOp": "source:ADD_EXTRACTED_CLAIM",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "source:INGEST_SOURCE": -0.5824729638055404,
+          "source:SET_SOURCE_STATUS": -0.18583034055049752,
+          "source:ADD_EXTRACTED_CLAIM": -0.14818155631732077,
+          "source:RECORD_EXTRACTION_STATS": -0.02235412806880155
+        },
+        "pick": "source:RECORD_EXTRACTION_STATS",
+        "opCorrect": false,
+        "args": {
+          "claimCount": 5,
+          "skippedCount": 3,
+          "skipRate": 10
+        },
+        "argsRaw": "{\"claimCount\": 5, \"skippedCount\": 3, \"skipRate\": 10}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 44,
+          "op": 483,
+          "args": 163,
+          "total": 690
+        }
+      },
+      {
+        "id": "src2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "final tally on this one: 12 claims pulled, 3 thrown out",
+        "expectedOp": "source:RECORD_EXTRACTION_STATS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "source:INGEST_SOURCE": -0.30993432016300804,
+          "source:SET_SOURCE_STATUS": -0.3147909378617091,
+          "source:ADD_EXTRACTED_CLAIM": -0.3571667309480451,
+          "source:RECORD_EXTRACTION_STATS": -0.19045027196663045
+        },
+        "pick": "source:RECORD_EXTRACTION_STATS",
+        "opCorrect": true,
+        "args": {
+          "claimCount": 12,
+          "skippedCount": 3,
+          "skipRate": 0
+        },
+        "argsRaw": "{\"claimCount\": 12, \"skippedCount\": 3, \"skipRate\": 0.0}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 38,
+          "op": 462,
+          "args": 171,
+          "total": 671
+        }
+      },
+      {
+        "id": "prj2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "create a project called \"Search relevance revamp\", Priya owns it and we're still planning",
+        "expectedOp": "project:CREATE_PROJECT",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": 0.529445606392563,
+          "project:UPDATE_PROJECT_INFO": 0.45015280198779983,
+          "project:SET_PROJECT_STATUS": 0.32375554993590283,
+          "project:SET_OWNER": 0.348949663730449,
+          "project:SET_TARGET_DATE": -1.6086486528414337,
+          "project:LINK_WBS": -0.3638015977568301,
+          "project:ADD_MEMBER": 0.3833450232608673,
+          "project:UPDATE_MEMBER": 0.2507579321174296,
+          "project:REMOVE_MEMBER": -0.0032300508216089874,
+          "project:ADD_DELIVERABLE": -0.17658359766698295,
+          "project:UPDATE_DELIVERABLE": -0.2790926337562145,
+          "project:SET_DELIVERABLE_STATUS": -0.8809358319690279,
+          "project:REMOVE_DELIVERABLE": -0.10901821073208762,
+          "project:ADD_KNOWLEDGE_REF": 0.12456381568951169,
+          "project:REMOVE_KNOWLEDGE_REF": 0.09346591550827643,
+          "project:SET_REFERENCES": 0.026498889393496983
+        },
+        "pick": "project:UPDATE_PROJECT_INFO",
+        "opCorrect": false,
+        "args": {
+          "name": "Search relevance revamp"
+        },
+        "argsRaw": "{\"name\": \"Search relevance revamp\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 54,
+          "op": 3819,
+          "args": 125,
+          "total": 3998
+        }
+      },
+      {
+        "id": "prj2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the blurb up top should say: Replace BM25 with hybrid retrieval by Q1.",
+        "expectedOp": "project:UPDATE_PROJECT_INFO",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.9160166673885983,
+          "project:UPDATE_PROJECT_INFO": -0.5789499998953032,
+          "project:SET_PROJECT_STATUS": -1.7187907511704625,
+          "project:SET_OWNER": -0.7165395978865772,
+          "project:SET_TARGET_DATE": -0.41750712992137173,
+          "project:LINK_WBS": -0.2353538192079061,
+          "project:ADD_MEMBER": -0.2628012557391297,
+          "project:UPDATE_MEMBER": -0.06879532556610801,
+          "project:REMOVE_MEMBER": -0.1253343007116805,
+          "project:ADD_DELIVERABLE": -0.34076301395310415,
+          "project:UPDATE_DELIVERABLE": 0.0011067879225805655,
+          "project:SET_DELIVERABLE_STATUS": -0.3219540323286978,
+          "project:REMOVE_DELIVERABLE": -0.26561247884822414,
+          "project:ADD_KNOWLEDGE_REF": -0.3961574318306622,
+          "project:REMOVE_KNOWLEDGE_REF": -0.09643211202975221,
+          "project:SET_REFERENCES": -0.48362822925675264
+        },
+        "pick": "project:LINK_WBS",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 47,
+          "op": 2012,
+          "args": 0,
+          "total": 2059
+        }
+      },
+      {
+        "id": "prj2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "everything shipped, we're wrapped up here",
+        "expectedOp": "project:SET_PROJECT_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.27781761530255045,
+          "project:UPDATE_PROJECT_INFO": 0.06572625672494414,
+          "project:SET_PROJECT_STATUS": -1.318083590415951,
+          "project:SET_OWNER": -0.2364057903249397,
+          "project:SET_TARGET_DATE": 0.019269733844703207,
+          "project:LINK_WBS": 0.09138465596773448,
+          "project:ADD_MEMBER": 0.3635080586805439,
+          "project:UPDATE_MEMBER": 0.2720131196732447,
+          "project:REMOVE_MEMBER": 0.11426216319838822,
+          "project:ADD_DELIVERABLE": 0.18909689251665118,
+          "project:UPDATE_DELIVERABLE": 0.2827312983721413,
+          "project:SET_DELIVERABLE_STATUS": 0.0416202153656684,
+          "project:REMOVE_DELIVERABLE": 0.12244489177494278,
+          "project:ADD_KNOWLEDGE_REF": 0.004027234522181233,
+          "project:REMOVE_KNOWLEDGE_REF": -0.14770310078593907,
+          "project:SET_REFERENCES": 0.010430088237065593
+        },
+        "pick": "project:SET_DELIVERABLE_STATUS",
+        "opCorrect": false,
+        "args": {
+          "status": "PLANNED"
+        },
+        "argsRaw": "{\"status\": \"PLANNED\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 1943,
+          "args": 122,
+          "total": 2095
+        }
+      },
+      {
+        "id": "prj2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "Tomas is taking over running this from Priya",
+        "expectedOp": "project:SET_OWNER",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": 0.20685304486610567,
+          "project:UPDATE_PROJECT_INFO": 0.35608311878149834,
+          "project:SET_PROJECT_STATUS": 0.34940691042769556,
+          "project:SET_OWNER": 0.2790751052197473,
+          "project:SET_TARGET_DATE": -1.767342541578478,
+          "project:LINK_WBS": 0.3338896066057564,
+          "project:ADD_MEMBER": 0.3768965450891091,
+          "project:UPDATE_MEMBER": 0.321561686655059,
+          "project:REMOVE_MEMBER": 0.38092488822458126,
+          "project:ADD_DELIVERABLE": -0.049877066349745425,
+          "project:UPDATE_DELIVERABLE": 0.09013890534629354,
+          "project:SET_DELIVERABLE_STATUS": -0.8219947765957092,
+          "project:REMOVE_DELIVERABLE": -0.13614293896034724,
+          "project:ADD_KNOWLEDGE_REF": 0.13433222607109063,
+          "project:REMOVE_KNOWLEDGE_REF": 0.06373238548729598,
+          "project:SET_REFERENCES": 0.008322723427879097
+        },
+        "pick": "project:SET_OWNER",
+        "opCorrect": true,
+        "args": {
+          "owner": "Tomas"
+        },
+        "argsRaw": "{\"owner\": \"Tomas\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 1987,
+          "args": 112,
+          "total": 2129
+        }
+      },
+      {
+        "id": "prj2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "set the target date to March 31",
+        "expectedOp": "project:SET_TARGET_DATE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -1.129240591618377,
+          "project:UPDATE_PROJECT_INFO": -0.32935206345064216,
+          "project:SET_PROJECT_STATUS": -1.6573228067716346,
+          "project:SET_OWNER": -0.6681702563442182,
+          "project:SET_TARGET_DATE": 0.10810813211761938,
+          "project:LINK_WBS": -1.0931293987689046,
+          "project:ADD_MEMBER": -0.5136527548096497,
+          "project:UPDATE_MEMBER": -0.3001032474981,
+          "project:REMOVE_MEMBER": -0.5390386968129728,
+          "project:ADD_DELIVERABLE": -0.34529545550249185,
+          "project:UPDATE_DELIVERABLE": 0.18988822262106453,
+          "project:SET_DELIVERABLE_STATUS": -0.8144179047684541,
+          "project:REMOVE_DELIVERABLE": 0.054914942276582224,
+          "project:ADD_KNOWLEDGE_REF": -1.27800469636774,
+          "project:REMOVE_KNOWLEDGE_REF": -0.330840706259268,
+          "project:SET_REFERENCES": -0.5179720893084019
+        },
+        "pick": "project:SET_TARGET_DATE",
+        "opCorrect": true,
+        "args": {
+          "targetDate": "2023-03-31T00:00:00Z"
+        },
+        "argsRaw": "{\"targetDate\": \"2023-03-31T00:00:00Z\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "targetDate"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 24,
+          "op": 1891,
+          "args": 155,
+          "total": 2070
+        }
+      },
+      {
+        "id": "prj2-07",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add Lena to the team as a data engineer",
+        "expectedOp": "project:ADD_MEMBER",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.1109487031911578,
+          "project:UPDATE_PROJECT_INFO": 0.08383201063118872,
+          "project:SET_PROJECT_STATUS": -1.6775676001434126,
+          "project:SET_OWNER": -0.05805491426015319,
+          "project:SET_TARGET_DATE": -2.2629711741228054,
+          "project:LINK_WBS": 0.03118987286419883,
+          "project:ADD_MEMBER": 0.24579122294160416,
+          "project:UPDATE_MEMBER": 0.19450779694768383,
+          "project:REMOVE_MEMBER": 0.043665042173385515,
+          "project:ADD_DELIVERABLE": -0.5667356935175425,
+          "project:UPDATE_DELIVERABLE": -0.2071391735402699,
+          "project:SET_DELIVERABLE_STATUS": -1.3445476098601614,
+          "project:REMOVE_DELIVERABLE": -0.5145394511179857,
+          "project:ADD_KNOWLEDGE_REF": -0.14647486519713904,
+          "project:REMOVE_KNOWLEDGE_REF": -0.15806025820991532,
+          "project:SET_REFERENCES": -0.6376340403041314
+        },
+        "pick": "project:ADD_MEMBER",
+        "opCorrect": true,
+        "args": {
+          "name": "Lena"
+        },
+        "argsRaw": "{\"name\": \"Lena\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 1958,
+          "args": 115,
+          "total": 2104
+        }
+      },
+      {
+        "id": "prj2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the eval bot should be on this too, it's the agent that runs the nightly benchmarks",
+        "expectedOp": "project:ADD_MEMBER",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.24410668097292598,
+          "project:UPDATE_PROJECT_INFO": -0.08534493145683286,
+          "project:SET_PROJECT_STATUS": 0.013664820998970928,
+          "project:SET_OWNER": -0.282878327884716,
+          "project:SET_TARGET_DATE": -2.0526690072659344,
+          "project:LINK_WBS": 0.05631539727104018,
+          "project:ADD_MEMBER": 0.03893390060007884,
+          "project:UPDATE_MEMBER": 0.2592788575149956,
+          "project:REMOVE_MEMBER": 0.3672559447708541,
+          "project:ADD_DELIVERABLE": -0.1104694587654953,
+          "project:UPDATE_DELIVERABLE": 0.3440751805602531,
+          "project:SET_DELIVERABLE_STATUS": 0.03354421271299657,
+          "project:REMOVE_DELIVERABLE": 0.3866482842626624,
+          "project:ADD_KNOWLEDGE_REF": -0.08620397924468826,
+          "project:REMOVE_KNOWLEDGE_REF": 0.2532956886339406,
+          "project:SET_REFERENCES": -0.07627686423447799
+        },
+        "pick": "project:UPDATE_MEMBER",
+        "opCorrect": false,
+        "args": {
+          "kind": "AGENT"
+        },
+        "argsRaw": "{\"kind\": \"AGENT\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 54,
+          "op": 1995,
+          "args": 108,
+          "total": 2157
+        }
+      },
+      {
+        "id": "prj2-09",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "Lena's actually the tech lead now",
+        "expectedOp": "project:UPDATE_MEMBER",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": 0.06847567132875221,
+          "project:UPDATE_PROJECT_INFO": 0.22255461024891088,
+          "project:SET_PROJECT_STATUS": 0.4302225918454847,
+          "project:SET_OWNER": 0.3341693143415796,
+          "project:SET_TARGET_DATE": -1.8641327378464203,
+          "project:LINK_WBS": 0.21451928601546433,
+          "project:ADD_MEMBER": 0.3015108573537104,
+          "project:UPDATE_MEMBER": 0.3415423153698418,
+          "project:REMOVE_MEMBER": 0.21737365937554687,
+          "project:ADD_DELIVERABLE": -0.1789887346407948,
+          "project:UPDATE_DELIVERABLE": 0.23090061410613316,
+          "project:SET_DELIVERABLE_STATUS": -0.8688737074718014,
+          "project:REMOVE_DELIVERABLE": -0.25359799026990215,
+          "project:ADD_KNOWLEDGE_REF": 0.15519029037874832,
+          "project:REMOVE_KNOWLEDGE_REF": 0.005493339371720474,
+          "project:SET_REFERENCES": 0.02182161882618261
+        },
+        "pick": "project:UPDATE_MEMBER",
+        "opCorrect": true,
+        "args": {
+          "id": "m-l",
+          "name": "Lena's"
+        },
+        "argsRaw": "{\"id\": \"Lena (data engineer)\", \"name\": \"Lena's\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [
+          "name"
+        ],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 28,
+          "op": 1938,
+          "args": 421,
+          "total": 2386
+        }
+      },
+      {
+        "id": "prj2-10",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove Marco from the team",
+        "expectedOp": "project:REMOVE_MEMBER",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.9494087116842052,
+          "project:UPDATE_PROJECT_INFO": -0.28544454606465774,
+          "project:SET_PROJECT_STATUS": -1.7400788799229931,
+          "project:SET_OWNER": -0.18892042359836436,
+          "project:SET_TARGET_DATE": -2.3892536048382436,
+          "project:LINK_WBS": -1.0959161410254554,
+          "project:ADD_MEMBER": -0.34938629013581335,
+          "project:UPDATE_MEMBER": -0.08293592750338319,
+          "project:REMOVE_MEMBER": 0.5558366688132215,
+          "project:ADD_DELIVERABLE": -0.6079851923436461,
+          "project:UPDATE_DELIVERABLE": -0.2289092634443648,
+          "project:SET_DELIVERABLE_STATUS": -1.3572819970248235,
+          "project:REMOVE_DELIVERABLE": -0.19527531990581792,
+          "project:ADD_KNOWLEDGE_REF": -0.286743328560533,
+          "project:REMOVE_KNOWLEDGE_REF": -0.030676984306468702,
+          "project:SET_REFERENCES": -0.8171511098063244
+        },
+        "pick": "project:REMOVE_MEMBER",
+        "opCorrect": true,
+        "args": {
+          "id": "m-m"
+        },
+        "argsRaw": "{\"id\": \"Marco\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 23,
+          "op": 1870,
+          "args": 303,
+          "total": 2196
+        }
+      },
+      {
+        "id": "prj2-11",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a deliverable: \"Offline eval dashboard\"",
+        "expectedOp": "project:ADD_DELIVERABLE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -1.3261813291132618,
+          "project:UPDATE_PROJECT_INFO": -1.2112706643547426,
+          "project:SET_PROJECT_STATUS": -1.0603013391086136,
+          "project:SET_OWNER": -1.5072203372369937,
+          "project:SET_TARGET_DATE": -0.8480904103747282,
+          "project:LINK_WBS": -0.4754207890969153,
+          "project:ADD_MEMBER": -0.35470108132701106,
+          "project:UPDATE_MEMBER": -0.577547601010987,
+          "project:REMOVE_MEMBER": -0.23657273264060263,
+          "project:ADD_DELIVERABLE": -0.32188681513325723,
+          "project:UPDATE_DELIVERABLE": -0.28021106723716116,
+          "project:SET_DELIVERABLE_STATUS": -0.7568032494315844,
+          "project:REMOVE_DELIVERABLE": -0.0923882880268252,
+          "project:ADD_KNOWLEDGE_REF": -0.646241979580529,
+          "project:REMOVE_KNOWLEDGE_REF": -0.2940481492435667,
+          "project:SET_REFERENCES": -0.8289135358140962
+        },
+        "pick": "project:ADD_DELIVERABLE",
+        "opCorrect": true,
+        "args": {
+          "title": "Offline eval dashboard"
+        },
+        "argsRaw": "{\"title\": \"Offline eval dashboard\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 35,
+          "op": 1886,
+          "args": 137,
+          "total": 2058
+        }
+      },
+      {
+        "id": "prj2-12",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the reranker prototype is out the door",
+        "expectedOp": "project:SET_DELIVERABLE_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.33171564468249515,
+          "project:UPDATE_PROJECT_INFO": 0.11969509174293003,
+          "project:SET_PROJECT_STATUS": 0.1460565941365881,
+          "project:SET_OWNER": -0.031036638033863362,
+          "project:SET_TARGET_DATE": -0.007450750665581651,
+          "project:LINK_WBS": 0.3996305964659921,
+          "project:ADD_MEMBER": 0.15470863752104314,
+          "project:UPDATE_MEMBER": 0.30394690609435715,
+          "project:REMOVE_MEMBER": -0.05047133021089367,
+          "project:ADD_DELIVERABLE": -0.052682275333457707,
+          "project:UPDATE_DELIVERABLE": 0.3105132036601077,
+          "project:SET_DELIVERABLE_STATUS": 0.01463871929496463,
+          "project:REMOVE_DELIVERABLE": -0.17466162554873188,
+          "project:ADD_KNOWLEDGE_REF": -0.058602601731061466,
+          "project:REMOVE_KNOWLEDGE_REF": -0.05382693587590004,
+          "project:SET_REFERENCES": -0.10627675873353537
+        },
+        "pick": "project:LINK_WBS",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 1918,
+          "args": 0,
+          "total": 1948
+        }
+      },
+      {
+        "id": "prj2-13",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "scrap the A/B harness item entirely, we're not doing it and I don't want it listed at all",
+        "expectedOp": "project:REMOVE_DELIVERABLE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.6285140848561312,
+          "project:UPDATE_PROJECT_INFO": -0.2746189929728644,
+          "project:SET_PROJECT_STATUS": -1.246931406646651,
+          "project:SET_OWNER": -0.410775348397622,
+          "project:SET_TARGET_DATE": -0.10972798344882917,
+          "project:LINK_WBS": 0.14367124746771287,
+          "project:ADD_MEMBER": -0.06329395380593117,
+          "project:UPDATE_MEMBER": 0.12205007775141241,
+          "project:REMOVE_MEMBER": 0.6030534374347944,
+          "project:ADD_DELIVERABLE": -0.19792349154725652,
+          "project:UPDATE_DELIVERABLE": 0.16722425745953728,
+          "project:SET_DELIVERABLE_STATUS": -0.12734901736021698,
+          "project:REMOVE_DELIVERABLE": 0.40764963442688895,
+          "project:ADD_KNOWLEDGE_REF": -0.19285482890887473,
+          "project:REMOVE_KNOWLEDGE_REF": 0.3670761583182711,
+          "project:SET_REFERENCES": -0.2697917445045126
+        },
+        "pick": "project:REMOVE_MEMBER",
+        "opCorrect": false,
+        "args": {
+          "id": "d-3"
+        },
+        "argsRaw": "{\"id\": \"A/B harness\"}",
+        "refCfMs": 381.3000000715256,
+        "ms": {
+          "gate": 0,
+          "embed": 61,
+          "op": 1931,
+          "args": 491,
+          "total": 2483
+        }
+      },
+      {
+        "id": "prj2-14",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "change the link for the offline eval dashboard deliverable to https://grafana.example.com/d/offline-eval",
+        "expectedOp": "project:UPDATE_DELIVERABLE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.9639486797707202,
+          "project:UPDATE_PROJECT_INFO": -0.570728647061757,
+          "project:SET_PROJECT_STATUS": -1.3132341027279693,
+          "project:SET_OWNER": -0.2188598608133292,
+          "project:SET_TARGET_DATE": -0.05113070170057954,
+          "project:LINK_WBS": 0.04196876594619425,
+          "project:ADD_MEMBER": -0.11776993444338868,
+          "project:UPDATE_MEMBER": -0.06273087529793231,
+          "project:REMOVE_MEMBER": 0.17334218454638473,
+          "project:ADD_DELIVERABLE": -0.245567526252368,
+          "project:UPDATE_DELIVERABLE": 0.07452628290181451,
+          "project:SET_DELIVERABLE_STATUS": -0.43934862059079194,
+          "project:REMOVE_DELIVERABLE": 0.2588544020205745,
+          "project:ADD_KNOWLEDGE_REF": -0.607796826225748,
+          "project:REMOVE_KNOWLEDGE_REF": -0.03251634664811509,
+          "project:SET_REFERENCES": -0.4517641998492006
+        },
+        "pick": "project:LINK_WBS",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 73,
+          "op": 1983,
+          "args": 0,
+          "total": 2056
+        }
+      },
+      {
+        "id": "prj2-15",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "our reading list for this is https://arxiv.org/abs/2104.08663 and https://www.elastic.co/blog/hybrid-retrieval",
+        "expectedOp": "project:SET_REFERENCES",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.7880307108960973,
+          "project:UPDATE_PROJECT_INFO": -0.37635976593816545,
+          "project:SET_PROJECT_STATUS": -1.7404517431868949,
+          "project:SET_OWNER": -0.5000097202105631,
+          "project:SET_TARGET_DATE": -0.1555714862918951,
+          "project:LINK_WBS": -0.22231673155260978,
+          "project:ADD_MEMBER": -0.025357732899744745,
+          "project:UPDATE_MEMBER": 0.07494741198986188,
+          "project:REMOVE_MEMBER": -0.5560904193995153,
+          "project:ADD_DELIVERABLE": -0.19302286578758876,
+          "project:UPDATE_DELIVERABLE": 0.09600627405143314,
+          "project:SET_DELIVERABLE_STATUS": -0.48644006956965313,
+          "project:REMOVE_DELIVERABLE": -0.301166066849472,
+          "project:ADD_KNOWLEDGE_REF": -0.39756136256527075,
+          "project:REMOVE_KNOWLEDGE_REF": -0.39920967651363237,
+          "project:SET_REFERENCES": -0.44647806195168105
+        },
+        "pick": "project:LINK_WBS",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 93,
+          "op": 1963,
+          "args": 0,
+          "total": 2056
+        }
+      },
+      {
+        "id": "wbs2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a goal: migrate the ingestion workers to the new queue",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": 0.29984886699870306,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.4022120368217178,
+          "wbs:DELETE_GOAL": 0.2905273727484504,
+          "wbs:REORDER": 0.2735897659468567,
+          "wbs:SET_GOAL_STATUS": 1.164987423899341,
+          "wbs:ASSIGN_GOAL": 0.1736757956922399,
+          "wbs:SET_OUTCOME": -0.013518506485100668,
+          "wbs:ADD_DEPENDENCIES": 0.12126339084097582,
+          "wbs:REMOVE_DEPENDENCIES": 0.6943846507423779,
+          "wbs:ADD_NOTE": -0.09388708342822416,
+          "wbs:REMOVE_NOTE": 0.4800837009473984,
+          "wbs:SET_OWNER": -0.1280711260796059,
+          "wbs:SET_REFERENCES": 0.058682713876862636,
+          "wbs:SET_PROJECT_REF": -0.2631974874045835
+        },
+        "pick": "wbs:CREATE_GOAL",
+        "opCorrect": true,
+        "args": {
+          "description": "migrate the ingestion workers to the new queue"
+        },
+        "argsRaw": "{\"description\": \"migrate the ingestion workers to the new queue\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 37,
+          "op": 3277,
+          "args": 145,
+          "total": 3459
+        }
+      },
+      {
+        "id": "wbs2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "as part of shipping hybrid search we also need to tune the fusion weights",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.1981862515295385,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.12650409694039189,
+          "wbs:DELETE_GOAL": 0.02612243366766065,
+          "wbs:REORDER": 0.19109368620524947,
+          "wbs:SET_GOAL_STATUS": 1.207247312244302,
+          "wbs:ASSIGN_GOAL": -0.04143045216733299,
+          "wbs:SET_OUTCOME": 0.08456765244382036,
+          "wbs:ADD_DEPENDENCIES": -0.04937921002142365,
+          "wbs:REMOVE_DEPENDENCIES": 0.1278667142991683,
+          "wbs:ADD_NOTE": -0.28024514035615344,
+          "wbs:REMOVE_NOTE": -0.0879758944587592,
+          "wbs:SET_OWNER": -0.1110263936007283,
+          "wbs:SET_REFERENCES": 0.07965497022030377,
+          "wbs:SET_PROJECT_REF": -0.054966998876958995
+        },
+        "pick": "wbs:ADD_DEPENDENCIES",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 1576,
+          "args": 0,
+          "total": 1613
+        }
+      },
+      {
+        "id": "wbs2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "mark \"Rebuild the index\" as in progress",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.5262467032597367,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.10538044350826237,
+          "wbs:DELETE_GOAL": -0.10079647023640059,
+          "wbs:REORDER": 0.10987561342290064,
+          "wbs:SET_GOAL_STATUS": 1.1667036131397859,
+          "wbs:ASSIGN_GOAL": 0.12296068131581706,
+          "wbs:SET_OUTCOME": 0.16666240780650687,
+          "wbs:ADD_DEPENDENCIES": 0.04771162729280287,
+          "wbs:REMOVE_DEPENDENCIES": 0.1157529431779829,
+          "wbs:ADD_NOTE": 0.05129453447513632,
+          "wbs:REMOVE_NOTE": -0.02408276775762097,
+          "wbs:SET_OWNER": -0.13950235690604784,
+          "wbs:SET_REFERENCES": 0.012521534361496833,
+          "wbs:SET_PROJECT_REF": -0.1339976059855872
+        },
+        "pick": "wbs:SET_PROJECT_REF",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 1664,
+          "args": 0,
+          "total": 1695
+        }
+      },
+      {
+        "id": "wbs2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the eval set is finished, we ended up with 14 query categories",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.4919038039385366,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.20980765567678894,
+          "wbs:DELETE_GOAL": -0.0429996621674642,
+          "wbs:REORDER": 0.1234414132344075,
+          "wbs:SET_GOAL_STATUS": 0.40239234985856465,
+          "wbs:ASSIGN_GOAL": -0.03677333671657834,
+          "wbs:SET_OUTCOME": 0.4507468509311061,
+          "wbs:ADD_DEPENDENCIES": -0.09359251642970046,
+          "wbs:REMOVE_DEPENDENCIES": 0.17974876210940405,
+          "wbs:ADD_NOTE": -0.027407579050934494,
+          "wbs:REMOVE_NOTE": -0.015645093485606054,
+          "wbs:SET_OWNER": 0.0098521774472633,
+          "wbs:SET_REFERENCES": -0.009181349057200805,
+          "wbs:SET_PROJECT_REF": 1.0066716615912505
+        },
+        "pick": "wbs:SET_OUTCOME",
+        "opCorrect": false,
+        "args": {
+          "id": "g-hybrid",
+          "outcome": "set"
+        },
+        "argsRaw": "{\"id\": \"Ship hybrid search\", \"outcome\": \"set\"}",
+        "refCfMs": 473.9999998807907,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 1546,
+          "args": 684,
+          "total": 2267
+        }
+      },
+      {
+        "id": "wbs2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the index rebuild is done on my end, just waiting on Sam to look it over",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.1458770079055587,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.049949784208174086,
+          "wbs:DELETE_GOAL": 0.20129632000139286,
+          "wbs:REORDER": 0.44294940927685866,
+          "wbs:SET_GOAL_STATUS": -0.19923700281572865,
+          "wbs:ASSIGN_GOAL": 0.060601996097102484,
+          "wbs:SET_OUTCOME": -0.23057563274675585,
+          "wbs:ADD_DEPENDENCIES": 0.07504889940682513,
+          "wbs:REMOVE_DEPENDENCIES": 0.24872159329403365,
+          "wbs:ADD_NOTE": 0.15249575905384583,
+          "wbs:REMOVE_NOTE": -0.047068752367037,
+          "wbs:SET_OWNER": -0.08100423865864426,
+          "wbs:SET_REFERENCES": -0.04417138788534203,
+          "wbs:SET_PROJECT_REF": 0.6403191642419035
+        },
+        "pick": "wbs:SET_PROJECT_REF",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 46,
+          "op": 1687,
+          "args": 0,
+          "total": 1733
+        }
+      },
+      {
+        "id": "wbs2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "assign the rollout to Sam",
+        "expectedOp": "wbs:ASSIGN_GOAL",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.575727840375051,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.06788676052431253,
+          "wbs:DELETE_GOAL": -0.13021795607260156,
+          "wbs:REORDER": -0.15770814487996176,
+          "wbs:SET_GOAL_STATUS": 0.7070211664536448,
+          "wbs:ASSIGN_GOAL": 0.41254317520476136,
+          "wbs:SET_OUTCOME": -0.5067059895698549,
+          "wbs:ADD_DEPENDENCIES": -0.22175429860677764,
+          "wbs:REMOVE_DEPENDENCIES": -0.10803308335416162,
+          "wbs:ADD_NOTE": -0.5712306643801222,
+          "wbs:REMOVE_NOTE": -1.3084242091302332,
+          "wbs:SET_OWNER": -0.4846142099723434,
+          "wbs:SET_REFERENCES": -0.4467315178494289,
+          "wbs:SET_PROJECT_REF": -0.7112723395087717
+        },
+        "pick": "wbs:ADD_DEPENDENCIES",
+        "opCorrect": false,
+        "args": {
+          "id": "g-roll"
+        },
+        "argsRaw": "{\"id\": \"Roll out to 100%\"}",
+        "refCfMs": 466.09999990463257,
+        "ms": {
+          "gate": 0,
+          "embed": 21,
+          "op": 1681,
+          "args": 617,
+          "total": 2319
+        }
+      },
+      {
+        "id": "wbs2-07",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "nobody is on the eval set work anymore, clear whoever had it",
+        "expectedOp": "wbs:ASSIGN_GOAL",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.3376350454237165,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.006281660745930617,
+          "wbs:DELETE_GOAL": 0.3607956835015861,
+          "wbs:REORDER": 0.24970344207789208,
+          "wbs:SET_GOAL_STATUS": 0.1971366316329899,
+          "wbs:ASSIGN_GOAL": 0.262346566798745,
+          "wbs:SET_OUTCOME": 0.2919229060071604,
+          "wbs:ADD_DEPENDENCIES": 0.08224923249027893,
+          "wbs:REMOVE_DEPENDENCIES": 1.6917797398321661,
+          "wbs:ADD_NOTE": 0.49418898788252785,
+          "wbs:REMOVE_NOTE": 2.0182528340414354,
+          "wbs:SET_OWNER": 0.2733485428381559,
+          "wbs:SET_REFERENCES": 0.21327066346725587,
+          "wbs:SET_PROJECT_REF": 0.04173160536238352
+        },
+        "pick": "wbs:SET_OWNER",
+        "opCorrect": false,
+        "args": {
+          "owner": "nobody"
+        },
+        "argsRaw": "{\"owner\": \"nobody\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 1612,
+          "args": 108,
+          "total": 1757
+        }
+      },
+      {
+        "id": "wbs2-08",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "we can't start the rollout until both the eval set and the index rebuild are done",
+        "expectedOp": "wbs:ADD_DEPENDENCIES",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.3067898429098932,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.1111433131428432,
+          "wbs:DELETE_GOAL": 0.257725336470882,
+          "wbs:REORDER": 0.3532312986658326,
+          "wbs:SET_GOAL_STATUS": 0.37659213069479547,
+          "wbs:ASSIGN_GOAL": 0.11035708408047262,
+          "wbs:SET_OUTCOME": 0.4089357053118874,
+          "wbs:ADD_DEPENDENCIES": -0.08354373375432123,
+          "wbs:REMOVE_DEPENDENCIES": 0.17754876526853547,
+          "wbs:ADD_NOTE": 0.16155228559154433,
+          "wbs:REMOVE_NOTE": -0.7141688282220531,
+          "wbs:SET_OWNER": 0.03386722586956892,
+          "wbs:SET_REFERENCES": 0.23133442762588174,
+          "wbs:SET_PROJECT_REF": 0.9698879175821427
+        },
+        "pick": "wbs:SET_PROJECT_REF",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 51,
+          "op": 1626,
+          "args": 0,
+          "total": 1677
+        }
+      },
+      {
+        "id": "wbs2-09",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "remove the dependency of the rollout on the index rebuild",
+        "expectedOp": "wbs:REMOVE_DEPENDENCIES",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.554890594548245,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.14008787162559821,
+          "wbs:DELETE_GOAL": 0.4695246319346249,
+          "wbs:REORDER": 0.15498348574154375,
+          "wbs:SET_GOAL_STATUS": -0.14314686020752587,
+          "wbs:ASSIGN_GOAL": -0.118605862116965,
+          "wbs:SET_OUTCOME": 0.040705604440396836,
+          "wbs:ADD_DEPENDENCIES": 0.11066784529256946,
+          "wbs:REMOVE_DEPENDENCIES": 0.22046550544057153,
+          "wbs:ADD_NOTE": -0.24254581481776638,
+          "wbs:REMOVE_NOTE": -1.3398125052743768,
+          "wbs:SET_OWNER": -0.35273662451244747,
+          "wbs:SET_REFERENCES": -0.1812816097038592,
+          "wbs:SET_PROJECT_REF": -0.4197234016181788
+        },
+        "pick": "wbs:REMOVE_DEPENDENCIES",
+        "opCorrect": true,
+        "args": {
+          "id": "g-roll",
+          "dependencies": [
+            "g-index"
+          ]
+        },
+        "argsRaw": "{\"id\": \"Roll out to 100%\", \"dependencies\": [\"Rebuild the index\"]}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 32,
+          "op": 1652,
+          "args": 455,
+          "total": 2139
+        }
+      },
+      {
+        "id": "wbs2-10",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a note to the eval set goal: we need at least 200 queries per locale",
+        "expectedOp": "wbs:ADD_NOTE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.6913976855870716,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.4212718782675533,
+          "wbs:DELETE_GOAL": -0.39922240170855416,
+          "wbs:REORDER": -0.2064165768202506,
+          "wbs:SET_GOAL_STATUS": 1.0450534561301537,
+          "wbs:ASSIGN_GOAL": -0.003962092385578764,
+          "wbs:SET_OUTCOME": 0.027295521637430875,
+          "wbs:ADD_DEPENDENCIES": -0.10312964789923573,
+          "wbs:REMOVE_DEPENDENCIES": 1.3689897909847843,
+          "wbs:ADD_NOTE": 0.3299557758183045,
+          "wbs:REMOVE_NOTE": 1.8354407435177262,
+          "wbs:SET_OWNER": -0.3889605307869519,
+          "wbs:SET_REFERENCES": -0.17870591947934145,
+          "wbs:SET_PROJECT_REF": 0.5248018862838306
+        },
+        "pick": "wbs:ADD_NOTE",
+        "opCorrect": true,
+        "args": {
+          "goalId": "g-hybrid",
+          "note": "we need at least 200 queries per locale"
+        },
+        "argsRaw": "{\"goalId\": \"Ship hybrid search\", \"note\": \"we need at least 200 queries per locale\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 51,
+          "op": 1610,
+          "args": 585,
+          "total": 2246
+        }
+      },
+      {
+        "id": "wbs2-11",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "get rid of the \"Evaluate Vespa\" item, it was a duplicate of the hybrid search one",
+        "expectedOp": "wbs:DELETE_GOAL",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.48174305137961637,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.00036519527513623196,
+          "wbs:DELETE_GOAL": 0.5370196538382668,
+          "wbs:REORDER": 0.15961709215419728,
+          "wbs:SET_GOAL_STATUS": 0.2362545839588468,
+          "wbs:ASSIGN_GOAL": 0.10366869481252561,
+          "wbs:SET_OUTCOME": 0.4903760017125023,
+          "wbs:ADD_DEPENDENCIES": 0.24824616300628244,
+          "wbs:REMOVE_DEPENDENCIES": 1.818508613379483,
+          "wbs:ADD_NOTE": 0.39009520732193215,
+          "wbs:REMOVE_NOTE": 1.7259969145612908,
+          "wbs:SET_OWNER": 0.14277843481551944,
+          "wbs:SET_REFERENCES": -0.009975672503117039,
+          "wbs:SET_PROJECT_REF": -0.21299929979695675
+        },
+        "pick": "wbs:REMOVE_DEPENDENCIES",
+        "opCorrect": false,
+        "args": {
+          "id": "g-vespa"
+        },
+        "argsRaw": "{\"id\": \"Evaluate Vespa\"}",
+        "refCfMs": 331.8000000715256,
+        "ms": {
+          "gate": 0,
+          "embed": 54,
+          "op": 1637,
+          "args": 458,
+          "total": 2149
+        }
+      },
+      {
+        "id": "wbs2-12",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "move \"Tune fusion weights\" so it sits under \"Build eval set\"",
+        "expectedOp": "wbs:REORDER",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.26758002296185923,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.1575458446618062,
+          "wbs:DELETE_GOAL": 0.1428191085477315,
+          "wbs:REORDER": 0.19325955520222715,
+          "wbs:SET_GOAL_STATUS": 1.2105807934664576,
+          "wbs:ASSIGN_GOAL": 0.25063174211675987,
+          "wbs:SET_OUTCOME": 0.3052170948550761,
+          "wbs:ADD_DEPENDENCIES": 0.21038301181943775,
+          "wbs:REMOVE_DEPENDENCIES": 0.24087515197306608,
+          "wbs:ADD_NOTE": 0.11373267535880305,
+          "wbs:REMOVE_NOTE": -0.11300874507748304,
+          "wbs:SET_OWNER": 0.07584996517981124,
+          "wbs:SET_REFERENCES": -0.026820639236348143,
+          "wbs:SET_PROJECT_REF": 0.05612236470848675
+        },
+        "pick": "wbs:ADD_DEPENDENCIES",
+        "opCorrect": false,
+        "args": {
+          "id": "g-fuse"
+        },
+        "argsRaw": "{\"id\": \"Tune fusion weights\"}",
+        "refCfMs": 350.2999999523163,
+        "ms": {
+          "gate": 0,
+          "embed": 45,
+          "op": 1675,
+          "args": 473,
+          "total": 2193
+        }
+      },
+      {
+        "id": "wbs2-13",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "set the owner of this breakdown to Priya",
+        "expectedOp": "wbs:SET_OWNER",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.5977422511040762,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.2847974044883046,
+          "wbs:DELETE_GOAL": -0.18517927293328285,
+          "wbs:REORDER": -0.42542169435243227,
+          "wbs:SET_GOAL_STATUS": -0.9326938380191945,
+          "wbs:ASSIGN_GOAL": 0.3160675140303284,
+          "wbs:SET_OUTCOME": -0.10323747136480965,
+          "wbs:ADD_DEPENDENCIES": 0.2135640266119414,
+          "wbs:REMOVE_DEPENDENCIES": 1.3629320707195138,
+          "wbs:ADD_NOTE": 0.16739572128090696,
+          "wbs:REMOVE_NOTE": 1.1832803821219215,
+          "wbs:SET_OWNER": 0.4082316131539625,
+          "wbs:SET_REFERENCES": -0.20791572221122578,
+          "wbs:SET_PROJECT_REF": -0.0433047467295562
+        },
+        "pick": "wbs:SET_OWNER",
+        "opCorrect": true,
+        "args": {
+          "owner": "Priya"
+        },
+        "argsRaw": "{\"owner\": \"Priya\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 30,
+          "op": 1583,
+          "args": 108,
+          "total": 1722
+        }
+      },
+      {
+        "id": "rc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a claim: \"Hybrid retrieval beats BM25 on long-tail queries\". kind: empirical. methodology: offline eval on 500 queries. source: internal benchmark, Oct 2026. topics: search, retrieval.",
+        "expectedOp": "research-claim:CREATE_CLAIM",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "research-claim:CREATE_CLAIM": -0.11079054141380174,
+          "research-claim:ADD_RESEARCH_CONNECTION": -0.22393889149076895,
+          "research-claim:REMOVE_RESEARCH_CONNECTION": -0.4865532605296685,
+          "research-claim:UPDATE_CLAIM_CONTENT": -0.3774040048489806
+        },
+        "pick": "research-claim:CREATE_CLAIM",
+        "opCorrect": true,
+        "args": {
+          "kind": "example",
+          "title": "Hybrid retrieval beats BM25 on long-tail queries",
+          "description": "Hybrid retrieval beats BM25 on long-tail queries",
+          "content": "Hybrid retrieval",
+          "methodology": [
+            "offline eval",
+            "500 queries"
+          ],
+          "sources": [
+            "internal benchmark",
+            "Oct 2026"
+          ],
+          "topics": [
+            "search",
+            "retrieval"
+          ]
+        },
+        "argsRaw": "{\"kind\": \"example\", \"title\": \"Hybrid retrieval beats BM25 on long-tail queries\", \"description\": \"Hybrid retrieval beats BM25 on long-tail queries\", \"content\": \"Hybrid retrieval\", \"methodology\": [\"offline eval\", \"500 queries\"], \"sources\": [\"internal benchmark\", \"Oct 2026\"], \"topics\": [\"search\", \"retrieval\"]}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "kind",
+          "methodology",
+          "sources"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 107,
+          "op": 1136,
+          "args": 491,
+          "total": 1734
+        }
+      },
+      {
+        "id": "rc2-02",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "connect this to \"Rerankers need calibrated scores\", it's why the fusion step works at all",
+        "expectedOp": "research-claim:ADD_RESEARCH_CONNECTION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "research-claim:CREATE_CLAIM": -0.15012232016750415,
+          "research-claim:ADD_RESEARCH_CONNECTION": 0.18162634736544492,
+          "research-claim:REMOVE_RESEARCH_CONNECTION": -2.89497383950179,
+          "research-claim:UPDATE_CLAIM_CONTENT": -0.034983778503254515
+        },
+        "pick": "research-claim:ADD_RESEARCH_CONNECTION",
+        "opCorrect": true,
+        "args": {
+          "targetRef": "Rerankers",
+          "contextPhrase": "fusion step"
+        },
+        "argsRaw": "{\"targetRef\": \"Rerankers\", \"contextPhrase\": \"fusion step\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "targetRef"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 59,
+          "op": 667,
+          "args": 164,
+          "total": 889
+        }
+      },
+      {
+        "id": "rc2-03",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "this leans on the \"Query logs over-represent head terms\" finding",
+        "expectedOp": "research-claim:ADD_RESEARCH_CONNECTION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "research-claim:CREATE_CLAIM": -0.03711673636127988,
+          "research-claim:ADD_RESEARCH_CONNECTION": 0.04830102105157308,
+          "research-claim:REMOVE_RESEARCH_CONNECTION": -0.21223615201805934,
+          "research-claim:UPDATE_CLAIM_CONTENT": -0.04912301836987498
+        },
+        "pick": "research-claim:ADD_RESEARCH_CONNECTION",
+        "opCorrect": true,
+        "args": {
+          "targetRef": "Query logs over-represent head terms",
+          "contextPhrase": "this leans on the"
+        },
+        "argsRaw": "{\"targetRef\": \"Query logs over-represent head terms\", \"contextPhrase\": \"this leans on the\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 37,
+          "op": 550,
+          "args": 188,
+          "total": 775
+        }
+      },
+      {
+        "id": "rc2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "unhook it from the click-model claim, that pairing was a mistake",
+        "expectedOp": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "research-claim:CREATE_CLAIM": 0.01515654892622309,
+          "research-claim:ADD_RESEARCH_CONNECTION": 0.19721165716140088,
+          "research-claim:REMOVE_RESEARCH_CONNECTION": 0.5167895183058704,
+          "research-claim:UPDATE_CLAIM_CONTENT": 0.23197527229411352
+        },
+        "pick": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "opCorrect": true,
+        "args": {
+          "id": "cx-3"
+        },
+        "argsRaw": "{\"id\": \"Click models overfit to position\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 43,
+          "op": 581,
+          "args": 427,
+          "total": 1050
+        }
+      },
+      {
+        "id": "rc2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "update the claim content to: On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52.",
+        "expectedOp": "research-claim:UPDATE_CLAIM_CONTENT",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "research-claim:CREATE_CLAIM": -1.1502934377356402,
+          "research-claim:ADD_RESEARCH_CONNECTION": -0.6218655575925438,
+          "research-claim:REMOVE_RESEARCH_CONNECTION": -0.460694841137695,
+          "research-claim:UPDATE_CLAIM_CONTENT": -0.6674499373437859
+        },
+        "pick": "research-claim:UPDATE_CLAIM_CONTENT",
+        "opCorrect": true,
+        "args": {
+          "content": "On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52"
+        },
+        "argsRaw": "{\"content\": \"On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "content"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 74,
+          "op": 592,
+          "args": 227,
+          "total": 893
+        }
+      },
+      {
+        "id": "rc2-06",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "rewrite the body: the gain vanishes on head queries, where BM25 is already near its ceiling.",
+        "expectedOp": "research-claim:UPDATE_CLAIM_CONTENT",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "research-claim:CREATE_CLAIM": -0.49179163985498997,
+          "research-claim:ADD_RESEARCH_CONNECTION": -0.1989909555843974,
+          "research-claim:REMOVE_RESEARCH_CONNECTION": -0.05693873902361024,
+          "research-claim:UPDATE_CLAIM_CONTENT": -0.4185032811773046
+        },
+        "pick": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 60,
+          "op": 615,
+          "args": 0,
+          "total": 675
+        }
+      },
+      {
+        "id": "obs2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "log an observation, friction: reviewers keep missing the provenance panel because it's collapsed by default",
+        "expectedOp": "observation:CREATE_OBSERVATION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "observation:CREATE_OBSERVATION": 0.07708889409036601,
+          "observation:PROMOTE_OBSERVATION": 0.38027947443695087,
+          "observation:IMPLEMENT_OBSERVATION": 0.4981224171204248,
+          "observation:ARCHIVE_OBSERVATION": 0.3402680760609119
+        },
+        "pick": "observation:CREATE_OBSERVATION",
+        "opCorrect": true,
+        "args": {
+          "category": "FRICTION",
+          "title": "provenance panel",
+          "description": "reviewers keep missing the provenance panel because it's collapsed by default"
+        },
+        "argsRaw": "{\"category\": \"FRICTION\", \"title\": \"provenance panel\", \"description\": \"reviewers keep missing the provenance panel because it's collapsed by default\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 52,
+          "op": 1051,
+          "args": 276,
+          "total": 1378
+        }
+      },
+      {
+        "id": "obs2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "jot this down, it caught me off guard: notes drafted from voice transcripts get approved faster than typed ones",
+        "expectedOp": "observation:CREATE_OBSERVATION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "observation:CREATE_OBSERVATION": 0.06641120044499815,
+          "observation:PROMOTE_OBSERVATION": 0.37434153981757834,
+          "observation:IMPLEMENT_OBSERVATION": 0.2645846456115617,
+          "observation:ARCHIVE_OBSERVATION": 0.33910904262764974
+        },
+        "pick": "observation:PROMOTE_OBSERVATION",
+        "opCorrect": false,
+        "args": {
+          "promotedTo": "notes"
+        },
+        "argsRaw": "{\"promotedTo\": \"notes\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 56,
+          "op": 556,
+          "args": 128,
+          "total": 740
+        }
+      },
+      {
+        "id": "obs2-03",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "this one earned a proper write-up, I turned it into \"Collapsed panels hide provenance\"",
+        "expectedOp": "observation:PROMOTE_OBSERVATION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "observation:CREATE_OBSERVATION": 0.0221644552619229,
+          "observation:PROMOTE_OBSERVATION": 0.22835909350164663,
+          "observation:IMPLEMENT_OBSERVATION": 0.39531276334242227,
+          "observation:ARCHIVE_OBSERVATION": 0.22974593344519478
+        },
+        "pick": "observation:PROMOTE_OBSERVATION",
+        "opCorrect": true,
+        "args": {
+          "promotedTo": "Collapsed panels"
+        },
+        "argsRaw": "{\"promotedTo\": \"Collapsed panels\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "promotedTo"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 52,
+          "op": 530,
+          "args": 112,
+          "total": 693
+        }
+      },
+      {
+        "id": "obs2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we acted on this, the panel has been expanded by default since yesterday's release",
+        "expectedOp": "observation:IMPLEMENT_OBSERVATION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "observation:CREATE_OBSERVATION": 0.06459849755464453,
+          "observation:PROMOTE_OBSERVATION": 0.3469183940472391,
+          "observation:IMPLEMENT_OBSERVATION": 0.3963631587055192,
+          "observation:ARCHIVE_OBSERVATION": 0.2971448793647635
+        },
+        "pick": "observation:ARCHIVE_OBSERVATION",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 47,
+          "op": 528,
+          "args": 0,
+          "total": 575
+        }
+      },
+      {
+        "id": "obs2-05",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "archive this observation, it's stale",
+        "expectedOp": "observation:ARCHIVE_OBSERVATION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "observation:CREATE_OBSERVATION": -1.8534497929533476,
+          "observation:PROMOTE_OBSERVATION": -1.074485797566563,
+          "observation:IMPLEMENT_OBSERVATION": -0.7769424992840455,
+          "observation:ARCHIVE_OBSERVATION": -0.3905192467848606
+        },
+        "pick": "observation:ARCHIVE_OBSERVATION",
+        "opCorrect": true,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 28,
+          "op": 547,
+          "args": 0,
+          "total": 575
+        }
+      },
+      {
+        "id": "ten2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a tension \"Freshness vs. stability\": reindexing nightly keeps results fresh but makes rankings jumpy. It involves the nightly reindex note and the ranking stability note.",
+        "expectedOp": "tension:CREATE_TENSION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "tension:CREATE_TENSION": -0.34524472358377045,
+          "tension:RESOLVE_TENSION": 0.8057873909932964,
+          "tension:DISSOLVE_TENSION": 0.0007767423299971377,
+          "tension:ADD_INVOLVED_REF": -0.26244887030660546
+        },
+        "pick": "tension:CREATE_TENSION",
+        "opCorrect": true,
+        "args": {
+          "title": "Freshness vs. stability",
+          "description": "reindexing nightly keeps results fresh but makes rankings jumpy",
+          "involvedRefs": [
+            "nightly reindex note",
+            "ranking stability note"
+          ]
+        },
+        "argsRaw": "{\"title\": \"Freshness vs. stability\", \"description\": \"reindexing nightly keeps results fresh but makes rankings jumpy\", \"involvedRefs\": [\"nightly reindex note\", \"ranking stability note\"]}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 85,
+          "op": 1023,
+          "args": 275,
+          "total": 1383
+        }
+      },
+      {
+        "id": "ten2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we settled it: reindex nightly, but only swap the ranking model weekly",
+        "expectedOp": "tension:RESOLVE_TENSION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "tension:CREATE_TENSION": -0.570765804753076,
+          "tension:RESOLVE_TENSION": 0.8482931925846997,
+          "tension:DISSOLVE_TENSION": 0.046034179457819846,
+          "tension:ADD_INVOLVED_REF": -0.21767088655955524
+        },
+        "pick": "tension:ADD_INVOLVED_REF",
+        "opCorrect": false,
+        "args": {
+          "ref": "reindex"
+        },
+        "argsRaw": "{\"ref\": \"reindex\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 43,
+          "op": 524,
+          "args": 101,
+          "total": 667
+        }
+      },
+      {
+        "id": "ten2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "dissolve this tension, turns out the two notes were measuring different things",
+        "expectedOp": "tension:DISSOLVE_TENSION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "tension:CREATE_TENSION": -2.006573027276003,
+          "tension:RESOLVE_TENSION": 0.19624827400967026,
+          "tension:DISSOLVE_TENSION": -0.004791971079311397,
+          "tension:ADD_INVOLVED_REF": -0.6685897373612495
+        },
+        "pick": "tension:DISSOLVE_TENSION",
+        "opCorrect": true,
+        "args": {
+          "resolution": "dissolve"
+        },
+        "argsRaw": "{\"resolution\": \"dissolve\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 38,
+          "op": 503,
+          "args": 71,
+          "total": 612
+        }
+      },
+      {
+        "id": "ten2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the \"Cache warmup after deploy\" note is part of this conflict too",
+        "expectedOp": "tension:ADD_INVOLVED_REF",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "tension:CREATE_TENSION": -0.5470842823150935,
+          "tension:RESOLVE_TENSION": 0.596894528373221,
+          "tension:DISSOLVE_TENSION": -0.038551343667623916,
+          "tension:ADD_INVOLVED_REF": -0.0362152340239561
+        },
+        "pick": "tension:RESOLVE_TENSION",
+        "opCorrect": false,
+        "args": {
+          "resolution": "Cache warmup after deploy"
+        },
+        "argsRaw": "{\"resolution\": \"Cache warmup after deploy\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 40,
+          "op": 480,
+          "args": 129,
+          "total": 650
+        }
+      },
+      {
+        "id": "pq2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add an extract task for \"Database Internals ch. 7\"",
+        "expectedOp": "pipeline-queue:ADD_TASK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": 0.1516672457010524,
+          "pipeline-queue:ASSIGN_TASK": 0.12108269264095384,
+          "pipeline-queue:ADVANCE_PHASE": -0.027498845980593045,
+          "pipeline-queue:COMPLETE_TASK": 0.03463955695315235,
+          "pipeline-queue:FAIL_TASK": -0.18104476443318163,
+          "pipeline-queue:BLOCK_TASK": -0.026621954047044483,
+          "pipeline-queue:UNBLOCK_TASK": -0.19141771797041984
+        },
+        "pick": "pipeline-queue:ADD_TASK",
+        "opCorrect": true,
+        "args": {
+          "taskType": "claim",
+          "target": "Database Internals ch. 7"
+        },
+        "argsRaw": "{\"taskType\": \"claim\", \"target\": \"Database Internals ch. 7\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "taskType"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 38,
+          "op": 1591,
+          "args": 183,
+          "total": 1812
+        }
+      },
+      {
+        "id": "pq2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "give the arch sync transcript job to Nadia",
+        "expectedOp": "pipeline-queue:ASSIGN_TASK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": -0.04823114942937534,
+          "pipeline-queue:ASSIGN_TASK": -0.06267569243353677,
+          "pipeline-queue:ADVANCE_PHASE": 0.07983312584128222,
+          "pipeline-queue:COMPLETE_TASK": 0.07648760554576484,
+          "pipeline-queue:FAIL_TASK": -0.01350390546036806,
+          "pipeline-queue:BLOCK_TASK": 0.1368441528913138,
+          "pipeline-queue:UNBLOCK_TASK": -0.11431631673333276
+        },
+        "pick": "pipeline-queue:ADVANCE_PHASE",
+        "opCorrect": false,
+        "args": {
+          "taskId": "tk-2",
+          "handoff": {
+            "phase": "create",
+            "workDone": "Nadia",
+            "filesModified": []
+          }
+        },
+        "argsRaw": "{\"taskId\": \"extract: Arch sync transcript (PENDING)\", \"handoff\": {\"phase\": \"create\", \"workDone\": \"Nadia\", \"filesModified\": []}}",
+        "refCfMs": 544.3000000715256,
+        "ms": {
+          "gate": 0,
+          "embed": 27,
+          "op": 785,
+          "args": 840,
+          "total": 1653
+        }
+      },
+      {
+        "id": "pq2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "unblock the dedupe task",
+        "expectedOp": "pipeline-queue:UNBLOCK_TASK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": -3.451019937782985,
+          "pipeline-queue:ASSIGN_TASK": -0.5928281961211397,
+          "pipeline-queue:ADVANCE_PHASE": -0.4676063441533087,
+          "pipeline-queue:COMPLETE_TASK": -1.8446896009551539,
+          "pipeline-queue:FAIL_TASK": 0.10325281554844423,
+          "pipeline-queue:BLOCK_TASK": 0.320081522799029,
+          "pipeline-queue:UNBLOCK_TASK": 0.19260254972901103
+        },
+        "pick": "pipeline-queue:UNBLOCK_TASK",
+        "opCorrect": true,
+        "args": {
+          "taskId": "tk-2"
+        },
+        "argsRaw": "{\"taskId\": \"extract: Arch sync transcript (PENDING)\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 24,
+          "op": 856,
+          "args": 576,
+          "total": 1456
+        }
+      },
+      {
+        "id": "pq2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "just close out the Tail at Scale job, skip whatever phases are left",
+        "expectedOp": "pipeline-queue:COMPLETE_TASK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": -3.029002711944718,
+          "pipeline-queue:ASSIGN_TASK": -0.5250372236763567,
+          "pipeline-queue:ADVANCE_PHASE": -0.2897819807455513,
+          "pipeline-queue:COMPLETE_TASK": -0.19710347822933727,
+          "pipeline-queue:FAIL_TASK": 0.06829014906207931,
+          "pipeline-queue:BLOCK_TASK": -0.07608985554955439,
+          "pipeline-queue:UNBLOCK_TASK": -0.16524780902310499
+        },
+        "pick": "pipeline-queue:ADVANCE_PHASE",
+        "opCorrect": false,
+        "args": {
+          "taskId": "tk-3",
+          "handoff": {
+            "phase": "verify",
+            "workDone": "the",
+            "filesModified": []
+          }
+        },
+        "argsRaw": "{\"taskId\": \"dedupe: storage engines (BLOCKED)\", \"handoff\": {\"phase\": \"verify\", \"workDone\": \"the\", \"filesModified\": []}}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 845,
+          "args": 687,
+          "total": 1568
+        }
+      },
+      {
+        "id": "pq2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the arch sync job is dead, the transcript file is corrupted so it can't go anywhere",
+        "expectedOp": "pipeline-queue:FAIL_TASK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": -3.3888938145232004,
+          "pipeline-queue:ASSIGN_TASK": -0.3970257026737869,
+          "pipeline-queue:ADVANCE_PHASE": -0.11440603864611554,
+          "pipeline-queue:COMPLETE_TASK": -0.10847864017233633,
+          "pipeline-queue:FAIL_TASK": 0.038235821706052775,
+          "pipeline-queue:BLOCK_TASK": -0.28147589815674223,
+          "pipeline-queue:UNBLOCK_TASK": -0.399487856126571
+        },
+        "pick": "pipeline-queue:FAIL_TASK",
+        "opCorrect": true,
+        "args": {
+          "taskId": "tk-2",
+          "reason": "corrupted"
+        },
+        "argsRaw": "{\"taskId\": \"extract: Arch sync transcript (PENDING)\", \"reason\": \"corrupted\"}",
+        "refCfMs": 0,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 47,
+          "op": 836,
+          "args": 595,
+          "total": 1479
+        }
+      },
+      {
+        "id": "moc2-12",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "add a tension between \"SLOs beat static thresholds\" and \"Dashboards nobody reads\": SLO alerts hide the per-host detail the dashboards were built to show",
+        "expectedOp": "moc:ADD_TENSION",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "moc:CREATE_MOC": -0.07628169952935049,
+          "moc:UPDATE_ORIENTATION": 0.18510103006568102,
+          "moc:UPDATE_DESCRIPTION": 0.2920948747535874,
+          "moc:ADD_CORE_IDEA": -0.09827964250353038,
+          "moc:UPDATE_CORE_IDEA": 0.2146253881940936,
+          "moc:REMOVE_CORE_IDEA": 1.8405078435702147,
+          "moc:REORDER_CORE_IDEAS": 0.24909913378528725,
+          "moc:ADD_TENSION": 0.39520179778742204,
+          "moc:REMOVE_TENSION": 2.4550677037708377,
+          "moc:ADD_OPEN_QUESTION": 0.4648861742594059,
+          "moc:REMOVE_OPEN_QUESTION": 2.6465193834273943,
+          "moc:ADD_CHILD_MOC": -1.0214131563870523,
+          "moc:REMOVE_CHILD_MOC": 1.505435319427602,
+          "moc:SET_METADATA_FIELD": 0.12755389253789562
+        },
+        "pick": "moc:REMOVE_CORE_IDEA",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 85,
+          "op": 1802,
+          "args": 0,
+          "total": 1887
+        }
+      },
+      {
+        "id": "prj2-16",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "cancel the A/B harness deliverable",
+        "expectedOp": "project:SET_DELIVERABLE_STATUS",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "project:CREATE_PROJECT": -1.1902426128683452,
+          "project:UPDATE_PROJECT_INFO": -0.5458447324994573,
+          "project:SET_PROJECT_STATUS": -0.2761709474313925,
+          "project:SET_OWNER": -0.7021967441366121,
+          "project:SET_TARGET_DATE": -0.39008775929623885,
+          "project:LINK_WBS": -0.25663696104421274,
+          "project:ADD_MEMBER": -0.17750969007350315,
+          "project:UPDATE_MEMBER": -0.011255861233653963,
+          "project:REMOVE_MEMBER": 0.3509090206920975,
+          "project:ADD_DELIVERABLE": -0.07356754264512055,
+          "project:UPDATE_DELIVERABLE": 0.22516989054474834,
+          "project:SET_DELIVERABLE_STATUS": -0.12405407210816577,
+          "project:REMOVE_DELIVERABLE": 0.5040985979609616,
+          "project:ADD_KNOWLEDGE_REF": -0.19763880072264328,
+          "project:REMOVE_KNOWLEDGE_REF": 0.009011271611855554,
+          "project:SET_REFERENCES": -0.30837081350520434
+        },
+        "pick": "project:REMOVE_DELIVERABLE",
+        "opCorrect": false,
+        "args": {
+          "id": "d-3"
+        },
+        "argsRaw": "{\"id\": \"A/B harness\"}",
+        "refCfMs": 376.39999997615814,
+        "ms": {
+          "gate": 0,
+          "embed": 27,
+          "op": 1928,
+          "args": 482,
+          "total": 2437
+        }
+      },
+      {
+        "id": "wbs2-14",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "set the outcome of \"Build eval set\" to: 14 query categories, 3,200 queries total",
+        "expectedOp": "wbs:SET_OUTCOME",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.6079145833344228,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.24782682142684176,
+          "wbs:DELETE_GOAL": -0.14507484321078046,
+          "wbs:REORDER": -0.196536030527644,
+          "wbs:SET_GOAL_STATUS": 0.2715973708710102,
+          "wbs:ASSIGN_GOAL": -0.10602739652955884,
+          "wbs:SET_OUTCOME": 0.5028824268500708,
+          "wbs:ADD_DEPENDENCIES": -0.0480533864729763,
+          "wbs:REMOVE_DEPENDENCIES": 0.03750512948013984,
+          "wbs:ADD_NOTE": -0.1403195315157204,
+          "wbs:REMOVE_NOTE": -0.200834215897157,
+          "wbs:SET_OWNER": -0.3405384031188661,
+          "wbs:SET_REFERENCES": -0.05942598072533656,
+          "wbs:SET_PROJECT_REF": -0.23911813453973996
+        },
+        "pick": "wbs:SET_OUTCOME",
+        "opCorrect": true,
+        "args": {
+          "id": "g-roll",
+          "outcome": "query categories"
+        },
+        "argsRaw": "{\"id\": \"Roll out to 100%\", \"outcome\": \"query categories\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "outcome"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 52,
+          "op": 1629,
+          "args": 507,
+          "total": 2187
+        }
+      },
+      {
+        "id": "pq2-06",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "block the Tail at Scale task, we're waiting on the PDF from the library",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": -3.0704826544207355,
+          "pipeline-queue:ASSIGN_TASK": -0.27904757429062954,
+          "pipeline-queue:ADVANCE_PHASE": -0.2562455052928827,
+          "pipeline-queue:COMPLETE_TASK": -0.3478747173734007,
+          "pipeline-queue:FAIL_TASK": 0.21889554936021227,
+          "pipeline-queue:BLOCK_TASK": 0.2811537596744529,
+          "pipeline-queue:UNBLOCK_TASK": -0.056990908999898005
+        },
+        "pick": "pipeline-queue:UNBLOCK_TASK",
+        "opCorrect": false,
+        "args": {
+          "taskId": "tk-3"
+        },
+        "argsRaw": "{\"taskId\": \"dedupe: storage engines (BLOCKED)\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 46,
+          "op": 871,
+          "args": 548,
+          "total": 1465
+        }
+      },
+      {
+        "id": "vc2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "turn on the semantic-search feature",
+        "expectedOp": "vault-config:TOGGLE_FEATURE",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "vault-config:INITIALIZE_CONFIG": -0.528995083478776,
+          "vault-config:UPDATE_DIMENSION": -2.4825478919250403,
+          "vault-config:UPDATE_VOCABULARY": 0.24978470350536597,
+          "vault-config:UPDATE_PIPELINE_CONFIG": -0.9996455055073545,
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD": 0.11917924570030647,
+          "vault-config:ADD_EXTRACTION_CATEGORY": 0.06549670554502418,
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY": 0.24137618718265486,
+          "vault-config:TOGGLE_FEATURE": 0.3915347521820205
+        },
+        "pick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "opCorrect": false,
+        "args": {
+          "active": true
+        },
+        "argsRaw": "{\"active\": true}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 25,
+          "op": 2396,
+          "args": 102,
+          "total": 2523
+        }
+      },
+      {
+        "id": "vc2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "only nag me once a map gets past 60 entries instead of 40",
+        "expectedOp": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "vault-config:INITIALIZE_CONFIG": -0.14491216326498746,
+          "vault-config:UPDATE_DIMENSION": -1.0268519270404983,
+          "vault-config:UPDATE_VOCABULARY": -0.6456649053934178,
+          "vault-config:UPDATE_PIPELINE_CONFIG": -0.8993519831970767,
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD": 0.12058169594121171,
+          "vault-config:ADD_EXTRACTION_CATEGORY": 0.009916353407947831,
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY": 0.12629899033735792,
+          "vault-config:TOGGLE_FEATURE": 0.2186895870041241
+        },
+        "pick": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "opCorrect": true,
+        "args": {
+          "condition": "orphanThreshold",
+          "threshold": 60
+        },
+        "argsRaw": "{\"condition\": \"orphanThreshold\", \"threshold\": 60}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "condition"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 1217,
+          "args": 152,
+          "total": 1405
+        }
+      },
+      {
+        "id": "vc2-03",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "in the vocabulary, call the inbox \"landing zone\"",
+        "expectedOp": "vault-config:UPDATE_VOCABULARY",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "vault-config:INITIALIZE_CONFIG": -0.16341388406901092,
+          "vault-config:UPDATE_DIMENSION": -2.4924681540640448,
+          "vault-config:UPDATE_VOCABULARY": 0.22008193946107069,
+          "vault-config:UPDATE_PIPELINE_CONFIG": -1.0491119863710223,
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD": -0.004519871023589417,
+          "vault-config:ADD_EXTRACTION_CATEGORY": 0.07034145903483013,
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY": 0.061923304861693396,
+          "vault-config:TOGGLE_FEATURE": 0.18633751305894375
+        },
+        "pick": "vault-config:UPDATE_VOCABULARY",
+        "opCorrect": true,
+        "args": {
+          "key": "inbox",
+          "value": "landing zone"
+        },
+        "argsRaw": "{\"key\": \"inbox\", \"value\": \"landing zone\"}",
+        "refCfMs": 0,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 35,
+          "op": 1289,
+          "args": 147,
+          "total": 1471
+        }
+      },
+      {
+        "id": "vc2-04",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "start pulling \"open problems\" out of what we read too, anything the author flags as unsolved",
+        "expectedOp": "vault-config:ADD_EXTRACTION_CATEGORY",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "vault-config:INITIALIZE_CONFIG": -0.19926040114587007,
+          "vault-config:UPDATE_DIMENSION": 0.0880901131728884,
+          "vault-config:UPDATE_VOCABULARY": 0.3189855224299609,
+          "vault-config:UPDATE_PIPELINE_CONFIG": 0.15556905786163489,
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD": 0.1325358569603735,
+          "vault-config:ADD_EXTRACTION_CATEGORY": 0.0504543146159675,
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY": -0.022784317272848575,
+          "vault-config:TOGGLE_FEATURE": -0.534469395325591
+        },
+        "pick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "opCorrect": false,
+        "args": {
+          "active": true
+        },
+        "argsRaw": "{\"active\": true}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 54,
+          "op": 1162,
+          "args": 104,
+          "total": 1319
+        }
+      },
+      {
+        "id": "vc2-05",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "let the phases run back to back without me kicking off each one",
+        "expectedOp": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "vault-config:INITIALIZE_CONFIG": -0.005520012391343698,
+          "vault-config:UPDATE_DIMENSION": 0.020964867163381085,
+          "vault-config:UPDATE_VOCABULARY": -0.6552419132069678,
+          "vault-config:UPDATE_PIPELINE_CONFIG": 0.2107732093370258,
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD": 0.0991355727388451,
+          "vault-config:ADD_EXTRACTION_CATEGORY": 0.042910599481717604,
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY": 0.1587567404651411,
+          "vault-config:TOGGLE_FEATURE": 0.1146182007553187
+        },
+        "pick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "opCorrect": false,
+        "args": {
+          "active": true
+        },
+        "argsRaw": "{\"active\": true}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 38,
+          "op": 1228,
+          "args": 104,
+          "total": 1370
+        }
+      },
+      {
+        "id": "der2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add a signal: the user said \"I never browse, I only search\", which pushes navigation down and linking up",
+        "expectedOp": "derivation:ADD_SIGNAL",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "derivation:INITIALIZE_DERIVATION": -0.6973620512349802,
+          "derivation:ADD_SIGNAL": 0.05094726636155289,
+          "derivation:ADD_RESEED_ENTRY": -0.41708801923021066,
+          "derivation:UPDATE_DIMENSION_RATIONALE": -0.17724859614396615
+        },
+        "pick": "derivation:ADD_SIGNAL",
+        "opCorrect": true,
+        "args": {
+          "utterance": "I never browse, I only search",
+          "influencedDimensions": [
+            "navigation",
+            "search"
+          ],
+          "interpretation": "the user said \"I never browse, I only search\", which pushes navigation down and linking up"
+        },
+        "argsRaw": "{\"utterance\": \"I never browse, I only search\", \"influencedDimensions\": [\"navigation\", \"search\"], \"interpretation\": \"the user said \\\"I never browse, I only search\\\", which pushes navigation down and linking up\"}",
+        "refCfMs": 0,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "influencedDimensions"
+        ],
+        "zodOk": true,
+        "ms": {
+          "gate": 0,
+          "embed": 62,
+          "op": 1019,
+          "args": 313,
+          "total": 1394
+        }
+      },
+      {
+        "id": "hr2-01",
+        "set": "h2",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add a warning check for link health: \"Cache warmup after deploy\" and \"Tune fusion weights\" both have dangling links",
+        "expectedOp": "health-report:ADD_CHECK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "health-report:GENERATE_REPORT": -1.2024515918812995,
+          "health-report:ADD_CHECK": -0.12713593734458928
+        },
+        "pick": "health-report:GENERATE_REPORT",
+        "opCorrect": false,
+        "args": {
+          "mode": "three-space",
+          "overallStatus": "FAIL",
+          "graphMetrics": {
+            "noteCount": 5,
+            "mocCount": 3,
+            "connectionCount": 12,
+            "density": 0.45,
+            "orphanCount": 2,
+            "danglingLinkCount": 1,
+            "mocCoverage": 0.8,
+            "averageLinksPerNote": 8
+          },
+          "recommendations": [
+            "Tune fusion weights",
+            "Cache warmup after deploy"
+          ]
+        },
+        "argsRaw": "{\"mode\": \"three-space\", \"overallStatus\": \"FAIL\", \"graphMetrics\": {\"noteCount\": 5, \"mocCount\": 3, \"connectionCount\": 12, \"density\": 0.45, \"orphanCount\": 2, \"danglingLinkCount\": 1, \"mocCoverage\": 0.8, \"averageLinksPerNote\": 8}, \"recommendations\": [\"Tune fusion weights\", \"Cache warmup after deploy\"]}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 62,
+          "op": 484,
+          "args": 606,
+          "total": 1151
+        }
+      },
+      {
+        "id": "hr2-02",
+        "set": "h2",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "log that stale notes pass, nothing is older than the limit",
+        "expectedOp": "health-report:ADD_CHECK",
+        "expectedOps": null,
+        "inCandidates": true,
+        "opScores": {
+          "health-report:GENERATE_REPORT": -0.18228318816468914,
+          "health-report:ADD_CHECK": 0.15967237890471064
+        },
+        "pick": "health-report:GENERATE_REPORT",
+        "opCorrect": false,
+        "args": {
+          "mode": "quick",
+          "overallStatus": "FAIL",
+          "graphMetrics": {
+            "noteCount": 5,
+            "mocCount": 3,
+            "connectionCount": 2,
+            "density": 0.5,
+            "orphanCount": 1,
+            "danglingLinkCount": 1,
+            "mocCoverage": 0.8,
+            "averageLinksPerNote": 12
+          },
+          "recommendations": []
+        },
+        "argsRaw": "{\"mode\": \"quick\", \"overallStatus\": \"FAIL\", \"graphMetrics\": {\"noteCount\": 5, \"mocCount\": 3, \"connectionCount\": 2, \"density\": 0.5, \"orphanCount\": 1, \"danglingLinkCount\": 1, \"mocCoverage\": 0.8, \"averageLinksPerNote\": 12}, \"recommendations\": []}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 35,
+          "op": 231,
+          "args": 515,
+          "total": 781
+        }
+      },
+      {
+        "id": "none2-01",
+        "set": "h2na",
+        "style": "natural",
+        "utterance": "what's the difference between builds-on and derived-from?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "knowledge-note:SET_TITLE": 0.38544539608191997,
+          "knowledge-note:SET_DESCRIPTION": 0.7011719467568316,
+          "knowledge-note:SET_NOTE_TYPE": 0.530470463210861,
+          "knowledge-note:SET_CONTENT": 0.7111441060245245,
+          "knowledge-note:PATCH_CONTENT": 0.7394920333270534,
+          "knowledge-note:SET_METADATA_FIELD": 0.3597125492601423,
+          "knowledge-note:SET_METADATA_LIST_FIELD": 0.3317781116389771,
+          "knowledge-note:SET_PROVENANCE": 0.06662349499924858,
+          "knowledge-note:ADD_LINK": 0.19228811355624198,
+          "knowledge-note:REMOVE_LINK": -0.8250360733508888,
+          "knowledge-note:UPDATE_LINK_TYPE": 0.20045028145919153,
+          "knowledge-note:ADD_TOPIC": 0.22900391376043672,
+          "knowledge-note:REMOVE_TOPIC": -0.40233699587955196,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.14198855080481643,
+          "knowledge-note:APPROVE_NOTE": -0.06713640715908609,
+          "knowledge-note:REJECT_NOTE": -1.1339706092799524,
+          "knowledge-note:ARCHIVE_NOTE": 1.3766662647144772,
+          "knowledge-note:RESTORE_NOTE": 2.2912458042673847
+        },
+        "pick": "knowledge-note:SET_PROVENANCE",
+        "opCorrect": false,
+        "args": {
+          "sourceOrigin": "DERIVED",
+          "author": "derived-from"
+        },
+        "argsRaw": "{\"sourceOrigin\": \"DERIVED\", \"author\": \"derived-from\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 36,
+          "op": 2520,
+          "args": 198,
+          "total": 2754
+        }
+      },
+      {
+        "id": "none2-02",
+        "set": "h2na",
+        "style": "natural",
+        "utterance": "how many core ideas does this map have now?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "moc:CREATE_MOC": -1.4555697398736487,
+          "moc:UPDATE_ORIENTATION": -1.0831700821106898,
+          "moc:UPDATE_DESCRIPTION": -0.9245996143474997,
+          "moc:ADD_CORE_IDEA": -0.5748510041379329,
+          "moc:UPDATE_CORE_IDEA": -0.6473717802505394,
+          "moc:REMOVE_CORE_IDEA": -1.009252065407951,
+          "moc:REORDER_CORE_IDEAS": -0.9850220903123741,
+          "moc:ADD_TENSION": -1.182028045463588,
+          "moc:REMOVE_TENSION": -1.3453418373370285,
+          "moc:ADD_OPEN_QUESTION": -1.4785548775373258,
+          "moc:REMOVE_OPEN_QUESTION": -0.8140132378938674,
+          "moc:ADD_CHILD_MOC": -1.9078691313815093,
+          "moc:REMOVE_CHILD_MOC": -1.084340053287249,
+          "moc:SET_METADATA_FIELD": -0.5832796816430288
+        },
+        "pick": "moc:ADD_CORE_IDEA",
+        "opCorrect": false,
+        "args": {
+          "noteRef": "map",
+          "contextPhrase": "this map",
+          "sortOrder": 1
+        },
+        "argsRaw": "{\"noteRef\": \"map\", \"contextPhrase\": \"this map\", \"sortOrder\": 1}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 29,
+          "op": 2188,
+          "args": 181,
+          "total": 2398
+        }
+      },
+      {
+        "id": "none2-03",
+        "set": "h2na",
+        "style": "natural",
+        "utterance": "when's the target date again?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.7390090516002881,
+          "project:UPDATE_PROJECT_INFO": -0.003796457804128295,
+          "project:SET_PROJECT_STATUS": -1.1102150564912123,
+          "project:SET_OWNER": -0.18942435301498595,
+          "project:SET_TARGET_DATE": 0.5451454218373328,
+          "project:LINK_WBS": -0.4132439075719665,
+          "project:ADD_MEMBER": -0.09141806892715132,
+          "project:UPDATE_MEMBER": -0.11224870514999052,
+          "project:REMOVE_MEMBER": -1.6651779488342298,
+          "project:ADD_DELIVERABLE": 0.05086402530212886,
+          "project:UPDATE_DELIVERABLE": 0.5405603326521771,
+          "project:SET_DELIVERABLE_STATUS": -0.07986290716587519,
+          "project:REMOVE_DELIVERABLE": 0.06389999459045548,
+          "project:ADD_KNOWLEDGE_REF": -0.8272460066977549,
+          "project:REMOVE_KNOWLEDGE_REF": -0.4138460078856949,
+          "project:SET_REFERENCES": -0.06673213114137666
+        },
+        "pick": "project:SET_TARGET_DATE",
+        "opCorrect": false,
+        "args": {
+          "targetDate": "2024-06-30T00:00:00Z"
+        },
+        "argsRaw": "{\"targetDate\": \"2024-06-30T00:00:00Z\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 27,
+          "op": 1884,
+          "args": 161,
+          "total": 2072
+        }
+      },
+      {
+        "id": "none2-04",
+        "set": "h2na",
+        "style": "natural",
+        "utterance": "which of these are blocked right now?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "wbs:CREATE_GOAL": 0.00007863788232498337,
+          "wbs:UPDATE_GOAL_DESCRIPTION": 0.35665406455221893,
+          "wbs:DELETE_GOAL": 0.6634835171334696,
+          "wbs:REORDER": 0.6287138950408461,
+          "wbs:SET_GOAL_STATUS": 0.4124051128080586,
+          "wbs:ASSIGN_GOAL": 0.45626539760335916,
+          "wbs:SET_OUTCOME": 0.5150326521448126,
+          "wbs:ADD_DEPENDENCIES": 0.21818652097000035,
+          "wbs:REMOVE_DEPENDENCIES": 0.3415725349834462,
+          "wbs:ADD_NOTE": 0.3650717291690082,
+          "wbs:REMOVE_NOTE": 0.17866487360958372,
+          "wbs:SET_OWNER": 0.4263427603696397,
+          "wbs:SET_REFERENCES": 0.4285381676088491,
+          "wbs:SET_PROJECT_REF": 0.21857633035297863
+        },
+        "pick": "wbs:SET_GOAL_STATUS",
+        "opCorrect": false,
+        "args": {
+          "status": "IN_REVIEW",
+          "blockReason": "these"
+        },
+        "argsRaw": "{\"status\": \"IN_REVIEW\", \"blockReason\": \"these\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 27,
+          "op": 1591,
+          "args": 168,
+          "total": 1787
+        }
+      },
+      {
+        "id": "none2-05",
+        "set": "h2na",
+        "style": "paraphrase",
+        "utterance": "is this the same paper Sam sent around last week?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "source:INGEST_SOURCE": 0.07696045873007473,
+          "source:SET_SOURCE_STATUS": 0.3070236708090306,
+          "source:ADD_EXTRACTED_CLAIM": -0.07853661474872053,
+          "source:RECORD_EXTRACTION_STATS": 0.23016719503405458
+        },
+        "pick": "source:INGEST_SOURCE",
+        "opCorrect": false,
+        "args": {
+          "sourceType": "DOCUMENTATION",
+          "title": "Sam",
+          "content": "Sam sent around last week"
+        },
+        "argsRaw": "{\"sourceType\": \"DOCUMENTATION\", \"title\": \"Sam\", \"content\": \"Sam sent around last week\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 32,
+          "op": 466,
+          "args": 206,
+          "total": 704
+        }
+      },
+      {
+        "id": "none2-06",
+        "set": "h2na",
+        "style": "paraphrase",
+        "utterance": "hmm, I'm not convinced by this yet",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "research-claim:CREATE_CLAIM": 0.05703914584414105,
+          "research-claim:ADD_RESEARCH_CONNECTION": 0.13094266121964604,
+          "research-claim:REMOVE_RESEARCH_CONNECTION": 0.13463373863381767,
+          "research-claim:UPDATE_CLAIM_CONTENT": 0.1514307027318027
+        },
+        "pick": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "opCorrect": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 29,
+          "op": 570,
+          "args": 0,
+          "total": 599
+        }
+      },
+      {
+        "id": "none2-07",
+        "set": "h2na",
+        "style": "paraphrase",
+        "utterance": "nice, things are moving a lot faster today",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": -0.10799397257051158,
+          "pipeline-queue:ASSIGN_TASK": -0.15991921338992654,
+          "pipeline-queue:ADVANCE_PHASE": 0.07209166632974806,
+          "pipeline-queue:COMPLETE_TASK": 0.05736267498872394,
+          "pipeline-queue:FAIL_TASK": 0.13778207722015168,
+          "pipeline-queue:BLOCK_TASK": 0.11978364482024517,
+          "pipeline-queue:UNBLOCK_TASK": -0.013366110642838214
+        },
+        "pick": "pipeline-queue:ADVANCE_PHASE",
+        "opCorrect": false,
+        "args": {
+          "handoff": {
+            "phase": "create",
+            "workDone": "nice",
+            "filesModified": []
+          }
+        },
+        "argsRaw": "{\"handoff\": {\"phase\": \"create\", \"workDone\": \"nice\", \"filesModified\": []}}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 31,
+          "op": 821,
+          "args": 212,
+          "total": 1064
+        }
+      },
+      {
+        "id": "none2-08",
+        "set": "h2na",
+        "style": "paraphrase",
+        "utterance": "should I settle this or call it a non-issue? what do you think?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "inCandidates": null,
+        "opScores": {
+          "tension:CREATE_TENSION": -0.22625725212134673,
+          "tension:RESOLVE_TENSION": 0.9519609632065253,
+          "tension:DISSOLVE_TENSION": 0.12094171156906985,
+          "tension:ADD_INVOLVED_REF": -0.011519939292365167
+        },
+        "pick": "tension:RESOLVE_TENSION",
+        "opCorrect": false,
+        "args": {
+          "resolution": "non-issue"
+        },
+        "argsRaw": "{\"resolution\": \"non-issue\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 46,
+          "op": 530,
+          "args": 107,
+          "total": 682
+        }
+      },
+      {
+        "id": "ma2-01",
+        "set": "h2multi",
+        "style": "natural",
+        "utterance": "call it \"Group commit amortizes fsync\" and send it for review",
+        "expectedOp": null,
+        "expectedOps": [
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SUBMIT_FOR_REVIEW"
+        ],
+        "inCandidates": null,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.26144617909423573,
+          "knowledge-note:SET_DESCRIPTION": -0.9941698441408318,
+          "knowledge-note:SET_NOTE_TYPE": -0.24638494215106732,
+          "knowledge-note:SET_CONTENT": -0.21165646556378315,
+          "knowledge-note:PATCH_CONTENT": -0.2886794833446089,
+          "knowledge-note:SET_METADATA_FIELD": -0.2567150856768159,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.2439333095155689,
+          "knowledge-note:SET_PROVENANCE": -0.3143010068390195,
+          "knowledge-note:ADD_LINK": -0.30111012512863167,
+          "knowledge-note:REMOVE_LINK": -0.970211727079886,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.3511269610982628,
+          "knowledge-note:ADD_TOPIC": -0.34536174913570505,
+          "knowledge-note:REMOVE_TOPIC": -0.7266664617754348,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.339503821362507,
+          "knowledge-note:APPROVE_NOTE": -0.17134266814003452,
+          "knowledge-note:REJECT_NOTE": -0.4132899027915897,
+          "knowledge-note:ARCHIVE_NOTE": -0.21009970428273927,
+          "knowledge-note:RESTORE_NOTE": -1.1784651843141662
+        },
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": null,
+        "multiFirstPlausible": true,
+        "multiFirstIsFirst": false,
+        "args": {},
+        "argsRaw": null,
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 46,
+          "op": 2537,
+          "args": 0,
+          "total": 2583
+        }
+      },
+      {
+        "id": "ma2-02",
+        "set": "h2multi",
+        "style": "paraphrase",
+        "utterance": "the eval set is finished; Sam can pick up the fusion weights next",
+        "expectedOp": null,
+        "expectedOps": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ASSIGN_GOAL"
+        ],
+        "inCandidates": null,
+        "opScores": {
+          "wbs:CREATE_GOAL": -0.3735976668180836,
+          "wbs:UPDATE_GOAL_DESCRIPTION": -0.18810229070363427,
+          "wbs:DELETE_GOAL": -0.03443281434516998,
+          "wbs:REORDER": 0.14784581289647258,
+          "wbs:SET_GOAL_STATUS": 1.374986084558865,
+          "wbs:ASSIGN_GOAL": 0.08050529680682916,
+          "wbs:SET_OUTCOME": 0.47163972559580225,
+          "wbs:ADD_DEPENDENCIES": -0.03054772975864284,
+          "wbs:REMOVE_DEPENDENCIES": 0.19740522687339102,
+          "wbs:ADD_NOTE": -0.10663502365675348,
+          "wbs:REMOVE_NOTE": 0.049256513099681154,
+          "wbs:SET_OWNER": 0.02429464930248404,
+          "wbs:SET_REFERENCES": -0.06701523916544261,
+          "wbs:SET_PROJECT_REF": 1.0165158874031022
+        },
+        "pick": "wbs:SET_OUTCOME",
+        "opCorrect": null,
+        "multiFirstPlausible": false,
+        "multiFirstIsFirst": false,
+        "args": {
+          "id": "g-fuse",
+          "outcome": "set"
+        },
+        "argsRaw": "{\"id\": \"Tune fusion weights\", \"outcome\": \"set\"}",
+        "refCfMs": 340.10000014305115,
+        "ms": {
+          "gate": 0,
+          "embed": 40,
+          "op": 1607,
+          "args": 527,
+          "total": 2174
+        }
+      },
+      {
+        "id": "ma2-03",
+        "set": "h2multi",
+        "style": "natural",
+        "utterance": "add Ines to the team as our designer and make her the project owner",
+        "expectedOp": null,
+        "expectedOps": [
+          "project:ADD_MEMBER",
+          "project:SET_OWNER"
+        ],
+        "inCandidates": null,
+        "opScores": {
+          "project:CREATE_PROJECT": -0.12333932438874551,
+          "project:UPDATE_PROJECT_INFO": 0.130238031348199,
+          "project:SET_PROJECT_STATUS": -1.4696099400140996,
+          "project:SET_OWNER": 0.18324656282318497,
+          "project:SET_TARGET_DATE": -2.178265359003528,
+          "project:LINK_WBS": 0.06563461102397627,
+          "project:ADD_MEMBER": 0.35032355387899705,
+          "project:UPDATE_MEMBER": 0.2725509356411555,
+          "project:REMOVE_MEMBER": 0.0028494846637840965,
+          "project:ADD_DELIVERABLE": -0.4948037547977342,
+          "project:UPDATE_DELIVERABLE": -0.12379612587332645,
+          "project:SET_DELIVERABLE_STATUS": -1.3149093357422532,
+          "project:REMOVE_DELIVERABLE": -0.47187503240593287,
+          "project:ADD_KNOWLEDGE_REF": 0.0978279690549404,
+          "project:REMOVE_KNOWLEDGE_REF": -0.14256052523734586,
+          "project:SET_REFERENCES": -0.5356676499818152
+        },
+        "pick": "project:SET_OWNER",
+        "opCorrect": null,
+        "multiFirstPlausible": true,
+        "multiFirstIsFirst": false,
+        "args": {
+          "owner": "Ines"
+        },
+        "argsRaw": "{\"owner\": \"Ines\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 40,
+          "op": 1887,
+          "args": 107,
+          "total": 2034
+        }
+      },
+      {
+        "id": "ma2-04",
+        "set": "h2multi",
+        "style": "paraphrase",
+        "utterance": "pulling claims from this is finished: 8 claims, nothing skipped, so flip it to extracted",
+        "expectedOp": null,
+        "expectedOps": [
+          "source:RECORD_EXTRACTION_STATS",
+          "source:SET_SOURCE_STATUS"
+        ],
+        "inCandidates": null,
+        "opScores": {
+          "source:INGEST_SOURCE": -0.6808787294576029,
+          "source:SET_SOURCE_STATUS": -0.47243776731556864,
+          "source:ADD_EXTRACTED_CLAIM": -0.42098816830850727,
+          "source:RECORD_EXTRACTION_STATS": -0.3582388852487116
+        },
+        "pick": "source:RECORD_EXTRACTION_STATS",
+        "opCorrect": null,
+        "multiFirstPlausible": true,
+        "multiFirstIsFirst": true,
+        "args": {
+          "claimCount": 8,
+          "skippedCount": 0,
+          "skipRate": 0
+        },
+        "argsRaw": "{\"claimCount\": 8, \"skippedCount\": 0, \"skipRate\": 0}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 44,
+          "op": 511,
+          "args": 163,
+          "total": 717
+        }
+      },
+      {
+        "id": "ma2-05",
+        "set": "h2multi",
+        "style": "natural",
+        "utterance": "add the open question \"Should traces be sampled per tenant?\" and remove the old one about debug log retention",
+        "expectedOp": null,
+        "expectedOps": [
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_OPEN_QUESTION"
+        ],
+        "inCandidates": null,
+        "opScores": {
+          "moc:CREATE_MOC": -1.0140097996937323,
+          "moc:UPDATE_ORIENTATION": -1.050827350823056,
+          "moc:UPDATE_DESCRIPTION": -2.23922165642065,
+          "moc:ADD_CORE_IDEA": -1.7838241699476138,
+          "moc:UPDATE_CORE_IDEA": -0.5640249828800847,
+          "moc:REMOVE_CORE_IDEA": 1.278148753147128,
+          "moc:REORDER_CORE_IDEAS": 0.05801010660129302,
+          "moc:ADD_TENSION": -0.09511195478684642,
+          "moc:REMOVE_TENSION": 2.317055784150635,
+          "moc:ADD_OPEN_QUESTION": 0.3046454342304665,
+          "moc:REMOVE_OPEN_QUESTION": 2.710535323015857,
+          "moc:ADD_CHILD_MOC": -1.1788596876170743,
+          "moc:REMOVE_CHILD_MOC": 1.190836429609163,
+          "moc:SET_METADATA_FIELD": -0.20155310717285935
+        },
+        "pick": "moc:REMOVE_OPEN_QUESTION",
+        "opCorrect": null,
+        "multiFirstPlausible": true,
+        "multiFirstIsFirst": false,
+        "args": {
+          "question": "Should traces be sampled per tenant?"
+        },
+        "argsRaw": "{\"question\": \"Should traces be sampled per tenant?\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 58,
+          "op": 1932,
+          "args": 146,
+          "total": 2136
+        }
+      },
+      {
+        "id": "ma2-06",
+        "set": "h2multi",
+        "style": "paraphrase",
+        "utterance": "unstick the dedupe job and hand it to Nadia",
+        "expectedOp": null,
+        "expectedOps": [
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:ASSIGN_TASK"
+        ],
+        "inCandidates": null,
+        "opScores": {
+          "pipeline-queue:ADD_TASK": -3.4673144785753216,
+          "pipeline-queue:ASSIGN_TASK": -0.5848311663985584,
+          "pipeline-queue:ADVANCE_PHASE": -0.3974256612007896,
+          "pipeline-queue:COMPLETE_TASK": -0.5031873576685939,
+          "pipeline-queue:FAIL_TASK": 0.17972836313805374,
+          "pipeline-queue:BLOCK_TASK": 0.034365786648862695,
+          "pipeline-queue:UNBLOCK_TASK": 0.13662842563788968
+        },
+        "pick": "pipeline-queue:FAIL_TASK",
+        "opCorrect": null,
+        "multiFirstPlausible": false,
+        "multiFirstIsFirst": false,
+        "args": {
+          "taskId": "tk-2",
+          "reason": "unstick the dedupe job"
+        },
+        "argsRaw": "{\"taskId\": \"extract: Arch sync transcript (PENDING)\", \"reason\": \"unstick the dedupe job\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 35,
+          "op": 820,
+          "args": 594,
+          "total": 1448
+        }
+      },
+      {
+        "id": "ma2-07",
+        "set": "h2multi",
+        "style": "natural",
+        "utterance": "tag this \"consensus\" and link it to the Raft leader election note as related",
+        "expectedOp": null,
+        "expectedOps": [
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:ADD_LINK"
+        ],
+        "inCandidates": null,
+        "opScores": {
+          "knowledge-note:SET_TITLE": -0.38839059178395985,
+          "knowledge-note:SET_DESCRIPTION": -0.8186219548826892,
+          "knowledge-note:SET_NOTE_TYPE": -0.7887391411396911,
+          "knowledge-note:SET_CONTENT": -2.4883672191729853,
+          "knowledge-note:PATCH_CONTENT": 0.3288173421480707,
+          "knowledge-note:SET_METADATA_FIELD": 0.08081385828485921,
+          "knowledge-note:SET_METADATA_LIST_FIELD": -0.018117936576767635,
+          "knowledge-note:SET_PROVENANCE": -0.07177975730740083,
+          "knowledge-note:ADD_LINK": 0.17097138318175298,
+          "knowledge-note:REMOVE_LINK": -0.9464416391540311,
+          "knowledge-note:UPDATE_LINK_TYPE": -0.046784400332867015,
+          "knowledge-note:ADD_TOPIC": 0.3079396605055109,
+          "knowledge-note:REMOVE_TOPIC": -0.5144369633545731,
+          "knowledge-note:SUBMIT_FOR_REVIEW": -0.5210995927672657,
+          "knowledge-note:APPROVE_NOTE": 0.10217814772965306,
+          "knowledge-note:REJECT_NOTE": -0.022534166010515833,
+          "knowledge-note:ARCHIVE_NOTE": 1.014320579268916,
+          "knowledge-note:RESTORE_NOTE": -0.35738479302556714
+        },
+        "pick": "knowledge-note:ADD_TOPIC",
+        "opCorrect": null,
+        "multiFirstPlausible": true,
+        "multiFirstIsFirst": true,
+        "args": {
+          "name": "Raft leader election"
+        },
+        "argsRaw": "{\"name\": \"Raft leader election\"}",
+        "refCfMs": 0,
+        "ms": {
+          "gate": 0,
+          "embed": 43,
+          "op": 2649,
+          "args": 128,
+          "total": 2820
+        }
+      }
+    ]
+  }
+}
