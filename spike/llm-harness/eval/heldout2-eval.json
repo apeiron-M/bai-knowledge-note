@@ -1,0 +1,4557 @@
+{
+ "name": "heldout2-chat-op-eval",
+ "version": 1,
+ "createdAt": "2026-10-20",
+ "conventions": {
+  "opKey": "<model>:<OP_NAME>, model = docType without the 'bai/' prefix (work-breakdown-structure is 'wbs'), matching CatalogEntry.key in op-catalog.ts",
+  "style": "'natural' = how a user would type it, may reuse the op's own words; 'paraphrase' = indirect wording that avoids the non-trivial words of the op name (enforced by the validator). Report results per style.",
+  "args": "Semantic (model-filled) fields that must match exactly (subject to argMatch). App-filled fields (new-id, timestamp, actor, DateTime) never appear.",
+  "ambiguousArgs": "Semantic fields whose wording/value is open; reference values only, EXCLUDED from exact match.",
+  "refArgs": "ref-id fields the model must choose from context.refCandidates (keys are dotted paths, same as buildModelSchema/envelope refIds). Score separately from args.",
+  "requiredPresent": "Dotted paths of required ambiguousArgs fields that must be present and non-empty.",
+  "argMatch": "Optional per-field comparator: 'ci', 'date' (YYYY-MM-DD prefix), 'unordered', 'ci-unordered'.",
+  "omittedOptional": "Optional semantic fields absent from args and ambiguousArgs are expected to be omitted or null.",
+  "context": "context.state is a partial snapshot that satisfies the reducer preconditions. refCandidates entries are {id,label}.",
+  "multiAction": "Utterances whose correct answer is two actions. expected is an ordered list of steps in the same shape as items[].expected. orderSensitive=true means the reducers make only the given order valid; otherwise the utterance order is the reference and any order is acceptable.",
+  "noAction": "Correct output is no operation.",
+  "today": "2026-10-20 (for relative dates)",
+  "actor": "ben (app-supplied; never expected in args)"
+ },
+ "items": [
+  {
+   "id": "kn2-01",
+   "style": "natural",
+   "utterance": "change the title to \"Write-ahead logs make crash recovery boring\"",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "WAL notes",
+     "status": "DRAFT"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_TITLE",
+    "args": {
+     "title": "Write-ahead logs make crash recovery boring"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "kn2-02",
+   "style": "paraphrase",
+   "utterance": "the one-liner under the heading should read: Batching fsyncs trades a few milliseconds of latency for an order of magnitude more throughput.",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Group commit",
+     "description": null
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_DESCRIPTION",
+    "args": {
+     "description": "Batching fsyncs trades a few milliseconds of latency for an order of magnitude more throughput."
+    },
+    "argMatch": {
+     "description": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "kn2-03",
+   "style": "natural",
+   "utterance": "set the note type to decision",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Pick RocksDB for the metadata store",
+     "noteType": "concept"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_NOTE_TYPE",
+    "args": {
+     "noteType": "decision"
+    },
+    "argMatch": {
+     "noteType": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "kn2-04",
+   "style": "paraphrase",
+   "utterance": "wipe what's written here and put this in its place: Compaction debt grows faster than write volume once L0 has more than eight files.",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Compaction debt",
+     "content": "TODO"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_CONTENT",
+    "args": {
+     "content": "Compaction debt grows faster than write volume once L0 has more than eight files."
+    },
+    "argMatch": {
+     "content": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:PATCH_CONTENT",
+     "knowledge-note:SET_DESCRIPTION"
+    ],
+    "why": "replace the whole body, not an offset patch or the summary line"
+   }
+  },
+  {
+   "id": "kn2-05",
+   "style": "natural",
+   "utterance": "add the topic \"storage engines\" to this",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Write-ahead logs make crash recovery boring",
+     "topics": [
+      {
+       "id": "t-db",
+       "name": "databases"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:ADD_TOPIC",
+    "args": {
+     "name": "storage engines"
+    },
+    "argMatch": {
+     "name": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "kn2-06",
+   "style": "paraphrase",
+   "utterance": "we're arguing the opposite of \"LSM trees always win on writes\" here, point at it from this one",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "B-trees hold up under mixed workloads",
+     "links": [],
+     "topics": [
+      {
+       "id": "t-se",
+       "name": "storage engines"
+      }
+     ]
+    },
+    "refCandidates": {
+     "targetDocumentId": [
+      {
+       "id": "doc-bloom",
+       "label": "Bloom filters cut point-read IO"
+      },
+      {
+       "id": "doc-wal",
+       "label": "Write-ahead logs make crash recovery boring"
+      },
+      {
+       "id": "doc-lsm",
+       "label": "LSM trees always win on writes"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:ADD_LINK",
+    "args": {
+     "linkType": "CONTRADICTS"
+    },
+    "ambiguousArgs": {
+     "targetTitle": "LSM trees always win on writes"
+    },
+    "refArgs": {
+     "targetDocumentId": "doc-lsm"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:ADD_TOPIC",
+     "knowledge-note:UPDATE_LINK_TYPE"
+    ],
+    "why": "a new relation to another note, with linkType inferred from \"arguing the opposite\"; there is no existing link to retype"
+   }
+  },
+  {
+   "id": "kn2-07",
+   "style": "natural",
+   "utterance": "change the link to \"B-tree page splits\" so it says this supersedes it",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Fractal trees avoid split storms",
+     "links": [
+      {
+       "id": "lk-1",
+       "targetTitle": "Write amplification basics",
+       "linkType": "RELATES_TO"
+      },
+      {
+       "id": "lk-2",
+       "targetTitle": "B-tree page splits",
+       "linkType": "RELATES_TO"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "lk-1",
+       "label": "Write amplification basics (RELATES_TO)"
+      },
+      {
+       "id": "lk-2",
+       "label": "B-tree page splits (RELATES_TO)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:UPDATE_LINK_TYPE",
+    "args": {
+     "linkType": "SUPERSEDES"
+    },
+    "refArgs": {
+     "id": "lk-2"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:ADD_LINK"
+    ],
+    "why": "the link already exists; only its type changes"
+   }
+  },
+  {
+   "id": "kn2-08",
+   "style": "paraphrase",
+   "utterance": "drop the connection to the Postgres vacuum writeup, it's not relevant anymore",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "MVCC garbage in long transactions",
+     "links": [
+      {
+       "id": "lk-a",
+       "targetTitle": "Snapshot isolation anomalies",
+       "linkType": "BUILDS_ON"
+      },
+      {
+       "id": "lk-b",
+       "targetTitle": "Postgres vacuum tuning",
+       "linkType": "RELATES_TO"
+      }
+     ],
+     "topics": [
+      {
+       "id": "t-pg",
+       "name": "postgres"
+      },
+      {
+       "id": "t-mvcc",
+       "name": "mvcc"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "lk-a",
+       "label": "link: Snapshot isolation anomalies"
+      },
+      {
+       "id": "lk-b",
+       "label": "link: Postgres vacuum tuning"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:REMOVE_LINK",
+    "args": {},
+    "refArgs": {
+     "id": "lk-b"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:REMOVE_TOPIC"
+    ],
+    "why": "a \"postgres\" topic also exists; the user means the link to another writeup"
+   }
+  },
+  {
+   "id": "kn2-09",
+   "style": "natural",
+   "utterance": "remove the databases topic",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Bloom filters cut point-read IO",
+     "topics": [
+      {
+       "id": "t-se",
+       "name": "storage engines"
+      },
+      {
+       "id": "t-db",
+       "name": "databases"
+      },
+      {
+       "id": "t-perf",
+       "name": "performance"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "t-se",
+       "label": "storage engines"
+      },
+      {
+       "id": "t-db",
+       "label": "databases"
+      },
+      {
+       "id": "t-perf",
+       "label": "performance"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:REMOVE_TOPIC",
+    "args": {},
+    "refArgs": {
+     "id": "t-db"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "kn2-10",
+   "style": "paraphrase",
+   "utterance": "we're not very sure about this one yet, only a single benchmark backs it, so call our certainty low",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "io_uring halves syscall overhead",
+     "confidence": null
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_METADATA_FIELD",
+    "args": {
+     "field": "confidence",
+     "value": "low"
+    },
+    "argMatch": {
+     "value": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "field name is the reducer literal \"confidence\""
+  },
+  {
+   "id": "kn2-11",
+   "style": "natural",
+   "utterance": "set the consequences to: slower cold start, roughly 2x disk usage",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Pick RocksDB for the metadata store",
+     "noteType": "decision",
+     "consequences": []
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_METADATA_LIST_FIELD",
+    "args": {
+     "field": "consequences",
+     "values": [
+      "slower cold start",
+      "roughly 2x disk usage"
+     ]
+    },
+    "argMatch": {
+     "values": "ci-unordered"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:SET_METADATA_FIELD"
+    ],
+    "why": "consequences is a list field; two comma-separated items, not one string"
+   }
+  },
+  {
+   "id": "kn2-12",
+   "style": "natural",
+   "utterance": "submit this for review",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Group commit",
+     "status": "DRAFT"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+    "args": {}
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "kn2-13",
+   "style": "paraphrase",
+   "utterance": "reads well to me, ship it as canonical",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Bloom filters cut point-read IO",
+     "status": "IN_REVIEW",
+     "provenance": {
+      "author": "maria"
+     }
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:APPROVE_NOTE",
+    "args": {},
+    "ambiguousArgs": {
+     "comment": "Reads well"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "comment is optional; parked in ambiguousArgs so adding or omitting it is not penalised"
+  },
+  {
+   "id": "kn2-14",
+   "style": "paraphrase",
+   "utterance": "pull this one back out of cold storage, we need it again for the migration",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Old sharding scheme",
+     "status": "ARCHIVED"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:RESTORE_NOTE",
+    "args": {},
+    "ambiguousArgs": {
+     "comment": "Needed again for the migration"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:SUBMIT_FOR_REVIEW",
+     "knowledge-note:ARCHIVE_NOTE"
+    ],
+    "why": "status is ARCHIVED; \"back out of cold storage\" means restore, and archive would be invalid"
+   }
+  },
+  {
+   "id": "kn2-15",
+   "style": "natural",
+   "utterance": "archive this note, the newer compaction writeup replaces it",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Compaction in 2019",
+     "status": "CANONICAL"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:ARCHIVE_NOTE",
+    "args": {},
+    "ambiguousArgs": {
+     "comment": "Replaced by the newer compaction writeup"
+    },
+    "requiredPresent": [
+     "comment"
+    ]
+   },
+   "difficulty": "easy",
+   "tags": [],
+   "notes": "comment is required by the schema"
+  },
+  {
+   "id": "moc2-01",
+   "style": "natural",
+   "utterance": "create a domain-level map called \"Observability\". Description: everything about logs, metrics and traces. Orientation: start with the three pillars, then read the cost notes.",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {}
+   },
+   "expected": {
+    "op": "moc:CREATE_MOC",
+    "args": {
+     "title": "Observability",
+     "tier": "DOMAIN"
+    },
+    "ambiguousArgs": {
+     "description": "Everything about logs, metrics and traces.",
+     "orientation": "Start with the three pillars, then read the cost notes."
+    },
+    "argMatch": {
+     "title": "ci"
+    },
+    "requiredPresent": [
+     "description",
+     "orientation"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "moc2-02",
+   "style": "paraphrase",
+   "utterance": "the bit at the top that tells readers where to begin should say: Read the incident reviews first, then the alerting notes.",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "On-call health",
+     "description": "Notes on alert fatigue",
+     "orientation": "Start anywhere."
+    }
+   },
+   "expected": {
+    "op": "moc:UPDATE_ORIENTATION",
+    "args": {
+     "orientation": "Read the incident reviews first, then the alerting notes."
+    },
+    "argMatch": {
+     "orientation": "ci"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:UPDATE_DESCRIPTION"
+    ],
+    "why": "the reading-path text is orientation, not description (contrast moc2-03)"
+   }
+  },
+  {
+   "id": "moc2-03",
+   "style": "natural",
+   "utterance": "update the description to \"Notes on alert fatigue and on-call health\"",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "On-call health",
+     "description": "Notes on alert fatigue"
+    }
+   },
+   "expected": {
+    "op": "moc:UPDATE_DESCRIPTION",
+    "args": {
+     "description": "Notes on alert fatigue and on-call health"
+    },
+    "argMatch": {
+     "description": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "moc2-04",
+   "style": "natural",
+   "utterance": "add \"SLOs beat static thresholds\" as a core idea, it's the reason we moved off fixed CPU alerts",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Alerting",
+     "coreIdeas": [
+      {
+       "id": "ci-1",
+       "noteRef": "Cardinality explosions",
+       "sortOrder": 1
+      },
+      {
+       "id": "ci-2",
+       "noteRef": "Dashboards nobody reads",
+       "sortOrder": 2
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_CORE_IDEA",
+    "args": {
+     "noteRef": "SLOs beat static thresholds"
+    },
+    "ambiguousArgs": {
+     "contextPhrase": "the reason we moved off fixed CPU alerts",
+     "sortOrder": 3
+    },
+    "argMatch": {
+     "noteRef": "ci"
+    },
+    "requiredPresent": [
+     "contextPhrase",
+     "sortOrder"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "sortOrder is required but the user gave no position; 3 (append) is the reference value"
+  },
+  {
+   "id": "moc2-05",
+   "style": "paraphrase",
+   "utterance": "for the cardinality entry, the blurb next to it should be \"why per-user labels blow up Prometheus\"",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Alerting",
+     "coreIdeas": [
+      {
+       "id": "ci-1",
+       "noteRef": "Tracing sampling",
+       "contextPhrase": "what to keep"
+      },
+      {
+       "id": "ci-2",
+       "noteRef": "Cardinality explosions",
+       "contextPhrase": "labels"
+      },
+      {
+       "id": "ci-3",
+       "noteRef": "SLOs beat static thresholds",
+       "contextPhrase": "why SLOs"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "ci-1",
+       "label": "Tracing sampling"
+      },
+      {
+       "id": "ci-2",
+       "label": "Cardinality explosions"
+      },
+      {
+       "id": "ci-3",
+       "label": "SLOs beat static thresholds"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:UPDATE_CORE_IDEA",
+    "args": {
+     "contextPhrase": "why per-user labels blow up Prometheus"
+    },
+    "refArgs": {
+     "id": "ci-2"
+    },
+    "argMatch": {
+     "contextPhrase": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:ADD_CORE_IDEA",
+     "moc:UPDATE_DESCRIPTION"
+    ],
+    "why": "edits the context phrase of an existing entry; sortOrder must stay omitted"
+   }
+  },
+  {
+   "id": "moc2-06",
+   "style": "natural",
+   "utterance": "remove \"Dashboards nobody reads\" from the core ideas",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Alerting",
+     "coreIdeas": [
+      {
+       "id": "ci-1",
+       "noteRef": "Tracing sampling"
+      },
+      {
+       "id": "ci-2",
+       "noteRef": "Cardinality explosions"
+      },
+      {
+       "id": "ci-3",
+       "noteRef": "Dashboards nobody reads"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "ci-1",
+       "label": "Tracing sampling"
+      },
+      {
+       "id": "ci-2",
+       "label": "Cardinality explosions"
+      },
+      {
+       "id": "ci-3",
+       "label": "Dashboards nobody reads"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:REMOVE_CORE_IDEA",
+    "args": {},
+    "refArgs": {
+     "id": "ci-3"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "moc2-07",
+   "style": "paraphrase",
+   "utterance": "put the SLO one first, then tracing, then cardinality",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Alerting",
+     "coreIdeas": [
+      {
+       "id": "ci-1",
+       "noteRef": "Tracing sampling"
+      },
+      {
+       "id": "ci-2",
+       "noteRef": "Cardinality explosions"
+      },
+      {
+       "id": "ci-3",
+       "noteRef": "SLOs beat static thresholds"
+      }
+     ]
+    },
+    "refCandidates": {
+     "ids": [
+      {
+       "id": "ci-1",
+       "label": "Tracing sampling"
+      },
+      {
+       "id": "ci-2",
+       "label": "Cardinality explosions"
+      },
+      {
+       "id": "ci-3",
+       "label": "SLOs beat static thresholds"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:REORDER_CORE_IDEAS",
+    "args": {},
+    "refArgs": {
+     "ids": [
+      "ci-3",
+      "ci-1",
+      "ci-2"
+     ]
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "ids is an ordered ref list; compare in order"
+  },
+  {
+   "id": "moc2-08",
+   "style": "natural",
+   "utterance": "add an open question: do we page on error-budget burn or on raw symptoms?",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "On-call health",
+     "openQuestions": []
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_OPEN_QUESTION",
+    "args": {
+     "question": "Do we page on error-budget burn or on raw symptoms?"
+    },
+    "argMatch": {
+     "question": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "moc2-09",
+   "style": "paraphrase",
+   "utterance": "the \"Alert routing\" map should sit underneath this one",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Observability",
+     "tier": "DOMAIN",
+     "childRefs": [
+      "Log pipelines"
+     ],
+     "coreIdeas": []
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_CHILD_MOC",
+    "args": {
+     "childRef": "Alert routing"
+    },
+    "argMatch": {
+     "childRef": "ci"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:ADD_CORE_IDEA"
+    ],
+    "why": "another map nested below this one is a child MOC, not a core-idea entry"
+   }
+  },
+  {
+   "id": "moc2-10",
+   "style": "paraphrase",
+   "utterance": "that disagreement about trace sampling rates is settled, take it off this map",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Observability",
+     "tensions": [
+      {
+       "id": "tn-1",
+       "description": "Log retention cost vs. audit needs"
+      },
+      {
+       "id": "tn-2",
+       "description": "Head-based vs. tail-based trace sampling rates"
+      }
+     ],
+     "openQuestions": [
+      "How long do we keep debug logs?"
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "tn-1",
+       "label": "Log retention cost vs. audit needs"
+      },
+      {
+       "id": "tn-2",
+       "label": "Head-based vs. tail-based trace sampling rates"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:REMOVE_TENSION",
+    "args": {},
+    "refArgs": {
+     "id": "tn-2"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:REMOVE_OPEN_QUESTION",
+     "tension:RESOLVE_TENSION"
+    ],
+    "why": "removes a tension entry from the MOC; the separate tension document is not in scope"
+   }
+  },
+  {
+   "id": "moc2-11",
+   "style": "natural",
+   "utterance": "set the version to 2.1",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Observability",
+     "version": "2.0"
+    }
+   },
+   "expected": {
+    "op": "moc:SET_METADATA_FIELD",
+    "args": {
+     "field": "version",
+     "value": "2.1"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [],
+   "notes": "\"version\" is the only field the moc reducer accepts"
+  },
+  {
+   "id": "src2-01",
+   "style": "natural",
+   "utterance": "ingest this paper: \"The Tail at Scale\" by Jeffrey Dean and Luiz Barroso, https://research.google/pubs/the-tail-at-scale/ - content: Latency variability across many servers dominates request latency at scale; hedged and tied requests reduce the tail.",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {}
+   },
+   "expected": {
+    "op": "source:INGEST_SOURCE",
+    "args": {
+     "title": "The Tail at Scale",
+     "sourceType": "PAPER",
+     "url": "https://research.google/pubs/the-tail-at-scale/"
+    },
+    "ambiguousArgs": {
+     "content": "Latency variability across many servers dominates request latency at scale; hedged and tied requests reduce the tail.",
+     "author": "Jeffrey Dean and Luiz Barroso"
+    },
+    "argMatch": {
+     "title": "ci"
+    },
+    "requiredPresent": [
+     "content"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "src2-02",
+   "style": "paraphrase",
+   "utterance": "here's the transcript from Tuesday's architecture call, file it as \"Arch sync 2026-10-13\": Sam: we keep the old queue until the backfill ends. Priya: agreed, and we cut over shard by shard.",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {}
+   },
+   "expected": {
+    "op": "source:INGEST_SOURCE",
+    "args": {
+     "title": "Arch sync 2026-10-13",
+     "sourceType": "TRANSCRIPT"
+    },
+    "ambiguousArgs": {
+     "content": "Sam: we keep the old queue until the backfill ends. Priya: agreed, and we cut over shard by shard."
+    },
+    "argMatch": {
+     "title": "ci"
+    },
+    "requiredPresent": [
+     "content"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "src2-03",
+   "style": "natural",
+   "utterance": "mark this source as extracted",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "The Tail at Scale",
+     "status": "EXTRACTING"
+    }
+   },
+   "expected": {
+    "op": "source:SET_SOURCE_STATUS",
+    "args": {
+     "status": "EXTRACTED"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "src2-04",
+   "style": "paraphrase",
+   "utterance": "I'm starting to pull claims out of this one now",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "Arch sync 2026-10-13",
+     "status": "INBOX"
+    }
+   },
+   "expected": {
+    "op": "source:SET_SOURCE_STATUS",
+    "args": {
+     "status": "EXTRACTING"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "source:ADD_EXTRACTED_CLAIM",
+     "source:RECORD_EXTRACTION_STATS"
+    ],
+    "why": "announces the start of work, no claim named yet"
+   }
+  },
+  {
+   "id": "src2-05",
+   "style": "natural",
+   "utterance": "add the extracted claim \"Hedged requests cut p99 latency by 40%\"",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "The Tail at Scale",
+     "status": "EXTRACTING",
+     "extractedClaims": [
+      "Tail latency compounds with fan-out"
+     ]
+    }
+   },
+   "expected": {
+    "op": "source:ADD_EXTRACTED_CLAIM",
+    "args": {
+     "claimRef": "Hedged requests cut p99 latency by 40%"
+    },
+    "argMatch": {
+     "claimRef": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "src2-06",
+   "style": "paraphrase",
+   "utterance": "final tally on this one: 12 claims pulled, 3 thrown out",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "The Tail at Scale",
+     "status": "EXTRACTING"
+    }
+   },
+   "expected": {
+    "op": "source:RECORD_EXTRACTION_STATS",
+    "args": {
+     "claimCount": 12,
+     "skippedCount": 3
+    },
+    "ambiguousArgs": {
+     "skipRate": 0.2
+    },
+    "requiredPresent": [
+     "skipRate"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "skipRate reference = 3/(12+3); 3/12=0.25 or a percentage are defensible, so it is ambiguous"
+  },
+  {
+   "id": "prj2-01",
+   "style": "natural",
+   "utterance": "create a project called \"Search relevance revamp\", Priya owns it and we're still planning",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "status": "PLANNING",
+     "name": null,
+     "team": [],
+     "deliverables": []
+    }
+   },
+   "expected": {
+    "op": "project:CREATE_PROJECT",
+    "args": {
+     "name": "Search relevance revamp",
+     "owner": "Priya",
+     "status": "PLANNING"
+    },
+    "argMatch": {
+     "name": "ci",
+     "owner": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "prj2-02",
+   "style": "paraphrase",
+   "utterance": "the blurb up top should say: Replace BM25 with hybrid retrieval by Q1.",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "description": null,
+     "status": "ACTIVE"
+    }
+   },
+   "expected": {
+    "op": "project:UPDATE_PROJECT_INFO",
+    "args": {
+     "description": "Replace BM25 with hybrid retrieval by Q1."
+    },
+    "argMatch": {
+     "description": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "name must be omitted; CREATE_PROJECT would throw AlreadyInitialized"
+  },
+  {
+   "id": "prj2-04",
+   "style": "paraphrase",
+   "utterance": "everything shipped, we're wrapped up here",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "status": "ACTIVE"
+    }
+   },
+   "expected": {
+    "op": "project:SET_PROJECT_STATUS",
+    "args": {
+     "status": "COMPLETED"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:SET_PROJECT_STATUS(ARCHIVED)",
+     "project:SET_DELIVERABLE_STATUS"
+    ],
+    "why": "finished work is COMPLETED, not ARCHIVED; it is about the whole effort, not one deliverable"
+   }
+  },
+  {
+   "id": "prj2-05",
+   "style": "paraphrase",
+   "utterance": "Tomas is taking over running this from Priya",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "owner": "Priya",
+     "team": [
+      {
+       "id": "m-p",
+       "name": "Priya"
+      },
+      {
+       "id": "m-t",
+       "name": "Tomas"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:SET_OWNER",
+    "args": {
+     "owner": "Tomas"
+    },
+    "argMatch": {
+     "owner": "ci"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:UPDATE_MEMBER",
+     "project:ADD_MEMBER"
+    ],
+    "why": "Tomas is already on the team; \"running this\" is project ownership, not a role edit"
+   }
+  },
+  {
+   "id": "prj2-06",
+   "style": "natural",
+   "utterance": "set the target date to March 31",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "targetDate": null
+    }
+   },
+   "expected": {
+    "op": "project:SET_TARGET_DATE",
+    "args": {
+     "targetDate": "2027-03-31T00:00:00Z"
+    },
+    "argMatch": {
+     "targetDate": "date"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "today is 2026-10-20, so the next March 31 is in 2027"
+  },
+  {
+   "id": "prj2-07",
+   "style": "natural",
+   "utterance": "add Lena to the team as a data engineer",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "team": [
+      {
+       "id": "m-p",
+       "name": "Priya"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:ADD_MEMBER",
+    "args": {
+     "name": "Lena",
+     "role": "data engineer"
+    },
+    "ambiguousArgs": {
+     "kind": "HUMAN"
+    },
+    "argMatch": {
+     "name": "ci",
+     "role": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "prj2-08",
+   "style": "paraphrase",
+   "utterance": "the eval bot should be on this too, it's the agent that runs the nightly benchmarks",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "team": [
+      {
+       "id": "m-p",
+       "name": "Priya"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:ADD_MEMBER",
+    "args": {
+     "name": "eval bot",
+     "kind": "AGENT"
+    },
+    "ambiguousArgs": {
+     "role": "runs the nightly benchmarks"
+    },
+    "argMatch": {
+     "name": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "prj2-09",
+   "style": "paraphrase",
+   "utterance": "Lena's actually the tech lead now",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "owner": "Priya",
+     "team": [
+      {
+       "id": "m-p",
+       "name": "Priya",
+       "role": "PM"
+      },
+      {
+       "id": "m-l",
+       "name": "Lena",
+       "role": "data engineer"
+      },
+      {
+       "id": "m-m",
+       "name": "Marco",
+       "role": "designer"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "m-p",
+       "label": "Priya (PM)"
+      },
+      {
+       "id": "m-l",
+       "label": "Lena (data engineer)"
+      },
+      {
+       "id": "m-m",
+       "label": "Marco (designer)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:UPDATE_MEMBER",
+    "args": {
+     "role": "tech lead"
+    },
+    "refArgs": {
+     "id": "m-l"
+    },
+    "argMatch": {
+     "role": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:SET_OWNER"
+    ],
+    "why": "a role change for a team member; ownership stays with Priya (contrast prj2-05)"
+   }
+  },
+  {
+   "id": "prj2-10",
+   "style": "natural",
+   "utterance": "remove Marco from the team",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "team": [
+      {
+       "id": "m-p",
+       "name": "Priya"
+      },
+      {
+       "id": "m-l",
+       "name": "Lena"
+      },
+      {
+       "id": "m-m",
+       "name": "Marco"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "m-p",
+       "label": "Priya"
+      },
+      {
+       "id": "m-l",
+       "label": "Lena"
+      },
+      {
+       "id": "m-m",
+       "label": "Marco"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:REMOVE_MEMBER",
+    "args": {},
+    "refArgs": {
+     "id": "m-m"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "prj2-11",
+   "style": "natural",
+   "utterance": "add a deliverable: \"Offline eval dashboard\"",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "deliverables": [
+      {
+       "id": "d-1",
+       "title": "Reranker prototype"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:ADD_DELIVERABLE",
+    "args": {
+     "title": "Offline eval dashboard"
+    },
+    "argMatch": {
+     "title": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "prj2-12",
+   "style": "paraphrase",
+   "utterance": "the reranker prototype is out the door",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "deliverables": [
+      {
+       "id": "d-1",
+       "title": "Offline eval dashboard",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "d-2",
+       "title": "Reranker prototype",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "d-3",
+       "title": "A/B harness",
+       "status": "PLANNED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "d-1",
+       "label": "Offline eval dashboard"
+      },
+      {
+       "id": "d-2",
+       "label": "Reranker prototype"
+      },
+      {
+       "id": "d-3",
+       "label": "A/B harness"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:SET_DELIVERABLE_STATUS",
+    "args": {
+     "status": "DELIVERED"
+    },
+    "refArgs": {
+     "id": "d-2"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:UPDATE_DELIVERABLE",
+     "project:SET_PROJECT_STATUS"
+    ],
+    "why": "status change of one deliverable; deliveredAt is app-filled"
+   }
+  },
+  {
+   "id": "prj2-13",
+   "style": "paraphrase",
+   "utterance": "scrap the A/B harness item entirely, we're not doing it and I don't want it listed at all",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "deliverables": [
+      {
+       "id": "d-1",
+       "title": "Offline eval dashboard",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "d-2",
+       "title": "Reranker prototype",
+       "status": "DELIVERED"
+      },
+      {
+       "id": "d-3",
+       "title": "A/B harness",
+       "status": "PLANNED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "d-1",
+       "label": "Offline eval dashboard"
+      },
+      {
+       "id": "d-2",
+       "label": "Reranker prototype"
+      },
+      {
+       "id": "d-3",
+       "label": "A/B harness"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:REMOVE_DELIVERABLE",
+    "args": {},
+    "refArgs": {
+     "id": "d-3"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:SET_DELIVERABLE_STATUS(CANCELLED)"
+    ],
+    "why": "\"don't want it listed at all\" means remove it; CANCELLED would keep it on the list"
+   }
+  },
+  {
+   "id": "prj2-14",
+   "style": "natural",
+   "utterance": "change the link for the offline eval dashboard deliverable to https://grafana.example.com/d/offline-eval",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "deliverables": [
+      {
+       "id": "d-1",
+       "title": "Reranker prototype"
+      },
+      {
+       "id": "d-2",
+       "title": "Offline eval dashboard",
+       "url": null
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "d-1",
+       "label": "Reranker prototype"
+      },
+      {
+       "id": "d-2",
+       "label": "Offline eval dashboard"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:UPDATE_DELIVERABLE",
+    "args": {
+     "url": "https://grafana.example.com/d/offline-eval"
+    },
+    "refArgs": {
+     "id": "d-2"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "title, description and goalRef must stay omitted"
+  },
+  {
+   "id": "prj2-15",
+   "style": "paraphrase",
+   "utterance": "our reading list for this is https://arxiv.org/abs/2104.08663 and https://www.elastic.co/blog/hybrid-retrieval",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "references": []
+    }
+   },
+   "expected": {
+    "op": "project:SET_REFERENCES",
+    "args": {
+     "references": [
+      "https://arxiv.org/abs/2104.08663",
+      "https://www.elastic.co/blog/hybrid-retrieval"
+     ]
+    },
+    "argMatch": {
+     "references": "unordered"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:ADD_KNOWLEDGE_REF"
+    ],
+    "why": "external URLs go to references; knowledge refs are PHIDs of vault documents"
+   }
+  },
+  {
+   "id": "wbs2-01",
+   "style": "natural",
+   "utterance": "add a goal: migrate the ingestion workers to the new queue",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:CREATE_GOAL",
+    "args": {
+     "description": "migrate the ingestion workers to the new queue"
+    },
+    "argMatch": {
+     "description": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [],
+   "notes": "top level: parentId and insertBefore omitted"
+  },
+  {
+   "id": "wbs2-02",
+   "style": "paraphrase",
+   "utterance": "as part of shipping hybrid search we also need to tune the fusion weights",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    },
+    "refCandidates": {
+     "parentId": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:CREATE_GOAL",
+    "args": {},
+    "ambiguousArgs": {
+     "description": "Tune the fusion weights"
+    },
+    "refArgs": {
+     "parentId": "g-hybrid"
+    },
+    "requiredPresent": [
+     "description"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:UPDATE_GOAL_DESCRIPTION",
+     "wbs:ADD_NOTE"
+    ],
+    "why": "new sub-item under an existing parent, not an edit or a note on the parent"
+   }
+  },
+  {
+   "id": "wbs2-03",
+   "style": "natural",
+   "utterance": "mark \"Rebuild the index\" as in progress",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_GOAL_STATUS",
+    "args": {
+     "status": "IN_PROGRESS"
+    },
+    "refArgs": {
+     "id": "g-index"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "wbs2-04",
+   "style": "paraphrase",
+   "utterance": "the eval set is finished, we ended up with 14 query categories",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_GOAL_STATUS",
+    "args": {
+     "status": "COMPLETED"
+    },
+    "ambiguousArgs": {
+     "outcome": "Ended up with 14 query categories"
+    },
+    "refArgs": {
+     "id": "g-eval"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_OUTCOME",
+     "wbs:ADD_NOTE"
+    ],
+    "why": "item is TODO, so the status change is the primary intent; SET_GOAL_STATUS carries the outcome in the same action"
+   }
+  },
+  {
+   "id": "wbs2-05",
+   "style": "paraphrase",
+   "utterance": "the index rebuild is done on my end, just waiting on Sam to look it over",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_GOAL_STATUS",
+    "args": {
+     "status": "IN_REVIEW"
+    },
+    "refArgs": {
+     "id": "g-index"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_GOAL_STATUS(COMPLETED)",
+     "wbs:ASSIGN_GOAL"
+    ],
+    "why": "\"done on my end, waiting on review\" is IN_REVIEW, not COMPLETED; Sam is a reviewer, not the new assignee"
+   }
+  },
+  {
+   "id": "wbs2-06",
+   "style": "natural",
+   "utterance": "assign the rollout to Sam",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:ASSIGN_GOAL",
+    "args": {
+     "assignee": "Sam"
+    },
+    "refArgs": {
+     "id": "g-roll"
+    },
+    "argMatch": {
+     "assignee": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "wbs2-07",
+   "style": "paraphrase",
+   "utterance": "nobody is on the eval set work anymore, clear whoever had it",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "IN_PROGRESS",
+       "assignee": "Lena"
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set (Lena)"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:ASSIGN_GOAL",
+    "args": {},
+    "refArgs": {
+     "id": "g-eval"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "expected assignee omitted or null (unassign)"
+  },
+  {
+   "id": "wbs2-08",
+   "style": "paraphrase",
+   "utterance": "we can't start the rollout until both the eval set and the index rebuild are done",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ],
+     "dependencies": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:ADD_DEPENDENCIES",
+    "args": {},
+    "refArgs": {
+     "id": "g-roll",
+     "dependencies": [
+      "g-eval",
+      "g-index"
+     ]
+    },
+    "argMatch": {
+     "dependencies": "unordered"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_GOAL_STATUS(BLOCKED)",
+     "wbs:ADD_NOTE"
+    ],
+    "why": "ordering constraint between items, not a block with a reason"
+   }
+  },
+  {
+   "id": "wbs2-09",
+   "style": "natural",
+   "utterance": "remove the dependency of the rollout on the index rebuild",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "dependencies": [
+        "g-eval",
+        "g-index"
+       ]
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ],
+     "dependencies": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:REMOVE_DEPENDENCIES",
+    "args": {},
+    "refArgs": {
+     "id": "g-roll",
+     "dependencies": [
+      "g-index"
+     ]
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "wbs2-10",
+   "style": "natural",
+   "utterance": "add a note to the eval set goal: we need at least 200 queries per locale",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    },
+    "refCandidates": {
+     "goalId": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:ADD_NOTE",
+    "args": {
+     "note": "we need at least 200 queries per locale"
+    },
+    "refArgs": {
+     "goalId": "g-eval"
+    },
+    "argMatch": {
+     "note": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "wbs2-11",
+   "style": "paraphrase",
+   "utterance": "get rid of the \"Evaluate Vespa\" item, it was a duplicate of the hybrid search one",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search"
+      },
+      {
+       "id": "g-vespa",
+       "description": "Evaluate Vespa"
+      },
+      {
+       "id": "g-eval",
+       "description": "Build eval set"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-vespa",
+       "label": "Evaluate Vespa"
+      },
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:DELETE_GOAL",
+    "args": {},
+    "refArgs": {
+     "id": "g-vespa"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_GOAL_STATUS(WONT_DO)"
+    ],
+    "why": "a duplicate should disappear, not be kept as WONT_DO"
+   }
+  },
+  {
+   "id": "wbs2-12",
+   "style": "paraphrase",
+   "utterance": "move \"Tune fusion weights\" so it sits under \"Build eval set\"",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set"
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search"
+      },
+      {
+       "id": "g-fuse",
+       "description": "Tune fusion weights",
+       "parentId": "g-hybrid"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-fuse",
+       "label": "Tune fusion weights"
+      }
+     ],
+     "parentId": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-hybrid",
+       "label": "Ship hybrid search"
+      },
+      {
+       "id": "g-fuse",
+       "label": "Tune fusion weights"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:REORDER",
+    "args": {},
+    "refArgs": {
+     "id": "g-fuse",
+     "parentId": "g-eval"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:CREATE_GOAL",
+     "wbs:ADD_DEPENDENCIES"
+    ],
+    "why": "re-parents an existing item"
+   },
+   "notes": "insertBefore omitted"
+  },
+  {
+   "id": "wbs2-13",
+   "style": "natural",
+   "utterance": "set the owner of this breakdown to Priya",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": null,
+     "goals": []
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_OWNER",
+    "args": {
+     "owner": "Priya"
+    },
+    "argMatch": {
+     "owner": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "rc2-01",
+   "style": "natural",
+   "utterance": "create a claim: \"Hybrid retrieval beats BM25 on long-tail queries\". kind: empirical. methodology: offline eval on 500 queries. source: internal benchmark, Oct 2026. topics: search, retrieval.",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {}
+   },
+   "expected": {
+    "op": "research-claim:CREATE_CLAIM",
+    "args": {
+     "title": "Hybrid retrieval beats BM25 on long-tail queries",
+     "kind": "empirical",
+     "methodology": [
+      "offline eval on 500 queries"
+     ],
+     "sources": [
+      "internal benchmark, Oct 2026"
+     ],
+     "topics": [
+      "search",
+      "retrieval"
+     ]
+    },
+    "ambiguousArgs": {
+     "description": "Hybrid retrieval outperforms BM25 on long-tail queries.",
+     "content": "Hybrid retrieval beats BM25 on long-tail queries in an offline eval on 500 queries."
+    },
+    "argMatch": {
+     "title": "ci",
+     "kind": "ci",
+     "methodology": "ci-unordered",
+     "sources": "ci-unordered",
+     "topics": "ci-unordered"
+    },
+    "requiredPresent": [
+     "description",
+     "content"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "rc2-02",
+   "style": "natural",
+   "utterance": "connect this to \"Rerankers need calibrated scores\", it's why the fusion step works at all",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Hybrid retrieval beats BM25 on long-tail queries",
+     "connections": []
+    }
+   },
+   "expected": {
+    "op": "research-claim:ADD_RESEARCH_CONNECTION",
+    "args": {
+     "targetRef": "Rerankers need calibrated scores"
+    },
+    "ambiguousArgs": {
+     "contextPhrase": "why the fusion step works at all"
+    },
+    "argMatch": {
+     "targetRef": "ci"
+    },
+    "requiredPresent": [
+     "contextPhrase"
+    ]
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "rc2-03",
+   "style": "paraphrase",
+   "utterance": "this leans on the \"Query logs over-represent head terms\" finding",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Hybrid retrieval beats BM25 on long-tail queries",
+     "connections": [
+      {
+       "id": "cx-1",
+       "targetRef": "Rerankers need calibrated scores"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "research-claim:ADD_RESEARCH_CONNECTION",
+    "args": {
+     "targetRef": "Query logs over-represent head terms"
+    },
+    "ambiguousArgs": {
+     "contextPhrase": "leans on this finding"
+    },
+    "argMatch": {
+     "targetRef": "ci"
+    },
+    "requiredPresent": [
+     "contextPhrase"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "research-claim:UPDATE_CLAIM_CONTENT",
+     "research-claim:CREATE_CLAIM"
+    ],
+    "why": "a relation to another claim, not new text in this one"
+   }
+  },
+  {
+   "id": "rc2-04",
+   "style": "paraphrase",
+   "utterance": "unhook it from the click-model claim, that pairing was a mistake",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Hybrid retrieval beats BM25 on long-tail queries",
+     "connections": [
+      {
+       "id": "cx-1",
+       "targetRef": "Rerankers need calibrated scores"
+      },
+      {
+       "id": "cx-2",
+       "targetRef": "Query logs over-represent head terms"
+      },
+      {
+       "id": "cx-3",
+       "targetRef": "Click models overfit to position"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "cx-1",
+       "label": "Rerankers need calibrated scores"
+      },
+      {
+       "id": "cx-2",
+       "label": "Query logs over-represent head terms"
+      },
+      {
+       "id": "cx-3",
+       "label": "Click models overfit to position"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+    "args": {},
+    "refArgs": {
+     "id": "cx-3"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "rc2-05",
+   "style": "natural",
+   "utterance": "update the claim content to: On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52.",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Hybrid retrieval beats BM25 on long-tail queries",
+     "content": "TBD"
+    }
+   },
+   "expected": {
+    "op": "research-claim:UPDATE_CLAIM_CONTENT",
+    "args": {
+     "content": "On 500 long-tail queries, hybrid retrieval raised nDCG@10 from 0.41 to 0.52."
+    },
+    "argMatch": {
+     "content": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "rc2-06",
+   "style": "paraphrase",
+   "utterance": "rewrite the body: the gain vanishes on head queries, where BM25 is already near its ceiling.",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Hybrid retrieval beats BM25 on long-tail queries",
+     "content": "On 500 long-tail queries, hybrid retrieval raised nDCG@10."
+    }
+   },
+   "expected": {
+    "op": "research-claim:UPDATE_CLAIM_CONTENT",
+    "args": {
+     "content": "the gain vanishes on head queries, where BM25 is already near its ceiling."
+    },
+    "argMatch": {
+     "content": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "obs2-01",
+   "style": "natural",
+   "utterance": "log an observation, friction: reviewers keep missing the provenance panel because it's collapsed by default",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {}
+   },
+   "expected": {
+    "op": "observation:CREATE_OBSERVATION",
+    "args": {
+     "category": "FRICTION"
+    },
+    "ambiguousArgs": {
+     "title": "Reviewers miss the collapsed provenance panel",
+     "description": "Reviewers keep missing the provenance panel because it is collapsed by default."
+    },
+    "requiredPresent": [
+     "title",
+     "description"
+    ]
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "obs2-02",
+   "style": "paraphrase",
+   "utterance": "jot this down, it caught me off guard: notes drafted from voice transcripts get approved faster than typed ones",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {}
+   },
+   "expected": {
+    "op": "observation:CREATE_OBSERVATION",
+    "args": {
+     "category": "SURPRISE"
+    },
+    "ambiguousArgs": {
+     "title": "Voice-drafted notes get approved faster",
+     "description": "Notes drafted from voice transcripts get approved faster than typed ones."
+    },
+    "requiredPresent": [
+     "title",
+     "description"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "obs2-03",
+   "style": "paraphrase",
+   "utterance": "this one earned a proper write-up, I turned it into \"Collapsed panels hide provenance\"",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {
+     "title": "Reviewers miss the collapsed provenance panel",
+     "status": "PENDING"
+    }
+   },
+   "expected": {
+    "op": "observation:PROMOTE_OBSERVATION",
+    "args": {
+     "promotedTo": "Collapsed panels hide provenance"
+    },
+    "argMatch": {
+     "promotedTo": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "observation:IMPLEMENT_OBSERVATION"
+    ],
+    "why": "became a note (promoted), not acted on in the product (contrast obs2-04)"
+   }
+  },
+  {
+   "id": "obs2-04",
+   "style": "paraphrase",
+   "utterance": "we acted on this, the panel has been expanded by default since yesterday's release",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {
+     "title": "Reviewers miss the collapsed provenance panel",
+     "status": "PROMOTED"
+    }
+   },
+   "expected": {
+    "op": "observation:IMPLEMENT_OBSERVATION",
+    "args": {}
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "observation:PROMOTE_OBSERVATION",
+     "observation:ARCHIVE_OBSERVATION"
+    ],
+    "why": "the change shipped, so it is implemented"
+   }
+  },
+  {
+   "id": "obs2-05",
+   "style": "natural",
+   "utterance": "archive this observation, it's stale",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {
+     "title": "Search box loses focus on save",
+     "status": "PENDING"
+    }
+   },
+   "expected": {
+    "op": "observation:ARCHIVE_OBSERVATION",
+    "args": {}
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "ten2-01",
+   "style": "natural",
+   "utterance": "create a tension \"Freshness vs. stability\": reindexing nightly keeps results fresh but makes rankings jumpy. It involves the nightly reindex note and the ranking stability note.",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {}
+   },
+   "expected": {
+    "op": "tension:CREATE_TENSION",
+    "args": {
+     "title": "Freshness vs. stability"
+    },
+    "ambiguousArgs": {
+     "description": "Reindexing nightly keeps results fresh but makes rankings jumpy.",
+     "involvedRefs": [
+      "nightly reindex",
+      "ranking stability"
+     ]
+    },
+    "argMatch": {
+     "title": "ci"
+    },
+    "requiredPresent": [
+     "description",
+     "involvedRefs"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "ten2-02",
+   "style": "paraphrase",
+   "utterance": "we settled it: reindex nightly, but only swap the ranking model weekly",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Freshness vs. stability",
+     "status": "OPEN"
+    }
+   },
+   "expected": {
+    "op": "tension:RESOLVE_TENSION",
+    "args": {},
+    "ambiguousArgs": {
+     "resolution": "Reindex nightly, but only swap the ranking model weekly."
+    },
+    "requiredPresent": [
+     "resolution"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "tension:DISSOLVE_TENSION"
+    ],
+    "why": "a real trade-off was decided, so it is resolved; nothing says the conflict was illusory (contrast ten2-03)"
+   }
+  },
+  {
+   "id": "ten2-03",
+   "style": "natural",
+   "utterance": "dissolve this tension, turns out the two notes were measuring different things",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Cache hit rate vs. p99",
+     "status": "OPEN"
+    }
+   },
+   "expected": {
+    "op": "tension:DISSOLVE_TENSION",
+    "args": {},
+    "ambiguousArgs": {
+     "resolution": "The two notes were measuring different things."
+    },
+    "requiredPresent": [
+     "resolution"
+    ]
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "ten2-04",
+   "style": "paraphrase",
+   "utterance": "the \"Cache warmup after deploy\" note is part of this conflict too",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Freshness vs. stability",
+     "status": "OPEN",
+     "involvedRefs": [
+      "nightly reindex",
+      "ranking stability"
+     ]
+    }
+   },
+   "expected": {
+    "op": "tension:ADD_INVOLVED_REF",
+    "args": {
+     "ref": "Cache warmup after deploy"
+    },
+    "argMatch": {
+     "ref": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "tension:CREATE_TENSION"
+    ],
+    "why": "extends the existing tension"
+   }
+  },
+  {
+   "id": "pq2-01",
+   "style": "natural",
+   "utterance": "add an extract task for \"Database Internals ch. 7\"",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:ADD_TASK",
+    "args": {
+     "taskType": "extract",
+     "target": "Database Internals ch. 7"
+    },
+    "argMatch": {
+     "taskType": "ci",
+     "target": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [],
+   "notes": "batchId, documentRef, currentPhase omitted (reducer picks the first phase)"
+  },
+  {
+   "id": "pq2-02",
+   "style": "paraphrase",
+   "utterance": "give the arch sync transcript job to Nadia",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "extract: The Tail at Scale (PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "extract: Arch sync transcript (PENDING)"
+      },
+      {
+       "id": "tk-3",
+       "label": "dedupe: storage engines (BLOCKED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:ASSIGN_TASK",
+    "args": {
+     "assignedTo": "Nadia"
+    },
+    "refArgs": {
+     "taskId": "tk-2"
+    },
+    "argMatch": {
+     "assignedTo": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "pq2-03",
+   "style": "natural",
+   "utterance": "unblock the dedupe task",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "extract: The Tail at Scale (PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "extract: Arch sync transcript (PENDING)"
+      },
+      {
+       "id": "tk-3",
+       "label": "dedupe: storage engines (BLOCKED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:UNBLOCK_TASK",
+    "args": {},
+    "refArgs": {
+     "taskId": "tk-3"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "pq2-04",
+   "style": "paraphrase",
+   "utterance": "just close out the Tail at Scale job, skip whatever phases are left",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "extract: The Tail at Scale (PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "extract: Arch sync transcript (PENDING)"
+      },
+      {
+       "id": "tk-3",
+       "label": "dedupe: storage engines (BLOCKED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:COMPLETE_TASK",
+    "args": {},
+    "refArgs": {
+     "taskId": "tk-1"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:ADVANCE_PHASE"
+    ],
+    "why": "skipping remaining phases means finishing outright, not handing off one phase"
+   }
+  },
+  {
+   "id": "pq2-05",
+   "style": "paraphrase",
+   "utterance": "the arch sync job is dead, the transcript file is corrupted so it can't go anywhere",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "extract: The Tail at Scale (PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "extract: Arch sync transcript (PENDING)"
+      },
+      {
+       "id": "tk-3",
+       "label": "dedupe: storage engines (BLOCKED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:FAIL_TASK",
+    "args": {},
+    "ambiguousArgs": {
+     "reason": "Transcript file is corrupted"
+    },
+    "refArgs": {
+     "taskId": "tk-2"
+    },
+    "requiredPresent": [
+     "reason"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:BLOCK_TASK"
+    ],
+    "why": "\"dead\", \"can't go anywhere\": unrecoverable, so FAILED rather than BLOCKED"
+   }
+  },
+  {
+   "id": "moc2-12",
+   "style": "natural",
+   "utterance": "add a tension between \"SLOs beat static thresholds\" and \"Dashboards nobody reads\": SLO alerts hide the per-host detail the dashboards were built to show",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Alerting",
+     "tensions": [],
+     "openQuestions": []
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_TENSION",
+    "args": {
+     "involvedRefs": [
+      "SLOs beat static thresholds",
+      "Dashboards nobody reads"
+     ]
+    },
+    "ambiguousArgs": {
+     "description": "SLO alerts hide the per-host detail the dashboards were built to show"
+    },
+    "argMatch": {
+     "involvedRefs": "ci-unordered"
+    },
+    "requiredPresent": [
+     "description"
+    ]
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "tension:CREATE_TENSION",
+     "moc:ADD_OPEN_QUESTION"
+    ],
+    "why": "scoped to a MOC, so the tension is an entry on this map, not a new tension document"
+   }
+  },
+  {
+   "id": "prj2-16",
+   "style": "natural",
+   "utterance": "cancel the A/B harness deliverable",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "deliverables": [
+      {
+       "id": "d-3",
+       "title": "A/B harness",
+       "status": "PLANNED"
+      },
+      {
+       "id": "d-1",
+       "title": "Offline eval dashboard",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "d-2",
+       "title": "Reranker prototype",
+       "status": "DELIVERED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "d-3",
+       "label": "A/B harness"
+      },
+      {
+       "id": "d-1",
+       "label": "Offline eval dashboard"
+      },
+      {
+       "id": "d-2",
+       "label": "Reranker prototype"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:SET_DELIVERABLE_STATUS",
+    "args": {
+     "status": "CANCELLED"
+    },
+    "refArgs": {
+     "id": "d-3"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:REMOVE_DELIVERABLE"
+    ],
+    "why": "\"cancel\" is a status, the item stays listed (contrast prj2-13)"
+   }
+  },
+  {
+   "id": "wbs2-14",
+   "style": "natural",
+   "utterance": "set the outcome of \"Build eval set\" to: 14 query categories, 3,200 queries total",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO"
+      },
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "COMPLETED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-index",
+       "label": "Rebuild the index"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      },
+      {
+       "id": "g-eval",
+       "label": "Build eval set (COMPLETED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_OUTCOME",
+    "args": {
+     "outcome": "14 query categories, 3,200 queries total"
+    },
+    "refArgs": {
+     "id": "g-eval"
+    },
+    "argMatch": {
+     "outcome": "ci"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_GOAL_STATUS",
+     "wbs:ADD_NOTE"
+    ],
+    "why": "already COMPLETED, so only the outcome changes (contrast wbs2-04)"
+   }
+  },
+  {
+   "id": "pq2-06",
+   "style": "natural",
+   "utterance": "block the Tail at Scale task, we're waiting on the PDF from the library",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "extract: The Tail at Scale (PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "extract: Arch sync transcript (PENDING)"
+      },
+      {
+       "id": "tk-3",
+       "label": "dedupe: storage engines (BLOCKED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:BLOCK_TASK",
+    "args": {},
+    "ambiguousArgs": {
+     "reason": "Waiting on the PDF from the library"
+    },
+    "refArgs": {
+     "taskId": "tk-1"
+    },
+    "requiredPresent": [
+     "reason"
+    ]
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:FAIL_TASK"
+    ],
+    "why": "waiting on an input is recoverable, so BLOCKED rather than FAILED (contrast pq2-05)"
+   }
+  },
+  {
+   "id": "vc2-01",
+   "style": "natural",
+   "utterance": "turn on the semantic-search feature",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Relevance vault",
+     "features": [
+      "graph-view"
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:TOGGLE_FEATURE",
+    "args": {
+     "feature": "semantic-search",
+     "enabled": true
+    },
+    "argMatch": {
+     "feature": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "vc2-02",
+   "style": "paraphrase",
+   "utterance": "only nag me once a map gets past 60 entries instead of 40",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Relevance vault",
+     "maintenance": {
+      "mocOversize": 40,
+      "staleNoteDays": 30,
+      "inboxPressure": 5
+     }
+    }
+   },
+   "expected": {
+    "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+    "args": {
+     "condition": "mocOversize",
+     "threshold": 60
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "vault-config:UPDATE_DIMENSION",
+     "vault-config:UPDATE_PIPELINE_CONFIG"
+    ],
+    "why": "must map \"map gets past N entries\" onto the reducer literal mocOversize"
+   }
+  },
+  {
+   "id": "vc2-03",
+   "style": "natural",
+   "utterance": "in the vocabulary, call the inbox \"landing zone\"",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Relevance vault",
+     "vocabulary": {
+      "inbox": "inbox",
+      "notes": "notes"
+     }
+    }
+   },
+   "expected": {
+    "op": "vault-config:UPDATE_VOCABULARY",
+    "args": {
+     "key": "inbox",
+     "value": "landing zone"
+    },
+    "argMatch": {
+     "value": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "vc2-04",
+   "style": "paraphrase",
+   "utterance": "start pulling \"open problems\" out of what we read too, anything the author flags as unsolved",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Relevance vault",
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "claims",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "definitions",
+       "active": false
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:ADD_EXTRACTION_CATEGORY",
+    "args": {
+     "name": "open problems",
+     "active": true
+    },
+    "ambiguousArgs": {
+     "description": "Anything the author flags as unsolved"
+    },
+    "argMatch": {
+     "name": "ci"
+    },
+    "requiredPresent": [
+     "description"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+    ],
+    "why": "no \"open problems\" category exists yet; turning one on means adding it"
+   }
+  },
+  {
+   "id": "vc2-05",
+   "style": "paraphrase",
+   "utterance": "let the phases run back to back without me kicking off each one",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Relevance vault",
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     }
+    }
+   },
+   "expected": {
+    "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+    "args": {
+     "autoChain": true
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "depth and extractionSelectivity omitted"
+  },
+  {
+   "id": "der2-01",
+   "style": "natural",
+   "utterance": "add a signal: the user said \"I never browse, I only search\", which pushes navigation down and linking up",
+   "context": {
+    "docType": "bai/derivation",
+    "model": "derivation",
+    "state": {
+     "engineVersion": "0.3"
+    }
+   },
+   "expected": {
+    "op": "derivation:ADD_SIGNAL",
+    "args": {
+     "utterance": "I never browse, I only search",
+     "influencedDimensions": [
+      "navigation",
+      "linking"
+     ]
+    },
+    "ambiguousArgs": {
+     "interpretation": "Search-first user: lower navigation, higher linking."
+    },
+    "argMatch": {
+     "utterance": "ci",
+     "influencedDimensions": "ci-unordered"
+    },
+    "requiredPresent": [
+     "interpretation"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "hr2-01",
+   "style": "natural",
+   "utterance": "add a warning check for link health: \"Cache warmup after deploy\" and \"Tune fusion weights\" both have dangling links",
+   "context": {
+    "docType": "bai/health-report",
+    "model": "health-report",
+    "state": {
+     "mode": "quick",
+     "checks": []
+    }
+   },
+   "expected": {
+    "op": "health-report:ADD_CHECK",
+    "args": {
+     "category": "LINK_HEALTH",
+     "status": "WARN",
+     "affectedItems": [
+      "Cache warmup after deploy",
+      "Tune fusion weights"
+     ]
+    },
+    "ambiguousArgs": {
+     "message": "Two notes have dangling links"
+    },
+    "argMatch": {
+     "affectedItems": "ci-unordered"
+    },
+    "requiredPresent": [
+     "message"
+    ]
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "hr2-02",
+   "style": "paraphrase",
+   "utterance": "log that stale notes pass, nothing is older than the limit",
+   "context": {
+    "docType": "bai/health-report",
+    "model": "health-report",
+    "state": {
+     "mode": "quick",
+     "checks": []
+    }
+   },
+   "expected": {
+    "op": "health-report:ADD_CHECK",
+    "args": {
+     "category": "STALE_NOTES",
+     "status": "PASS",
+     "affectedItems": []
+    },
+    "ambiguousArgs": {
+     "message": "No notes older than the stale threshold"
+    },
+    "requiredPresent": [
+     "message"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "affectedItems is required and legitimately empty, so [] is exact-matched"
+  }
+ ],
+ "noAction": [
+  {
+   "id": "none2-01",
+   "style": "natural",
+   "utterance": "what's the difference between builds-on and derived-from?",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Group commit",
+     "links": []
+    }
+   },
+   "reason": "Terminology question; tempting false positive is ADD_LINK."
+  },
+  {
+   "id": "none2-02",
+   "style": "natural",
+   "utterance": "how many core ideas does this map have now?",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Alerting",
+     "coreIdeas": [
+      {
+       "id": "ci-1"
+      },
+      {
+       "id": "ci-2"
+      }
+     ]
+    }
+   },
+   "reason": "Count question; tempting REORDER_CORE_IDEAS or ADD_CORE_IDEA."
+  },
+  {
+   "id": "none2-03",
+   "style": "natural",
+   "utterance": "when's the target date again?",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "targetDate": "2027-03-31"
+    }
+   },
+   "reason": "Read-only question; tempting SET_TARGET_DATE."
+  },
+  {
+   "id": "none2-04",
+   "style": "natural",
+   "utterance": "which of these are blocked right now?",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-index",
+       "description": "Rebuild the index",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-hybrid",
+       "description": "Ship hybrid search",
+       "status": "TODO",
+       "dependencies": []
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO",
+       "dependencies": []
+      }
+     ]
+    }
+   },
+   "reason": "Read-only question; tempting SET_GOAL_STATUS(BLOCKED)."
+  },
+  {
+   "id": "none2-05",
+   "style": "paraphrase",
+   "utterance": "is this the same paper Sam sent around last week?",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "The Tail at Scale",
+     "status": "INBOX"
+    }
+   },
+   "reason": "Question about provenance; tempting INGEST_SOURCE or SET_SOURCE_STATUS."
+  },
+  {
+   "id": "none2-06",
+   "style": "paraphrase",
+   "utterance": "hmm, I'm not convinced by this yet",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Hybrid retrieval beats BM25 on long-tail queries"
+    }
+   },
+   "reason": "Hedge with no instruction; tempting UPDATE_CLAIM_CONTENT."
+  },
+  {
+   "id": "none2-07",
+   "style": "paraphrase",
+   "utterance": "nice, things are moving a lot faster today",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    }
+   },
+   "reason": "Chit-chat; tempting COMPLETE_TASK or ADVANCE_PHASE."
+  },
+  {
+   "id": "none2-08",
+   "style": "paraphrase",
+   "utterance": "should I settle this or call it a non-issue? what do you think?",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Freshness vs. stability",
+     "status": "OPEN"
+    }
+   },
+   "reason": "Asks for advice; tempting RESOLVE_TENSION / DISSOLVE_TENSION."
+  }
+ ],
+ "multiAction": [
+  {
+   "id": "ma2-01",
+   "style": "natural",
+   "utterance": "call it \"Group commit amortizes fsync\" and send it for review",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Group commit",
+     "status": "DRAFT"
+    }
+   },
+   "expected": [
+    {
+     "op": "knowledge-note:SET_TITLE",
+     "args": {
+      "title": "Group commit amortizes fsync"
+     },
+     "argMatch": {
+      "title": "ci"
+     }
+    },
+    {
+     "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+     "args": {}
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Independent edits; the order in the utterance is the reference."
+  },
+  {
+   "id": "ma2-02",
+   "style": "paraphrase",
+   "utterance": "the eval set is finished; Sam can pick up the fusion weights next",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "Priya",
+     "goals": [
+      {
+       "id": "g-eval",
+       "description": "Build eval set",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "g-fuse",
+       "description": "Tune fusion weights",
+       "status": "TODO"
+      },
+      {
+       "id": "g-roll",
+       "description": "Roll out to 100%",
+       "status": "TODO"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-eval",
+       "label": "Build eval set"
+      },
+      {
+       "id": "g-fuse",
+       "label": "Tune fusion weights"
+      },
+      {
+       "id": "g-roll",
+       "label": "Roll out to 100%"
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "wbs:SET_GOAL_STATUS",
+     "args": {
+      "status": "COMPLETED"
+     },
+     "refArgs": {
+      "id": "g-eval"
+     }
+    },
+    {
+     "op": "wbs:ASSIGN_GOAL",
+     "args": {
+      "assignee": "Sam"
+     },
+     "refArgs": {
+      "id": "g-fuse"
+     },
+     "argMatch": {
+      "assignee": "ci"
+     }
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Two different goals; both steps choose from the same id candidates."
+  },
+  {
+   "id": "ma2-03",
+   "style": "natural",
+   "utterance": "add Ines to the team as our designer and make her the project owner",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Search relevance revamp",
+     "owner": "Priya",
+     "team": [
+      {
+       "id": "m-p",
+       "name": "Priya"
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "project:ADD_MEMBER",
+     "args": {
+      "name": "Ines",
+      "role": "designer"
+     },
+     "ambiguousArgs": {
+      "kind": "HUMAN"
+     },
+     "argMatch": {
+      "name": "ci",
+      "role": "ci"
+     }
+    },
+    {
+     "op": "project:SET_OWNER",
+     "args": {
+      "owner": "Ines"
+     },
+     "argMatch": {
+      "owner": "ci"
+     }
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "SET_OWNER is a free string, so the order does not matter to the reducers."
+  },
+  {
+   "id": "ma2-04",
+   "style": "paraphrase",
+   "utterance": "pulling claims from this is finished: 8 claims, nothing skipped, so flip it to extracted",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "Database Internals ch. 7",
+     "status": "EXTRACTING"
+    }
+   },
+   "expected": [
+    {
+     "op": "source:RECORD_EXTRACTION_STATS",
+     "args": {
+      "claimCount": 8,
+      "skippedCount": 0,
+      "skipRate": 0
+     }
+    },
+    {
+     "op": "source:SET_SOURCE_STATUS",
+     "args": {
+      "status": "EXTRACTED"
+     }
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "skipRate is exactly 0 because nothing was skipped."
+  },
+  {
+   "id": "ma2-05",
+   "style": "natural",
+   "utterance": "add the open question \"Should traces be sampled per tenant?\" and remove the old one about debug log retention",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Observability",
+     "openQuestions": [
+      "How long do we keep debug logs?",
+      "Who owns the alert catalog?"
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "moc:ADD_OPEN_QUESTION",
+     "args": {
+      "question": "Should traces be sampled per tenant?"
+     },
+     "argMatch": {
+      "question": "ci"
+     }
+    },
+    {
+     "op": "moc:REMOVE_OPEN_QUESTION",
+     "args": {
+      "question": "How long do we keep debug logs?"
+     }
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "REMOVE_OPEN_QUESTION matches by exact string, so the removed question must be copied verbatim from state."
+  },
+  {
+   "id": "ma2-06",
+   "style": "paraphrase",
+   "utterance": "unstick the dedupe job and hand it to Nadia",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "extract",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "extract",
+       "target": "The Tail at Scale",
+       "status": "PENDING",
+       "currentPhase": "create"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "extract",
+       "target": "Arch sync transcript",
+       "status": "PENDING",
+       "currentPhase": "reflect"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "dedupe",
+       "target": "storage engines",
+       "status": "BLOCKED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "extract: The Tail at Scale (PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "extract: Arch sync transcript (PENDING)"
+      },
+      {
+       "id": "tk-3",
+       "label": "dedupe: storage engines (BLOCKED)"
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "pipeline-queue:UNBLOCK_TASK",
+     "args": {},
+     "refArgs": {
+      "taskId": "tk-3"
+     }
+    },
+    {
+     "op": "pipeline-queue:ASSIGN_TASK",
+     "args": {
+      "assignedTo": "Nadia"
+     },
+     "refArgs": {
+      "taskId": "tk-3"
+     },
+     "argMatch": {
+      "assignedTo": "ci"
+     }
+    }
+   ],
+   "orderSensitive": true,
+   "notes": "UNBLOCK requires BLOCKED and moves it to PENDING; assigning first would set IN_PROGRESS and the unblock would then throw InvalidTaskStatus."
+  },
+  {
+   "id": "ma2-07",
+   "style": "natural",
+   "utterance": "tag this \"consensus\" and link it to the Raft leader election note as related",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Lease-based reads",
+     "topics": [],
+     "links": []
+    },
+    "refCandidates": {
+     "targetDocumentId": [
+      {
+       "id": "doc-paxos",
+       "label": "Multi-Paxos in practice"
+      },
+      {
+       "id": "doc-raft",
+       "label": "Raft leader election"
+      },
+      {
+       "id": "doc-clock",
+       "label": "Clock skew and leases"
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "knowledge-note:ADD_TOPIC",
+     "args": {
+      "name": "consensus"
+     },
+     "argMatch": {
+      "name": "ci"
+     }
+    },
+    {
+     "op": "knowledge-note:ADD_LINK",
+     "args": {
+      "linkType": "RELATES_TO"
+     },
+     "ambiguousArgs": {
+      "targetTitle": "Raft leader election"
+     },
+     "refArgs": {
+      "targetDocumentId": "doc-raft"
+     }
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Topic plus link; mirrors the ADD_TOPIC vs ADD_LINK confusion inside one request."
+  }
+ ]
+}
