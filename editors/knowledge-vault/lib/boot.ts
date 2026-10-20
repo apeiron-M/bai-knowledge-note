@@ -64,6 +64,7 @@ import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
 const SYNC_NOTHING = "remote-first-sync-nothing";
 
 import { isDesktopHost } from "../../shared/host-config.js";
+import { connectRunsRemoteClient } from "../../shared/connect-client-mode.js";
 
 const POLL_MS = 400;
 /** A failed adoption is retried after 1 s, 2 s, 4 s … capped at 30 s — not on the next tick. */
@@ -650,8 +651,9 @@ function scheduleSessionRecovery(): void {
 }
 
 function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
-  // A declared desktop host has no sync manager and owns the client itself.
-  if (isDesktopHost()) {
+  // A declared desktop host has no sync manager and owns the client itself;
+  // so does Connect's remote client mode, which has no replica to keep empty.
+  if (isDesktopHost() || connectRunsRemoteClient()) {
     clearInterval(timer);
     return;
   }

@@ -49,6 +49,7 @@
 import { PollBehavior } from "@powerhousedao/reactor";
 import { getBearerToken } from "../../shared/authed-fetch.js";
 import { useEffect, useRef } from "react";
+import { connectRunsRemoteClient, keepConnectRealtimeAlive } from "../../shared/connect-client-mode.js";
 import {
   DriveCollectionId,
   setDrives,
@@ -166,10 +167,17 @@ export function useRemoteFirst(): void {
   const hydrateRef = useRef<(() => void) | null>(null);
   /** The same hydrator, coalesced — for the high-frequency event paths. */
   const hydrateSoonRef = useRef<(() => void) | null>(null);
+  /** The open document, for the feed to re-read after a reconnect. */
+  const selectedIdRef = useRef<string | undefined>(undefined);
+  selectedIdRef.current = selectedNode?.id;
+
+  // Connect's own remote client already reads, writes and lists drives against
+  // the Switchboard: steps 1-4 have nothing to do, only the feed (step 5) stays.
+  const connectOwnsRemote = connectRunsRemoteClient();
 
   // ── 1. Client + cache swap (render-time, idempotent per drive) ────
   const handleRef = useRef<ReturnType<typeof enableRemoteFirst> | null>(null);
-  if (driveId) {
+  if (driveId && !connectOwnsRemote) {
     handleRef.current = enableRemoteFirst({
       endpoint: resolveReactorEndpoint(),
       driveId,
@@ -194,7 +202,7 @@ export function useRemoteFirst(): void {
 
   // ── 2. Neutralise the sync channel ────────────────────────────────
   useEffect(() => {
-    if (!driveId || !sync || scopedDrives.has(driveId)) return;
+    if (!driveId || !sync || connectOwnsRemote || scopedDrives.has(driveId)) return;
     scopedDrives.add(driveId);
 
     void (async () => {
@@ -283,11 +291,11 @@ export function useRemoteFirst(): void {
         scopedDrives.delete(driveId);
       }
     })();
-  }, [driveId, sync]);
+  }, [driveId, sync, connectOwnsRemote]);
 
   // ── 3. Server-side drive-tree hydration ───────────────────────────
   useEffect(() => {
-    if (!driveId) return;
+    if (!driveId || connectOwnsRemote) return;
     let cancelled = false;
     let inFlight = false;
 
@@ -365,12 +373,12 @@ export function useRemoteFirst(): void {
       clearInterval(interval);
       window.removeEventListener("MutateDocument", onMutation);
     };
-  }, [driveId, address]);
+  }, [driveId, address, connectOwnsRemote]);
 
   // ── 4. Selected-document freshness ────────────────────────────────
   const selectedId = selectedNode?.id;
   useEffect(() => {
-    if (!selectedId || !driveId || selectedId === driveId) return;
+    if (!selectedId || !driveId || selectedId === driveId || connectOwnsRemote) return;
     let lastPollAt = Date.now();
     const interval = setInterval(() => {
       if (document.visibilityState !== "visible") return;
@@ -413,7 +421,7 @@ export function useRemoteFirst(): void {
       }
     }, SELECTED_DOC_REFRESH_MS);
     return () => clearInterval(interval);
-  }, [selectedId, driveId]);
+  }, [selectedId, driveId, connectOwnsRemote]);
 
   // ── 5. Live change feed ───────────────────────────────────────────
   useEffect(() => {
@@ -433,6 +441,10 @@ export function useRemoteFirst(): void {
     let stopped = false;
     /** Whether the most recent handshake carried a bearer. */
     let hadToken = false;
+    /** Whether this feed has connected before: a later `connected` is a reconnect. */
+    let connectedBefore = false;
+    /** Remote mode: keep Connect's own realtime socket from staying down. */
+    const realtime = connectOwnsRemote ? keepConnectRealtimeAlive() : null;
 
     const wsUrl = subscriptionsUrlFromGraphqlUrl(resolveReactorEndpoint());
     const client = createWsClient({
@@ -471,10 +483,29 @@ export function useRemoteFirst(): void {
           console.info(
             `[RemoteFirst] Live change feed connected (${wsUrl}) for drive ${driveId.slice(0, 8)}; awaiting first event.`,
           );
-          // Anything that happened while the socket was down is unknown
-          // to us; one hydrate closes the gap. The cache's own
-          // revalidation covers the selected document on its next poll.
-          hydrateRef.current?.();
+          if (connectOwnsRemote) {
+            // Connect owns the documents and the drive list. Its own socket
+            // gives up during a long outage, so renew the keeper (which
+            // reopens it), and — since neither socket replays what changed
+            // while it was down — re-read the open document and tell the
+            // vault's projections to refresh.
+            if (connectedBefore) {
+              realtime?.renew();
+              const open = selectedIdRef.current;
+              if (open && open !== driveId) {
+                void (
+                  window as unknown as { ph?: { documentCache?: IDocumentCache } }
+                ).ph?.documentCache?.get(open, true);
+              }
+              announceVaultRemoteChange({ driveId, type: "UPDATED", documents: [], structural: true, at: Date.now() });
+            }
+          } else {
+            // Anything that happened while the socket was down is unknown
+            // to us; one hydrate closes the gap. The cache's own
+            // revalidation covers the selected document on its next poll.
+            hydrateRef.current?.();
+          }
+          connectedBefore = true;
         },
         closed: (event) => {
           setVaultLive(false);
@@ -591,11 +622,12 @@ export function useRemoteFirst(): void {
     return () => {
       stopped = true;
       setVaultLive(false);
+      realtime?.stop();
       try {
         unsubscribe();
       } finally {
         void client.dispose();
       }
     };
-  }, [driveId, address]);
+  }, [driveId, address, connectOwnsRemote]);
 }

@@ -7,6 +7,7 @@
  * Priority:
  *   0. A declared host configuration (the desktop app) — see host-config.ts
  *   1. `VITE_SUBGRAPH_URL` env override (escape hatch for unusual deploys)
+ *   1b. Connect's remote client: the Switchboard it was configured with
  *   2. Explicit Connect → Switchboard mappings (`DOMAIN_MAP`)
  *   3. Vetra host patterns (see `resolveSwitchboardOrigin` for all three)
  *   4. Any localhost / 127.0.0.1 → http://localhost:4001
@@ -16,6 +17,7 @@
  *   5. Same-origin (production where the subgraph is co-hosted)
  */
 
+import { connectSwitchboardOrigin } from "./connect-client-mode.js";
 import { getHostConfig } from "./host-config.js";
 
 const SUBGRAPH_PATH = "/graphql/knowledgeGraph";
@@ -49,6 +51,11 @@ export function resolveSwitchboardOrigin(): string | null {
   // A host that declared itself (the desktop app) is never guessed at.
   const declared = getHostConfig();
   if (declared) return declared.switchboardOrigin;
+  // Connect's remote client already knows its Switchboard (from the default
+  // drive's URL): the vault's own reads and writes go to the same server, on
+  // any hostname, instead of guessing it from where Connect is served.
+  const connected = connectSwitchboardOrigin();
+  if (connected) return connected;
   const hostname = globalThis.window?.location?.hostname;
   if (!hostname) return null;
 
