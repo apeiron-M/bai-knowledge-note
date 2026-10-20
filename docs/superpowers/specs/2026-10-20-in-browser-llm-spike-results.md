@@ -13,6 +13,7 @@ Every number below was observed in one run on the machine described under Enviro
 - **ADD_TOPIC works end to end in the harness.** utterance → args → `buildAction` → reducer, with no operation error.
 - **Picking the operation is the weak point.** With scoped retrieval (k=5), the model picked the right op 43.3% of the time overall, and 48.1% of the time when the right op was among the candidates. That is far below the 90–95% bar, so **the fine-tune trigger is met** (see Verdict).
 - **Round 5 (held-out, 68 items): decoding-time techniques are not enough.** Calibrated likelihood scoring fused with BM25 picks the right op 32.4% of the time scoped (51.2% when the op is in the top 5), against 13.2% for today's enum generation. Retrieval reaches only 63.2% recall@5. Args are 46–48% exact even with the oracle op. A fine-tune is justified, but retrieval, ref-id context and schema enums need fixing too (see Round 5).
+- **Round 6 (held-out-2, 91 items): code fixes reach their targets, op choice does not move.** Scoring every op of the scoped model plus gte-small embeddings gives 44–49% scoped op accuracy; gte-small top-1 alone (43/91, 47.3%) matches the LLM-fused pick at 40 ms instead of 1.6 s, so the base model's step-1 call is dropped. Unscoped is 26.4%. Paraphrased requests stay at 10–13/45. Calibrated ref-label scoring doubled ref accuracy (31% → 66%); args exact 43%; the best no-action gate reaches 61.5% precision / 100% recall. The r6.1 prompt format for a LoRA is fixed and test-pinned (see Round 6).
 - **The Chat tab is verified in Connect (round 3).** Two blockers were found and cleared: the monorepo's stale Connect `dist`, and Connect's CSP blocking the wllama CDN import. ADD_TOPIC then dispatched through the in-browser reactor with no errors (see Round 3).
 
 ## Environment
@@ -831,3 +832,195 @@ Each configuration runs **once** on held-out-2 (`items` 91, `noAction` 8, `multi
   - I read held-out-1's README (its hard-case table, no-action gists and vocabulary hints) during orientation; held-out-1 was not run.
   - I will not read held-out-2's README until all runs are saved.
 - **If a run breaks,** the bug is fixed, both numbers are reported, and nothing else changes.
+
+### Held-out-2 results
+
+`spike/llm-harness/eval/heldout2-eval.json`, committed unchanged (`039236ac`, sha256 `0c9cc44d…307c0b`): 91 action items (46 natural, 45 paraphrase; 31 easy, 47 medium, 13 hard; every easy item is natural), 8 no-action, 7 multi-action. All pre-registered configurations ran once (WebGPU, Apple `metal-3`, one session), with the exception below. Per-item data: `spike/llm-harness/eval/results-r6-h2-*.json`.
+
+**Run incident (args).** My polling script matched a dev run's label, so A2 was started while A0 was still running. The two runs shared one wllama instance; A0 finished, and A2 hung with no output. Following the pre-registered rule, I reloaded the page and reran A0, A2 and A3 sequentially. The concurrent A0 (`results-r6-h2-args-A0-concurrent.json`) and the sequential A0 produced identical args on all 91 items. Only the sequential runs are reported. (The results commit message mentions a `results-r6-h2-args.json`; that file was never written.) The P run's O5 picks equal the O run's O5 picks on all 106 items.
+
+#### Retrieval (91 action items, no LLM)
+
+| | @1 | @3 | @5 | @10 | natural @5 | paraphrase @5 |
+|---|---|---|---|---|---|---|
+| BM25, unscoped | 30 (33.0%) | 42 | 44 (48.4%) | 47 | 42/46 | **2/45** |
+| gte-small, unscoped | 24 (26.4%) | 41 | 49 (53.8%) | 58 (63.7%) | 35/46 | 14/45 |
+| RRF(gte, BM25), unscoped | 29 | 46 | 50 (54.9%) | 56 | 43/46 | 7/45 |
+| BM25, scoped | 41 (45.1%) | – | 75 (82.4%) | – | | |
+| gte-small, scoped | 43 (47.3%) | – | 81 (89.0%) | – | | |
+
+- BM25 scored 0 on every scoped op for 33 of 91 items.
+- Model routing by best op hit: 36/91 @1, 57/91 @2.
+- Embedder load 455 ms; embedding the 99 ops took 11 524 ms once; per-query embed median 40 ms, p90 71 ms.
+
+#### Op selection, scoped (all ops of the model; one run)
+
+Latency is warm per utterance (content-free cached; see the pre-registration). The one-time content-free cost per document type and ordering was 0.27 s (health-report, 2 ops) to 2.4 s (knowledge-note, 19 ops).
+
+| Config | All (n=91) | Natural (46) | Paraphrase (45) | Nat. easy / med / hard (31/9/6) | Para. med / hard (38/7) | Latency median / p90 |
+|---|---|---|---|---|---|---|
+| O1 BM25 top-1 | 41 (45.1%) | 38 | 3 | 27 / 7 / 4 | 3 / 0 | 0 |
+| **O2 gte-small top-1** | **43 (47.3%)** | 30 | 13 | 22 / 6 / 2 | 10 / 3 | 40 / 71 ms (embed) |
+| O3 S2-mean | 29 (31.9%) | 21 | 8 | 16 / 3 / 2 | 8 / 0 | 1 562 / 2 284 ms |
+| O4 S3-mean | 32 (35.2%) | 22 | 10 | 17 / 4 / 1 | 8 / 2 | 4 596 / 6 918 ms |
+| O5 S2-mean + emb (primary) | 40 (44.0%) | 30 | 10 | 23 / 6 / 1 | 8 / 2 | 1 562 / 2 284 ms |
+| O6 S3-mean + emb | 44 (48.4%) | 32 | 12 | 23 / 7 / 2 | 10 / 2 | 4 596 / 6 918 ms |
+| O7 S2-mean + bm25 | 43 (47.3%) | 36 | 7 | 27 / 6 / 3 | 7 / 0 | 1 562 / 2 284 ms |
+| O8 S3-mean + bm25 | 45 (49.5%) | 39 | 6 | 27 / 8 / 4 | 5 / 1 | 4 596 / 6 918 ms |
+
+- **Recall is 100% here** (every op of the model is a candidate), so "given in candidates" equals overall.
+- **Round 5 for comparison** (different set, 68 items): H1 scoped 32.4% overall, with recall@5 63.2%.
+- **Decision rule outcome:** O2 (43) ≥ O5 (40). **The recommended v1 scoped runtime skips the step-1 LLM call and takes gte-small's top op** (about 40 ms instead of 1.6 s). O6 and O8 are 1–2 items above O2 at about 115× the latency, which is within noise on 91 items.
+- **Paraphrase items fail for every method:** at most 13/45. Lexical BM25 gets 3/45. The calibrated LLM alone (O3/O4) is below both retrievers in every cell.
+
+#### Op selection, unscoped (gte-small top 5; one run)
+
+Recall@5 = 49/91. Latency includes the embed and the uncached content-free pass.
+
+| Config | All | Given in top 5 (n=49) | Natural | Paraphrase | Latency median / p90 |
+|---|---|---|---|---|---|
+| **U1 gte-small top-1** | **24 (26.4%)** | 24 | 20 | 4 | 40 / 71 ms |
+| U2 S2-mean | 18 (19.8%) | 18 | 14 | 4 | 1 254 / 1 349 ms |
+| U3 S2-mean + emb (primary) | 24 (26.4%) | 24 | 21 | 3 | 1 254 / 1 349 ms |
+| U4 S2 (2 orders) + emb | 24 (26.4%) | 24 | 21 | 3 | 2 461 / 2 639 ms |
+
+Decision rule outcome: U1 = U3, so unscoped also skips the LLM step. Round 5's unscoped H1 was 8.8%, on a different set.
+
+#### No-action (8 no-action items, 91 action items)
+
+| Gate | No-action flagged | False positives on action items | Precision / recall | Latency median |
+|---|---|---|---|---|
+| G1 LLM yes/no, calibrated, threshold 0 | 8/8 | 90/91 | 8.2% / 100% | 164 ms |
+| G2 embedding, threshold 0 | 5/8 | 30/91 | 14.3% / 62.5% | 78 ms (incl. embeds) |
+| **G3** question rule OR G2 > 0.04 | 8/8 | 5/91 (1 natural, 4 paraphrase) | **61.5% / 100%** | 78 ms |
+| G4 `{"ops": []}` as a candidate, S2-mean / S3-mean | 1/8 / 0/8 | 1/91 / 1/91 | – | (inside step 1) |
+
+- **Where G3's hits come from:** the question rule alone flags 6/8 no-action items with 1 false positive (moc2-08, an action phrased as a question). The embedding part adds the other 2 and 4 false positives.
+- **G1 fails the same way as on dev:** no-action scores −14.4 … −9.3, action scores −16.2 … +5.4.
+- **End to end with G3 in front of P:** op accuracy stays 40/91, because all 5 items G3 wrongly blocks were already wrong in P. All 8 no-action items are answered instead of acted on. With G2: 33/91.
+- **Verdict:** G3 is the best gate measured, but 61.5% precision misses the LoRA plan's 0.85 bar, and its threshold and rule were fit on dev. The 350M base model gives no usable no-action signal, either as a yes/no gate or as `{"ops": []}`.
+
+#### Args, oracle op (91 items; 65 with exact-scored args, 32 with refs, 22 with `requiredPresent`)
+
+| | Exact | Natural / Paraphrase | Ref-id exact | Ref natural / paraphrase | Extras | `requiredPresent` | Zod-valid | Gen median / p90 | Ref/enum scoring median / p90 (one-time CF median) |
+|---|---|---|---|---|---|---|---|---|---|
+| A0 = Round 5 A1 | 25/65 (38.5%) | 16/36 / 9/29 | 10/32 (31.3%) | 5/13 / 5/19 | 0 | 22/22 | 91/91 | 158 / 254 ms | – |
+| **A2** (primary) | **28/65 (43.1%)** | 17/36 / 11/29 | **21/32 (65.6%)** | 8/13 / 13/19 | 5 | 22/22 | 91/91 | 148 / 260 ms | 363 / 508 ms (354 ms) |
+| A3 = A2 + enum scoring | 27/65 (41.5%) | 16/36 / 11/29 | 21/32 | 8/13 / 13/19 | 5 | 22/22 | 91/91 | 129 / 240 ms | 356 / 1 009 ms (847 ms) |
+
+- By difficulty, A2 exact: natural easy 14/23, medium 2/8, hard 1/5; paraphrase medium 10/25, hard 1/4.
+- Calibrated label scoring doubled ref accuracy (10 → 21 of 32). The coordinator reports that the gold ref is the first candidate in only 10 of 43 cases, and A0's 10/32 matches "always pick the first".
+- A2 had no all-optional op come back as `{}` (A0: 3).
+
+#### End to end, scoped (P = O5 then A2, no gate; 91 + 8 + 7 items)
+
+- **Op:** 40/91 (natural 30/46, paraphrase 10/45).
+- **Args given the right op:** 15/27 exact, refs 8/12, `requiredPresent` 11/11, zod-valid 40/40.
+- **Fully right** (right op, plus exact args and refs where scored): **25/91 (27.5%)**.
+  - Natural 19/46: easy 16/31, medium 3/9, hard 0/6.
+  - Paraphrase 6/45: medium 4/38, hard 2/7.
+- **Warm latency per utterance:** embed 38 / 68 ms, step 1 1 519 / 2 284 ms, step 2 143 / 527 ms; total **1.79 s median, 2.47 s p90**.
+  - Measured over the whole P run, including the first content-free pass for each model: 1.95 / 2.74 s.
+  - With the decision rule applied (no step-1 LLM call), the per-utterance cost is the embed plus step 2. That combination was not run as a separate configuration.
+- **Multi-action (out of scope for v1, 7 items):** no item was answered with no action. The single action emitted was one of the expected ops for 5/7, and the first expected op for 2/7.
+
+### Final runtime prompt format (r6.1)
+
+Built by `scoringMessages(utterance, toOptions(candidates, "key"), "ops")` (`op-scorer.ts`) and `argsMessages(utterance, entry, orderedSchema, choices)` (`args-step.ts`). The bytes below are asserted by `tests/unit/chat-prompt-format.test.ts`. A fine-tune must use exactly these. Any change bumps `PROMPT_FORMAT_VERSION` (`prompt-format.ts`).
+
+**Step 1.** The candidates are every global op of the scoped model, in catalog order. Unscoped, they are gte-small's top 5 by similarity. Each line is `- <catalog key>: <model's own description, or the op name in words> (fields: <semantic field names, or none>)`.
+
+System:
+
+```
+You choose the document operations that carry out the user's request. Answer with JSON: {"ops": [...]} lists the operations in the order they run, and {"ops": []} means the request needs no document change.
+```
+
+User (example):
+
+```
+Operations:
+- tension:CREATE_TENSION: Identify a new contradiction (fields: title, description, content, involvedRefs)
+- tension:RESOLVE_TENSION: Mark as resolved with explanation (fields: resolution)
+- tension:DISSOLVE_TENSION: Mark as dissolved (apparent, not real) (fields: resolution)
+- tension:ADD_INVOLVED_REF: Add a note to the tension (fields: ref)
+
+Request: that conflict is settled
+```
+
+Assistant target: `{"ops": ["tension:RESOLVE_TENSION"]}`, or `{"ops": []}` for no action. v1 never has more than one op.
+
+**Step 2.**
+
+- The schema is the op's model schema with vocabularies and ref labels, after the `safe` gate.
+- Keys are ordered: root ref fields, required enum fields, other required fields, the one-of fields, then the other optional fields.
+- There is one `Choices for <path>: …` line per ref path, with labels in document order (duplicates suffixed ` (2)`). The signature renders ref fields as `choice`.
+- The description falls back to the op name in words.
+
+System:
+
+```
+You extract the arguments for a document operation from the user's request. Copy names and text from the request exactly. Answer with JSON.
+```
+
+User (example):
+
+```
+Operation: SET_GOAL_STATUS - set goal status
+Choices for id: "Ship the beta", "Set up CI"
+Arguments: {"id": choice, "status": "BLOCKED" | "COMPLETED" | "IN_PROGRESS" | "IN_REVIEW" | "TODO" | "WONT_DO", "blockReason"?: string | null, "outcome"?: string | null}
+Request: the CI goal is blocked on hardware
+```
+
+Assistant target: compact JSON in that key order, with ref fields as labels, e.g. `{"id": "Set up CI", "status": "BLOCKED", "blockReason": "hardware"}`. The app maps labels to ids and adds new ids, timestamps and actor.
+
+**Runtime decoding around the format (not trained):**
+
+- Step 2 decodes under the copy-span GBNF.
+- The first required ref label is chosen by calibrated prefix likelihood (with `scoreEnums`, the first required enum is too, when there is no ref), then fixed.
+- The no-action gate (G3) runs before step 1.
+- With the base model, the step-1 call is replaced by gte-small top-1 per the decision rule. A LoRA would be judged against O2's 43/91 scoped.
+
+### Remaining error types (held-out-2, after these fixes)
+
+**Op selection** (O5's 51 scoped misses; the gold op is gte-small's rank 2–3 in 26 of them):
+
+- **Polarity and sibling confusion:**
+  - ADD ↔ REMOVE: moc2-04, moc2-08, moc2-09, pq2-06 BLOCK → UNBLOCK, prj2-16.
+  - Lifecycle siblings: kn2-13/kn2-14 → ARCHIVE_NOTE, obs2-04, pq2-02/pq2-04 → ADVANCE_PHASE.
+  - Create vs update: prj2-01, prj2-08, vc2-04.
+- **A model-wide prior pick:** knowledge-note's ARCHIVE_NOTE and SUBMIT_FOR_REVIEW, project's LINK_WBS, and wbs's SET_PROJECT_REF / ADD_DEPENDENCIES win on unrelated requests.
+- **wbs SET_GOAL_STATUS is ranked 9–11 by gte-small** (wbs2-03/04/05), so neither retriever nor fusion recovers it.
+- **Paraphrase.** Paraphrased requests (no op words, indirect phrasing) score 10–13/45 for the best methods. This is the LoRA's job; retrieval alone cannot reach it.
+
+**Args** (A2, oracle op):
+
+1. **Span length and edges (12 items).** The span is cut short (moc2-02, moc2-04, moc2-09, src2-05, obs2-03, rc2-02, rc2-06, prj2-08, wbs2-14), the final period is dropped (kn2-02, rc2-05), or the wrong span is copied (kn2-04).
+2. **Enum and value semantics (13).** kn2-06, kn2-07 `linkType`; kn2-10 `field`; src2-01 `sourceType`; src2-03, prj2-12, wbs2-04, wbs2-05 status; obs2-02 category; vc2-02 `condition`; der2-01 dimension; hr2-01, hr2-02 category/status.
+3. **Gate.**
+   - It drops meant-but-unnamed fields beside a required one: prj2-01 `owner`, prj2-07 `role`, moc2-11 and kn2-10 `value`.
+   - Exactly-one picks the wrong field: prj2-02, prj2-09, prj2-14, vc2-05.
+4. **Ref choice (11/32 wrong, 7 of them in wbs goals).** wbs2-02/04/05/07/08/10/14, kn2-07, moc2-07, pq2-03, pq2-06.
+5. **Vocabulary mismatch (2).** My UI-derived lists exclude the writer's value: pq2-01 `taskType: "extract"` (seed data says `claim`/`enrichment`), and rc2-01 `kind: "empirical"` (editor list). The two sources disagree; the user should decide which is canonical.
+6. **Lists and dates.** List splitting (kn2-11 `values`, moc2-12 `involvedRefs`, wbs2-08 dependencies, moc2-07 reorder ids), and prj2-06's year (2023 instead of 2027; dates are not normalized by the app).
+
+**No-action:** G3 precision 61.5%. Multi-action is not supported in v1.
+
+### Verdict
+
+- **The fixes that are not about the model helped where they target the code:**
+  - Scoped recall is now 100% (Round 5: 63.2%).
+  - Ref accuracy rose from 31% to 66%.
+  - All-optional ops are no longer emptied.
+  - Unscoped recall@5 went from BM25's 48% to gte-small's 54%.
+- **They did not move op choice off about 45–49% scoped,** and paraphrases stay near 25%.
+- **The 350M base model's likelihood scores no longer add accuracy** once gte-small is fused in (O2 43 vs O5 40), and they cost 1.6 s.
+- **Next:** the LoRA should be trained on the r6.1 format above, and judged against O2 (scoped 47.3%) and U1 (unscoped 26.4%), on paraphrase items in particular.
+
+**Caveats:**
+- One run, one machine.
+- The dev extension, the G3 rule and its threshold were written by me.
+- source and research-claim have only 6 items each.
+- Held-out-2's README was not read before or during the runs.
+- `npm run tsc` stays at 204 errors outside `training/`. The `training/` checkout added by another agent brings its own tsc errors from vendored llama.cpp UI files; I did not touch it.
+- **Connect gap:** onnxruntime-web's wasm comes from jsdelivr unless `wasmPaths` is set, and Connect's CSP blocks that. The harness serves it locally.
