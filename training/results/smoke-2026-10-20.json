@@ -1,0 +1,425 @@
+{
+ "date": "2026-10-20",
+ "machine": "Apple M4 Max, 36 GB, macOS 26.6.2",
+ "note": "Smoke test of the pipeline only: 49 hand-made rows (86 trainable steps), 20 optimizer steps. Probe outputs on 4 unseen utterances are not an accuracy measurement.",
+ "renderManifest": {
+  "promptFormatVersion": "r5-runtime-op-1",
+  "retrieveK": 5,
+  "catalogHash": "26a08429ffeeb378b6ca8887c5ebc973e150d006635ac4d321b35ae16ce03109",
+  "catalogOps": 100,
+  "gitHead": "ab237292ff334a98c722d2d532e6af202d20df11",
+  "chatCoreDirty": [],
+  "grammarTool": "schema2gbnf (llama.cpp b11364)",
+  "rows": 94,
+  "step1": 49,
+  "step2": 45,
+  "skipped": 8,
+  "targetRejected": []
+ },
+ "dedup": {
+  "evalUtterances": 134,
+  "rows": 50,
+  "kept": 49,
+  "rejected": [
+   {
+    "id": "smoke-49",
+    "utterance": "summarize this for me",
+    "reason": "eval-leak",
+    "score": 0.778,
+    "evalSource": "dev-extra.json",
+    "evalId": "dn-06",
+    "evalUtterance": "summarize this map for me"
+   }
+  ]
+ },
+ "validate": {
+  "rows": 49,
+  "ok": 49,
+  "failed": []
+ },
+ "templateParity": {
+  "steps": 94,
+  "trainable": 86,
+  "templateMismatch": [],
+  "tokenMismatch": [],
+  "promptTargetBoundaryMerges": [],
+  "bosCount": [
+   1
+  ],
+  "promptTokens": {
+   "max": 183,
+   "min": 66
+  }
+ },
+ "stages": [
+  {
+   "stage": "render",
+   "wallSec": 19.22,
+   "maxRssBytes": 412254208,
+   "peakFootprintBytes": 1425696
+  },
+  {
+   "stage": "render-probe",
+   "wallSec": 20.43,
+   "maxRssBytes": 410599424,
+   "peakFootprintBytes": 1425696
+  },
+  {
+   "stage": "train",
+   "wallSec": 17.99,
+   "maxRssBytes": 1053605888,
+   "peakFootprintBytes": 7869794128
+  },
+  {
+   "stage": "merge",
+   "wallSec": 4.21,
+   "maxRssBytes": 2517368832,
+   "peakFootprintBytes": 2453326752
+  },
+  {
+   "stage": "export",
+   "wallSec": 8.91,
+   "maxRssBytes": 1013694464,
+   "peakFootprintBytes": 1474848
+  },
+  {
+   "stage": "infer",
+   "wallSec": 1.77,
+   "maxRssBytes": 449282048,
+   "peakFootprintBytes": 17039840
+  }
+ ],
+ "exportStages": [
+  {
+   "stage": "convert",
+   "wallSec": 4.51,
+   "maxRssBytes": 1013694464
+  },
+  {
+   "stage": "template",
+   "wallSec": 1.55,
+   "maxRssBytes": 995885056
+  },
+  {
+   "stage": "quantize",
+   "wallSec": 1.69,
+   "maxRssBytes": 562135040
+  },
+  {
+   "file": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/artifacts/smoke/gguf/smoke-BF16.gguf",
+   "bytes": 711485152
+  },
+  {
+   "file": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/artifacts/smoke/gguf/smoke-Q4_K_M.gguf",
+   "bytes": 229312224
+  }
+ ],
+ "train": {
+  "device": "mps",
+  "precision": "bf16",
+  "rows": 86,
+  "trainableParams": 5996544,
+  "totalParams": 360480512,
+  "steps": 20,
+  "effectiveBatch": 8,
+  "trainWallSec": 14.74,
+  "firstLoss": 2.633134126663208,
+  "lastLoss": 0.04333226755261421,
+  "rowCheck": {
+   "nPrompt": 158,
+   "nCompletion": 16,
+   "completion": "{\"op\": \"knowledge-note:SET_TITLE\"}<|im_end|>",
+   "labelledTokens": 16
+  },
+  "mpsDriverAllocatedGB": 6.179
+ },
+ "trainLoss": [
+  {
+   "step": 1,
+   "loss": 2.633134126663208
+  },
+  {
+   "step": 2,
+   "loss": 2.2797698974609375
+  },
+  {
+   "step": 3,
+   "loss": 0.9486129283905029
+  },
+  {
+   "step": 4,
+   "loss": 0.40491950511932373
+  },
+  {
+   "step": 5,
+   "loss": 0.19679707288742065
+  },
+  {
+   "step": 6,
+   "loss": 0.1265656054019928
+  },
+  {
+   "step": 7,
+   "loss": 0.07844673097133636
+  },
+  {
+   "step": 8,
+   "loss": 0.16692765057086945
+  },
+  {
+   "step": 9,
+   "loss": 0.06974003463983536
+  },
+  {
+   "step": 10,
+   "loss": 0.14111222326755524
+  },
+  {
+   "step": 11,
+   "loss": 0.23903802037239075
+  },
+  {
+   "step": 12,
+   "loss": 0.06188303977251053
+  },
+  {
+   "step": 13,
+   "loss": 0.029094649478793144
+  },
+  {
+   "step": 14,
+   "loss": 0.006989739369601011
+  },
+  {
+   "step": 15,
+   "loss": 0.06208506599068642
+  },
+  {
+   "step": 16,
+   "loss": 0.1251303106546402
+  },
+  {
+   "step": 17,
+   "loss": 0.09367255121469498
+  },
+  {
+   "step": 18,
+   "loss": 0.030763013288378716
+  },
+  {
+   "step": 19,
+   "loss": 0.07104793936014175
+  },
+  {
+   "step": 20,
+   "loss": 0.04333226755261421
+  }
+ ],
+ "merge": {
+  "maxAbsLogitDiffFp32": 0.0002435445785522461,
+  "argmaxAgree": true,
+  "mergeWallSec": 1.67,
+  "safetensorsBytes": 708984464
+ },
+ "officialQ4KMBytes": 229312224,
+ "infer": [
+  {
+   "gguf": "LFM2.5-350M-Q4_K_M.gguf",
+   "bytes": 229312224,
+   "serverStartSec": 0.26,
+   "step1Exact": 3,
+   "step1N": 4,
+   "step2Exact": 1,
+   "step2N": 4,
+   "rows": [
+    {
+     "id": "probe-01",
+     "step": 1,
+     "target": "{\"op\": \"knowledge-note:SET_TITLE\"}",
+     "output": "{\"op\": \"knowledge-note:SET_TITLE\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 17,
+     "promptN": 162,
+     "wallMs": 300.5
+    },
+    {
+     "id": "probe-01",
+     "step": 2,
+     "target": "{\"title\": \"Raft leader election in practice\"}",
+     "output": "{\n  \"title\": \"Raft Leader Election Practice\"\n \t}",
+     "exact": false,
+     "stop": "eos",
+     "predictedN": 16,
+     "promptN": 73,
+     "wallMs": 83.2
+    },
+    {
+     "id": "probe-02",
+     "step": 1,
+     "target": "{\"op\": \"knowledge-note:ADD_TOPIC\"}",
+     "output": "{\"op\": \"knowledge-note:ADD_TOPIC\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 17,
+     "promptN": 153,
+     "wallMs": 86.5
+    },
+    {
+     "id": "probe-02",
+     "step": 2,
+     "target": "{\"name\": \"category theory\"}",
+     "output": "{\"name\": \"category theory\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 9,
+     "promptN": 69,
+     "wallMs": 37.3
+    },
+    {
+     "id": "probe-03",
+     "step": 1,
+     "target": "{\"op\": \"project:ADD_MEMBER\"}",
+     "output": "{\"op\": \"project:ADD_MEMBER\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 14,
+     "promptN": 143,
+     "wallMs": 76.3
+    },
+    {
+     "id": "probe-03",
+     "step": 2,
+     "target": "{\"name\": \"Ines\", \"role\": \"data analyst\"}",
+     "output": "{\n  \"name\": \"Ines\",\n  \"role\": \"data analyst\",\n  \"kind\": \"AGENT\"\n}",
+     "exact": false,
+     "stop": "eos",
+     "predictedN": 27,
+     "promptN": 93,
+     "wallMs": 75.5
+    },
+    {
+     "id": "probe-04",
+     "step": 1,
+     "target": "{\"op\": \"wbs:CREATE_GOAL\"}",
+     "output": "{\"op\": \"wbs:REORDER\"}",
+     "exact": false,
+     "stop": "eos",
+     "predictedN": 13,
+     "promptN": 138,
+     "wallMs": 84.4
+    },
+    {
+     "id": "probe-04",
+     "step": 2,
+     "target": "{\"description\": \"Publish the onboarding checklist\"}",
+     "output": "{\n  \"description\": \"Publish the onboarding checklist\",\n  \"assignee\": \"\"\n}",
+     "exact": false,
+     "stop": "eos",
+     "predictedN": 23,
+     "promptN": 77,
+     "wallMs": 62.9
+    }
+   ]
+  },
+  {
+   "gguf": "smoke-Q4_K_M.gguf",
+   "bytes": 229312224,
+   "serverStartSec": 0.26,
+   "step1Exact": 4,
+   "step1N": 4,
+   "step2Exact": 2,
+   "step2N": 4,
+   "rows": [
+    {
+     "id": "probe-01",
+     "step": 1,
+     "target": "{\"op\": \"knowledge-note:SET_TITLE\"}",
+     "output": "{\"op\": \"knowledge-note:SET_TITLE\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 16,
+     "promptN": 162,
+     "wallMs": 48.2
+    },
+    {
+     "id": "probe-01",
+     "step": 2,
+     "target": "{\"title\": \"Raft leader election in practice\"}",
+     "output": "{\"title\": \"Raft leader election in practice\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 13,
+     "promptN": 73,
+     "wallMs": 41.2
+    },
+    {
+     "id": "probe-02",
+     "step": 1,
+     "target": "{\"op\": \"knowledge-note:ADD_TOPIC\"}",
+     "output": "{\"op\": \"knowledge-note:ADD_TOPIC\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 16,
+     "promptN": 153,
+     "wallMs": 47.1
+    },
+    {
+     "id": "probe-02",
+     "step": 2,
+     "target": "{\"name\": \"category theory\"}",
+     "output": "{\"name\": \"category theory\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 9,
+     "promptN": 69,
+     "wallMs": 33.3
+    },
+    {
+     "id": "probe-03",
+     "step": 1,
+     "target": "{\"op\": \"project:ADD_MEMBER\"}",
+     "output": "{\"op\": \"project:ADD_MEMBER\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 13,
+     "promptN": 143,
+     "wallMs": 40.4
+    },
+    {
+     "id": "probe-03",
+     "step": 2,
+     "target": "{\"name\": \"Ines\", \"role\": \"data analyst\"}",
+     "output": "{\"name\": \"Ine\", \"role\": \"data analyst\"}",
+     "exact": false,
+     "stop": "eos",
+     "predictedN": 16,
+     "promptN": 93,
+     "wallMs": 46.4
+    },
+    {
+     "id": "probe-04",
+     "step": 1,
+     "target": "{\"op\": \"wbs:CREATE_GOAL\"}",
+     "output": "{\"op\": \"wbs:CREATE_GOAL\"}",
+     "exact": true,
+     "stop": "eos",
+     "predictedN": 15,
+     "promptN": 138,
+     "wallMs": 43.3
+    },
+    {
+     "id": "probe-04",
+     "step": 2,
+     "target": "{\"description\": \"Publish the onboarding checklist\"}",
+     "output": "{\"description\": \"Publish the onboarding checklist\", \"assignee\": \"null\"}",
+     "exact": false,
+     "stop": "eos",
+     "predictedN": 21,
+     "promptN": 77,
+     "wallMs": 53.8
+    }
+   ]
+  }
+ ]
+}
