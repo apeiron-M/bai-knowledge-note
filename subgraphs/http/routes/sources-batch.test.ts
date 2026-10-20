@@ -116,7 +116,7 @@ const post = (body: unknown) =>
 const typesOf = (actions: Act[]) => actions.map((a) => a.type);
 
 describe("POST sources/batch", () => {
-  it("files a batch with one drive write and one queue write, the original riding with each source's content", async () => {
+  it("files a batch with two drive writes (containment links, then the tree) and one queue write, the original riding with each source's content", async () => {
     const e = engine();
     const res = await createIngestSourcesBatchRoute(e.deps)(
       post({ drive: "drive", parentFolder: "f-book", sources: [source(1), source(2), source(3)] }),
@@ -131,10 +131,16 @@ describe("POST sources/batch", () => {
       ids.map((id, index) => [index, id, "EXTRACTING", true]),
     );
 
+    // The drive's "child" relationship to each source — what a reader's grant
+    // on the drive reaches it through — then the tree, each in one job.
     const drive = e.dispatches.filter((d) => d.doc === "drive");
-    expect(drive).toHaveLength(1);
-    expect(typesOf(drive[0].actions)).toEqual(["ADD_FILE", "ADD_FILE", "ADD_FILE"]);
-    expect(drive[0].actions.every((a) => a.input.parentFolder === "f-book")).toBe(true);
+    expect(drive).toHaveLength(2);
+    expect(typesOf(drive[0].actions)).toEqual(["ADD_RELATIONSHIP", "ADD_RELATIONSHIP", "ADD_RELATIONSHIP"]);
+    expect(drive[0].actions.map((a) => [a.input.sourceId, a.input.targetId, a.input.relationshipType])).toEqual(
+      ids.map((id) => ["drive", id, "child"]),
+    );
+    expect(typesOf(drive[1].actions)).toEqual(["ADD_FILE", "ADD_FILE", "ADD_FILE"]);
+    expect(drive[1].actions.every((a) => a.input.parentFolder === "f-book")).toBe(true);
     const queue = e.dispatches.filter((d) => d.doc === "queue-1");
     expect(queue).toHaveLength(1);
     expect(queue[0].actions.map((a) => a.input.documentRef)).toEqual(ids);

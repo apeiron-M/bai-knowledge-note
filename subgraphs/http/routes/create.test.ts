@@ -126,6 +126,50 @@ describe("POST notes", () => {
     expect(addFileCalls[0][2]).toHaveLength(2);
   });
 
+  it("gives every note the drive's child relationship before filing it, in two drive jobs whatever the batch size", async () => {
+    // The relationship is what a reader's grant on the drive reaches a note
+    // through, and what puts it in the drive's sync collection. The tree alone
+    // left notes unreadable to anyone with READ on the drive.
+    const d = deps();
+    const res = await createNotesRoute(d)(
+      post({ drive: "drive", notes: [{ name: "note-1" }, { name: "note-2" }] }),
+      ctx,
+    );
+    expect(res.status).toBe(201);
+    type Dispatched = { type: string; scope: string; input: Record<string, unknown> };
+    const calls = (
+      d.reactorClient.executeAsync as unknown as { mock: { calls: [string, string, Dispatched[]][] } }
+    ).mock.calls.filter((c) => c[0] === "drive");
+    expect(calls).toHaveLength(2);
+    expect(calls[0][2].map((a) => [a.type, a.scope, a.input])).toEqual([
+      ["ADD_RELATIONSHIP", "document", { sourceId: "drive", targetId: "n1", relationshipType: "child" }],
+      ["ADD_RELATIONSHIP", "document", { sourceId: "drive", targetId: "n2", relationshipType: "child" }],
+    ]);
+    expect(calls[1][2].map((a) => [a.type, a.scope])).toEqual([
+      ["ADD_FILE", "global"],
+      ["ADD_FILE", "global"],
+    ]);
+  });
+
+  it("ROLLS BACK when the drive refuses the child relationships, filing nothing", async () => {
+    const d = deps();
+    (d.reactorClient.waitForJob as unknown as { mockResolvedValueOnce: (v: unknown) => void }).mockResolvedValueOnce({
+      id: "job-1",
+      status: "FAILED",
+      error: { message: "relationship refused" },
+    });
+    const res = await createNotesRoute(d)(
+      post({ drive: "drive", notes: [{ name: "note-1" }, { name: "note-2" }] }),
+      ctx,
+    );
+    expect(res.status).toBe(502);
+    const body = JSON.stringify(await res.json());
+    expect(body).toContain("CONTAINMENT_FAILED");
+    expect(body).toContain("relationship refused");
+    expect(d.reactorClient.deleteDocuments).toHaveBeenCalledWith(["n1", "n2"]);
+    expect(d.reactorClient.executeAsync).toHaveBeenCalledTimes(1);
+  });
+
   it("ROLLS BACK when containment does not land, leaving no orphans", async () => {
     const d = deps({}, { contained: false });
     const res = await createNotesRoute(d)(
