@@ -51,3 +51,34 @@ describe("connectSwitchboardOrigin", () => {
     expect(connectSwitchboardOrigin()).toBeNull();
   });
 });
+
+describe("keepConnectRealtimeAlive", () => {
+  it("holds one keeper subscription, renews it on a timer and on demand, and releases it on stop", async () => {
+    vi.useFakeTimers();
+    try {
+      const released: number[] = []; let n = 0;
+      const subscribe = vi.fn(() => { const id = ++n; return () => released.push(id); });
+      withPh({ reactorClient: { ...router, subscribe } });
+      const { keepConnectRealtimeAlive } = await import("./connect-client-mode.js");
+      const keeper = keepConnectRealtimeAlive(1000);
+      expect(subscribe).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(2500);
+      expect(subscribe).toHaveBeenCalledTimes(3);
+      expect(released).toEqual([1, 2]);
+      keeper.renew();
+      expect(subscribe).toHaveBeenCalledTimes(4);
+      keeper.stop();
+      expect(released).toEqual([1, 2, 3, 4]);
+      vi.advanceTimersByTime(5000);
+      expect(subscribe).toHaveBeenCalledTimes(4);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does nothing without a client that can subscribe", async () => {
+    withPh({});
+    const { keepConnectRealtimeAlive } = await import("./connect-client-mode.js");
+    expect(() => keepConnectRealtimeAlive().stop()).not.toThrow();
+  });
+});

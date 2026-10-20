@@ -47,3 +47,50 @@ export function connectSwitchboardOrigin(): string | null {
   const prefix = /^(.*)\/d\/[^/]+\/?$/.exec(parsed.pathname)?.[1];
   return prefix === undefined ? null : `${parsed.origin}${prefix}`;
 }
+
+type Subscribable = { subscribe?: (search: object, callback: () => void) => () => void };
+
+/** How often the keeper subscription is renewed. */
+export const CONNECT_REALTIME_RENEW_MS = 30_000;
+
+/**
+ * Keep Connect's own realtime socket alive in remote mode.
+ *
+ * Connect's GraphQL client opens its `documentChanges` socket on the first
+ * subscriber, and graphql-ws gives up after five reconnect attempts (about
+ * half a minute): a Switchboard restart or deploy longer than that leaves
+ * Connect's live updates off until a reload — open documents and the drive
+ * list stop following other clients. Its `notifyCredentialsChanged` reopens
+ * only after an auth refusal; a new `subscribe` is what reopens a socket that
+ * died for any other reason, and is a no-op on a live one.
+ *
+ * So hold one subscription that delivers nowhere and renew it on a timer and
+ * whenever `renew()` is called (the vault's own feed reconnecting). Returns
+ * `renew` and `stop`.
+ */
+export function keepConnectRealtimeAlive(
+  every = CONNECT_REALTIME_RENEW_MS,
+): { renew: () => void; stop: () => void } {
+  let release: (() => void) | null = null;
+  const renew = () => {
+    const client = ph()?.reactorClient as Subscribable | undefined;
+    if (typeof client?.subscribe !== "function") return;
+    try {
+      const next = client.subscribe({}, () => {});
+      release?.();
+      release = next;
+    } catch {
+      // A client mid-teardown: the next renewal tries again.
+    }
+  };
+  renew();
+  const timer = setInterval(renew, every);
+  return {
+    renew,
+    stop: () => {
+      clearInterval(timer);
+      release?.();
+      release = null;
+    },
+  };
+}
