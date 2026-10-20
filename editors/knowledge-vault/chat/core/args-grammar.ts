@@ -99,8 +99,13 @@ export function spanRules(name: string, utterance: string): string[] {
 /* Optional-field gating                                                */
 /* ------------------------------------------------------------------ */
 
-/** Which optional fields the gate may drop. */
-export type GateMode = "none" | "closed" | "all";
+/**
+ * Which optional fields the gate may drop. `safe` (round 6) is `all`, except
+ * that an object whose semantic fields are all optional never loses all of
+ * them: when the utterance mentions none, every one is kept (and
+ * `argsGrammar`'s `requireOneOf` then asks for at least one).
+ */
+export type GateMode = "none" | "closed" | "all" | "safe";
 
 function enumValues(schema: unknown): unknown[] | null {
   const s = nonNull(schema);
@@ -167,7 +172,9 @@ export function gateOptional(
     }
     const optional = !required.includes(name);
     const gateable =
-      mode === "all" || (mode === "closed" && enumValues(sub) !== null);
+      mode === "all" ||
+      mode === "safe" ||
+      (mode === "closed" && enumValues(sub) !== null);
     if (
       optional &&
       gateable &&
@@ -177,11 +184,62 @@ export function gateOptional(
       continue;
     out[name] = sub;
   }
+  if (mode === "safe") {
+    const free = semanticOptional(props, required, keep, prefix);
+    const anyRequired = Object.keys(props).some(
+      (k) => required.includes(k) && !keep.has(prefix ? `${prefix}.${k}` : k),
+    );
+    if (!anyRequired && free.length > 0 && !free.some((k) => k in out)) {
+      // Never empty an op: keep every optional field, in schema order.
+      const restored: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(props))
+        if (k in out || free.includes(k)) restored[k] = out[k] ?? v;
+      return { ...schema, properties: restored, required };
+    }
+  }
   return {
     ...schema,
     properties: out,
     required: required.filter((r) => r in out),
   };
+}
+
+/** Optional, non-object properties that are not kept (ref) paths. */
+function semanticOptional(
+  props: Record<string, unknown>,
+  required: string[],
+  keep: Set<string>,
+  prefix: string,
+): string[] {
+  return Object.entries(props)
+    .filter(([k, v]) => {
+      const inner = nonNull(v);
+      const path = prefix ? `${prefix}.${k}` : k;
+      return (
+        !required.includes(k) &&
+        !keep.has(path) &&
+        !(isRecord(inner) && inner.type === "object")
+      );
+    })
+    .map(([k]) => k);
+}
+
+/**
+ * Root fields of which at least one must be present: the optional semantic
+ * fields of an op that has no required semantic field (e.g. ASSIGN_GOAL's
+ * `assignee` beside the ref `id`). Empty when some semantic field is
+ * required.
+ */
+export function requireOneOf(schema: JsonSchema, refPaths: string[]): string[] {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  const required = Array.isArray(schema.required)
+    ? schema.required.filter((r): r is string => typeof r === "string")
+    : [];
+  const keep = new Set(refPaths);
+  const anyRequired = Object.keys(props).some(
+    (k) => required.includes(k) && !keep.has(k),
+  );
+  return anyRequired ? [] : semanticOptional(props, required, keep, "");
 }
 
 /* ------------------------------------------------------------------ */
@@ -201,6 +259,13 @@ const PRIMITIVES = [
 export interface ArgsGrammarOptions {
   /** Constrain free-text strings to utterance spans (else any string). */
   spans: boolean;
+  /** Root fields emitted first, in this order (e.g. ref fields). */
+  first?: string[];
+  /**
+   * Root optional fields of which at least one must be present (see
+   * `requireOneOf`). They follow the required fields.
+   */
+  requireOneOf?: string[];
 }
 
 /**
@@ -252,43 +317,81 @@ export function argsGrammar(
     }
   }
 
-  function object(s: Record<string, unknown>): string {
+  /**
+   * Members in order, each required or optional, with at least one member
+   * of the flagged set present when `needOne`. Built right to left over
+   * states (position, something emitted yet, set satisfied yet), so the
+   * grammar stays linear in the number of members. Returns "" for an empty
+   * body and null when no sentence is possible.
+   */
+  function sequence(
+    members: { lit: string; req: boolean; inSet: boolean }[],
+    needOne: boolean,
+  ): string | null {
+    const memo = new Map<string, string | null>();
+    const n = members.length;
+    function from(i: number, emitted: boolean, sat: boolean): string | null {
+      if (i === n) return sat ? "" : null;
+      const key = `${i}:${emitted}:${sat}`;
+      if (memo.has(key)) return memo.get(key) ?? null;
+      const m = members[i];
+      const next = from(i + 1, true, sat || m.inSet);
+      const emit =
+        next === null
+          ? null
+          : [emitted ? `", " ${m.lit}` : m.lit, next].filter(Boolean).join(" ");
+      let out: string | null = emit;
+      if (!m.req) {
+        const skip = from(i + 1, emitted, sat);
+        if (emit === null) out = skip;
+        else if (skip === "") out = `(${emit})?`;
+        else if (skip !== null) out = `(${emit} | ${skip})`;
+      }
+      if (out !== null && out !== "") {
+        const name = fresh();
+        rules.push(`${name} ::= ${out}`);
+        out = name;
+      }
+      memo.set(key, out);
+      return out;
+    }
+    return from(0, false, !needOne);
+  }
+
+  function object(s: Record<string, unknown>, isRoot = false): string {
     const props = isRecord(s.properties) ? s.properties : {};
-    const required = Array.isArray(s.required) ? s.required : [];
+    const reqList: unknown[] = Array.isArray(s.required) ? s.required : [];
     const names = Object.keys(props);
+    const first = isRoot ? (opts.first ?? []).filter((k) => k in props) : [];
+    const oneOf = isRoot
+      ? (opts.requireOneOf ?? []).filter(
+          (k) => k in props && !reqList.includes(k) && !first.includes(k),
+        )
+      : [];
+    const rest = names.filter((k) => !first.includes(k) && !oneOf.includes(k));
     const ordered = [
-      ...names.filter((k) => required.includes(k)),
-      ...names.filter((k) => !required.includes(k)),
+      ...first,
+      ...rest.filter((k) => reqList.includes(k)),
+      ...oneOf,
+      ...rest.filter((k) => !reqList.includes(k)),
     ];
     const name = fresh();
-    if (ordered.length === 0) {
-      rules.push(`${name} ::= "{}"`);
-      return name;
-    }
-    const member = (k: string) =>
-      `${gbnfLiteral(JSON.stringify(k) + ": ")} ${value(props[k])}`;
-    const members = ordered.map(member);
-    const nReq = ordered.filter((k) => required.includes(k)).length;
-    let body: string;
-    if (nReq > 0) {
-      body = members
-        .map((m, i) =>
-          i === 0 ? m : i < nReq ? `", " ${m}` : `(", " ${m})?`,
-        )
-        .join(" ");
-    } else {
-      // No required member: one of them first, then optional later ones.
-      body = alt(
-        members.map((m, i) =>
-          [m, ...members.slice(i + 1).map((x) => `(", " ${x})?`)].join(" "),
-        ),
-      );
-    }
-    rules.push(`${name} ::= "{" ${body} "}"`);
+    const anyReq = ordered.some((k) => reqList.includes(k));
+    // At least one of `oneOf`; with no required member, at least one member.
+    const set = oneOf.length > 0 ? oneOf : anyReq ? [] : ordered;
+    const body = sequence(
+      ordered.map((k) => ({
+        lit: `${gbnfLiteral(JSON.stringify(k) + ": ")} ${value(props[k])}`,
+        req: reqList.includes(k),
+        inSet: set.includes(k),
+      })),
+      set.length > 0,
+    );
+    rules.push(body ? `${name} ::= "{" ${body} "}"` : `${name} ::= "{}"`);
     return name;
   }
 
-  const root = object(schema);
+  const root = object(schema, true);
   const out = [`root ::= ${root}`, ...rules, ...PRIMITIVES];
   if (used.span) out.push(...spanRules("span", utterance));
   return out.join("\n");
@@ -339,4 +442,31 @@ export function mapRefLabels(
     parent[leaf] = Array.isArray(cur) ? cur.map(toId) : toId(cur);
   }
   return out;
+}
+
+/**
+ * Candidates with unique, non-empty labels (round 6, the LoRA plan's
+ * labeled refs): a missing label becomes the id, and a repeated label gets
+ * ` (2)`, ` (3)`, … in list order. Pass the result to `refEnumValues` and
+ * `mapRefLabels` so the model chooses a label and the app maps it to an id.
+ */
+export function labelRefCandidates(
+  refCandidates: Record<string, { id: string; label?: string | null }[]>,
+): Record<string, RefCandidate[]> {
+  return Object.fromEntries(
+    Object.entries(refCandidates).map(([path, cands]) => {
+      const seen = new Map<string, number>();
+      const taken = new Set<string>();
+      const out = cands.map((c) => {
+        const base = c.label?.trim() ? c.label.trim() : c.id;
+        const n = (seen.get(base) ?? 0) + 1;
+        seen.set(base, n);
+        let label = n === 1 ? base : `${base} (${n})`;
+        while (taken.has(label)) label = `${label}'`;
+        taken.add(label);
+        return { id: c.id, label };
+      });
+      return [path, out];
+    }),
+  );
 }

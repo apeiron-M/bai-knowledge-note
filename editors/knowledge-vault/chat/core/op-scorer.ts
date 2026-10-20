@@ -40,6 +40,18 @@ export function forcedOpText(label: string): string {
   return `{"op": ${JSON.stringify(label)}}`;
 }
 
+/**
+ * Step-1 answer shape. `op` is the round 1–5 single-op object; `ops` is the
+ * list form from the LoRA plan: `{"ops": []}` means no document change and
+ * `{"ops": ["a", "b"]}` is a multi-action plan in execution order.
+ */
+export type AnswerFormat = "op" | "ops";
+
+/** Compact `{"ops": [...]}` answer for the given labels (may be empty). */
+export function forcedOpsText(labels: string[]): string {
+  return `{"ops": [${labels.map((l) => JSON.stringify(l)).join(", ")}]}`;
+}
+
 /* ------------------------------------------------------------------ */
 /* Options and prompt                                                   */
 /* ------------------------------------------------------------------ */
@@ -66,19 +78,28 @@ export function readableOpName(opName: string): string {
   return opName.toLowerCase().replace(/_/g, " ");
 }
 
-export type LabelStyle = "key" | "readable";
+export type LabelStyle = "key" | "readable" | "op";
 
 /**
  * Labels for a candidate list. `key` uses the catalog key (round 1–2
- * layout). `readable` uses the op name in words; when two candidates would
- * share a label (unscoped: `set owner` in project and wbs) each gets its
- * model name in brackets.
+ * layout). `op` uses the bare op name (`ADD_TOPIC`); a name that two
+ * candidates share (unscoped `SET_OWNER`) falls back to the key for both.
+ * `readable` uses the op name in words; when two candidates would share a
+ * label (unscoped: `set owner` in project and wbs) each gets its model name
+ * in brackets.
  */
 export function optionLabels(
   candidates: Pick<CatalogEntry, "key" | "opName" | "model">[],
   style: LabelStyle,
 ): string[] {
   if (style === "key") return candidates.map((c) => c.key);
+  if (style === "op") {
+    const n = new Map<string, number>();
+    for (const c of candidates) n.set(c.opName, (n.get(c.opName) ?? 0) + 1);
+    return candidates.map((c) =>
+      (n.get(c.opName) ?? 0) > 1 ? c.key : c.opName,
+    );
+  }
   const base = candidates.map((c) => readableOpName(c.opName));
   const count = new Map<string, number>();
   for (const b of base) count.set(b, (count.get(b) ?? 0) + 1);
@@ -112,6 +133,11 @@ export function noneOption(style: LabelStyle): OpOption {
   };
 }
 
+export const STEP1_SYSTEM: Record<AnswerFormat, string> = {
+  op: "You choose the single document operation that carries out the user's request. Answer with JSON.",
+  ops: 'You choose the document operations that carry out the user\'s request. Answer with JSON: {"ops": [...]} lists the operations in the order they run, and {"ops": []} means the request needs no document change.',
+};
+
 /**
  * Same layout as `selectOpMessages` (round 1): system instruction, then the
  * option list, then the request last so the content-free pass shares the
@@ -120,6 +146,7 @@ export function noneOption(style: LabelStyle): OpOption {
 export function scoringMessages(
   utterance: string,
   options: OpOption[],
+  format: AnswerFormat = "op",
 ): WllamaChatMessage[] {
   const lines = options.map(
     (o) =>
@@ -128,8 +155,7 @@ export function scoringMessages(
   return [
     {
       role: "system",
-      content:
-        "You choose the single document operation that carries out the user's request. Answer with JSON.",
+      content: STEP1_SYSTEM[format],
     },
     {
       role: "user",
@@ -226,10 +252,28 @@ export interface ScoredRequest {
   text: string;
   logprobs: number[];
   tokens: string[];
+  /** Wall time this request cost now (0 when served from the cache). */
   wallMs: number;
+  /** Wall time when it was computed (equals `wallMs` unless cached). */
+  computeMs: number;
+  cached: boolean;
   promptN?: number;
   cacheN?: number;
   predictedN?: number;
+}
+
+/**
+ * Forced-answer results by prompt and answer. The content-free pass does
+ * not depend on the utterance, so one entry serves every request made
+ * against the same option list (per document type and ordering).
+ */
+export type ScoreCache = Map<string, ScoredRequest>;
+
+export function scoreCacheKey(
+  messages: WllamaChatMessage[],
+  text: string,
+): string {
+  return `${JSON.stringify(messages)}\u0000${text}`;
 }
 
 export interface ScoreRunOptions {
@@ -239,8 +283,24 @@ export interface ScoreRunOptions {
   offsets: number[];
   /** Also score each option against the content-free input. */
   contentFree: boolean;
-  /** Append the "none" pseudo-candidate (last, before rotation). */
+  /**
+   * Add the no-action answer. `op` format: a listed "none" option (round
+   * 5). `ops` format: the unlisted answer `{"ops": []}`.
+   */
   includeNone?: boolean;
+  /** Answer shape; default `op`. */
+  format?: AnswerFormat;
+  /** Reuse content-free results across utterances. */
+  cache?: ScoreCache;
+}
+
+/** The forced answer for one option (or the no-action answer). */
+export function answerText(
+  label: string | null,
+  format: AnswerFormat,
+): string {
+  if (format === "ops") return forcedOpsText(label === null ? [] : [label]);
+  return forcedOpText(label ?? NONE_KEY);
 }
 
 /**
@@ -253,29 +313,47 @@ export async function scoreOptions(
   candidates: CatalogEntry[],
   opts: ScoreRunOptions,
 ): Promise<ScoredRequest[]> {
+  const format = opts.format ?? "op";
   const base = toOptions(candidates, opts.style);
-  if (opts.includeNone) base.push(noneOption(opts.style));
+  const listedNone = opts.includeNone && format === "op";
+  if (listedNone) base.push(noneOption(opts.style));
   const out: ScoredRequest[] = [];
   for (const offset of opts.offsets) {
     const options = rotate(base, offset);
+    const answers = options.map((o) => ({
+      key: o.key,
+      text: answerText(o.key === NONE_KEY ? null : o.label, format),
+    }));
+    if (opts.includeNone && format === "ops")
+      answers.push({ key: NONE_KEY, text: answerText(null, format) });
     const inputs = opts.contentFree ? [utterance, CONTENT_FREE] : [utterance];
     for (const [ii, input] of inputs.entries()) {
-      const messages = scoringMessages(input, options);
-      for (const o of options) {
-        const text = forcedOpText(o.label);
-        const r = await opts.scoreText(messages, literalGrammar(text));
-        out.push({
-          key: o.key,
+      const contentFree = ii === 1;
+      const messages = scoringMessages(input, options, format);
+      for (const a of answers) {
+        const ck = scoreCacheKey(messages, a.text);
+        const hit = contentFree ? opts.cache?.get(ck) : undefined;
+        if (hit) {
+          out.push({ ...hit, offset, wallMs: 0, cached: true });
+          continue;
+        }
+        const r = await opts.scoreText(messages, literalGrammar(a.text));
+        const req: ScoredRequest = {
+          key: a.key,
           offset,
-          contentFree: ii === 1,
+          contentFree,
           text: r.text,
           logprobs: forcedLogprobs(r),
           tokens: r.tokens.map((t) => t.token),
           wallMs: r.wallMs,
+          computeMs: r.wallMs,
+          cached: false,
           promptN: r.timings?.prompt_n,
           cacheN: r.timings?.cache_n,
           predictedN: r.timings?.predicted_n,
-        });
+        };
+        if (contentFree) opts.cache?.set(ck, req);
+        out.push(req);
       }
     }
   }
