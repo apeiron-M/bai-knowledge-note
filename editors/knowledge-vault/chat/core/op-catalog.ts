@@ -47,6 +47,8 @@ export interface CatalogEntry {
   modelSchema: JsonSchema;
   /** Full JSON Schema of the operation input (as zod sees it). */
   inputJsonSchema: JsonSchema;
+  /** Closed String vocabularies applied to `modelSchema`, by dotted path. */
+  vocabulary: Record<string, string[]>;
   zod: z.ZodType;
   creator: ActionCreator;
 }
@@ -91,6 +93,8 @@ export interface BuildCatalogOptions {
   collapseNullable?: boolean;
   /** Description overrides keyed `<model>:<OP>`; replace the model's text. */
   descriptionOverrides?: Record<string, string>;
+  /** Closed String vocabularies keyed `<model>:<OP>:<dotted.path>`. */
+  vocabularies?: Record<string, string[]>;
 }
 
 /**
@@ -227,6 +231,21 @@ export interface ModelSchemaOptions {
   /** Candidate ids per ref-id field, keyed by dotted path. */
   refCandidates?: Record<string, string[]>;
   collapseNullable?: boolean;
+  /** Closed values per semantic String field, keyed by dotted path. */
+  vocabulary?: Record<string, string[]>;
+}
+
+/** `sub` with its string type narrowed to `values` (null branch kept). */
+function withVocabulary(sub: unknown, values: string[]): unknown {
+  const e: JsonSchema = { type: "string", enum: values };
+  if (isRecord(sub) && Array.isArray(sub.anyOf)) {
+    return {
+      ...sub,
+      anyOf: sub.anyOf.map((b) => (isRecord(b) && b.type === "null" ? b : e)),
+    };
+  }
+  if (isRecord(sub) && sub.type === "array") return { ...sub, items: e };
+  return e;
 }
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -269,7 +288,9 @@ function projectObject(
       continue;
     }
     if (field.fieldClass === "semantic") {
-      outProps[field.name] = opts.collapseNullable ? collapseNull(sub) : sub;
+      const base = opts.collapseNullable ? collapseNull(sub) : sub;
+      const vocab = opts.vocabulary?.[key];
+      outProps[field.name] = vocab ? withVocabulary(base, vocab) : base;
     } else if (field.fieldClass === "ref-id") {
       const ids = opts.refCandidates?.[key];
       if (ids && ids.length > 0) outProps[field.name] = enumSchema(field, ids);
@@ -291,11 +312,13 @@ function projectObject(
  * object (possibly with no properties).
  */
 export function buildModelSchema(
-  entry: Pick<CatalogEntry, "fields" | "inputJsonSchema">,
+  entry: Pick<CatalogEntry, "fields" | "inputJsonSchema"> &
+    Partial<Pick<CatalogEntry, "vocabulary">>,
   opts: ModelSchemaOptions = {},
 ): JsonSchema {
+  const o = { ...opts, vocabulary: opts.vocabulary ?? entry.vocabulary };
   return (
-    projectObject(entry.fields, entry.inputJsonSchema, opts) ?? {
+    projectObject(entry.fields, entry.inputJsonSchema, o) ?? {
       type: "object",
       properties: {},
       required: [],
@@ -359,6 +382,11 @@ export function buildCatalog(
         const { $schema: _drop, ...inputJsonSchema } = full;
         const base = { fields, inputJsonSchema };
         const key = `${model}:${opName}`;
+        const vocabulary = Object.fromEntries(
+          Object.entries(options.vocabularies ?? {})
+            .filter(([k]) => k.startsWith(`${key}:`))
+            .map(([k, v]) => [k.slice(key.length + 1), v]),
+        );
         entries.push({
           key,
           model,
@@ -371,8 +399,10 @@ export function buildCatalog(
           scope: op.scope ?? "global",
           fields,
           inputJsonSchema,
+          vocabulary,
           modelSchema: buildModelSchema(base, {
             collapseNullable: options.collapseNullable,
+            vocabulary,
           }),
           zod,
           creator,
