@@ -26,6 +26,7 @@ import {
 } from "../shared/revision-history.js";
 import { useRevisionHistory } from "../shared/use-revision-history.js";
 import { NOTE_REVISION_MODEL } from "./lib/revision-model.js";
+import { takeInWhenIdle } from "./lib/take-in-when-idle.js";
 import { MetadataPanel } from "./components/metadata-panel.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { useGraphMetadata } from "../knowledge-vault/hooks/use-graph-metadata.js";
@@ -135,6 +136,7 @@ function timestamp() {
   return new Date().toISOString();
 }
 
+
 export default function Editor() {
   const [document, dispatch] = useSelectedKnowledgeNoteDocument();
   const [view, setView] = useState<"note" | "links" | "details" | "history">(
@@ -186,6 +188,11 @@ export default function Editor() {
   useLayoutEffect(() => {
     const el = titleRef.current;
     if (!el) return;
+    // The box is uncontrolled (`defaultValue`), so typing never fights a
+    // render — and so it kept the text it mounted with when the title changed
+    // elsewhere (another tab, an agent, the pipeline). Take the newer title in
+    // whenever the box is not being edited.
+    takeInWhenIdle(el, stateTitle ?? "");
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
   }, [stateTitle]);
@@ -197,6 +204,9 @@ export default function Editor() {
   useLayoutEffect(() => {
     const el = descRef.current;
     if (!el) return;
+    // Same as the title: a description changed elsewhere replaces the box's
+    // text unless it is being edited, and the counter follows it.
+    if (takeInWhenIdle(el, stateDescription ?? "")) setDescLen(null);
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
   }, [stateDescription]);
