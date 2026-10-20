@@ -10,8 +10,11 @@ import {
 } from "../../editors/knowledge-vault/chat/core/llm-client.js";
 import {
   fillArgs,
+  generateAction,
   opEnumSchema,
 } from "../../editors/knowledge-vault/chat/core/generator.js";
+import { leafFields } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
+import seed from "./eval/seed-utterances.json" with { type: "json" };
 import { buildAction } from "../../editors/knowledge-vault/chat/core/envelope.js";
 import { createOpRetriever } from "../../editors/knowledge-vault/chat/core/op-retriever.js";
 import type { CatalogEntry } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
@@ -363,6 +366,149 @@ async function happyPath(backendRaw: unknown): Promise<Json> {
   };
 }
 
+/* ------------------------------------------------------------------ */
+/* Goal 3: seed eval                                                    */
+/* ------------------------------------------------------------------ */
+
+interface SeedItem {
+  utterance: string;
+  expectedKey: string;
+  docType: string;
+  expectedArgs?: Record<string, unknown>;
+}
+
+function pct(n: number, d: number): number | null {
+  return d === 0 ? null : Math.round((1000 * n) / d) / 10;
+}
+
+function quantile(xs: number[], q: number): number | null {
+  if (xs.length === 0) return null;
+  const sorted = [...xs].sort((a, b) => a - b);
+  const i = Math.min(sorted.length - 1, Math.ceil(q * sorted.length) - 1);
+  return Math.round(sorted[Math.max(0, i)]);
+}
+
+function norm(v: unknown): string {
+  return typeof v === "string"
+    ? v
+        .trim()
+        .toLowerCase()
+        .replace(/[_\s]+/g, " ")
+        .replace(/[.?!]$/, "")
+    : JSON.stringify(v);
+}
+
+async function evalSeed(
+  backendRaw: unknown,
+  scopedRaw: unknown,
+): Promise<Json> {
+  const backend = backendArg(backendRaw);
+  const scoped = scopedRaw === true;
+  const c = client(backend);
+  const { retriever } = await catalogTools();
+  const items: SeedItem[] = seed;
+  const rows: Json[] = [];
+  for (const [i, item] of items.entries()) {
+    if (statusEl) statusEl.textContent = `eval ${i + 1}/${items.length}`;
+    const candidates = retriever
+      .retrieve(item.utterance, {
+        k: 5,
+        docType: scoped ? item.docType : undefined,
+      })
+      .map((h) => h.entry);
+    const inCandidates = candidates.some((e) => e.key === item.expectedKey);
+    const gen = await generateAction(item.utterance, candidates, {
+      completeJson: c.completeJson,
+    });
+    const entry = candidates.find((e) => e.key === gen.key);
+    let argsValid: boolean | null = null;
+    let argsError: string | null = null;
+    if (entry && gen.args) {
+      const refIds = Object.fromEntries(
+        leafFields(entry.fields)
+          .filter((f) => f.fieldClass === "ref-id")
+          .map((f) => [f.path.join("."), f.list ? ["ref-1"] : "ref-1"]),
+      );
+      const built = buildAction(entry, gen.args, { ...ctxFor(), refIds });
+      argsValid = built.ok;
+      argsError = built.ok ? null : built.error.slice(0, 300);
+    } else if (entry) {
+      argsValid = false;
+      argsError = gen.error ?? "no args";
+    }
+    const opCorrect = gen.key === item.expectedKey;
+    let argsExact: boolean | null = null;
+    let argsLoose: boolean | null = null;
+    if (opCorrect && item.expectedArgs) {
+      const expected = Object.entries(item.expectedArgs);
+      const got = gen.args ?? {};
+      argsExact = expected.every(([k, v]) => got[k] === v);
+      argsLoose = expected.every(([k, v]) => norm(got[k]) === norm(v));
+    }
+    rows.push({
+      utterance: item.utterance,
+      expectedKey: item.expectedKey,
+      candidates: candidates.map((e) => e.key),
+      inCandidates,
+      selectedKey: gen.key,
+      opCorrect,
+      args: gen.args,
+      expectedArgs: item.expectedArgs ?? null,
+      argsValid,
+      argsError,
+      argsExact,
+      argsLoose,
+      raw: gen.raw,
+      timings: gen.timings,
+    });
+  }
+  const n = rows.length;
+  const inCand = rows.filter((r) => r.inCandidates);
+  const selected = rows.filter((r) => r.argsValid !== null);
+  const withExpected = rows.filter((r) => r.argsExact !== null);
+  const s1 = rows.map(
+    (r) => (r.timings as { step1: { wallMs: number } }).step1.wallMs,
+  );
+  const s2 = rows
+    .map(
+      (r) => (r.timings as { step2: { wallMs: number } | null }).step2?.wallMs,
+    )
+    .filter((x): x is number => typeof x === "number");
+  const summary = {
+    backend,
+    scoped,
+    n,
+    recallAt5: pct(inCand.length, n),
+    opAccuracy: pct(rows.filter((r) => r.opCorrect).length, n),
+    opAccuracyGivenInCandidates: pct(
+      inCand.filter((r) => r.opCorrect).length,
+      inCand.length,
+    ),
+    inCandidates: inCand.length,
+    argsValidPct: pct(
+      selected.filter((r) => r.argsValid).length,
+      selected.length,
+    ),
+    argsValidN: selected.length,
+    argsExactPct: pct(
+      withExpected.filter((r) => r.argsExact).length,
+      withExpected.length,
+    ),
+    argsLoosePct: pct(
+      withExpected.filter((r) => r.argsLoose).length,
+      withExpected.length,
+    ),
+    argsExactN: withExpected.length,
+    step1Ms: { median: quantile(s1, 0.5), p95: quantile(s1, 0.95) },
+    step2Ms: {
+      median: quantile(s2, 0.5),
+      p95: quantile(s2, 0.95),
+      n: s2.length,
+    },
+  };
+  return { summary, rows };
+}
+
 /** Ad-hoc probe: raw chat (optionally constrained by a JSON schema). */
 async function chat(
   backendRaw: unknown,
@@ -396,6 +542,7 @@ const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
   constraints,
   happyPath,
   chat,
+  evalSeed,
 };
 
 /* ------------------------------------------------------------------ */
@@ -445,9 +592,13 @@ const buttons: [string, unknown[]][] = [
   ["stream", ["webgpu"]],
   ["constraints", ["webgpu", 20]],
   ["happyPath", ["webgpu"]],
+  ["evalSeed", ["webgpu", true]],
+  ["evalSeed", ["webgpu", false]],
   ["unload", ["webgpu"]],
   ["load", ["cpu"]],
   ["stream", ["cpu"]],
+  ["evalSeed", ["cpu", true]],
+  ["evalSeed", ["cpu", false]],
   ["unload", ["cpu"]],
 ];
 const buttonsEl = document.getElementById("buttons");
