@@ -12,7 +12,7 @@ Every number below was observed in one run on the machine described under Enviro
 - **The constraints hold.** There were 0 violations out of 20 in each of the three modes (json_schema, GBNF and op-enum), even with an adversarial prompt at temperature 1.2.
 - **ADD_TOPIC works end to end in the harness.** utterance → args → `buildAction` → reducer, with no operation error.
 - **Picking the operation is the weak point.** With scoped retrieval (k=5), the model picked the right op 43.3% of the time overall, and 48.1% of the time when the right op was among the candidates. That is far below the 90–95% bar, so **the fine-tune trigger is met** (see Verdict).
-- **The Chat tab is built but not verified in Connect.** The local `ph connect studio` would not start because the monorepo's Connect `dist` is stale (details under Chat tab).
+- **The Chat tab is verified in Connect (round 3).** Two blockers were found and cleared: the monorepo's stale Connect `dist`, and Connect's CSP blocking the wllama CDN import. ADD_TOPIC then dispatched through the in-browser reactor with no errors (see Round 3).
 
 ## Environment
 
@@ -372,3 +372,48 @@ BM25 recall on the seed set, from `tests/unit/chat-retriever.test.ts`:
   3. Run the same harness on LFM2.5-1.2B-Instruct.
   4. Fine-tune.
 - **Before tuning on this seed set again:** a held-out utterance set is needed. Fifteen LLM runs have now been made against these same 30 items: four in round 1 (WebGPU and CPU), and eleven in round 2 (including the reload check).
+
+## Round 3: Connect end-to-end (2026-10-20)
+
+Goal: load the model in the Chat tab inside a real Connect and dispatch ADD_TOPIC to a real knowledge-note document through the reactor.
+
+### Blocker 1: stale monorepo build
+
+- `node_modules/@powerhousedao/*` and `document-model` are symlinks into the local monorepo at `../powerhouse` (HEAD `b16bae3c7e`, branch `main`, `git status --short` empty before and after).
+- Connect's source no longer references `react-router-dom`. It uses `@tanstack/react-router`, which is installed. The `dist` was simply stale. Every linked package's `dist` dated from Oct 12–13 (reactor from Oct 19), while sources had commits through Oct 19.
+- The monorepo's install (`node_modules/.modules.yaml`, Oct 19 09:45 CDT) postdates the last `pnpm-lock.yaml` commit, so no `pnpm install` was run.
+- Rebuilt with `pnpm --filter "@powerhousedao/connect..." --filter "@powerhousedao/ph-cli..." run build`: 35 package builds, exit 0, 20.6 s wall. Afterwards `apps/connect/dist` has no `react-router-dom` import, and the monorepo's `git status --short` is still empty. The build outputs are git-ignored.
+- `npm run tsc` here still reports 204 errors against the rebuilt `.d.ts` files, the same as before.
+
+### Blocker 2: Connect's CSP
+
+- After the rebuild, `ph-cli connect studio --port 3100` rendered Connect. A drive was created with the KnowledgeVault app, a knowledge note was created, and the Chat tab rendered.
+- The first send failed with `Failed to fetch dynamically imported module: https://cdn.jsdelivr.net/npm/@wllama/wllama@3.8.1/esm/index.js`.
+- Console: `Loading the script '…/esm/index.js' violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://registry.vetra.io"`.
+- The CSP is a `<meta>` built in `packages/builder-tools/connect-utils/vite-config.ts`: `script-src 'self' 'unsafe-inline' 'unsafe-eval'[ <packageRegistryUrl>]; worker-src 'self' blob:; object-src 'none'; base-uri 'self';`. Its only configurable slot is the single `packageRegistryUrl` origin. `connect-src` is unset, so a plain `fetch` of the same URL returned 200 (382 633 bytes).
+- **Fix (spike-grade, commit `e20f698b`):** `importWllama` now falls back to fetching the bundle and running it as an inline `<script type="module">`, which `'unsafe-inline'` allows. The bundle's single trailing `export { … }` is rewritten into a callback. A rejected import is no longer cached. The wllama worker (blob URL) and wasm compile ran without further CSP errors.
+- **Production fix (needs a dependency change):** add `@wllama/wllama` as a package dependency so it is served from `'self'`. The other option is a Connect CSP that admits the CDN.
+
+### Result
+
+| | Cold (OPFS empty for `localhost:3100`) | Warm (after reload) |
+|---|---|---|
+| `loadMs` (client timer, shown in the status label since `bd46a8cf`) | 15 167 ms | 570 ms |
+| Send → "Model ready" (DOM observer) | 15 180 ms | 582 ms |
+| "Model ready" → proposal card (retrieve + generate) | 444 ms | 454 ms |
+| Backend | webgpu | webgpu |
+
+- Environment: `crossOriginIsolated` false, `navigator.gpu` present. After the cold load, OPFS `cache/` held the GGUF (229 312 224 bytes) plus 278 B of metadata.
+- **Utterance:** "tag this note with distributed systems", with the target note "CRDT merge semantics" (no topics before).
+- **Proposed action:** ADD_TOPIC `{"name": "distributed_systems", "id": "3fed44eb-9cff-4925-a2ae-e84927c47f16"}`. The name came back in snake_case rather than "distributed systems".
+- **Dispatch:** after Confirm, the tab reported `Dispatched ADD_TOPIC to "CRDT merge semantics".`
+  - The note's own editor showed the topic chip `distributed_systems`.
+  - Revision history showed revision 1, `ADD_TOPIC`, "1/1 signature verified", "No errors".
+- **Second utterance (warm):** "add the topic consensus" gave ADD_TOPIC `{"name": "consensus", …}`. It was discarded, not dispatched.
+
+### Console
+
+- **Expected:** one CSP violation per page load, from the first `import()` attempt before the fallback. There were no worker, wasm or cross-origin errors.
+- **Unrelated to chat:**
+  - `net::ERR_CONNECTION_REFUSED` with `[useGraphSearch]` / `[useGraphMetadata] Fetch failed`. These are the vault's subgraph requests to `http://localhost:4001`, where no Switchboard was running.
+  - One Chrome issue: "A form field element should have an id or name attribute" (count 4).
