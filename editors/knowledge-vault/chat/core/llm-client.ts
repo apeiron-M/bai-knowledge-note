@@ -1,6 +1,7 @@
 import type {
   WllamaChatMessage,
   WllamaChatParams,
+  WllamaLogprobContent,
   WllamaInstance,
   WllamaModule,
   WllamaResponseFormat,
@@ -73,6 +74,32 @@ export type CompleteJson = (
   opts?: Omit<ChatOptions, "responseFormat" | "grammar">,
 ) => Promise<JsonResult>;
 
+export interface ScoreOptions {
+  maxTokens?: number;
+  /** Alternatives reported per position (llama.cpp `n_probs`). */
+  topLogprobs?: number;
+}
+
+export interface ScoreResult {
+  text: string;
+  /** One entry per generated token, as llama.cpp reports them. */
+  tokens: WllamaLogprobContent[];
+  finishReason: string | null;
+  timings?: WllamaTimings;
+  wallMs: number;
+}
+
+/**
+ * Non-streaming greedy completion under `grammar` with per-token logprobs.
+ * With a single-literal grammar this forces a continuation; its logprobs are
+ * the model's unconstrained (pre-grammar) token probabilities.
+ */
+export type ScoreText = (
+  messages: WllamaChatMessage[],
+  grammar: string,
+  opts?: ScoreOptions,
+) => Promise<ScoreResult>;
+
 export interface LlmInfo {
   libllamaVersion: string;
   wllamaVersion: string;
@@ -94,6 +121,7 @@ export interface LlmClient {
     opts?: ChatOptions,
   ): Promise<ChatResult>;
   completeJson: CompleteJson;
+  scoreText: ScoreText;
   info: LlmInfo;
   exit(): Promise<void>;
 }
@@ -259,9 +287,32 @@ export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
     }
   };
 
+  const scoreText: ScoreText = async (messages, grammar, o = {}) => {
+    const t0 = performance.now();
+    const res = await wllama.createChatCompletion({
+      messages,
+      stream: false,
+      max_tokens: o.maxTokens ?? 48,
+      temperature: 0,
+      // An empty grammar means unconstrained greedy decoding.
+      grammar: grammar || undefined,
+      logprobs: true,
+      top_logprobs: o.topLogprobs ?? 1,
+    });
+    const choice = res.choices.at(0);
+    return {
+      text: choice?.message.content ?? "",
+      tokens: choice?.logprobs?.content ?? [],
+      finishReason: choice?.finish_reason ?? null,
+      timings: res.timings,
+      wallMs: performance.now() - t0,
+    };
+  };
+
   return {
     chatStream: (messages, o = {}) => runChat(wllama, messages, o),
     completeJson,
+    scoreText,
     info,
     exit: () => wllama.exit(),
   };

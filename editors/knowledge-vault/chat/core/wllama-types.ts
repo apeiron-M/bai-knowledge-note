@@ -1,7 +1,7 @@
 /**
- * Hand-written subset of the @wllama/wllama@3.8.1 API. wllama is loaded
- * from jsdelivr at runtime (its npm `main` is broken), so these types stand
- * in for its own .d.ts.
+ * Hand-written subset of the @wllama/wllama@3.8.1 API. wllama is vendored
+ * as plain ESM (`vendor/wllama/3.8.1/`), so these types stand in for its own
+ * .d.ts.
  */
 
 export interface WllamaChatMessage {
@@ -48,9 +48,8 @@ export interface WllamaResponseFormat {
   json_schema?: { name: string; schema: unknown; strict?: boolean };
 }
 
-export interface WllamaChatParams {
+interface WllamaChatParamsBase {
   messages: WllamaChatMessage[];
-  stream: true;
   max_tokens?: number;
   temperature?: number;
   seed?: number;
@@ -58,6 +57,42 @@ export interface WllamaChatParams {
   grammar?: string;
   timings_per_token?: boolean;
   abortSignal?: AbortSignal;
+  /** Maps to llama.cpp `n_probs` (= `top_logprobs`, default 20). */
+  logprobs?: boolean;
+  top_logprobs?: number;
+}
+
+export interface WllamaChatParams extends WllamaChatParamsBase {
+  stream: true;
+}
+
+export interface WllamaChatParamsNoStream extends WllamaChatParamsBase {
+  stream: false;
+}
+
+export interface WllamaLogprob {
+  token: string;
+  /**
+   * Natural log of the token's probability. With llama.cpp's default
+   * `post_sampling_probs: false` this is a softmax over the raw logits of
+   * the whole vocabulary, i.e. before the grammar mask.
+   */
+  logprob: number;
+  bytes: number[] | null;
+}
+
+export interface WllamaLogprobContent extends WllamaLogprob {
+  top_logprobs: WllamaLogprob[];
+}
+
+/** `stream: false` response (OAI chat.completion plus llama.cpp timings). */
+export interface WllamaChatResponse {
+  choices: {
+    message: { role: "assistant"; content?: string | null };
+    finish_reason: string | null;
+    logprobs: { content: WllamaLogprobContent[] | null } | null;
+  }[];
+  timings?: WllamaTimings;
 }
 
 export interface WllamaCacheManager {
@@ -74,6 +109,9 @@ export interface WllamaInstance {
   createChatCompletion(
     params: WllamaChatParams,
   ): Promise<AsyncIterable<WllamaChunk>>;
+  createChatCompletion(
+    params: WllamaChatParamsNoStream,
+  ): Promise<WllamaChatResponse>;
   isSupportWebGPU(): boolean;
   isMultithread(): boolean;
   getNumThreads(): number;
