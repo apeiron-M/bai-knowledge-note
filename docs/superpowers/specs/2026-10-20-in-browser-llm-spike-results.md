@@ -14,6 +14,7 @@ Every number below was observed in one run on the machine described under Enviro
 - **Picking the operation is the weak point.** With scoped retrieval (k=5), the model picked the right op 43.3% of the time overall, and 48.1% of the time when the right op was among the candidates. That is far below the 90–95% bar, so **the fine-tune trigger is met** (see Verdict).
 - **Round 5 (held-out, 68 items): decoding-time techniques are not enough.** Calibrated likelihood scoring fused with BM25 picks the right op 32.4% of the time scoped (51.2% when the op is in the top 5), against 13.2% for today's enum generation. Retrieval reaches only 63.2% recall@5. Args are 46–48% exact even with the oracle op. A fine-tune is justified, but retrieval, ref-id context and schema enums need fixing too (see Round 5).
 - **Round 6 (held-out-2, 91 items): code fixes reach their targets, op choice does not move.** Scoring every op of the scoped model plus gte-small embeddings gives 44–49% scoped op accuracy; gte-small top-1 alone (43/91, 47.3%) matches the LLM-fused pick at 40 ms instead of 1.6 s, so the base model's step-1 call is dropped. Unscoped is 26.4%. Paraphrased requests stay at 10–13/45. Calibrated ref-label scoring doubled ref accuracy (31% → 66%); args exact 43%; the best no-action gate reaches 61.5% precision / 100% recall. The r6.1 prompt format for a LoRA is fixed and test-pinned (see Round 6).
+- **Round 7 (cleanup): the Chat tab, the harness and the training renderer share the v1 pipeline (r6.1).** gte-small op vectors are precomputed (bit-identical to the browser), onnxruntime-web and gte-small load from the package origin, and in Connect an action was dispatched and a question was answered with no CSP violation and nothing from jsdelivr (see Round 7).
 - **The Chat tab is verified in Connect (round 3).** Two blockers were found and cleared: the monorepo's stale Connect `dist`, and Connect's CSP blocking the wllama CDN import. ADD_TOPIC then dispatched through the in-browser reactor with no errors (see Round 3).
 
 ## Environment
@@ -1049,3 +1050,108 @@ Three expected values in the held-out sets used values outside the canonical lis
 - **`"empirical"` → `"research"` is a judgment.** No canonical kind means "empirical". The claims are empirical findings from evaluations ("offline eval on 500 queries", "A/B over 40 prompts"), and `research` is the closest kind. rc2-01's utterance still says "kind: empirical" literally, so the enum now forces a mapping that the text does not spell out.
 - **pq2-01's `context.state` still says `"extract"`** (its `phaseOrder` and tasks tk-1/tk-2), and tk-3 says `"dedupe"`. The other held-out-2 items that copy that state snapshot also say `"extract"`. These are context, not expected values, and nothing scores them, so they were left as they are.
 - New sha256: `heldout2-eval.json` `71080a7b…25472e` (was `0c9cc44d…307c0b`), `heldout-eval.json` `45efda5b…562dae` (was `e71ce178…75aa0`).
+
+### tsc baseline
+
+- `npm run tsc` reports 204 errors, before and after this round.
+- A fresh, non-incremental `npx tsc --incremental false --noEmit` was run at HEAD and in a detached worktree of `main` (`55229d19`, removed afterwards). Both printed 204 errors, and the two sorted error lists are identical: the generated `v1/tests/*.test.ts`, `processors/graph-indexer/factory.ts` and the `kysely-pglite-dialect` tests. The same diff was re-run after every commit of this round.
+- The 5 `training/gen/*.ts` files are in the root tsconfig and have no errors. The extra errors Round 6 mentions came from llama.cpp's `.ts` files while they sat inside `training/`. `setup.sh` now builds llama.cpp in `~/.cache/bai-training`, outside the repo. No tsconfig change and no task-1 commit were needed.
+
+### Precomputed op embeddings
+
+- `scripts/gen-op-embeddings.ts` writes `chat/core/op-embeddings.gte-small.json` (239 KB): 99 op vectors and 16 no-action-exemplar vectors, 384 dims, float32 in base64. They are keyed by a sha256 over the model spec (`Supabase/gte-small`, q8, mean pooling, normalized) and every input text: the op texts (with `OP_DESCRIPTIONS`) and the exemplars. `--check` exits 1 when the asset is stale, and `tests/unit/chat-op-embeddings.test.ts` fails when the hash or the keys no longer match the catalog.
+- `createOpEmbeddingIndex` ranks ops from the asset, so a session embeds only the utterance. The asset loads as its own lazy chunk (`op-embeddings.gte-small-<hash>.js` in the build). Round 6 spent 11.5–12 s embedding the 99 ops each session.
+- **Numerics.** The first version used transformers' node build (onnxruntime-node, CPU). Against the browser's wasm embedder (harness `v1EmbedParity`), it differed by up to 0.0099 per dimension (min cosine 0.99849) and changed the scoped top-1 op on 4 of 59 dev items (dev-04, dx-07, dx-14, dn-01).
+  - `scripts/gte-wasm-node.ts` now runs the same `onnxruntime-web` bundle and the vendored asyncify wasm under node, with transformers' tokenizer, `mean_pooling` and `normalize`.
+  - The regenerated asset equals the browser's vectors exactly (max |Δ| 0, min cosine 0.999999, 0 flips).
+  - Generation takes 4.1 s, and two runs gave byte-identical files.
+- This also settles the training README's open question: transformers.js and onnxruntime-web load gte-small under tsx.
+
+### Chat tab on the v1 pipeline
+
+- `chat/core/v1-pipeline.ts` holds `runV1`, which the Chat tab (`use-chat-llm.ts`) and the harness's new `v1Pipeline` entry (`spike/llm-harness/v1.ts`) both call. Per request it:
+  1. embeds the utterance once;
+  2. applies the G3 gate (question rule OR embedding score > 0.04), which sends no-action requests to the plain answer path;
+  3. otherwise takes gte-small's top op among the scoped model's global ops, with no step-1 LLM call;
+  4. calls `fillArgsStep` with the A2 settings (safe gate, label-scored refs).
+- `loadV1Runtime` loads the catalog (`buildRuntimeCatalog`), the asset and the embedder once per page. The tab loads it in parallel with wllama.
+- The tab's Command/Ask toggle is gone, because the gate decides. Confirm still gates dispatch. The proposal card shows the op, the top 3 ops by embedding with their similarities, the ref label scores when a ref was scored, and the args.
+- Ref candidates from the selected note: `REMOVE_TOPIC.id` comes from its topics (label = name), and `REMOVE_LINK.id` / `UPDATE_LINK_TYPE.id` from its links (label = target title, else id). `ADD_LINK.targetDocumentId` gets no candidates, so that op fails zod and Confirm stays disabled.
+- **Dev smoke run of the shared code** (harness, WebGPU, `results-r7-dev-v1.json`; dev sets only):
+  - Op: 40/49, the same as Round 6's gte-small scoped top-1 on dev.
+  - No-action: 10/10 answered. 1 action item was gated out.
+  - Args exact: 17/25 where the op was right. Refs: 10/12.
+  - Per-utterance wall time: median 135 ms, p90 796 ms.
+- `prepareArgsStep` (`args-step.ts`) is the step-2 prompt preparation split out of `fillArgsStep`, which now calls it. The training renderer uses it too.
+
+### onnxruntime-web and gte-small from the package origin
+
+- `vendor/onnxruntime-web/1.26.0-dev.20260416-b7804b056c/` holds `ort-wasm-simd-threaded.asyncify.mjs` (47 389 B) and `.wasm` (23 567 050 B), copied unchanged from the onnxruntime-web that transformers 4.2.0 bundles. A README records sha256s and the tarball shasum. `LICENSE` is microsoft/onnxruntime's MIT text at the package's commit `b7804b05`, because the npm package ships none.
+- `gte-embedder.ts`:
+  - It sets `wasmPaths: { mjs, wasm }` to those files via `new URL(…, import.meta.url)`, after the transformers import (transformers assigns jsdelivr paths at init).
+  - It sets `env.useWasmCache = false`, so the factory is never re-wrapped as a `blob:` module.
+  - The committed `models/Supabase/gte-small` files come in through `env.fetch` from `new URL()` assets. The local model path must not be an http(s) URL: with one, transformers skips its local existence check, loads no tokenizer, and fails with `this.tokenizer is not a function`.
+- `tests/unit/chat-ort-vendor.test.ts` fails if the installed onnxruntime-web version or files differ from the vendored copy.
+- **Build** (`npx ph-cli build --ignore-type-errors`: exit 0, 13.1 s):
+  - `dist/browser/assets/` holds `ort-wasm-simd-threaded.asyncify-DMmc6YqF.wasm` (23 567 050 B), its `.mjs`, `model_quantized-BexI1B2v.onnx` (34 014 426 B) and the four gte-small JSON files. All are emitted as files, none inlined.
+  - The editor chunk references every one of them. transformers' own chunk references the same `-DMmc6YqF.wasm`, so the content hash makes the "dead" ort asset and the chat's asset one file.
+  - The only `cdn.jsdelivr` strings left are transformers' default-path literal and wllama's two compat URLs.
+- **`copy-runtime-assets.mjs`:**
+  - Step 3 now removes only `ort-wasm-*` browser assets that no chunk names, and its comments no longer say the browser build is model-free. Steps 1, 2 and 4 (the server path) are unchanged.
+  - In this checkout the script still stops at step 2 (`cannot locate onnxruntime-web/dist`, as in Round 4), because onnxruntime-web is a nested pnpm dependency.
+  - Step 3 was checked with a scratch copy that adds the real ort path to step 2's candidates. It printed "kept chat browser asset" for both ort files, and both stayed in `dist/browser/assets`.
+
+### Training renderer on r6.1
+
+- `training/gen/prompt-format.ts` now builds step 1 with `scoringMessages(…, toOptions(candidates, "key"), "ops")` over every global op of the row's model. Unscoped rows use gte-small's top 5, computed on the wasm numerics above.
+  - Targets are `{"ops": [key]}`, and no-action rows now get `{"ops": []}`.
+  - Step 2 goes through `prepareArgsStep` with the v1 gate. Targets follow the step-2 key order, with refs as labels.
+  - `PROMPT_FORMAT_VERSION` is re-exported from the core.
+- Targets are checked against the runtime grammars (core `argsGrammar` and the `{"ops": …}` alternation) with `gbnf-check`, no longer against llama.cpp's JSON-schema grammar. `render_template.py` no longer trains on a rejected target. `validate-rows.ts` has a vocabulary stage. `smoke_infer.py` decodes every step under its rendered grammar.
+- `tests/unit/training-prompt-format.test.ts` asserts the rendered step-1 and step-2 bytes against the r6.1 strings, and asserts that the step-2 messages equal what `fillArgsStep` sends.
+- **Re-render** (`render.sh` on the 50 smoke rows, render and parity only, no retraining, 16.1 s):
+  - Validation dropped smoke-17 (`noteType "question"`, not canonical), leaving 48 valid rows and 91 steps (48 step 1, 4 of them no-action; 43 step 2).
+  - 3 step-2 targets are rejected by the runtime grammar: smoke-24 and smoke-25 (`role`) and smoke-38 (`assignee`). The safe gate drops a meant-but-unnamed optional field beside a required one.
+  - The other 88 steps have template and token parity with HF (0 mismatches, 0 boundary merges, one BOS each).
+  - Probe rows: 8 steps, 7 trainable (probe-03 `role`, same cause), parity holds.
+- The teacher context now carries the vocabularies as enums (e.g. `taskType: "claim" | "enrichment"`). `teacher.py plan` dry run: 20 requests, 0 over the schema limits.
+
+### Connect end to end (`ph connect studio --port 3100`, Vite dev path)
+
+- **Page:** the CSP meta was the same as in Rounds 3–4: `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://registry.vetra.io; worker-src 'self' blob:; …`. `crossOriginIsolated` was false.
+- **Setup:** the drive "Chat E2E Vault" and the note "CRDT merge semantics" from Round 3 were used. OPFS `cache/` was deleted first to get a cold load.
+- **(a) Action, cold:**
+  - "tag this note with eventual consistency" proposed ADD_TOPIC (embedding top 3: ADD_TOPIC 0.863, REMOVE_TOPIC 0.833, ARCHIVE_NOTE 0.833) with `name: "eventual"`, a cut-short span (Round 6's error type 1). It was discarded.
+  - "add the topic replication" (warm) proposed ADD_TOPIC (0.879) with `name: "add"`, a wrong span. It was confirmed: the tab reported `Dispatched ADD_TOPIC to "CRDT merge semantics".`
+  - The note's editor showed a new topic chip `add`, and revision history showed revision 3, `ADD_TOPIC`, "1/1 signature verified", "No errors".
+- **(b) Question:** "what does this note say about merge conflicts?" was routed to "No document change (question); answering." and answered in plain text. It made no dispatch: the history still ended at revision 3.
+- **Warm reload:** "submit this note for review" proposed SUBMIT_FOR_REVIEW (0.914; APPROVE_NOTE 0.884, REJECT_NOTE 0.867) with only app-filled fields. It was discarded.
+- **Load times** (status label, and a DOM observer from Send):
+
+| | Cold (OPFS empty) | Warm (after reload) |
+|---|---|---|
+| wllama `loadMs` (webgpu) | 9 179 ms | 918 ms |
+| gte-small embedder load (in parallel) | 657 ms | 481 ms |
+| Send → proposal card | 9 364 ms | 1 003 ms |
+| Model ready → proposal (embed + step 2) | 120 ms | – |
+| Send → proposal, second utterance, same page | 128 ms | – |
+
+- **Network:**
+  - Every chat asset came from `localhost:3100`: `/vendor/wllama/3.8.1/wllama.{js,wasm}`, `/vendor/onnxruntime-web/…/ort-wasm-simd-threaded.asyncify.{mjs,wasm}`, `/models/Supabase/gte-small/{config,tokenizer,tokenizer_config}.json` and `onnx/model_quantized.onnx`, and the asset module `op-embeddings.gte-small.json?import`. There were also three `blob:` wllama workers.
+  - **No request went to `cdn.jsdelivr.net`.**
+  - External hosts: `huggingface.co` (the model tree API, then a HEAD and a GET on the GGUF) and its `us.aws.cdn.hf.co` redirect, for the GGUF only. `www.renown.id` is Connect's own. `localhost:4001` is the vault subgraph, refused because no Switchboard was running.
+  - The warm load made no GGUF download (OPFS), only the tree API call.
+- **Console:** no CSP violation. The only errors and warnings were the Round 3 ones: the `localhost:4001` refusals with the `[useGraphSearch]` / `[useGraphMetadata]` warnings, and the form-field id/name issue (count 4). There were also the SharedArrayBuffer and deprecated-feature issues.
+- Screenshots: the session scratchpad `connect-check-r7/` (01 cold proposal, 02 dispatch and question, 03 revision history, 04 warm proposal).
+
+### Record note: `dd5b7802`
+
+Commit `dd5b7802` ("round-6 held-out-2 per-item results") says `results-r6-h2-args.json` holds the broken concurrent A0/A2 attempt. That file was never written; the concurrent A0 is in `results-r6-h2-args-A0-concurrent.json`. History is left as it is.
+
+### Still open
+
+- **Args quality** is the visible weak point in the tab: two of three ADD_TOPIC proposals copied the wrong span. Round 6 attributes this to the base model.
+- **The safe gate drops meant-but-unnamed optional fields** (`role`, `assignee`, `owner`). That makes some correct training targets untrainable as the format stands. Changing it would change r6.1.
+- **The `dist/browser` path was built and inspected, not loaded in Connect.** `copy-runtime-assets.mjs` still cannot find onnxruntime-web in this pnpm layout (step 2, server path, unchanged).
+- **The asyncify wasm is used on Safari too,** where transformers would pick the plain build. Not tested.
+- The wllama compat path (`needCompat()`) would still fetch from jsdelivr. Chrome did not need it.
