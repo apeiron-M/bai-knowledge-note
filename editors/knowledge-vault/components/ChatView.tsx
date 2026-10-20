@@ -256,7 +256,8 @@ export function ChatView({
         <ChatConnectPanel
           vaultName={vaultName}
           busy={prov.isCompletingOAuth}
-          interrupted={prov.interruptedAttempt}
+          onCancelSignIn={prov.cancelSignIn}
+          notice={prov.signInNotice}
           onConnect={() => void prov.connectOpenRouter({ driveId, draft })}
           onConnectWithKey={prov.connectWithOpenRouterKey}
           onConnectCustom={prov.connectCustom}

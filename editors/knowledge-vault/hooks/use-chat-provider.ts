@@ -77,6 +77,14 @@ export interface CustomEndpointInput {
   disableThinking?: boolean;
 }
 
+/**
+ * Why the connect panel should ask for one more OpenRouter sign-in.
+ * `interrupted`: a sign-in was started and the user came back without a code —
+ * what a brand-new OpenRouter account does, because its sign-up drops our
+ * callback. `failed`: a code came back but no key came of it.
+ */
+export type SignInNotice = "interrupted" | "failed";
+
 /** A saved connection as the UI lists it. */
 export interface SavedConnection {
   kind: SavedProviderKind;
@@ -91,10 +99,15 @@ export interface UseChatProvider {
   isConnected: boolean;
   /** "OpenRouter", "localhost:11434", "Connect's AI settings · host" */
   providerLabel: string;
-  /** True while the post-redirect OpenRouter code exchange is in flight. */
+  /** True while an OpenRouter sign-in is finishing: the post-redirect code exchange, or the desktop app's browser sign-in. */
   isCompletingOAuth: boolean;
-  /** OpenRouter Connect was started in this tab and the user came back without a code. */
-  interruptedAttempt: boolean;
+  /**
+   * Stops waiting on a sign-in the desktop app is running in the system browser — which never
+   * returns for a brand-new account. Null when there is nothing to stop.
+   */
+  cancelSignIn: (() => void) | null;
+  /** Set when the last OpenRouter sign-in did not connect and the panel should ask for another. */
+  signInNotice: SignInNotice | null;
   /** Connect's own AI endpoint, when one is configured in this browser. */
   connectSettings: { host: string; model: string } | null;
   /** Every connection this browser remembers — the active one included. */
@@ -142,7 +155,8 @@ const nothing = () => {};
  */
 const HOST_MANAGED = {
   isCompletingOAuth: false,
-  interruptedAttempt: false,
+  cancelSignIn: null,
+  signInNotice: null,
   connectSettings: null,
   saved: [],
   switchTo: nothing,
@@ -189,16 +203,34 @@ export function useChatProvider(): UseChatProvider {
     setSaved(next);
   }, []);
   const [isCompletingOAuth, setCompleting] = useState(false);
-  // Read once at mount; the flag is consumed by reading it. The desktop app
-  // starts no OpenRouter sign-in from the chat, so there the flag is not ours
-  // to read or clear.
-  const [interruptedAttempt] = useState(
+  const [waitingOnHost, setWaitingOnHost] = useState(false);
+  // Bumped by every host sign-in and by Cancel, so a sign-in that settles
+  // after it was cancelled or superseded leaves the panel alone.
+  const signInAttempt = useRef(0);
+  // The flag is consumed by reading it. The desktop app starts no OpenRouter
+  // sign-in from the chat when it manages the model, so there the flag is not
+  // ours to read or clear; nor while a connection is active.
+  const readInterrupted = useCallback(
     () =>
       !hostManaged &&
       !getStoredKey() &&
       !activeProvider(readSavedProviders()) &&
       takeInterruptedAttempt(),
+    [hostManaged],
   );
+  const [signInNotice, setSignInNotice] = useState<SignInNotice | null>(() =>
+    readInterrupted() ? "interrupted" : null,
+  );
+  // Back from OpenRouter can restore this page from the back-forward cache
+  // instead of loading it again — nothing remounts, so the read above never
+  // re-runs. `pageshow` with `persisted` is that restore.
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted && readInterrupted()) setSignInNotice("interrupted");
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, [readInterrupted]);
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
   const [storedOpenRouterModel, setStoredOpenRouterModel] = useState<string | null>(
@@ -227,7 +259,12 @@ export function useChatProvider(): UseChatProvider {
     setCompleting(true);
     void completeOAuthFromUrl()
       .then((r) => {
-        if (!r) return;
+        // A code came back but no key: the code expired, or the tab lost its
+        // verifier. Only a fresh sign-in can fix either.
+        if (!r) {
+          setSignInNotice("failed");
+          return;
+        }
         save({ ...readSavedProviders(), openrouter: { key: r.key }, active: "openrouter" });
       })
       .finally(() => setCompleting(false));
@@ -272,16 +309,34 @@ export function useChatProvider(): UseChatProvider {
     async (intent: { driveId: string; draft: string }) => {
       const signIn = getHostConfig()?.externalSignIn;
       if (!signIn) return beginOAuth(intent);
+      const attempt = ++signInAttempt.current;
+      setSignInNotice(null);
       setCompleting(true);
+      setWaitingOnHost(true);
       try {
         const r = await connectThroughHost(signIn);
+        // A key is welcome even after Cancel: the user did finish signing in.
         if (r) save({ ...readSavedProviders(), openrouter: { key: r.key }, active: "openrouter" });
+        else if (attempt === signInAttempt.current) setSignInNotice("failed");
       } finally {
-        setCompleting(false);
+        if (attempt === signInAttempt.current) {
+          setCompleting(false);
+          setWaitingOnHost(false);
+        }
       }
     },
     [save],
   );
+
+  // The host's promise cannot be aborted, only stopped waiting on. A
+  // brand-new account never returns to the host's callback (OpenRouter's
+  // sign-up drops it), so without this the panel would spin forever.
+  const cancelSignIn = useCallback(() => {
+    signInAttempt.current++;
+    setCompleting(false);
+    setWaitingOnHost(false);
+    setSignInNotice("interrupted");
+  }, []);
 
   const connectWithOpenRouterKey = useCallback(async (candidate: string) => {
     const trimmed = candidate.trim();
@@ -516,7 +571,8 @@ export function useChatProvider(): UseChatProvider {
     isConnected: endpoint !== null,
     providerLabel: endpoint?.label ?? "",
     isCompletingOAuth,
-    interruptedAttempt,
+    cancelSignIn: waitingOnHost ? cancelSignIn : null,
+    signInNotice,
     connectSettings,
     saved: savedConnections,
     switchTo,

@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import { SIGN_UP_URL } from "../../lib/chat/openrouter-auth.js";
 import { normalizeBaseUrl } from "../../lib/chat/provider.js";
 import type {
   CustomEndpointInput,
   SavedConnection,
+  SignInNotice,
 } from "../../hooks/use-chat-provider.js";
 import type { SavedProviderKind } from "../../lib/chat/provider.js";
 import { Spinner } from "../LoadingStates.js";
@@ -19,19 +19,29 @@ const inputStyle = {
 } as const;
 
 /**
- * Shown until a model endpoint is connected. Three ways in, in the order most
- * people want them: OpenRouter (sign in, come straight back), Connect's own AI
- * settings when this browser already has them, or any OpenAI-compatible
- * server by address — Ollama, LM Studio, vLLM, a gateway. Whatever the route,
- * the vault is only ever read and the key never leaves this browser.
+ * Shown until a model endpoint is connected. Three buttons and nothing else:
+ * OpenRouter (sign in, come straight back), paste an OpenRouter key, or any
+ * OpenAI-compatible server by address — Ollama, LM Studio, vLLM, a gateway.
+ * The two secondary buttons each open their form in the stage's tail, so it
+ * grows downward without moving the primary button (the glow's anchor).
+ * Saved connections and Connect's own AI settings appear as one-click rows
+ * beneath, only when this browser has them.
  *
- * The primary button is the glow's anchor. The disclosures live in the
- * stage's tail so opening one grows downward without moving the button.
+ * When an OpenRouter sign-in did not connect — most often a brand-new account,
+ * whose sign-up never returns here — `notice` says so and the primary button
+ * asks for one more sign-in, which now goes straight through.
  */
+
+const NOTICE_TEXT: Record<SignInNotice, string> = {
+  interrupted:
+    "OpenRouter didn't send you back here — that's normal right after creating an account. You're signed in there now, so one more sign-in connects the vault.",
+  failed: "OpenRouter didn't finish connecting the vault. Sign in again to retry.",
+};
 export function ChatConnectPanel({
   vaultName,
   busy,
-  interrupted = false,
+  onCancelSignIn,
+  notice = null,
   onConnect,
   onConnectWithKey,
   onConnectCustom,
@@ -41,10 +51,12 @@ export function ChatConnectPanel({
   onUseSaved,
 }: {
   vaultName: string;
-  /** True while a redirect's code exchange is finishing. */
+  /** True while an OpenRouter sign-in is finishing. */
   busy: boolean;
-  /** The user started Connect and came back without finishing — see useChatProvider. */
-  interrupted?: boolean;
+  /** Present while the sign-in runs in the system browser (desktop app): stop waiting on it. */
+  onCancelSignIn?: (() => void) | null;
+  /** The last OpenRouter sign-in did not connect — see useChatProvider. */
+  notice?: SignInNotice | null;
   onConnect: () => void;
   onConnectWithKey: (key: string) => Promise<boolean>;
   /** Resolves to null on success, else a message saying what went wrong. */
@@ -57,12 +69,13 @@ export function ChatConnectPanel({
   onUseSaved?: (kind: SavedProviderKind) => void;
 }) {
   const anchorRef = useRef<HTMLDivElement>(null);
-  const [showKey, setShowKey] = useState(false);
+  const [open, setOpen] = useState<"key" | "local" | null>(null);
+  const toggle = (panel: "key" | "local") =>
+    setOpen((current) => (current === panel ? null : panel));
   const [key, setKey] = useState("");
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [showCustom, setShowCustom] = useState(false);
   const [baseUrl, setBaseUrl] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [model, setModel] = useState("");
@@ -100,7 +113,21 @@ export function ChatConnectPanel({
           style={{ color: "var(--bai-text-muted)" }}
         >
           <Spinner />
-          Finishing sign-in…
+          {onCancelSignIn ? (
+            <>
+              Finish signing in to OpenRouter in your browser…
+              <button
+                type="button"
+                onClick={onCancelSignIn}
+                className="text-xs underline decoration-dotted underline-offset-4"
+                style={{ color: "var(--bai-text-secondary)" }}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            "Finishing sign-in…"
+          )}
         </div>
       </LandingStage>
     );
@@ -109,60 +136,32 @@ export function ChatConnectPanel({
   const resolvedBase = normalizeBaseUrl(baseUrl);
   const origin = typeof location === "undefined" ? "this app" : location.origin;
 
-  const tail = (
-    <div className="flex w-full max-w-md flex-col items-center gap-3 pt-6">
-      {saved && saved.length > 0 && onUseSaved && (
-        <div className="flex w-full flex-col gap-1.5">
-          <p className="text-[11px] uppercase tracking-wide" style={{ color: "var(--bai-text-muted)" }}>
-            Saved connections
-          </p>
-          {saved.map((c) => (
-            <button
-              key={c.kind}
-              type="button"
-              onClick={() => onUseSaved(c.kind)}
-              className="flex w-full items-baseline gap-2 rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--bai-hover)]"
-              style={{ border: "1px solid var(--bai-border)", color: "var(--bai-text-secondary)" }}
-            >
-              <span className="font-medium" style={{ color: "var(--bai-text)" }}>
-                {c.label}
-              </span>
-              {c.model && <span className="truncate font-mono text-[10px]">{c.model}</span>}
-              <span className="ml-auto shrink-0" style={{ color: "var(--bai-accent)" }}>
-                Use →
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
-      <p
-        className="text-center text-xs leading-relaxed"
-        style={{ color: "var(--bai-text-muted)" }}
-      >
-        New to OpenRouter?{" "}
-        <a
-          href={SIGN_UP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline decoration-dotted underline-offset-4"
-          style={{ color: "var(--bai-text-secondary)" }}
-        >
-          Create an account
-        </a>{" "}
-        — it opens in a new tab, so this one stays put. Then come back and click
-        Connect.
-      </p>
-      <button
-        type="button"
-        onClick={() => setShowKey((v) => !v)}
-        className="text-xs underline decoration-dotted underline-offset-4"
-        style={{ color: "var(--bai-text-muted)" }}
-        aria-expanded={showKey}
-      >
-        {showKey ? "Hide" : "I already have an OpenRouter key"}
-      </button>
+  const shortcuts = [
+    ...(saved && onUseSaved
+      ? saved.map((c) => ({
+          id: c.kind,
+          label: c.label,
+          detail: c.model,
+          title: undefined,
+          onUse: () => onUseSaved(c.kind),
+        }))
+      : []),
+    ...(connectSettings
+      ? [
+          {
+            id: "connect-settings",
+            label: "Connect's AI settings",
+            detail: `${connectSettings.model} at ${connectSettings.host}`,
+            title: "Use the endpoint configured under Connect › Settings › AI assistant",
+            onUse: onUseConnectSettings,
+          },
+        ]
+      : []),
+  ];
 
-      {showKey && (
+  const tail = (
+    <div className="flex w-full max-w-md flex-col items-center gap-3 pt-5">
+      {open === "key" && (
         <div className="mt-1 flex w-full flex-col gap-2">
           <div className="flex gap-2">
             <input
@@ -170,7 +169,7 @@ export function ChatConnectPanel({
               value={key}
               onChange={(e) => setKey(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && void submitKey()}
-              placeholder="sk-or-v1-…"
+              placeholder="OpenRouter key — sk-or-v1-…"
               aria-label="OpenRouter API key"
               autoComplete="off"
               autoFocus
@@ -198,44 +197,7 @@ export function ChatConnectPanel({
         </div>
       )}
 
-      <div
-        className="my-2 flex w-full items-center gap-3 text-[11px] uppercase tracking-wide"
-        style={{ color: "var(--bai-text-muted)" }}
-        aria-hidden
-      >
-        <span className="h-px flex-1" style={{ backgroundColor: "var(--bai-border)" }} />
-        or bring your own model
-        <span className="h-px flex-1" style={{ backgroundColor: "var(--bai-border)" }} />
-      </div>
-
-      {connectSettings && (
-        <button
-          type="button"
-          onClick={onUseConnectSettings}
-          className="w-full rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--bai-hover)]"
-          style={{ border: "1px solid var(--bai-border)", color: "var(--bai-text-secondary)" }}
-          title="Use the endpoint configured under Connect › Settings › AI assistant"
-        >
-          <span className="font-medium" style={{ color: "var(--bai-text)" }}>
-            Use Connect&apos;s AI settings
-          </span>{" "}
-          — {connectSettings.model} at {connectSettings.host}
-        </button>
-      )}
-
-      <button
-        type="button"
-        onClick={() => setShowCustom((v) => !v)}
-        className="text-xs underline decoration-dotted underline-offset-4"
-        style={{ color: "var(--bai-text-muted)" }}
-        aria-expanded={showCustom}
-      >
-        {showCustom
-          ? "Hide"
-          : "Use my own endpoint — Ollama, LM Studio, vLLM, any OpenAI-compatible server"}
-      </button>
-
-      {showCustom && (
+      {open === "local" && (
         <form
           className="flex w-full flex-col gap-2 text-left"
           onSubmit={(e) => {
@@ -354,6 +316,31 @@ export function ChatConnectPanel({
           </p>
         </form>
       )}
+      {shortcuts.length > 0 && (
+        <div className="flex w-full flex-col gap-1.5">
+          <p className="text-[11px] uppercase tracking-wide" style={{ color: "var(--bai-text-muted)" }}>
+            Saved connections
+          </p>
+          {shortcuts.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={c.onUse}
+              title={c.title}
+              className="flex w-full items-baseline gap-2 rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--bai-hover)]"
+              style={{ border: "1px solid var(--bai-border)", color: "var(--bai-text-secondary)" }}
+            >
+              <span className="font-medium" style={{ color: "var(--bai-text)" }}>
+                {c.label}
+              </span>
+              {c.detail && <span className="truncate font-mono text-[10px]">{c.detail}</span>}
+              <span className="ml-auto shrink-0" style={{ color: "var(--bai-accent)" }}>
+                Use →
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 
@@ -376,19 +363,10 @@ export function ChatConnectPanel({
         >
           Chat with {vaultName}
         </h2>
-        <p
-          className="mt-2 text-sm leading-relaxed"
-          style={{ color: "var(--bai-text-muted)" }}
-        >
-          Connect a model — through OpenRouter, or one running on your own
-          machine — and ask questions in plain language. The model reads your
-          notes and cites the ones it used; it can never change anything in the
-          vault.
-        </p>
 
-        {interrupted && (
+        {notice && (
           <p
-            className="mt-5 max-w-sm rounded-lg px-3 py-2 text-xs leading-relaxed"
+            className="mt-4 max-w-sm rounded-lg px-3 py-2 text-xs leading-relaxed"
             style={{
               backgroundColor: "var(--bai-accent-soft)",
               color: "var(--bai-text-secondary)",
@@ -396,14 +374,11 @@ export function ChatConnectPanel({
             }}
             role="status"
           >
-            Looks like the sign-in didn&apos;t finish — that happens when you
-            create a new OpenRouter account along the way. You&apos;re signed in
-            now, so click <span className="font-semibold">Connect</span> once
-            more and you&apos;ll come straight back.
+            {NOTICE_TEXT[notice]}
           </p>
         )}
 
-        <div ref={anchorRef} className={interrupted ? "mt-4" : "mt-6"}>
+        <div ref={anchorRef} className={notice ? "mt-4" : "mt-6"}>
           <button
             type="button"
             onClick={onConnect}
@@ -413,18 +388,56 @@ export function ChatConnectPanel({
               color: "var(--bai-accent-text)",
             }}
           >
-            Connect with OpenRouter
+            {notice ? "Sign in to OpenRouter again" : "Connect with OpenRouter"}
           </button>
         </div>
 
-        <p
-          className="mt-3 text-[11px] leading-relaxed"
-          style={{ color: "var(--bai-text-muted)" }}
-        >
-          You sign in on openrouter.ai and come straight back. Keys and
-          addresses are stored only in this browser and removed with Disconnect.
-        </p>
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
+          <SecondaryButton
+            active={open === "key"}
+            onClick={() => toggle("key")}
+            title="Paste an OpenRouter API key"
+          >
+            Add API key
+          </SecondaryButton>
+          <SecondaryButton
+            active={open === "local"}
+            onClick={() => toggle("local")}
+            title="Ollama, LM Studio, vLLM or any OpenAI-compatible server"
+          >
+            Connect local AI
+          </SecondaryButton>
+        </div>
       </div>
     </LandingStage>
+  );
+}
+
+function SecondaryButton({
+  active,
+  onClick,
+  title,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  title: string;
+  children: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      aria-expanded={active}
+      className="rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-[var(--bai-hover)]"
+      style={{
+        border: "1px solid var(--bai-border)",
+        backgroundColor: active ? "var(--bai-hover)" : undefined,
+        color: active ? "var(--bai-text)" : "var(--bai-text-secondary)",
+      }}
+    >
+      {children}
+    </button>
   );
 }

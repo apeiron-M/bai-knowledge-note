@@ -20,10 +20,15 @@ const KEY_PROBE_URL = "https://openrouter.ai/api/v1/key";
 const KEY_STORAGE = "bai-chat-credentials:v1";
 const VERIFIER_STORAGE = "bai-chat:pkce-verifier:v1";
 const RETURN_STORAGE = "bai-chat:oauth-return:v1";
-const PENDING_STORAGE = "bai-chat:oauth-pending:v1";
-
-/** Where a new user creates an account. Opened in a new tab — see below. */
-export const SIGN_UP_URL = "https://openrouter.ai/sign-up";
+/**
+ * "A sign-in was started" — in localStorage, not sessionStorage, because a
+ * brand-new user often comes back in a different tab (see
+ * `takeInterruptedAttempt`). Holds the start time; older than
+ * `PENDING_TTL_MS` it is ignored, so an abandoned attempt cannot surface days
+ * later.
+ */
+const PENDING_STORAGE = "bai-chat:oauth-pending:v2";
+const PENDING_TTL_MS = 60 * 60 * 1000;
 
 export interface ReturnIntent {
   driveId: string;
@@ -102,7 +107,7 @@ export async function beginOAuth(intent: ReturnIntent): Promise<void> {
   const verifier = randomVerifier();
   sessionStorage.setItem(VERIFIER_STORAGE, verifier);
   sessionStorage.setItem(RETURN_STORAGE, JSON.stringify(intent));
-  sessionStorage.setItem(PENDING_STORAGE, "1");
+  localStorage.setItem(PENDING_STORAGE, String(Date.now()));
 
   // The callback must be this exact page so the app remounts where it left.
   const callback = `${location.origin}${location.pathname}${location.search}`;
@@ -133,7 +138,9 @@ function stripCodeFromUrl(): void {
 }
 
 /**
- * Exchange `?code=` for a key.
+ * Exchange `?code=` for a key. Null when there is no code, or when there is
+ * one but no key came of it (no verifier in this tab, or OpenRouter refused) —
+ * the caller tells those apart by whether it saw a code.
  *
  * The code is stripped from the URL whatever the outcome: it is single-use
  * and expires in ten minutes, so leaving it in place would make a reload look
@@ -145,7 +152,7 @@ export async function completeOAuthFromUrl(): Promise<{ key: string } | null> {
 
   // A code came back, so the attempt was not interrupted — whatever the
   // exchange's outcome, the "did you get lost?" hint would be wrong.
-  sessionStorage.removeItem(PENDING_STORAGE);
+  localStorage.removeItem(PENDING_STORAGE);
   const verifier = sessionStorage.getItem(VERIFIER_STORAGE);
   sessionStorage.removeItem(VERIFIER_STORAGE);
   stripCodeFromUrl();
@@ -158,24 +165,28 @@ export async function completeOAuthFromUrl(): Promise<{ key: string } | null> {
 }
 
 /**
- * True, once, if Connect was started in this tab and the user came back
+ * True, once, if Connect was started in the last hour and the user came back
  * without a code.
  *
  * OpenRouter's login flow preserves our `/auth?callback_url=…` request, but
  * its sign-up flow drops the query string, so a brand-new user finishes
  * account creation logged in with nowhere to return to. They find their way
- * back by hand. Rather than show them the untouched connect panel as if
- * nothing happened, the panel can say what happened and that one more click
- * will now complete — which it will, because they are logged in.
+ * back by hand: Back in the same tab, or the vault's address in a new one
+ * (often from the tab the verification email opened). Either way they land on
+ * the connect panel unconnected; rather than show it as if nothing happened,
+ * the panel says what happened and asks them to sign in once more — which now
+ * completes, because they are logged in.
  *
  * Not reported while a code is in the URL: the exchange is about to run and
  * will clear the flag itself.
  */
 export function takeInterruptedAttempt(): boolean {
-  if (sessionStorage.getItem(PENDING_STORAGE) === null) return false;
+  const raw = localStorage.getItem(PENDING_STORAGE);
+  if (raw === null) return false;
   if (new URL(location.href).searchParams.has("code")) return false;
-  sessionStorage.removeItem(PENDING_STORAGE);
-  return true;
+  localStorage.removeItem(PENDING_STORAGE);
+  const startedAt = Number(raw);
+  return Number.isFinite(startedAt) && Date.now() - startedAt < PENDING_TTL_MS;
 }
 
 export function getStoredKey(): string | null {

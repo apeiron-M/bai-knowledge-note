@@ -74,28 +74,39 @@ describe("useChatProvider in a browser or Connect (the host declares no model)",
   });
 });
 
-describe("the flag a started-but-not-finished OpenRouter sign-in leaves in the tab", () => {
-  // Written by beginOAuth, consumed by the read that reports it.
-  const PENDING = "bai-chat:oauth-pending:v1";
+describe("the flag a started-but-not-finished OpenRouter sign-in leaves behind", () => {
+  // Written by beginOAuth (its start time), consumed by the read that reports it.
+  const PENDING = "bai-chat:oauth-pending:v2";
+  const started = () => localStorage.setItem(PENDING, String(Date.now()));
 
-  it("is reported once in a browser, and consumed by being read", () => {
-    sessionStorage.setItem(PENDING, "1");
-    expect(renderChat().interruptedAttempt).toBe(true);
-    expect(sessionStorage.getItem(PENDING)).toBeNull();
+  it("asks for another sign-in once in a browser, and is consumed by being read", () => {
+    started();
+    const chat = renderChat();
+    expect(chat.signInNotice).toBe("interrupted");
+    expect(chat.cancelSignIn).toBeNull();
+    expect(localStorage.getItem(PENDING)).toBeNull();
+    expect(renderChat().signInNotice).toBeNull();
+  });
+
+  it("is left alone while a connection is active", () => {
+    started();
+    writeSavedProviders(REMEMBERED);
+    expect(renderChat().signInNotice).toBeNull();
+    expect(localStorage.getItem(PENDING)).not.toBeNull();
   });
 
   it("is not read in the desktop app, which never starts that sign-in from the chat: it stays where it was", () => {
-    sessionStorage.setItem(PENDING, "1");
+    started();
     declare({ model: GATEWAY });
-    expect(renderChat().interruptedAttempt).toBe(false);
-    expect(sessionStorage.getItem(PENDING)).toBe("1");
+    expect(renderChat().signInNotice).toBeNull();
+    expect(localStorage.getItem(PENDING)).not.toBeNull();
   });
 
   it("is not read either when the app has no model set up", () => {
-    sessionStorage.setItem(PENDING, "1");
+    started();
     declare({ model: null });
-    expect(renderChat().interruptedAttempt).toBe(false);
-    expect(sessionStorage.getItem(PENDING)).toBe("1");
+    expect(renderChat().signInNotice).toBeNull();
+    expect(localStorage.getItem(PENDING)).not.toBeNull();
   });
 });
 
@@ -122,7 +133,8 @@ describe("useChatProvider in the desktop app (the host declares its model)", () 
     expect(chat.connectSettings).toBeNull();
     expect(chat.thinkingDisabled).toBeNull();
     expect(chat.isCompletingOAuth).toBe(false);
-    expect(chat.interruptedAttempt).toBe(false);
+    expect(chat.cancelSignIn).toBeNull();
+    expect(chat.signInNotice).toBeNull();
   });
 
   it("follows the declaration: a new model is picked up on the next read", () => {

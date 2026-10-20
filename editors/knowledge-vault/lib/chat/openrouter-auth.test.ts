@@ -207,7 +207,29 @@ describe("interrupted attempt", () => {
     resetLocation("http://localhost:3000/app?code=abc");
     expect(takeInterruptedAttempt()).toBe(false);
     // and the flag survives, so it can still be cleared by the exchange
-    expect(sessionStorage.getItem("bai-chat:oauth-pending:v1")).not.toBeNull();
+    expect(localStorage.getItem("bai-chat:oauth-pending:v2")).not.toBeNull();
+  });
+
+  it("survives coming back in a new tab — where a brand-new account usually returns", async () => {
+    await beginOAuth({ driveId: "d1", draft: "" });
+    sessionStorage.clear(); // a fresh tab has its own sessionStorage
+    resetLocation("http://localhost:3000/app");
+    expect(takeInterruptedAttempt()).toBe(true);
+  });
+
+  it("is not reported for an attempt started more than an hour ago, and is cleared anyway", async () => {
+    const now = Date.now();
+    vi.spyOn(Date, "now").mockReturnValue(now);
+    await beginOAuth({ driveId: "d1", draft: "" });
+    resetLocation("http://localhost:3000/app");
+    vi.spyOn(Date, "now").mockReturnValue(now + 61 * 60 * 1000);
+    expect(takeInterruptedAttempt()).toBe(false);
+    expect(localStorage.getItem("bai-chat:oauth-pending:v2")).toBeNull();
+  });
+
+  it("ignores a flag that is not a timestamp", () => {
+    localStorage.setItem("bai-chat:oauth-pending:v2", "1x");
+    expect(takeInterruptedAttempt()).toBe(false);
   });
 });
 
