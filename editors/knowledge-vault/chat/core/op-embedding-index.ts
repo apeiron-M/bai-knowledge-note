@@ -109,8 +109,6 @@ export function createOpEmbeddingIndex(
 
 /** The committed asset, as its own lazily loaded chunk. */
 export async function loadOpEmbeddingAsset(): Promise<OpEmbeddingAsset> {
-  const m = await import("./op-embeddings.gte-small.json", {
-    with: { type: "json" },
-  });
+  const m = await import("./op-embeddings-asset.js");
   return m.default;
 }
