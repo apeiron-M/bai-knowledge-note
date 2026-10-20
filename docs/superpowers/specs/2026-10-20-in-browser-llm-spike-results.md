@@ -1060,11 +1060,12 @@ Three expected values in the held-out sets used values outside the canonical lis
 ### Precomputed op embeddings
 
 - `scripts/gen-op-embeddings.ts` writes `chat/core/op-embeddings.gte-small.json` (239 KB): 99 op vectors and 16 no-action-exemplar vectors, 384 dims, float32 in base64. They are keyed by a sha256 over the model spec (`Supabase/gte-small`, q8, mean pooling, normalized) and every input text: the op texts (with `OP_DESCRIPTIONS`) and the exemplars. `--check` exits 1 when the asset is stale, and `tests/unit/chat-op-embeddings.test.ts` fails when the hash or the keys no longer match the catalog.
-- `createOpEmbeddingIndex` ranks ops from the asset, so a session embeds only the utterance. The asset loads as its own lazy chunk (`op-embeddings.gte-small-<hash>.js` in the build). Round 6 spent 11.5–12 s embedding the 99 ops each session.
+- `createOpEmbeddingIndex` ranks ops from the asset, so a session embeds only the utterance. The asset loads as its own lazy chunk: the build emits `op-embeddings-asset-<hash>.js` (239 320 B), and the editor chunk does not contain the vectors. Round 6 spent 11.5–12 s embedding the 99 ops each session.
 - **Numerics.** The first version used transformers' node build (onnxruntime-node, CPU). Against the browser's wasm embedder (harness `v1EmbedParity`), it differed by up to 0.0099 per dimension (min cosine 0.99849) and changed the scoped top-1 op on 4 of 59 dev items (dev-04, dx-07, dx-14, dn-01).
   - `scripts/gte-wasm-node.ts` now runs the same `onnxruntime-web` bundle and the vendored asyncify wasm under node, with transformers' tokenizer, `mean_pooling` and `normalize`.
   - The regenerated asset equals the browser's vectors exactly (max |Δ| 0, min cosine 0.999999, 0 flips).
   - Generation takes 4.1 s, and two runs gave byte-identical files.
+- Changing one exemplar character made `chat-op-embeddings.test.ts` fail on the hash; the edit was reverted.
 - This also settles the training README's open question: transformers.js and onnxruntime-web load gte-small under tsx.
 
 ### Chat tab on the v1 pipeline
