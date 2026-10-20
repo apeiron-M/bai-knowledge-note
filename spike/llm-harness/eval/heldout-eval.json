@@ -1,0 +1,2619 @@
+{
+  "name": "heldout-chat-op-eval",
+  "version": 1,
+  "createdAt": "2026-10-20",
+  "conventions": {
+    "opKey": "<model>:<OP_NAME>, model = docType without the 'bai/' prefix (work-breakdown-structure is 'wbs'), matching CatalogEntry.key in op-catalog.ts",
+    "args": "Semantic (model-filled) fields that must match exactly. App-filled fields (new-id, timestamp, actor, DateTime) never appear.",
+    "ambiguousArgs": "Semantic fields the model should fill but whose exact wording/value is inherently open; reference values only, EXCLUDED from exact match. Presence of required ones can still be checked.",
+    "refArgs": "ref-id fields (OID/PHID/*Id) the model must choose from context.refCandidates (same dotted-path keys the envelope uses). Score separately from args.",
+    "argMatch": "Optional per-field comparator overriding strict equality: 'ci' (trimmed, case-insensitive string), 'date' (compare YYYY-MM-DD prefix; zod requires an ISO datetime), 'unordered' (array as a set), 'ci-unordered' (both).",
+    "omittedOptional": "Optional semantic fields absent from args and ambiguousArgs are expected to be omitted or null.",
+    "context": "context.docType/model is the document the chat is scoped to. context.state is a partial, human-readable snapshot of what the app knows (enough for the reducer preconditions to hold). refCandidates entries are {id,label}.",
+    "today": "2026-10-20 (for relative dates)",
+    "actor": "ben (app-supplied; never expected in args)"
+  },
+  "items": [
+    {
+      "id": "kn-01",
+      "utterance": "rename this to \"Retrieval beats fine-tuning for small vaults\"",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "retrieval vs finetune",
+          "status": "DRAFT"
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:SET_TITLE",
+        "args": {
+          "title": "Retrieval beats fine-tuning for small vaults"
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "kn-02",
+      "utterance": "The one-line summary for this should read: Small local models need retrieval to stay grounded.",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Retrieval beats fine-tuning for small vaults",
+          "description": null,
+          "content": "Long body text about retrieval experiments..."
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "args": {
+          "description": "Small local models need retrieval to stay grounded."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_TITLE"
+        ],
+        "why": "'summary' is the short description, not the body or the title"
+      }
+    },
+    {
+      "id": "kn-03",
+      "utterance": "wipe out the body text and just put: Quantized 1B models hallucinate op names unless you hand them a shortlist.",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Shortlists for small models",
+          "content": "TODO write this up"
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:SET_CONTENT",
+        "args": {
+          "content": "Quantized 1B models hallucinate op names unless you hand them a shortlist."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "notes": "PATCH_CONTENT is wrong here: the user replaces the whole body."
+    },
+    {
+      "id": "kn-04",
+      "utterance": "this is really a decision record, not an insight — reclassify it",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Use wllama over WebLLM",
+          "noteType": "insight"
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:SET_NOTE_TYPE",
+        "args": {
+          "noteType": "decision"
+        },
+        "argMatch": {
+          "noteType": "ci"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "kn-05",
+      "utterance": "What actually caused it: the reducer was calling Date.now() during replay.",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Replay produced different hashes",
+          "noteType": "bug-pattern",
+          "errorMessage": "hash mismatch on op 14"
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:SET_METADATA_FIELD",
+        "args": {
+          "field": "rootCause"
+        },
+        "ambiguousArgs": {
+          "value": "The reducer was calling Date.now() during replay."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "metadata-vocabulary"
+      ],
+      "notes": "field must be one of the reducer's 18 string metadata keys; rootCause is the only fit."
+    },
+    {
+      "id": "kn-06",
+      "utterance": "Options we looked at and rejected: fine-tuning, a bigger cloud model, regex routing",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Use a retriever before the LLM",
+          "noteType": "decision",
+          "alternatives": []
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:SET_METADATA_LIST_FIELD",
+        "args": {
+          "field": "alternatives"
+        },
+        "ambiguousArgs": {
+          "values": [
+            "fine-tuning",
+            "a bigger cloud model",
+            "regex routing"
+          ]
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion",
+        "metadata-vocabulary"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "knowledge-note:SET_METADATA_FIELD"
+        ],
+        "why": "alternatives is a list field, so the list variant is required; the scalar op would throw InvalidMetadataField"
+      },
+      "requiredPresent": [
+        "values"
+      ]
+    },
+    {
+      "id": "kn-07",
+      "utterance": "file this under local-first",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Offline sync with CRDTs",
+          "topics": [
+            {
+              "id": "top-9",
+              "name": "crdt"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:ADD_TOPIC",
+        "args": {
+          "name": "local-first"
+        },
+        "argMatch": {
+          "name": "ci"
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "kn-08",
+      "utterance": "this builds on the grammar-constrained decoding writeup",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "JSON mode for tiny models",
+          "links": []
+        },
+        "refCandidates": {
+          "targetDocumentId": [
+            {
+              "id": "doc-gcd",
+              "label": "Grammar-constrained decoding"
+            },
+            {
+              "id": "doc-kv",
+              "label": "KV cache limits on 8GB laptops"
+            },
+            {
+              "id": "doc-wl",
+              "label": "wllama cold start"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:ADD_LINK",
+        "args": {
+          "linkType": "BUILDS_ON"
+        },
+        "ambiguousArgs": {
+          "targetTitle": "Grammar-constrained decoding"
+        },
+        "refArgs": {
+          "targetDocumentId": "doc-gcd"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "knowledge-note:ADD_TOPIC"
+        ],
+        "why": "relation to another document, not a category tag; linkType must be inferred from 'builds on'"
+      }
+    },
+    {
+      "id": "kn-09",
+      "utterance": "actually the cloud-inference-is-cheaper piece flat out contradicts this, it's not just related",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Local inference wins on cost at scale",
+          "links": [
+            {
+              "id": "lnk-1",
+              "targetTitle": "Cloud inference is cheaper",
+              "linkType": "RELATES_TO"
+            },
+            {
+              "id": "lnk-2",
+              "targetTitle": "Battery drain under WebGPU",
+              "linkType": "BUILDS_ON"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "lnk-1",
+              "label": "-> Cloud inference is cheaper (RELATES_TO)"
+            },
+            {
+              "id": "lnk-2",
+              "label": "-> Battery drain under WebGPU (BUILDS_ON)"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:UPDATE_LINK_TYPE",
+        "args": {
+          "linkType": "CONTRADICTS"
+        },
+        "refArgs": {
+          "id": "lnk-1"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "knowledge-note:ADD_LINK"
+        ],
+        "why": "the connection already exists; only its kind changes"
+      }
+    },
+    {
+      "id": "kn-10",
+      "utterance": "it's not really about webgpu, drop that tag",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Tokenizer speed in wasm",
+          "topics": [
+            {
+              "id": "top-1",
+              "name": "webgpu"
+            },
+            {
+              "id": "top-2",
+              "name": "wasm"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "top-1",
+              "label": "webgpu"
+            },
+            {
+              "id": "top-2",
+              "label": "wasm"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "args": {},
+        "refArgs": {
+          "id": "top-1"
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "kn-11",
+      "utterance": "I think this one's ready, can someone look it over? double-check the latency numbers though",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Cold start budget",
+          "status": "DRAFT"
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "args": {},
+        "ambiguousArgs": {
+          "comment": "Double-check the latency numbers."
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "kn-13",
+      "utterance": "Sending this back — the benchmark section cites the wrong model size.",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Qwen vs Llama at 1B",
+          "status": "IN_REVIEW",
+          "provenance": {
+            "author": "priya"
+          }
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:REJECT_NOTE",
+        "args": {},
+        "ambiguousArgs": {
+          "comment": "The benchmark section cites the wrong model size."
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_CONTENT"
+        ],
+        "why": "both reject and archive carry a required comment; 'send back' during review means reject"
+      },
+      "requiredPresent": [
+        "comment"
+      ]
+    },
+    {
+      "id": "kn-14",
+      "utterance": "this is obsolete since we dropped WebLLM. retire it",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "WebLLM shader cache tips",
+          "status": "CANONICAL"
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:ARCHIVE_NOTE",
+        "args": {},
+        "ambiguousArgs": {
+          "comment": "Obsolete since we dropped WebLLM."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "requiredPresent": [
+        "comment"
+      ]
+    },
+    {
+      "id": "moc-01",
+      "utterance": "Start a map called \"On-device inference\" — domain level. It should help me find my way around quantization, runtimes and memory limits.",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": null,
+          "note": "empty, uninitialized map"
+        }
+      },
+      "expected": {
+        "op": "moc:CREATE_MOC",
+        "args": {
+          "title": "On-device inference",
+          "tier": "DOMAIN"
+        },
+        "ambiguousArgs": {
+          "description": "Map of on-device inference: quantization, runtimes and memory limits.",
+          "orientation": "Start here to navigate quantization, runtimes and memory limits."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "requiredPresent": [
+        "description",
+        "orientation"
+      ]
+    },
+    {
+      "id": "moc-02",
+      "utterance": "Reframe the intro so a reader starts with runtimes, then quantization, and memory budgets last.",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference",
+          "description": "Map of on-device inference topics.",
+          "orientation": "Covers memory, quantization and runtimes."
+        }
+      },
+      "expected": {
+        "op": "moc:UPDATE_ORIENTATION",
+        "args": {},
+        "ambiguousArgs": {
+          "orientation": "Start with runtimes, then quantization, and finish with memory budgets."
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "moc:UPDATE_DESCRIPTION",
+          "moc:REORDER_CORE_IDEAS"
+        ],
+        "why": "the reading-guide intro (orientation), not the one-liner and not the order of entries"
+      },
+      "requiredPresent": [
+        "orientation"
+      ]
+    },
+    {
+      "id": "moc-03",
+      "utterance": "tweak the blurb to: Hub for running LLMs in the browser and on laptops.",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference",
+          "description": "Map of on-device inference topics.",
+          "orientation": "Start with runtimes."
+        }
+      },
+      "expected": {
+        "op": "moc:UPDATE_DESCRIPTION",
+        "args": {
+          "description": "Hub for running LLMs in the browser and on laptops."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "moc:UPDATE_ORIENTATION"
+        ],
+        "why": "short summary blurb vs reading-guide intro"
+      }
+    },
+    {
+      "id": "moc-04",
+      "utterance": "pull the wllama-cold-start note into the key ideas here, it's why first load takes 20 seconds",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference",
+          "coreIdeas": [
+            {
+              "id": "ci-2",
+              "noteRef": "kv-cache-limits",
+              "contextPhrase": "why long chats crash"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "moc:ADD_CORE_IDEA",
+        "args": {
+          "noteRef": "wllama-cold-start"
+        },
+        "ambiguousArgs": {
+          "contextPhrase": "why first load takes 20 seconds",
+          "sortOrder": 1
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "requiredPresent": [
+        "contextPhrase",
+        "sortOrder"
+      ]
+    },
+    {
+      "id": "moc-05",
+      "utterance": "the little explainer beside kv-cache-limits should say \"caps context at 4k on 8GB machines\"",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference",
+          "coreIdeas": [
+            {
+              "id": "ci-1",
+              "noteRef": "wllama-cold-start",
+              "contextPhrase": "why first load is slow"
+            },
+            {
+              "id": "ci-2",
+              "noteRef": "kv-cache-limits",
+              "contextPhrase": "why long chats crash"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "ci-1",
+              "label": "wllama-cold-start — why first load is slow"
+            },
+            {
+              "id": "ci-2",
+              "label": "kv-cache-limits — why long chats crash"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "moc:UPDATE_CORE_IDEA",
+        "args": {
+          "contextPhrase": "caps context at 4k on 8GB machines"
+        },
+        "refArgs": {
+          "id": "ci-2"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_DESCRIPTION"
+        ],
+        "why": "entry already exists; edits the entry's phrase, not the map's own blurb"
+      }
+    },
+    {
+      "id": "moc-07",
+      "utterance": "something we still don't know: does WebGPU actually help on integrated Intel graphics?",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference",
+          "openQuestions": []
+        }
+      },
+      "expected": {
+        "op": "moc:ADD_OPEN_QUESTION",
+        "args": {},
+        "ambiguousArgs": {
+          "question": "Does WebGPU actually help on integrated Intel graphics?"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "requiredPresent": [
+        "question"
+      ]
+    },
+    {
+      "id": "moc-08",
+      "utterance": "we figured out the 4-bit tool calling one, cross it off",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference",
+          "openQuestions": [
+            "Is 4-bit quantization good enough for tool calling?",
+            "How much RAM does a 3B model need in Safari?"
+          ]
+        }
+      },
+      "expected": {
+        "op": "moc:REMOVE_OPEN_QUESTION",
+        "args": {
+          "question": "Is 4-bit quantization good enough for tool calling?"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "notes": "question must be copied verbatim from state; the reducer filters by exact string."
+    },
+    {
+      "id": "moc-10",
+      "utterance": "fast-cold-start and big-context-window pull against each other — on 8GB you can't have both",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference",
+          "tensions": []
+        }
+      },
+      "expected": {
+        "op": "moc:ADD_TENSION",
+        "args": {
+          "involvedRefs": [
+            "fast-cold-start",
+            "big-context-window"
+          ]
+        },
+        "ambiguousArgs": {
+          "description": "On 8GB you can't have both a fast cold start and a big context window."
+        },
+        "argMatch": {
+          "involvedRefs": "unordered"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "cross-model-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "tension:CREATE_TENSION"
+        ],
+        "why": "in unscoped mode the standalone tension document is a plausible target; scoped to a map it must be the map's own entry"
+      },
+      "requiredPresent": [
+        "description"
+      ]
+    },
+    {
+      "id": "src-01",
+      "utterance": "Save this article: \"Running Llama in the browser\" by Jane Park, https://example.com/llama-browser. Text: WebGPU lets us run 1B models at 20 tokens per second.",
+      "context": {
+        "docType": "bai/source",
+        "model": "source",
+        "state": {
+          "title": null,
+          "note": "empty source document"
+        }
+      },
+      "expected": {
+        "op": "source:INGEST_SOURCE",
+        "args": {
+          "title": "Running Llama in the browser",
+          "sourceType": "ARTICLE",
+          "author": "Jane Park",
+          "url": "https://example.com/llama-browser",
+          "content": "WebGPU lets us run 1B models at 20 tokens per second."
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "src-02",
+      "utterance": "ok I'm starting to mine this one for claims now",
+      "context": {
+        "docType": "bai/source",
+        "model": "source",
+        "state": {
+          "title": "Running Llama in the browser",
+          "status": "INBOX"
+        }
+      },
+      "expected": {
+        "op": "source:SET_SOURCE_STATUS",
+        "args": {
+          "status": "EXTRACTING"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "src-03",
+      "utterance": "we're never going to use this paper, shelve it",
+      "context": {
+        "docType": "bai/source",
+        "model": "source",
+        "state": {
+          "title": "Speculative decoding survey",
+          "status": "INBOX"
+        }
+      },
+      "expected": {
+        "op": "source:SET_SOURCE_STATUS",
+        "args": {
+          "status": "ARCHIVED"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "enum-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [],
+        "confusableValue": {
+          "status": "EXTRACTED"
+        },
+        "why": "abandoning a source is ARCHIVED, not 'done extracting' (EXTRACTED)"
+      }
+    },
+    {
+      "id": "src-05",
+      "utterance": "Pulled 12 claims out of it and skipped 3",
+      "context": {
+        "docType": "bai/source",
+        "model": "source",
+        "state": {
+          "title": "Running Llama in the browser",
+          "status": "EXTRACTING"
+        }
+      },
+      "expected": {
+        "op": "source:RECORD_EXTRACTION_STATS",
+        "args": {
+          "claimCount": 12,
+          "skippedCount": 3
+        },
+        "ambiguousArgs": {
+          "skipRate": 0.2
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "notes": "skipRate could be 3/15=0.2 or 3/12=0.25; excluded.",
+      "requiredPresent": [
+        "skipRate"
+      ]
+    },
+    {
+      "id": "prj-01",
+      "utterance": "kick off a new initiative, \"Browser LLM spike\", Ben's running it",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": null,
+          "status": "PLANNING"
+        }
+      },
+      "expected": {
+        "op": "project:CREATE_PROJECT",
+        "args": {
+          "name": "Browser LLM spike",
+          "owner": "Ben"
+        },
+        "argMatch": {
+          "owner": "ci"
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "prj-02",
+      "utterance": "park this for now, we're waiting on the model license",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Browser LLM spike",
+          "status": "ACTIVE"
+        }
+      },
+      "expected": {
+        "op": "project:SET_PROJECT_STATUS",
+        "args": {
+          "status": "ON_HOLD"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "prj-03",
+      "utterance": "let's call it \"Offline assistant\" from now on",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Browser LLM spike",
+          "description": "Run a chat model fully in the browser.",
+          "status": "ACTIVE"
+        }
+      },
+      "expected": {
+        "op": "project:UPDATE_PROJECT_INFO",
+        "args": {
+          "name": "Offline assistant"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "project:CREATE_PROJECT",
+          "knowledge-note:SET_TITLE"
+        ],
+        "why": "project already exists (CREATE would throw AlreadyInitialized); rename is a project-info edit"
+      }
+    },
+    {
+      "id": "prj-04",
+      "utterance": "Priya is accountable for this one now, not me",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "owner": "Ben",
+          "team": [
+            {
+              "id": "m-2",
+              "name": "Priya",
+              "role": "Designer"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:SET_OWNER",
+        "args": {
+          "owner": "Priya"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "prj-05",
+      "utterance": "we need this wrapped up by December 15th",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "targetDate": null
+        }
+      },
+      "expected": {
+        "op": "project:SET_TARGET_DATE",
+        "args": {
+          "targetDate": "2026-12-15T00:00:00Z"
+        },
+        "argMatch": {
+          "targetDate": "date"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "notes": "Date scalar is validated by zod as z.iso.datetime(); a bare 2026-12-15 fails validation. Compare by date prefix."
+    },
+    {
+      "id": "prj-06",
+      "utterance": "bring Marco on board as our QA lead",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "team": [
+            {
+              "id": "m-2",
+              "name": "Priya",
+              "role": "Designer"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:ADD_MEMBER",
+        "args": {
+          "name": "Marco",
+          "role": "QA lead"
+        },
+        "ambiguousArgs": {
+          "kind": "HUMAN"
+        },
+        "argMatch": {
+          "role": "ci"
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "prj-08",
+      "utterance": "Priya's switching from design to research",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "team": [
+            {
+              "id": "m-1",
+              "name": "Marco",
+              "role": "QA lead"
+            },
+            {
+              "id": "m-2",
+              "name": "Priya",
+              "role": "Designer"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "m-1",
+              "label": "Marco (QA lead)"
+            },
+            {
+              "id": "m-2",
+              "label": "Priya (Designer)"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:UPDATE_MEMBER",
+        "args": {},
+        "ambiguousArgs": {
+          "role": "Researcher"
+        },
+        "refArgs": {
+          "id": "m-2"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "prj-09",
+      "utterance": "Marco left the company, take him off",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "owner": "Priya",
+          "team": [
+            {
+              "id": "m-1",
+              "name": "Marco",
+              "role": "QA lead"
+            },
+            {
+              "id": "m-2",
+              "name": "Priya",
+              "role": "Researcher"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "m-1",
+              "label": "Marco (QA lead)"
+            },
+            {
+              "id": "m-2",
+              "label": "Priya (Researcher)"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:REMOVE_MEMBER",
+        "args": {},
+        "refArgs": {
+          "id": "m-1"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "project:SET_OWNER",
+          "project:UPDATE_MEMBER"
+        ],
+        "why": "Marco is a team member, not the owner; leaving means removal, not an edit"
+      }
+    },
+    {
+      "id": "prj-10",
+      "utterance": "one more thing we owe out of this: a \"Benchmark report\"",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "deliverables": [
+            {
+              "id": "d-2",
+              "title": "Demo video",
+              "status": "PLANNED"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:ADD_DELIVERABLE",
+        "args": {
+          "title": "Benchmark report"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "prj-11",
+      "utterance": "we're scrapping the demo video, it's not happening",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "deliverables": [
+            {
+              "id": "d-1",
+              "title": "Benchmark report",
+              "status": "IN_PROGRESS"
+            },
+            {
+              "id": "d-2",
+              "title": "Demo video",
+              "status": "PLANNED"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "d-1",
+              "label": "Benchmark report (IN_PROGRESS)"
+            },
+            {
+              "id": "d-2",
+              "label": "Demo video (PLANNED)"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:SET_DELIVERABLE_STATUS",
+        "args": {
+          "status": "CANCELLED"
+        },
+        "refArgs": {
+          "id": "d-2"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "project:REMOVE_DELIVERABLE"
+        ],
+        "why": "'not happening' is a cancellation that keeps the record; removal deletes it"
+      }
+    },
+    {
+      "id": "prj-13",
+      "utterance": "useful links for this: https://github.com/ngxson/wllama and https://webgpureport.org",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "references": []
+        }
+      },
+      "expected": {
+        "op": "project:SET_REFERENCES",
+        "args": {
+          "references": [
+            "https://github.com/ngxson/wllama",
+            "https://webgpureport.org"
+          ]
+        },
+        "argMatch": {
+          "references": "unordered"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "wbs-01",
+      "utterance": "under the benchmarking piece we also need: \"Compare Qwen 0.5B against Llama 1B\"",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat",
+              "status": "IN_PROGRESS"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models",
+              "status": "TODO"
+            },
+            {
+              "id": "g-3",
+              "description": "Support Safari",
+              "status": "TODO"
+            }
+          ]
+        },
+        "refCandidates": {
+          "parentId": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            },
+            {
+              "id": "g-3",
+              "label": "Support Safari"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:CREATE_GOAL",
+        "args": {
+          "description": "Compare Qwen 0.5B against Llama 1B"
+        },
+        "refArgs": {
+          "parentId": "g-2"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "wbs-02",
+      "utterance": "reword \"Benchmark models\" to \"Benchmark models on low-end hardware\"",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "args": {
+          "description": "Benchmark models on low-end hardware"
+        },
+        "refArgs": {
+          "id": "g-2"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "wbs:CREATE_GOAL"
+        ],
+        "why": "new text for an existing item, not a new item with that text"
+      }
+    },
+    {
+      "id": "wbs-03",
+      "utterance": "get rid of the Safari support item, I made it by mistake",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models"
+            },
+            {
+              "id": "g-3",
+              "description": "Support Safari"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            },
+            {
+              "id": "g-3",
+              "label": "Support Safari"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:DELETE_GOAL",
+        "args": {},
+        "refArgs": {
+          "id": "g-3"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "wbs-04",
+      "utterance": "we're not doing Safari after all — leave it on the list but mark it as not happening",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat",
+              "status": "IN_PROGRESS"
+            },
+            {
+              "id": "g-3",
+              "description": "Support Safari",
+              "status": "TODO"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-3",
+              "label": "Support Safari"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:SET_GOAL_STATUS",
+        "args": {
+          "status": "WONT_DO"
+        },
+        "refArgs": {
+          "id": "g-3"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "wbs:DELETE_GOAL"
+        ],
+        "why": "user explicitly keeps the item; status change, not removal (contrast wbs-03)"
+      }
+    },
+    {
+      "id": "wbs-05",
+      "utterance": "benchmarking is stuck until IT gives us the test laptops",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat",
+              "status": "IN_PROGRESS"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models",
+              "status": "IN_PROGRESS"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:SET_GOAL_STATUS",
+        "args": {
+          "status": "BLOCKED"
+        },
+        "ambiguousArgs": {
+          "blockReason": "Waiting on IT for the test laptops."
+        },
+        "refArgs": {
+          "id": "g-2"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:ADD_NOTE"
+        ],
+        "why": "blocked on something outside the plan; reducer requires blockReason when BLOCKED (presence should be checked)"
+      },
+      "requiredPresent": [
+        "blockReason"
+      ]
+    },
+    {
+      "id": "wbs-07",
+      "utterance": "let Priya take the benchmarking work",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "owner": "Ben",
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat",
+              "assignee": "Ben"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models",
+              "assignee": null
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:ASSIGN_GOAL",
+        "args": {
+          "assignee": "Priya"
+        },
+        "refArgs": {
+          "id": "g-2"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "wbs:SET_OWNER"
+        ],
+        "why": "one item's assignee, not the owner of the whole breakdown (contrast wbs-08)"
+      }
+    },
+    {
+      "id": "wbs-08",
+      "utterance": "Ben is accountable for this whole plan",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "owner": null,
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:SET_OWNER",
+        "args": {
+          "owner": "Ben"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "wbs:ASSIGN_GOAL"
+        ],
+        "why": "whole-document owner, no specific item mentioned"
+      }
+    },
+    {
+      "id": "wbs-09",
+      "utterance": "for the record, the chat work ended up at 85% top-1 accuracy on the eval",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat",
+              "status": "COMPLETED",
+              "outcome": null
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models",
+              "status": "IN_PROGRESS"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat (COMPLETED)"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models (IN_PROGRESS)"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:SET_OUTCOME",
+        "args": {},
+        "ambiguousArgs": {
+          "outcome": "85% top-1 accuracy on the eval"
+        },
+        "refArgs": {
+          "id": "g-1"
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ADD_NOTE"
+        ],
+        "why": "item is already COMPLETED; only the result is recorded"
+      }
+    },
+    {
+      "id": "wbs-10",
+      "utterance": "shipping chat can't start until benchmarking is finished",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat",
+              "status": "TODO",
+              "dependencies": []
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models",
+              "status": "IN_PROGRESS"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            }
+          ],
+          "dependencies": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:ADD_DEPENDENCIES",
+        "args": {},
+        "refArgs": {
+          "id": "g-1",
+          "dependencies": [
+            "g-2"
+          ]
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "wbs:SET_GOAL_STATUS"
+        ],
+        "why": "ordering between two plan items, not an external blocker; direction matters (g-1 depends on g-2)"
+      }
+    },
+    {
+      "id": "wbs-11",
+      "utterance": "jot down on the benchmarking item: the Qwen tokenizer is ~30% slower in wasm",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models",
+              "notes": []
+            }
+          ]
+        },
+        "refCandidates": {
+          "goalId": [
+            {
+              "id": "g-1",
+              "label": "Ship in-browser chat"
+            },
+            {
+              "id": "g-2",
+              "label": "Benchmark models"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:ADD_NOTE",
+        "args": {},
+        "ambiguousArgs": {
+          "note": "The Qwen tokenizer is ~30% slower in wasm."
+        },
+        "refArgs": {
+          "goalId": "g-2"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "notes": "author is a semantic String; the user did not name one, so it should be omitted.",
+      "requiredPresent": [
+        "note"
+      ]
+    },
+    {
+      "id": "rc-01",
+      "utterance": "New finding: \"Constrained decoding cuts invalid JSON to zero\". It's empirical, from our spike runs — A/B over 40 prompts, source is the round 2 spike notes. Tag it llm and decoding.",
+      "context": {
+        "docType": "bai/research-claim",
+        "model": "research-claim",
+        "state": {
+          "title": null,
+          "note": "empty claim document"
+        }
+      },
+      "expected": {
+        "op": "research-claim:CREATE_CLAIM",
+        "args": {
+          "title": "Constrained decoding cuts invalid JSON to zero",
+          "topics": [
+            "llm",
+            "decoding"
+          ]
+        },
+        "ambiguousArgs": {
+          "description": "Grammar-constrained decoding eliminated invalid JSON in spike runs.",
+          "content": "A/B over 40 prompts showed zero invalid JSON with constrained decoding.",
+          "kind": "empirical",
+          "methodology": [
+            "A/B test over 40 prompts"
+          ],
+          "sources": [
+            "round 2 spike notes"
+          ]
+        },
+        "argMatch": {
+          "topics": "ci-unordered"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "requiredPresent": [
+        "description",
+        "content",
+        "kind",
+        "methodology",
+        "sources"
+      ]
+    },
+    {
+      "id": "rc-02",
+      "utterance": "this ties into small-models-need-retrieval — it's the reason the shortlist matters",
+      "context": {
+        "docType": "bai/research-claim",
+        "model": "research-claim",
+        "state": {
+          "title": "Constrained decoding cuts invalid JSON to zero",
+          "connections": []
+        }
+      },
+      "expected": {
+        "op": "research-claim:ADD_RESEARCH_CONNECTION",
+        "args": {
+          "targetRef": "small-models-need-retrieval"
+        },
+        "ambiguousArgs": {
+          "contextPhrase": "the reason the shortlist matters"
+        }
+      },
+      "difficulty": "easy",
+      "tags": [],
+      "requiredPresent": [
+        "contextPhrase"
+      ]
+    },
+    {
+      "id": "rc-03",
+      "utterance": "the cloud-cost-curve tie-in is bogus, unhook it",
+      "context": {
+        "docType": "bai/research-claim",
+        "model": "research-claim",
+        "state": {
+          "title": "Constrained decoding cuts invalid JSON to zero",
+          "connections": [
+            {
+              "id": "c-1",
+              "targetRef": "webgpu-speedups"
+            },
+            {
+              "id": "c-2",
+              "targetRef": "cloud-cost-curve"
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "c-1",
+              "label": "webgpu-speedups"
+            },
+            {
+              "id": "c-2",
+              "label": "cloud-cost-curve"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "args": {},
+        "refArgs": {
+          "id": "c-2"
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "rc-04",
+      "utterance": "rewrite the body: Grammar-constrained decoding eliminated malformed JSON in 40 of 40 runs.",
+      "context": {
+        "docType": "bai/research-claim",
+        "model": "research-claim",
+        "state": {
+          "title": "Constrained decoding cuts invalid JSON to zero",
+          "content": "Early numbers look good."
+        }
+      },
+      "expected": {
+        "op": "research-claim:UPDATE_CLAIM_CONTENT",
+        "args": {
+          "content": "Grammar-constrained decoding eliminated malformed JSON in 40 of 40 runs."
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "obs-01",
+      "utterance": "Friction worth logging: every reload re-downloads the 600MB model. Call it \"Model re-downloads on reload\".",
+      "context": {
+        "docType": "bai/observation",
+        "model": "observation",
+        "state": {
+          "title": null,
+          "note": "empty observation document"
+        }
+      },
+      "expected": {
+        "op": "observation:CREATE_OBSERVATION",
+        "args": {
+          "title": "Model re-downloads on reload",
+          "category": "FRICTION"
+        },
+        "ambiguousArgs": {
+          "description": "Every reload re-downloads the 600MB model.",
+          "content": "Every reload re-downloads the 600MB model."
+        }
+      },
+      "difficulty": "easy",
+      "tags": [],
+      "requiredPresent": [
+        "description"
+      ]
+    },
+    {
+      "id": "obs-02",
+      "utterance": "this deserves to graduate into a proper note — note-model-caching",
+      "context": {
+        "docType": "bai/observation",
+        "model": "observation",
+        "state": {
+          "title": "Model re-downloads on reload",
+          "status": "PENDING"
+        }
+      },
+      "expected": {
+        "op": "observation:PROMOTE_OBSERVATION",
+        "args": {
+          "promotedTo": "note-model-caching"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "obs-03",
+      "utterance": "we fixed this with the OPFS cache, so it's been acted on",
+      "context": {
+        "docType": "bai/observation",
+        "model": "observation",
+        "state": {
+          "title": "Model re-downloads on reload",
+          "status": "PROMOTED"
+        }
+      },
+      "expected": {
+        "op": "observation:IMPLEMENT_OBSERVATION",
+        "args": {}
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "observation:ARCHIVE_OBSERVATION"
+        ],
+        "why": "both have no semantic args; 'fixed / acted on' is implemented, not shelved"
+      }
+    },
+    {
+      "id": "ten-01",
+      "utterance": "Log a conflict: \"Privacy vs capability\" — local models keep data on the device but they're far weaker than the cloud ones.",
+      "context": {
+        "docType": "bai/tension",
+        "model": "tension",
+        "state": {
+          "title": null,
+          "note": "empty tension document"
+        }
+      },
+      "expected": {
+        "op": "tension:CREATE_TENSION",
+        "args": {
+          "title": "Privacy vs capability"
+        },
+        "ambiguousArgs": {
+          "description": "Local models keep data on the device but are far weaker than cloud models.",
+          "involvedRefs": []
+        },
+        "argMatch": {
+          "title": "ci"
+        }
+      },
+      "difficulty": "easy",
+      "tags": [],
+      "requiredPresent": [
+        "description",
+        "involvedRefs"
+      ]
+    },
+    {
+      "id": "ten-02",
+      "utterance": "we settled this one: local by default, cloud only if the user opts in",
+      "context": {
+        "docType": "bai/tension",
+        "model": "tension",
+        "state": {
+          "title": "Privacy vs capability",
+          "status": "OPEN"
+        }
+      },
+      "expected": {
+        "op": "tension:RESOLVE_TENSION",
+        "args": {},
+        "ambiguousArgs": {
+          "resolution": "Local by default; cloud only if the user opts in."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "tension:DISSOLVE_TENSION"
+        ],
+        "why": "a real conflict settled by a choice = resolve (contrast ten-03)"
+      },
+      "requiredPresent": [
+        "resolution"
+      ]
+    },
+    {
+      "id": "ten-03",
+      "utterance": "turns out this was never a real conflict — the two benchmarks were measuring different things",
+      "context": {
+        "docType": "bai/tension",
+        "model": "tension",
+        "state": {
+          "title": "WebGPU faster vs WebGPU slower",
+          "status": "OPEN"
+        }
+      },
+      "expected": {
+        "op": "tension:DISSOLVE_TENSION",
+        "args": {},
+        "ambiguousArgs": {
+          "resolution": "Never a real conflict; the two benchmarks measured different things."
+        }
+      },
+      "difficulty": "hard",
+      "tags": [
+        "hard",
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "tension:RESOLVE_TENSION"
+        ],
+        "why": "the conflict was illusory = dissolve"
+      },
+      "requiredPresent": [
+        "resolution"
+      ]
+    },
+    {
+      "id": "pq-01",
+      "utterance": "queue up claim processing for sources/llama-browser",
+      "context": {
+        "docType": "bai/pipeline-queue",
+        "model": "pipeline-queue",
+        "state": {
+          "phaseOrder": [
+            {
+              "taskType": "claim",
+              "phases": [
+                "create",
+                "reflect",
+                "reweave",
+                "verify"
+              ]
+            },
+            {
+              "taskType": "enrichment",
+              "phases": [
+                "enrich",
+                "reflect",
+                "reweave",
+                "verify"
+              ]
+            }
+          ],
+          "tasks": []
+        }
+      },
+      "expected": {
+        "op": "pipeline-queue:ADD_TASK",
+        "args": {
+          "taskType": "claim",
+          "target": "sources/llama-browser"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "notes": "currentPhase and documentRef not stated; expected omitted."
+    },
+    {
+      "id": "pq-02",
+      "utterance": "hand the kv-cache job to agent-7",
+      "context": {
+        "docType": "bai/pipeline-queue",
+        "model": "pipeline-queue",
+        "state": {
+          "tasks": [
+            {
+              "id": "t-1",
+              "taskType": "claim",
+              "target": "sources/llama-browser",
+              "status": "PENDING"
+            },
+            {
+              "id": "t-2",
+              "taskType": "enrichment",
+              "target": "notes/kv-cache",
+              "status": "PENDING"
+            }
+          ]
+        },
+        "refCandidates": {
+          "taskId": [
+            {
+              "id": "t-1",
+              "label": "claim: sources/llama-browser"
+            },
+            {
+              "id": "t-2",
+              "label": "enrichment: notes/kv-cache"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "pipeline-queue:ASSIGN_TASK",
+        "args": {
+          "assignedTo": "agent-7"
+        },
+        "refArgs": {
+          "taskId": "t-2"
+        }
+      },
+      "difficulty": "easy",
+      "tags": []
+    },
+    {
+      "id": "pq-03",
+      "utterance": "the llama-browser one can't go any further until someone re-uploads the PDF, it's corrupted",
+      "context": {
+        "docType": "bai/pipeline-queue",
+        "model": "pipeline-queue",
+        "state": {
+          "tasks": [
+            {
+              "id": "t-1",
+              "taskType": "claim",
+              "target": "sources/llama-browser",
+              "status": "IN_PROGRESS"
+            },
+            {
+              "id": "t-2",
+              "taskType": "enrichment",
+              "target": "notes/kv-cache",
+              "status": "IN_PROGRESS"
+            }
+          ]
+        },
+        "refCandidates": {
+          "taskId": [
+            {
+              "id": "t-1",
+              "label": "claim: sources/llama-browser"
+            },
+            {
+              "id": "t-2",
+              "label": "enrichment: notes/kv-cache"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "pipeline-queue:BLOCK_TASK",
+        "args": {},
+        "ambiguousArgs": {
+          "reason": "Source PDF is corrupted; needs re-upload."
+        },
+        "refArgs": {
+          "taskId": "t-1"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "pipeline-queue:FAIL_TASK"
+        ],
+        "why": "waiting on a fix (recoverable) = blocked, not failed (contrast pq-04)"
+      },
+      "requiredPresent": [
+        "reason"
+      ]
+    },
+    {
+      "id": "pq-04",
+      "utterance": "the kv-cache job died with an out-of-memory error, give up on it",
+      "context": {
+        "docType": "bai/pipeline-queue",
+        "model": "pipeline-queue",
+        "state": {
+          "tasks": [
+            {
+              "id": "t-1",
+              "taskType": "claim",
+              "target": "sources/llama-browser",
+              "status": "BLOCKED"
+            },
+            {
+              "id": "t-2",
+              "taskType": "enrichment",
+              "target": "notes/kv-cache",
+              "status": "IN_PROGRESS"
+            }
+          ]
+        },
+        "refCandidates": {
+          "taskId": [
+            {
+              "id": "t-1",
+              "label": "claim: sources/llama-browser"
+            },
+            {
+              "id": "t-2",
+              "label": "enrichment: notes/kv-cache"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "pipeline-queue:FAIL_TASK",
+        "args": {},
+        "ambiguousArgs": {
+          "reason": "Out-of-memory error."
+        },
+        "refArgs": {
+          "taskId": "t-2"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "pipeline-queue:BLOCK_TASK"
+        ],
+        "why": "terminal error + 'give up' = failed"
+      },
+      "requiredPresent": [
+        "reason"
+      ]
+    },
+    {
+      "id": "pq-06",
+      "utterance": "finished the reflect step on llama-browser: connected 4 claims to existing notes, touched notes/kv-cache.md and notes/wllama.md",
+      "context": {
+        "docType": "bai/pipeline-queue",
+        "model": "pipeline-queue",
+        "state": {
+          "tasks": [
+            {
+              "id": "t-1",
+              "taskType": "claim",
+              "target": "sources/llama-browser",
+              "status": "IN_PROGRESS",
+              "currentPhase": "reflect",
+              "completedPhases": [
+                "create"
+              ]
+            }
+          ]
+        },
+        "refCandidates": {
+          "taskId": [
+            {
+              "id": "t-1",
+              "label": "claim: sources/llama-browser (phase: reflect)"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "pipeline-queue:ADVANCE_PHASE",
+        "args": {
+          "handoff": {
+            "phase": "reflect",
+            "filesModified": [
+              "notes/kv-cache.md",
+              "notes/wllama.md"
+            ]
+          }
+        },
+        "ambiguousArgs": {
+          "handoff": {
+            "workDone": "Connected 4 claims to existing notes."
+          }
+        },
+        "refArgs": {
+          "taskId": "t-1"
+        },
+        "argMatch": {
+          "handoff.filesModified": "unordered"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion",
+        "nested-input"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "pipeline-queue:COMPLETE_TASK"
+        ],
+        "why": "one phase of several is done, not the whole task; nested handoff object"
+      },
+      "requiredPresent": [
+        "handoff.workDone"
+      ]
+    },
+    {
+      "id": "vc-01",
+      "utterance": "treat notes as stale after 60 days instead of 30",
+      "context": {
+        "docType": "bai/vault-config",
+        "model": "vault-config",
+        "state": {
+          "name": "My vault",
+          "maintenance": {
+            "staleNoteDays": 30,
+            "orphanThreshold": 1
+          }
+        }
+      },
+      "expected": {
+        "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "args": {
+          "condition": "staleNoteDays",
+          "threshold": 60
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "config-vocabulary"
+      ]
+    },
+    {
+      "id": "vc-02",
+      "utterance": "in my vault I'd rather call topic maps \"atlases\"",
+      "context": {
+        "docType": "bai/vault-config",
+        "model": "vault-config",
+        "state": {
+          "name": "My vault",
+          "vocabulary": {
+            "notes": "notes",
+            "topicMap": "topic map",
+            "inbox": "inbox"
+          }
+        }
+      },
+      "expected": {
+        "op": "vault-config:UPDATE_VOCABULARY",
+        "args": {
+          "key": "topicMap",
+          "value": "atlases"
+        },
+        "argMatch": {
+          "value": "ci"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "config-vocabulary"
+      ]
+    },
+    {
+      "id": "vc-03",
+      "utterance": "let processing roll from one step into the next on its own",
+      "context": {
+        "docType": "bai/vault-config",
+        "model": "vault-config",
+        "state": {
+          "name": "My vault",
+          "pipeline": {
+            "depth": "standard",
+            "autoChain": false,
+            "extractionSelectivity": 0.1
+          },
+          "features": [
+            "graph"
+          ]
+        }
+      },
+      "expected": {
+        "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "args": {
+          "autoChain": true
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "sibling-confusion"
+      ],
+      "hardCase": {
+        "confusableWith": [
+          "vault-config:TOGGLE_FEATURE"
+        ],
+        "why": "auto-chaining is a pipeline setting, not a named feature flag"
+      }
+    },
+    {
+      "id": "vc-04",
+      "utterance": "I want much more atomic notes — crank granularity up to 5",
+      "context": {
+        "docType": "bai/vault-config",
+        "model": "vault-config",
+        "state": {
+          "name": "My vault",
+          "dimensions": {
+            "granularity": {
+              "value": 3,
+              "confidence": 0.5
+            }
+          }
+        }
+      },
+      "expected": {
+        "op": "vault-config:UPDATE_DIMENSION",
+        "args": {
+          "dimension": "granularity",
+          "value": 5
+        },
+        "ambiguousArgs": {
+          "confidence": 0.8,
+          "rationale": "User wants much more atomic notes."
+        }
+      },
+      "difficulty": "medium",
+      "tags": [
+        "config-vocabulary"
+      ],
+      "requiredPresent": [
+        "confidence"
+      ]
+    },
+    {
+      "id": "vc-05",
+      "utterance": "stop pulling anecdotes out of sources",
+      "context": {
+        "docType": "bai/vault-config",
+        "model": "vault-config",
+        "state": {
+          "name": "My vault",
+          "extractionCategories": [
+            {
+              "id": "ec-1",
+              "name": "Anecdotes",
+              "active": true
+            },
+            {
+              "id": "ec-2",
+              "name": "Definitions",
+              "active": true
+            }
+          ]
+        },
+        "refCandidates": {
+          "id": [
+            {
+              "id": "ec-1",
+              "label": "Anecdotes (active)"
+            },
+            {
+              "id": "ec-2",
+              "label": "Definitions (active)"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "args": {
+          "active": false
+        },
+        "refArgs": {
+          "id": "ec-1"
+        }
+      },
+      "difficulty": "medium",
+      "tags": []
+    },
+    {
+      "id": "der-01",
+      "utterance": "log this: when I said \"I hate deep folder trees\" that's a vote for flatter organization",
+      "context": {
+        "docType": "bai/derivation",
+        "model": "derivation",
+        "state": {
+          "engineVersion": "0.4.0",
+          "signals": []
+        }
+      },
+      "expected": {
+        "op": "derivation:ADD_SIGNAL",
+        "args": {
+          "utterance": "I hate deep folder trees",
+          "influencedDimensions": [
+            "organization"
+          ]
+        },
+        "ambiguousArgs": {
+          "interpretation": "Prefers flatter organization."
+        },
+        "argMatch": {
+          "influencedDimensions": "ci-unordered"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "requiredPresent": [
+        "interpretation"
+      ]
+    },
+    {
+      "id": "hr-01",
+      "utterance": "flag it as failing: 3 links point nowhere, in kv-cache and wllama-cold-start",
+      "context": {
+        "docType": "bai/health-report",
+        "model": "health-report",
+        "state": {
+          "mode": "full",
+          "checks": []
+        }
+      },
+      "expected": {
+        "op": "health-report:ADD_CHECK",
+        "args": {
+          "category": "LINK_HEALTH",
+          "status": "FAIL",
+          "affectedItems": [
+            "kv-cache",
+            "wllama-cold-start"
+          ]
+        },
+        "ambiguousArgs": {
+          "message": "3 dangling links."
+        },
+        "argMatch": {
+          "affectedItems": "unordered"
+        }
+      },
+      "difficulty": "medium",
+      "tags": [],
+      "requiredPresent": [
+        "message"
+      ]
+    }
+  ],
+  "noAction": [
+    {
+      "id": "none-01",
+      "utterance": "what does canonical actually mean in this vault?",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "model": "knowledge-note",
+        "state": {
+          "title": "Cold start budget",
+          "status": "IN_REVIEW"
+        }
+      },
+      "reason": "Question about terminology; tempting false positive is APPROVE_NOTE."
+    },
+    {
+      "id": "none-02",
+      "utterance": "thanks, that's perfect",
+      "context": {
+        "docType": "bai/moc",
+        "model": "moc",
+        "state": {
+          "title": "On-device inference"
+        }
+      },
+      "reason": "Acknowledgement / chit-chat."
+    },
+    {
+      "id": "none-03",
+      "utterance": "how many of these are still open?",
+      "context": {
+        "docType": "bai/wbs",
+        "model": "wbs",
+        "state": {
+          "goals": [
+            {
+              "id": "g-1",
+              "description": "Ship in-browser chat",
+              "status": "IN_PROGRESS"
+            },
+            {
+              "id": "g-2",
+              "description": "Benchmark models",
+              "status": "TODO"
+            }
+          ]
+        }
+      },
+      "reason": "Read-only question about state."
+    },
+    {
+      "id": "none-04",
+      "utterance": "who's on the team for this?",
+      "context": {
+        "docType": "bai/project",
+        "model": "project",
+        "state": {
+          "name": "Offline assistant",
+          "team": [
+            {
+              "id": "m-2",
+              "name": "Priya",
+              "role": "Researcher"
+            }
+          ]
+        }
+      },
+      "reason": "Read-only question; tempting false positive is ADD_MEMBER."
+    },
+    {
+      "id": "none-05",
+      "utterance": "hmm, not sure yet whether this conflict is real. let me think about it",
+      "context": {
+        "docType": "bai/tension",
+        "model": "tension",
+        "state": {
+          "title": "Privacy vs capability",
+          "status": "OPEN"
+        }
+      },
+      "reason": "User is deliberating; tempting false positives are RESOLVE/DISSOLVE_TENSION."
+    },
+    {
+      "id": "none-06",
+      "utterance": "can you explain what the skip rate is measuring?",
+      "context": {
+        "docType": "bai/source",
+        "model": "source",
+        "state": {
+          "title": "Running Llama in the browser",
+          "status": "EXTRACTED"
+        }
+      },
+      "reason": "Explanation request; tempting false positive is RECORD_EXTRACTION_STATS."
+    }
+  ]
+}
