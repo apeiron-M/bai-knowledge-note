@@ -13,8 +13,6 @@ export interface GteEmbedderOptions {
   localModelPath?: string;
   /** onnxruntime-web wasm: a directory URL or `{ mjs, wasm }` (default `ORT_WASM_PATHS`). */
   wasmPaths?: string | { mjs: string; wasm: string };
-  /** `wasm` in the browser (default); `cpu` under node (onnxruntime-node). */
-  device?: "wasm" | "cpu";
 }
 
 /**
@@ -88,12 +86,11 @@ export function loadGteEmbedder(
   loading ??= (async () => {
     const t0 = performance.now();
     const tf = await import("@huggingface/transformers");
-    const browser = (opts.device ?? "wasm") === "wasm";
     tf.env.allowLocalModels = true;
     tf.env.allowRemoteModels = false;
     tf.env.useBrowserCache = false;
     tf.env.localModelPath = opts.localModelPath ?? PACKAGE_MODELS;
-    if (browser && !opts.localModelPath) {
+    if (!opts.localModelPath) {
       const prefix = `${PACKAGE_MODELS}${GTE_MODEL}/`;
       const base = tf.env.fetch;
       tf.env.fetch = (input, init) => {
@@ -106,7 +103,7 @@ export function loadGteEmbedder(
       };
     }
     const wasm = tf.env.backends.onnx.wasm;
-    if (browser && wasm) {
+    if (wasm) {
       // Set after import: transformers assigns jsdelivr paths at init.
       wasm.wasmPaths = opts.wasmPaths ?? ORT_WASM_PATHS;
       // Else transformers may re-wrap the .mjs as a blob: module URL,
@@ -115,7 +112,7 @@ export function loadGteEmbedder(
     }
     const extractor = await tf.pipeline("feature-extraction", GTE_MODEL, {
       dtype: GTE_SPEC.dtype,
-      device: opts.device ?? "wasm",
+      device: "wasm",
     });
     const embed: EmbedTexts = async (texts) => {
       const out = await extractor(texts, {

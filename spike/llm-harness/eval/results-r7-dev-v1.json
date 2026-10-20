@@ -1,0 +1,1324 @@
+{
+  "v1EmbedParity": {
+    "ops": 99,
+    "maxAbsDiff": 0,
+    "minCosine": 0.9999990186289326,
+    "devItems": 59,
+    "scopedTop1Flips": []
+  },
+  "v1Pipeline:\"webgpu\":{\"sets\":[\"dev\",\"devx\",\"devna\"]}": {
+    "summary": {
+      "sets": [
+        "dev",
+        "devx",
+        "devna"
+      ],
+      "runtimeLoadMs": 0,
+      "embedderLoadMs": 410,
+      "opAcc": "40/49",
+      "noActionRecall": "10/10",
+      "actionGatedOut": 1,
+      "argsExact": "17/25",
+      "refExact": "10/12",
+      "totalMedianMs": 135,
+      "totalP90Ms": 796
+    },
+    "rows": [
+      {
+        "id": "dev-01",
+        "set": "dev",
+        "utterance": "tag this note with distributed systems",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "pick": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "gateScore": -0.043,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 138,
+          "total": 160
+        },
+        "args": {
+          "name": "distributed systems"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-02",
+        "set": "dev",
+        "utterance": "add the topic machine learning",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "pick": "knowledge-note:ADD_TOPIC",
+        "opCorrect": true,
+        "gateScore": -0.065,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 103,
+          "total": 127
+        },
+        "args": {
+          "name": "machine learning"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-03",
+        "set": "dev",
+        "utterance": "label this as epistemology",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "pick": "knowledge-note:SET_PROVENANCE",
+        "opCorrect": false,
+        "gateScore": 0.033,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 181,
+          "total": 203
+        },
+        "args": {
+          "sourceOrigin": "DERIVED",
+          "author": "this"
+        }
+      },
+      {
+        "id": "dev-04",
+        "set": "dev",
+        "utterance": "file this note under productivity",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": false,
+        "gateScore": -0.046,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 0,
+          "total": 24
+        },
+        "args": {}
+      },
+      {
+        "id": "dev-05",
+        "set": "dev",
+        "utterance": "rename this note to Spaced repetition beats cramming",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "pick": "knowledge-note:SET_TITLE",
+        "opCorrect": true,
+        "gateScore": -0.026,
+        "question": false,
+        "ms": {
+          "embed": 33,
+          "args": 134,
+          "total": 167
+        },
+        "args": {
+          "title": "Spaced repetition beats cramming"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-06",
+        "set": "dev",
+        "utterance": "set the title to CAP theorem tradeoffs",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "pick": "knowledge-note:SET_TITLE",
+        "opCorrect": true,
+        "gateScore": -0.022,
+        "question": false,
+        "ms": {
+          "embed": 28,
+          "args": 116,
+          "total": 144
+        },
+        "args": {
+          "title": "CAP theorem tradeoffs"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-07",
+        "set": "dev",
+        "utterance": "change the heading of the note to Why caches lie",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "pick": "knowledge-note:SET_TITLE",
+        "opCorrect": true,
+        "gateScore": -0.037,
+        "question": false,
+        "ms": {
+          "embed": 33,
+          "args": 109,
+          "total": 142
+        },
+        "args": {
+          "title": "Why caches lie"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-08",
+        "set": "dev",
+        "utterance": "set the description to A short argument for writing every day",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "pick": "knowledge-note:SET_DESCRIPTION",
+        "opCorrect": true,
+        "gateScore": -0.068,
+        "question": false,
+        "ms": {
+          "embed": 33,
+          "args": 103,
+          "total": 136
+        },
+        "args": {
+          "description": "A short argument"
+        },
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ]
+      },
+      {
+        "id": "dev-09",
+        "set": "dev",
+        "utterance": "update the summary: explains how consensus protocols tolerate faults",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "pick": "knowledge-note:UPDATE_LINK_TYPE",
+        "opCorrect": false,
+        "gateScore": 0.02,
+        "question": false,
+        "ms": {
+          "embed": 29,
+          "args": 131,
+          "total": 160
+        },
+        "args": {
+          "linkType": "BUILDS_ON"
+        }
+      },
+      {
+        "id": "dev-10",
+        "set": "dev",
+        "utterance": "describe this note as notes from the Raft paper",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "pick": "knowledge-note:RESTORE_NOTE",
+        "opCorrect": false,
+        "gateScore": -0.035,
+        "question": false,
+        "ms": {
+          "embed": 31,
+          "args": 0,
+          "total": 31
+        },
+        "args": {}
+      },
+      {
+        "id": "dev-11",
+        "set": "dev",
+        "utterance": "submit this note for review",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "gateScore": -0.101,
+        "question": false,
+        "ms": {
+          "embed": 23,
+          "args": 0,
+          "total": 23
+        },
+        "args": {},
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-12",
+        "set": "dev",
+        "utterance": "send it to review, it's ready",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "gateScore": -0.012,
+        "question": false,
+        "ms": {
+          "embed": 31,
+          "args": 0,
+          "total": 31
+        },
+        "args": {},
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-13",
+        "set": "dev",
+        "utterance": "I'm done drafting, request a review",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "pick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "opCorrect": true,
+        "gateScore": -0.049,
+        "question": false,
+        "ms": {
+          "embed": 31,
+          "args": 0,
+          "total": 31
+        },
+        "args": {},
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-14",
+        "set": "dev",
+        "utterance": "remove the topic tag",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "pick": "knowledge-note:REMOVE_TOPIC",
+        "opCorrect": true,
+        "gateScore": -0.115,
+        "question": false,
+        "ms": {
+          "embed": 20,
+          "args": 0,
+          "total": 20
+        },
+        "args": {},
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-15",
+        "set": "dev",
+        "utterance": "untag this note",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "pick": "knowledge-note:REMOVE_TOPIC",
+        "opCorrect": true,
+        "gateScore": -0.049,
+        "question": false,
+        "ms": {
+          "embed": 20,
+          "args": 0,
+          "total": 20
+        },
+        "args": {},
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-16",
+        "set": "dev",
+        "utterance": "add an open question: does spacing help procedural memory?",
+        "expectedOp": "moc:ADD_OPEN_QUESTION",
+        "pick": null,
+        "opCorrect": false,
+        "gateScore": -0.047,
+        "question": true,
+        "ms": {
+          "embed": 37,
+          "args": 0,
+          "total": 37
+        }
+      },
+      {
+        "id": "dev-17",
+        "set": "dev",
+        "utterance": "note an unexplored direction: how do CRDTs handle deletes",
+        "expectedOp": "moc:ADD_OPEN_QUESTION",
+        "pick": "moc:REMOVE_TENSION",
+        "opCorrect": false,
+        "gateScore": 0.008,
+        "question": false,
+        "ms": {
+          "embed": 47,
+          "args": 0,
+          "total": 47
+        },
+        "args": {}
+      },
+      {
+        "id": "dev-18",
+        "set": "dev",
+        "utterance": "rewrite the synthesis paragraph to say memory is reconstructive",
+        "expectedOp": "moc:UPDATE_ORIENTATION",
+        "pick": "moc:UPDATE_ORIENTATION",
+        "opCorrect": true,
+        "gateScore": -0.028,
+        "question": false,
+        "ms": {
+          "embed": 42,
+          "args": 119,
+          "total": 161
+        },
+        "args": {
+          "orientation": "reconstructive"
+        },
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "orientation"
+        ]
+      },
+      {
+        "id": "dev-19",
+        "set": "dev",
+        "utterance": "update the orientation of this map",
+        "expectedOp": "moc:UPDATE_ORIENTATION",
+        "pick": "moc:UPDATE_ORIENTATION",
+        "opCorrect": true,
+        "gateScore": -0.108,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 96,
+          "total": 117
+        },
+        "args": {
+          "orientation": "map"
+        },
+        "fieldsMatch": null,
+        "extras": [
+          "orientation"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-20",
+        "set": "dev",
+        "utterance": "queue a new extraction task for the Raft paper",
+        "expectedOp": "pipeline-queue:ADD_TASK",
+        "pick": "pipeline-queue:ADD_TASK",
+        "opCorrect": true,
+        "gateScore": -0.061,
+        "question": false,
+        "ms": {
+          "embed": 31,
+          "args": 145,
+          "total": 177
+        },
+        "args": {
+          "taskType": "claim",
+          "target": "Raft paper"
+        },
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-21",
+        "set": "dev",
+        "utterance": "add a task to reflect on the CRDT notes",
+        "expectedOp": "pipeline-queue:ADD_TASK",
+        "pick": "pipeline-queue:ADD_TASK",
+        "opCorrect": true,
+        "gateScore": -0.028,
+        "question": false,
+        "ms": {
+          "embed": 28,
+          "args": 189,
+          "total": 217
+        },
+        "args": {
+          "taskType": "enrichment",
+          "target": "CRDT notes",
+          "currentPhase": "reflect"
+        },
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target",
+          "currentPhase"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-22",
+        "set": "dev",
+        "utterance": "mark the task as blocked because the source is missing",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "pick": "pipeline-queue:BLOCK_TASK",
+        "opCorrect": true,
+        "gateScore": -0.098,
+        "question": false,
+        "ms": {
+          "embed": 28,
+          "args": 107,
+          "total": 135
+        },
+        "args": {
+          "reason": "source is missing"
+        },
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "reason"
+        ]
+      },
+      {
+        "id": "dev-23",
+        "set": "dev",
+        "utterance": "the task is stuck waiting on review, block it",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "pick": "pipeline-queue:BLOCK_TASK",
+        "opCorrect": true,
+        "gateScore": -0.089,
+        "question": false,
+        "ms": {
+          "embed": 28,
+          "args": 110,
+          "total": 138
+        },
+        "args": {
+          "reason": "waiting on review"
+        },
+        "fieldsMatch": null,
+        "extras": [
+          "reason"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-24",
+        "set": "dev",
+        "utterance": "add Alice to the team as designer",
+        "expectedOp": "project:ADD_MEMBER",
+        "pick": "project:ADD_MEMBER",
+        "opCorrect": true,
+        "gateScore": -0.018,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 92,
+          "total": 116
+        },
+        "args": {
+          "name": "Alice"
+        },
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ]
+      },
+      {
+        "id": "dev-25",
+        "set": "dev",
+        "utterance": "add a team member named Bob",
+        "expectedOp": "project:ADD_MEMBER",
+        "pick": "project:ADD_MEMBER",
+        "opCorrect": true,
+        "gateScore": -0.081,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 83,
+          "total": 103
+        },
+        "args": {
+          "name": "Bob"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-26",
+        "set": "dev",
+        "utterance": "put the project on hold",
+        "expectedOp": "project:SET_PROJECT_STATUS",
+        "pick": "project:SET_PROJECT_STATUS",
+        "opCorrect": true,
+        "gateScore": -0.073,
+        "question": false,
+        "ms": {
+          "embed": 23,
+          "args": 104,
+          "total": 127
+        },
+        "args": {
+          "status": "ON_HOLD"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-27",
+        "set": "dev",
+        "utterance": "mark the project as completed",
+        "expectedOp": "project:SET_PROJECT_STATUS",
+        "pick": "project:SET_PROJECT_STATUS",
+        "opCorrect": true,
+        "gateScore": -0.054,
+        "question": false,
+        "ms": {
+          "embed": 23,
+          "args": 99,
+          "total": 122
+        },
+        "args": {
+          "status": "COMPLETED"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-28",
+        "set": "dev",
+        "utterance": "create a goal to write the onboarding guide",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "pick": "wbs:CREATE_GOAL",
+        "opCorrect": true,
+        "gateScore": -0.07,
+        "question": false,
+        "ms": {
+          "embed": 31,
+          "args": 124,
+          "total": 155
+        },
+        "args": {
+          "description": "write the onboarding guide"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-29",
+        "set": "dev",
+        "utterance": "new goal: ship the beta",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "pick": "wbs:CREATE_GOAL",
+        "opCorrect": true,
+        "gateScore": -0.038,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 92,
+          "total": 113
+        },
+        "args": {
+          "description": "ship the beta"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dev-30",
+        "set": "dev",
+        "utterance": "set the goal status to in progress",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "pick": "wbs:SET_GOAL_STATUS",
+        "opCorrect": true,
+        "gateScore": -0.128,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 108,
+          "total": 132
+        },
+        "args": {
+          "status": "IN_PROGRESS"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dx-01",
+        "set": "devx",
+        "utterance": "drop the machine learning tag",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "pick": "knowledge-note:REMOVE_TOPIC",
+        "opCorrect": true,
+        "gateScore": -0.031,
+        "question": false,
+        "ms": {
+          "embed": 23,
+          "args": 423,
+          "total": 767
+        },
+        "args": {
+          "id": "t-2"
+        },
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-02",
+        "set": "devx",
+        "utterance": "this note is not about epistemology anymore, untag it",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "pick": "knowledge-note:REMOVE_TOPIC",
+        "opCorrect": true,
+        "gateScore": -0.044,
+        "question": false,
+        "ms": {
+          "embed": 41,
+          "args": 440,
+          "total": 792
+        },
+        "args": {
+          "id": "t-3"
+        },
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-03",
+        "set": "devx",
+        "utterance": "the link to the Raft paper should say it contradicts this note",
+        "expectedOp": "knowledge-note:UPDATE_LINK_TYPE",
+        "pick": "knowledge-note:UPDATE_LINK_TYPE",
+        "opCorrect": true,
+        "gateScore": -0.012,
+        "question": false,
+        "ms": {
+          "embed": 37,
+          "args": 555,
+          "total": 936
+        },
+        "args": {
+          "id": "l-3",
+          "linkType": "DERIVED_FROM"
+        },
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "linkType"
+        ]
+      },
+      {
+        "id": "dx-04",
+        "set": "devx",
+        "utterance": "get rid of the link to CAP theorem",
+        "expectedOp": "knowledge-note:REMOVE_LINK",
+        "pick": "knowledge-note:REMOVE_LINK",
+        "opCorrect": true,
+        "gateScore": -0.05,
+        "question": false,
+        "ms": {
+          "embed": 28,
+          "args": 449,
+          "total": 812
+        },
+        "args": {
+          "id": "l-3"
+        },
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-05",
+        "set": "devx",
+        "utterance": "the onboarding guide goal is finished",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "pick": "wbs:SET_GOAL_STATUS",
+        "opCorrect": true,
+        "gateScore": -0.041,
+        "question": false,
+        "ms": {
+          "embed": 25,
+          "args": 554,
+          "total": 952
+        },
+        "args": {
+          "id": "g-2",
+          "status": "COMPLETED"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-06",
+        "set": "devx",
+        "utterance": "delete the CI goal",
+        "expectedOp": "wbs:DELETE_GOAL",
+        "pick": "wbs:DELETE_GOAL",
+        "opCorrect": true,
+        "gateScore": -0.111,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 499,
+          "total": 875
+        },
+        "args": {
+          "id": "g-2"
+        },
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "dx-07",
+        "set": "devx",
+        "utterance": "give the beta goal to Priya",
+        "expectedOp": "wbs:ASSIGN_GOAL",
+        "pick": "wbs:CREATE_GOAL",
+        "opCorrect": false,
+        "gateScore": -0.027,
+        "question": false,
+        "ms": {
+          "embed": 25,
+          "args": 116,
+          "total": 140
+        },
+        "args": {
+          "description": "Priya"
+        }
+      },
+      {
+        "id": "dx-08",
+        "set": "devx",
+        "utterance": "Bob left, take him off the team",
+        "expectedOp": "project:REMOVE_MEMBER",
+        "pick": "project:REMOVE_MEMBER",
+        "opCorrect": true,
+        "gateScore": -0.067,
+        "question": false,
+        "ms": {
+          "embed": 28,
+          "args": 399,
+          "total": 720
+        },
+        "args": {
+          "id": "m-2"
+        },
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-09",
+        "set": "devx",
+        "utterance": "the API docs deliverable shipped today",
+        "expectedOp": "project:SET_DELIVERABLE_STATUS",
+        "pick": "project:SET_DELIVERABLE_STATUS",
+        "opCorrect": true,
+        "gateScore": -0.051,
+        "question": false,
+        "ms": {
+          "embed": 28,
+          "args": 383,
+          "total": 627
+        },
+        "args": {
+          "id": "d-2",
+          "status": "DELIVERED"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-10",
+        "set": "devx",
+        "utterance": "Carol is now our tech lead",
+        "expectedOp": "project:UPDATE_MEMBER",
+        "pick": "project:UPDATE_MEMBER",
+        "opCorrect": true,
+        "gateScore": 0.036,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 472,
+          "total": 796
+        },
+        "args": {
+          "id": "m-3",
+          "name": "Carol"
+        },
+        "fieldsMatch": false,
+        "extras": [
+          "name"
+        ],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "role"
+        ]
+      },
+      {
+        "id": "dx-11",
+        "set": "devx",
+        "utterance": "block the CRDT reflection task because the notes are not written yet",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "pick": "pipeline-queue:BLOCK_TASK",
+        "opCorrect": true,
+        "gateScore": -0.058,
+        "question": false,
+        "ms": {
+          "embed": 42,
+          "args": 445,
+          "total": 732
+        },
+        "args": {
+          "taskId": "q-2",
+          "reason": "the notes are not written yet"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-12",
+        "set": "devx",
+        "utterance": "take the spacing effect idea out of this map",
+        "expectedOp": "moc:REMOVE_CORE_IDEA",
+        "pick": "moc:REMOVE_CORE_IDEA",
+        "opCorrect": true,
+        "gateScore": -0.055,
+        "question": false,
+        "ms": {
+          "embed": 29,
+          "args": 447,
+          "total": 809
+        },
+        "args": {
+          "id": "c-2"
+        },
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "dx-13",
+        "set": "devx",
+        "utterance": "stop extracting the quotes category",
+        "expectedOp": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "pick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "opCorrect": true,
+        "gateScore": -0.071,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 328,
+          "total": 550
+        },
+        "args": {
+          "id": "x-2",
+          "active": true
+        },
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "active"
+        ]
+      },
+      {
+        "id": "dx-14",
+        "set": "devx",
+        "utterance": "record the root cause: the cache key ignored the locale",
+        "expectedOp": "knowledge-note:SET_METADATA_FIELD",
+        "pick": "knowledge-note:SET_PROVENANCE",
+        "opCorrect": false,
+        "gateScore": 0.009,
+        "question": false,
+        "ms": {
+          "embed": 37,
+          "args": 185,
+          "total": 223
+        },
+        "args": {
+          "sourceOrigin": "DERIVED",
+          "author": "the"
+        }
+      },
+      {
+        "id": "dx-15",
+        "set": "devx",
+        "utterance": "this is a decision record",
+        "expectedOp": "knowledge-note:SET_NOTE_TYPE",
+        "pick": "knowledge-note:SET_METADATA_FIELD",
+        "opCorrect": false,
+        "gateScore": 0.006,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 123,
+          "total": 147
+        },
+        "args": {
+          "field": "modelId"
+        }
+      },
+      {
+        "id": "dx-16",
+        "set": "devx",
+        "utterance": "flag notes as stale after 60 days",
+        "expectedOp": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "pick": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "opCorrect": true,
+        "gateScore": 0.032,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 207,
+          "total": 231
+        },
+        "args": {
+          "condition": "orphanThreshold",
+          "threshold": 60
+        },
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "condition"
+        ]
+      },
+      {
+        "id": "dx-17",
+        "set": "devx",
+        "utterance": "call the inbox \"capture\" from now on",
+        "expectedOp": "vault-config:UPDATE_VOCABULARY",
+        "pick": "vault-config:UPDATE_VOCABULARY",
+        "opCorrect": true,
+        "gateScore": 0.007,
+        "question": false,
+        "ms": {
+          "embed": 29,
+          "args": 148,
+          "total": 177
+        },
+        "args": {
+          "key": "inbox",
+          "value": "capture"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dx-18",
+        "set": "devx",
+        "utterance": "use the deep processing pipeline",
+        "expectedOp": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "pick": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "opCorrect": true,
+        "gateScore": -0.058,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 108,
+          "total": 131
+        },
+        "args": {
+          "depth": "deep"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dx-19",
+        "set": "devx",
+        "utterance": "rename the project to Atlas",
+        "expectedOp": "project:UPDATE_PROJECT_INFO",
+        "pick": "project:UPDATE_PROJECT_INFO",
+        "opCorrect": true,
+        "gateScore": -0.053,
+        "question": false,
+        "ms": {
+          "embed": 21,
+          "args": 106,
+          "total": 127
+        },
+        "args": {
+          "name": "Atlas"
+        },
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "dn-01",
+        "set": "devna",
+        "utterance": "what is this note about?",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.004,
+        "question": true,
+        "ms": {
+          "embed": 21,
+          "args": 0,
+          "total": 21
+        }
+      },
+      {
+        "id": "dn-02",
+        "set": "devna",
+        "utterance": "thanks!",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.11,
+        "question": false,
+        "ms": {
+          "embed": 13,
+          "args": 0,
+          "total": 13
+        }
+      },
+      {
+        "id": "dn-03",
+        "set": "devna",
+        "utterance": "how many topics does it have?",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.002,
+        "question": true,
+        "ms": {
+          "embed": 25,
+          "args": 0,
+          "total": 25
+        }
+      },
+      {
+        "id": "dn-04",
+        "set": "devna",
+        "utterance": "which goals are blocked right now?",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": -0.048,
+        "question": true,
+        "ms": {
+          "embed": 24,
+          "args": 0,
+          "total": 24
+        }
+      },
+      {
+        "id": "dn-05",
+        "set": "devna",
+        "utterance": "is the project on track?",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": -0.034,
+        "question": true,
+        "ms": {
+          "embed": 21,
+          "args": 0,
+          "total": 21
+        }
+      },
+      {
+        "id": "dn-06",
+        "set": "devna",
+        "utterance": "summarize this map for me",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.074,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 0,
+          "total": 24
+        }
+      },
+      {
+        "id": "dn-07",
+        "set": "devna",
+        "utterance": "hmm, let me think about that",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.159,
+        "question": false,
+        "ms": {
+          "embed": 25,
+          "args": 0,
+          "total": 25
+        }
+      },
+      {
+        "id": "dn-08",
+        "set": "devna",
+        "utterance": "what does reweave mean?",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.027,
+        "question": true,
+        "ms": {
+          "embed": 24,
+          "args": 0,
+          "total": 24
+        }
+      },
+      {
+        "id": "dn-09",
+        "set": "devna",
+        "utterance": "great, that looks right",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.149,
+        "question": false,
+        "ms": {
+          "embed": 24,
+          "args": 0,
+          "total": 24
+        }
+      },
+      {
+        "id": "dn-10",
+        "set": "devna",
+        "utterance": "who wrote the Raft paper?",
+        "expectedOp": null,
+        "pick": null,
+        "opCorrect": true,
+        "gateScore": 0.003,
+        "question": true,
+        "ms": {
+          "embed": 21,
+          "args": 0,
+          "total": 21
+        }
+      }
+    ]
+  }
+}

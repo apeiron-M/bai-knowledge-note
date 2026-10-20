@@ -1,7 +1,8 @@
 /**
  * Writes the chat's precomputed op and no-action-exemplar vectors
  * (`editors/knowledge-vault/chat/core/op-embeddings.gte-small.json`) with
- * the committed gte-small model under node (onnxruntime-node, CPU).
+ * the committed gte-small model on the browser's onnxruntime-web wasm
+ * (`gte-wasm-node.ts`), so they match what the Chat tab computes.
  *
  *   npx --no-install tsx scripts/gen-op-embeddings.ts           # regenerate
  *   npx --no-install tsx scripts/gen-op-embeddings.ts --check   # exit 1 if stale
@@ -9,13 +10,13 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { buildRuntimeCatalog } from "../editors/knowledge-vault/chat/core/catalog-models.js";
-import { loadGteEmbedder } from "../editors/knowledge-vault/chat/core/gte-embedder.js";
 import {
   encodeVectors,
   opEmbeddingHash,
   opEmbeddingInputs,
   type OpEmbeddingAsset,
 } from "../editors/knowledge-vault/chat/core/op-embedding-index.js";
+import { loadNodeWasmEmbedder } from "./gte-wasm-node.js";
 
 const ASSET = fileURLToPath(
   new URL(
@@ -23,7 +24,6 @@ const ASSET = fileURLToPath(
     import.meta.url,
   ),
 );
-const MODELS = fileURLToPath(new URL("../models/", import.meta.url));
 
 function storedHash(): string | null {
   if (!existsSync(ASSET)) return null;
@@ -42,7 +42,7 @@ async function main(): Promise<void> {
     process.exit(ok ? 0 : 1);
   }
   const t0 = performance.now();
-  const emb = await loadGteEmbedder({ localModelPath: MODELS, device: "cpu" });
+  const emb = await loadNodeWasmEmbedder();
   // One text per call, as the runtime embeds the utterance alone.
   const one = async (t: string) => (await emb.embed([t]))[0];
   const ops: Float32Array[] = [];
@@ -54,7 +54,7 @@ async function main(): Promise<void> {
     spec: inputs.spec,
     hash,
     dims: ops[0].length,
-    generatedWith: `node ${process.version}, @huggingface/transformers + onnxruntime-node (cpu)`,
+    generatedWith: `node ${process.version}, ${emb.backend}`,
     ops: { keys: inputs.ops.map((o) => o.key), vectors: encodeVectors(ops) },
     exemplars: { count: exemplars.length, vectors: encodeVectors(exemplars) },
   };
