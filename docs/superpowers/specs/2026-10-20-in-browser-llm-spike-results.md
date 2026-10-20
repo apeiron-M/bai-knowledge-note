@@ -544,3 +544,161 @@ Each configuration runs **once** on the held-out set, WebGPU, temperature 0, BM2
 - **Latency:** median and p90 per utterance, summed over the requests each method needs.
 - **Disclosure:** while checking the file structure I saw the utterances of kn-01 and kn-02 and the `refCandidates` of kn-08. I read no other held-out item before these runs.
 - **If a run breaks** (for example, a grammar llama.cpp rejects), the bug is fixed, both numbers are reported, and nothing else changes.
+
+### Held-out results
+
+All ten pre-registered configurations ran once (WebGPU, one session, no errors, no reruns). Raw per-item data:
+
+- Op selection: `spike/llm-harness/eval/results-r5-heldout-ops-{scoped,unscoped}-{key,readable}.json`
+- The "none" run: `results-r5-heldout-ops-scoped-key-none.json` and `results-r5-noaction-ops-{scoped,unscoped}-key-none.json`
+- Args: `results-r5-heldout-args-A0.json` and `results-r5-heldout-args-A1.json`
+- Dev reference runs: `results-r5-dev-*.json`
+
+**Item errors:** none found, none excluded. Three args items, kn-02, kn-03 and moc-03, fail exact match only because the expected value keeps the utterance's trailing period and both A0 and A1 drop it. They are kept and scored as misses.
+
+#### Op selection, scoped (the document's model)
+
+Held-out n = 68, recall@5 = 63.2% (43/68). Dev n = 30, recall@5 = 90.0%. Primary aggregate is mean; sum is in brackets.
+
+| Config | Held-out overall | Held-out given in top-5 (n=43) | Dev overall | Held-out latency median / p90 |
+|---|---|---|---|---|
+| B0 BM25 top-1 | 13 (19.1%) | 30.2% | 22 (73.3%) | 0 ms |
+| B1 enum (current) | 9 (13.2%) | 20.9% | 13 (43.3%) | 332 / 376 ms |
+| S1 likelihood | 7 (10.3%) [sum 12] | 16.3% | 5 [7] | 610 / 766 ms |
+| S2 + calibration | 16 (23.5%) [15] | 37.2% | 18 [18] | 1 258 / 1 622 ms |
+| S3 + 3 rotations | 17 (25.0%) [17] | 39.5% | 23 [23] | 3 923 / 4 923 ms |
+| S4 = S3, readable labels | 20 (29.4%) [18] | 46.5% | 16 [14] | 2 851 / 3 036 ms |
+| **H1 = S3 + 5 × BM25** | **22 (32.4%)** | **51.2%** | 23 (76.7%) | 3 923 / 4 923 ms |
+| H1 + "none" option | 18 (26.5%) | 41.9% | 22 | 4 244 / 4 835 ms |
+
+#### Op selection, unscoped (all 99 global ops)
+
+Held-out recall@5 = 13.2% (9/68). Dev recall@5 = 83.3%.
+
+| Config | Held-out overall | Given in top-5 (n=9) | Dev overall | Latency median / p90 |
+|---|---|---|---|---|
+| B0 | 4 (5.9%) | 44.4% | 20 (66.7%) | 0 ms |
+| B1 | 5 (7.4%) | 55.6% | 10 (33.3%) | 339 / 386 ms |
+| S1 | 2 (2.9%) [2] | 22.2% | 4 [6] | 668 / 851 ms |
+| S2 | 2 (2.9%) [3] | 22.2% | 11 [13] | 1 409 / 1 694 ms |
+| S3 | 3 (4.4%) [3] | 33.3% | 19 [17] | 4 307 / 4 885 ms |
+| S4 | 2 (2.9%) [3] | 22.2% | 13 [10] | 2 960 / 3 107 ms |
+| H1 | 6 (8.8%) | 66.7% | 22 (73.3%) | 4 307 / 4 885 ms |
+
+Latency is the sum of wall time over the requests each method needs, for one utterance (B0 runs no model). S3 and H1 make 30 forced requests per utterance (5 options × 3 orders × utterance and `N/A`), at about 130 ms each. S4's forced answers are shorter, which makes it about 1 s faster.
+
+#### Why retrieval collapsed
+
+- **Scoped:** on 51 of 68 held-out items, every scoped op scores 0 in BM25. On dev that happened for 1 of 30 items.
+  - The candidate list is then simply the model's first five ops in catalog order, and B0 is the first op (SET_TITLE, CREATE_PROJECT, CREATE_GOAL, …).
+  - 30 of the 43 "in top-5" items are there by this catalog-order accident.
+  - On those 51 items the H1 BM25 term is 0, so H1 is S3 there.
+- **Unscoped:** 22 items score 0 on every op.
+- **Cause:** the held-out writer kept the op name's words out of every utterance, and the models' own descriptions are thin. Lexical retrieval has almost nothing to match.
+
+#### Flips (scoped, op correct ↔ incorrect)
+
+- **B1 → H1: +19 / −6.**
+  - Gains: kn-03, moc-01, moc-02, moc-03, moc-05, src-03, prj-01, prj-04, prj-05, wbs-02, rc-01, obs-01, obs-02, obs-03, ten-01, ten-02, ten-03, pq-02, der-01.
+  - Losses: kn-04, prj-03, rc-04, pq-04, vc-02, hr-01.
+- **B0 → H1: +12 / −3.**
+  - Gains: kn-10, moc-02, moc-03, src-03, prj-04, prj-05, wbs-02, wbs-03, obs-03, ten-02, pq-02, der-01.
+  - Losses: kn-01, src-01, wbs-01.
+- **S2 → S3: +5 / −4.** Order averaging bought one net item.
+- **S3 key → S3 readable: +13 / −10.**
+  - Readable labels were net positive on held-out, the reverse of dev, where they lost 8 and gained 1.
+  - H1 with readable labels (not pre-registered, computed in the same run) is 23/68.
+- **Unscoped:** B1 → H1 is +2 / −1, and B0 → H1 is +2 / −0.
+
+#### Dev choices did not transfer
+
+- Every choice selected on dev was within noise there: mean vs sum, key vs readable labels, λ = 5, and 3 rotations.
+- On held-out, readable labels beat keys (S3 20 vs 17). Sum beat mean for scoped S1 (12 vs 7) and for unscoped S2 and S4 (3 vs 2), and tied for S3.
+- What did hold across both sets:
+  - Calibration is the large step: S1 → S2 is +9 scoped on held-out and +13 on dev.
+  - Fusing BM25 adds a few items on top: S3 → H1 is +5 on held-out.
+  - Scoped, every calibrated method beats the current B1 (9). Unscoped, only H1 does (6 vs 5), on 9 in-candidate items.
+
+#### No-action
+
+| | none-01 … none-06 picked "none" | Action items sent to "none" (false positives) |
+|---|---|---|
+| Scoped, H1 + none | 0/6 | 0/68 |
+| Scoped, S3 + none | 0/6 | 0/68 |
+| Scoped, S2 + none | 0/6 | 1/68 |
+| Unscoped, H1 / S3 / S2 + none | 0/6 | not run |
+
+- **"None" never won.** Its calibrated S3 score is below the best op on every no-action item: median −1.7 nats scoped (closest −0.4) and −2.65 unscoped. It ranks last or next to last.
+- **It also cost op accuracy.** Adding the option dropped H1 from 22 to 18 on the action items.
+- **Verdict:** a "none" candidate in the scoring list does not work at this size. No-action needs a separate gate, such as an intent classifier or "is this a request to change the document?".
+
+#### Args (oracle op, all 68 held-out items)
+
+50 items have exact-scored `args`, 22 have `refArgs`, and 23 have `requiredPresent`.
+
+| | A0 current | A1 copy-span + gate + ref labels | Dev A0 / A1 |
+|---|---|---|---|
+| Exact (fields match and no extras) | 24/50 (48%) | 23/50 (46%) | 5/21 / 15/21 |
+| Fields match (extras ignored) | 30/50 (60%) | 23/50 (46%) | 8/21 / 15/21 |
+| Items with hallucinated extra fields | 12 | **0** | 12 / 4 |
+| `requiredPresent` | 22/23 | 22/23 | – |
+| Ref-id exact | 8/22 | 9/22 | – |
+| Zod-valid | 67/68 | 68/68 | 30/30 / 30/30 |
+| Latency median / p90 (model calls) | 178 / 337 ms (67 calls) | 137 / 262 ms (61 calls) | – |
+
+- **Subset where H1 scoped picked the right op** (22 items; 16 with args, 5 with refs): A0 9/16 exact, A1 7/16, refs 1/5 for both.
+- **What A1 fixed:**
+  - All hallucinated optionals, e.g. `kind: "AGENT"`, invented `description`/`url`/`assignee`, `outcome: "TODO"`.
+  - Paraphrase and truncation: moc-10 `involvedRefs`, pq-01 `target`.
+  - Extras: prj-10 and wbs-01 became exact once the extras were gone.
+  - pq-06's nested `phase`.
+- **What A1 broke: the gate is too blunt.**
+  - It removed every field of all-optional ops, so prj-03, prj-04, prj-05, wbs-08 and vc-03 came back as `{}`.
+  - It dropped fields that were meant but not named: prj-06 `role`, wbs-07 `assignee`.
+  - Dev had no all-optional op with an expected value, so this was not visible there.
+  - **Counterfactual, not run:** if all seven of these became exact, A1 would reach at most 30/50 (60%).
+  - The fix for a next round is to gate only beside a required field, and never empty an op.
+- **Errors neither variant fixes:**
+  - **Ref-id choice:** 8–9/22 correct, nearly always the first candidate (g-1, t-1, m-1, d-1). The prompt has no document state, so labels alone do not tell the model which goal is "the benchmarking item".
+  - **Reducer vocabulary literals:** `rootCause`, `alternatives`, `staleNoteDays`, `topicMap`. They are not in the utterance, and the schema has no enum for them.
+  - **Enum semantics:**
+    - prj-02 ON_HOLD → ACTIVE
+    - wbs-04 WONT_DO → BLOCKED
+    - src-02 EXTRACTING → ARCHIVED (A1)
+    - vc-05 `active: false` → true
+    - kn-09 CONTRADICTS → BUILDS_ON (A1)
+    - hr-01 LINK_HEALTH → ORPHAN_DETECTION
+  - **Date normalization:** "December 15th" was not turned into an ISO date (A0 failed zod; A1 gated the field out).
+  - **Values that live in document state:** moc-08's question text.
+
+### Verdict: (c) not close; fine-tuning is justified, but a LoRA alone will not reach the bar
+
+- **Best held-out op accuracy, scoped:** H1 at 32.4% overall and 51.2% when the right op is among the candidates. **Unscoped:** 8.8%. The bar is 90–95%.
+- **Args exact:** 46–48% even with the oracle op.
+- **The decoding techniques help but do not close the gap.**
+  - Scored, calibrated selection beats today's sampled enum by +13 items scoped (9 → 22).
+  - The cost is about 3.9 s median and 4.9 s p90 per utterance on WebGPU, against 0.33 s.
+  - S2 alone (1.3 s) gets 16/68.
+- **What remains, by owner:**
+  1. **Retrieval (not a LoRA problem).** 25/68 scoped items, and 59/68 unscoped, never reach the candidates, because BM25 matches nothing on most held-out phrasings. Options:
+     - Score every op of the scoped model directly (typically 10–20 ops; S2 over 18 ops would be about 36 forced requests, roughly 5 s).
+     - Use embeddings.
+     - Train the LoRA to emit the op directly over the full scoped list.
+  2. **Op semantics (the LoRA's job).** Given the right candidates, about half are still wrong:
+     - Lifecycle and status ops lose to a sibling: prj-02 → SET_TARGET_DATE, wbs-04/05 → UPDATE_GOAL_DESCRIPTION, pq-04/06 → ASSIGN_TASK, src-02.
+     - Polarity: moc-04 ADD → REMOVE_CORE_IDEA, rc-03 REMOVE → ADD_RESEARCH_CONNECTION.
+     - Create vs update and field-name pull: wbs-01, rc-02, rc-04, kn-01, kn-02, prj-03, hr-01.
+     - Enum-value semantics inside args (ON_HOLD, WONT_DO, `active: false`, CONTRADICTS).
+     - Training data should cover each op's paraphrases without the op's own words, since that is exactly where both BM25 and the base model fail.
+  3. **Ref-ids (needs document state in the prompt, not just a LoRA).** Put the relevant entity rows (titles and statuses) into the step-2 prompt, or score ref labels by likelihood the way ops are scored.
+  4. **Schema and gating (code, not a LoRA).**
+     - Expose reducer vocabularies (metadata fields, threshold conditions, vocabulary keys) as enums.
+     - Keep copy-span for free text; it removed every hallucinated extra.
+     - Fix the gate so it never empties an op.
+     - Normalize dates in the app.
+  5. **No-action needs its own gate.** A "none" option was never chosen (0/6).
+
+**Caveats:**
+- The held-out set is 68 items written by one person, deliberately without op-name words. Real users will sometimes say "add a topic", which is the dev set's regime, where BM25 alone gets about 73%.
+- The truth for real traffic is probably between the two sets.
+- Every number above was observed once, on one machine (Chrome WebGPU, Apple `metal-3` adapter; see Environment).
