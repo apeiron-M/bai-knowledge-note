@@ -1,0 +1,3662 @@
+{
+  "r6Args:\"webgpu\":{\"mode\":\"r6\",\"gate\":\"safe\",\"scoreRefs\":true,\"scoreEnums\":false,\"refAggregate\":\"mean\",\"sets\":[\"dev\",\"devx\"],\"desc\":\"own\"}": {
+    "summary": {
+      "config": {
+        "mode": "r6",
+        "gate": "safe",
+        "scoreRefs": true,
+        "scoreEnums": false,
+        "refAggregate": "mean",
+        "sets": [
+          "dev",
+          "devx"
+        ],
+        "desc": "own"
+      },
+      "n": 49,
+      "exact": "23/34",
+      "fieldsMatch": "23/34",
+      "withExtras": 5,
+      "requiredPresent": "0/0",
+      "refExact": "11/13",
+      "zodOk": "49/49",
+      "emptyArgs": 0,
+      "genMedianMs": 109,
+      "genP90Ms": 163,
+      "refMedianMs": 305,
+      "refP90Ms": 368,
+      "refCfMedianMs": 305,
+      "exactByStyle": {
+        "all": "23/34",
+        "style=dev": "23/34",
+        "dev/undefined": "23/34"
+      },
+      "refByStyle": {
+        "all": "11/13",
+        "style=dev": "11/13",
+        "dev/undefined": "11/13"
+      }
+    },
+    "rows": [
+      {
+        "id": "dev-01",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "tag this note with distributed systems",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "distributed systems"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "distributed systems"
+        },
+        "raw": "{\"name\": \"distributed systems\"}",
+        "error": null,
+        "genMs": 141.40000009536743,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: tag this note with distributed systems",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-02",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add the topic machine learning",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "machine learning"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "machine learning"
+        },
+        "raw": "{\"name\": \"machine learning\"}",
+        "error": null,
+        "genMs": 100.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: add the topic machine learning",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-03",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "label this as epistemology",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "epistemology"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "epistemology"
+        },
+        "raw": "{\"name\": \"epistemology\"}",
+        "error": null,
+        "genMs": 102.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: label this as epistemology",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-04",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "file this note under productivity",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "productivity"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "productivity"
+        },
+        "raw": "{\"name\": \"productivity\"}",
+        "error": null,
+        "genMs": 101.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: file this note under productivity",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-05",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "rename this note to Spaced repetition beats cramming",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "Spaced repetition beats cramming"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Spaced repetition beats cramming"
+        },
+        "raw": "{\"title\": \"Spaced repetition beats cramming\"}",
+        "error": null,
+        "genMs": 117.40000009536743,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "title"
+        ],
+        "prompt": "Operation: SET_TITLE - Set the note title\nArguments: {\"title\": string}\nRequest: rename this note to Spaced repetition beats cramming",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-06",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "set the title to CAP theorem tradeoffs",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "CAP theorem tradeoffs"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "CAP theorem tradeoffs"
+        },
+        "raw": "{\"title\": \"CAP theorem tradeoffs\"}",
+        "error": null,
+        "genMs": 110.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "title"
+        ],
+        "prompt": "Operation: SET_TITLE - Set the note title\nArguments: {\"title\": string}\nRequest: set the title to CAP theorem tradeoffs",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-07",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "change the heading of the note to Why caches lie",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "Why caches lie"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Why caches lie"
+        },
+        "raw": "{\"title\": \"Why caches lie\"}",
+        "error": null,
+        "genMs": 100.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "title"
+        ],
+        "prompt": "Operation: SET_TITLE - Set the note title\nArguments: {\"title\": string}\nRequest: change the heading of the note to Why caches lie",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-08",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "set the description to A short argument for writing every day",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "A short argument for writing every day"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "A short argument"
+        },
+        "raw": "{\"description\": \"A short argument\"}",
+        "error": null,
+        "genMs": 99,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: SET_DESCRIPTION - Set the note description (max 200 chars)\nArguments: {\"description\": string}\nRequest: set the description to A short argument for writing every day",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-09",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "update the summary: explains how consensus protocols tolerate faults",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "explains how consensus protocols tolerate faults"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "consensus protocols tolerate faults"
+        },
+        "raw": "{\"description\": \"consensus protocols tolerate faults\"}",
+        "error": null,
+        "genMs": 115.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: SET_DESCRIPTION - Set the note description (max 200 chars)\nArguments: {\"description\": string}\nRequest: update the summary: explains how consensus protocols tolerate faults",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-10",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "describe this note as notes from the Raft paper",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "notes from the Raft paper"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "Raft paper"
+        },
+        "raw": "{\"description\": \"Raft paper\"}",
+        "error": null,
+        "genMs": 97.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: SET_DESCRIPTION - Set the note description (max 200 chars)\nArguments: {\"description\": string}\nRequest: describe this note as notes from the Raft paper",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-11",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "submit this note for review",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-12",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "send it to review, it's ready",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-13",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "I'm done drafting, request a review",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-14",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "remove the topic tag",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-15",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "untag this note",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-16",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add an open question: does spacing help procedural memory?",
+        "op": "moc:ADD_OPEN_QUESTION",
+        "expected": {
+          "args": {
+            "question": "does spacing help procedural memory?"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "question": "does spacing help procedural memory?"
+        },
+        "raw": "{\"question\": \"does spacing help procedural memory?\"}",
+        "error": null,
+        "genMs": 123.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "question"
+        ],
+        "prompt": "Operation: ADD_OPEN_QUESTION - Add an unexplored direction\nArguments: {\"question\": string}\nRequest: add an open question: does spacing help procedural memory?",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-17",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "note an unexplored direction: how do CRDTs handle deletes",
+        "op": "moc:ADD_OPEN_QUESTION",
+        "expected": {
+          "args": {
+            "question": "how do CRDTs handle deletes"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "question": "how do CRDTs handle deletes"
+        },
+        "raw": "{\"question\": \"how do CRDTs handle deletes\"}",
+        "error": null,
+        "genMs": 129.30000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "question"
+        ],
+        "prompt": "Operation: ADD_OPEN_QUESTION - Add an unexplored direction\nArguments: {\"question\": string}\nRequest: note an unexplored direction: how do CRDTs handle deletes",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-18",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "rewrite the synthesis paragraph to say memory is reconstructive",
+        "op": "moc:UPDATE_ORIENTATION",
+        "expected": {
+          "args": {
+            "orientation": "memory is reconstructive"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "orientation": "reconstructive"
+        },
+        "raw": "{\"orientation\": \"reconstructive\"}",
+        "error": null,
+        "genMs": 101.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "orientation"
+        ],
+        "prompt": "Operation: UPDATE_ORIENTATION - Update the synthesis paragraph\nArguments: {\"orientation\": string}\nRequest: rewrite the synthesis paragraph to say memory is reconstructive",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "orientation"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-19",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "update the orientation of this map",
+        "op": "moc:UPDATE_ORIENTATION",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "orientation": "map"
+        },
+        "raw": "{\"orientation\": \"map\"}",
+        "error": null,
+        "genMs": 94,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "orientation"
+        ],
+        "prompt": "Operation: UPDATE_ORIENTATION - Update the synthesis paragraph\nArguments: {\"orientation\": string}\nRequest: update the orientation of this map",
+        "fieldsMatch": null,
+        "extras": [
+          "orientation"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-20",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "queue a new extraction task for the Raft paper",
+        "op": "pipeline-queue:ADD_TASK",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "taskType": "claim",
+          "target": "Raft paper"
+        },
+        "raw": "{\"taskType\": \"claim\", \"target\": \"Raft paper\"}",
+        "error": null,
+        "genMs": 145.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "taskType",
+          "target"
+        ],
+        "prompt": "Operation: ADD_TASK - Add a new task to the pipeline\nArguments: {\"taskType\": \"claim\" | \"enrichment\", \"target\": string}\nRequest: queue a new extraction task for the Raft paper",
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-21",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add a task to reflect on the CRDT notes",
+        "op": "pipeline-queue:ADD_TASK",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "taskType": "enrichment",
+          "target": "CRDT notes",
+          "currentPhase": "reflect"
+        },
+        "raw": "{\"taskType\": \"enrichment\", \"target\": \"CRDT notes\", \"currentPhase\": \"reflect\"}",
+        "error": null,
+        "genMs": 187.40000009536743,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "taskType",
+          "target",
+          "currentPhase"
+        ],
+        "prompt": "Operation: ADD_TASK - Add a new task to the pipeline\nArguments: {\"taskType\": \"claim\" | \"enrichment\", \"target\": string, \"currentPhase\"?: \"create\" | \"enrich\" | \"reflect\" | \"reweave\" | \"verify\" | null}\nRequest: add a task to reflect on the CRDT notes",
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target",
+          "currentPhase"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-22",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "mark the task as blocked because the source is missing",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": {
+            "reason": "the source is missing"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "reason": "source is missing"
+        },
+        "raw": "{\"reason\": \"source is missing\"}",
+        "error": null,
+        "genMs": 106.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "reason"
+        ],
+        "prompt": "Operation: BLOCK_TASK - Mark task as blocked\nArguments: {\"reason\": string}\nRequest: mark the task as blocked because the source is missing",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "reason"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-23",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "the task is stuck waiting on review, block it",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "reason": "waiting on review"
+        },
+        "raw": "{\"reason\": \"waiting on review\"}",
+        "error": null,
+        "genMs": 109,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "reason"
+        ],
+        "prompt": "Operation: BLOCK_TASK - Mark task as blocked\nArguments: {\"reason\": string}\nRequest: the task is stuck waiting on review, block it",
+        "fieldsMatch": null,
+        "extras": [
+          "reason"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-24",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add Alice to the team as designer",
+        "op": "project:ADD_MEMBER",
+        "expected": {
+          "args": {
+            "name": "Alice",
+            "role": "designer"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Alice"
+        },
+        "raw": "{\"name\": \"Alice\"}",
+        "error": null,
+        "genMs": 91.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_MEMBER - add member\nArguments: {\"name\": string}\nRequest: add Alice to the team as designer",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-25",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add a team member named Bob",
+        "op": "project:ADD_MEMBER",
+        "expected": {
+          "args": {
+            "name": "Bob"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Bob"
+        },
+        "raw": "{\"name\": \"Bob\"}",
+        "error": null,
+        "genMs": 93.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_MEMBER - add member\nArguments: {\"name\": string}\nRequest: add a team member named Bob",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-26",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "put the project on hold",
+        "op": "project:SET_PROJECT_STATUS",
+        "expected": {
+          "args": {
+            "status": "ON_HOLD"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "ON_HOLD"
+        },
+        "raw": "{\"status\": \"ON_HOLD\"}",
+        "error": null,
+        "genMs": 106.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "status"
+        ],
+        "prompt": "Operation: SET_PROJECT_STATUS - set project status\nArguments: {\"status\": \"ACTIVE\" | \"ARCHIVED\" | \"COMPLETED\" | \"ON_HOLD\" | \"PLANNING\"}\nRequest: put the project on hold",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-27",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "mark the project as completed",
+        "op": "project:SET_PROJECT_STATUS",
+        "expected": {
+          "args": {
+            "status": "COMPLETED"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "COMPLETED"
+        },
+        "raw": "{\"status\": \"COMPLETED\"}",
+        "error": null,
+        "genMs": 101.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "status"
+        ],
+        "prompt": "Operation: SET_PROJECT_STATUS - set project status\nArguments: {\"status\": \"ACTIVE\" | \"ARCHIVED\" | \"COMPLETED\" | \"ON_HOLD\" | \"PLANNING\"}\nRequest: mark the project as completed",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-28",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "create a goal to write the onboarding guide",
+        "op": "wbs:CREATE_GOAL",
+        "expected": {
+          "args": {
+            "description": "write the onboarding guide"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "write the onboarding guide"
+        },
+        "raw": "{\"description\": \"write the onboarding guide\"}",
+        "error": null,
+        "genMs": 127.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: CREATE_GOAL - create goal\nArguments: {\"description\": string}\nRequest: create a goal to write the onboarding guide",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-29",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "new goal: ship the beta",
+        "op": "wbs:CREATE_GOAL",
+        "expected": {
+          "args": {
+            "description": "ship the beta"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "ship the beta"
+        },
+        "raw": "{\"description\": \"ship the beta\"}",
+        "error": null,
+        "genMs": 95.90000009536743,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: CREATE_GOAL - create goal\nArguments: {\"description\": string}\nRequest: new goal: ship the beta",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-30",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "set the goal status to in progress",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "IN_PROGRESS"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "IN_PROGRESS"
+        },
+        "raw": "{\"status\": \"IN_PROGRESS\"}",
+        "error": null,
+        "genMs": 111.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "status"
+        ],
+        "prompt": "Operation: SET_GOAL_STATUS - set goal status\nArguments: {\"status\": \"BLOCKED\" | \"COMPLETED\" | \"IN_PROGRESS\" | \"IN_REVIEW\" | \"TODO\" | \"WONT_DO\"}\nRequest: set the goal status to in progress",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-01",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "drop the machine learning tag",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "t-2"
+          }
+        },
+        "args": {
+          "id": "t-2"
+        },
+        "raw": "{\"id\": \"machine learning\"}",
+        "error": null,
+        "genMs": 98.20000004768372,
+        "refMs": 328.1999999284744,
+        "refCfMs": 324.5,
+        "refField": "id",
+        "refScores": {
+          "distributed systems": -0.9998921529282825,
+          "machine learning": 0.16547311667585518,
+          "epistemology": -0.12149684244434411
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_TOPIC - Remove a topic tag by ID\nChoices for id: \"distributed systems\", \"machine learning\", \"epistemology\"\nArguments: {\"id\": choice}\nRequest: drop the machine learning tag",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-02",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "this note is not about epistemology anymore, untag it",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "t-3"
+          }
+        },
+        "args": {
+          "id": "t-3"
+        },
+        "raw": "{\"id\": \"epistemology\"}",
+        "error": null,
+        "genMs": 102.09999990463257,
+        "refMs": 305.299999833107,
+        "refCfMs": 304.5000001192093,
+        "refField": "id",
+        "refScores": {
+          "memory": 0.5860127921979645,
+          "learning science": 1.0114319368305067,
+          "epistemology": 1.106737776241971
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_TOPIC - Remove a topic tag by ID\nChoices for id: \"memory\", \"learning science\", \"epistemology\"\nArguments: {\"id\": choice}\nRequest: this note is not about epistemology anymore, untag it",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-03",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "the link to the Raft paper should say it contradicts this note",
+        "op": "knowledge-note:UPDATE_LINK_TYPE",
+        "expected": {
+          "args": {
+            "linkType": "CONTRADICTS"
+          },
+          "refArgs": {
+            "id": "l-2"
+          }
+        },
+        "args": {
+          "id": "l-3",
+          "linkType": "DERIVED_FROM"
+        },
+        "raw": "{\"id\": \"CAP theorem\", \"linkType\": \"DERIVED_FROM\"}",
+        "error": null,
+        "genMs": 163.09999990463257,
+        "refMs": 368.1999999284744,
+        "refCfMs": 333.8000000715256,
+        "refField": "id",
+        "refScores": {
+          "Paxos made simple": 0.1545335249523534,
+          "Raft paper": 0.7544466432997581,
+          "CAP theorem": 0.8983149522540828
+        },
+        "gatedFields": [
+          "id",
+          "linkType"
+        ],
+        "prompt": "Operation: UPDATE_LINK_TYPE - Change a link's type\nChoices for id: \"Paxos made simple\", \"Raft paper\", \"CAP theorem\"\nArguments: {\"id\": choice, \"linkType\": \"BUILDS_ON\" | \"CONTRADICTS\" | \"DERIVED_FROM\" | \"RELATES_TO\" | \"SUPERSEDES\"}\nRequest: the link to the Raft paper should say it contradicts this note",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "linkType"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-04",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "get rid of the link to CAP theorem",
+        "op": "knowledge-note:REMOVE_LINK",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "l-3"
+          }
+        },
+        "args": {
+          "id": "l-3"
+        },
+        "raw": "{\"id\": \"CAP theorem\"}",
+        "error": null,
+        "genMs": 100.5,
+        "refMs": 337.59999990463257,
+        "refCfMs": 326.5000001192093,
+        "refField": "id",
+        "refScores": {
+          "Paxos made simple": 0.010220395747455702,
+          "Raft paper": 0.12785091610999189,
+          "CAP theorem": 0.6029256727240409
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_LINK - Remove a link by ID\nChoices for id: \"Paxos made simple\", \"Raft paper\", \"CAP theorem\"\nArguments: {\"id\": choice}\nRequest: get rid of the link to CAP theorem",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-05",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "the onboarding guide goal is finished",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "COMPLETED"
+          },
+          "refArgs": {
+            "id": "g-2"
+          }
+        },
+        "args": {
+          "id": "g-2",
+          "status": "COMPLETED"
+        },
+        "raw": "{\"id\": \"Write the onboarding guide\", \"status\": \"COMPLETED\"}",
+        "error": null,
+        "genMs": 164.79999995231628,
+        "refMs": 376.09999990463257,
+        "refCfMs": 378.7000000476837,
+        "refField": "id",
+        "refScores": {
+          "Ship the beta": 0.041622856859248714,
+          "Write the onboarding guide": 2.0300994448460328,
+          "Set up CI": 0.4921303721857839
+        },
+        "gatedFields": [
+          "id",
+          "status"
+        ],
+        "prompt": "Operation: SET_GOAL_STATUS - set goal status\nChoices for id: \"Ship the beta\", \"Write the onboarding guide\", \"Set up CI\"\nArguments: {\"id\": choice, \"status\": \"BLOCKED\" | \"COMPLETED\" | \"IN_PROGRESS\" | \"IN_REVIEW\" | \"TODO\" | \"WONT_DO\"}\nRequest: the onboarding guide goal is finished",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-06",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "delete the CI goal",
+        "op": "wbs:DELETE_GOAL",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "g-3"
+          }
+        },
+        "args": {
+          "id": "g-2"
+        },
+        "raw": "{\"id\": \"Write the onboarding guide\"}",
+        "error": null,
+        "genMs": 113.79999995231628,
+        "refMs": 358.8000000715256,
+        "refCfMs": 344,
+        "refField": "id",
+        "refScores": {
+          "Ship the beta": 0.09942693907093303,
+          "Write the onboarding guide": 0.36403555586461644,
+          "Set up CI": 0.25474878446766525
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: DELETE_GOAL - delete goal\nChoices for id: \"Ship the beta\", \"Write the onboarding guide\", \"Set up CI\"\nArguments: {\"id\": choice}\nRequest: delete the CI goal",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-07",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "give the beta goal to Priya",
+        "op": "wbs:ASSIGN_GOAL",
+        "expected": {
+          "args": {
+            "assignee": "Priya"
+          },
+          "refArgs": {
+            "id": "g-2"
+          }
+        },
+        "args": {
+          "id": "g-2",
+          "assignee": "Priya"
+        },
+        "raw": "{\"id\": \"Ship the beta\", \"assignee\": \"Priya\"}",
+        "error": null,
+        "genMs": 150.10000002384186,
+        "refMs": 220.69999992847443,
+        "refCfMs": 208.60000002384186,
+        "refField": "id",
+        "refScores": {
+          "Set up CI": 0.13358707290854,
+          "Ship the beta": 0.43337456086414416
+        },
+        "gatedFields": [
+          "id",
+          "assignee"
+        ],
+        "prompt": "Operation: ASSIGN_GOAL - assign goal\nChoices for id: \"Set up CI\", \"Ship the beta\"\nArguments: {\"id\": choice, \"assignee\"?: string | null}\nRequest: give the beta goal to Priya",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-08",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "Bob left, take him off the team",
+        "op": "project:REMOVE_MEMBER",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "m-2"
+          }
+        },
+        "args": {
+          "id": "m-2"
+        },
+        "raw": "{\"id\": \"Bob\"}",
+        "error": null,
+        "genMs": 93.39999997615814,
+        "refMs": 293.10000002384186,
+        "refCfMs": 285.2999999523163,
+        "refField": "id",
+        "refScores": {
+          "Alice": 0.11059379350107124,
+          "Bob": 1.9751429462800538,
+          "Carol": 0.36621139341994935
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_MEMBER - remove member\nChoices for id: \"Alice\", \"Bob\", \"Carol\"\nArguments: {\"id\": choice}\nRequest: Bob left, take him off the team",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-09",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "the API docs deliverable shipped today",
+        "op": "project:SET_DELIVERABLE_STATUS",
+        "expected": {
+          "args": {
+            "status": "DELIVERED"
+          },
+          "refArgs": {
+            "id": "d-2"
+          }
+        },
+        "args": {
+          "id": "d-2",
+          "status": "DELIVERED"
+        },
+        "raw": "{\"id\": \"API docs\", \"status\": \"DELIVERED\"}",
+        "error": null,
+        "genMs": 148.70000004768372,
+        "refMs": 238,
+        "refCfMs": 211.5,
+        "refField": "id",
+        "refScores": {
+          "Design mockups": 0.16452265266048016,
+          "API docs": 1.5746080182918831
+        },
+        "gatedFields": [
+          "id",
+          "status"
+        ],
+        "prompt": "Operation: SET_DELIVERABLE_STATUS - set deliverable status\nChoices for id: \"Design mockups\", \"API docs\"\nArguments: {\"id\": choice, \"status\": \"CANCELLED\" | \"DELIVERED\" | \"IN_PROGRESS\" | \"PLANNED\"}\nRequest: the API docs deliverable shipped today",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-10",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "Carol is now our tech lead",
+        "op": "project:UPDATE_MEMBER",
+        "expected": {
+          "args": {
+            "role": "tech lead"
+          },
+          "refArgs": {
+            "id": "m-3"
+          }
+        },
+        "args": {
+          "id": "m-3",
+          "name": "Carol"
+        },
+        "raw": "{\"id\": \"Carol\", \"name\": \"Carol\"}",
+        "error": null,
+        "genMs": 137.70000004768372,
+        "refMs": 303.4999998807907,
+        "refCfMs": 296.8000000715256,
+        "refField": "id",
+        "refScores": {
+          "Alice": 0.101308632572779,
+          "Bob": 1.0537287836811329,
+          "Carol": 1.6211002872479572
+        },
+        "gatedFields": [
+          "id",
+          "name",
+          "role",
+          "kind"
+        ],
+        "prompt": "Operation: UPDATE_MEMBER - update member\nChoices for id: \"Alice\", \"Bob\", \"Carol\"\nArguments: {\"id\": choice, \"name\"?: string | null, \"role\"?: string | null, \"kind\"?: \"AGENT\" | \"HUMAN\" | null}\nRequest: Carol is now our tech lead",
+        "fieldsMatch": false,
+        "extras": [
+          "name"
+        ],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-11",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "block the CRDT reflection task because the notes are not written yet",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": {
+            "reason": "the notes are not written yet"
+          },
+          "refArgs": {
+            "taskId": "q-2"
+          }
+        },
+        "args": {
+          "taskId": "q-2",
+          "reason": "the notes are not written yet"
+        },
+        "raw": "{\"taskId\": \"reflect on CRDT notes\", \"reason\": \"the notes are not written yet\"}",
+        "error": null,
+        "genMs": 174.19999992847443,
+        "refMs": 252.9999998807907,
+        "refCfMs": 242.0000001192093,
+        "refField": "taskId",
+        "refScores": {
+          "extract Raft paper": 0.09353364186154067,
+          "reflect on CRDT notes": 0.8360575397353311
+        },
+        "gatedFields": [
+          "taskId",
+          "reason"
+        ],
+        "prompt": "Operation: BLOCK_TASK - Mark task as blocked\nChoices for taskId: \"extract Raft paper\", \"reflect on CRDT notes\"\nArguments: {\"taskId\": choice, \"reason\": string}\nRequest: block the CRDT reflection task because the notes are not written yet",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-12",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "take the spacing effect idea out of this map",
+        "op": "moc:REMOVE_CORE_IDEA",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "c-2"
+          }
+        },
+        "args": {
+          "id": "c-2"
+        },
+        "raw": "{\"id\": \"Spacing effect\"}",
+        "error": null,
+        "genMs": 120,
+        "refMs": 331.2000000476837,
+        "refCfMs": 320.7999999523163,
+        "refField": "id",
+        "refScores": {
+          "Retrieval practice": -0.24284782367309765,
+          "Spacing effect": 1.3004035512872179,
+          "Interleaving": 0.7122684438384113
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_CORE_IDEA - Remove a note from Core Ideas\nChoices for id: \"Retrieval practice\", \"Spacing effect\", \"Interleaving\"\nArguments: {\"id\": choice}\nRequest: take the spacing effect idea out of this map",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-13",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "stop extracting the quotes category",
+        "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "expected": {
+          "args": {
+            "active": false
+          },
+          "refArgs": {
+            "id": "x-2"
+          }
+        },
+        "args": {
+          "id": "x-2",
+          "active": true
+        },
+        "raw": "{\"id\": \"quotes\", \"active\": true}",
+        "error": null,
+        "genMs": 113.89999997615814,
+        "refMs": 200.59999990463257,
+        "refCfMs": 194.30000007152557,
+        "refField": "id",
+        "refScores": {
+          "claims": 0.12211948134271156,
+          "quotes": 1.376320174370838
+        },
+        "gatedFields": [
+          "id",
+          "active"
+        ],
+        "prompt": "Operation: TOGGLE_EXTRACTION_CATEGORY - Enable/disable an extraction category\nChoices for id: \"claims\", \"quotes\"\nArguments: {\"id\": choice, \"active\": boolean}\nRequest: stop extracting the quotes category",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "active"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-14",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "record the root cause: the cache key ignored the locale",
+        "op": "knowledge-note:SET_METADATA_FIELD",
+        "expected": {
+          "args": {
+            "field": "rootCause",
+            "value": "the cache key ignored the locale"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "field": "rootCause"
+        },
+        "raw": "{\"field\": \"rootCause\"}",
+        "error": null,
+        "genMs": 123.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "field"
+        ],
+        "prompt": "Operation: SET_METADATA_FIELD - Set any string metadata field by name\nArguments: {\"field\": \"scope\" | \"confidence\" | \"severity\" | \"editor\" | \"modelId\" | \"version\" | \"filePath\" | \"computes\" | \"context\" | \"decisionStatus\" | \"model\" | \"sourceType\" | \"targetType\" | \"relationType\" | \"cardinality\" | \"errorMessage\" | \"rootCause\" | \"correctPattern\"}\nRequest: record the root cause: the cache key ignored the locale",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "value"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-15",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "this is a decision record",
+        "op": "knowledge-note:SET_NOTE_TYPE",
+        "expected": {
+          "args": {
+            "noteType": "decision"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "noteType": "decision"
+        },
+        "raw": "{\"noteType\": \"decision\"}",
+        "error": null,
+        "genMs": 105.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "noteType"
+        ],
+        "prompt": "Operation: SET_NOTE_TYPE - Set or change the note type\nArguments: {\"noteType\": \"concept\" | \"decision\" | \"pattern\" | \"observation\" | \"procedure\" | \"architecture\" | \"bug-pattern\" | \"integration\" | \"workflow\" | \"reference\"}\nRequest: this is a decision record",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-16",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "flag notes as stale after 60 days",
+        "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "expected": {
+          "args": {
+            "condition": "staleNoteDays",
+            "threshold": 60
+          },
+          "refArgs": null
+        },
+        "args": {
+          "condition": "orphanThreshold",
+          "threshold": 60
+        },
+        "raw": "{\"condition\": \"orphanThreshold\", \"threshold\": 60}",
+        "error": null,
+        "genMs": 178.40000009536743,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "condition",
+          "threshold"
+        ],
+        "prompt": "Operation: UPDATE_MAINTENANCE_THRESHOLD - Update a maintenance threshold\nArguments: {\"condition\": \"orphanThreshold\" | \"danglingThreshold\" | \"inboxPressure\" | \"observationAccumulation\" | \"tensionAccumulation\" | \"mocOversize\" | \"staleNoteDays\", \"threshold\": number}\nRequest: flag notes as stale after 60 days",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "condition"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-17",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "call the inbox \"capture\" from now on",
+        "op": "vault-config:UPDATE_VOCABULARY",
+        "expected": {
+          "args": {
+            "key": "inbox",
+            "value": "capture"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "key": "inbox",
+          "value": "capture"
+        },
+        "raw": "{\"key\": \"inbox\", \"value\": \"capture\"}",
+        "error": null,
+        "genMs": 136.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "key",
+          "value"
+        ],
+        "prompt": "Operation: UPDATE_VOCABULARY - Update a vocabulary term\nArguments: {\"key\": \"notes\" | \"inbox\" | \"reduce\" | \"reflect\" | \"reweave\" | \"verify\" | \"rethink\" | \"topicMap\" | \"description\", \"value\": string}\nRequest: call the inbox \"capture\" from now on",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-18",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "use the deep processing pipeline",
+        "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "expected": {
+          "args": {
+            "depth": "deep"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "depth": "deep"
+        },
+        "raw": "{\"depth\": \"deep\"}",
+        "error": null,
+        "genMs": 105,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "depth"
+        ],
+        "prompt": "Operation: UPDATE_PIPELINE_CONFIG - Update pipeline settings\nArguments: {\"depth\"?: \"quick\" | \"standard\" | \"deep\" | null}\nRequest: use the deep processing pipeline",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-19",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "rename the project to Atlas",
+        "op": "project:UPDATE_PROJECT_INFO",
+        "expected": {
+          "args": {
+            "name": "Atlas"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Atlas"
+        },
+        "raw": "{\"name\": \"Atlas\"}",
+        "error": null,
+        "genMs": 100.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name",
+          "description"
+        ],
+        "prompt": "Operation: UPDATE_PROJECT_INFO - update project info\nArguments: {\"name\"?: string | null, \"description\"?: string | null}\nRequest: rename the project to Atlas",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      }
+    ]
+  },
+  "r6Args:\"webgpu\":{\"mode\":\"r6\",\"gate\":\"safe\",\"scoreRefs\":true,\"scoreEnums\":true,\"refAggregate\":\"mean\",\"sets\":[\"dev\",\"devx\"],\"desc\":\"own\"}": {
+    "summary": {
+      "config": {
+        "mode": "r6",
+        "gate": "safe",
+        "scoreRefs": true,
+        "scoreEnums": true,
+        "refAggregate": "mean",
+        "sets": [
+          "dev",
+          "devx"
+        ],
+        "desc": "own"
+      },
+      "n": 49,
+      "exact": "24/34",
+      "fieldsMatch": "24/34",
+      "withExtras": 5,
+      "requiredPresent": "0/0",
+      "refExact": "11/13",
+      "zodOk": "49/49",
+      "emptyArgs": 0,
+      "genMedianMs": 103,
+      "genP90Ms": 133,
+      "refMedianMs": 256,
+      "refP90Ms": 969,
+      "refCfMedianMs": 842,
+      "exactByStyle": {
+        "all": "24/34",
+        "style=dev": "24/34",
+        "dev/undefined": "24/34"
+      },
+      "refByStyle": {
+        "all": "11/13",
+        "style=dev": "11/13",
+        "dev/undefined": "11/13"
+      }
+    },
+    "rows": [
+      {
+        "id": "dev-01",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "tag this note with distributed systems",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "distributed systems"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "distributed systems"
+        },
+        "raw": "{\"name\": \"distributed systems\"}",
+        "error": null,
+        "genMs": 103.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: tag this note with distributed systems",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-02",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add the topic machine learning",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "machine learning"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "machine learning"
+        },
+        "raw": "{\"name\": \"machine learning\"}",
+        "error": null,
+        "genMs": 94.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: add the topic machine learning",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-03",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "label this as epistemology",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "epistemology"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "epistemology"
+        },
+        "raw": "{\"name\": \"epistemology\"}",
+        "error": null,
+        "genMs": 97.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: label this as epistemology",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-04",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "file this note under productivity",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "productivity"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "productivity"
+        },
+        "raw": "{\"name\": \"productivity\"}",
+        "error": null,
+        "genMs": 110.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_TOPIC - Tag the note with a topic\nArguments: {\"name\": string}\nRequest: file this note under productivity",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-05",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "rename this note to Spaced repetition beats cramming",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "Spaced repetition beats cramming"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Spaced repetition beats cramming"
+        },
+        "raw": "{\"title\": \"Spaced repetition beats cramming\"}",
+        "error": null,
+        "genMs": 116.90000009536743,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "title"
+        ],
+        "prompt": "Operation: SET_TITLE - Set the note title\nArguments: {\"title\": string}\nRequest: rename this note to Spaced repetition beats cramming",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-06",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "set the title to CAP theorem tradeoffs",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "CAP theorem tradeoffs"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "CAP theorem tradeoffs"
+        },
+        "raw": "{\"title\": \"CAP theorem tradeoffs\"}",
+        "error": null,
+        "genMs": 110,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "title"
+        ],
+        "prompt": "Operation: SET_TITLE - Set the note title\nArguments: {\"title\": string}\nRequest: set the title to CAP theorem tradeoffs",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-07",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "change the heading of the note to Why caches lie",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "Why caches lie"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "title": "Why caches lie"
+        },
+        "raw": "{\"title\": \"Why caches lie\"}",
+        "error": null,
+        "genMs": 101.30000007152557,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "title"
+        ],
+        "prompt": "Operation: SET_TITLE - Set the note title\nArguments: {\"title\": string}\nRequest: change the heading of the note to Why caches lie",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-08",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "set the description to A short argument for writing every day",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "A short argument for writing every day"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "A short argument"
+        },
+        "raw": "{\"description\": \"A short argument\"}",
+        "error": null,
+        "genMs": 98.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: SET_DESCRIPTION - Set the note description (max 200 chars)\nArguments: {\"description\": string}\nRequest: set the description to A short argument for writing every day",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-09",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "update the summary: explains how consensus protocols tolerate faults",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "explains how consensus protocols tolerate faults"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "consensus protocols tolerate faults"
+        },
+        "raw": "{\"description\": \"consensus protocols tolerate faults\"}",
+        "error": null,
+        "genMs": 115.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: SET_DESCRIPTION - Set the note description (max 200 chars)\nArguments: {\"description\": string}\nRequest: update the summary: explains how consensus protocols tolerate faults",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-10",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "describe this note as notes from the Raft paper",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "notes from the Raft paper"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "Raft paper"
+        },
+        "raw": "{\"description\": \"Raft paper\"}",
+        "error": null,
+        "genMs": 97,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: SET_DESCRIPTION - Set the note description (max 200 chars)\nArguments: {\"description\": string}\nRequest: describe this note as notes from the Raft paper",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-11",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "submit this note for review",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-12",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "send it to review, it's ready",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-13",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "I'm done drafting, request a review",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-14",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "remove the topic tag",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-15",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "untag this note",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "genMs": 0,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [],
+        "prompt": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-16",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add an open question: does spacing help procedural memory?",
+        "op": "moc:ADD_OPEN_QUESTION",
+        "expected": {
+          "args": {
+            "question": "does spacing help procedural memory?"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "question": "does spacing help procedural memory?"
+        },
+        "raw": "{\"question\": \"does spacing help procedural memory?\"}",
+        "error": null,
+        "genMs": 123.5,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "question"
+        ],
+        "prompt": "Operation: ADD_OPEN_QUESTION - Add an unexplored direction\nArguments: {\"question\": string}\nRequest: add an open question: does spacing help procedural memory?",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-17",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "note an unexplored direction: how do CRDTs handle deletes",
+        "op": "moc:ADD_OPEN_QUESTION",
+        "expected": {
+          "args": {
+            "question": "how do CRDTs handle deletes"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "question": "how do CRDTs handle deletes"
+        },
+        "raw": "{\"question\": \"how do CRDTs handle deletes\"}",
+        "error": null,
+        "genMs": 118.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "question"
+        ],
+        "prompt": "Operation: ADD_OPEN_QUESTION - Add an unexplored direction\nArguments: {\"question\": string}\nRequest: note an unexplored direction: how do CRDTs handle deletes",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-18",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "rewrite the synthesis paragraph to say memory is reconstructive",
+        "op": "moc:UPDATE_ORIENTATION",
+        "expected": {
+          "args": {
+            "orientation": "memory is reconstructive"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "orientation": "reconstructive"
+        },
+        "raw": "{\"orientation\": \"reconstructive\"}",
+        "error": null,
+        "genMs": 103.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "orientation"
+        ],
+        "prompt": "Operation: UPDATE_ORIENTATION - Update the synthesis paragraph\nArguments: {\"orientation\": string}\nRequest: rewrite the synthesis paragraph to say memory is reconstructive",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "orientation"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-19",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "update the orientation of this map",
+        "op": "moc:UPDATE_ORIENTATION",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "orientation": "map"
+        },
+        "raw": "{\"orientation\": \"map\"}",
+        "error": null,
+        "genMs": 92.89999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "orientation"
+        ],
+        "prompt": "Operation: UPDATE_ORIENTATION - Update the synthesis paragraph\nArguments: {\"orientation\": string}\nRequest: update the orientation of this map",
+        "fieldsMatch": null,
+        "extras": [
+          "orientation"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-20",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "queue a new extraction task for the Raft paper",
+        "op": "pipeline-queue:ADD_TASK",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "taskType": "claim",
+          "target": "Raft paper"
+        },
+        "raw": "{\"taskType\": \"claim\", \"target\": \"Raft paper\"}",
+        "error": null,
+        "genMs": 137,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "taskType",
+          "target"
+        ],
+        "prompt": "Operation: ADD_TASK - Add a new task to the pipeline\nArguments: {\"taskType\": \"claim\" | \"enrichment\", \"target\": string}\nRequest: queue a new extraction task for the Raft paper",
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-21",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add a task to reflect on the CRDT notes",
+        "op": "pipeline-queue:ADD_TASK",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "taskType": "enrichment",
+          "target": "CRDT notes",
+          "currentPhase": "reflect"
+        },
+        "raw": "{\"taskType\": \"enrichment\", \"target\": \"CRDT notes\", \"currentPhase\": \"reflect\"}",
+        "error": null,
+        "genMs": 184.10000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "taskType",
+          "target",
+          "currentPhase"
+        ],
+        "prompt": "Operation: ADD_TASK - Add a new task to the pipeline\nArguments: {\"taskType\": \"claim\" | \"enrichment\", \"target\": string, \"currentPhase\"?: \"create\" | \"enrich\" | \"reflect\" | \"reweave\" | \"verify\" | null}\nRequest: add a task to reflect on the CRDT notes",
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target",
+          "currentPhase"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-22",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "mark the task as blocked because the source is missing",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": {
+            "reason": "the source is missing"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "reason": "source is missing"
+        },
+        "raw": "{\"reason\": \"source is missing\"}",
+        "error": null,
+        "genMs": 102.70000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "reason"
+        ],
+        "prompt": "Operation: BLOCK_TASK - Mark task as blocked\nArguments: {\"reason\": string}\nRequest: mark the task as blocked because the source is missing",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "reason"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-23",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "the task is stuck waiting on review, block it",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": null,
+          "refArgs": null
+        },
+        "args": {
+          "reason": "waiting on review"
+        },
+        "raw": "{\"reason\": \"waiting on review\"}",
+        "error": null,
+        "genMs": 109.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "reason"
+        ],
+        "prompt": "Operation: BLOCK_TASK - Mark task as blocked\nArguments: {\"reason\": string}\nRequest: the task is stuck waiting on review, block it",
+        "fieldsMatch": null,
+        "extras": [
+          "reason"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-24",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add Alice to the team as designer",
+        "op": "project:ADD_MEMBER",
+        "expected": {
+          "args": {
+            "name": "Alice",
+            "role": "designer"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Alice"
+        },
+        "raw": "{\"name\": \"Alice\"}",
+        "error": null,
+        "genMs": 91.69999992847443,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_MEMBER - add member\nArguments: {\"name\": string}\nRequest: add Alice to the team as designer",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dev-25",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "add a team member named Bob",
+        "op": "project:ADD_MEMBER",
+        "expected": {
+          "args": {
+            "name": "Bob"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Bob"
+        },
+        "raw": "{\"name\": \"Bob\"}",
+        "error": null,
+        "genMs": 82.29999995231628,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name"
+        ],
+        "prompt": "Operation: ADD_MEMBER - add member\nArguments: {\"name\": string}\nRequest: add a team member named Bob",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-26",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "put the project on hold",
+        "op": "project:SET_PROJECT_STATUS",
+        "expected": {
+          "args": {
+            "status": "ON_HOLD"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "ON_HOLD"
+        },
+        "raw": "{\"status\": \"ON_HOLD\"}",
+        "error": null,
+        "genMs": 107.20000004768372,
+        "refMs": 512.7999999523163,
+        "refCfMs": 516.200000166893,
+        "refField": "status",
+        "refScores": {
+          "ACTIVE": -0.836769664207168,
+          "ARCHIVED": 0.00748406586768624,
+          "COMPLETED": 0.05455995341048947,
+          "ON_HOLD": 0.5962773514581841,
+          "PLANNING": 0.17318593158461226
+        },
+        "gatedFields": [
+          "status"
+        ],
+        "prompt": "Operation: SET_PROJECT_STATUS - set project status\nArguments: {\"status\": \"ACTIVE\" | \"ARCHIVED\" | \"COMPLETED\" | \"ON_HOLD\" | \"PLANNING\"}\nRequest: put the project on hold",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-27",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "mark the project as completed",
+        "op": "project:SET_PROJECT_STATUS",
+        "expected": {
+          "args": {
+            "status": "COMPLETED"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "COMPLETED"
+        },
+        "raw": "{\"status\": \"COMPLETED\"}",
+        "error": null,
+        "genMs": 58.89999997615814,
+        "refMs": 396.89999997615814,
+        "refCfMs": 0,
+        "refField": "status",
+        "refScores": {
+          "ACTIVE": -1.0635149533905277,
+          "ARCHIVED": -0.8063285100386395,
+          "COMPLETED": 0.44134055660268245,
+          "ON_HOLD": -0.9630902814026001,
+          "PLANNING": -0.44775054876774334
+        },
+        "gatedFields": [
+          "status"
+        ],
+        "prompt": "Operation: SET_PROJECT_STATUS - set project status\nArguments: {\"status\": \"ACTIVE\" | \"ARCHIVED\" | \"COMPLETED\" | \"ON_HOLD\" | \"PLANNING\"}\nRequest: mark the project as completed",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-28",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "create a goal to write the onboarding guide",
+        "op": "wbs:CREATE_GOAL",
+        "expected": {
+          "args": {
+            "description": "write the onboarding guide"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "write the onboarding guide"
+        },
+        "raw": "{\"description\": \"write the onboarding guide\"}",
+        "error": null,
+        "genMs": 125.39999997615814,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: CREATE_GOAL - create goal\nArguments: {\"description\": string}\nRequest: create a goal to write the onboarding guide",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-29",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "new goal: ship the beta",
+        "op": "wbs:CREATE_GOAL",
+        "expected": {
+          "args": {
+            "description": "ship the beta"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "description": "ship the beta"
+        },
+        "raw": "{\"description\": \"ship the beta\"}",
+        "error": null,
+        "genMs": 91.60000002384186,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "description"
+        ],
+        "prompt": "Operation: CREATE_GOAL - create goal\nArguments: {\"description\": string}\nRequest: new goal: ship the beta",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dev-30",
+        "set": "dev",
+        "style": "dev",
+        "utterance": "set the goal status to in progress",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "IN_PROGRESS"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "status": "IN_PROGRESS"
+        },
+        "raw": "{\"status\": \"IN_PROGRESS\"}",
+        "error": null,
+        "genMs": 116.30000007152557,
+        "refMs": 679.7999999523163,
+        "refCfMs": 662.4000000953674,
+        "refField": "status",
+        "refScores": {
+          "BLOCKED": -2.6184321587456285,
+          "COMPLETED": -0.7918677235520022,
+          "IN_PROGRESS": 0.35102158366908043,
+          "IN_REVIEW": -0.48195108404711884,
+          "TODO": -2.1312226540383437,
+          "WONT_DO": -0.9876764441141355
+        },
+        "gatedFields": [
+          "status"
+        ],
+        "prompt": "Operation: SET_GOAL_STATUS - set goal status\nArguments: {\"status\": \"BLOCKED\" | \"COMPLETED\" | \"IN_PROGRESS\" | \"IN_REVIEW\" | \"TODO\" | \"WONT_DO\"}\nRequest: set the goal status to in progress",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-01",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "drop the machine learning tag",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "t-2"
+          }
+        },
+        "args": {
+          "id": "t-2"
+        },
+        "raw": "{\"id\": \"machine learning\"}",
+        "error": null,
+        "genMs": 62,
+        "refMs": 256.39999997615814,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "distributed systems": -0.9998921529282825,
+          "machine learning": 0.16547311667585518,
+          "epistemology": -0.12149684244434411
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_TOPIC - Remove a topic tag by ID\nChoices for id: \"distributed systems\", \"machine learning\", \"epistemology\"\nArguments: {\"id\": choice}\nRequest: drop the machine learning tag",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-02",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "this note is not about epistemology anymore, untag it",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "t-3"
+          }
+        },
+        "args": {
+          "id": "t-3"
+        },
+        "raw": "{\"id\": \"epistemology\"}",
+        "error": null,
+        "genMs": 65.90000009536743,
+        "refMs": 237.5,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "memory": 0.5860127921979645,
+          "learning science": 1.0114319368305067,
+          "epistemology": 1.106737776241971
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_TOPIC - Remove a topic tag by ID\nChoices for id: \"memory\", \"learning science\", \"epistemology\"\nArguments: {\"id\": choice}\nRequest: this note is not about epistemology anymore, untag it",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-03",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "the link to the Raft paper should say it contradicts this note",
+        "op": "knowledge-note:UPDATE_LINK_TYPE",
+        "expected": {
+          "args": {
+            "linkType": "CONTRADICTS"
+          },
+          "refArgs": {
+            "id": "l-2"
+          }
+        },
+        "args": {
+          "id": "l-3",
+          "linkType": "DERIVED_FROM"
+        },
+        "raw": "{\"id\": \"CAP theorem\", \"linkType\": \"DERIVED_FROM\"}",
+        "error": null,
+        "genMs": 125.30000007152557,
+        "refMs": 218.79999995231628,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Paxos made simple": 0.1545335249523534,
+          "Raft paper": 0.7544466432997581,
+          "CAP theorem": 0.8983149522540828
+        },
+        "gatedFields": [
+          "id",
+          "linkType"
+        ],
+        "prompt": "Operation: UPDATE_LINK_TYPE - Change a link's type\nChoices for id: \"Paxos made simple\", \"Raft paper\", \"CAP theorem\"\nArguments: {\"id\": choice, \"linkType\": \"BUILDS_ON\" | \"CONTRADICTS\" | \"DERIVED_FROM\" | \"RELATES_TO\" | \"SUPERSEDES\"}\nRequest: the link to the Raft paper should say it contradicts this note",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "linkType"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-04",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "get rid of the link to CAP theorem",
+        "op": "knowledge-note:REMOVE_LINK",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "l-3"
+          }
+        },
+        "args": {
+          "id": "l-3"
+        },
+        "raw": "{\"id\": \"CAP theorem\"}",
+        "error": null,
+        "genMs": 65.5,
+        "refMs": 265.6999999284744,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Paxos made simple": 0.010220395747455702,
+          "Raft paper": 0.12785091610999189,
+          "CAP theorem": 0.6029256727240409
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_LINK - Remove a link by ID\nChoices for id: \"Paxos made simple\", \"Raft paper\", \"CAP theorem\"\nArguments: {\"id\": choice}\nRequest: get rid of the link to CAP theorem",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-05",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "the onboarding guide goal is finished",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "COMPLETED"
+          },
+          "refArgs": {
+            "id": "g-2"
+          }
+        },
+        "args": {
+          "id": "g-2",
+          "status": "COMPLETED"
+        },
+        "raw": "{\"id\": \"Write the onboarding guide\", \"status\": \"COMPLETED\"}",
+        "error": null,
+        "genMs": 123.19999992847443,
+        "refMs": 281.60000002384186,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Ship the beta": 0.041622856859248714,
+          "Write the onboarding guide": 2.0300994448460328,
+          "Set up CI": 0.4921303721857839
+        },
+        "gatedFields": [
+          "id",
+          "status"
+        ],
+        "prompt": "Operation: SET_GOAL_STATUS - set goal status\nChoices for id: \"Ship the beta\", \"Write the onboarding guide\", \"Set up CI\"\nArguments: {\"id\": choice, \"status\": \"BLOCKED\" | \"COMPLETED\" | \"IN_PROGRESS\" | \"IN_REVIEW\" | \"TODO\" | \"WONT_DO\"}\nRequest: the onboarding guide goal is finished",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-06",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "delete the CI goal",
+        "op": "wbs:DELETE_GOAL",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "g-3"
+          }
+        },
+        "args": {
+          "id": "g-2"
+        },
+        "raw": "{\"id\": \"Write the onboarding guide\"}",
+        "error": null,
+        "genMs": 80.60000002384186,
+        "refMs": 246.10000002384186,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Ship the beta": 0.09942693907093303,
+          "Write the onboarding guide": 0.36403555586461644,
+          "Set up CI": 0.25474878446766525
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: DELETE_GOAL - delete goal\nChoices for id: \"Ship the beta\", \"Write the onboarding guide\", \"Set up CI\"\nArguments: {\"id\": choice}\nRequest: delete the CI goal",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-07",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "give the beta goal to Priya",
+        "op": "wbs:ASSIGN_GOAL",
+        "expected": {
+          "args": {
+            "assignee": "Priya"
+          },
+          "refArgs": {
+            "id": "g-2"
+          }
+        },
+        "args": {
+          "id": "g-2",
+          "assignee": "Priya"
+        },
+        "raw": "{\"id\": \"Ship the beta\", \"assignee\": \"Priya\"}",
+        "error": null,
+        "genMs": 117.39999997615814,
+        "refMs": 147.10000002384186,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Set up CI": 0.13358707290854,
+          "Ship the beta": 0.43337456086414416
+        },
+        "gatedFields": [
+          "id",
+          "assignee"
+        ],
+        "prompt": "Operation: ASSIGN_GOAL - assign goal\nChoices for id: \"Set up CI\", \"Ship the beta\"\nArguments: {\"id\": choice, \"assignee\"?: string | null}\nRequest: give the beta goal to Priya",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-08",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "Bob left, take him off the team",
+        "op": "project:REMOVE_MEMBER",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "m-2"
+          }
+        },
+        "args": {
+          "id": "m-2"
+        },
+        "raw": "{\"id\": \"Bob\"}",
+        "error": null,
+        "genMs": 58.5,
+        "refMs": 221.700000166893,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Alice": 0.11059379350107124,
+          "Bob": 1.9751429462800538,
+          "Carol": 0.36621139341994935
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_MEMBER - remove member\nChoices for id: \"Alice\", \"Bob\", \"Carol\"\nArguments: {\"id\": choice}\nRequest: Bob left, take him off the team",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-09",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "the API docs deliverable shipped today",
+        "op": "project:SET_DELIVERABLE_STATUS",
+        "expected": {
+          "args": {
+            "status": "DELIVERED"
+          },
+          "refArgs": {
+            "id": "d-2"
+          }
+        },
+        "args": {
+          "id": "d-2",
+          "status": "DELIVERED"
+        },
+        "raw": "{\"id\": \"API docs\", \"status\": \"DELIVERED\"}",
+        "error": null,
+        "genMs": 113.79999995231628,
+        "refMs": 137.19999992847443,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Design mockups": 0.16452265266048016,
+          "API docs": 1.5746080182918831
+        },
+        "gatedFields": [
+          "id",
+          "status"
+        ],
+        "prompt": "Operation: SET_DELIVERABLE_STATUS - set deliverable status\nChoices for id: \"Design mockups\", \"API docs\"\nArguments: {\"id\": choice, \"status\": \"CANCELLED\" | \"DELIVERED\" | \"IN_PROGRESS\" | \"PLANNED\"}\nRequest: the API docs deliverable shipped today",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-10",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "Carol is now our tech lead",
+        "op": "project:UPDATE_MEMBER",
+        "expected": {
+          "args": {
+            "role": "tech lead"
+          },
+          "refArgs": {
+            "id": "m-3"
+          }
+        },
+        "args": {
+          "id": "m-3",
+          "name": "Carol"
+        },
+        "raw": "{\"id\": \"Carol\", \"name\": \"Carol\"}",
+        "error": null,
+        "genMs": 101.39999997615814,
+        "refMs": 226.10000002384186,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Alice": 0.101308632572779,
+          "Bob": 1.0537287836811329,
+          "Carol": 1.6211002872479572
+        },
+        "gatedFields": [
+          "id",
+          "name",
+          "role",
+          "kind"
+        ],
+        "prompt": "Operation: UPDATE_MEMBER - update member\nChoices for id: \"Alice\", \"Bob\", \"Carol\"\nArguments: {\"id\": choice, \"name\"?: string | null, \"role\"?: string | null, \"kind\"?: \"AGENT\" | \"HUMAN\" | null}\nRequest: Carol is now our tech lead",
+        "fieldsMatch": false,
+        "extras": [
+          "name"
+        ],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-11",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "block the CRDT reflection task because the notes are not written yet",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": {
+            "reason": "the notes are not written yet"
+          },
+          "refArgs": {
+            "taskId": "q-2"
+          }
+        },
+        "args": {
+          "taskId": "q-2",
+          "reason": "the notes are not written yet"
+        },
+        "raw": "{\"taskId\": \"reflect on CRDT notes\", \"reason\": \"the notes are not written yet\"}",
+        "error": null,
+        "genMs": 140,
+        "refMs": 217.10000002384186,
+        "refCfMs": 0,
+        "refField": "taskId",
+        "refScores": {
+          "extract Raft paper": 0.09353364186154067,
+          "reflect on CRDT notes": 0.8360575397353311
+        },
+        "gatedFields": [
+          "taskId",
+          "reason"
+        ],
+        "prompt": "Operation: BLOCK_TASK - Mark task as blocked\nChoices for taskId: \"extract Raft paper\", \"reflect on CRDT notes\"\nArguments: {\"taskId\": choice, \"reason\": string}\nRequest: block the CRDT reflection task because the notes are not written yet",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-12",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "take the spacing effect idea out of this map",
+        "op": "moc:REMOVE_CORE_IDEA",
+        "expected": {
+          "args": null,
+          "refArgs": {
+            "id": "c-2"
+          }
+        },
+        "args": {
+          "id": "c-2"
+        },
+        "raw": "{\"id\": \"Spacing effect\"}",
+        "error": null,
+        "genMs": 61.39999997615814,
+        "refMs": 261.90000009536743,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "Retrieval practice": -0.24284782367309765,
+          "Spacing effect": 1.3004035512872179,
+          "Interleaving": 0.7122684438384113
+        },
+        "gatedFields": [
+          "id"
+        ],
+        "prompt": "Operation: REMOVE_CORE_IDEA - Remove a note from Core Ideas\nChoices for id: \"Retrieval practice\", \"Spacing effect\", \"Interleaving\"\nArguments: {\"id\": choice}\nRequest: take the spacing effect idea out of this map",
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-13",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "stop extracting the quotes category",
+        "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "expected": {
+          "args": {
+            "active": false
+          },
+          "refArgs": {
+            "id": "x-2"
+          }
+        },
+        "args": {
+          "id": "x-2",
+          "active": true
+        },
+        "raw": "{\"id\": \"quotes\", \"active\": true}",
+        "error": null,
+        "genMs": 78.09999990463257,
+        "refMs": 125.80000007152557,
+        "refCfMs": 0,
+        "refField": "id",
+        "refScores": {
+          "claims": 0.12211948134271156,
+          "quotes": 1.376320174370838
+        },
+        "gatedFields": [
+          "id",
+          "active"
+        ],
+        "prompt": "Operation: TOGGLE_EXTRACTION_CATEGORY - Enable/disable an extraction category\nChoices for id: \"claims\", \"quotes\"\nArguments: {\"id\": choice, \"active\": boolean}\nRequest: stop extracting the quotes category",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "active"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-14",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "record the root cause: the cache key ignored the locale",
+        "op": "knowledge-note:SET_METADATA_FIELD",
+        "expected": {
+          "args": {
+            "field": "rootCause",
+            "value": "the cache key ignored the locale"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "field": "relationType"
+        },
+        "raw": "{\"field\": \"relationType\"}",
+        "error": null,
+        "genMs": 116.60000002384186,
+        "refMs": 2152.9999997615814,
+        "refCfMs": 2022.9000002145767,
+        "refField": "field",
+        "refScores": {
+          "scope": -3.4419078508002108,
+          "confidence": -2.969608535377452,
+          "severity": 0.0028785919275833294,
+          "editor": -1.6147507789406745,
+          "modelId": -0.34433680438366654,
+          "version": -0.5201855360204117,
+          "filePath": -0.1738784536924607,
+          "computes": -0.236741090091666,
+          "context": 0.5631813940841539,
+          "decisionStatus": 0.5125501025996613,
+          "model": -0.09540659812531249,
+          "sourceType": 0.3261795225073296,
+          "targetType": 0.39574164502654874,
+          "relationType": 2.1575078139275488,
+          "cardinality": 0.8813042150659811,
+          "errorMessage": 0.614940297380461,
+          "rootCause": 1.4467740525714845,
+          "correctPattern": 0.7859151145603391
+        },
+        "gatedFields": [
+          "field"
+        ],
+        "prompt": "Operation: SET_METADATA_FIELD - Set any string metadata field by name\nArguments: {\"field\": \"scope\" | \"confidence\" | \"severity\" | \"editor\" | \"modelId\" | \"version\" | \"filePath\" | \"computes\" | \"context\" | \"decisionStatus\" | \"model\" | \"sourceType\" | \"targetType\" | \"relationType\" | \"cardinality\" | \"errorMessage\" | \"rootCause\" | \"correctPattern\"}\nRequest: record the root cause: the cache key ignored the locale",
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "field",
+          "value"
+        ],
+        "zodOk": true
+      },
+      {
+        "id": "dx-15",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "this is a decision record",
+        "op": "knowledge-note:SET_NOTE_TYPE",
+        "expected": {
+          "args": {
+            "noteType": "decision"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "noteType": "decision"
+        },
+        "raw": "{\"noteType\": \"decision\"}",
+        "error": null,
+        "genMs": 103.79999995231628,
+        "refMs": 1089.3999998569489,
+        "refCfMs": 1152.8000003099442,
+        "refField": "noteType",
+        "refScores": {
+          "concept": -0.6737281753267439,
+          "decision": 1.2965708925503918,
+          "pattern": -1.2495966593709715,
+          "observation": -1.2222407532487267,
+          "procedure": 0.1653907808460846,
+          "architecture": -0.9039119897419141,
+          "bug-pattern": -0.6165097722161588,
+          "integration": -0.6260159013421536,
+          "workflow": -0.9073751150166469,
+          "reference": -0.51558999453919
+        },
+        "gatedFields": [
+          "noteType"
+        ],
+        "prompt": "Operation: SET_NOTE_TYPE - Set or change the note type\nArguments: {\"noteType\": \"concept\" | \"decision\" | \"pattern\" | \"observation\" | \"procedure\" | \"architecture\" | \"bug-pattern\" | \"integration\" | \"workflow\" | \"reference\"}\nRequest: this is a decision record",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-16",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "flag notes as stale after 60 days",
+        "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "expected": {
+          "args": {
+            "condition": "staleNoteDays",
+            "threshold": 60
+          },
+          "refArgs": null
+        },
+        "args": {
+          "condition": "staleNoteDays",
+          "threshold": 60
+        },
+        "raw": "{\"condition\": \"staleNoteDays\", \"threshold\": 60}",
+        "error": null,
+        "genMs": 178,
+        "refMs": 814.3999999761581,
+        "refCfMs": 842.2000000476837,
+        "refField": "condition",
+        "refScores": {
+          "orphanThreshold": -0.16826043585761985,
+          "danglingThreshold": 0.06436455367875205,
+          "inboxPressure": 0.3796554453533143,
+          "observationAccumulation": 0.731620164364978,
+          "tensionAccumulation": 0.9818429124639807,
+          "mocOversize": 0.7575267440479592,
+          "staleNoteDays": 4.051007798021461
+        },
+        "gatedFields": [
+          "condition",
+          "threshold"
+        ],
+        "prompt": "Operation: UPDATE_MAINTENANCE_THRESHOLD - Update a maintenance threshold\nArguments: {\"condition\": \"orphanThreshold\" | \"danglingThreshold\" | \"inboxPressure\" | \"observationAccumulation\" | \"tensionAccumulation\" | \"mocOversize\" | \"staleNoteDays\", \"threshold\": number}\nRequest: flag notes as stale after 60 days",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-17",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "call the inbox \"capture\" from now on",
+        "op": "vault-config:UPDATE_VOCABULARY",
+        "expected": {
+          "args": {
+            "key": "inbox",
+            "value": "capture"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "key": "inbox",
+          "value": "capture"
+        },
+        "raw": "{\"key\": \"inbox\", \"value\": \"capture\"}",
+        "error": null,
+        "genMs": 133.29999995231628,
+        "refMs": 968.7000000476837,
+        "refCfMs": 911.2000000476837,
+        "refField": "key",
+        "refScores": {
+          "notes": -3.559697598554045,
+          "inbox": 1.26607227591072,
+          "reduce": -1.2611083023906366,
+          "reflect": 0.008356869161616487,
+          "reweave": 0.37304300196780105,
+          "verify": -4.512218481553798,
+          "rethink": -0.062273341066429566,
+          "topicMap": -1.2170358010292017,
+          "description": -0.891806582592229
+        },
+        "gatedFields": [
+          "key",
+          "value"
+        ],
+        "prompt": "Operation: UPDATE_VOCABULARY - Update a vocabulary term\nArguments: {\"key\": \"notes\" | \"inbox\" | \"reduce\" | \"reflect\" | \"reweave\" | \"verify\" | \"rethink\" | \"topicMap\" | \"description\", \"value\": string}\nRequest: call the inbox \"capture\" from now on",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-18",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "use the deep processing pipeline",
+        "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "expected": {
+          "args": {
+            "depth": "deep"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "depth": "deep"
+        },
+        "raw": "{\"depth\": \"deep\"}",
+        "error": null,
+        "genMs": 107.20000004768372,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "depth"
+        ],
+        "prompt": "Operation: UPDATE_PIPELINE_CONFIG - Update pipeline settings\nArguments: {\"depth\"?: \"quick\" | \"standard\" | \"deep\" | null}\nRequest: use the deep processing pipeline",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      },
+      {
+        "id": "dx-19",
+        "set": "devx",
+        "style": "dev",
+        "utterance": "rename the project to Atlas",
+        "op": "project:UPDATE_PROJECT_INFO",
+        "expected": {
+          "args": {
+            "name": "Atlas"
+          },
+          "refArgs": null
+        },
+        "args": {
+          "name": "Atlas"
+        },
+        "raw": "{\"name\": \"Atlas\"}",
+        "error": null,
+        "genMs": 63.700000047683716,
+        "refMs": 0,
+        "refCfMs": 0,
+        "refField": null,
+        "refScores": null,
+        "gatedFields": [
+          "name",
+          "description"
+        ],
+        "prompt": "Operation: UPDATE_PROJECT_INFO - update project info\nArguments: {\"name\"?: string | null, \"description\"?: string | null}\nRequest: rename the project to Atlas",
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true
+      }
+    ]
+  }
+}

@@ -29,6 +29,7 @@ import {
   argmax,
   CONTENT_FREE,
   gbnfLiteral,
+  readableOpName,
   scoreCacheKey,
   type Aggregate,
   type ScoreCache,
@@ -82,7 +83,7 @@ export function argsMessages(
     { role: "system", content: STEP2_SYSTEM },
     {
       role: "user",
-      content: `Operation: ${entry.opName} - ${entry.description}\n${choiceLines.join("")}Arguments: ${argsSignature(signatureSchema(schema, paths))}\nRequest: ${utterance}`,
+      content: `Operation: ${entry.opName} - ${entry.description || readableOpName(entry.opName)}\n${choiceLines.join("")}Arguments: ${argsSignature(signatureSchema(schema, paths))}\nRequest: ${utterance}`,
     },
   ];
 }
@@ -100,6 +101,38 @@ export function scoredRefField(
     if (refPaths.includes(k) && required.includes(k) && scalar) return k;
   }
   return null;
+}
+
+function requiredEnum(schema: JsonSchema, k: string): boolean {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  const required = Array.isArray(schema.required) ? schema.required : [];
+  const v = props[k];
+  return required.includes(k) && isRecord(v) && Array.isArray(v.enum);
+}
+
+/**
+ * Step-2 key order (fixed by the schema, never by scoring options): root
+ * ref fields, required enum fields, other required fields, the
+ * `requireOneOf` fields, then the remaining optional fields; schema order
+ * within each group.
+ */
+export function step2Order(
+  schema: JsonSchema,
+  rootRefs: string[],
+  oneOf: string[],
+): string[] {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  const required = Array.isArray(schema.required) ? schema.required : [];
+  const keys = Object.keys(props);
+  const refs = keys.filter((k) => rootRefs.includes(k));
+  const rest = keys.filter((k) => !refs.includes(k));
+  return [
+    ...refs,
+    ...rest.filter((k) => requiredEnum(schema, k)),
+    ...rest.filter((k) => required.includes(k) && !requiredEnum(schema, k)),
+    ...rest.filter((k) => !required.includes(k) && oneOf.includes(k)),
+    ...rest.filter((k) => !required.includes(k) && !oneOf.includes(k)),
+  ];
 }
 
 /** The first required root string enum with at least 3 values. */
@@ -207,24 +240,37 @@ export async function fillArgsStep(
   };
   const props = isRecord(schema.properties) ? schema.properties : {};
   if (Object.keys(props).length === 0) return { ...base, args: {} };
-  const rootRefs = refPaths.filter((p) => !p.includes(".") && p in props);
+  const rootRefs = Object.keys(props).filter((k) => refPaths.includes(k));
   const oneOf = requireOneOf(schema, refPaths);
   // No field named: the request most plausibly sets exactly one of them.
   const exactlyOne =
     oneOf.length > 1 &&
     !oneOf.some((k) => mentionsField(k, props[k], utterance));
-  const messages = argsMessages(utterance, entry, schema, choices);
-  let fixed: JsonSchema = schema;
-  const refField = opts.scoreRefs ? scoredRefField(schema, rootRefs) : null;
+  const order = step2Order(schema, rootRefs, oneOf);
+  const ordered: JsonSchema = {
+    ...schema,
+    properties: Object.fromEntries(order.map((k) => [k, props[k]])),
+  };
+  const first = order.filter(
+    (k) => rootRefs.includes(k) || requiredEnum(ordered, k),
+  );
+  const messages = argsMessages(utterance, entry, ordered, choices);
+  let fixed: JsonSchema = ordered;
+  const head = order[0];
+  const refField =
+    opts.scoreRefs && scoredRefField(ordered, rootRefs) === head ? head : null;
   const enumField =
-    !refField && opts.scoreEnums ? scoredEnumField(schema) : null;
+    opts.scoreEnums &&
+    rootRefs.length === 0 &&
+    scoredEnumField(ordered)?.field === head
+      ? scoredEnumField(ordered)
+      : null;
   const field = refField ?? enumField?.field ?? null;
   const labels = refField ? choices[refField] : (enumField?.values ?? []);
-  const first = enumField ? [enumField.field, ...rootRefs] : rootRefs;
   const out = { ...base, messages };
   if (field && labels.length > 1) {
     const agg = opts.refAggregate ?? "mean";
-    const cfMessages = argsMessages(CONTENT_FREE, entry, schema, choices);
+    const cfMessages = argsMessages(CONTENT_FREE, entry, ordered, choices);
     const scores: number[] = [];
     for (const label of labels) {
       const prefix = refPrefix(field, label);
@@ -268,8 +314,11 @@ export async function fillArgsStep(
     out.refField = field;
     out.refScores = Object.fromEntries(labels.map((l, i) => [l, scores[i]]));
     fixed = {
-      ...schema,
-      properties: { ...props, [field]: { type: "string", enum: [best] } },
+      ...ordered,
+      properties: {
+        ...(ordered.properties as Record<string, unknown>),
+        [field]: { type: "string", enum: [best] },
+      },
     };
   }
   const grammar = argsGrammar(fixed, utterance, {
