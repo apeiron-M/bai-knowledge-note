@@ -171,6 +171,10 @@ The first real pilot replaces this table with `collect`'s `.usage.json`.
    - Whether step 1 switches to the scorer layout.
 
    Then bump `PROMPT_FORMAT_VERSION` and re-run `render.sh` on the smoke rows to re-check parity.
+
+   Commit `eed52510` already adds `args-step.ts` (ref choices by label), the yes/no change gate, and gte-small embedding retrieval with RRF fusion. `use-chat-llm.ts` does not use them yet.
+   - If the shipped path adopts them, `prompt-format.ts` must call them too.
+   - The embedding retriever then has to run under node in `render-prompts.ts`, so that training candidates are the ones the app really retrieves. Whether transformers.js loads gte-small under tsx is **[U]**.
 2. **The second blind held-out set** goes into `spike/llm-harness/eval/`. `dedup.py` picks it up automatically.
 3. **The user** supplies an API key and approves spend. Then run the pilot as above, read the measured cost and the agreement rate, and only then the full batch (`submit` refuses more than 200 requests unless `--max-requests` is raised).
 4. **The real training run** comes after that: 3 epochs, effective batch 32, then a dev-checkpoint pick, export, and the in-browser eval arms.
