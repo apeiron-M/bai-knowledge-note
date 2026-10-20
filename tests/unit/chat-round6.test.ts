@@ -21,7 +21,11 @@ import type {
   ScoreText,
 } from "../../editors/knowledge-vault/chat/core/llm-client.js";
 import {
+  combinedNoAction,
   docTypeLabel,
+  embeddingGateScore,
+  looksLikeQuestion,
+  NO_ACTION_EXEMPLARS,
   gateLogOdds,
   gateMessages,
   scoreChangeGate,
@@ -456,6 +460,24 @@ describe("no-action gate", () => {
     expect(n).toBe(6);
     expect(b.noAction).toBe(false);
     expect(b.wallMs).toBe(10);
+  });
+});
+
+describe("embedding no-action gate", () => {
+  it("compares the nearest exemplar with the nearest op", () => {
+    expect(embeddingGateScore([0.2, 0.7], [0.5, 0.6])).toBeCloseTo(0.1);
+    expect(embeddingGateScore([], [0.3])).toBeCloseTo(-1.3);
+    expect(NO_ACTION_EXEMPLARS.length).toBeGreaterThan(10);
+  });
+
+  it("treats plain questions, not polite commands, as no-action", () => {
+    expect(looksLikeQuestion("what does canonical mean?")).toBe(true);
+    expect(looksLikeQuestion("can you tag this with ML?")).toBe(false);
+    expect(looksLikeQuestion("Please archive it?")).toBe(false);
+    expect(looksLikeQuestion("tag this with ML")).toBe(false);
+    expect(combinedNoAction("tag it", 0.05)).toBe(true);
+    expect(combinedNoAction("tag it", 0.04)).toBe(false);
+    expect(combinedNoAction("is it done?", -0.5)).toBe(true);
   });
 });
 
