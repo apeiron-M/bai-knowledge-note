@@ -195,7 +195,7 @@ function LlmStatus({ llm }: { llm: ReturnType<typeof useChatLlm> }) {
     llm.status === "loading"
       ? `Loading model ${Math.round(llm.progress * 100)}%`
       : llm.status === "ready"
-        ? `Model ready${llm.info ? ` (${llm.info.backend})` : ""}`
+        ? `Model ready${llm.info ? ` (${llm.info.backend}, ${Math.round(llm.info.loadMs)} ms)` : ""}`
         : llm.status === "error"
           ? `Model error: ${llm.error ?? ""}`
           : "Model loads on first message";
