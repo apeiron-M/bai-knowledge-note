@@ -89,6 +89,8 @@ export interface BuildCatalogOptions {
   overrides?: Partial<Record<string, FieldClass>>;
   /** Collapse `anyOf: [X, {type: null}]` to plain optional `X`. */
   collapseNullable?: boolean;
+  /** Description overrides keyed `<model>:<OP>`; replace the model's text. */
+  descriptionOverrides?: Record<string, string>;
 }
 
 /**
@@ -356,13 +358,15 @@ export function buildCatalog(
         const full = z.toJSONSchema(zod, { io: "input" }) as JsonSchema;
         const { $schema: _drop, ...inputJsonSchema } = full;
         const base = { fields, inputJsonSchema };
+        const key = `${model}:${opName}`;
         entries.push({
-          key: `${model}:${opName}`,
+          key,
           model,
           docType,
           opName,
           creatorName,
-          description: op.description ?? "",
+          description:
+            options.descriptionOverrides?.[key] ?? op.description ?? "",
           module: mod.name,
           scope: op.scope ?? "global",
           fields,

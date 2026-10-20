@@ -9,6 +9,7 @@ import {
   semanticFieldNames,
   type CatalogEntry,
 } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
+import { OP_DESCRIPTIONS } from "../../editors/knowledge-vault/chat/core/op-descriptions.js";
 
 const catalog = buildVaultCatalog();
 const byKey = new Map(catalog.map((e) => [e.key, e]));
@@ -215,5 +216,22 @@ describe("op catalog", () => {
         if (f.gqlType === "OID") expect(f.fieldClass, e.key).toBe("ref-id");
       }
     }
+  });
+
+  it("has a description override for every op and no stray keys", () => {
+    const keys = new Set(catalog.map((e) => e.key));
+    expect(Object.keys(OP_DESCRIPTIONS).filter((k) => !keys.has(k))).toEqual(
+      [],
+    );
+    for (const e of catalog) {
+      expect(e.description, e.key).toBe(OP_DESCRIPTIONS[e.key]);
+    }
+  });
+
+  it("keeps the models' own descriptions when overrides are empty", () => {
+    const original = buildVaultCatalog({ descriptionOverrides: {} });
+    expect(
+      original.find((e) => e.key === "knowledge-note:ADD_TOPIC")?.description,
+    ).toBe("Tag the note with a topic");
   });
 });
