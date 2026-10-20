@@ -15,6 +15,7 @@ import { ProjectsView } from "./ProjectsView.js";
 import { HealthDashboard } from "./HealthDashboard.js";
 import { SearchView } from "./SearchView.js";
 import { ActivityView } from "./ActivityView.js";
+import { ChatView } from "./ChatView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
@@ -30,7 +31,8 @@ type ViewMode =
   | "activity"
   | "pipeline"
   | "health"
-  | "config";
+  | "config"
+  | "chat";
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
@@ -213,6 +215,21 @@ export function DriveExplorer({ children }: EditorProps) {
       ),
     },
     {
+      key: "chat",
+      label: "Chat",
+      icon: (
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+      ),
+    },
+    {
       key: "activity",
       label: "Activity",
       icon: (
@@ -384,6 +401,8 @@ export function DriveExplorer({ children }: EditorProps) {
             <ProjectsView />
           ) : viewMode === "health" ? (
             <HealthDashboard />
+          ) : viewMode === "chat" ? (
+            <ChatView notes={notes} />
           ) : (
             <NoteList notes={notes} />
           )}
