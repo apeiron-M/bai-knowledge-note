@@ -140,7 +140,23 @@ if (!apply) {
   process.exit(0);
 }
 
-// 4. Add them, a batch per write, onto the drive's document-scope log.
+// 4. Add them, a batch per job, onto the drive's document-scope log. Submitted
+//    with executeAsync and followed by jobStatus, NOT the synchronous execute:
+//    the job is READ_READY in well under a second, but execute then re-reads the
+//    drive at the job's consistency token, and for a relationship whose source is
+//    a drive that read did not return within 300 s (6.2.3-dev.66, 2026-10-20).
+async function settle(jobId) {
+  const deadline = Date.now() + 120_000;
+  for (;;) {
+    const r = await gql(`query($j:String!){jobStatus(jobId:$j){status error errorName}}`, { j: jobId });
+    const job = r.data?.jobStatus;
+    if (job?.status === "READ_READY") return null;
+    if (job?.status === "FAILED") return job.error ?? job.errorName ?? "job failed";
+    if (r.errors?.length && !job) return r.errors[0].message;
+    if (Date.now() > deadline) return `job ${jobId} still ${job?.status ?? "unknown"} after 120 s`;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+}
 const todo = missing.slice(0, limit);
 let added = 0;
 const failed = [];
@@ -152,16 +168,17 @@ for (const group of chunks(todo, batch)) {
     timestampUtcMs: new Date().toISOString(),
     input: { sourceId: drive.id, targetId: n.id, relationshipType: "child" },
   }));
-  const r = await gql(`mutation($id:String!,$a:[ActionInput!]!){execute(documentIdOrSlug:$id, actions:$a){id}}`, { id: drive.id, a: actions });
-  if (r.errors?.length) failed.push({ count: group.length, error: r.errors[0].message, first: group[0].id });
+  const r = await gql(`mutation($id:String!,$a:[ActionInput!]!){executeAsync(documentIdOrSlug:$id, actions:$a){id}}`, { id: drive.id, a: actions });
+  const error = r.errors?.length ? r.errors[0].message : await settle(r.data.executeAsync.id);
+  if (error) failed.push({ count: group.length, error, first: group[0].id });
   else added += group.length;
-  console.log(`  … ${added + failed.reduce((s, f) => s + f.count, 0)}/${todo.length}`);
+  console.log(`  … ${added + failed.reduce((sum, f) => sum + f.count, 0)}/${todo.length}`);
 }
 
 // 5. Read back — a dispatch is not a result.
 const after = await childrenOfDrive();
 const stillMissing = todo.filter((n) => !after.has(n.id));
-console.log(`written: ${added}; refused: ${failed.reduce((s, f) => s + f.count, 0)}; confirmed by read-back: ${todo.length - stillMissing.length}/${todo.length}`);
+console.log(`settled: ${added}; refused: ${failed.reduce((s, f) => s + f.count, 0)}; confirmed by read-back: ${todo.length - stillMissing.length}/${todo.length}`);
 for (const f of failed.slice(0, 5)) console.log(`  refused batch starting ${f.first}: ${f.error}`);
 if (missing.length > todo.length) console.log(`--limit left ${missing.length - todo.length} for a later run`);
 process.exit(failed.length || stillMissing.length ? 1 : 0);
