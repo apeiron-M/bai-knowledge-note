@@ -57,7 +57,23 @@ export type VaultSeed = {
 /** The drive app every seeded vault opens in. */
 export const VAULT_APP_ID = "knowledge-vault";
 
-export type SeedProgress = (done: number, total: number) => void;
+/**
+ * What the vault app must find when it opens, written with the folders before
+ * it does:
+ *
+ * - the documents it creates itself on a drive without them (`useDriveInit`),
+ *   or it would make a second set;
+ * - the sources. A vault with no notes and no sources is new to the app
+ *   (DriveExplorer's empty-vault landing), so it would leave Ask for the
+ *   Sources intake ("Add your first sources") and stay there after the guide
+ *   arrived. With the guide's source in place it opens on Ask.
+ */
+const SKELETON_TYPES: ReadonlySet<string> = new Set([
+  "bai/vault-config",
+  "bai/pipeline-queue",
+  "bai/health-report",
+  "bai/source",
+]);
 
 type ExecutionJob = {
   key: string;
@@ -86,95 +102,83 @@ function foldersParentFirst(nodes: readonly VaultSeedNode[]): VaultSeedNode[] {
   return ordered;
 }
 
-/**
- * Write `seed` into a new drive and return the drive id, as one batch of jobs
- * the engine runs in dependency order:
- *
- * - one job per document: its creation, its seeded state, and its link to the
- *   drive. The graph indexer must see that link in the same batch as the
- *   state, or it does not know the document is the vault's;
- * - one job on the drive: the folder tree and a node per document;
- * - one job per document with outgoing links, after the documents it links.
- *
- * The graph indexer must already be registered: it builds nodes from live
- * operations only.
- */
-export async function seedVault(
-  client: IReactorClient,
-  models: readonly DocumentModelModule[],
-  seed: VaultSeed,
-  onProgress?: SeedProgress,
-): Promise<string> {
-  const total = seed.documents.length + seed.relationships.length;
-  onProgress?.(0, total);
+type Writable = { doc: VaultSeedDocument; module: DocumentModelModule };
 
-  const drive = await client.drives.create({
-    global: { name: seed.drive.name, icon: null },
-    preferredEditor: VAULT_APP_ID,
-  });
-  const driveId = drive.header.id;
+/** The seed's documents with the model that writes each; one without a model is skipped, with a warning. */
+function writableDocuments(models: readonly DocumentModelModule[], seed: VaultSeed): Writable[] {
   const moduleFor = new Map(models.map((m) => [m.documentModel.global.id, m]));
-  const jobs: ExecutionJob[] = [];
-  const seeded = new Set<string>();
-
+  const writable: Writable[] = [];
   for (const doc of seed.documents) {
     const module = moduleFor.get(doc.documentType);
-    if (!module) {
-      console.warn(`[BrowserVault] The seed holds a ${doc.documentType} this engine has no model for; skipped.`);
-      continue;
-    }
-    const created = module.utils.createDocument({
-      global: doc.state.global,
-      local: doc.state.local ?? {},
-    } as never) as PHDocument;
-    const version = (created.state as { document?: { version?: number } }).document?.version ?? 0;
-    jobs.push({
-      key: `doc:${doc.id}`,
-      documentId: doc.id,
-      scope: "document",
-      branch: "main",
-      actions: [
-        createDocumentAction({
-          model: doc.documentType,
-          version: 0,
-          documentId: doc.id,
-          signing: {
-            signature: doc.id,
-            publicKey: created.header.sig.publicKey,
-            nonce: doc.created.nonce,
-            createdAtUtcIso: doc.created.createdAtUtcIso,
-            documentType: doc.documentType,
-          },
-          slug: doc.id,
-          name: doc.name,
-          branch: "main",
-          meta: created.header.meta,
-          protocolVersions: doc.created.protocolVersions,
-        }),
-        upgradeDocumentAction({
-          documentId: doc.id,
-          model: doc.documentType,
-          fromVersion: 0,
-          toVersion: version,
-          initialState: created.state,
-        }),
-        addRelationshipAction(driveId, doc.id, "child"),
-      ],
-      dependsOn: [],
-    });
-    seeded.add(doc.id);
+    if (module) writable.push({ doc, module });
+    else console.warn(`[BrowserVault] The seed holds a ${doc.documentType} this engine has no model for; skipped.`);
   }
+  return writable;
+}
 
-  const files = seed.drive.nodes.filter((n) => n.kind === "file" && seeded.has(n.id));
+/**
+ * One job per document: its creation under its seeded id, its seeded state,
+ * and its link to the drive. The graph indexer must see that link in the same
+ * batch as the state, or it does not know the document is the vault's.
+ */
+function documentJob(module: DocumentModelModule, doc: VaultSeedDocument, driveId: string): ExecutionJob {
+  const created = module.utils.createDocument({
+    global: doc.state.global,
+    local: doc.state.local ?? {},
+  } as never) as PHDocument;
+  const version = (created.state as { document?: { version?: number } }).document?.version ?? 0;
+  return {
+    key: `doc:${doc.id}`,
+    documentId: doc.id,
+    scope: "document",
+    branch: "main",
+    actions: [
+      createDocumentAction({
+        model: doc.documentType,
+        version: 0,
+        documentId: doc.id,
+        signing: {
+          signature: doc.id,
+          publicKey: created.header.sig.publicKey,
+          nonce: doc.created.nonce,
+          createdAtUtcIso: doc.created.createdAtUtcIso,
+          documentType: doc.documentType,
+        },
+        slug: doc.id,
+        name: doc.name,
+        branch: "main",
+        meta: created.header.meta,
+        protocolVersions: doc.created.protocolVersions,
+      }),
+      upgradeDocumentAction({
+        documentId: doc.id,
+        model: doc.documentType,
+        fromVersion: 0,
+        toVersion: version,
+        initialState: created.state,
+      }),
+      addRelationshipAction(driveId, doc.id, "child"),
+    ],
+    dependsOn: [],
+  };
+}
+
+/** Jobs for `docs`, and a job on the drive that files them (and, with `folders`, makes the folders first). */
+function placementJobs(seed: VaultSeed, docs: readonly Writable[], driveId: string, folders: boolean): ExecutionJob[] {
+  const jobs = docs.map(({ doc, module }) => documentJob(module, doc, driveId));
+  const ids = new Set(docs.map(({ doc }) => doc.id));
+  const files = seed.drive.nodes.filter((n) => n.kind === "file" && ids.has(n.id));
   jobs.push({
     key: "tree",
     documentId: driveId,
     scope: "global",
     branch: "main",
     actions: [
-      ...foldersParentFirst(seed.drive.nodes).map((f) =>
-        addFolder({ id: f.id, name: f.name, parentFolder: f.parentFolder ?? undefined }),
-      ),
+      ...(folders
+        ? foldersParentFirst(seed.drive.nodes).map((f) =>
+            addFolder({ id: f.id, name: f.name, parentFolder: f.parentFolder ?? undefined }),
+          )
+        : []),
       ...files.map((f) =>
         addFile({
           id: f.id,
@@ -186,15 +190,63 @@ export async function seedVault(
     ] as Action[],
     dependsOn: files.map((f) => `doc:${f.id}`),
   });
+  return jobs;
+}
 
+/**
+ * Write the part of the seed the vault app must find when it opens — a new
+ * drive, its folders, the documents the app would otherwise create itself, and
+ * the sources (see `SKELETON_TYPES`) — and return the drive id. Small on
+ * purpose: the app opens as soon as it is written, and {@link seedContent}
+ * fills the vault in behind it.
+ *
+ * The graph indexer must already be registered: it builds nodes from live
+ * operations only.
+ */
+export async function seedSkeleton(
+  client: IReactorClient,
+  models: readonly DocumentModelModule[],
+  seed: VaultSeed,
+  signal?: AbortSignal,
+): Promise<string> {
+  const drive = await client.drives.create(
+    { global: { name: seed.drive.name, icon: null }, preferredEditor: VAULT_APP_ID },
+    signal,
+  );
+  const driveId = drive.header.id;
+  const docs = writableDocuments(models, seed).filter(({ doc }) => SKELETON_TYPES.has(doc.documentType));
+  await client.executeBatch({ jobs: placementJobs(seed, docs, driveId, true) }, signal);
+  return driveId;
+}
+
+/**
+ * Write the rest of the seed into the drive {@link seedSkeleton} made: the
+ * notes and maps, their places in the folders, and — once both ends exist —
+ * the links between documents, one job per document that has any.
+ */
+export async function seedContent(
+  client: IReactorClient,
+  models: readonly DocumentModelModule[],
+  seed: VaultSeed,
+  driveId: string,
+  signal?: AbortSignal,
+): Promise<void> {
+  const writable = writableDocuments(models, seed);
+  const docs = writable.filter(({ doc }) => !SKELETON_TYPES.has(doc.documentType));
+  const jobs = placementJobs(seed, docs, driveId, false);
+
+  const exists = new Set(writable.map(({ doc }) => doc.id));
+  const inThisBatch = new Set(docs.map(({ doc }) => doc.id));
   const bySource = new Map<string, VaultSeedRelationship[]>();
   for (const r of seed.relationships) {
-    if (!seeded.has(r.sourceId) || !seeded.has(r.targetId)) continue;
+    if (!exists.has(r.sourceId) || !exists.has(r.targetId)) continue;
     const list = bySource.get(r.sourceId) ?? [];
     list.push(r);
     bySource.set(r.sourceId, list);
   }
   for (const [sourceId, links] of bySource) {
+    // Documents the skeleton wrote are already there: only this batch's are waited for.
+    const waitFor = [...new Set([sourceId, ...links.map((l) => l.targetId)])].filter((id) => inThisBatch.has(id));
     jobs.push({
       key: `links:${sourceId}`,
       documentId: sourceId,
@@ -203,11 +255,8 @@ export async function seedVault(
       actions: links.map((l) =>
         addRelationshipAction(l.sourceId, l.targetId, l.relationshipType, l.metadata ?? undefined),
       ),
-      dependsOn: [...new Set([sourceId, ...links.map((l) => l.targetId)])].map((id) => `doc:${id}`),
+      dependsOn: waitFor.map((id) => `doc:${id}`),
     });
   }
-
-  await client.executeBatch({ jobs });
-  onProgress?.(total, total);
-  return driveId;
+  await client.executeBatch({ jobs }, signal);
 }

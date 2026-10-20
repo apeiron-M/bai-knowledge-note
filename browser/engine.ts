@@ -6,6 +6,11 @@
  * This is the shape Connect builds in its in-process mode (`createBrowserReactor`
  * and `createProcessorHostModule`), which it does not export, reduced to what a
  * single vault needs: no sync channels, no package registry, no workers.
+ *
+ * Only the documents are kept in IndexedDB. The graph index lives in memory and
+ * is rebuilt from them on every start: keeping it on disk cost a first visit
+ * ~70 MB of IndexedDB writes and saved nothing, since a reload could overtake
+ * its last rows and it was rebuilt anyway.
  */
 import { PGlite } from "@electric-sql/pglite";
 import {
@@ -45,20 +50,111 @@ export type BrowserEngine = {
   models: readonly DocumentModelModule[];
   /** The visitor's signing key, as a `did:key`. */
   did: string;
+  /** Holds the document store's writes to IndexedDB; see {@link FlushGate}. */
+  flushes: FlushGate;
   close(): Promise<void>;
 };
 
+export type BrowserEngineOptions = {
+  /** Start with the store's flushes held, PGlite's own start-up flush included. */
+  holdFlushes?: boolean;
+};
+
+/**
+ * Holds the document store's flushes to IndexedDB, then writes everything held
+ * in one go.
+ *
+ * PGlite keeps its files in memory and copies every changed file to IndexedDB
+ * on a flush, whole. The reactor flushes once per job, so writing the guide —
+ * about seventy jobs — rewrote the same 1 MB write-ahead-log segment seventy
+ * times: ~120 MB to store a vault of ~30 MB. Held, the guide is written once.
+ *
+ * What a held flush skips is not on disk until `release`: a vault whose writes
+ * were held must not be trusted after a reload that came before the release.
+ * The boot only marks a vault complete once `release` has resolved.
+ */
+export type FlushGate = {
+  readonly held: boolean;
+  /** Skip flushes from now on, until {@link release}. */
+  hold(): void;
+  /** Write everything skipped while held, and flush normally from then on. */
+  release(): Promise<void>;
+};
+
+/**
+ * Lets the browser paint and take input before the caller goes on.
+ *
+ * A held flush must not resolve at once. PGlite runs a statement synchronously
+ * inside its promise, so with nothing on disk to wait for, the reactor ran a
+ * whole batch of jobs as one unbroken chain of microtasks: one 2.6 s task in
+ * which the page could not paint the app it had just been told to show. A
+ * real flush yields on its IndexedDB request; a held one yields here.
+ */
+function yieldToBrowser(): Promise<void> {
+  // A plain task, queued behind the page's own work — the render React has
+  // scheduled. Not scheduler.yield(): Chrome runs its continuations ahead of
+  // queued tasks, so the writing kept the app from rendering until it was done.
+  // Not setTimeout(0): nested timeouts are clamped to 4 ms each.
+  return new Promise((resolve) => {
+    const channel = new MessageChannel();
+    channel.port1.onmessage = () => {
+      channel.port1.close();
+      resolve();
+    };
+    channel.port2.postMessage(null);
+  });
+}
+
+/**
+ * Installed as the instance's own `syncToFs` straight after construction, so
+ * it also sees PGlite's start-up flush, and it is the function the reactor's
+ * group commit captures and calls at each job's flush.
+ */
+function gateFlushes(pg: PGlite, held: boolean): FlushGate {
+  const flush = pg.syncToFs.bind(pg);
+  let holding = held;
+  let skipped = false;
+  (pg as unknown as { syncToFs: () => Promise<void> }).syncToFs = () => {
+    if (!holding) return flush();
+    skipped = true;
+    return yieldToBrowser();
+  };
+  return {
+    get held() {
+      return holding;
+    },
+    hold() {
+      holding = true;
+    },
+    async release() {
+      if (!holding) return;
+      holding = false;
+      if (skipped) {
+        skipped = false;
+        await flush();
+      }
+    },
+  };
+}
+
+/** Where the graph index was kept before it moved to memory; deleted when found. */
+export function legacyIndexDatabase(namespace: string): string {
+  return `/pglite/${namespace}-relational`;
+}
+
 /** IndexedDB database names, so a reset can find them. */
 export function engineDatabases(namespace: string): string[] {
-  return [`/pglite/${namespace}-reactor`, `/pglite/${namespace}-relational`];
+  return [`/pglite/${namespace}-reactor`, legacyIndexDatabase(namespace)];
 }
 
 export async function createBrowserEngine(
   namespace: string,
+  options: BrowserEngineOptions = {},
 ): Promise<BrowserEngine> {
   // Durable on purpose: the reactor's group commit flushes through syncToFs,
   // which a relaxed instance resolves before the sync has run.
   const reactorPg = new PGlite(`idb://${namespace}-reactor`);
+  const flushes = gateFlushes(reactorPg, options.holdFlushes ?? false);
   await reactorPg.waitReady;
 
   const crypto = await new RenownCryptoBuilder()
@@ -90,11 +186,8 @@ export async function createBrowserEngine(
     .buildModule();
   const client = module.client;
 
-  // Relaxed: the index is rebuilt from the documents when it falls behind,
-  // so a write that a reload overtakes costs a rebuild, not data.
-  const relationalPg = new PGlite(`idb://${namespace}-relational`, {
-    relaxedDurability: true,
-  });
+  // In memory: the boot rebuilds the index from the documents (see the module note).
+  const relationalPg = new PGlite();
   await relationalPg.waitReady;
   const relationalDb = createRelationalDb(
     new Kysely({
@@ -131,6 +224,7 @@ export async function createBrowserEngine(
     relationalDb,
     models,
     did: crypto.did,
+    flushes,
     close: async () => {
       await Promise.allSettled([reactorPg.close(), relationalPg.close()]);
     },

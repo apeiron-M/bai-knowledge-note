@@ -23,13 +23,13 @@ import { editors } from "../editors/editors.js";
 import { setHostConfig, type KnowledgeVaultHostDocuments } from "../editors/shared/host-config.js";
 import manifest from "../powerhouse.manifest.json" with { type: "json" };
 import { createCoreGraphQLService } from "./core-graphql.js";
-import { createBrowserEngine, engineDatabases, type BrowserEngine } from "./engine.js";
+import { createBrowserEngine, engineDatabases, legacyIndexDatabase, type BrowserEngine } from "./engine.js";
 import { createKnowledgeGraphService } from "./knowledge-graph.js";
 import { startLiveFeed } from "./live-feed.js";
 import { installLocalOrigin, LOCAL_ORIGIN } from "./local-origin.js";
 import { createPageSubgraph } from "./page-subgraph.js";
 import { createRestService } from "./rest.js";
-import { seedVault, VAULT_APP_ID, type SeedProgress, type VaultSeed } from "./seed.js";
+import { seedContent, seedSkeleton, VAULT_APP_ID, type VaultSeed } from "./seed.js";
 
 export type BootOptions = {
   namespace: string;
@@ -44,6 +44,14 @@ export type BootedVault = {
   driveId: string;
   /** The vault was seeded from another version of the starting content. */
   outdated: boolean;
+  /**
+   * On a first visit the vault app opens on the drive's skeleton while the
+   * guide is written behind it: this settles once the guide is complete and on
+   * disk, and is null when nothing is being written. Rejects if the guide could
+   * not be written; nothing of the vault reached the disk then, so a reload
+   * starts over.
+   */
+  seeding: Promise<void> | null;
   stop(): Promise<void>;
 };
 
@@ -66,6 +74,18 @@ function writeStamp(namespace: string, stamp: SeedStamp): void {
   } catch {
     // A missing stamp only means the next visit re-checks the drive itself.
   }
+}
+
+function deleteDatabases(names: readonly string[]): Promise<void> {
+  return Promise.all(
+    names.map(
+      (name) =>
+        new Promise<void>((resolve) => {
+          const request = indexedDB.deleteDatabase(name);
+          request.onsuccess = request.onerror = request.onblocked = () => resolve();
+        }),
+    ),
+  ).then(() => undefined);
 }
 
 /** The vault package as Connect would load it: models, editors, manifest. */
@@ -133,34 +153,45 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
   const mark = (stage: string) => {
     timings[stage] = Math.round(performance.now() - started);
   };
+  // The vault app is needed the moment the engine is up: fetch its code meanwhile.
+  void import("../editors/knowledge-vault/editor.js").catch(() => undefined);
+
+  const stamp = readStamp(namespace);
+  // Without a stamp this is most likely a first visit: hold the store's flushes
+  // from its very start (see FlushGate), so the guide reaches the disk in one write.
+  const seedLoad = stamp ? null : options.loadSeed();
+  seedLoad?.catch(() => undefined);
   onProgress?.("engine");
-  const engine = await createBrowserEngine(namespace);
+  const engine = await createBrowserEngine(namespace, { holdFlushes: !stamp });
   const { client, relationalDb, models } = engine;
   const subgraph = createPageSubgraph(client, relationalDb);
   const knowledgeGraph = createKnowledgeGraphService(subgraph);
   mark("engine");
+  // The graph index's store from before it moved to memory: nothing reads it any more.
+  void deleteDatabases([legacyIndexDatabase(namespace)]);
 
-  const stamp = readStamp(namespace);
   let driveId = await findVaultDrive(client, stamp?.driveId);
   let outdated = false;
-  const seed = driveId ? null : await options.loadSeed();
-  if (!driveId && seed) {
-    onProgress?.("seed", 0, seed.documents.length + seed.relationships.length);
-    const progress: SeedProgress = (done, total) => onProgress?.("seed", done, total);
-    driveId = await seedVault(client, models, seed, progress);
-    writeStamp(namespace, { version: seed.version, driveId });
-    mark("seeded");
-  } else if (driveId) {
-    // A return visit. The index store is relaxed (fast writes, flushed a moment
-    // later), so a reload can overtake its last rows: rebuild it from the
-    // documents rather than trust it.
+  let seed: VaultSeed | null = null;
+  if (driveId) {
+    // A return visit. Flushes held on a guess are let go: nothing of the vault was skipped.
+    await engine.flushes.release();
     onProgress?.("index");
+    const current = options.loadSeed().then((s) => s.version).catch(() => null);
+    // The index lives in memory, so every start rebuilds it from the documents.
     await knowledgeGraph.reindex(driveId);
     mark("reindexed");
-    const current = await options.loadSeed().then((s) => s.version).catch(() => null);
-    outdated = Boolean(stamp && current && stamp.version !== current);
+    const version = await current;
+    outdated = Boolean(stamp && version && stamp.version !== version);
+  } else {
+    // Held until the guide is complete: nothing of the vault reaches the disk
+    // before it is whole, so a tab closed halfway leaves nothing behind to repair.
+    engine.flushes.hold();
+    seed = await (seedLoad ?? options.loadSeed());
+    onProgress?.("seed");
+    driveId = await seedSkeleton(client, models, seed);
+    mark("skeleton");
   }
-  if (!driveId) throw new Error("The browser vault could not be created.");
   const vaultDriveId = driveId;
 
   const core = createCoreGraphQLService(client, models);
@@ -202,6 +233,23 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     pending = setTimeout(() => void publishDrive().catch(() => undefined), 150);
   });
 
+  // The rest of the guide, behind the open app: the live feed shows it arriving.
+  const abort = new AbortController();
+  const guide = seed;
+  const seeding = guide
+    ? (async () => {
+        await seedContent(client, models, guide, vaultDriveId, abort.signal);
+        mark("seeded");
+        await engine.flushes.release();
+        mark("stored");
+        writeStamp(namespace, { version: guide.version, driveId: vaultDriveId });
+        console.info(`[BrowserVault] guide written: ${JSON.stringify(timings)} (ms since start)`);
+      })()
+    : null;
+  seeding?.catch((error: unknown) => {
+    if (!abort.signal.aborted) console.error("[BrowserVault] The guide could not be written.", error);
+  });
+
   // Ask the browser not to evict the vault; older browsers have no storage manager.
   if ("storage" in navigator && typeof navigator.storage.persist === "function") {
     void navigator.storage.persist().catch(() => undefined);
@@ -214,7 +262,10 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     engine,
     driveId: vaultDriveId,
     outdated,
+    seeding,
     stop: async () => {
+      abort.abort();
+      await seeding?.catch(() => undefined);
       if (pending) clearTimeout(pending);
       stopFeed();
       uninstallOrigin();
@@ -232,13 +283,5 @@ export async function deleteBrowserVault(namespace: string, booted?: BootedVault
   } catch {
     // Nothing to remove.
   }
-  await Promise.all(
-    engineDatabases(namespace).map(
-      (name) =>
-        new Promise<void>((resolve) => {
-          const request = indexedDB.deleteDatabase(name);
-          request.onsuccess = request.onerror = request.onblocked = () => resolve();
-        }),
-    ),
-  );
+  await deleteDatabases(engineDatabases(namespace));
 }

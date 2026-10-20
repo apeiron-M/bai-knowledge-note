@@ -105,8 +105,34 @@ function VaultApp() {
   );
 }
 
+type GuideState = "writing" | "written" | "failed";
+
+/** Whether the guide is still being written behind the open app (first visit only). */
+function useGuideState(seeding: Promise<void> | null): GuideState {
+  const [state, setState] = useState<GuideState>(seeding ? "writing" : "written");
+  useEffect(() => {
+    if (!seeding) return undefined;
+    let live = true;
+    seeding.then(
+      () => live && setState("written"),
+      () => live && setState("failed"),
+    );
+    return () => {
+      live = false;
+    };
+  }, [seeding]);
+  return state;
+}
+
+const GUIDE_MESSAGE: Record<GuideState, string | null> = {
+  writing: "Adding the guide to your vault…",
+  failed: "The guide could not be added. Reload the page to try again.",
+  written: null,
+};
+
 function Banner({ vault, namespace, downloadUrl }: { vault: BootedVault; namespace: string; downloadUrl?: string }) {
   const [busy, setBusy] = useState(false);
+  const guide = useGuideState(vault.seeding);
   const reset = async () => {
     if (!window.confirm("Reset the vault? Everything you added or changed in this browser is removed, and the guide vault comes back.")) return;
     setBusy(true);
@@ -129,8 +155,11 @@ function Banner({ vault, namespace, downloadUrl }: { vault: BootedVault; namespa
   };
   const link: CSSProperties = { color: "#c4b5fd", background: "none", border: 0, padding: 0, font: "inherit", cursor: "pointer" };
   return (
-    <div style={bar}>
-      <span>{vault.outdated ? "A newer guide is available." : "This vault lives only in this browser."}</span>
+    <div style={bar} role="status" data-guide={guide}>
+      <span>
+        {GUIDE_MESSAGE[guide] ??
+          (vault.outdated ? "A newer guide is available." : "This vault lives only in this browser.")}
+      </span>
       <button type="button" style={link} onClick={() => void reset()} disabled={busy}>
         {busy ? "Resetting…" : "Reset"}
       </button>
