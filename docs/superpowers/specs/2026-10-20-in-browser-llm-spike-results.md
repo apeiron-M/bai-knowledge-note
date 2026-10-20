@@ -275,7 +275,7 @@ BM25 recall on the seed set, from `tests/unit/chat-retriever.test.ts`:
 | Models' own (round 1) | 73.3 / **90.0** / 93.3 | 66.7 / 83.3 / 86.7 |
 | Overrides | 66.7 / **86.7** / 90.0 | 66.7 / 80.0 / 80.0 |
 
-- **Why it dropped:** the longer descriptions dilute BM25. "change the heading of the note to Why caches lie" fell out of the scoped top 5 (rank 12), and "tag this note…", "send it to review…", "add a team member named Bob" and "new goal: ship the beta" fell from rank 1 to rank 2.
+- **Why it dropped:** the longer descriptions dilute BM25. "change the heading of the note to Why caches lie" fell out of the scoped top 5 (rank 12), and "tag this note…", "send it to review…" and "add a team member named Bob" fell from rank 1 to rank 2. Unscoped, "file this note under productivity" fell out of the top 5.
 - **Effect on the gate:** with the overrides, scoped recall@5 is below the 90% gate. That is the second reason they are opt-in.
 
 ### Seed eval, WebGPU
