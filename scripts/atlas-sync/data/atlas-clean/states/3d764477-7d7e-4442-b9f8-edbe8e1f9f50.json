@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-4f46d642-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4f46d642-bf6c-4774-a5a4-365e49918d18",
+      "targetTitle": "Signer onboarding binds a key to an accountable identifier t"
+    },
+    {
+      "id": "lnk-f4b41dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4b41dda-9a74-4a12-8f29-58d5f5ad9301",
+      "targetTitle": "Emergency-response multisigs are exempt from signer and thre"
+    },
+    {
+      "id": "lnk-584bb9a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "584bb9a8-1f1e-45ee-8cfe-d3da9b02160c",
+      "targetTitle": "doc-00a86fb7"
+    },
+    {
+      "id": "lnk-b2c6cd89-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b2c6cd89-6ef2-4b9f-a50d-d3d29493224f",
+      "targetTitle": "doc-6db5097b"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Signers must use hardware wallets and a unique signing address per multisig",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a9cbd923-f0bb-4d36-b89c-365250f2932a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c746ec9d-4b31-47b7-b16b-bd9456255b91",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d787d6c-18e0-46b8-9c9f-81873030f683",
+      "name": "key-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.1.2.2 sets three signer-level requirements. Hardware wallets are mandatory, with seed phrases \"securely backed up using physical, offline storage methods only\" and \"never stored digitally, including in photographs, files, password managers, cloud storage, email, or messaging applications.\" Signers \"must use a unique signing address per Multisig and must not reuse the same signing address across Multisigs.\" And for critical or security-sensitive multisigs, signers \"should not use their signing addresses for personal transactions\" and should hold a dedicated address.\n\nThe non-reuse rule is the structurally interesting one. Without it, a single person signing for six multisigs collapses six independent security domains into one key: compromise it and the attacker inherits that person's weight everywhere at once, which can silently defeat carefully chosen thresholds across unrelated systems. Per-multisig addresses make the blast radius exactly one multisig.\n\nThe explicit ban on password managers is a deliberate rejection of the usual security advice, and it is correct in this threat model \u2014 a password manager is an online, single-point, high-value target, and seed phrase exposure is unrecoverable in a way that a leaked password is not.\n\nThe personal-transaction separation adds a privacy and targeting benefit: an address used only for multisig signing does not link a signer's identity, holdings, or habits to their role, which reduces both phishing surface and physical coercion risk. The framework states this one as \"should\" rather than \"must,\" so it is the softest of the three.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Seed phrases may never be stored digitally in any form, and address reuse across multisigs is prohibited \u2014 so one compromised key exposes exactly one multisig rather than every one a person signs for.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

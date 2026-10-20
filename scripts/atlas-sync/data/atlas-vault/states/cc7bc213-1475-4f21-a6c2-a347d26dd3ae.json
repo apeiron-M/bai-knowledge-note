@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SparkLend quarantines risk on both sides of a loan, with isolated collateral and siloed borrowing as mirror mechanisms",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0c6a85cc-57b9-44a2-9e23-a9d36b547cf9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6a16bff7-39f6-4221-82ea-5b2c5b90204a",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f179c5f-b088-491d-a882-725e547cda97",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "SparkLend defines two containment parameters that operate on opposite legs of a position.\n\n**Isolated collateral** constrains the debt side of a risky *collateral*: \"If Isolated Collateral is Enabled, only Stablecoins can be borrowed when using the asset as collateral\" (A.6.1.1.1.3.2.1.1.1.20), bounded further by an Isolated Debt Ceiling \u2014 \"the maximum amount that can be borrowed against designated isolated assets\" \u2014 with the same restriction restated: \"Only Stablecoins may be borrowed against isolated assets\" (.1.12). Isolation Mode is the borrower-side view: while in it, \"only assets with Isolated Borrow enabled can be borrowed\" (.1.21).\n\n**Siloed borrowing** constrains the other direction, on a risky *debt asset*: \"If Siloed Borrowing is Enabled, then when borrowing the asset, no other asset may be borrowed\" (.1.22).\n\nBoth exist to stop a single questionable asset from becoming a vector into the rest of the pool. If a thinly traded collateral is manipulated upward, isolation caps the damage at a known stablecoin quantity rather than letting the attacker draw out any asset they choose. If a debt asset itself is the problem, siloing prevents it from being combined into a leveraged multi-asset position whose failure spans markets.\n\nThe cost is capital efficiency, and it is paid by the honest user: a position using isolated collateral cannot borrow the asset they may actually want, and a siloed borrow cannot be combined with anything. This is why the parameters are per-asset switches rather than global policy \u2014 the protocol pays the efficiency cost only where the asset warrants it, and the live GNO configuration (isolated collateral yes, $5,000,000 debt ceiling) shows the settings applied to exactly one weak collateral rather than to the whole market.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Isolated collateral restricts what a risky asset can borrow (stablecoins only, under a debt ceiling); siloed borrowing restricts what can be borrowed alongside a risky debt asset.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "33124031-bfe1-4948-b82a-c4ae2a357e5c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6c494889-3ad8-42a8-8d14-37d6b74015e2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

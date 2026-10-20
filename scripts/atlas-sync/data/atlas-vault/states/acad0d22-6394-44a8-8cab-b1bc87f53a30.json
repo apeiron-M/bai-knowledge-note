@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-bea96dc1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bea96dc1-4182-4f96-acfc-7e7d72b2fc52",
+      "targetTitle": "Grove caps how fast capital can enter an allocation but leav"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's own rate limit can allow an Ethena mint that still fails because Ethena's per-block limits are shared with other users",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fdf4e63a-a687-4f46-8450-1f655ebf3947",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40ce754e-5626-4077-b0b1-957d00d62282",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "18123baf-b2b3-4d07-92fe-45a6efd5797f",
+      "name": "ethena",
+      "topicDocumentId": null
+    },
+    {
+      "id": "136d98ba-3a33-4dc4-9765-f1d6a4929a02",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.10.3.2 carries an unusual admission: \"Note that Ethena's per-block mint limits are shared with other users, so a mint may still fail even when the `RateLimits` allow the `usdcAmount`.\" A...10.4.2 repeats it for redemption.\n\nThe distinction being drawn is between a **budget** and a **guarantee**. Grove's `RateLimits` are a self-imposed ceiling on its own activity; Ethena's per-block limits are a shared resource contended for by every other participant. Passing the first says nothing about the second.\n\nThe operational implication is that a relayer's failed mint is not necessarily evidence of misconfiguration on Grove's side, and \u2014 more importantly \u2014 that Grove's exit path is contended too. In a stress event where many holders want to redeem USDe at once, the same shared per-block limit that throttles everyone throttles Grove, exactly when Grove most wants to move.\n\nDocumenting the gap in the Artifact rather than in a code comment is the notable part: it makes the residual risk a governance-visible fact about the integration rather than a surprise discovered during an incident.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas records this explicitly for both mint and redeem: a local control cannot guarantee capacity at a counterparty whose throughput is a common resource.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7a64c44d-46e9-4bb9-94c4-034a3f1c4389",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b0bbf0e8-61e2-47dd-9c36-bda7a89a66f0",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

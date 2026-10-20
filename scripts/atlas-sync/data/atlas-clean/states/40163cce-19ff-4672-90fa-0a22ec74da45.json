@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-46252857-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "46252857-c49d-469d-8f39-b12e487c8a9c",
+      "targetTitle": "doc-08e8b457"
+    },
+    {
+      "id": "lnk-d4791aac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4791aac-106c-4f67-ba0d-2bc9776a214a",
+      "targetTitle": "Safe Harbor pre-authorizes whitehats to seize at-risk funds "
+    },
+    {
+      "id": "lnk-fa3fc1d0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fa3fc1d0-0f93-4ccb-abdc-c6df084fea4e",
+      "targetTitle": "Sky pays 1% of Net Revenue to keep governance frontends main"
+    },
+    {
+      "id": "lnk-922642fa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "922642fa-0bc1-41f5-9f38-f56148db3990",
+      "targetTitle": "Sky's website IP must be transferred to a Dai-Foundation-lik"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky frontend terms of service must make users consent in advance to the rescue of their funds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6fc8d115-656a-4609-8101-ab472ffa2773",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d4f7719-7889-4772-8a21-0262308bbaa5",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c481930-0b00-483c-b216-ede89c241b37",
+      "name": "legal-resilience",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.2.4 requires that \"[t]he terms and conditions of frontends operated by Sky must be updated to include consent to the potential rescue of funds,\" with Core GovOps ensuring \"the contents contained in Exhibit D of the Safe Harbor agreement are incorporated into the terms of conditions governing the frontends operated by Sky and/or Prime Agents.\" A.2.11.1.2.5 pushes the same duty onto Primes for every frontend they operate.\n\nThis provision closes the gap that makes Safe Harbor incomplete on its own. Sky can waive claims it holds, but a rescue drains contracts holding *user* assets, and no protocol-level waiver binds a depositor whose tokens were moved without instruction. Without user consent, every successful rescue creates a class of people with a plausible claim against the rescuer.\n\nRouting that consent through frontend terms of service is pragmatic and imperfect. It reaches users who transact through official interfaces and misses everyone who interacts with the contracts directly, through an aggregator, or through a third-party frontend \u2014 a substantial share of users of permissionless contracts.\n\nThe extension to Primes matters structurally: Safe Harbor coverage is only as complete as the weakest frontend in the ecosystem, so a Prime that omits Exhibit D leaves rescuers exposed for assets deposited through it. Legal protection for whitehats is therefore assembled from many independently maintained documents, and A.2.11.1.2.3's registry-maintenance duty has an analogue here that no one is assigned to audit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Exhibit D of the Safe Harbor agreement has to be incorporated into the terms of every frontend Sky or a Prime Agent operates, because a rescue can move assets belonging to users, not the protocol.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

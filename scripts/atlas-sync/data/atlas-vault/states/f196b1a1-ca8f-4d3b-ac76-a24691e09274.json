@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Budget Controllers are the single sanctioned path from Atlas state to Surplus Buffer disbursement",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d1695a43-a566-4b93-bf0d-0d7a8686de6f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d5e15178-44c0-4e3e-b345-10fa60ccf6d3",
+      "name": "budgets",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c9675b5-8f48-4170-b434-56d20dca82e4",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.2.2.2.18 defines the Budget Controller Type as the mechanism that \"controls variable state that specifically authorizes executive votes to disburse payments from the Sky Surplus Buffer, or authorize smart contracts to disburse such payments.\" A.1.2.2.2.20 says Budget Documents \"specify a budget rate expressed as SKY or USDS per unit of time\" and can be modified through processes outside the Atlas Edit Proposal process.\n\nThree design choices are worth isolating. First, spending is expressed as a **rate**, not an amount \u2014 budgets are flows with a time dimension, which makes them naturally continuous and comparable rather than a series of discrete grants. Second, the Budget Document holds *authorization state*, not money: it licenses an executive vote or a smart contract to pay. The Atlas document tree is the permission layer; execution lives on-chain.\n\nThird, a Budget Controller must carry **both** an Active Data Directory at .0.6 and a Budget Directory at .0.7, and A.1.2.2.2.18 explains why: \"Budget Controllers also have Active Data Documents attached that are used to report on the status and results of projects funded through the Budget Documents.\" Authorization and reporting are structurally co-located, so a budget cannot exist in the tree without a designated place for its outcomes.\n\nThe consequence is that funding is architecturally the same kind of object as any other fast-moving state: a slow Primary Document (the Controller) declaring the rules, and fast Supporting Documents carrying the numbers. Money gets no special governance path \u2014 it gets the Active Data pattern with an extra directory for results.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.2.2.2.18 and .20 place spending authority in Budget Documents whose variable state authorizes executive votes or smart contracts to pay out, with rates expressed per unit of time.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b3ea2a8c-5943-447a-bd16-e806ebdf52e3",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b5427d6c-ad5e-4b56-a36c-8d0f86079d14",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

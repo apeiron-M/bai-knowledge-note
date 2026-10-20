@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-cacce6b0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cacce6b0-e16f-45ae-96a1-d2a60f7bcd40",
+      "targetTitle": "Keel outsources its operational execution to a separate Exec"
+    },
+    {
+      "id": "lnk-bde727af-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bde727af-b2b5-4efc-a863-c7b00b593aef",
+      "targetTitle": "Obex delegates its executive function to a separate Executor"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove outsources its day-to-day execution to a separate Executor Agent, Amatsu, through the Executor Accord Primitive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c0a2b1f5-34bb-4489-abcc-9d84f8825629",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "28392ad5-e1c4-4066-b5e1-013a9fed8f49",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c4d1195-37eb-412f-a9e6-69c331383c0b",
+      "name": "agent-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "02d875b9-cbe7-43af-a949-1ad51849dd91",
+      "name": "executor-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.2.1 records an **Active** Executor Accord Primitive for Grove with a single live Instance named Amatsu (A.6.1.1.2.2.2.1.2.1). Its parameters section A.6.1.1.2.2.2.1.2.1.1.1 does not define the roles inline; it points outward: \"The Operational Facilitator and Operational GovOps for Amatsu are specified in [A.6.1.2.1 - Operational Executor Agent Amatsu].\"\n\nThat indirection is the architecture. Grove, a Prime Agent, does not staff its own execution functions \u2014 it enters an Accord with a purpose-built **Executor Agent** whose own Artifact holds the role assignments. Grove's Artifact specifies *that* execution is delegated and under what process; Amatsu's specifies *who* executes.\n\nThe separation lets one Executor Agent serve multiple Primes with a shared operational apparatus, and lets Grove change executors by opening a new Accord Instance rather than rewriting its own governance. Because the Executor Accord is an Operational Primitive rather than a Genesis Primitive, it remains re-invocable \u2014 the delegation is intentionally reversible.\n\nThe corresponding exposure is that Grove's day-to-day integrity depends on a document it does not control. A change to Amatsu's Artifact changes who can act for Grove, so Grove's risk surface extends into another Agent's governance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Amatsu supplies Grove's Operational Facilitator and Operational GovOps roles, so a Prime Agent's operational authority is defined in another Agent's Artifact rather than its own.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "25fe15bc-2b36-4b10-8ab4-7bfa6310e646",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e198049d-e2fd-44de-9fa1-21552006ac0a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

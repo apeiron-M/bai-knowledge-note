@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Obex's governance currently runs on Forum posts, cryptographic proofs and GitHub pull requests because Powerhouse does not yet support it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "072c4a5b-8a06-408b-a4e2-9d17fdc62c25",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "569614bc-a3c7-4c39-a6d3-d0323cb58b28",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb9afa70-9adb-48cc-a36f-23fe39fdbff3",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2b0c156e-1f67-409f-9850-149f1820104b",
+      "name": "tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two Short-Term Transitionary Measures describe the system as actually operated. For submission (A.6.1.1.5.2.2.2.2.1.2.1.1.1): \"Until the Powerhouse system supports submitting Artifact Edit Proposals, OBEX token holders may submit \u2026 by posting them to the Sky Forum under the 'Obex Prime' category. The title of the post must include the text 'Obex Artifact Edit Proposal'. The post must include cryptographic proof that the author controls an account holding the required percentage.\" For execution (A.6.1.1.5.2.2.2.2.1.2.1.5.1): \"the Operational Facilitator works with the Core Facilitator to update the Atlas GitHub repository \u2026 to reflect proposals approved by Prime Governance.\"\n\nThe substitutions are not equivalent to what they replace. Signature-verified proof in a forum post preserves the 1% gate reasonably well, but a GitHub pull request is a fundamentally weaker execution path than a system-enforced edit: the merge is performed by people, and correspondence between the approved proposal and the merged diff is a matter of trust rather than mechanism.\n\nThe second measure also inserts an actor the routine protocol does not name. Ordinarily the Operational Facilitator submits the edit; in transition they must work with the **Core Facilitator**, a Sky-level role. So during the interim, no Agent can amend its own Artifact without Sky-side participation \u2014 a temporary centralisation the permanent design explicitly avoids.\n\nThe measures are self-terminating (\"Until the Powerhouse system supports\u2026\"), which is the right shape. But as with other deferrals in this Artifact, no date bounds the interim, so how long a manually-mediated constitution persists depends entirely on delivery of tooling described elsewhere.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Transitionary measures substitute a titled Forum post plus proof of holdings for formal submission, and route approved edits through the Core Facilitator into the next-gen-atlas repository.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

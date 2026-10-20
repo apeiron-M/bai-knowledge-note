@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { prefetchOnHover } from "../lib/prefetch.js";
 import {
   useGraphSearch,
   type SearchResult,
   type TopicInfo,
 } from "../hooks/use-graph-search.js";
 import type { CSSProperties } from "react";
+import { LoadingLine, LoadingPanel } from "./LoadingStates.js";
+import { plainError } from "../../shared/plain-error.js";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                         */
@@ -32,7 +35,75 @@ const STATUS_COLORS: Record<string, CSSProperties> = {
     color: "var(--bai-text-muted)",
     borderColor: "var(--bai-border)",
   },
+  // Execution documents — a scope of work and its work breakdowns — are
+  // indexed under sentinel statuses; their real state is in noteType.
+  SCOPE: {
+    background: "rgba(244, 114, 182, 0.2)",
+    color: "rgba(249, 168, 212, 1)",
+    borderColor: "rgba(244, 114, 182, 0.3)",
+  },
+  WBS: {
+    background: "rgba(20, 184, 166, 0.2)",
+    color: "rgba(94, 234, 212, 1)",
+    borderColor: "rgba(20, 184, 166, 0.3)",
+  },
 };
+
+const NOTE_TYPE_COLORS: Record<string, CSSProperties> = {
+  CONCEPT: {
+    background: "rgba(139, 92, 246, 0.15)",
+    color: "rgba(167, 139, 250, 1)",
+    borderColor: "rgba(139, 92, 246, 0.25)",
+  },
+  DECISION: {
+    background: "rgba(239, 68, 68, 0.12)",
+    color: "rgba(248, 113, 113, 1)",
+    borderColor: "rgba(239, 68, 68, 0.2)",
+  },
+  PATTERN: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "rgba(52, 211, 153, 1)",
+    borderColor: "rgba(16, 185, 129, 0.25)",
+  },
+  PROCEDURE: {
+    background: "rgba(59, 130, 246, 0.15)",
+    color: "rgba(96, 165, 250, 1)",
+    borderColor: "rgba(59, 130, 246, 0.25)",
+  },
+  REFERENCE: {
+    background: "rgba(245, 158, 11, 0.15)",
+    color: "rgba(252, 211, 77, 1)",
+    borderColor: "rgba(245, 158, 11, 0.25)",
+  },
+  BUG_PATTERN: {
+    background: "rgba(239, 68, 68, 0.15)",
+    color: "rgba(248, 113, 113, 1)",
+    borderColor: "rgba(239, 68, 68, 0.25)",
+  },
+  OBSERVATION: {
+    background: "rgba(244, 114, 182, 0.15)",
+    color: "rgba(243, 156, 185, 1)",
+    borderColor: "rgba(244, 114, 182, 0.25)",
+  },
+  INTEGRATION: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "rgba(52, 211, 153, 1)",
+    borderColor: "rgba(16, 185, 129, 0.25)",
+  },
+  WORKFLOW: {
+    background: "rgba(59, 130, 246, 0.15)",
+    color: "rgba(96, 165, 250, 1)",
+    borderColor: "rgba(59, 130, 246, 0.25)",
+  },
+};
+
+function noteTypeStyle(type: string | undefined): CSSProperties {
+  return NOTE_TYPE_COLORS[type ?? ""] ?? {
+    background: "var(--bai-hover)",
+    color: "var(--bai-text-muted)",
+    borderColor: "var(--bai-border)",
+  };
+}
 
 // Buckets for the server's 0..1 relevance. A note matched by BOTH the
 // semantic and keyword legs can approach 1.0; one matched by a single leg is
@@ -48,7 +119,7 @@ function similarityColor(score: number): string {
 /*  Component                                                         */
 /* ------------------------------------------------------------------ */
 
-export function SearchView() {
+export function SearchView({ isLoading = false }: { isLoading?: boolean }) {
   const { query, setQuery, results, topics, loading, error } = useGraphSearch();
 
   return (
@@ -122,16 +193,20 @@ export function SearchView() {
               )}
             </>
           )}
-          {error && <span style={{ color: "#ef4444" }}>{error}</span>}
+          {error && <span style={{ color: "#ef4444" }}>{plainError(error)}</span>}
         </div>
       )}
 
       {/* Content */}
       <div className="flex-1 overflow-auto">
         {!query.trim() ? (
-          <EmptyState topics={topics} onTopicClick={setQuery} />
+          <EmptyState
+            topics={topics}
+            onTopicClick={setQuery}
+            isLoading={isLoading}
+          />
         ) : (
-          <ResultList results={results} />
+          <ResultList results={results} loading={loading} />
         )}
       </div>
     </div>
@@ -145,9 +220,12 @@ export function SearchView() {
 function EmptyState({
   topics,
   onTopicClick,
+  isLoading,
 }: {
   topics: TopicInfo[];
   onTopicClick: (topic: string) => void;
+  /** True until the vault's first metadata fetch settles. */
+  isLoading: boolean;
 }) {
   const [showTopics, setShowTopics] = useState(false);
 
@@ -181,6 +259,12 @@ function EmptyState({
         organizations".
       </p>
 
+      {/* While the vault is still loading, say so instead of silently
+          rendering a landing page with nothing behind it. */}
+      {isLoading && topics.length === 0 && (
+        <LoadingLine label="Loading notes…" />
+      )}
+
       {/* Explore topics button */}
       {topics.length > 0 && (
         <div className="flex flex-col items-center">
@@ -205,11 +289,8 @@ function EmptyState({
                     key={t.name}
                     type="button"
                     onClick={() => onTopicClick(t.name)}
-                    className="rounded-full px-3 py-1.5 text-xs transition-colors"
-                    style={{
-                      backgroundColor: "var(--bai-hover)",
-                      color: "var(--bai-accent)",
-                    }}
+                    className="vault-chip"
+                    data-tone="accent"
                   >
                     {t.name}
                     <span
@@ -233,7 +314,18 @@ function EmptyState({
 /*  Result list                                                       */
 /* ------------------------------------------------------------------ */
 
-function ResultList({ results }: { results: SearchResult[] }) {
+function ResultList({
+  results,
+  loading,
+}: {
+  results: SearchResult[];
+  loading: boolean;
+}) {
+  // A search in flight with nothing to show yet is not "no results".
+  if (loading && results.length === 0) {
+    return <LoadingPanel label="Searching…" />;
+  }
+
   if (results.length === 0) {
     return (
       <div
@@ -276,6 +368,7 @@ function ResultCard({
     <button
       type="button"
       onClick={() => setSelectedNode(result.documentId)}
+      {...prefetchOnHover(result.documentId)}
       className="group flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all border-[var(--bai-border)] bg-[var(--bai-surface)] hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       {/* Similarity score */}
@@ -319,10 +412,7 @@ function ResultCard({
           {result.noteType && (
             <span
               className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-              style={{
-                background: "var(--bai-hover)",
-                color: "var(--bai-text-muted)",
-              }}
+              style={noteTypeStyle(result.noteType)}
             >
               {result.noteType}
             </span>

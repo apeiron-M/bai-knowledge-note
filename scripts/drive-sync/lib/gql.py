@@ -32,6 +32,7 @@ synthesis bug.
 import http.client
 import json
 import os
+import socket
 import threading
 import time
 import uuid
@@ -43,6 +44,11 @@ DEFAULT_ENDPOINT = os.environ.get(
     "PH_GRAPHQL_ENDPOINT", "http://localhost:4001/graphql"
 )
 
+# Renown bearer for every request. `ph access-token` prints one; it lasts 7
+# days, so this is a per-session export rather than something to persist:
+#   export PH_ACCESS_TOKEN="$(ph access-token | tail -1)"
+ACCESS_TOKEN = os.environ.get("PH_ACCESS_TOKEN", "").strip()
+
 
 class GraphQLError(RuntimeError):
     """A GraphQL request returned errors."""
@@ -52,7 +58,7 @@ _POOL: dict[str, Any] = {}
 _POOL_LOCK = threading.Lock()
 
 
-def _connection(endpoint: str):
+def _connection(endpoint: str, timeout: float | None = None):
     """One keep-alive connection per (scheme, host), reused across calls.
 
     `urllib.request.urlopen` opens a fresh TCP+TLS connection per request. A
@@ -66,10 +72,23 @@ def _connection(endpoint: str):
     p = urlsplit(endpoint)
     key = f"{p.scheme}://{p.netloc}"
     conn = _POOL.get(key)
-    if conn is None:
+    if conn is None or (timeout is not None and conn.timeout != timeout):
+        # Honour the caller's timeout. This used to be hard-coded to 60s while
+        # `post(timeout=...)` was silently ignored, which turned every
+        # long-running mutation into a false failure: the socket timed out at
+        # 60s, the retry loop re-sent the request, and an idempotent server-side
+        # job ran four times. Observed twice on `knowledgeGraphReindex` (~63s),
+        # which logged "Reindex complete" four times from a single call and
+        # saturated the reactor while doing it. A pooled connection whose
+        # timeout no longer matches the caller is replaced rather than reused.
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
         cls = (http.client.HTTPSConnection if p.scheme == "https"
                else http.client.HTTPConnection)
-        conn = cls(p.netloc, timeout=60)
+        conn = cls(p.netloc, timeout=timeout if timeout is not None else 60)
         _POOL[key] = conn
     return key, conn, (p.path or "/")
 
@@ -110,17 +129,35 @@ def post(
         "Accept": "application/json",
         "Connection": "keep-alive",
     }
+    # The Switchboard reads identity from the bearer, not from the signed
+    # actions inside the payload. Mint one with `ph access-token`. Absent is
+    # left absent rather than sent empty: a missing header is an anonymous
+    # caller (which a host with authorization off serves normally), while a
+    # malformed one is a hard 401.
+    if ACCESS_TOKEN:
+        headers["Authorization"] = f"Bearer {ACCESS_TOKEN}"
 
     last: Exception | None = None
     for attempt in range(attempts):
-        key, conn, path = _connection(endpoint)
+        key, conn, path = _connection(endpoint, timeout)
         try:
             with _POOL_LOCK:
                 conn.request("POST", path, payload, headers)
                 resp = conn.getresponse()
                 status = resp.status
                 raw = resp.read()
-        except Exception as e:  # transport-level: socket closed, TLS, timeout
+        except socket.timeout as e:
+            # NEVER retry a timeout. The request reached the server and may
+            # still be running there; re-sending it runs the work again. A
+            # `knowledgeGraphReindex` that outlived a too-short client timeout
+            # was observed executing four times from one call. Retrying is only
+            # safe when the request demonstrably did not arrive.
+            _drop(key)
+            raise GraphQLError(
+                f"timeout after {timeout}s - the server may still be running "
+                f"this request; check before re-sending: {e}"
+            ) from e
+        except Exception as e:  # transport-level: socket closed, TLS, refused
             _drop(key)
             last = e
             if attempt < attempts - 1:
@@ -161,6 +198,8 @@ NAMESPACE_BY_TYPE: dict[str, str] = {
     "bai/tension": "Tension",
     "bai/derivation": "Derivation",
     "bai/research-claim": "ResearchClaim",
+    "powerhouse/scopeofwork": "ScopeOfWork",
+    "bai/wbs": "WorkBreakdownStructure",
 }
 
 SUPERGRAPH_ENDPOINT = DEFAULT_ENDPOINT  # /graphql
@@ -183,7 +222,7 @@ def create_document(
         raise GraphQLError(f"no namespace mapping for {doc_type}")
     query = (
         f"mutation($name: String!, $parentIdentifier: String) "
-        f"{{ {ns} {{ createDocument(name: $name, parentIdentifier: $parentIdentifier) {{ id }} }} }}"
+        f"{{ {ns} {{ createDocument(name: $name, parentIdOrSlug: $parentIdentifier) {{ id }} }} }}"
     )
     data = post(query, {"name": name, "parentIdentifier": drive_id}, endpoint=SUPERGRAPH_ENDPOINT)
     new_id = (data.get(ns) or {}).get("createDocument", {}).get("id")
@@ -199,8 +238,8 @@ def move_node(drive_id: str, src_folder_or_doc_id: str, target_parent_folder: st
     item is a folder or a file — that's the reactor's naming, not a typo.
     """
     query = (
-        "mutation($docId: PHID!, $input: DocumentDrive_MoveNodeInput!) "
-        "{ DocumentDrive { moveNode(docId: $docId, input: $input) { id } } }"
+        "mutation($docId: String!, $input: DocumentDrive_MoveNodeInput!) "
+        "{ DocumentDrive { moveNode(documentIdOrSlug: $docId, input: $input) { id } } }"
     )
     variables = {
         "docId": drive_id,
@@ -275,7 +314,7 @@ def add_relationship(
     """
     query = (
         "mutation($source: String!, $target: String!, $type: String!, $branch: String) "
-        "{ addRelationship(sourceIdentifier: $source, targetIdentifier: $target, "
+        "{ addRelationship(sourceIdOrSlug: $source, targetIdOrSlug: $target, "
         "relationshipType: $type, branch: $branch) { documentType } }"
     )
     post(
@@ -328,7 +367,7 @@ def get_drive_info(drive_id: str) -> dict[str, Any]:
     own TLS handshake — the cost that makes remote runs fail.
     """
     query = (
-        "query($id: String!) { document(identifier: $id) "
+        "query($id: String!) { document(idOrSlug: $id) "
         "{ document { id slug name } } }"
     )
     data = post(query, {"id": drive_id})
@@ -341,7 +380,7 @@ def get_drive_nodes(drive_id: str) -> list[dict[str, Any]]:
     discover existing folder ids on a resumed run.
     """
     query = (
-        "query($id: String!) { document(identifier: $id) { document { state } } }"
+        "query($id: String!) { document(idOrSlug: $id) { document { state } } }"
     )
     data = post(query, {"id": drive_id}, endpoint=READ_ENDPOINT)
     doc = ((data.get("document") or {}).get("document") or {})

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-0b65f96e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b65f96e-2a39-4073-a31b-921385087e89",
+      "targetTitle": "BEAMs delegate parameter authority to whitelisted operators "
+    },
+    {
+      "id": "lnk-77693b5a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77693b5a-3a79-447b-bc39-a1967c8b1bc6",
+      "targetTitle": "Standby Spells pre-build the mitigation path so emergency en"
+    },
+    {
+      "id": "lnk-a0b3b01b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0b3b01b-9831-4f38-a69a-e7c9fcc8fdf3",
+      "targetTitle": "Emergency bypasses are one-directional ratchets: restriction"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Halting SP-BEAM freezes rates at their pre-invocation level rather than reverting them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b634bc7f-0d7f-44dc-a5ef-7935159aa8e6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7dbfcbd0-36c9-4e75-a799-1497d92e7f9d",
+      "name": "circuit-breakers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c58c305-4fb8-4b6a-a085-8641f36d584a",
+      "name": "parameter-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.5.2.2.4.2 defines the SPBEAMHaltSpell, which disables the Stability Parameter Bounded External Access Module. The consequential detail: \"After this Standby Spell is invoked, the SP-BEAM will no longer be able to set rates in the system. Invoking the Standby Spell has no impact on rates, which remain at pre-invocation levels until adjusted by Sky Governance via an Executive Vote.\"\n\nThis separates two things that are easy to conflate. Halting an automated module removes its *authority to act*; it does not undo its *past actions*. If SP-BEAM has been manipulated or has malfunctioned into a bad rate, pulling the breaker stops it going further but leaves the bad rate in force.\n\nThe operational consequence is that this breaker is only half a remedy. It buys time and stops drift, but it must be followed by an Executive Vote to restore a correct value \u2014 exactly the division of labour A.1.10.5.1 describes between a Standby Spell that stops the bleeding and an Emergency Spell that fixes the cause.\n\nThe design is nonetheless the safer default. Automatically reverting to some prior value on halt would require the contract to decide *which* prior value was legitimate, and that decision is itself attackable; freezing the current state is deterministic and leaves the judgment with governance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The SPBEAMHaltSpell removes the module's authority to set rates but leaves its last outputs standing until Sky Governance changes them by Executive Vote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

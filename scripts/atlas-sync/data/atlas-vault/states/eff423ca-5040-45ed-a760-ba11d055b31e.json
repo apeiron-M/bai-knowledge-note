@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f7b51e2f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7b51e2f-634d-48cc-8d3d-dfb392d0b909",
+      "targetTitle": "A Primitive's Global Activation Status and each instance's S"
+    },
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A primitive marked Globally Active with no Instances is authorized capability the Agent has not yet used",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2fc9ee42-6837-41e8-a80a-d22196661f35",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d29d409-b554-437c-9ab7-6a6416aefdbb",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "586a1793-22cb-4600-ad28-8d20d59d4bb8",
+      "name": "agent-operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Among the SkyLink and Demand Side Stablecoin Primitives, Launch Agent 7 shows two distinct empty states. Distribution Reward (A.6.1.1.8.2.5.1.1.1) and Integration Boost (A.6.1.1.8.2.5.2.1.1) are `Active` yet have no Instances in any directory. Token SkyLink (A.6.1.1.8.2.4.1.1.1) and Pioneer Chain (A.6.1.1.8.2.5.3.1.1) are `Inactive`, also with no Instances.\n\nThe pair is what makes the semantics readable. If `Active` meant \"in use,\" the first two would be mislabeled. It instead means the primitive is switched on and available: an Invocation may begin at any time and, when it succeeds, its subtree moves into the Active Instances directory without any further authorization step.\n\nSo the Artifact distinguishes three things that a single flag would collapse \u2014 a capability not enabled (`Inactive`), enabled but unexercised (`Active`, no Instances), and in use (`Active` with Instances).\n\nRead as a portfolio, this tells you what Launch Agent 7 has prepared for versus committed to. It has pre-authorized demand-side stablecoin tooling \u2014 rewards for distribution and integration boosts \u2014 while leaving cross-chain SkyLink deployment and Pioneer Chain participation switched off. Enabling the first pair required a governance decision that has already been taken; using them does not require another.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Distribution Reward and Integration Boost are Active with empty Instance directories, while Token SkyLink and Pioneer Chain are Inactive \u2014 switched-on-but-unused differs from not switched on.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a703503f-ed26-4dde-83df-3a75745f3733",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4cef587e-b2ee-4463-8407-4dc7682363ca",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:28.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,524 @@
+import { describe, expect, it } from "vitest";
+import { createHttpConversionService } from "./service.js";
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+
+/** fetch's input is `RequestInfo | URL`; the client always passes a string. */
+const toUrl = (input: RequestInfo | URL): string =>
+  typeof input === "string"
+    ? input
+    : input instanceof URL
+      ? input.href
+      : input.url;
+
+interface Call {
+  url: string;
+  init: RequestInit;
+}
+
+/**
+ * A fetch double that records each call. Returning `Promise.resolve(...)`
+ * rather than writing `async` keeps `require-await` quiet, and `toUrl` keeps
+ * the input narrow enough to compare.
+ */
+function fakeFetch(respond: (call: Call) => Response) {
+  const calls: Call[] = [];
+  const impl = ((input: RequestInfo | URL, init?: RequestInit) => {
+    const call: Call = { url: toUrl(input), init: init ?? {} };
+    calls.push(call);
+    try {
+      return Promise.resolve(respond(call));
+    } catch (error) {
+      return Promise.reject(
+        error instanceof Error ? error : new Error(String(error)),
+      );
+    }
+  }) as typeof fetch;
+  return { calls, impl };
+}
+
+/** Captures the rejection so its fields can be asserted without an `any`. */
+async function conversionError(
+  fetchImpl: typeof fetch,
+): Promise<{ status: number; code: string; message: string }> {
+  const service = createHttpConversionService({
+    baseUrl: "http://127.0.0.1:5099",
+    fetchImpl,
+  });
+  try {
+    await service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) });
+  } catch (error) {
+    return error as { status: number; code: string; message: string };
+  }
+  throw new Error("expected the conversion to reject");
+}
+
+describe("createHttpConversionService — failure mapping", () => {
+  it("maps a non-2xx from the service to CONVERT_UNAVAILABLE with the status", async () => {
+    // A backend that answers 500 is *reachable but broken* — reporting it as
+    // "unreachable" without the status would leave an operator guessing.
+    const { impl } = fakeFetch(() => json({ error: "models missing" }, 500));
+
+    const error = await conversionError(impl);
+
+    expect(error.status).toBe(502);
+    expect(error.code).toBe("CONVERT_UNAVAILABLE");
+    expect(error.message).toContain("500");
+  });
+
+  it("describes a rejection that is not an Error at all", async () => {
+    // fetch can reject with anything, and `String(error)` is the only safe read.
+    // Built by hand because both `Promise.reject(nonError)` and `throw` of a
+    // literal are lint errors — and a non-Error rejection is the point here.
+    const nonError: unknown = "socket closed";
+    const rejecting = (() =>
+      Promise.resolve().then(() => {
+        throw nonError;
+      })) as typeof fetch;
+
+    const error = await conversionError(rejecting);
+
+    expect(error.status).toBe(502);
+    expect(error.code).toBe("CONVERT_UNAVAILABLE");
+    expect(error.message).toContain("socket closed");
+  });
+
+  it("passes a 415 through with the service's code and remedy, for the intake to show", async () => {
+    const { impl } = fakeFetch(() =>
+      json(
+        {
+          error:
+            "cannot convert docx without the docling.rs binding — install the converter",
+          code: "BINDING_REQUIRED",
+          hint: "Install the converter, or point the vault at a conversion service.",
+          binding: false,
+        },
+        415,
+      ),
+    );
+
+    const error = (await conversionError(impl)) as {
+      status: number;
+      code: string;
+      message: string;
+      details?: { hint?: string; binding?: boolean };
+    };
+
+    expect(error.status).toBe(415);
+    expect(error.code).toBe("BINDING_REQUIRED");
+    expect(error.message).toContain("install the converter");
+    expect(error.details?.hint).toContain("Install the converter");
+    expect(error.details?.binding).toBe(false);
+  });
+});
+
+describe("createHttpConversionService", () => {
+  it("posts the bytes with the filename and maps a 2xx body", async () => {
+    const { calls, impl } = fakeFetch(() =>
+      json({
+        markdown: "# Hi",
+        chunks: [{ text: "Hi", headings: ["Hi"] }],
+        format: "md",
+      }),
+    );
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test/",
+      fetchImpl: impl,
+    });
+
+    const result = await service.convert({
+      filename: "Book chapter.pdf",
+      bytes: new Uint8Array([1, 2, 3]),
+    });
+
+    expect(calls).toHaveLength(1);
+    const call = calls[0];
+    // `encodeURIComponent`, so a space is %20 — not the `+` a form encoding
+    // would produce. The service reads it back with URLSearchParams, which
+    // decodes either, but the client sends what it says it sends.
+    expect(call.url).toBe(
+      "http://convert.test/convert?filename=Book%20chapter.pdf",
+    );
+    expect(call.init.method).toBe("POST");
+    expect((call.init.headers as Record<string, string>)["content-type"]).toBe(
+      "application/octet-stream",
+    );
+    expect(result.markdown).toBe("# Hi");
+    expect(result.chunks).toHaveLength(1);
+    expect(result.format).toBe("md");
+  });
+
+  it("strips trailing slashes from the base url", async () => {
+    const { calls, impl } = fakeFetch(() => json({ markdown: "", chunks: [] }));
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test///",
+      fetchImpl: impl,
+    });
+    await service.convert({ filename: "a.md", bytes: new Uint8Array([1]) });
+    expect(calls[0].url).toBe("http://convert.test/convert?filename=a.md");
+  });
+
+  it("sends the api key when configured", async () => {
+    const { calls, impl } = fakeFetch(() => json({ markdown: "", chunks: [] }));
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      apiKey: "secret",
+      fetchImpl: impl,
+    });
+    await service.convert({ filename: "a.md", bytes: new Uint8Array([1]) });
+    expect((calls[0].init.headers as Record<string, string>)["x-api-key"]).toBe(
+      "secret",
+    );
+  });
+
+  it("sends no api key header when none is configured", async () => {
+    const { calls, impl } = fakeFetch(() => json({ markdown: "", chunks: [] }));
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: impl,
+    });
+    await service.convert({ filename: "a.md", bytes: new Uint8Array([1]) });
+    const headers = calls[0].init.headers as Record<string, string>;
+    expect(headers["x-api-key"]).toBeUndefined();
+    // An absent key must not clear the content type.
+    expect(headers["content-type"]).toBe("application/octet-stream");
+  });
+
+  it("raises CONVERT_UNAVAILABLE when the service rejects", async () => {
+    const { impl } = fakeFetch(() => json({ error: "no models" }, 500));
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: impl,
+    });
+    await expect(
+      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
+    ).rejects.toMatchObject({ code: "CONVERT_UNAVAILABLE", status: 502 });
+  });
+
+  it("keeps the service's own detail — a 415 passes through with its sentence and `missing[]`", async () => {
+    // The service answers 415 with a `missing[]` list when models are absent;
+    // that has to survive the mapping as the 415 it is, or the UI cannot tell
+    // the user what to fetch.
+    const { impl } = fakeFetch(() =>
+      json(
+        {
+          error: "cannot convert pdf without the docling models",
+          missing: ["pdfium"],
+        },
+        415,
+      ),
+    );
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: impl,
+    });
+    const error = await service
+      .convert({ filename: "a.pdf", bytes: new Uint8Array([1]) })
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+    expect(error).toMatchObject({
+      status: 415,
+      code: "CONVERT_UNSUPPORTED",
+      details: { missing: ["pdfium"] },
+    });
+    expect((error as Error).message).toContain("docling models");
+  });
+
+  it("raises CONVERT_UNAVAILABLE when the service is unreachable", async () => {
+    const { impl } = fakeFetch(() => {
+      throw new Error("ECONNREFUSED");
+    });
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: impl,
+    });
+    await expect(
+      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
+    ).rejects.toMatchObject({ code: "CONVERT_UNAVAILABLE" });
+  });
+
+  it("treats a body that is not the agreed shape as unavailable, not as success", async () => {
+    // docling-serve answers `{ document: { md_content, … } }`; if someone points
+    // CONVERT_SERVICE_URL at it without an adapter, that must surface as an
+    // error rather than as a source with no text.
+    const { impl } = fakeFetch(() =>
+      json({ document: { md_content: "# Hi" }, status: "success" }),
+    );
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: impl,
+    });
+    await expect(
+      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
+    ).rejects.toMatchObject({ code: "CONVERT_UNAVAILABLE", status: 502 });
+  });
+
+  it("maps the service's ocr field, defaulting to null", async () => {
+    const withOcr = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          markdown: "# x",
+          chunks: [],
+          ocr: "tesseract",
+        })) as typeof fetch,
+    });
+    expect(
+      (await withOcr.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }))
+        .ocr,
+    ).toBe("tesseract");
+    const without = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({ markdown: "# x", chunks: [] })) as typeof fetch,
+    });
+    expect(
+      (await without.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }))
+        .ocr,
+    ).toBeNull();
+  });
+
+  it("asks the service for OCR with ?ocr=1 when told to", async () => {
+    let url = "";
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async (u) => {
+        url = typeof u === "string" ? u : u instanceof URL ? u.href : u.url;
+        return json({ markdown: "# x", chunks: [] });
+      }) as typeof fetch,
+    });
+    await service.convert({
+      filename: "scan.pdf",
+      bytes: new Uint8Array([1]),
+      ocr: true,
+    });
+    expect(url).toBe("http://convert.test/convert?filename=scan.pdf&ocr=1");
+  });
+
+  it("maps the service's busy answer to CONVERT_BUSY rather than CONVERT_UNAVAILABLE", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json(
+          { error: "a conversion is already running", code: "CONVERSION_BUSY" },
+          503,
+        )) as typeof fetch,
+    });
+    await expect(
+      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
+    ).rejects.toMatchObject({ status: 503, code: "CONVERT_BUSY" });
+  });
+
+  // Behind a reverse proxy the service writes keep-alive bytes so a long
+  // conversion is not cut off; the first one commits the status to 200, so a
+  // later failure can only travel in the body.
+  it("recovers the real status from a deferred error in a 200 body", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          error: "no text layer and OCR exceeded its budget",
+          code: "PDF_UNREADABLE",
+          deferredStatus: 415,
+        })) as typeof fetch,
+    });
+
+    const error = await service
+      .convert({ filename: "a.pdf", bytes: new Uint8Array([1]) })
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+
+    // A deferred 415 is still the service's own refusal: its code and sentence survive.
+    expect(error).toMatchObject({ status: 415, code: "PDF_UNREADABLE" });
+    expect((error as Error).message).toContain("no text layer");
+  });
+
+  it("keeps the busy distinction when it arrives deferred", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          error: "a conversion is already running",
+          code: "CONVERSION_BUSY",
+          deferredStatus: 503,
+        })) as typeof fetch,
+    });
+
+    await expect(
+      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
+    ).rejects.toMatchObject({ status: 503, code: "CONVERT_BUSY" });
+  });
+
+  // The message is the whole point of the deferral — losing it would leave the
+  // caller with "unexpected body", which reads as a misconfigured URL.
+  it("surfaces the deferred error text, not just the code", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          error: "pdfium refused the document after two rewrites",
+          deferredStatus: 415,
+        })) as typeof fetch,
+    });
+
+    const error = await service
+      .convert({ filename: "a.pdf", bytes: new Uint8Array([1]) })
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+
+    expect((error as Error).message).toContain("pdfium refused");
+  });
+
+  it("reports health verbatim", async () => {
+    const { calls, impl } = fakeFetch(() =>
+      json({
+        ok: true,
+        backend: "docling.rs",
+        ready: false,
+        missing: ["pdfium"],
+        formats: ["md", "pdf"],
+      }),
+    );
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: impl,
+    });
+    const health = await service.health();
+    expect(calls[0].url).toBe("http://convert.test/health");
+    expect(calls[0].init.method).toBe("GET");
+    expect(health.ready).toBe(false);
+    expect(health.missing).toEqual(["pdfium"]);
+  });
+});
+
+describe("createHttpConversionService — cancellation, progress and lanes (contract v2)", () => {
+  const service = (fetchImpl: typeof fetch, apiKey?: string) =>
+    createHttpConversionService({
+      baseUrl: "http://convert.test/",
+      fetchImpl,
+      ...(apiKey ? { apiKey } : {}),
+    });
+
+  it("sends DELETE /convert/:job with the api key, and answers true when the job was running", async () => {
+    const { calls, impl } = fakeFetch(() => json({ cancelled: true }));
+
+    await expect(service(impl, "secret").cancel("job-1")).resolves.toBe(true);
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0].url).toBe("http://convert.test/convert/job-1");
+    expect(calls[0].init.method).toBe("DELETE");
+    expect((calls[0].init.headers as Record<string, string>)["x-api-key"]).toBe(
+      "secret",
+    );
+  });
+
+  it("encodes the job id into the path", async () => {
+    const { calls, impl } = fakeFetch(() => json({ cancelled: true }));
+    await service(impl).cancel("a b/c");
+    expect(calls[0].url).toBe("http://convert.test/convert/a%20b%2Fc");
+  });
+
+  it("answers false when no such job is running — finished, or never started", async () => {
+    const { impl } = fakeFetch(() => json({ cancelled: false }, 404));
+    await expect(service(impl).cancel("job-1")).resolves.toBe(false);
+  });
+
+  it("raises CONVERT_UNAVAILABLE for any other status, with the status in the message", async () => {
+    const { impl } = fakeFetch(() => json({ error: "bad job id" }, 400));
+    const error = await service(impl)
+      .cancel("job-1")
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+    expect(error).toMatchObject({ status: 502, code: "CONVERT_UNAVAILABLE" });
+    expect((error as Error).message).toContain("400");
+  });
+
+  it("raises CONVERT_UNAVAILABLE when the service is unreachable", async () => {
+    const { impl } = fakeFetch(() => {
+      throw new Error("ECONNREFUSED");
+    });
+    await expect(service(impl).cancel("job-1")).rejects.toMatchObject({
+      status: 502,
+      code: "CONVERT_UNAVAILABLE",
+    });
+  });
+
+  it("maps the service's 409 CONVERSION_CANCELLED to CONVERT_CANCELLED", async () => {
+    const { impl } = fakeFetch(() =>
+      json(
+        { error: "the conversion was cancelled", code: "CONVERSION_CANCELLED" },
+        409,
+      ),
+    );
+    const error = await conversionError(impl);
+    expect(error).toMatchObject({
+      status: 409,
+      code: "CONVERT_CANCELLED",
+      message: "The conversion was cancelled.",
+    });
+  });
+
+  // After the first heartbeat the status is already 200, so the cancellation
+  // travels in the body like every other late failure.
+  it("maps a deferred 409 CONVERSION_CANCELLED the same way", async () => {
+    const { impl } = fakeFetch(() =>
+      json({
+        error: "the conversion was cancelled",
+        code: "CONVERSION_CANCELLED",
+        deferredStatus: 409,
+      }),
+    );
+    const error = await conversionError(impl);
+    expect(error).toMatchObject({ status: 409, code: "CONVERT_CANCELLED" });
+  });
+
+  it("does not read some other 409 as a cancellation", async () => {
+    const { impl } = fakeFetch(() => json({ error: "conflict" }, 409));
+    const error = await conversionError(impl);
+    expect(error).toMatchObject({ status: 502, code: "CONVERT_UNAVAILABLE" });
+    expect(error.message).toContain("409");
+  });
+
+  it("reads a job's progress, phases like `cancelled` included, and null once the service has forgotten it", async () => {
+    const { calls, impl } = fakeFetch((call) =>
+      call.url.endsWith("/progress/job-1")
+        ? json({ phase: "cancelled", pages: 23, pagesDone: 0, elapsedMs: 900 })
+        : json({ error: "no such job" }, 404),
+    );
+    const svc = service(impl);
+    await expect(svc.progress("job-1")).resolves.toEqual({
+      phase: "cancelled",
+      pages: 23,
+      pagesDone: 0,
+      elapsedMs: 900,
+    });
+    await expect(svc.progress("gone")).resolves.toBeNull();
+    expect(calls[0].url).toBe("http://convert.test/progress/job-1");
+  });
+
+  it("passes the lanes through with the health, verbatim", async () => {
+    const { impl } = fakeFetch(() =>
+      json({
+        ok: true,
+        backend: "docling.rs",
+        ready: true,
+        missing: [],
+        formats: ["md", "pdf"],
+        slots: { models: 1, other: 2, busyModels: 1, busyOther: 0 },
+        modelExtensions: ["pdf", "png"],
+      }),
+    );
+    const health = await service(impl).health();
+    expect(health.slots).toEqual({
+      models: 1,
+      other: 2,
+      busyModels: 1,
+      busyOther: 0,
+    });
+    expect(health.modelExtensions).toEqual(["pdf", "png"]);
+  });
+});

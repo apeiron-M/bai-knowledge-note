@@ -1,429 +1,139 @@
-# bai-knowledge-note
+![Knowledge Vault — turns what you read into ideas you can find.](docs/assets/header.png)
 
-A Powerhouse Vetra package for team-wide institutional memory — atomic knowledge notes with typed content, structured links, lifecycle states, and provenance tracking.
+# Knowledge Vault
 
-## Architecture
+**A shared memory for your team.** Everything you read — articles, meeting notes, transcripts, docs — goes in. The vault breaks it into small, clear ideas, connects each idea to the ones it relates to, and lets you ask questions in plain language. Every answer comes from your own notes, with the sources cited.
 
-```
-bai-knowledge-note/
-├── document-models/     11 document models (data schemas + reducers)
-├── editors/             10 editors + 1 drive-app (UI layer)
-├── processors/          Graph indexer (data pipeline)
-├── subgraphs/           Knowledge graph (GraphQL query API)
-├── powerhouse.manifest.json
-└── powerhouse.config.json
-```
+Knowledge Vault is an app for [Powerhouse Connect](https://powerhouse.inc/), built as a Powerhouse package. This repository is that package.
 
-## Document Models
+## What it does
 
-11 document types defining the knowledge vault's data layer:
+- **Turns documents into ideas.** Each note holds one idea, written as a clear sentence. When two sources say the same thing, they add to the same note instead of repeating it in two places.
+- **Connects ideas.** Notes are linked to each other, and every link says *why* the two belong together. Topic maps group related notes, so you can browse an area the way you'd browse a table of contents.
+- **Answers questions with sources.** Ask the chat anything. It searches the vault, reads the notes that match, and writes an answer with a numbered citation for every note it used — so you can check each claim.
+- **Keeps a human in charge.** AI agents can do the heavy lifting — reading sources, writing notes, making links — but a person approves what becomes part of the vault. An author can't approve their own note.
+- **Remembers who did what.** Every change is signed and kept, so you can always see who changed a note, when, and what it said before.
 
-| Model | Type | Role |
-|-------|------|------|
-| **KnowledgeNote** | `bai/knowledge-note` | Atomic knowledge claims with title, content, typed links, topics, provenance |
-| **Moc** | `bai/moc` | Maps of Content — topic navigation hubs organizing notes into clusters |
-| **Source** | `bai/source` | Raw ingested material (articles, transcripts, documentation) |
-| **ResearchClaim** | `bai/research-claim` | Ars Contexta methodology foundation (249 claims) |
-| **KnowledgeGraph** | `bai/knowledge-graph` | Materialized graph singleton |
-| **PipelineQueue** | `bai/pipeline-queue` | Processing task tracker singleton |
-| **HealthReport** | `bai/health-report` | Point-in-time vault diagnostics |
-| **VaultConfig** | `bai/vault-config` | Vault configuration singleton |
-| **Observation** | `bai/observation` | Operational learning signals |
-| **Tension** | `bai/tension` | Unresolved contradictions between claims |
-| **Derivation** | `bai/derivation` | Configuration audit trail |
 
-Each model lives in `document-models/<name>/v1/` with `gen/` (auto-generated types, action creators) and `src/` (hand-written reducers).
 
-## Editors
+## A quick tour
 
-React components for viewing and editing each document type. All editors use the `useSelectedXDocument()` hook pattern from `@powerhousedao/reactor-browser` which returns `[document, dispatch]`.
+When you open a vault you land on **Chat**. The other views sit alongside it:
 
-### Drive App: Knowledge Vault
 
-The main entry point (`editors/knowledge-vault/`). Registered as a drive-app in the manifest — this is what users see when they open the drive in Connect. Features:
+| View                                               | What you do there                                                                  |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Chat**                                           | Ask a question, get an answer with citations                                       |
+| **Search**                                         | Find notes by meaning, not just by exact words                                     |
+| **Notes**                                          | Browse every note with its status and topics                                       |
+| **Graph**                                          | See how all the ideas connect                                                      |
+| **Sources**                                        | The original material the notes came from                                          |
+| **Projects** / **Scope**                           | Plans and deliverables, linked to the knowledge behind them                        |
+| **Activity**, **Health**, **Pipeline**, **Access** | Who changed what, how healthy the vault is, what's being processed, who can see it |
 
-- **Notes tab** — Paginated grid of NoteCards with status badges, topics, and link counts
-- **Graph tab** — Cytoscape.js visualization with fcose layout, semantic clustering around MOC hubs, position persistence across sessions, and cross-cluster edge separation
-- **Sources tab** — Ingested source material with status tracking
-- **Pipeline tab** — Processing queue with phase tracking
-- **Health tab** — Vault diagnostics dashboard
-- **Config tab** — Vault configuration
 
-### Document Editors
 
-| Editor | Document Type | Purpose |
-|--------|--------------|---------|
-| `knowledge-note-editor` | `bai/knowledge-note` | Textarea editor with markdown preview, links section, topic management |
-| `moc-editor` | `bai/moc` | Core ideas, tensions, open questions, child MOC references |
-| `source-editor` | `bai/source` | Source ingestion with content preview and extraction stats |
-| `research-claim-editor` | `bai/research-claim` | Methodology claim viewer |
-| `health-report-editor` | `bai/health-report` | Health check results |
-| `pipeline-queue-editor` | `bai/pipeline-queue` | Task queue management |
-| `observation-editor` | `bai/observation` | Operational signals |
-| `tension-editor` | `bai/tension` | Contradiction tracking |
-| `vault-config-editor` | `bai/vault-config` | Configuration management |
-| `knowledge-graph-editor` | `bai/knowledge-graph` | Graph document viewer |
 
-## Processor: Graph Indexer
+## How knowledge gets in
 
-The data pipeline that turns document operations into a queryable relational index (`processors/graph-indexer/`).
+1. **Add a source** — paste an article, upload a transcript, or import a document.
+2. **Queue it for processing** — one click.
+3. **An agent extracts the ideas** — each one becomes its own note, linked to the source it came from.
+4. **The ideas get connected** — to each other and into topic maps.
+5. **A person reviews and approves** — approved notes become part of the vault.
+6. **Health checks run** — the vault reports anything that needs attention.
 
-### How it works
+You can do all of this by hand in the app. The agent side runs through the [powerhouse-knowledge](https://github.com/liberuum/powerhouse-knowledge) plugin for Claude Code, which knows how to seed sources, extract notes, link them and verify the result.
 
-**Registration:** `processors/factory.ts` → `graph-indexer/factory.ts` — called once per drive on startup. Creates a namespaced PGlite store (`GraphIndexerProcessor_<driveId>`) and registers a filter for `bai/knowledge-note` + `powerhouse/document-drive` operations.
+## Choose where the AI runs
 
-**Processing:** `onOperations()` is called whenever matching operations occur:
+The chat reads your vault with a set of read-only tools. You pick the model; the setting stays in your browser:
 
-1. **Deduplicates** — keeps only the last operation per document in a batch
-2. **Handles deletions** — `DELETE_NODE` on the drive removes the node + all edges from the index
-3. **Filters** — skips anything that isn't `bai/knowledge-note`
-4. **Reconciles** — for each changed document, reads `context.resultingState`:
-   - Upserts into `graph_nodes` (id, title, description, noteType, status)
-   - Deletes old edges for that source document
-   - Inserts new edges from the note's `links[]` array
+- **OpenRouter** — hosted models, including free ones. Sign in or paste a key.
+- **Your own server** — Ollama, LM Studio, vLLM, llama.cpp, or any OpenAI-compatible endpoint.
+- **Connect's AI settings** — reuse the assistant you've already set up in Connect.
 
-**Schema:**
+The chat can only read. It has no way to run code or change your vault.
 
-```
-graph_nodes: id, document_id, title, description, note_type, status, updated_at
-graph_edges: id, source_document_id, target_document_id, link_type, target_title, updated_at
-```
+## Run it yourself
 
-Indexes on `source_document_id`, `target_document_id`, and `status` for query performance.
+### Add it to your own Powerhouse setup
 
-**On disconnect:** No-op — preserves indexed data across restarts. The reactor does not replay historical operations, so wiping tables would leave the index permanently empty.
-
-## Subgraph: Knowledge Graph
-
-GraphQL query layer exposing the indexed data (`subgraphs/knowledge-graph/`). Registered at `/graphql/knowledgeGraph`.
-
-### Queries
-
-| Query | Description |
-|-------|-------------|
-| `knowledgeGraphNodes(driveId)` | All indexed nodes |
-| `knowledgeGraphEdges(driveId)` | All indexed edges |
-| `knowledgeGraphStats(driveId)` | Node count, edge count, orphan count |
-| `knowledgeGraphSearch(driveId, query, limit?)` | Text search on title + description |
-| `knowledgeGraphOrphans(driveId)` | Nodes with no incoming edges |
-| `knowledgeGraphConnections(driveId, documentId, depth?)` | BFS traversal from a node |
-| `knowledgeGraphBacklinks(driveId, documentId)` | Edges pointing TO a document |
-| `knowledgeGraphForwardLinks(driveId, documentId)` | Edges pointing FROM a document |
-| `knowledgeGraphTriangles(driveId, limit?)` | Pairs that share a target but aren't linked |
-| `knowledgeGraphBridges(driveId)` | Articulation points that connect clusters |
-| `knowledgeGraphDensity(driveId)` | Graph density metric |
-| `knowledgeGraphDebug(driveId)` | Raw DB rows for debugging |
-
-### Mutations
-
-| Mutation | Description |
-|----------|-------------|
-| `knowledgeGraphReindex(driveId)` | Backfill the index by reading all notes — use when the processor missed historical operations |
-
-## Deep Dive: Processor + Subgraph Architecture
-
-### The Problem They Solve
-
-Powerhouse documents are stored as **operation logs** (event sourcing). To read a note's title, you replay all its operations to reconstruct the current state. This works for individual documents, but becomes expensive when you need to:
-
-- Search across 500+ notes by keyword
-- Find all notes linking to a specific note
-- Calculate graph metrics (density, orphans, bridges)
-- Render a graph visualization of all notes and edges
-
-Without an index, every query would require loading and replaying every document in the drive. The processor + subgraph pattern solves this by maintaining a **materialized read model** — a relational projection of document state that's always up to date.
-
-### How the Processor Works (Write Path)
-
-The `GraphIndexerProcessor` sits between the Reactor and a PGlite relational database. It implements the `RelationalDbProcessor` base class from `@powerhousedao/shared/processors`.
-
-```
-┌─────────────────────────────────────────────────────┐
-│                      Reactor                        │
-│                                                     │
-│  Document A  ──op──▶ ┌───────────────────────────┐  │
-│  Document B  ──op──▶ │   GraphIndexerProcessor   │  │
-│  Document C  ──op──▶ │                           │  │
-│  Drive (delete)──op─▶│  filter:                  │  │
-│                      │   bai/knowledge-note      │  │
-│                      │   powerhouse/document-drive│  │
-│                      │                           │  │
-│                      │  onOperations(ops[]):      │  │
-│                      │   1. deduplicate           │  │
-│                      │   2. handle deletions      │  │
-│                      │   3. upsert graph_nodes    │  │
-│                      │   4. reconcile graph_edges │  │
-│                      └──────────┬────────────────┘  │
-│                                 │                    │
-│                      ┌──────────▼────────────────┐  │
-│                      │    PGlite (namespaced)    │  │
-│                      │                           │  │
-│                      │  graph_nodes              │  │
-│                      │    id, document_id, title  │  │
-│                      │    description, note_type  │  │
-│                      │    status, updated_at      │  │
-│                      │                           │  │
-│                      │  graph_edges              │  │
-│                      │    id, source_document_id  │  │
-│                      │    target_document_id      │  │
-│                      │    link_type, target_title │  │
-│                      └───────────────────────────┘  │
-└─────────────────────────────────────────────────────┘
-```
-
-**Key design decisions:**
-
-1. **Filter-based subscription** — The processor declares interest in specific document types and scopes. The Reactor only sends matching operations, avoiding unnecessary work:
-   ```typescript
-   const filter: ProcessorFilter = {
-     branch: ["main"],
-     documentId: ["*"],
-     documentType: ["bai/knowledge-note", "powerhouse/document-drive"],
-     scope: ["global"],
-   };
-   ```
-
-2. **State reconciliation, not event replay** — The processor doesn't interpret individual operations (SET_TITLE, ADD_LINK, etc.). Instead, it reads `context.resultingState` — the full document state after the operation — and upserts the entire node + edges. This means it doesn't need to know the document model's operation semantics.
-
-3. **Namespace isolation** — Each drive gets its own PGlite namespace (`GraphIndexerProcessor_<driveId>`), so multiple drives don't interfere with each other. The namespace is derived deterministically from the drive ID.
-
-4. **Idempotent migrations** — Tables and indexes are created with `ifNotExists`, so the processor can restart safely without schema conflicts.
-
-5. **No-op on disconnect** — The processor preserves its data across server restarts. Since the Reactor doesn't replay historical operations to processors, wiping on disconnect would leave the index empty until new edits arrive.
-
-### How the Subgraph Works (Read Path)
-
-The `KnowledgeGraphSubgraph` extends `BaseSubgraph` from `@powerhousedao/reactor-api` and exposes the indexed data via GraphQL at `/graphql/knowledgeGraph`.
-
-```
-┌──────────────────────────────────────────────────┐
-│              GraphQL Clients                     │
-│                                                  │
-│  Connect UI ─────────┐                           │
-│  AI Agent (MCP) ─────┤                           │
-│  Switchboard CLI ────┤  query / mutation         │
-│  Third-party app ────┤                           │
-│  curl / Postman ─────┘                           │
-│                      │                           │
-│           ┌──────────▼───────────────────┐       │
-│           │   /graphql/knowledgeGraph    │       │
-│           │                              │       │
-│           │   KnowledgeGraphSubgraph     │       │
-│           │     ├─ getDb(driveId)        │       │
-│           │     │    → namespaced Kysely │       │
-│           │     ├─ getQuery(driveId)     │       │
-│           │     │    → typed query API   │       │
-│           │     ├─ reindexDrive()        │       │
-│           │     │    → backfill from     │       │
-│           │     │      reactorClient     │       │
-│           │     └─ ensureGraphDoc()      │       │
-│           │          → auto-create       │       │
-│           │            bai/knowledge-    │       │
-│           │            graph doc         │       │
-│           └──────────┬───────────────────┘       │
-│                      │                           │
-│           ┌──────────▼───────────────────┐       │
-│           │  PGlite (same namespace as   │       │
-│           │  the processor writes to)    │       │
-│           └──────────────────────────────┘       │
-└──────────────────────────────────────────────────┘
-```
-
-**The subgraph reads from the same PGlite tables the processor writes to.** This is the key architectural link — the processor is the write path, the subgraph is the read path, and they share a namespace.
-
-The subgraph provides two levels of query abstraction:
-
-1. **`getDb(driveId)`** — Returns a typed `Kysely<DB>` instance scoped to the processor's namespace. This centralizes the `IRelationalDbLegacy → IRelationalDb → Kysely` cast in one place.
-
-2. **`getQuery(driveId)`** — Wraps `getDb` with the `createGraphQuery()` helper that provides high-level methods (`allNodes()`, `searchNodes()`, `connections()`, `triangles()`, `bridges()`, etc.). All queries use Kysely's type-safe query builder.
-
-### How Third-Party Plugins Can Use This
-
-Any application that can make GraphQL requests to the Reactor's endpoint can query the knowledge graph. The subgraph is accessible at `/graphql/knowledgeGraph` (local: `http://localhost:4001/graphql/knowledgeGraph`, remote: `https://your-switchboard.example.com/graphql/knowledgeGraph`).
-
-**Example: Search notes from any client**
-
-```graphql
-query SearchNotes($driveId: ID!, $query: String!) {
-  knowledgeGraphSearch(driveId: $driveId, query: $query, limit: 20) {
-    documentId
-    title
-    description
-    noteType
-    status
-  }
-}
-```
-
-**Example: Get graph structure for visualization**
-
-```graphql
-query GraphData($driveId: ID!) {
-  knowledgeGraphNodes(driveId: $driveId) {
-    documentId
-    title
-    noteType
-    status
-  }
-  knowledgeGraphEdges(driveId: $driveId) {
-    sourceDocumentId
-    targetDocumentId
-    linkType
-    targetTitle
-  }
-  knowledgeGraphStats(driveId: $driveId) {
-    nodeCount
-    edgeCount
-    orphanCount
-  }
-}
-```
-
-**Example: Find synthesis opportunities (triangles)**
-
-```graphql
-query FindTriangles($driveId: ID!) {
-  knowledgeGraphTriangles(driveId: $driveId, limit: 10) {
-    noteA { documentId title }
-    noteB { documentId title }
-    sharedTarget { documentId title }
-  }
-}
-```
-
-**Example: Backfill the index after deployment**
-
-```graphql
-mutation Reindex($driveId: ID!) {
-  knowledgeGraphReindex(driveId: $driveId) {
-    indexedNodes
-    indexedEdges
-    errors
-  }
-}
-```
-
-**Using the Switchboard CLI:**
+First install the Powerhouse CLI, which gives you the `ph` command:
 
 ```bash
-# Search
-switchboard query '{ knowledgeGraphSearch(driveId: "<UUID>", query: "reactor") { documentId title } }'
-
-# Stats
-switchboard query '{ knowledgeGraphStats(driveId: "<UUID>") { nodeCount edgeCount orphanCount } }'
-
-# Reindex
-switchboard query 'mutation { knowledgeGraphReindex(driveId: "<UUID>") { indexedNodes indexedEdges errors } }'
+bun install -g ph-cmd @powerhousedao/ph-cli
 ```
 
-**Using MCP (for AI agents):**
-
-AI agents connected via MCP can't call the subgraph directly, but they can use `mcp__reactor-mcp__getDocument` to read individual documents. The Switchboard CLI provides the fastest path for agents to query the graph index — the `powerhouse-knowledge` plugin uses this pattern.
-
-### Why This Pattern Matters
-
-The processor + subgraph pattern is the recommended way to build **read-optimized projections** in Powerhouse:
-
-| Concern | Without processor | With processor |
-|---------|------------------|----------------|
-| Search 500 notes by keyword | Load all 500 documents, replay ops, scan content | Single SQL `LIKE` query on `graph_nodes.title` |
-| Find orphan notes | Load all docs, build adjacency list in memory | `SELECT * FROM graph_nodes WHERE document_id NOT IN (SELECT target_document_id FROM graph_edges)` |
-| Graph density | Load everything, count manually | Two `COUNT(*)` queries |
-| Incremental updates | Reload everything on each change | Upsert one row per changed document |
-
-The same pattern can be applied to any domain — an invoice tracker could project invoice totals into a summary table, a project manager could index task statuses, etc. The processor handles the write path (operation → relational row), and the subgraph handles the read path (GraphQL → SQL → response).
-
-## Data Flow
-
-```
-User edits a note in the editor
-  → dispatch(setTitle({...}))
-    → operation recorded on the document
-      → Reactor sends operation to GraphIndexerProcessor
-        → Processor upserts graph_nodes + graph_edges in PGlite
-          → Subgraph queries return updated data
-            → GraphView in the drive-app renders the graph
-```
-
-## Drive Structure
-
-Documents are organized into folders within the drive:
-
-| Folder | Document Types | Purpose |
-|--------|---------------|---------|
-| `/knowledge/notes/` | `bai/knowledge-note` | Atomic knowledge claims |
-| `/knowledge/` | `bai/moc` | Maps of Content |
-| `/sources/` | `bai/source` | Raw input material |
-| `/research/` | `bai/research-claim` | Methodology foundation |
-| `/ops/queue/` | `bai/pipeline-queue` | Pipeline singleton |
-| `/ops/health/` | `bai/health-report` | Health report singleton |
-| `/ops/sessions/` | `bai/observation` | Operational signals |
-| `/self/` | `bai/knowledge-graph`, `bai/vault-config` | Singletons |
-
-## Installing the Agent Skills
-
-The agent skills for this vault ship as the `powerhouse-knowledge` plugin — 16 skills (`seed`, `extract`, `connect`, `synthesize`, `verify`, `pipeline`, `health`, `graph`, `search`, `setup`, `import`, `export`, `watch`, `projects`, `skills`, `cli-reference`), the `knowledge-agent` subagent, and the Switchboard preflight hook. To install them in any project, run these in a Claude Code session there:
-
-```
-/plugin marketplace add liberuum/powerhouse-knowledge
-/plugin install powerhouse-knowledge@powerhouse-knowledge
-```
-
-The plugin lives at [liberuum/powerhouse-knowledge](https://github.com/liberuum/powerhouse-knowledge), tracked here as the submodule `.claude/plugins/powerhouse-knowledge`. Restart Claude Code afterwards — skills register at session start.
-
-Installing at project scope writes `extraKnownMarketplaces` + `enabledPlugins` into that project's `.claude/settings.json`; commit it and teammates get the plugin on clone.
-
-## Development
+The package is published to the Powerhouse registry at [registry.vetra.io](https://registry.vetra.io) as `@powerhousedao/knowledge-note`. From your Powerhouse project:
 
 ```bash
-# Install dependencies
+ph install @powerhousedao/knowledge-note --registry https://registry.vetra.io
+```
+
+This registers the package in `powerhouse.config.json`, and Connect loads it from the registry at runtime. Add `--local` to also install it into `node_modules` and bundle it into your Connect build.
+
+The `[Dockerfile](Dockerfile)` and `[docker/](docker/)` show how a Switchboard and Connect are built with it. A deployment sets these five variables (see `[powerhouse.manifest.json](powerhouse.manifest.json)`):
+
+
+| Variable                       | What it does                                            |
+| ------------------------------ | ------------------------------------------------------- |
+| `AUTH_ENABLED`                 | Sign people in with Renown and check who they are       |
+| `ADMINS`                       | Addresses that can do everything (list at least two)    |
+| `DOCUMENT_PERMISSIONS_ENABLED` | Turn on per-document read / write / admin access        |
+| `DEFAULT_PROTECTION`           | New documents are private until someone is given access |
+| `REQUIRE_AUTHENTICATED_CALLER` | Refuse anonymous requests entirely                      |
+
+
+
+
+### Develop locally
+
+You need [Bun](https://bun.sh) and the Powerhouse CLI (`ph`, installed as shown [above](#add-it-to-your-own-powerhouse-setup)).
+
+```bash
 bun install
-
-# Start Vetra Studio with live code generation
-ph vetra --watch
-
-# Type check
-bun tsc --noEmit
-
-# Lint
-bun eslint <file>
-
-# Format
-bun prettier --write <file>
-
-# Run tests
-bun test
+ph vetra --watch        # local Connect + Switchboard with live code generation
 ```
 
-### Subgraph Endpoint Configuration
+Connect opens at `http://localhost:3000` (or `:3001` if 3000 is taken) and the Switchboard at `http://localhost:4001/graphql`.
 
-The Search tab and other editor features that query the Knowledge Graph subgraph need to reach the reactor's GraphQL endpoint. The endpoint is resolved automatically in most cases:
-
-| Environment | How it works |
-|-------------|-------------|
-| **`ph vetra --watch`** (local dev) | Auto-detected: Vite runs on port 3000/3001, subgraph at `http://localhost:4001/graphql/knowledgeGraph` |
-| **Connect production** (same origin) | Auto-detected: relative path `/graphql/knowledgeGraph` |
-| **Deployed** (Connect and Switchboard on different domains) | Set `VITE_SUBGRAPH_URL` env var |
-
-For deployed environments where Connect runs on a different domain than the Switchboard (e.g., `connect.example.com` vs `switchboard-dev.powerhouse.xyz`), create a `.env` file:
+Before you commit:
 
 ```bash
-# .env
-VITE_SUBGRAPH_URL=https://switchboard-dev.powerhouse.xyz/graphql/knowledgeGraph
+bun run tsc             # type check
+bun run lint:fix        # lint
+bun run test:coverage   # tests — document model reducers stay at 95%+ coverage
 ```
 
-This is only needed when the app and reactor are on different origins. Local development and same-origin deployments work without any configuration.
+> Changes under `subgraphs/` are served from the built output, so run `bun run build` and restart `ph vetra` to see them. See [CLAUDE.md](CLAUDE.md) for the full contributor rules.
 
-## Graph View
 
-The knowledge graph visualization uses `cytoscape-fcose` (force-directed layout) with semantic clustering:
 
-- **MOC hubs** act as cluster anchors with higher repulsion, pulling their CORE_IDEA-linked notes into visible topic neighborhoods
-- **Cross-cluster edges** have weak elasticity and long ideal lengths, preventing topic groups from collapsing together
-- **Position persistence** via localStorage — positions survive tab switches and page reloads. New nodes are placed by fcose while existing nodes stay pinned
-- **MOC group drag** — dragging a MOC diamond moves its entire cluster of connected notes
-- **Re-layout button** clears cached positions and recomputes a fresh layout
+## What's in this repository
+
+
+| Folder                                 | What's inside                                                                                                                |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `[document-models/](document-models/)` | The data: notes, topic maps, sources, tensions, health reports and more — each with its schema and the rules for changing it |
+| `[editors/](editors/)`                 | The user interface — the Knowledge Vault app and an editor for each document type                                            |
+| `[processors/](processors/)`           | The graph indexer, which keeps a searchable copy of the vault up to date (including meaning-based search)                    |
+| `[subgraphs/](subgraphs/)`             | The APIs: a GraphQL API for querying the graph, and a REST API that agents write through                                     |
+| `[scripts/](scripts/)`                 | Import, sync and maintenance tools                                                                                           |
+| `[tests/](tests/)`                     | Unit, processor and integration tests                                                                                        |
+| `[docs/](docs/)`                       | Architecture, the HTTP API reference, plans and migration notes                                                              |
+
+
+
+
+## Learn more
+
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — every document model, the indexer, the GraphQL queries, the chat's tools, and how they fit together.
+- **[docs/http-api.md](docs/http-api.md)** — the REST API: every route, request and response.
+- **[powerhouse-knowledge](https://github.com/liberuum/powerhouse-knowledge)** — the Claude Code plugin agents use to work with a vault.
+
+Knowledge Vault is a Powerhouse port of **Ars Contexta**, a personal knowledge method built on markdown files and wiki links, rebuilt here as shared, signed documents that a whole team can work in.
 
 ## License
 
-AGPL-3.0-only
+[AGPL-3.0-only](LICENSE)

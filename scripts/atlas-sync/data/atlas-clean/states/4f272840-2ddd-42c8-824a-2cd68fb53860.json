@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-712ae57e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "712ae57e-f3af-40db-9611-273b3ebdabe5",
+      "targetTitle": "A rate limit whose slope exceeds its maxAmount is a burst co"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's rate limits pair a maximum amount with a daily slope, capping both standing exposure and speed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "49805a3c-89d2-44dc-b62b-ba90b42bf6e5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac75fd1c-ced1-4387-9aa5-1e07af0c6b5a",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c295d10-2c69-4244-a2b2-199b16c716c7",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d352aa3-d2b4-46e7-8a11-34132c3f7802",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every entry under A.6.1.1.3.2.6.1.2.1.1.3 carries the same two fields, for example `LIMIT_USDS_TO_USDC` at \"`maxAmount`: 100,000,000 USDS, `slope`: 50,000,000 USDS per day.\"\n\nThe pair encodes two different risks. `maxAmount` bounds the worst case at any instant \u2014 the most that can be outstanding if everything goes wrong at once. `slope` bounds the rate at which the budget replenishes, so an actor who exhausts a limit cannot simply repeat the operation; they must wait while capacity accrues.\n\nThat second parameter is what makes the design defensive against a compromised operator rather than merely against a large mistake. A single-parameter cap can be drained repeatedly as fast as the underlying positions can be unwound; a slope turns the maximum into a per-day flow ceiling, converting an instantaneous theft into a slow leak that humans and the Freezer role have time to notice and stop.\n\nBecause the limits are enforced by an on-chain `ALM_RATE_LIMITS` contract (A.6.1.1.3.2.6.1.2.1.1.1.2.1.6) rather than by operator discipline, they bind even when the relayer keys are in the wrong hands \u2014 which is precisely the scenario they exist for.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every limit in the Liquidity Layer is a two-parameter budget that refills over time, so a limit constrains how much can be at risk and how fast it can be reached or re-used.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

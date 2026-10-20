@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-e5a02153-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5a02153-ac11-402b-88ff-73961e274570",
+      "targetTitle": "A SkyLink bridge only becomes usable after third-party audit"
+    },
+    {
+      "id": "lnk-286ba3b9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "286ba3b9-75ac-4d04-b27a-8074e57bce3a",
+      "targetTitle": "The audit requirement covers on-chain code only \u2014 off-chain "
+    },
+    {
+      "id": "lnk-6bc0f59e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6bc0f59e-3898-4377-8fa9-afb37ff6dd4a",
+      "targetTitle": "Deployment verification is explicitly outside audit scope an"
+    },
+    {
+      "id": "lnk-b155ee9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b155ee9c-c44b-41c4-85ba-bd7321b966fd",
+      "targetTitle": "A Technical Scope must contain enough detail for an independ"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An audit is complete only when the final report is published at a location outside Sky's control",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8f02bef4-639d-443e-bd3f-3128393312b6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e41381ff-5674-49ea-aa66-3920f60548eb",
+      "name": "audit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a2d3009f-1539-41a4-a882-a86df5499927",
+      "name": "provenance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.7.3 requires that \"the final audit report must be hosted on the auditor's website or another independently verifiable location. **Internal documents, shared drives, or non-permanent links do not satisfy this requirement.**\" A.1.10.2.7.4 makes the consequence explicit: \"An audit is considered complete when the final audit report is published at the independently verifiable hosting location.\"\n\nSo completion is defined by publication, not by delivery. A report that exists in Sky's own drive, however genuine, does not complete an audit \u2014 the artifact stays blocked from \"deployment, Spell inclusion, or governance vote.\"\n\nThis is the provenance framework from A.1.10.2.4.5.1 applied to attestations. A document Sky hosts is a document Sky can edit, and its mutability is invisible to readers; the same file on the auditor's own domain is published under the auditor's reputation, and altering it would require the auditor's cooperation. Independence is a property of custody, not of content.\n\nThe rejection of \"non-permanent links\" adds durability to the requirements. An audit's value is largely retrospective \u2014 read months later by a validator or an investigator asking what was known and when \u2014 and a report behind a dead link provides nothing to that reader.\n\nA.1.10.2.7.4 also requires the responsible team to confirm \"that the audited scope and commit hash match the audit request\" before acceptance. Publication proves the report exists; the scope-and-hash check proves it is a report about the right code.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.7.3 rejects internal documents, shared drives and non-permanent links; A.1.10.2.7.4 makes publication, not delivery, the completion event that unblocks the artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c446cc93-73b5-4bf3-b522-1bd4f2b77dab",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "719e7e5a-b151-4775-8811-dd46fed75bc8",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

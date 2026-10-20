@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Instant actions and MOM or IAM contract calls are excluded from Spell validation precisely because they have no pause delay",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "19c29d42-85c8-4716-804c-d0d8eb3a7298",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2b59b5c0-5004-4ffd-a807-4376b4b504ed",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e4355658-dbd7-4555-9a02-450b243e1cef",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.12.1.3 limits validation scope to code that \"must adhere to the `GSM Pause Delay` enforced by the Sky Protocol's `ds-pause` contract\" and \"is directly executed by the Sky Protocol's `Pause Proxy` contract.\" It then names what falls outside: \"Actions that do not meet these criteria \u2014 such as `instant actions`, `MOM` and `IAM` contract calls \u2014 are excluded from Spell validation. **This exclusion is due to the absence of a pause delay for such actions, which prevents ecosystem actors from having sufficient time to perform their reviews.**\"\n\nThe logic is internally consistent and the consequence is uncomfortable. Validation requires a window; these actions have no window; therefore they cannot be validated. Nothing is being hidden \u2014 the exclusion and its cause are stated plainly.\n\nBut the actions with no delay are, by construction, the ones that take effect immediately and cannot be stopped once initiated. The mechanism that makes them useful (speed, typically for risk response) is the same mechanism that removes them from independent review, so the powers with the shortest path to protocol state receive the least outside scrutiny.\n\nThis is a genuine structural gap rather than an oversight, and it means the safety of instant-action paths rests entirely on their pre-authorization design and on the trustworthiness of the parties holding them \u2014 not on the validation layer that covers ordinary Spells. Anyone assessing Sky's review coverage should read the Ecosystem Validation process as protecting the delayed path only.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.1.3 scopes validation to code enforced by ds-pause and executed by the Pause Proxy, so the fastest-acting powers receive the least independent review.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

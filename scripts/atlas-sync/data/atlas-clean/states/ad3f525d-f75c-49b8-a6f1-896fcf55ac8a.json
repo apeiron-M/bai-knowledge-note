@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-f5b63c58-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f5b63c58-a386-4300-b979-12cf1be3f840",
+      "targetTitle": "Core Facilitator and Core GovOps hold full discretion both t"
+    },
+    {
+      "id": "lnk-bf66692e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bf66692e-0961-4a1d-9f86-98ea1f9e8f8d",
+      "targetTitle": "doc-b90e41d7"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Core GovOps takes the final inclusion decision whenever the Core Facilitator is credibly suspected of being compromised",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "26df7e6e-b875-47a0-ade3-bad0b085f85c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "89a78590-8673-477c-8962-c197bf9a1722",
+      "name": "balance-of-powers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e3b6400-17c9-4aea-849f-d305eb8d4735",
+      "name": "executive-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Having just given the Core Facilitator a binding final say over Spell inclusion, A.1.10.2.4.3.1.3.1 immediately provides for that authority being corrupted: \"Where there is credible suspicion that the Core Facilitator is compromised, Core GovOps makes the final inclusion decision for the Executive Vote in question in the Core Facilitator's place, and the adjudication process specified in A.1.7.6 - Acting Against Misalignment applies.\"\n\nTwo design features are worth separating. First, the substitution is **scoped**: Core GovOps decides for *that* Executive Vote, not indefinitely, so the emergency power cannot itself become a takeover route. Second, it is **coupled to adjudication**: invoking the clause opens a formal misalignment process rather than just swapping the decider, so the suspicion gets tested instead of merely being acted on.\n\nThe threshold is deliberately low \u2014 \"credible suspicion,\" not proof. For a role whose decisions execute on chain within days, waiting for proof means the compromised decision has already shipped. Setting the bar at suspicion while routing to adjudication puts the cost of a false alarm on the process (an inquiry) rather than on the protocol (a bad Spell).\n\nThis is the Atlas's own doctrine applied to itself: authority to override a defective rule or actor must be pre-established, or the override is indistinguishable from a coup. The Spell process cannot pause for a governance vote, so the succession is written in advance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:21:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:21:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas names the substitute for its own tie-breaker in advance and routes the case to the Acting Against Misalignment process, so a captured decider is a defined state, not a crisis.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

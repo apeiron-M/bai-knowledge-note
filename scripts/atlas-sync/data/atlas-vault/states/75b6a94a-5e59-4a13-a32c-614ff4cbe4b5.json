@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-a19163ed-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a19163ed-d095-4a41-ab05-0cca18ee45bb",
+      "targetTitle": "Aggregate exposure limits need both a pre-trade prohibition "
+    },
+    {
+      "id": "lnk-d3ca21b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d3ca21b7-87e6-4aa6-9709-ac2b2377b087",
+      "targetTitle": "Imposing the collateral ratio on every Agent separately make"
+    },
+    {
+      "id": "lnk-a598243d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a598243d-46ac-4aed-bf43-58732b265e2d",
+      "targetTitle": "doc-82e6d18e"
+    },
+    {
+      "id": "lnk-b4ed0b4d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b4ed0b4d-420a-4b49-a382-a118e9f9aa6b",
+      "targetTitle": "Morpho market exposure is capped in two dimensions at once \u2014"
+    },
+    {
+      "id": "lnk-c3198ad1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3198ad1-1dc2-4fe0-b6a9-061994b230c1",
+      "targetTitle": "Perpetual yield exposure targets are declared to override th"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ethena exposure capacity is allocated to two named Agents by name, with every other Prime Agent limited to zero",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9e4f700a-1ffa-433e-9a00-35407c05927a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07cd7510-0262-47ab-804c-4af18f9df4b6",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84c7f6a0-7f53-466b-9354-f139258df2d5",
+      "name": "concentration-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.2.1.1.2.1 defines Ethena Aggregate Exposure as the sum of Ethena Exposures \"across all Prime Agents in the Sky Ecosystem,\" capped at 1,300,000,000 USDS. A.3.2.2.1.1.1.2.1.1.2.3 then allocates that ceiling explicitly:\n\n- Spark \u2014 one half of the Aggregate Limit\n- Grove \u2014 one half of the Aggregate Limit\n- All other Prime Agents \u2014 **Zero**\n\nThis is a different instrument from everything else in the Risk Capital Article. Elsewhere risk is *priced*: an Agent may take any exposure provided it holds the required capital, and concentration is discouraged by rising capital charges. Here capacity is *granted*, by name, in fixed shares, with no mechanism for another Agent to earn access by holding more capital.\n\nTwo reasons for the departure are visible in the surrounding text. Ethena is a perpetual-position asset whose risk model is explicitly unbuilt (A.3.2.2.1.1.1.2 defers it to \"a future iteration\"), so the near-term treatment is a flat 3\u20134% CRR that does not scale with size \u2014 a flat charge cannot express concentration risk, so a quantity limit must. And the exposure is unusually pervasive: A.3.2.2.1.1.1.2.1.1.1 has to enumerate three separate exposure paths (direct holdings, lending against Ethena collateral, and Pendle PT tokens) that all resolve to the same underlying counterparty.\n\nThe cost is that named allocations do not adapt. The split is a governance artifact requiring an Atlas amendment to change, so it encodes today's judgment about which Agents are competent to hold this exposure \u2014 and it functions as a competitive moat, since a new Prime Agent cannot access a 1.3bn-USDS asset class at any price.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:03:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A 1.3bn USDS ecosystem-wide ceiling is split half to Spark and half to Grove; all other Prime Agents have an Ethena Exposure Limit of zero, making capacity an assigned right rather than a priced one.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "60e0b1e2-d22d-444f-80f7-889c73060bbc",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:03:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8ff2102f-bce3-4f43-b393-ee8b24fb8877",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:03:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

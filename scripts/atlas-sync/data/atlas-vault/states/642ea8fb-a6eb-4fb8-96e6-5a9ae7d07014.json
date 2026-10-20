@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-acbe95d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "acbe95d1-dcdb-4a42-a90b-3f4926bd601f",
+      "targetTitle": "doc-c0f98c77"
+    },
+    {
+      "id": "lnk-7644760f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7644760f-8922-4c1d-b038-d8bd43aed8b5",
+      "targetTitle": "doc-43367d7f"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "sUSDe cooldown has two entry points because a share-denominated exit only learns its asset amount after the fact",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d9c3b6bd-3c2d-4436-a846-e13684b5414c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2734c594-e6e2-41b3-a152-0c2c6b0be55c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "08b99e4b-09c7-4940-b46a-4ccbc2ac39cb",
+      "name": "ethena",
+      "topicDocumentId": null
+    },
+    {
+      "id": "300c6a1b-c55c-48d4-aee0-0e4429a5f9c7",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.10.5 and A...10.6 expose the same economic action twice: `cooldownAssetsSUSDe(usdeAmount)` names the USDe you want out, `cooldownSharesSUSDe(susdeAmount)` names the sUSDe shares you want to burn.\n\nBoth debit the **same** rate-limit key, `LIMIT_SUSDE_COOLDOWN`, and both debit it in **USDe assets** \u2014 never in shares. For the assets variant that is trivial and the limit is decreased before the call (A...10.5.2). For the shares variant A...10.6.3 spells out the constraint: \"Because the resulting `cooldownAmount` of USDe is only known after the cooldown is initiated, the rate limit ... is decreased at the end of the function using the resulting `cooldownAmount`.\"\n\nThe forcing function is the shared key. Two entry points charging one limit must agree on the unit, or the limit means different things depending on which door was used \u2014 and because sUSDe accrues value, a share is a drifting quantity while USDe is a stable one. Denominating in the asset is what keeps the budget interpretable over time.\n\nThis is why `cooldownShares` bothers to `abi.decode` its result at all: the return value is not needed for the operation, only for the accounting.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "cooldownAssetsSUSDe charges LIMIT_SUSDE_COOLDOWN up front from the requested USDe; cooldownSharesSUSDe must decode the returned cooldownAmount and charge the same key afterwards.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7ad4dea0-bbb1-44e6-a759-0b97517cba82",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a9f193eb-7a2c-4841-8db0-d615edbd8458",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

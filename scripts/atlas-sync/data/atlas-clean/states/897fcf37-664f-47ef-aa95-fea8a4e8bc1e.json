@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-c429ccf5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c429ccf5-b469-4d85-8b82-215dfe2188f1",
+      "targetTitle": "Grove caps inflows to every Centrifuge instance but leaves o"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Grove rate limit is a continuously replenishing bucket, so maxAmount caps instantaneous exposure while slope caps sustained throughput",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "98b6eeee-2eeb-48d0-a773-959bde446ea6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea1b455b-81aa-412d-a5f5-30a5a305edce",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb997ca0-cbc3-4e57-a33e-934f7d097e59",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be1bce4f-b2c1-47b4-9321-c37486121ee2",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.3.1 gives the whole mechanism in four lines:\n\n```\nreturn _min(d.slope * (block.timestamp - d.lastUpdated) + d.lastAmount, d.maxAmount);\n```\n\nCapacity accrues linearly in real time at `slope` units per second from whatever was left after the last use, and is clipped at `maxAmount`. There is no window, no epoch and no reset \u2014 which matters, because period-based limits are gameable at boundaries (spend the whole budget at 23:59 and again at 00:01) and produce a sawtooth exposure profile.\n\nThe two parameters answer two different questions. `maxAmount` bounds how much can happen **at one instant**, which is the size of the worst single incident. `slope` bounds how much can happen **per unit time**, which is how fast an adversary or a malfunctioning relayer can drain a position while humans notice and respond.\n\nTheir ratio is a third, implicit parameter: `maxAmount / slope` is the time to refill from empty. The Atlas's own instance configurations show it being tuned deliberately \u2014 the Centrifuge JTRSY inflow (A...3.1.1.1.2.4.1) is 500,000,000 USDC max with a 500,000,000-per-day slope, a one-day refill, while Centrifuge JAAA (A...3.1.1.2.2.4.1) is 100,000,000 max with a 50,000,000-per-day slope, a two-day refill. The second counterparty gets both a smaller cap and a slower recovery.\n\nA...1.3 also states the governance duty attached: limits \"must be maintained in line with Grove's strategy, market conditions, and security considerations\" \u2014 they are living parameters, not set-and-forget constants.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "getCurrentRateLimit returns min(slope * elapsed + lastAmount, maxAmount), regenerating capacity every second rather than resetting at period boundaries.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

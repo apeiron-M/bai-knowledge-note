@@ -13,6 +13,17 @@ import {
   PromoteObservationInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<ObservationPHState> = (
   state,
   action,
@@ -23,7 +34,7 @@ const stateReducer: StateReducer<ObservationPHState> = (
   }
   switch (action.type) {
     case "CREATE_OBSERVATION": {
-      CreateObservationInputSchema().parse(action.input);
+      memoizedSchema(CreateObservationInputSchema).parse(action.input);
 
       observationObservationManagementOperations.createObservationOperation(
         (state as any)[action.scope],
@@ -35,7 +46,7 @@ const stateReducer: StateReducer<ObservationPHState> = (
     }
 
     case "PROMOTE_OBSERVATION": {
-      PromoteObservationInputSchema().parse(action.input);
+      memoizedSchema(PromoteObservationInputSchema).parse(action.input);
 
       observationObservationManagementOperations.promoteObservationOperation(
         (state as any)[action.scope],
@@ -47,7 +58,7 @@ const stateReducer: StateReducer<ObservationPHState> = (
     }
 
     case "IMPLEMENT_OBSERVATION": {
-      ImplementObservationInputSchema().parse(action.input);
+      memoizedSchema(ImplementObservationInputSchema).parse(action.input);
 
       observationObservationManagementOperations.implementObservationOperation(
         (state as any)[action.scope],
@@ -59,7 +70,7 @@ const stateReducer: StateReducer<ObservationPHState> = (
     }
 
     case "ARCHIVE_OBSERVATION": {
-      ArchiveObservationInputSchema().parse(action.input);
+      memoizedSchema(ArchiveObservationInputSchema).parse(action.input);
 
       observationObservationManagementOperations.archiveObservationOperation(
         (state as any)[action.scope],

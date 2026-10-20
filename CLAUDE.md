@@ -2,6 +2,63 @@
 
 This project creates document models, editors, processors and subgraphs for the Powerhouse ecosystem. Your role is to help users create these modules based on their needs.
 
+## ⚠️ Toolchain: bun locally, node in the remote
+
+**Local development uses `bun` exclusively.** `bun.lock` is the sole lockfile — running `npm install` or `pnpm install` generates a competing lockfile and can silently resolve different versions than the ones the team is running.
+
+| Instead of (locally)               | Use                             |
+| ---------------------------------- | ------------------------------- |
+| `npm install`                      | `bun install`                   |
+| `npm ci`                           | `bun install --frozen-lockfile` |
+| `npm add <pkg>` / `pnpm add <pkg>` | `bun add <pkg>`                 |
+| `npm run <script>`                 | `bun run <script>`              |
+| `npx <cli>`                        | `bunx <cli>`                    |
+
+**Scope: your local machine only.** bun is the *development* toolchain — installing dependencies and running scripts here. **The remote runtime is node**: the published package is consumed by a node Switchboard, which is what the `"node"` conditions in `exports` are for. Concretely:
+
+- ❌ **Do not rewrite `node ...` invocations inside `package.json` scripts.** `build`, `prepack` and `vetra` shell out to `node` deliberately — they run in build, publish and deploy contexts that must stay node. The `npx dpdm` in `check-circular-imports` stays too. Leave all of them alone.
+- ❌ **Do not use bun-only APIs (`Bun.*`, `bun:*` imports) in anything that ships in `dist/`.** Processors, subgraphs, document models and editors all execute under node on the remote Switchboard — a `Bun.file()` that works locally is a production crash.
+- ✅ **Do use bun for** `bun install`, `bun run tsc|lint:fix|test`, `bun add`, and local scratch scripts.
+
+The npm/pnpm/yarn install-and-run commands are blocked by a `deny` rule in `.claude/settings.json`, so a local slip fails loudly instead of quietly writing a second lockfile.
+
+**Exception — read-only registry queries.** `npm view`, `npm info` and `npm diff` have no bun equivalent and touch nothing local. They stay allowed; use them freely to inspect published versions.
+
+`ph use dev` and the other `ph-cli` commands already shell out to bun on their own — let them.
+
+## ⚠️ Subgraph changes need `bun run build` — `ph vetra --watch` does not cover them
+
+The Switchboard loads this package's subgraphs through `package.json`'s
+`exports["./subgraphs"]`, which points at **`dist/node/subgraphs/index.mjs`** —
+built output, not source. Vetra's watcher rebuilds document models and editors
+on save, but a change under `subgraphs/` (a new query, a resolver fix, a guard)
+is invisible to the running Switchboard until you:
+
+1. `bun run build`
+2. restart the Switchboard (`ph vetra`)
+
+Forgetting this is silent: the old subgraph keeps serving, `tsc` and tests
+pass against the new source, and nothing says the two disagree. It has bitten
+this project twice — a new subgraph "wouldn't register", and an authorization
+wrapper "stopped working" — and both were the same cause. If a subgraph change
+seems to have no effect, check `dist/` before debugging the code.
+
+## Ordinal holes in the operation index — resolved upstream
+
+`operation_index_operations.ordinal` is a Postgres `serial`; a rolled-back write
+consumes a number that never gets a row, which is normal. Before `6.2.3-dev.4`
+the attachment reference read model crashed the next boot on such a hole
+(`read model cannot advance past missing ordinal N`); `dev.4` parked it at the
+gap; since **`6.2.3-dev.33`** read models move a contiguous cursor and a
+*settled watermark* recognises a permanent hole and moves past it, so nothing
+stalls and nothing re-reads the tail. The repair scripts
+(`repair-ordinal-gap.mjs`, `repair-read-model-checkpoint.mjs`) edited the old
+checkpoint and were removed on 2026-10-06 — do not resurrect them from git
+history against a dev.33+ store.
+
+History: `docs/upstream-bugs-6.2.2-dev.85.md` (#6 and the `dev.4` status
+section); the upstream change is `ae8859131` (read-model contiguous catch-up).
+
 ## Core Concepts
 
 - **Document Model**: A template for creating documents. Defines schema and allowed operations for a document type.
@@ -71,9 +128,10 @@ If the `reactor-mcp` server is unavailable, ask the user to run `ph vetra` on a 
 
 After doing changes to the code, or after creating a new document model or a new editor, _YOU MUST RUN_ the following commands to check for errors in your implementation:
 
-- **TypeScript Check**: Run `npm run tsc` to validate type safety
-- **Lint Check**: Run `npm run lint:fix` to check for errors with oxlint (type-aware rules plus TypeScript type checking)
-- **Reducer Test Coverage**: Run `npm run test:coverage` after any change to a document model reducer. Document model reducers are pure synchronous functions and **MUST** stay at or above **95%** coverage on lines, branches, functions, and statements. If coverage drops below the threshold, add tests in `document-models/<name>/v<n>/tests/` until the threshold is restored — **DO NOT** lower the threshold or exclude files to make the check pass. Cover the happy path _and_ every error code defined via `ADD_OPERATION_ERROR` (each error is a branch that needs explicit test coverage). Push toward 100% by following the strategy below.
+- **TypeScript Check**: Run `bun run tsc` to validate type safety
+  - While iterating, `bun run check` (`bun check`) gives the same answer in about a quarter of the time. It is TypeScript 7's checker and this repo pins 5.9, so `bun run tsc` stays the check of record: run it before calling the work done.
+- **Lint Check**: Run `bun run lint:fix` to check for errors with oxlint (type-aware rules plus TypeScript type checking)
+- **Reducer Test Coverage**: Run `bun run test:coverage` after any change to a document model reducer. Document model reducers are pure synchronous functions and **MUST** stay at or above **95%** coverage on lines, branches, functions, and statements. If coverage drops below the threshold, add tests in `document-models/<name>/v<n>/tests/` until the threshold is restored — **DO NOT** lower the threshold or exclude files to make the check pass. Cover the happy path _and_ every error code defined via `ADD_OPERATION_ERROR` (each error is a branch that needs explicit test coverage). Push toward 100% by following the strategy below.
 
 #### Strategy: reaching 100% reducer coverage
 
@@ -268,7 +326,7 @@ Use this **only** when your editor needs UI primitives not covered by `@powerhou
 
 #### Setup steps
 
-1. **Install deps**: `pnpm add class-variance-authority clsx tailwind-merge lucide-react tw-animate-css`
+1. **Install deps**: `bun add class-variance-authority clsx tailwind-merge lucide-react tw-animate-css`
 
 2. **Create `components.json`** at the project root. The `@/*` alias here is consumed by the shadcn / AI Elements CLIs at install time only — do **NOT** add a matching `@/*` alias to `tsconfig.json`:
 
@@ -302,7 +360,7 @@ Use this **only** when your editor needs UI primitives not covered by `@powerhou
 5. **Install AI Elements** using Vercel's CLI (not shadcn's). Verify each name exists at https://ai-sdk.dev/elements first — unknown names abort the install:
 
    ```bash
-   npx ai-elements@latest add conversation message reasoning tool prompt-input code-block
+   bunx ai-elements@latest add conversation message reasoning tool prompt-input code-block
    ```
 
    The CLI auto-installs `ai`, `use-stick-to-bottom`, `streamdown` (+ `@streamdown/{cjk,code,math,mermaid}`), and `@radix-ui/react-use-controllable-state`.
@@ -383,7 +441,7 @@ editing `<name>.json` directly.
 A document imported from an older `.phd` can be **behind** the working tree. Regenerating from it
 overwrites the derived files and can silently revert unrelated parts of the model. After any
 regeneration, run `git diff document-models/` and confirm **only** the intended lines changed, then
-`npm run tsc` and `npm run test`.
+`bun run tsc` and `bun run test`.
 
 Regeneration also picks up changes from the **stack**, not just from the model document. Real
 example: after upgrading to 6.2.2-dev.45 and running `ph generate all`, the scalar block in
@@ -595,17 +653,77 @@ expect(() => reducer(document, setName({ name: "invalid" }))).toThrow();
 - **Specifications**: Versioned specs with `version`, `changeLog`, `state` (global/local with schema, initialValue, examples)
 - **Modules**: Operational modules containing their operations
 
-## Available Document Model Operations (37 total)
+## Available Document Model Operations (38 total)
 
 | Category                         | Operations                                                                                                                                                                                                       | Count |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | **Header Management**            | `SET_MODEL_NAME`, `SET_MODEL_ID`, `SET_MODEL_EXTENSION`, `SET_MODEL_DESCRIPTION`, `SET_AUTHOR_NAME`, `SET_AUTHOR_WEBSITE`                                                                                        | 6     |
-| **Versioning**                   | ⚠️ **DO NOT USE** - Not implemented                                                                                                                                                                              | 0     |
+| **Versioning**                   | `RELEASE_NEW_VERSION` — empty input `{}`; appends a deep copy of the latest specification and freezes the current one. Verified working on 6.2.3-dev.11. See "Versioning a document model" below.                | 1     |
 | **Module Management**            | `ADD_MODULE`, `SET_MODULE_NAME`, `SET_MODULE_DESCRIPTION`, `DELETE_MODULE`, `REORDER_MODULES`                                                                                                                    | 5     |
 | **Operation Management**         | `ADD_OPERATION`, `SET_OPERATION_NAME`, `SET_OPERATION_SCHEMA`, `SET_OPERATION_DESCRIPTION`, `SET_OPERATION_TEMPLATE`, `SET_OPERATION_REDUCER`, `MOVE_OPERATION`, `DELETE_OPERATION`, `REORDER_MODULE_OPERATIONS` | 9     |
 | **Operation Error Management**   | `ADD_OPERATION_ERROR`, `SET_OPERATION_ERROR_CODE`, `SET_OPERATION_ERROR_NAME`, `SET_OPERATION_ERROR_DESCRIPTION`, `SET_OPERATION_ERROR_TEMPLATE`, `DELETE_OPERATION_ERROR`, `REORDER_OPERATION_ERRORS`           | 7     |
 | **Operation Example Management** | `ADD_OPERATION_EXAMPLE`, `UPDATE_OPERATION_EXAMPLE`, `DELETE_OPERATION_EXAMPLE`, `REORDER_OPERATION_EXAMPLES`                                                                                                    | 4     |
 | **State Management**             | `SET_STATE_SCHEMA`, `SET_INITIAL_STATE`, `ADD_STATE_EXAMPLE`, `UPDATE_STATE_EXAMPLE`, `DELETE_STATE_EXAMPLE`, `REORDER_STATE_EXAMPLES`                                                                           | 6     |
+
+## ⚠️ Versioning a document model (breaking state changes)
+
+**A state change that existing documents cannot satisfy — a new non-nullable
+field, a narrowed enum — MUST go in a new specification version.** Changing the
+schema in place leaves the reactor with one version number describing two
+shapes, and every document created before the change breaks in its editor:
+
+```
+ZodError: state.global.<field> — expected array, received undefined
+```
+
+That error cannot heal itself. Reads are a raw `jsonb` snapshot read of
+`reactor."DocumentSnapshot".content` (the reducer never runs at read time),
+`initialState` is the *same object* as `state`, and a document's initial values
+are frozen at creation into its `UPGRADE_DOCUMENT(fromVersion: 0)` operation —
+so editing the document does not add the field and neither does a cold rebuild.
+
+### Order of operations — it is forced
+
+`RELEASE_NEW_VERSION` copies the **latest** specification, and every other
+meta-model reducer edits the **latest** specification. So if the new schema is
+already in place under v1, it has to be reverted first, or v1 and v2 end up
+identical and codegen emits a no-op upgrade reducer.
+
+1. **Revert the spec to the last published shape** via MCP (`SET_STATE_SCHEMA`,
+   `SET_INITIAL_STATE`, `DELETE_OPERATION`, `SET_OPERATION_REDUCER`,
+   `DELETE_OPERATION_ERROR`). Diff it against the published tarball or git tag
+   and assert byte-equality before continuing.
+2. **`RELEASE_NEW_VERSION`** with empty input `{}` — v1 is now frozen history.
+3. **Re-apply the new schema and operations onto v2** (now the latest spec).
+4. **Regenerate** — Vetra's watcher does this on the document change, or
+   `ph generate document-model --dir document-models/<name>`.
+5. **Two manual fixups.** Codegen's carry-forward pass has an off-by-one
+   (`if (previousVersion <= 1) return`), so for v1→v2 only files it generates
+   itself reach `v2/`. Hand-written tests stay behind in `v1/tests/` and must be
+   moved with their import paths rewritten `source/v1` → `source/v2`. Restore
+   `v1/src/reducers/*.ts` from the published tag so v1 compiles against v1 types.
+6. `git diff document-models/`, then `bun run tsc`, `test`, `build`.
+
+Codegen writes `upgrades/v<N>.ts` **once and never overwrites it**, so hand
+edits survive. An added field is filled from the new spec's `initialValue`, else
+the schema zero value (`[T!]!` → `[]`); a *changed* field type yields a reducer
+that throws until you write the migration yourself. The generated reducer
+migrates **both `state` and `initialState`**, and existing data always wins.
+
+### Migrating the live documents
+
+There is no `upgradeDocument` GraphQL mutation, but `execute` accepts arbitrary
+actions, so `UPGRADE_DOCUMENT` can be dispatched against any Switchboard:
+
+```bash
+node scripts/upgrade-documents.mjs --drive <id> --type bai/source --expect attachments          # dry run
+node scripts/upgrade-documents.mjs --drive <id> --type bai/source --expect attachments --apply
+```
+
+`ActionInput` needs `id`, `scope`, `input`, and — despite the name —
+`timestampUtcMs` must be an **ISO-8601 string**, not epoch milliseconds.
+Upgrading is idempotent: a document already at the target version succeeds
+unchanged. Record each run in `docs/migrations/<date>-<slug>.md`.
 
 ## Best Practices & Design Principles
 

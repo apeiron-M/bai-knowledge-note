@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>01 · Layers</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #1e1e2e;
+        --surface: #181825;
+        --deep: #11111b;
+        --hover: #313244;
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #e4e4e7;
+        --text-3: #9ca3af;
+        --muted: #6b7280;
+        --accent: #cba6f7;
+        --green: #10b981;
+        --blue: #3b82f6;
+        --amber: #f59e0b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+      }
+      nav {
+        display: flex;
+        gap: 14px;
+        padding: 14px 24px;
+        border-bottom: 1px solid var(--border);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+      }
+      nav a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      nav a.on,
+      nav a:hover {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 36px 24px 72px;
+      }
+      h1 {
+        font-family: Fraunces, serif;
+        font-size: 32px;
+        margin: 0 0 8px;
+      }
+      .lead {
+        color: var(--text-3);
+        max-width: 640px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 28px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      th {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      code {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        color: var(--accent);
+      }
+      .wrong {
+        color: #f38ba8;
+        text-decoration: line-through;
+        text-decoration-thickness: 1px;
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 18px;
+        margin-top: 36px;
+        align-items: stretch;
+      }
+      .col {
+        background: var(--deep);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+      }
+      .col h2 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: var(--accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+      }
+      .col ol {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--text-3);
+      }
+      .mid {
+        display: flex;
+        align-items: center;
+        color: var(--muted);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">hub</a>
+      <a class="on" href="01-layers.html">01 layers</a>
+      <a href="02-nav.html">02 nav</a>
+      <a href="03-author.html">03 author</a>
+      <a href="04-compile.html">04 compile</a>
+    </nav>
+    <div class="wrap">
+      <h1>Three documents. Two vocabularies.</h1>
+      <p class="lead">
+        The fight was English. Textbook “WBS” is deliverable decomposition
+        (already SoW). Vault “WBS” is a goal tree. Apeiron’s “WBS →
+        deliverables” is the second one compiling into the first.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Say this in the UI</th>
+            <th>Do not say</th>
+            <th>Owns</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>powerhouse/scopeofwork</code></td>
+            <td>Scope of work</td>
+            <td class="wrong">the project list</td>
+            <td>Budget, milestones, roadmap, named outcomes</td>
+          </tr>
+          <tr>
+            <td><code>bai/project</code></td>
+            <td>Project (execution)</td>
+            <td class="wrong">budget envelope</td>
+            <td>Team, knowledge notes, shipped URLs, link to goals</td>
+          </tr>
+          <tr>
+            <td><code>bai/wbs</code></td>
+            <td>Goals</td>
+            <td class="wrong">work breakdown structure</td>
+            <td>Task tree, assignees, blockers, session notes</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="flow">
+        <div class="col">
+          <h2>Author · bottom-up</h2>
+          <ol>
+            <li>Brief / demo steps</li>
+            <li>New project + goals (WBS)</li>
+            <li>Cite vault notes on the project</li>
+            <li>Compile into a SoW deliverable when a PM exists</li>
+            <li>Schedule that deliverable on a milestone</li>
+          </ol>
+        </div>
+        <div class="mid">same data</div>
+        <div class="col">
+          <h2>Read · top-down</h2>
+          <ol>
+            <li>Open the SoW</li>
+            <li>Roadmap → milestone</li>
+            <li>Project (who pays)</li>
+            <li>Deliverable (named outcome)</li>
+            <li>Open execution → goals + notes</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

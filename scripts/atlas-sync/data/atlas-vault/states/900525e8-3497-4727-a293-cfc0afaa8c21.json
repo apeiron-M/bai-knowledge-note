@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-b8cd8c44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b8cd8c44-9d0c-4d99-8399-7e656e157d54",
+      "targetTitle": "The Artifact specifies steady-state operations in call-level"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Artifact governs a class of off-chain parameters that no contract enforces",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "79179f32-60f4-4ef4-9738-27bacc786461",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b78d228e-6f14-47db-a623-3b9f975a4cf9",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea104e96-2c6d-45f2-ab97-f0c8981e159e",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ead61ffd-b245-41ad-a085-6d23f4f5ce1a",
+      "name": "governance-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.1.1.2 defines a distinct parameter class: \"off-chain operational parameters for the Spark Liquidity Layer on each blockchain. These operational parameters are protocol settings managed outside of smart contracts (off-chain), used by operators and off-chain systems to guide the functioning of the Spark Liquidity Layer.\"\n\nThe distinction matters because the two parameter classes have entirely different enforcement. The ALM rate limits are contracts: a Relayer physically cannot exceed them. A minimum operation size or a target USDC balance is a number an operator is expected to respect, with nothing on-chain stopping a violation.\n\nWriting them into the Artifact anyway is the right call. It makes the operating policy inspectable and gives deviations a reference to be judged against \u2014 a breach becomes visible and attributable rather than a matter of opinion about what operators should have done.\n\nBut it also means the Artifact's parameters are not uniformly binding, and nothing in the naming tells a casual reader which kind they are looking at beyond the section they sit under. When assessing what the Liquidity Layer *can* do versus what it is *supposed* to do, the on-chain limits give the hard bound and the off-chain parameters give the intended behaviour inside it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Off-Chain Operational Parameters are 'protocol settings managed outside of smart contracts' used by operators and off-chain systems \u2014 governed text whose only enforcement is operator compliance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "427ea3ce-0a35-4b66-b8cb-b72a824df24d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fc7579d5-d171-4b58-b8b0-c7b0cc6eb9f0",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

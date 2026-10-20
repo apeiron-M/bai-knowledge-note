@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e0e8b891-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e0e8b891-eeab-441d-b83f-6065c7d4c942",
+      "targetTitle": "doc-87659f7d"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Synome Documents are organized by emergent logical dependency, not by hierarchical identifier",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "34806511-629e-44f2-bfcf-21065d3f7136",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2b8304d0-a719-4c9e-8651-5fb39f44bed3",
+      "name": "synome",
+      "topicDocumentId": null
+    },
+    {
+      "id": "83d451a8-6dc7-4cb2-9354-f0157bd47e6b",
+      "name": "document-identifiers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.3.1.3 states that Synome Documents \"do not follow the hierarchical Document Identifier scheme of Atlas Documents,\" and that their organization \"is determined by the logical dependencies between them, which emerge from the relationships among Synome Documents when the complete set is loaded together.\"\n\nThis is a considered inversion of the Atlas's central structural commitment. In the Atlas, position *is* meaning: depth determines category, category determines mutability, and identifiers must be unique and non-overlapping. In the Synome, there is no assigned position at all \u2014 structure is a **graph discovered at load time** rather than a tree declared at authoring time.\n\nThe reason is that the two bodies solve different problems. A rulebook needs stable addresses so rules can be cited, amended, and constrained by their position; executable specifications need to compose, and a dependency graph is the only honest representation of how code and formulas relate. Forcing machine artifacts into a governance tree would either distort the tree or misdescribe the dependencies.\n\nThe consequence is that Synome structure cannot be inspected document-by-document \u2014 you must load the complete set to know what depends on what. That makes conformance review (A.1.3.2.2) a whole-set property, and it explains why the Synome needs a single designated editor rather than distributed authorship: only an actor holding the full graph can safely change one node in it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.3.1.3 explicitly exempts them from the Atlas identifier scheme: structure arises from relationships that appear only when the complete set is loaded together.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b3561049-a3b9-472e-8b01-b848ca5fcf65",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4edee750-2845-4bf1-91f2-1a690b1a8586",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

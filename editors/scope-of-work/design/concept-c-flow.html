@@ -1,0 +1,1307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Concept C — Flow · Scope of Work</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --canvas: #f6f7f9;
+        --panel: #ffffff;
+        --panel-2: #f0f2f5;
+        --ink: #1b2230;
+        --ink-2: #5b6474;
+        --ink-3: #8b94a5;
+        --rule: #e1e5eb;
+        --rule-2: #cbd2dc;
+        --meridian: #0e8a7a;
+        --meridian-soft: #ddf3ef;
+        --signal: #d98a00;
+        --signal-soft: #fbefd9;
+        --ember: #c2412b;
+        --ember-soft: #f9e1dc;
+        --slate: #6b7a90;
+        --slate-soft: #e7ebf1;
+        --focus: #2f5bff;
+        --r: 10px;
+        --display: "Bricolage Grotesque", Inter, system-ui, sans-serif;
+        --ui: Inter, system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+      }
+      .dark {
+        --canvas: #0f141b;
+        --panel: #161c25;
+        --panel-2: #1c2330;
+        --ink: #e6eaf0;
+        --ink-2: #9aa5b5;
+        --ink-3: #6c778a;
+        --rule: #263040;
+        --rule-2: #33405a;
+        --meridian: #2fb8a4;
+        --meridian-soft: #12332e;
+        --signal: #f0a72b;
+        --signal-soft: #3a2e12;
+        --ember: #e4644e;
+        --ember-soft: #3e1f1a;
+        --slate: #8c9ab0;
+        --slate-soft: #232c3a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        font: 14px/1.45 var(--ui);
+        color: var(--ink);
+        background: var(--canvas);
+        -webkit-font-smoothing: antialiased;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+      .muted {
+        color: var(--ink-2);
+      }
+      .faint {
+        color: var(--ink-3);
+      }
+      .app {
+        display: grid;
+        grid-template-rows: 52px 1fr;
+        height: 100vh;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 0 18px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--rule);
+      }
+      .topbar .grow {
+        flex: 1;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 8px;
+        border: 1px solid var(--rule-2);
+        background: var(--panel);
+        font-weight: 500;
+        font-size: 13px;
+      }
+      .btn:hover {
+        background: var(--panel-2);
+      }
+      .btn.primary {
+        background: var(--meridian);
+        color: #fff;
+        border-color: var(--meridian);
+      }
+      .btn.primary:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .btn.ghost {
+        border-color: transparent;
+      }
+      .btn.sm {
+        height: 26px;
+        padding: 0 9px;
+        font-size: 12.5px;
+      }
+      .body {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr) 300px;
+        min-height: 0;
+      }
+      .steps {
+        border-right: 1px solid var(--rule);
+        background: var(--panel);
+        padding: 18px 12px;
+        overflow: auto;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: 26px 1fr;
+        gap: 10px;
+        width: 100%;
+        text-align: left;
+        padding: 10px 10px;
+        border-radius: 9px;
+        color: var(--ink-2);
+        align-items: start;
+      }
+      .step:hover {
+        background: var(--panel-2);
+      }
+      .step.on {
+        background: var(--slate-soft);
+        color: var(--ink);
+      }
+      .step .n {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 1.5px solid var(--rule-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        background: var(--panel);
+      }
+      .step.done .n {
+        background: var(--meridian);
+        border-color: var(--meridian);
+        color: #fff;
+      }
+      .step.part .n {
+        border-color: var(--signal);
+        color: var(--signal);
+      }
+      .step b {
+        display: block;
+        font-weight: 600;
+        font-size: 13.5px;
+      }
+      .step small {
+        display: block;
+        font-size: 12px;
+        color: var(--ink-3);
+        margin-top: 2px;
+      }
+      .step .meter {
+        height: 3px;
+        background: var(--rule);
+        border-radius: 2px;
+        margin-top: 8px;
+        overflow: hidden;
+      }
+      .step .meter i {
+        display: block;
+        height: 100%;
+        background: var(--meridian);
+      }
+      .main {
+        overflow: auto;
+        padding: 30px 40px 90px;
+      }
+      .form {
+        max-width: 780px;
+        margin: 0 auto;
+      }
+      .form.wide {
+        max-width: 1040px;
+      }
+      .eyebrow {
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      h1 {
+        font-family: var(--display);
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 6px 0 6px;
+      }
+      .lead {
+        color: var(--ink-2);
+        font-size: 15px;
+        max-width: 600px;
+        margin: 0 0 22px;
+      }
+      label.f {
+        display: block;
+        margin-top: 16px;
+      }
+      label.f span {
+        display: block;
+        font-size: 12px;
+        color: var(--ink-3);
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+      .in {
+        width: 100%;
+        height: 38px;
+        border: 1px solid var(--rule-2);
+        border-radius: 9px;
+        padding: 0 12px;
+        background: var(--panel);
+        font-size: 14px;
+      }
+      .in:focus {
+        border-color: var(--focus);
+        outline: 0;
+      }
+      textarea.in {
+        height: auto;
+        min-height: 90px;
+        padding: 10px 12px;
+        resize: vertical;
+      }
+      .in.big {
+        height: 48px;
+        font-family: var(--display);
+        font-size: 22px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+      }
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .row3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+      }
+      .row4 {
+        display: grid;
+        grid-template-columns: 110px 1fr 160px 160px;
+        gap: 12px;
+        align-items: end;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        padding: 16px 18px;
+        margin-top: 14px;
+      }
+      .card.dashed {
+        border-style: dashed;
+        text-align: center;
+        color: var(--ink-3);
+        cursor: pointer;
+        padding: 18px;
+      }
+      .card.dashed:hover {
+        color: var(--ink);
+        background: var(--panel-2);
+      }
+      .card h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .card h3 .mono {
+        color: var(--ink-3);
+      }
+      .line {
+        display: grid;
+        grid-template-columns: 90px 1fr 150px 150px 30px;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 0;
+        border-top: 1px solid var(--rule);
+      }
+      .line input,
+      .line select {
+        height: 32px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        padding: 0 8px;
+        background: transparent;
+        width: 100%;
+      }
+      .line input:hover,
+      .line select:hover,
+      .line input:focus,
+      .line select:focus {
+        border-color: var(--rule-2);
+        background: var(--panel);
+        outline: 0;
+      }
+      .line .x {
+        color: var(--ink-3);
+        text-align: center;
+      }
+      .line .x:hover {
+        color: var(--ember);
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+        background: var(--slate-soft);
+        color: var(--ink-2);
+      }
+      .chip.DRAFT {
+        background: transparent;
+        border: 1px dashed var(--rule-2);
+        color: var(--ink-3);
+      }
+      .chip.SUBMITTED {
+        background: var(--signal-soft);
+        color: var(--signal);
+      }
+      .tag {
+        display: inline-flex;
+        height: 18px;
+        align-items: center;
+        padding: 0 6px;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 500;
+        background: var(--signal-soft);
+        color: var(--signal);
+        margin-left: 6px;
+      }
+      .tag.bad {
+        background: var(--ember-soft);
+        color: var(--ember);
+      }
+      .av {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--slate-soft);
+        color: var(--ink-2);
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .dl {
+        display: grid;
+        grid-template-columns: 78px minmax(0, 1fr) 128px 138px 214px 26px;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 0;
+        border-top: 1px solid var(--rule);
+      }
+      .dl input,
+      .dl select {
+        height: 32px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        padding: 0 8px;
+        background: transparent;
+        width: 100%;
+        font-size: 13px;
+      }
+      .dl input:hover,
+      .dl select:hover,
+      .dl input:focus,
+      .dl select:focus {
+        border-color: var(--rule-2);
+        background: var(--panel);
+        outline: 0;
+      }
+      .dl .q {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 4px;
+      }
+      .dl .q input {
+        font-family: var(--mono);
+        font-size: 12px;
+        text-align: right;
+        padding: 0 6px;
+      }
+      .dl .money {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink-2);
+        text-align: right;
+        padding-right: 6px;
+        grid-column: 1/-1;
+      }
+      .hdr {
+        display: grid;
+        grid-template-columns: 78px minmax(0, 1fr) 128px 138px 214px 26px;
+        gap: 10px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ink-3);
+        margin-top: 12px;
+      }
+      .tot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 18px;
+        padding-top: 10px;
+        border-top: 2px solid var(--rule-2);
+        margin-top: 6px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+      .tot b {
+        color: var(--ink);
+      }
+      .add {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 0 2px;
+        color: var(--ink-3);
+        font-size: 13px;
+      }
+      .add:hover {
+        color: var(--ink);
+      }
+      /* summary rail */
+      .rail {
+        border-left: 1px solid var(--rule);
+        background: var(--panel);
+        padding: 20px 18px;
+        overflow: auto;
+      }
+      .rail h4 {
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin: 0 0 10px;
+      }
+      .stat {
+        display: flex;
+        justify-content: space-between;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--rule);
+        font-size: 13px;
+        color: var(--ink-2);
+      }
+      .stat b {
+        font-family: var(--mono);
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .missing {
+        margin-top: 18px;
+      }
+      .missing div {
+        display: flex;
+        gap: 8px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+        padding: 5px 0;
+        align-items: center;
+      }
+      .missing i {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1.5px solid var(--rule-2);
+        flex: none;
+        font-style: normal;
+        font-size: 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .missing .ok i {
+        background: var(--meridian);
+        border-color: var(--meridian);
+        color: #fff;
+      }
+      .missing .ok {
+        color: var(--ink-3);
+        text-decoration: line-through;
+      }
+      .missing button {
+        margin-left: auto;
+        color: var(--focus);
+        font-size: 12px;
+      }
+      .bigbtn {
+        width: 100%;
+        height: 40px;
+        margin-top: 16px;
+        border-radius: 9px;
+      }
+      /* review */
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 18px 0;
+      }
+      .kpi {
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        padding: 12px 14px;
+      }
+      .kpi .l {
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+      .kpi .v {
+        font-family: var(--display);
+        font-size: 24px;
+        font-weight: 650;
+        letter-spacing: -0.02em;
+      }
+      .spine {
+        position: relative;
+        padding: 26px 0 6px;
+      }
+      .spine .line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 36px;
+        height: 2px;
+        background: var(--rule-2);
+        border: 0;
+        padding: 0;
+        display: block;
+      }
+      .spine .notches {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: 8px;
+        position: relative;
+      }
+      .notch {
+        position: relative;
+        padding-top: 26px;
+      }
+      .notch .dot {
+        position: absolute;
+        left: 0;
+        top: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--panel);
+        border: 2px solid var(--rule-2);
+      }
+      .notch .c {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .notch .t {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .notch .d {
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+      .matrix {
+        display: grid;
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        overflow: hidden;
+        background: var(--panel);
+        margin-top: 14px;
+      }
+      .matrix .c {
+        padding: 8px 10px;
+        border-right: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        font-size: 12.5px;
+        min-height: 44px;
+      }
+      .matrix .h {
+        background: var(--panel-2);
+        color: var(--ink-2);
+        font-size: 12px;
+      }
+      .matrix .rh {
+        background: var(--panel-2);
+        font-weight: 600;
+      }
+      .matrix .mini {
+        display: block;
+        padding: 3px 6px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        margin-bottom: 4px;
+        font-size: 12px;
+        line-height: 1.3;
+      }
+      .empty {
+        padding: 26px;
+        text-align: center;
+        color: var(--ink-3);
+        border: 1px dashed var(--rule-2);
+        border-radius: var(--r);
+        margin-top: 14px;
+      }
+      .toast {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: var(--canvas);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        padding-top: 18px;
+        border-top: 1px solid var(--rule);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <span class="faint" style="font-size: 12.5px"
+          >Connect › Atlas drive ›
+          <b id="tb" style="color: var(--ink-2); font-weight: 500"
+            >New scope of work</b
+          ></span
+        >
+        <div class="grow"></div>
+        <span class="chip DRAFT" id="chip">Draft</span
+        ><button
+          class="btn ghost"
+          onclick="document.documentElement.classList.toggle('dark')"
+        >
+          ◐
+        </button>
+      </header>
+      <div class="body">
+        <nav class="steps" id="steps"></nav>
+        <main class="main" id="main"></main>
+        <aside class="rail" id="rail"></aside>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script>
+      // Starts EMPTY on purpose: this concept is about populating a document from nothing. "Load example" fills it.
+      let D = {
+        title: "",
+        description: "",
+        status: "DRAFT",
+        contributors: [],
+        roadmaps: [],
+        projects: [],
+        deliverables: [],
+      };
+      const EXAMPLE = {
+        title: "Atlas Platform — H2 2026",
+        description:
+          "Ship the public API, the web console and the onboarding docs that let external teams build on Atlas without hand-holding.",
+        status: "DRAFT",
+        contributors: [
+          { id: "phd:alice", name: "Alice Ramos" },
+          { id: "phd:bob", name: "Bob Chen" },
+          { id: "phd:dana", name: "Dana Okafor" },
+          { id: "phd:eli", name: "Eli Novak" },
+        ],
+        roadmaps: [
+          {
+            id: "r1",
+            title: "Delivery 2026 H2",
+            milestones: [
+              {
+                id: "m1",
+                code: "M1",
+                title: "Alpha",
+                target: "2026-09-30",
+                coordinators: ["phd:alice"],
+                deliverables: ["d1", "d2", "d5"],
+              },
+              {
+                id: "m2",
+                code: "M2",
+                title: "Beta",
+                target: "2026-11-15",
+                coordinators: ["phd:bob"],
+                deliverables: ["d3", "d6", "d7"],
+              },
+              {
+                id: "m3",
+                code: "M3",
+                title: "General availability",
+                target: "2026-12-20",
+                coordinators: ["phd:bob"],
+                deliverables: ["d4", "d8"],
+              },
+            ],
+          },
+        ],
+        projects: [
+          {
+            id: "p1",
+            code: "PLT",
+            title: "Platform core",
+            owner: "phd:bob",
+            currency: "USD",
+            budgetType: "CAPEX",
+            abstract: "Runtime, storage and sync.",
+            deliverables: ["d1", "d3", "d4"],
+          },
+          {
+            id: "p2",
+            code: "API",
+            title: "Public API",
+            owner: "phd:alice",
+            currency: "USD",
+            budgetType: "OPEX",
+            abstract: "REST and GraphQL surface for partners.",
+            deliverables: ["d2", "d6"],
+          },
+          {
+            id: "p3",
+            code: "DOC",
+            title: "Docs & onboarding",
+            owner: "phd:dana",
+            currency: "EUR",
+            budgetType: "OPEX",
+            abstract: "Guides, reference and samples.",
+            deliverables: ["d5", "d7", "d8"],
+          },
+        ],
+        deliverables: [
+          {
+            id: "d1",
+            code: "PLT-01",
+            title: "Operation store on PGlite",
+            owner: "phd:alice",
+            status: "DELIVERED",
+            progress: { kind: "pct", value: 100 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 80, margin: 20 },
+          },
+          {
+            id: "d2",
+            code: "API-01",
+            title: "Auth & API keys",
+            owner: "phd:alice",
+            status: "IN_PROGRESS",
+            progress: { kind: "sp", total: 21, completed: 13 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 21,
+              margin: 20,
+            },
+          },
+          {
+            id: "d3",
+            code: "PLT-02",
+            title: "Realtime sync channel",
+            owner: "phd:eli",
+            status: "BLOCKED",
+            progress: { kind: "pct", value: 35 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 120, margin: 20 },
+          },
+          {
+            id: "d4",
+            code: "PLT-03",
+            title: "Hardening & SLOs",
+            owner: null,
+            status: "TODO",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 60, margin: 20 },
+          },
+          {
+            id: "d5",
+            code: "DOC-01",
+            title: "Quickstart guide",
+            owner: "phd:dana",
+            status: "DELIVERED",
+            progress: { kind: "bin", done: true },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 24, margin: 15 },
+          },
+          {
+            id: "d6",
+            code: "API-02",
+            title: "Webhooks",
+            owner: "phd:alice",
+            status: "IN_PROGRESS",
+            progress: { kind: "sp", total: 13, completed: 5 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 13,
+              margin: 20,
+            },
+          },
+          {
+            id: "d7",
+            code: "DOC-02",
+            title: "API reference site",
+            owner: "phd:dana",
+            status: "TODO",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 40, margin: 15 },
+          },
+          {
+            id: "d8",
+            code: "DOC-03",
+            title: "Migration playbook",
+            owner: null,
+            status: "DRAFT",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 0, margin: 15 },
+          },
+        ],
+      };
+      const $ = (s) => document.querySelector(s);
+      const byId = (id) => D.deliverables.find((d) => d.id === id);
+      const agent = (id) => D.contributors.find((c) => c.id === id);
+      const initials = (id) => {
+        const a = agent(id);
+        return a
+          ? a.name
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .slice(0, 2)
+          : "?";
+      };
+      const allMs = () =>
+        D.roadmaps
+          .flatMap((r) => r.milestones)
+          .slice()
+          .sort((a, b) => (a.target || "9").localeCompare(b.target || "9"));
+      const msOf = (did) => allMs().find((m) => m.deliverables.includes(did));
+      const prOf = (did) =>
+        D.projects.find((p) => p.deliverables.includes(did));
+      const ignored = (d) => d.status === "CANCELED" || d.status === "WONT_DO";
+      const pctOf = (d) => {
+        const p = d.progress;
+        if (!p) return 0;
+        if (p.kind === "pct") return p.value;
+        if (p.kind === "sp")
+          return p.total > 0 ? (p.completed / p.total) * 100 : 0;
+        return d.status === "IN_PROGRESS" ? 50 : p.done ? 100 : 0;
+      };
+      const isDone = (d) =>
+        d.status === "DELIVERED" ||
+        (d.progress?.kind === "bin" && d.progress.done);
+      function rollup(ids) {
+        const ds = ids.map(byId).filter((d) => d && !ignored(d));
+        if (!ds.length) return { pct: 0, total: 0, done: 0 };
+        return {
+          pct: Math.round(ds.reduce((a, d) => a + pctOf(d), 0) / ds.length),
+          total: ds.length,
+          done: ds.filter(isDone).length,
+        };
+      }
+      const cost = (d) =>
+        d.anchor ? d.anchor.unitCost * d.anchor.quantity : 0;
+      const budget = (d) =>
+        d.anchor
+          ? Math.round(cost(d) * (1 + d.anchor.margin / 100) * 100) / 100
+          : 0;
+      const sumB = (ids) =>
+        ids
+          .map(byId)
+          .filter(Boolean)
+          .reduce((a, d) => a + budget(d), 0);
+      const money = (n, cur = "USD") =>
+        new Intl.NumberFormat("en", {
+          style: "currency",
+          currency: cur,
+          maximumFractionDigits: 0,
+        }).format(n);
+      const dateFmt = (s) =>
+        s
+          ? new Date(s + "T00:00:00").toLocaleDateString("en", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "no date";
+      let uid = 100;
+      const newId = (p) => `${p}${++uid}`;
+      let step = 0;
+      function toast(t) {
+        const e = $("#toast");
+        e.textContent = t;
+        e.classList.add("show");
+        clearTimeout(e._t);
+        e._t = setTimeout(() => e.classList.remove("show"), 1600);
+      }
+      // completeness per step: [done, total]
+      const live = () => D.deliverables.filter((d) => !ignored(d));
+      const checks = () => ({
+        basics: [
+          [!!D.title, "Title"],
+          [!!D.description, "Summary"],
+        ],
+        team: [[D.contributors.length > 0, "At least one contributor"]],
+        projects: [
+          [D.projects.length > 0, "At least one project"],
+          [
+            D.projects.length > 0 && D.projects.every((p) => p.owner),
+            "Every project has an owner",
+          ],
+        ],
+        roadmap: [
+          [allMs().length > 0, "At least one milestone"],
+          [
+            allMs().length > 0 && allMs().every((m) => m.target),
+            "Every milestone has a date",
+          ],
+        ],
+        deliverables: [
+          [live().length > 0, "At least one deliverable"],
+          [
+            live().length > 0 && live().every((d) => msOf(d.id)),
+            "Every deliverable scheduled",
+          ],
+          [
+            live().length > 0 &&
+              live().every(
+                (d) => prOf(d.id) && d.anchor && d.anchor.quantity > 0,
+              ),
+            "Every deliverable funded and quoted",
+          ],
+          [
+            live().length > 0 && live().every((d) => d.owner),
+            "Every deliverable has an owner",
+          ],
+        ],
+      });
+      const STEPS = [
+        ["basics", "Basics", "What is this scope of work?"],
+        ["team", "Team", "Who is involved"],
+        ["projects", "Projects", "What pays for the work"],
+        ["roadmap", "Roadmap", "When things land"],
+        ["deliverables", "Deliverables", "The actual work"],
+        ["review", "Review & submit", "What reviewers will see"],
+      ];
+      function renderSteps() {
+        const c = checks();
+        $("#steps").innerHTML = STEPS.map(([k, l, s], i) => {
+          const cs = c[k] || [];
+          const done = cs.filter((x) => x[0]).length,
+            tot = cs.length;
+          const cls =
+            k === "review"
+              ? allOk()
+                ? "done"
+                : ""
+              : done === tot
+                ? "done"
+                : done
+                  ? "part"
+                  : "";
+          return `<button class="step ${step === i ? "on" : ""} ${cls}" onclick="step=${i};render()"><span class="n">${cls === "done" ? "✓" : i + 1}</span><span><b>${l}</b><small>${k === "review" ? (allOk() ? "Ready to submit" : "Complete the steps above") : `${done}/${tot} · ${s}`}</small>${tot ? `<span class="meter"><i style="width:${(done / tot) * 100}%"></i></span>` : ""}</span></button>`;
+        }).join("");
+      }
+      const allOk = () =>
+        Object.values(checks()).every((cs) => cs.every((x) => x[0]));
+      // ── step views ──
+      const F = (label, inner) =>
+        `<label class="f"><span>${label}</span>${inner}</label>`;
+      function basics() {
+        return `<div class="eyebrow">Step 1 of 6</div><h1>Basics</h1><p class="lead">Give the scope of work a name reviewers will recognise, and a summary that says what will exist when it is delivered.</p>
+  ${F("Title", `<input class="in big" placeholder="e.g. Atlas Platform — H2 2026" value="${D.title}" onchange="D.title=this.value;render()">`)}
+  ${F("Summary", `<textarea class="in" placeholder="Two or three sentences: what, for whom, and why now." onchange="D.description=this.value;render()">${D.description}</textarea>`)}
+  ${F("Status", `<div><span class="chip ${D.status}">${D.status === "DRAFT" ? "Draft" : "Submitted"}</span> <span class="faint" style="font-size:12.5px;margin-left:8px">Stays a draft until you submit it from the last step.</span></div>`)}`;
+      }
+      function team() {
+        return `<div class="eyebrow">Step 2 of 6</div><h1>Team</h1><p class="lead">Contributors are referenced by PHID. Add everyone who will own a deliverable, lead a project or coordinate a milestone.</p>
+  <div class="card">${D.contributors.length ? D.contributors.map((a) => `<div class="line" style="grid-template-columns:34px 1fr 1fr 30px"><span class="av">${initials(a.id)}</span><input value="${a.name}" placeholder="Name" onchange="agent('${a.id}').name=this.value;render()"><input class="mono" value="${a.id}" onchange="agent('${a.id}').id=this.value;render()"><button class="x" onclick="D.contributors=D.contributors.filter(x=>x.id!=='${a.id}');render()">×</button></div>`).join("") : `<div class="faint" style="padding:6px 0">Nobody yet.</div>`}
+  <div class="line" style="grid-template-columns:34px 1fr 1fr 30px;border-top:1px dashed var(--rule)"><span class="av" style="opacity:.4">+</span><input id="newName" placeholder="Name" onkeydown="if(event.key==='Enter')addAgent()"><input id="newPhid" class="mono" placeholder="phd:… (or paste a PHID)" onkeydown="if(event.key==='Enter')addAgent()"><button class="btn sm" onclick="addAgent()">Add</button></div></div>`;
+      }
+      function addAgent() {
+        const n = $("#newName").value.trim();
+        if (!n) return;
+        const id =
+          $("#newPhid").value.trim() ||
+          "phd:" + n.toLowerCase().replace(/\s+/g, "-");
+        D.contributors.push({ id, name: n });
+        render();
+        setTimeout(() => $("#newName")?.focus(), 0);
+      }
+      function projects() {
+        return `<div class="eyebrow">Step 3 of 6</div><h1>Projects</h1><p class="lead">A project is the budget line that pays for deliverables. Its budget is never typed in — it is derived from the quotes on its deliverables.</p>
+  ${D.projects
+    .map(
+      (
+        p,
+      ) => `<div class="card"><h3><input class="mono" style="width:70px;height:30px;border:1px solid transparent;border-radius:6px;background:transparent;padding:0 6px" value="${p.code}" placeholder="CODE" onchange="proj('${p.id}').code=this.value;render()"><input style="flex:1;height:30px;border:1px solid transparent;border-radius:6px;background:transparent;font-weight:600;padding:0 6px" value="${p.title}" placeholder="Project title" onchange="proj('${p.id}').title=this.value;render()"><button class="x faint" onclick="D.projects=D.projects.filter(x=>x.id!=='${p.id}');render()">×</button></h3>
+    <div class="row3" style="margin-top:10px">${F("Owner", `<select class="in" onchange="proj('${p.id}').owner=this.value||null;render()"><option value="">Choose…</option>${D.contributors.map((a) => `<option value="${a.id}" ${p.owner === a.id ? "selected" : ""}>${a.name}</option>`).join("")}</select>`)}${F("Currency", `<select class="in" onchange="proj('${p.id}').currency=this.value;render()">${["USD", "EUR", "DAI", "USDS"].map((x) => `<option ${p.currency === x ? "selected" : ""}>${x}</option>`).join("")}</select>`)}${F("Budget type", `<select class="in" onchange="proj('${p.id}').budgetType=this.value">${["OPEX", "CAPEX", "OVERHEAD", "CONTINGENCY"].map((x) => `<option ${p.budgetType === x ? "selected" : ""}>${x}</option>`).join("")}</select>`)}</div>
+    ${F("Abstract", `<input class="in" placeholder="One line on what this project covers" value="${p.abstract || ""}" onchange="proj('${p.id}').abstract=this.value">`)}
+    <div class="faint" style="font-size:12.5px;margin-top:10px">${p.deliverables.length} deliverables · budget ${money(sumB(p.deliverables), p.currency)} <span class="faint">(derived)</span></div></div>`,
+    )
+    .join("")}
+  <div class="card dashed" onclick="D.projects.push({id:newId('p'),code:'',title:'',owner:null,currency:'USD',budgetType:'OPEX',abstract:'',deliverables:[]});render()">+ Add a project</div>`;
+      }
+      const proj = (id) => D.projects.find((p) => p.id === id);
+      function roadmap() {
+        const r = D.roadmaps[0];
+        return `<div class="eyebrow">Step 4 of 6</div><h1>Roadmap</h1><p class="lead">Milestones are the dates work lands on. Deliverables get scheduled into them in the next step. Sequence codes (M1, M2…) are real order, so keep them ordered.</p>
+  ${
+    r
+      ? `<div class="card"><h3><input style="flex:1;height:30px;border:1px solid transparent;border-radius:6px;background:transparent;font-weight:600;padding:0 6px" value="${r.title}" placeholder="Roadmap title" onchange="D.roadmaps[0].title=this.value;render()"></h3>
+    <div class="hdr" style="grid-template-columns:70px 1fr 160px 200px 30px"><span>Code</span><span>Milestone</span><span>Target date</span><span>Coordinators</span><span></span></div>
+    ${r.milestones.map((m) => `<div class="line" style="grid-template-columns:70px 1fr 160px 200px 30px"><input class="mono" value="${m.code}" onchange="ms('${m.id}').code=this.value;render()"><input value="${m.title}" placeholder="Milestone title" onchange="ms('${m.id}').title=this.value;render()"><input type="date" value="${m.target}" onchange="ms('${m.id}').target=this.value;render()"><select onchange="if(this.value){ms('${m.id}').coordinators=[this.value];render()}"><option value="">${m.coordinators.length ? m.coordinators.map((c) => agent(c)?.name).join(", ") : "Choose…"}</option>${D.contributors.map((a) => `<option value="${a.id}">${a.name}</option>`).join("")}</select><button class="x" onclick="D.roadmaps[0].milestones=D.roadmaps[0].milestones.filter(x=>x.id!=='${m.id}');render()">×</button></div>`).join("")}
+    <button class="add" onclick="addMs()">+ Add milestone <kbd class="mono faint" style="font-size:11px">Enter</kbd></button></div>`
+      : `<div class="card dashed" onclick="D.roadmaps.push({id:newId('r'),title:'Delivery roadmap',milestones:[]});addMs()">+ Create the roadmap</div>`
+  }`;
+      }
+      const ms = (id) => allMs().find((m) => m.id === id);
+      function addMs() {
+        const r = D.roadmaps[0];
+        const n = r.milestones.length + 1;
+        r.milestones.push({
+          id: newId("m"),
+          code: "M" + n,
+          title: "",
+          target: "",
+          coordinators: [],
+          deliverables: [],
+        });
+        render();
+      }
+      function deliverables() {
+        const groups = [
+          ...D.projects.map((p) => ({ p, ids: p.deliverables })),
+          {
+            p: null,
+            ids: D.deliverables.filter((d) => !prOf(d.id)).map((d) => d.id),
+          },
+        ];
+        return `<div class="eyebrow">Step 5 of 6</div><h1>Deliverables</h1><p class="lead">Add deliverables under the project that pays for them, schedule each into a milestone, and quote it. Budgets update as you type.</p>
+  ${D.projects.length === 0 ? `<div class="empty">Create a project first — every deliverable needs someone to pay for it. <button class="btn sm" onclick="step=2;render()">Go to Projects</button></div>` : ""}
+  ${groups
+    .filter((g) => g.p || g.ids.length)
+    .map((g) => {
+      const p = g.p;
+      const c = p
+          ? p.deliverables
+              .map(byId)
+              .filter(Boolean)
+              .reduce((a, d) => a + cost(d), 0)
+          : 0,
+        b = p ? sumB(p.deliverables) : 0;
+      return `<div class="card"><h3>${p ? `<span class="mono">${p.code || "—"}</span> ${p.title || "Untitled project"}` : `<span class="tag bad" style="margin:0">Unfunded</span> not paid by any project`}<span style="flex:1"></span>${p ? `<span class="mono faint" style="font-weight:400">${money(b, p.currency)}</span>` : ""}</h3>
+    <div class="hdr"><span>Code</span><span>Deliverable</span><span>Owner</span><span>Milestone</span><span>Unit cost × qty @ margin %</span><span></span></div>
+    ${g.ids
+      .map(byId)
+      .filter(Boolean)
+      .map((d) => {
+        const m = msOf(d.id);
+        return `<div class="dl"><input class="mono" value="${d.code}" placeholder="CODE" onchange="byId('${d.id}').code=this.value;render()"><input value="${d.title}" placeholder="What will be delivered?" onchange="byId('${d.id}').title=this.value;render()">
+      <select onchange="byId('${d.id}').owner=this.value||null;render()"><option value="">Owner…</option>${D.contributors.map((a) => `<option value="${a.id}" ${d.owner === a.id ? "selected" : ""}>${a.name}</option>`).join("")}</select>
+      <select onchange="sched('${d.id}',this.value)"><option value="">Schedule…</option>${allMs()
+        .map(
+          (x) =>
+            `<option value="${x.id}" ${m?.id === x.id ? "selected" : ""}>${x.code} ${x.title || ""}</option>`,
+        )
+        .join("")}</select>
+      <div class="q"><input type="number" placeholder="cost" value="${d.anchor?.unitCost || ""}" onchange="anc('${d.id}',{unitCost:+this.value})"><input type="number" placeholder="qty" value="${d.anchor?.quantity || ""}" onchange="anc('${d.id}',{quantity:+this.value})"><input type="number" placeholder="%" value="${d.anchor?.margin ?? ""}" onchange="anc('${d.id}',{margin:+this.value})"><span class="money">${d.anchor && d.anchor.quantity ? `= ${money(budget(d), p?.currency)}` : "<span class='tag' style='margin:0'>Unquoted</span>"}</span></div>
+      <button class="x" onclick="rm('${d.id}')">×</button></div>`;
+      })
+      .join("")}
+    ${p ? `<button class="add" onclick="addD('${p.id}')">+ Add deliverable to ${p.code || "this project"}</button><div class="tot"><span>cost <b>${money(c, p.currency)}</b></span><span>margin <b>${c ? Math.round((b / c - 1) * 1000) / 10 : 0}%</b></span><span>budget <b>${money(b, p.currency)}</b></span></div>` : ""}</div>`;
+    })
+    .join("")}`;
+      }
+      function addD(pid) {
+        const id = newId("d");
+        D.deliverables.push({
+          id,
+          code: "",
+          title: "",
+          owner: null,
+          status: "DRAFT",
+          progress: { kind: "pct", value: 0 },
+          anchor: { unit: "Hours", unitCost: 0, quantity: 0, margin: 0 },
+        });
+        proj(pid).deliverables.push(id);
+        render();
+        setTimeout(() => {
+          const els = document.querySelectorAll(
+            ".dl input[placeholder='What will be delivered?']",
+          );
+          els[els.length - 1]?.focus();
+        }, 0);
+      }
+      function rm(id) {
+        D.deliverables = D.deliverables.filter((d) => d.id !== id);
+        D.projects.forEach(
+          (p) => (p.deliverables = p.deliverables.filter((x) => x !== id)),
+        );
+        D.roadmaps.forEach((r) =>
+          r.milestones.forEach(
+            (m) => (m.deliverables = m.deliverables.filter((x) => x !== id)),
+          ),
+        );
+        render();
+      }
+      function sched(id, mid) {
+        D.roadmaps.forEach((r) =>
+          r.milestones.forEach(
+            (m) => (m.deliverables = m.deliverables.filter((x) => x !== id)),
+          ),
+        );
+        if (mid) ms(mid).deliverables.push(id);
+        render();
+      }
+      function anc(id, patch) {
+        const d = byId(id);
+        const a = {
+          unit: "Hours",
+          unitCost: 0,
+          quantity: 0,
+          margin: 0,
+          ...(d.anchor || {}),
+          ...patch,
+        };
+        if (a.unitCost < 0 || a.quantity < 0 || a.margin < 0)
+          return toast("Quotes must be zero or positive");
+        d.anchor = a;
+        render();
+      }
+      function review() {
+        const all = rollup(D.deliverables.map((d) => d.id));
+        const byCur = {};
+        D.projects.forEach(
+          (p) =>
+            (byCur[p.currency] =
+              (byCur[p.currency] || 0) + sumB(p.deliverables)),
+        );
+        const m = allMs();
+        return `<div class="eyebrow">Step 6 of 6</div><h1>${D.title || "<span class='faint'>Untitled scope of work</span>"}</h1><p class="lead">${D.description || "<span class='faint'>No summary yet.</span>"}</p>
+  <div class="kpis"><div class="kpi"><div class="l">Budget</div><div class="v">${
+    Object.entries(byCur)
+      .map(([c, v]) => money(v, c))
+      .join(" · ") || "—"
+  }</div></div><div class="kpi"><div class="l">Projects</div><div class="v">${D.projects.length}</div></div><div class="kpi"><div class="l">Milestones</div><div class="v">${m.length}</div></div><div class="kpi"><div class="l">Deliverables</div><div class="v">${all.done}<span class="faint" style="font-size:16px"> / ${all.total}</span></div></div></div>
+  ${
+    m.length
+      ? `<div class="spine"><span class="line"></span><div class="notches">${m
+          .map((x) => {
+            const r = rollup(x.deliverables);
+            return `<div class="notch"><span class="dot" style="${r.total && r.done === r.total ? "background:var(--meridian);border-color:var(--meridian)" : ""}"></span><div class="c">${x.code}</div><div class="t">${x.title || "Untitled"}</div><div class="d">${dateFmt(x.target)} · ${r.total} deliverables · ${money(sumB(x.deliverables))}</div></div>`;
+          })
+          .join("")}</div></div>`
+      : `<div class="empty">No milestones yet.</div>`
+  }
+  ${
+    D.projects.length && m.length
+      ? `<div class="matrix" style="grid-template-columns:140px repeat(${m.length + 1},1fr)"><div class="c h"></div>${m.map((x) => `<div class="c h"><b>${x.code}</b> ${x.title}</div>`).join("")}<div class="c h">Unscheduled</div>
+    ${D.projects
+      .map(
+        (p) =>
+          `<div class="c rh">${p.code} <span class="faint" style="font-weight:400;font-size:11px">${money(sumB(p.deliverables), p.currency)}</span></div>${m
+            .map(
+              (x) =>
+                `<div class="c">${p.deliverables
+                  .map(byId)
+                  .filter((d) => d && msOf(d.id)?.id === x.id)
+                  .map(
+                    (d) =>
+                      `<span class="mini">${d.code || "—"} ${d.title}</span>`,
+                  )
+                  .join("")}</div>`,
+            )
+            .join("")}<div class="c">${p.deliverables
+            .map(byId)
+            .filter((d) => d && !msOf(d.id))
+            .map(
+              (d) =>
+                `<span class="mini" style="border-color:var(--signal)">${d.code || "—"} ${d.title}</span>`,
+            )
+            .join("")}</div>`,
+      )
+      .join("")}</div>`
+      : ""
+  }
+  <div class="card" style="margin-top:22px"><h3>Team</h3><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">${D.contributors.map((a) => `<span class="chip" style="height:28px"><span class="av" style="width:20px;height:20px;font-size:10px">${initials(a.id)}</span>${a.name}</span>`).join("") || "<span class='faint'>Nobody yet.</span>"}</div></div>`;
+      }
+      function renderRail() {
+        const c = checks();
+        const all = rollup(D.deliverables.map((d) => d.id));
+        const byCur = {};
+        D.projects.forEach(
+          (p) =>
+            (byCur[p.currency] =
+              (byCur[p.currency] || 0) + sumB(p.deliverables)),
+        );
+        const flat = Object.entries(c).flatMap(([k, cs]) =>
+          cs.map((x) => [k, ...x]),
+        );
+        $("#rail").innerHTML = `<h4>Live summary</h4>
+    <div class="stat"><span>Projects</span><b>${D.projects.length}</b></div><div class="stat"><span>Milestones</span><b>${allMs().length}</b></div><div class="stat"><span>Deliverables</span><b>${live().length}</b></div><div class="stat"><span>Scheduled</span><b>${live().filter((d) => msOf(d.id)).length}/${live().length}</b></div><div class="stat"><span>Funded &amp; quoted</span><b>${live().filter((d) => prOf(d.id) && d.anchor?.quantity > 0).length}/${live().length}</b></div><div class="stat"><span>Budget</span><b>${
+      Object.entries(byCur)
+        .map(([k, v]) => money(v, k))
+        .join(" · ") || "—"
+    }</b></div><div class="stat"><span>Progress</span><b>${all.pct}%</b></div>
+    <div class="missing"><h4>Before you submit</h4>${flat.map(([k, ok, l]) => `<div class="${ok ? "ok" : ""}"><i>${ok ? "✓" : ""}</i>${l}${ok ? "" : `<button onclick="step=${STEPS.findIndex((s) => s[0] === k)};render()">Fix</button>`}</div>`).join("")}</div>
+    <button class="btn primary bigbtn" ${allOk() && D.status === "DRAFT" ? "" : "disabled"} onclick="D.status='SUBMITTED';render();toast('Submitted for review')">${D.status === "SUBMITTED" ? "Submitted" : "Submit for review"}</button>
+    <button class="btn ghost bigbtn" style="height:32px;margin-top:8px;color:var(--ink-3)" onclick="D=JSON.parse(JSON.stringify(EXAMPLE));render();toast('Example loaded')">Load example data</button>
+    <button class="btn ghost bigbtn" style="height:32px;margin-top:2px;color:var(--ink-3)" onclick="D={title:'',description:'',status:'DRAFT',contributors:[],roadmaps:[],projects:[],deliverables:[]};step=0;render()">Start over</button>`;
+      }
+      function render() {
+        renderSteps();
+        const k = STEPS[step][0];
+        $("#main").innerHTML =
+          `<div class="form ${k === "deliverables" || k === "review" ? "wide" : ""}">${{ basics, team, projects, roadmap, deliverables, review }[k]()}<div class="nav">${step > 0 ? `<button class="btn" onclick="step--;render()">← ${STEPS[step - 1][1]}</button>` : "<span></span>"}${step < 5 ? `<button class="btn primary" onclick="step++;render()">Next: ${STEPS[step + 1][1]} →</button>` : ""}</div></div>`;
+        renderRail();
+        $("#tb").textContent = D.title || "New scope of work";
+        const ch = $("#chip");
+        ch.className = "chip " + D.status;
+        ch.textContent = D.status === "DRAFT" ? "Draft" : "Submitted";
+      }
+      render();
+    </script>
+  </body>
+</html>

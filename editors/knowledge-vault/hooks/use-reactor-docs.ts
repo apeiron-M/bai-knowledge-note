@@ -12,50 +12,103 @@
  * populate MoC / observation / tension / vault-config lists.
  *
  * Cost: N independent fetches (concurrency-capped) on every distinct
- * id list. Acceptable for the tens-of-docs ranges these views cover.
+ * id list — but only the FIRST time. Results are kept in the
+ * module-level stale-while-revalidate cache in `reactor-doc-cache.ts`,
+ * so a view the user switches away from and back to paints from cache
+ * in its first commit and revalidates in the background instead of
+ * re-running the whole fetch behind a spinner.
  */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import type { PHDocument } from "document-model";
-import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
+import { fetchDocumentState } from "../../shared/document-state.js";
+import { withTransientRetry } from "../lib/remote-first.js";
+import { isVaultLive } from "../../shared/vault-live.js";
+import { createPollCoordinator } from "./poll-coordinator.js";
+import {
+  cachedDocsFor,
+  DOC_CACHE_TTL_MS,
+  everyDocCached,
+  fetchThroughCache,
+  peekDoc,
+  recallIds,
+  rememberIds,
+  scopedRetainKey,
+  subscribeDocMutations,
+  type DocFetchOutcome,
+} from "./reactor-doc-cache.js";
 
 const FETCH_CONCURRENCY = 6;
 
-const DOC_QUERY = `
-  query DocState($id: String!) {
-    document(identifier: $id) {
-      document { state }
-    }
+/**
+ * Cadence a `pollMs` list falls back to while the change feed is
+ * delivering. Every poll tick re-reads the WHOLE list — one request per
+ * document — and there are seven call sites doing it every 10-60s, so on a
+ * live socket this was the app's single largest source of requests while
+ * the socket was already pushing the same news for free.
+ */
+const LIVE_SAFETY_NET_MS = 5 * 60_000;
+
+/**
+ * One timer per distinct id set. Three components read the scope-of-work
+ * documents over the identical set on three different periods, and because
+ * `fetchThroughCache` dedupes only CONCURRENT reads, three out-of-phase
+ * timers fetched the same list three times per cycle. Grouped by the spec
+ * key, they now tick together and collapse into one request.
+ */
+const pollCoordinator = createPollCoordinator({
+  isLive: isVaultLive,
+  isVisible: () =>
+    typeof document === "undefined" || document.visibilityState === "visible",
+  liveSafetyNetMs: LIVE_SAFETY_NET_MS,
+});
+
+/** Attempts per document read, for transient transport failures. */
+const FETCH_ATTEMPTS = 3;
+
+/**
+ * Read one document, classified so the cache can tell "gone" from
+ * "unreachable":
+ *
+ *  - transport failure (connection reset from the reactor's internal
+ *    gateway hop, a non-2xx response) → `error`, and the cache keeps the
+ *    last good body so a blip doesn't blank a row;
+ *  - GraphQL error or a body with no state → `missing`, and the cache
+ *    entry is dropped so a deleted document can't ghost.
+ *
+ * Retries are delegated to `withTransientRetry` — the same backoff the
+ * rest of remote-first mode uses — which returns immediately for
+ * deterministic failures.
+ */
+async function fetchDocOutcome(spec: ReactorDocSpec): Promise<DocFetchOutcome> {
+  let doc: Awaited<ReturnType<typeof fetchDocumentState>>;
+  try {
+    // `fetchDocumentState` throws on transport failure and resolves `null`
+    // when the reactor has no such document — exactly the split this
+    // classification needs, so no re-interpretation happens here.
+    doc = await withTransientRetry(
+      () => fetchDocumentState(spec.id),
+      FETCH_ATTEMPTS,
+    );
+  } catch {
+    return { kind: "error" };
   }
-`;
 
-type RawDocResponse = {
-  data?: {
-    document?: {
-      document?: {
-        state?: { global?: Record<string, unknown> };
-      };
-    };
+  if (!doc) return { kind: "missing" };
+  return {
+    kind: "doc",
+    // Stitch a header from server truth, falling back to the spec.
+    doc: {
+      header: {
+        id: doc.id,
+        documentType: doc.documentType ?? spec.documentType,
+        name: doc.name ?? spec.name ?? spec.id,
+        createdAtUtcIso: doc.createdAtUtcIso ?? undefined,
+        lastModifiedAtUtcIso: doc.lastModifiedAtUtcIso ?? undefined,
+      },
+      state: doc.state,
+    } as unknown as PHDocument,
   };
-  errors?: { message?: string }[];
-};
-
-
-async function fetchDocState(id: string): Promise<PHDocument | null> {
-  const res = await fetch(resolveReactorEndpoint(), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: DOC_QUERY, variables: { id } }),
-  });
-  if (!res.ok) return null;
-  const json = (await res.json()) as RawDocResponse;
-  if (json.errors?.length) return null;
-  const state = json.data?.document?.document?.state;
-  if (!state) return null;
-  // Synthesize a PHDocument-shaped object that the existing call sites
-  // (which read `d.header.documentType`, `d.state.global`, `d.header.id`)
-  // can handle. Header type/id are stitched in by the caller via the
-  // typeOf / idOf helpers — see useReactorDocs below.
-  return { state } as unknown as PHDocument;
 }
 
 async function pMap<T, U>(
@@ -83,55 +136,282 @@ export type ReactorDocSpec = {
   name?: string;
 };
 
+export type UseReactorDocsOptions = {
+  /**
+   * Re-fetch the whole spec list on this interval (ms). The vault is
+   * written by agents server-side, so views that must track external
+   * progress (pipeline queue, source statuses) poll; views that only
+   * change through this UI leave it unset.
+   */
+  pollMs?: number;
+  /**
+   * Opt-in continuity across remounts. The spec list is derived from the
+   * drive tree, whose hook holds its nodes in component state — so on
+   * remount `specs` is momentarily EMPTY even though every document is
+   * still cached. With a `retainKey` the hook recalls the id list this
+   * caller last asked for and paints those cached documents while the
+   * tree reloads, so switching back to a tab shows content rather than a
+   * spinner. Purely a paint hint: nothing is fetched from the recalled
+   * list, and the real spec list reconciles it on arrival.
+   */
+  retainKey?: string;
+};
+
+export type UseReactorDocsResult = {
+  docs: PHDocument[];
+  /**
+   * True while the authoritative fetch for the current spec set is still
+   * outstanding AND the cache can't answer it in full.
+   *
+   * `docs` may already carry cached entries while this is true — that's
+   * the stale-while-revalidate contract. Two consequences worth knowing:
+   *
+   *  - every requested spec cached ⇒ `false` on the very first render,
+   *    so a revisited tab paints its list instead of a spinner;
+   *  - only SOME specs cached ⇒ stays `true` (the list really is
+   *    incomplete) while `docs` shows the subset that is known. Consumers
+   *    should keep gating their spinner on `isLoading && docs.length === 0`
+   *    so a partial cache shows partial content rather than a spinner over
+   *    data we already hold.
+   *
+   * Poll-driven refetches and mutation-driven revalidations never
+   * re-enter loading, so a list never flickers back to a spinner once it
+   * has content.
+   */
+  isLoading: boolean;
+  /**
+   * True once every requested document has been read for the current spec
+   * set — a whole pass resolved, or the cache already held them all. Unlike
+   * `isLoading`, which turns false as soon as the first streamed document
+   * paints, this is what a consumer that needs the whole list waits for.
+   */
+  complete: boolean;
+  /** Force an immediate re-fetch (e.g. right after a local write). */
+  refetch: () => void;
+};
+
 /**
  * Returns full document state objects for the given specs, fetched
- * directly from the reactor (one GraphQL call per id, concurrency-
- * capped). Each returned object has the shape Connect's PHDocument
- * roughly conforms to: `{ header: { id, documentType, name }, state }`.
- * Failed fetches are filtered out of the result.
+ * directly from the reactor (one GraphQL call per id, concurrency-capped
+ * and de-duplicated across simultaneous consumers). Each returned object
+ * has the shape Connect's PHDocument roughly conforms to:
+ * `{ header: { id, documentType, name }, state }`.
+ *
+ * Documents the server can't produce are filtered out of the result;
+ * documents that merely failed in transit keep their last good body, so
+ * lists don't flicker on a connection reset.
  */
-export function useReactorDocs(specs: ReactorDocSpec[]): PHDocument[] {
-  const [docs, setDocs] = useState<PHDocument[]>([]);
+export function useReactorDocsWithRefetch(
+  specs: ReactorDocSpec[],
+  options?: UseReactorDocsOptions,
+): UseReactorDocsResult {
+  const selectedDriveId = useSelectedDriveId();
+  const [fetched, setFetched] = useState<{
+    key: string;
+    docs: PHDocument[];
+    /** A whole pass resolved for `key` (false while it streams). */
+    complete: boolean;
+  } | null>(null);
+  const [fetchTick, setFetchTick] = useState(0);
   const lastKeyRef = useRef<string>("");
+  const lastTickRef = useRef<number>(0);
+  /**
+   * The read pass currently in flight, if any. A pass for the SAME id set
+   * is never restarted while it runs (see the fetch effect); a pass for a
+   * superseded id set recognizes itself and drops its result.
+   */
+  const runningRef = useRef<{ key: string; token: object } | null>(null);
+  // Latest specs, for the mutation handler — reading them through a ref
+  // keeps its subscription keyed on the stable `ids`.
+  const specsRef = useRef(specs);
+  specsRef.current = specs;
 
   // Stable string key for the dep array (specs identity changes per render).
   const key = useMemo(
     () => specs.map((s) => `${s.id}:${s.documentType}`).join(","),
     [specs],
   );
+  // Keyed on `key`, NOT on `specs`: `specs` comes from a `.filter()` in a
+  // caller's render body and so has a new identity every render, which
+  // rippled into `seedIds`, `seeded`, `seedComplete`, `rememberIds` and the
+  // mutation subscription below — all of them re-running every render. An
+  // unchanged `key` means an identical id list, so this is safe.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const ids = useMemo(() => specs.map((s) => s.id), [key]);
+
+  // Scoped to the drive HERE rather than at each call site: the key is a
+  // paint hint shared by five views, and one that forgot to scope it would
+  // paint another vault's documents with nothing failing.
+  const retainKey = scopedRetainKey(options?.retainKey, selectedDriveId);
+  useEffect(() => {
+    rememberIds(retainKey, ids);
+  }, [retainKey, ids]);
+
+  /**
+   * Ids to paint from cache before this spec set's own fetch resolves.
+   * Falls back to the recalled list only while the tree is still
+   * reloading and `specs` is empty.
+   */
+  const seedIds = useMemo(
+    () => (ids.length > 0 ? ids : retainKey ? recallIds(retainKey) : []),
+    [ids, retainKey],
+  );
+  // Read synchronously during render — the whole point is to have content
+  // in the first commit after a remount rather than one paint later.
+  const seeded = useMemo(() => cachedDocsFor(seedIds), [seedIds]);
+  const seedComplete = useMemo(() => everyDocCached(seedIds), [seedIds]);
+
+  const refetch = useCallback(() => setFetchTick((t) => t + 1), []);
+
+  // Visibility and live-feed backoff are the coordinator's job now — while
+  // the change feed is delivering, every write arrives as a push and the
+  // mutation subscription below revalidates exactly the document that
+  // changed, so this poll is the safety net for a silently dead socket
+  // rather than the update mechanism.
+  const pollMs = options?.pollMs;
+  useEffect(() => {
+    if (!pollMs || key.length === 0) return;
+    return pollCoordinator.register(key, pollMs, () =>
+      setFetchTick((t) => t + 1),
+    );
+  }, [pollMs, key]);
+
+  // A write to a document this view shows was already evicted from the
+  // cache by the global listener; revalidate so the row updates (or, for
+  // a delete, disappears) without waiting for the poll.
+  //
+  // ONLY the document that changed. This used to bump `fetchTick`, which
+  // re-ran `pMap` over the entire spec list: editing one source re-read
+  // every source in the drive, and an agent's write burst multiplied that
+  // by the number of events.
+  useEffect(() => {
+    if (ids.length === 0) return;
+    const watched = new Set(ids);
+    return subscribeDocMutations((id) => {
+      if (!watched.has(id)) return;
+      const spec = specsRef.current.find((s) => s.id === id);
+      if (!spec) return;
+      void fetchThroughCache(spec.id, () => fetchDocOutcome(spec)).then(
+        (outcome) => {
+          // `error` is "unreachable", not "gone" — keep the last good body.
+          if (outcome.kind === "error") return;
+          setFetched((prev) => {
+            if (!prev) return prev;
+            const docs =
+              outcome.kind === "doc"
+                ? prev.docs.some((d) => d.header.id === id)
+                  ? prev.docs.map((d) => (d.header.id === id ? outcome.doc : d))
+                  : [...prev.docs, outcome.doc]
+                : prev.docs.filter((d) => d.header.id !== id);
+            return { key: prev.key, docs, complete: prev.complete };
+          });
+        },
+      );
+    });
+  }, [ids]);
 
   useEffect(() => {
-    if (specs.length === 0) {
-      if (docs.length) setDocs([]);
-      return;
+    if (specs.length === 0) return;
+    const fetchKey = `${key}#${fetchTick}`;
+    if (fetchKey === lastKeyRef.current) return;
+    lastKeyRef.current = fetchKey;
+
+    // A pass over this same id set is still in flight. Do NOT supersede
+    // it: `pMap` has no cancellation, so the old pass would keep spending
+    // requests while the new one starts from zero — and on a list long
+    // enough that one pass outlasts `pollMs` (404 sources ≈ 20s+), every
+    // tick restarted the list before it could land and the view hung on
+    // its spinner forever. Coalesce the tick: the running pass's result
+    // is still current for this key and will paint when it resolves; the
+    // next tick gets a fresh pass.
+    if (runningRef.current?.key === key) return;
+
+    // Note this runs on EVERY mount, cache hit or not: the cache decides
+    // what to paint, never whether to revalidate.
+    // A poll tick or an explicit `refetch()` asked for fresh data, so it
+    // bypasses the freshness gate. A mount or a navigation did not: it just
+    // needs the list, and re-reading every document because the user came
+    // back to a tab thirty seconds later is the waste this gate exists to
+    // stop.
+    const forced = fetchTick !== lastTickRef.current;
+    lastTickRef.current = fetchTick;
+    const maxAgeMs = forced ? 0 : DOC_CACHE_TTL_MS;
+
+    const token = {};
+    runningRef.current = { key, token };
+
+    // Paint documents as they land while this list has never been shown in
+    // full (the same condition `isLoading` reports). A 404-source vault is
+    // 404 reads and a blank panel for their duration reads as a hang;
+    // `isLoading` with a growing `docs` array is the contract this hook
+    // already documents, and every consumer gates its spinner on
+    // `isLoading && docs.length === 0`. Once a pass has painted the list
+    // (and on a remount whose cache already answers it), results are
+    // applied once at the end instead, so a revalidation can't flicker a
+    // full list down to whatever arrived first.
+    const streaming = fetched?.key !== key && !seedComplete;
+    const landed = new Map<string, PHDocument>();
+    if (streaming) {
+      // Start from whatever the cache could already answer so a partial
+      // warm list isn't replaced by a shorter, freshly-fetched one.
+      for (const doc of seeded) landed.set(doc.header.id, doc);
     }
-    if (key === lastKeyRef.current) return;
-    lastKeyRef.current = key;
-
-    let cancelled = false;
-    void pMap(specs, FETCH_CONCURRENCY, async (spec) => {
-      const doc = await fetchDocState(spec.id);
-      if (!doc) return null;
-      // Stitch a header so callers can read header.id / header.documentType.
-      return {
-        header: {
-          id: spec.id,
-          documentType: spec.documentType,
-          name: spec.name ?? spec.id,
-        },
-        state: (doc as unknown as { state: unknown }).state,
-      } as unknown as PHDocument;
-    }).then((results) => {
-      if (cancelled) return;
-      const ok = results.filter((d): d is PHDocument => d !== null);
-      setDocs(ok);
-    });
-
-    return () => {
-      cancelled = true;
+    const paint = (spec: ReactorDocSpec, outcome: DocFetchOutcome) => {
+      if (!streaming || runningRef.current?.token !== token) return;
+      if (outcome.kind === "doc") {
+        landed.set(spec.id, outcome.doc);
+      } else if (outcome.kind === "error") {
+        // Unreachable, not gone: keep the last good body if we have one.
+        const cached = peekDoc(spec.id);
+        if (cached) landed.set(spec.id, cached.doc);
+      } else {
+        landed.delete(spec.id);
+      }
+      setFetched({ key, docs: [...landed.values()], complete: false });
     };
+    void pMap(specs, FETCH_CONCURRENCY, (spec) =>
+      fetchThroughCache(spec.id, () => fetchDocOutcome(spec), Date.now, maxAgeMs).then(
+        (outcome) => {
+          paint(spec, outcome);
+          return outcome;
+        },
+      ),
+    )
+      .then((outcomes) => {
+        // The id set changed while this pass ran (a source was deleted or
+        // added); a newer pass owns the result now, so this one must not
+        // paint over it with a stale key.
+        if (runningRef.current?.token !== token) return;
+        runningRef.current = null;
+        const next: PHDocument[] = [];
+        outcomes.forEach((outcome, index) => {
+          if (outcome.kind === "doc") {
+            next.push(outcome.doc);
+          } else if (outcome.kind === "error") {
+            // Unreachable, not gone: keep the last good body if we have one.
+            const cached = peekDoc(specs[index].id);
+            if (cached) next.push(cached.doc);
+          }
+        });
+        setFetched({ key, docs: next, complete: true });
+      })
+      .catch(() => {
+        // Never leave a dead pass recorded as running, or the list waits
+        // on a promise that already rejected.
+        if (runningRef.current?.token === token) runningRef.current = null;
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+  }, [key, fetchTick]);
 
-  return docs;
+  return {
+    docs: fetched?.key === key ? fetched.docs : seeded,
+    isLoading: specs.length > 0 && fetched?.key !== key && !seedComplete,
+    complete: specs.length === 0 || (fetched?.key === key ? fetched.complete : seedComplete),
+    refetch,
+  };
+}
+
+/** Back-compat shape: just the docs. */
+export function useReactorDocs(specs: ReactorDocSpec[]): PHDocument[] {
+  return useReactorDocsWithRefetch(specs).docs;
 }

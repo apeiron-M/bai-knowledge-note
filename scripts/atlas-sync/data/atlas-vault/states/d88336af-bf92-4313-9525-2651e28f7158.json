@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Sky Primitive Instance is tracked through the same four-directory lifecycle regardless of what it does",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d6be5ab5-4bae-4012-abf8-539e8ec3b2cb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a488e1e1-c1d2-4f03-b8ea-213148e2156f",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bfdd78bb-8d02-4639-a473-0321a2cbcb4c",
+      "name": "governance-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65a8958e-62a2-44fc-8503-f77c02598c52",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across A.6.1.1.1.2.1 and A.6.1.1.1.2.2, every Primitive Spark uses \u2014 Agent Creation, Prime Transformation, Executor Transformation, Agent Token, Executor Accord \u2014 is represented by an identical document skeleton: a Primitive Hub Document carrying a Global Activation Status, then Active Instances, Completed Instances and In Progress Invocations directories, plus a Hub Data Repository holding archived subtrees for **Failed Invocations** and **Suspended Instances**.\n\nThe repetition is the finding, not noise. The Atlas is imposing one lifecycle state machine on every governance mechanism: a prospective Instance is *invoked*, and per A.6.1.1.1.2.2.1.1.4 successful Invocations move into the Active Instances Directory while \"failed Invocations are Archived\" in the Data Repository.\n\nTwo properties follow. First, an Instance's status is always readable from **where** its document sits, so state is a location rather than a field that could disagree with reality. Second, failure is a first-class outcome with a designated home \u2014 failed Invocations are retained rather than deleted, which preserves an audit trail of governance attempts that did not complete.\n\nThe cost is verbosity: most of Spark's Artifact by volume is this scaffolding, with a large majority of units being directory stubs that carry no claim. That is the price of making every Primitive navigable by the same rules.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Hub Document plus Active, Completed and In Progress Invocations directories, with failed and suspended subtrees archived in a Data Repository \u2014 one uniform state machine across all Primitives.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6ed79507-54a5-45de-b240-823478153695",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0222ea12-8252-4b51-a87e-d6a21ce85d57",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

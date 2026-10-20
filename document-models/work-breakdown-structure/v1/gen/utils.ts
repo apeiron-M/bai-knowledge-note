@@ -29,11 +29,13 @@ export const initialGlobalState: WorkBreakdownStructureGlobalState = {
   owner: null,
   goals: [],
   references: [],
+  sowRef: null,
+  sowProjectId: null,
 };
 export const initialLocalState: WorkBreakdownStructureLocalState = {};
 
 export const utils: DocumentModelUtils<WorkBreakdownStructurePHState> = {
-  fileExtension: ".wbs",
+  fileExtension: "",
   createState(state) {
     return {
       ...createBaseState(state?.auth, { version: 1, ...state?.document }),

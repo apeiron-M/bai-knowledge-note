@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-c3a6dec7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3a6dec7-8634-42bf-8ee4-b0e6ad841861",
+      "targetTitle": "An Executive Vote expires after thirty days and can never ag"
+    },
+    {
+      "id": "lnk-e9894e4e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9894e4e-f65a-4371-a084-01ec2237e9c0",
+      "targetTitle": "An Executive Proposal that fails to move the hat is not reje"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Atlas Edit Proposals lapse into an Obsolete status when they are abandoned or superseded",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d05276be-8cbc-44b3-bf03-e13b786d5ab9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf9a75e2-9615-43bf-b727-f808584a16d6",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9035a54a-e762-4c14-b12f-aa6cd87cd4b1",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.12.2.4 enumerates six AEP statuses \u2014 RFC, Formal Submission, Rejected-Misaligned, Accepted, Rejected, and Obsolete \u2014 and only Obsolete is reached without any decision being made about the proposal's merits. It is assigned when an AEP \"has been superseded or deprecated,\" when it \"has been deferred for over six (6) months,\" or when \"an AEP Author has abandoned the proposal and no person has communicated willingness to take over the responsibility of a AEP Author.\"\n\nThe third condition is the interesting one because it treats authorship as a live obligation rather than a credit. A proposal is not a standing item in the queue; it is something a named party must continue to carry, and it dies when nobody will carry it. The explicit provision for a successor means the *proposal* can outlive its author's involvement, but only if someone volunteers to own it.\n\nThe six-month deferral rule does the same work on a timer. Without it, a governance backlog accumulates indefinitely \u2014 and dormant proposals are a real hazard, not just clutter, because a years-old AEP drafted for different conditions can be revived and pushed through by whoever finds it convenient. This is the same logic as the thirty-day Executive Vote expiry: governance artifacts should decay unless actively maintained.\n\nThe status also documents *why* something left the pipeline, which distinguishes it from Rejected. An Obsolete proposal was never judged wrong, so nothing prevents the idea returning as a fresh AEP with a current sponsor.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Obsolete covers three cases \u2014 superseded or deprecated, deferred over six months, or abandoned by an author with no successor \u2014 so stale proposals leave the pipeline without a vote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

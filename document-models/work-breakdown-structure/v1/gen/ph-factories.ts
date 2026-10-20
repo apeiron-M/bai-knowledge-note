@@ -19,6 +19,8 @@ export function defaultGlobalState(): WorkBreakdownStructureGlobalState {
     owner: null,
     goals: [],
     references: [],
+    sowRef: null,
+    sowProjectId: null,
   };
 }
 

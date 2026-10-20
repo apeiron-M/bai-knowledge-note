@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-87de2b04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87de2b04-9047-4307-affc-e44851e79de2",
+      "targetTitle": "The Global Activation Status of a one-shot Primitive disting"
+    },
+    {
+      "id": "lnk-75383668-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75383668-2d82-4b08-87c8-7e5ecb1b80bc",
+      "targetTitle": "An Agent's realized identity is readable from the Global Act"
+    },
+    {
+      "id": "lnk-98d91d60-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98d91d60-fa63-4828-9a59-3fe8ea2cf9d3",
+      "targetTitle": "doc-e7db553d"
+    },
+    {
+      "id": "lnk-727dd583-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "727dd583-5ad6-41eb-a833-73ded3bb3fd8",
+      "targetTitle": "An Agent takes either the Prime or the Executor transformati"
+    },
+    {
+      "id": "lnk-7e3fa7c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7e3fa7c4-5cb2-453a-997f-7db403ddc022",
+      "targetTitle": "Globally deactivating a Primitive suspends every existing in"
+    },
+    {
+      "id": "lnk-f7b51e2f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7b51e2f-634d-48cc-8d3d-dfb392d0b909",
+      "targetTitle": "A Primitive's Global Activation Status and each instance's S"
+    },
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Primitive state is tracked on two independent axes: a per-primitive Global Activation Status and a per-Instance status",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3a909d77-b0e6-4c06-9e68-99b93e2731e8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3f8a3fc3-f8a8-437e-b669-b0001dcb0773",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e4721045-eb37-4874-bfd3-c32dd87fc31b",
+      "name": "agent-operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Launch Agent 7's Artifact carries a Global Activation Status per primitive, and its observed values differ by primitive: Agent Creation is `Completed` (A.6.1.1.8.2.1.1.1.1), Prime Transformation is `Completed` (A.6.1.1.8.2.1.2.1.1), Executor Transformation is `Inactive` (A.6.1.1.8.2.1.3.1.1), and Agent Token is `Active` (A.6.1.1.8.2.1.4.1.1).\n\nSeparately, Instances of any primitive are filed by their own status \u2014 `Active`, `Completed`, or `Suspended` \u2014 and Invocations can independently be `Failed` (A.6.1.1.8.2.1.1.1.5.1.1).\n\nThe two axes answer different questions. Global Activation Status says whether this *primitive* is a live part of the Agent's machinery; Instance status says what happened to a particular use of it. Decoupling them lets the Artifact express states that a single flag could not \u2014 for example a primitive that is permanently `Completed` yet retains a Completed Instance holding the configuration that still governs the Agent (the Agent Creation Primitive's Single Instance Configuration Document, A.6.1.1.8.2.1.1.3.1).\n\nIt also distinguishes `Inactive` from `Completed`: an unused capability versus a discharged one. That distinction is what makes the Executor path readable as never-taken rather than finished.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Observed global values are Completed, Active and Inactive; Instances are separately Active, Completed or Suspended, and Invocations can be Failed",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

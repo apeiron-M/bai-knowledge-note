@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent termination is the one governance action for which the Atlas mandates minimum quorum, period and supermajority",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "471387ee-8b55-40f5-8e02-da816f1c72d9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d9e7f02e-7ad3-4247-83f7-5e1cb719b362",
+      "name": "agent-termination",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7a2bc20-9fd9-496e-9231-c8418f76d9f2",
+      "name": "governance-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across the Root Edit requirements the Atlas mandates that Agents *specify* voting parameters without dictating values \u2014 with one exception. A.2.2.6.2.2.2.8.1 declares that the Agent Termination Process \"deviates from the general Artifact Edit Process\" and imposes concrete floors: a voting period of at least 14 days (.8.1.1), a minimum quorum of at least 20% of outstanding tokens (.8.1.2), a supermajority where at least two-thirds of votes cast are in favour (.8.1.3), and advance notice from the Operational Facilitator in the Sky Forum of both the proposed termination and the subsequent vote (.8.1.4).\n\nThe asymmetry is deliberate and tells you what the Atlas considers unrecoverable. Ordinary Artifact edits can be undone by another edit, so their thresholds can be left to each Agent's judgment. Termination cannot be undone at all, so it is the one place where an Agent's freedom to set its own bar is overridden.\n\nEach floor targets a distinct capture vector: the 14-day minimum defeats speed, the 20% quorum defeats apathy, the two-thirds threshold defeats a bare majority, and the Forum notice defeats surprise. Together they make winding down an Agent structurally harder than anything else it can vote on.\n\nThe requirement is also retroactive: A.2.2.6.2.2.2.8.1.5 obliges existing Prime Agents whose Root Edit Primitive lacks these provisions to amend their Artifacts to include them by a fixed deadline. Agents cannot be grandfathered into a weaker termination bar.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "At least 14 days of voting, 20% quorum, a two-thirds approval threshold and advance Forum notice \u2014 the only numeric floor imposed on an otherwise Agent-defined process.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "14b8b9f8-43c9-4d7d-a1d7-364fb3e8d4dc",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "48a5aef6-3ed7-4168-a948-07e5b468579d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-eb364c7e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb364c7e-874f-4878-8c3c-c7e0dd71a9b0",
+      "targetTitle": "Each pool's tick bounds are pinned to the same tolerance as "
+    },
+    {
+      "id": "lnk-96f429b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96f429b5-7c48-4423-9bf5-b98ad76bd6ca",
+      "targetTitle": "doc-554ab8fe"
+    },
+    {
+      "id": "lnk-8724c866-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8724c866-de5d-430b-ab85-21fb0266db97",
+      "targetTitle": "doc-33b019f8"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Curve slippage tolerances are calibrated per pool to how far its two assets can legitimately diverge",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e92b28a0-2089-4aa3-9555-795bf5e5a5cd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68c2af4c-3ac8-4ee6-ac03-4d1c2f1a7322",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bab0e3b5-34bc-4fec-b54d-72cf26f40c80",
+      "name": "slippage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5956b959-304e-4699-99cd-b27852ccf563",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Curve instances publish a spread of `Max slippage` values: USDC/USDT swaps 0.05% (A.6.1.1.1.2.6.1.3.1.7.2.2.4.3), pyUSD/USDC 0.1% (.7.3.2.4.3), rlUSD/USDC 0.1% (.7.6.2.4.3), pyUSD/USDS 0.2% (.7.4.2.4.3), sUSDS/USDT swaps 0.25% (.7.1.2.4.3) and weETH/WETH-ng 0.25% (.7.5.2.4.3).\n\nThe ordering is not arbitrary. The tightest bound sits on the pair of two mature, hard-pegged dollar stablecoins, where any meaningful deviation signals something wrong. The loosest sit on pairs where the two legs are *not* expected to trade one-for-one at all: sUSDS is a yield-accruing token against plain USDT, and weETH is a liquid restaking token against WETH. Newer or thinner stablecoin pairs (pyUSD, rlUSD) sit in between.\n\nSo the parameter does two jobs. It caps the loss Spark accepts on any single execution, and it acts as a sanity check \u2014 a swap that cannot complete within tolerance is a signal that the pool is dislocated, and refusing to trade is the correct response.\n\nThe trade-off is symmetric and unavoidable. Too tight, and routine swaps revert during ordinary volatility, exactly when rebalancing is most needed. Too loose, and the bound stops constraining anything: an attacker who can move the pool inside the tolerance can extract that margin on every trade Spark makes. Setting it per pool rather than globally is the only way to sit near the right point on that curve for six pools with materially different price dynamics.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Tolerance runs from 0.05% for the hard-pegged USDC/USDT pool up to 0.25% for weETH/WETH and sUSDS/USDT, so a single number encodes Spark's view of each pair's expected price relationship.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

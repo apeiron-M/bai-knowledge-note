@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-7656642c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7656642c-b436-4a61-a1a4-99ae59edb099",
+      "targetTitle": "Keel's allocation positions are addressed chain-then-protoco"
+    },
+    {
+      "id": "lnk-9fc3eb36-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9fc3eb36-cf8e-4d99-9aae-e7e02521bd6f",
+      "targetTitle": "Allocation Instances are modeled as bidirectional conduits w"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Allocation System Instance is identified by a five-part tuple, which sets the granularity of Keel's risk containment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "80b08573-927e-494a-b944-9ce9c7b9177f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "41e17ff9-1cd7-4cf2-9ff3-cdab9cf43ee8",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11e920ce-3fbf-4575-a2c3-33879171b93c",
+      "name": "allocation-system-primitive",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fee72fe5-18ea-4214-94e0-d1a8a009c3c9",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Instance Configuration Document opens with **Instance Identifiers** (A.6.1.1.3.2.6.1.3.1.1.5.2.1) comprising exactly five fields: Network, Target Protocol, Asset Supplied By Keel Liquidity Layer, Market, and Token. For the Kamino PYUSD Instance these are Solana / Kamino / PYUSD / Main / kPYUSD.\n\nThe tuple is not mere labelling \u2014 it defines what counts as a separate Instance, and therefore what gets its own configuration document, its own Integration account, its own rate limits, and its own lifecycle position. Drift on Solana appears four times in this chunk, once per supplied asset (USDS, USDC, USDT, PYUSD), rather than once as a protocol relationship.\n\nThis is a deliberately fine granularity. Exposure to a protocol is decomposed by asset and by market, so that the same venue can be throttled differently per asset, and a problem confined to one asset pool does not require unwinding the whole protocol relationship.\n\nThe `Token` field carries the receipt side of the position: `kPYUSD` for Kamino (a yield-bearing claim token), `N/A` for all four Drift Instances. Its presence or absence tells you whether the position is represented by a transferable token at all \u2014 a materially different accounting and exit profile between two otherwise identically structured Instances.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Network, Target Protocol, Asset Supplied by the Keel Liquidity Layer, Market and Token together define one Instance",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "083a6e39-287c-4b6d-b98f-0a213c506571",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5583208f-c843-4b1f-ad44-a4dfaf5a64d4",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

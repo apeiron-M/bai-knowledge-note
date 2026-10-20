@@ -9,7 +9,7 @@ export const documentModel: DocumentModelGlobalState = {
   },
   extension: "",
   description:
-    "Operational learning signal \u2014 captures friction, surprises, methodology insights, and quality observations from knowledge processing",
+    "Operational learning signal \u2014 captures friction, surprises, methodology insights, and quality observations from knowledge processing.",
   specifications: [
     {
       state: {
@@ -53,8 +53,16 @@ export const documentModel: DocumentModelGlobalState = {
                 "input PromoteObservationInput {\n    promotedTo: String!\n    promotedAt: DateTime!\n}",
               template: "Promote to a permanent note",
               reducer:
-                'state.status = "PROMOTED";\nstate.promotedTo = action.input.promotedTo;\nstate.promotedAt = action.input.promotedAt;',
-              errors: [],
+                'if (state.status !== "PENDING") {\n  throw new InvalidObservationTransitionError(\n    `Only a PENDING observation can be promoted (status is ${state.status})`,\n  );\n}\nstate.status = "PROMOTED";\nstate.promotedTo = action.input.promotedTo;\nstate.promotedAt = action.input.promotedAt;',
+              errors: [
+                {
+                  id: "err-invalid-transition-promote",
+                  name: "InvalidObservationTransitionError",
+                  code: "INVALID_OBSERVATION_TRANSITION",
+                  description: "Only a PENDING observation can be promoted",
+                  template: "",
+                },
+              ],
               examples: [],
               scope: "global",
             },
@@ -65,8 +73,17 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input ImplementObservationInput {\n    updatedAt: DateTime!\n}",
               template: "Mark as implemented in system",
-              reducer: 'state.status = "IMPLEMENTED";',
-              errors: [],
+              reducer:
+                'if (state.status !== "PROMOTED") {\n  throw new InvalidObservationTransitionError(\n    `Only a PROMOTED observation can be implemented (status is ${state.status})`,\n  );\n}\nstate.status = "IMPLEMENTED";',
+              errors: [
+                {
+                  id: "err-invalid-transition-implement",
+                  name: "InvalidObservationTransitionError",
+                  code: "INVALID_OBSERVATION_TRANSITION",
+                  description: "Only a PROMOTED observation can be implemented",
+                  template: "",
+                },
+              ],
               examples: [],
               scope: "global",
             },
@@ -77,8 +94,17 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input ArchiveObservationInput {\n    updatedAt: DateTime!\n}",
               template: "Archive observation",
-              reducer: 'state.status = "ARCHIVED";',
-              errors: [],
+              reducer:
+                'if (state.status === "ARCHIVED") {\n  throw new InvalidObservationTransitionError("Observation is already archived");\n}\nstate.status = "ARCHIVED";',
+              errors: [
+                {
+                  id: "err-invalid-transition-archive",
+                  name: "InvalidObservationTransitionError",
+                  code: "INVALID_OBSERVATION_TRANSITION",
+                  description: "Observation is already archived",
+                  template: "",
+                },
+              ],
               examples: [],
               scope: "global",
             },

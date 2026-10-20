@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e23e270c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e23e270c-6fb7-4a55-813e-69b372e20b9f",
+      "targetTitle": "Rate limits double as the whitelist: a venue with no configu"
+    },
+    {
+      "id": "lnk-cf7e2907-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf7e2907-72c3-4a58-b337-2b5e5c06a362",
+      "targetTitle": "A generic ERC-4626 adaptor lets Spark onboard any compliant "
+    },
+    {
+      "id": "lnk-d0d1a24d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0d1a24d-f4bc-4b44-b2ad-46f765dd4d88",
+      "targetTitle": "doc-634c748f"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Venue whitelisting in the Spark Liquidity Layer is implemented as rate limits rather than as a separate allowlist",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "08be311e-c48b-4c99-a450-b89eb6fb142b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c4dd2fec-511f-438f-a330-07056d1ba91f",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20e042b7-8044-4bc2-b9eb-4c97da562b77",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e79951e9-5ce7-4580-a8d9-b6161c79c800",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Inside the `Check RateLimits` step of the ERC-4626 deposit process (A.6.1.1.1.2.6.1.3.1.5.1.3.1.3) the quoted controller code carries the decisive comment: \"`// Note that whitelist is done by rate limits`\".\n\nThis collapses two controls into one. There is no separate registry of approved venues; a venue is approved exactly to the extent that a non-zero rate limit exists for its (action, asset) key. An unknown vault address passed to `depositERC4626` fails not because it is rejected as unrecognised but because no limit has been configured for it, and the `rateLimited` modifier therefore permits zero.\n\nIt also retroactively explains the many instances documented with `maxAmount`: 0 elsewhere in the Artifact. Those entries are not merely throttled to nothing \u2014 under this design they are, at the contract level, indistinguishable from venues that were never approved. \"Approved but sized at zero\" and \"not approved\" are the same on-chain state.\n\nThe design is elegant and dangerous in the same stroke. Elegant, because adding a venue and sizing it become a single governance action on a single parameter, and there is no way to whitelist something and forget to bound it. Dangerous, because the safety property \"only approved venues can be touched\" now depends entirely on the integrity of the rate-limit registry: whoever can write a non-zero limit can whitelist a venue, and any bug that treats a missing limit as unlimited would open the whole surface at once.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A code comment in the ERC-4626 deposit path states plainly that whitelisting is done by rate limits, so a zero maxAmount is not a paused venue but an unapproved one",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-9bae07e4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9bae07e4-7618-40c4-bb49-53813675eb16",
+      "targetTitle": "Asset Liability Management defends the peg in both direction"
+    },
+    {
+      "id": "lnk-c2522ca4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2522ca4-e6a1-4f95-99a9-18fc876a48be",
+      "targetTitle": "Collateral qualifies as peg-stabilizing by the price it comm"
+    },
+    {
+      "id": "lnk-a22ca456-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a22ca456-ad8f-4224-9100-d7c61f7ce547",
+      "targetTitle": "doc-015e675a"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas contradicts itself on whether the Demand Absorption Buffer is part of Actively Stabilizing Collateral",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a4175e82-3e30-47ee-9150-8143897575f2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5ad6ee8d-c169-40c7-b1bf-1dd76c085a66",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa61564c-12f1-4948-8b2d-b16583c41684",
+      "name": "specification-defect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.3.1.1 defines Actively Stabilizing Collateral as \"highly liquid market making **non-USDS** assets,\" and A.3.3.1.2 defines the Demand Absorption Buffer as \"highly liquid market making **USDS** assets.\" On that reading the two categories are disjoint by construction, which is the whole point \u2014 one is ammunition for buying USDS, the other is inventory for selling it.\n\nA.3.3.2.3.1, in the implementation Section, says the opposite: Prime Agents must maintain a Demand Absorption Buffer, \"**a subset of ASC** consisting of USDS that is for sale for at most 1.001 USD per USDS.\"\n\nBoth cannot hold. If DAB is a subset of ASC, then USDS counts toward ASC, contradicting the non-USDS definition; if ASC excludes USDS, then DAB cannot be a subset of it.\n\nThe difference is not cosmetic \u2014 it changes the required holdings. The DAB requirement is \"25% of their required Actively Stabilizing Collateral\" (A.3.3.2.3), i.e. 1.25% of the portfolio. Read as disjoint, an Agent must hold 5% in non-USDS ASC *plus* 1.25% in USDS, totalling 6.25%. Read as a subset, the 1.25% of USDS counts inside the 5%, and total reserves are 5% with only 3.75% available to buy USDS during a Peg Defense Event \u2014 a 25% reduction in the resource that defends the floor.\n\nThe ASC calculation lists (A.3.3.2.2.1.1.1 and A.3.3.2.2.1.2.1) favour the disjoint reading: every enumerated item is a Cash Stablecoin or USDC position, and the only USDS appearances are as the *pair* in a Curve or Uniswap pool, not as the counted asset. Meanwhile A.3.3.1.3.1 excludes USDS from the Agent Collateral Portfolio denominator entirely, which is hard to reconcile with USDS counting toward a ratio computed against it.\n\nThe subset language appears to be loose drafting, but it sits in the operative implementation Section rather than the conceptual one \u2014 and it is the Section an Agent would follow.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The conceptual framework defines ASC as non-USDS assets and DAB as USDS assets, making them disjoint; the implementation calls DAB 'a subset of ASC consisting of USDS.'",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

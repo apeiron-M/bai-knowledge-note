@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-58335213-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "58335213-4021-402b-8541-4f2c95d219e2",
+      "targetTitle": "A closed strategy is separated across three parties and must"
+    },
+    {
+      "id": "lnk-36543d71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "36543d71-727a-4514-a125-7ff1fd18abb4",
+      "targetTitle": "Deploying capital to a new venue is a constitutional act: in"
+    },
+    {
+      "id": "lnk-922b25cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "922b25cc-75d3-48e9-ab9f-5ecb04d636a8",
+      "targetTitle": "Settlement migrates in three stages from simplified accounti"
+    },
+    {
+      "id": "lnk-9a1ce76a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a1ce76a-43db-4b56-948f-ac6f846b6493",
+      "targetTitle": "Pre-agreed KPIs let deposit caps and yield expansions move w"
+    },
+    {
+      "id": "lnk-f8c24a5e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f8c24a5e-005b-40fb-bfb7-0b9cb3817eff",
+      "targetTitle": "An incomplete or noncompliant input invalidates a Primitive "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Allocation Instance must survive off-chain negotiation, a snapshot vote, and a minimal-funds live test before scaled deployment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fe9bdf44-35ec-42b3-802b-bb52613d4354",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8e50728-a72e-4d3f-b71e-c4f179f6f1c3",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "642a1f29-ddb4-4e4e-9bd5-4324062dbff1",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The setup process in A.2.2.10.1.1.2 runs three stages in a fixed order. A.2.2.10.1.1.2.1 covers \"the preliminary, off-chain human coordination stage\" \u2014 feasibility analysis against the Base Rate (A.2.2.10.1.1.2.1.1), risk-capital and ALM deals with other Primes (\u20262.1.2), the C&O Plan (\u20262.1.3), and an informal greenlight from Operational GovOps (\u20262.1.4). A.2.2.10.1.1.2.2 codifies it: the Prime drafts an Artifact update, the Operational Executor Facilitator checks completeness and Atlas alignment and runs an off-chain snapshot vote, then publishes. A.2.2.10.1.1.2.3 executes on-chain.\n\nEvery step names its output \u2014 \"an internal meeting note,\" \"informal confirmation of JRC/SRC... transfer details,\" \"the snapshot vote result recorded in the Powerhouse system,\" \"an updated Prime Agent Artifact.\" Each gate consumes an artifact the previous one produced, so a stage cannot be skipped without a visible gap in the record.\n\nThe most consequential gate is the last. A.2.2.10.1.1.2.3.1 requires Operational GovOps to \"test the Allocation Instance with minimal funds from the Prime Agent's Central Allocation Buffer, verifying deposit / withdrawal logic, slippage constraints, and oracle checks,\" and only then confirm it satisfies the Artifact's risk constraints, yielding \"a green light to proceed with a scaled deployment.\"\n\nApproval and activation are therefore deliberately separated: governance authorising an Instance does not authorise capital at scale. The empirical test with real funds sits *after* the vote, on the reasoning that slippage behaviour and oracle wiring are things only live execution reveals \u2014 and the ordering makes cheap failure the expected way to discover a broken integration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each of the three stages produces a named artifact, and Operational GovOps must verify deposit/withdrawal logic, slippage constraints and oracle checks with real funds before capital scales up.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

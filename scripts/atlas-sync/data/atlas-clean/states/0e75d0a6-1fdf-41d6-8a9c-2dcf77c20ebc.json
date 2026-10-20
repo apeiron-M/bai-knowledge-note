@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-4db9d97c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4db9d97c-a45d-468a-a7d0-6379b9f22e6d",
+      "targetTitle": "Grove's capital requirements distinguish markets within a si"
+    },
+    {
+      "id": "lnk-71500e0d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "71500e0d-69c4-4f78-a260-39379567cf16",
+      "targetTitle": "Grove needs an explicit Atlas authorization even to collect "
+    },
+    {
+      "id": "lnk-bdff89e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bdff89e9-f5f6-4bc3-bc1f-fb93cdc0c3b0",
+      "targetTitle": "Grove's Ecosystem Upkeep Fee is levied on its market capital"
+    },
+    {
+      "id": "lnk-e44c2a0c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e44c2a0c-60b1-464b-8544-cdb450492c6c",
+      "targetTitle": "Grove prices a new market's burn-in period as a capital char"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove deters allocation to unapproved markets with a 100% capital charge rather than a prohibition",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "130a5f08-386f-47bb-80d4-9cbf3e30061d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fd9ad76-7eed-42e2-94ed-0653e6ad4f45",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1f4dfb3-9091-4f1d-9674-732e25abec85",
+      "name": "capital-requirements",
+      "topicDocumentId": null
+    },
+    {
+      "id": "656b7c5f-1b58-4c94-9321-25a9eda01191",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.7.1.1.2.5.2 handles an unapproved market with a price rather than a rule: \"Any allocation to the syrupUSDG/USDG market, which is not approved, is subject to a **100% CRR**.\"\n\nGrove is not told it may not allocate there. It is told that if it does, the position must be backed one-for-one with capital \u2014 which strips out all leverage and therefore all economic point to the allocation. The prohibition is implemented as an economic dead end.\n\nThe technique has real advantages over a ban. It **degrades gracefully**: if the vault curator routes some funds to the unapproved market for reasons outside Grove's control, the outcome is an expensive position rather than a violation, so the framework stays coherent instead of being breached by circumstance. It is **self-enforcing**: no one has to detect and punish the allocation, because the capital charge applies automatically wherever the exposure lands. And it **prices rather than forbids**, leaving room for an allocation that is genuinely worth doing despite the charge.\n\nIt also fits the intermediated structure exactly. A prohibition needs someone capable of obeying it; here the allocating party is a vault curator outside Grove's authority. A capital charge needs no one's compliance \u2014 it is computed from the resulting exposure.\n\nThe general form is worth naming: where an actor cannot control an outcome but must bear its consequences, converting the rule from a permission into a price keeps the rule enforceable. The limit of the technique is that it only deters parties who bear the cost. It works here because Grove's own capital is charged; it would not work against a counterparty who is indifferent to Grove's balance sheet.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rather than forbidding the syrupUSDG/USDG market, the Atlas makes any exposure to it fully capital-backed \u2014 the allocation stays permitted but its return on capital collapses to zero.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

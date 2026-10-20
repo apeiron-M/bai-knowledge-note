@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd17992f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd17992f-ed65-4abe-8ade-5bcddc6013ab",
+      "targetTitle": "Real World Asset capital is computed by applying the Basel F"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky's financial risk framework is an explicit adaptation of the Basel Accords to decentralized finance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2e2dad6c-ead9-403a-abcd-a83ad37fc5f7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5cd04451-31c9-44d3-8ffb-0cecdefa0b85",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "01d2cb4d-95e5-49c9-a3f4-fe6979546591",
+      "name": "basel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.1.4.1 states the lineage plainly: the framework \"is based on the Basel Accords developed by the Committee on Bank Supervision, including Basel II, Basel III, and Basel IV,\" then \"adapted to reflect the differences between traditional finance and decentralized finance.\" Its stated purpose is capital \"to cover potential losses on their investments in case of an extreme market event.\"\n\nThe implementation is not a loose analogy. A.3.2.2.1.1.1.1.1 walks the canonical Basel internal-ratings-based sequence: probability of default (PD), loss given default (LGD), an asset correlation coefficient R that interpolates between a calm-period correlation of 0.13 and a stressed correlation of 0.33, a capital requirement K evaluated at the Basel `N\u207b\u00b9(0.999)` quantile, and finally RRC = K \u00d7 (1/CR) \u00d7 EAD \u00d7 ECR with a capital ratio of 8.75%.\n\nWhat the adaptation changes is the *inputs*, not the shape. PD is derived from a structural Merton-style model of onchain collateral versus debt using liquidation thresholds, supply yields and 365-day block-weighted return correlations; LGD is built from the contractual liquidation penalty and estimated one-block slippage. Where a bank would use obligor ratings and recovery statistics, Sky uses protocol parameters and market microstructure.\n\nThe decision carries a strong claim: that lending-protocol exposure is close enough to bank credit exposure that a regime designed for supervised banks transfers. It buys enormous credibility and a body of calibration work Sky did not have to invent, at the cost of importing Basel's known weaknesses \u2014 reliance on historical correlation, and a tail defined by a fixed quantile rather than by observed crypto behaviour.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The lending-market model reproduces Basel IRB machinery \u2014 probability of default, loss given default, asset correlation, a 99.9% confidence quantile and an 8.75% capital ratio \u2014 on onchain inputs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

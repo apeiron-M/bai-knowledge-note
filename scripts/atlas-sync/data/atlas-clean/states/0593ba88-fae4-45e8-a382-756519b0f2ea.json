@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-727dd583-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "727dd583-5ad6-41eb-a833-73ded3bb3fd8",
+      "targetTitle": "An Agent takes either the Prime or the Executor transformati"
+    },
+    {
+      "id": "lnk-75383668-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75383668-2d82-4b08-87c8-7e5ecb1b80bc",
+      "targetTitle": "An Agent's realized identity is readable from the Global Act"
+    },
+    {
+      "id": "lnk-191e590e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "191e590e-c95b-4a6d-8720-23c151e627b6",
+      "targetTitle": "Skybase's agent type is visible in its primitive activation "
+    },
+    {
+      "id": "lnk-a1754302-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a1754302-3f50-4e66-ac93-0ef2b93341fc",
+      "targetTitle": "Paying capital and the creation fee produces a Proto-Agent w"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Proto-Agent can perform no actions until it transforms into either a Prime Agent or an Executor Agent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8a447518-1a4d-41eb-bb66-3de4954122a7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6fea5408-5709-4412-bc3c-756444717606",
+      "name": "agent-lifecycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ddd85cde-bd8e-4ba0-ac85-5fe6f019bf37",
+      "name": "agent-types",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.5.2 states the constraint plainly: a Proto-Agent \"has not yet adopted any specialized role. Since a Proto-Agent cannot perform actions in the Sky Ecosystem, it must first transform into either a Prime Agent or Executor Agent to gain functionality.\"\n\nThe Transformation Primitive's actual input is minimal \u2014 the desired Agent Type, with 'Prime Agent' specified for the Prime path (A.2.2.5.2.1.1.1) \u2014 but the validation attached to it is not. A.2.2.5.2.1.1.2 has Core GovOps re-review everything the Founder built under Founder Access for specification quality and Alignment, and confirm that all six required Primitives are Activated. Transformation is therefore the **audit checkpoint** of Agent formation, not merely a type declaration.\n\nOnce Invoked, the Instance Status is `Completed` (A.2.2.5.2.1.1.3) and \"no further management process is needed post-deployment\" (A.2.2.5.2.1.2.1). Combined with the prohibition on deactivating Genesis Primitives, the choice between Prime and Executor is made once, under one review, and is not revisited through this mechanism.\n\nThe consequence is that Sky's two-sided Agent architecture \u2014 Primes holding strategy, Executors holding operations \u2014 is enforced at the moment of birth rather than by ongoing classification. An Agent cannot drift between roles or occupy both.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Role selection is a compulsory one-time gate: transformation is what confers functionality, and the resulting Instance is `Completed` and never revisited.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

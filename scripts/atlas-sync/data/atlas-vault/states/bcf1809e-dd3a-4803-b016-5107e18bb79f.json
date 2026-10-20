@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "One Uniswap pool is governed as three separate Grove Instances, making the Instance boundary a mandate rather than a contract",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "076541e9-2646-4f24-9b8b-f4b7fb3329d5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "27fdc6a5-e8ae-4859-b79c-444b0153709c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c69cb7c6-6d4f-4a2d-8b2c-46c0d3c8e041",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b370cf6c-99a5-4440-9a36-6df4348e7a13",
+      "name": "uniswap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.12.1.2.2.3, .12.2.2.2.3 and .12.3.2.2.3 all record the same Pool Address, `0xbAFeAd7c60Ea473758ED6c6021505E8BBd7e8E5d`, and the same two underlying asset addresses. The three Instances differ in *what Grove is authorized to do there*: swap only (deposit and withdrawal limits \"N/A - swaps only\"), provide liquidity (25,000,000 deposit cap, unlimited withdrawal), and the Grove Diamond PAU mandate (5,000,000 aggregate with slope 0, 100% CRR, 5,000,000 USDS exposure ceiling).\n\nSo the unit of governance is not the venue. An Instance is a *(venue, operation set, mandate)* triple, and one contract can host several of them.\n\nThe RateLimitIDs make this concrete and also show where the seams are. The Diamond PAU Instance's swap RateLimitIDs (`0x7dd93dac\u2026` for AUSD, `0x6e850dcb\u2026` for USDC, at A.6.1.1.2.2.6.1.3.1.12.3.2.3.7\u2013.8) are the *same hashes* used by the Swaps Instance at .12.1.2.3.1\u2013.2; its deposit and withdrawal IDs are the same as the LP Instance's. The three Instances are therefore overlapping views onto a shared set of on-chain limit slots, not three isolated silos.\n\nThat has a consequence worth stating plainly: capacity consumed under one Instance's mandate can deplete the limit another Instance relies on, because they share the underlying rate-limit slot. The Atlas separates the mandates cleanly at the document level while the enforcement layer keeps them coupled \u2014 so the per-Instance caps read as independent budgets but do not behave as independent budgets.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Swaps, LP and Diamond PAU Instances all point at pool 0xbAFe\u20268E5d but register distinct RateLimitIDs and caps, letting Grove throttle each activity on a single venue independently.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f165f577-9289-4bbe-b965-266cd9c80feb",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b819ee24-c0b3-41d9-bc92-067deb5d145b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

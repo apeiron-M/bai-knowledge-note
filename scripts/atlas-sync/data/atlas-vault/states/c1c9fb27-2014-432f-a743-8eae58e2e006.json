@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-da092bb0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da092bb0-60f9-41f9-b178-bedb28968e87",
+      "targetTitle": "Prime Agents receive an automatic upkeep rebate for holding "
+    },
+    {
+      "id": "lnk-d87f8b37-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d87f8b37-e89f-43e9-b703-660145344534",
+      "targetTitle": "Rebating upkeep fees against holdings of other Prime Agents'"
+    },
+    {
+      "id": "lnk-f75a126d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f75a126d-fb18-4947-a919-30e1b397aed2",
+      "targetTitle": "Every Scaffold Artifact ships with all Sky Primitives presen"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Upkeep Rebate makes Prime Agents' cross-holdings of each other's tokens reduce their own ecosystem fees",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4f216fe4-1d60-42ef-beab-20073efedc5e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cebb5e08-d752-4a5b-b546-33bdf47bd295",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "200cf442-900c-45de-8b9a-fa095008e095",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f5d8ab3-0ce2-43ab-ab0a-acc58f6394ce",
+      "name": "economics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.5.2.3.2.2.1.1 is unusually terse and unusually informative: \"Every Prime Agent is entitled to the Upkeep Rebate Primitive for tokens of other Prime Agents that they hold. Because this right automatically applies, there are no parameters.\"\n\nThe rebate exists because the Upkeep Fee is charged on market capitalisation. If Agent A holds a large position in Agent B's token, that value is reflected in A's own market cap \u2014 and B is already paying upkeep on it. Without a rebate, the ecosystem would charge the same underlying value twice, and would penalise Agents for holding each other.\n\nRemoving that penalty has a second-order effect the design appears to want. Cross-holding between Prime Agents becomes fee-neutral rather than fee-punishing, which makes mutual investment cheaper and aligns Agents' balance sheets with each other's success. For an incubator like Obex, whose natural end state is holding tokens in the Agents it launches, this is close to load-bearing: without the rebate, the incubation model would be taxed for succeeding.\n\nThe phrase \"because this right automatically applies, there are no parameters\" is also a small piece of framework design worth noting. An entitlement conferred at the Primitive level needs no per-Agent negotiation; the Instance Configuration Document exists purely to carry the operational process, with the substance inherited from A.2.2.7.2.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every Prime Agent is automatically entitled to a rebate for other Prime Agents' tokens it holds, so the same market cap is not charged the Upkeep Fee twice across the ecosystem.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "46ee24b5-929b-4fbf-99ed-b06b027854e6",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ea18b7d8-ff8e-4098-895c-70d92f4eaf0f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

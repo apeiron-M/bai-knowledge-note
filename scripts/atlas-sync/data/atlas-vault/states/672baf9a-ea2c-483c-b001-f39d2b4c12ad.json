@@ -1,0 +1,126 @@
+{
+  "links": [
+    {
+      "id": "lnk-fe9c9f97-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe9c9f97-49b3-47a7-8fbd-320db63c5490",
+      "targetTitle": "Asset Liability Management obligations are tradeable between"
+    },
+    {
+      "id": "lnk-9122e021-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9122e021-46f8-4595-8702-a50d985b26ce",
+      "targetTitle": "doc-65c02745"
+    },
+    {
+      "id": "lnk-8d9dd018-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d9dd018-8f6b-40a5-899a-46446ac5fd77",
+      "targetTitle": "The Purpose System's only binding rule is a ten percent floo"
+    },
+    {
+      "id": "lnk-b25976a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b25976a1-e82c-4b6b-acad-9080d0adecdf",
+      "targetTitle": "Funds borrowed on an Agent Credit Line are ring-fenced to th"
+    },
+    {
+      "id": "lnk-d3ca21b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d3ca21b7-87e6-4aa6-9709-ac2b2377b087",
+      "targetTitle": "Imposing the collateral ratio on every Agent separately make"
+    },
+    {
+      "id": "lnk-eb47eea3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb47eea3-b0a0-4630-8a37-4de0799b200c",
+      "targetTitle": "Launch Agent 7 has activated allocation but left both Supply"
+    },
+    {
+      "id": "lnk-f31f697f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f31f697f-4193-45ef-95ad-cb5387a7d3e5",
+      "targetTitle": "Osero pairs capital allocation into Sky's collateral portfol"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Allocation System lets a Prime Agent borrow USDS at the Base Rate against its own Risk Capital to seek returns",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "20a13955-c775-410e-a1f8-e4dd3a5b397e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "19126374-7375-4cc9-bd52-f9ded103024a",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9208c51-ed08-4ca7-9139-a3d77172d32b",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1 defines the Allocation System Primitive as \"the base mechanism that enables Prime Agents to put up **Risk Capital** to deploy USDS collateral into different opportunities that provide risk-adjusted return, by **borrowing at the Base Rate** from Sky, and following **Asset Liability Management** restrictions on the liquidity of deployed assets.\"\n\nThree constraints define the instrument. The Agent posts Risk Capital, so it holds a first-loss position and cannot lose only Sky's money. It borrows at the Base Rate, so Sky earns a defined return regardless of how the deployment performs and the Agent keeps the spread. And ALM restricts the liquidity profile of deployed assets, so a stablecoin-backing balance sheet cannot be funded into assets that cannot be unwound.\n\nThis is where Prime Agents stop being distribution partners and become balance-sheet operators. The Demand Side Primitives pay Agents for driving USDS adoption; the Allocation System lets them earn on the supply side by managing deployed collateral \u2014 and A.2.2.10 frames the whole family as \"focused on capital allocation and risk management.\"\n\nThe alignment logic is the standard secured-lending one made explicit in Atlas terms: the party choosing the risk holds the equity beneath it. It also explains why other provisions treat Risk Capital as the ecosystem's core protection \u2014 Sky Governance can reverse an Agent's irreversible emissions lock precisely when \"the Agent is in violation of Risk Capital requirements\" (A.2.2.5.4.2.7), because that capital is what stands between a bad allocation and USDS holders.\n\nInstances are also called \"conduits\" (A.2.2.10.1.1), and an Agent may run several, each an independently managed deployment channel.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It is the leverage primitive: Sky supplies borrowed collateral, the Agent supplies equity and takes the spread, and Asset Liability Management restricts the liquidity of what it deploys into.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5298ab4c-2bbb-4e49-b73a-30905b95fead",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:39.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5a7fd213-1e80-4f11-a122-db2a2bc65f3c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

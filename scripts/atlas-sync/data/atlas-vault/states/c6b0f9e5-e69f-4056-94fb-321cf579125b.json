@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas embeds a runnable reference implementation to disambiguate the utilization formula",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "23fcd1fb-f14f-4610-a494-c139189ecbbe",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0ae52d8a-4239-4d6a-b4f7-be6187650c8d",
+      "name": "specification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f321c0bb-3722-4f93-85f3-edec74ad92bb",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "421c8493-0c41-4617-b8c8-c8af2232daf4",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.2.1.4.1.1.5 does something unusual for a governance document: it includes working code. \"A reference implementation of the time-weighted utilization formula is included herein. The reference implementation uses sample data and a 30 day interval for illustrative purposes.\" The listing constructs an event list of `(timestamp, total_borrowed, total_supply)` tuples, sorts them, inserts the synthetic boundary events described in the prose, and computes per-event utilization with an explicit `borrow / supply if supply != 0 else 0` guard.\n\nWhy this earns its place in the ruleset: the prose formula is unambiguous to a mathematician but underdetermined for an implementer. Sort stability, the divide-by-zero case when supply is empty, and the exact construction of boundary events are all decisions that change the resulting number. Code answers them. Anything that determines real payments benefits from a canonical implementation that two independent teams can diff their output against, and the `supply != 0` guard in particular resolves a case the formula in A.4.4.1.3.2.1.4.1.1.4 simply does not define.\n\nThere is a trap in it, though. The normative interval is **one day** (A.4.4.1.3.2.1.4.1), while the reference code hardcodes `start_time = now - timedelta(days=30)`. The text flags this as illustrative, but reference implementations are copied, and a 30-fold difference in averaging window materially changes rate responsiveness. The generalizable caution is that when a spec ships example code, the example's parameters compete with the spec's parameters for authority \u2014 so illustrative constants should differ from normative ones as little as possible, or be named rather than inlined.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.4.4.1.3.2.1.4.1.1.5 ships sample Python with named steps, but uses a 30-day illustrative window against the normative one-day interval \u2014 an easy discrepancy for an implementer to copy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7ea92d48-e74b-4dae-8a62-0ef76db05165",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3c4b7f7e-4285-4617-9293-9bc13c2df356",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:11.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

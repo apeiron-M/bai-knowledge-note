@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-7c3f86be-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c3f86be-06f1-4127-bec9-11c6add7dee4",
+      "targetTitle": "A Prime's pro-forma RRC estimate is explicitly provisional a"
+    },
+    {
+      "id": "lnk-c8ad784e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c8ad784e-2321-4b46-b1f6-27af9a1f5c0d",
+      "targetTitle": "The 8.75% capital ratio in the RRC formula currently has no "
+    },
+    {
+      "id": "lnk-d97e9e31-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d97e9e31-e3d9-418f-adc5-b054206f3569",
+      "targetTitle": "Administered flat CRRs increasingly displace the modelled ca"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Required Risk Capital decomposes into three additive risk types per Instance, then aggregates across an Agent's Instances",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "30f13c71-80f9-4eee-be74-2c8eeed9ad9d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be6e47de-a788-42c9-bb43-597a54c0c4ef",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0db35e0-97c9-432b-8cbc-36d8ca178341",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2 requires Prime Agents investing Sky's Collateral Portfolio through the Allocation System Primitive to hold Risk Capital \"to protect Sky from potential losses.\" A.3.2.1.1.3 defines the unit of account: \"the Instance Total RRC for an Instance is equal to the sum of the Instance Financial RRC, Instance Smart Contract RRC, and Instance Administrative RRC.\" A.3.2.1.1.2 then aggregates: Aggregate RRC is the sum of Instance Total RRC over every Active Instance the Agent has deployed.\n\nTwo choices are embedded in that arithmetic. First, the three risk types are **additive**, not combined under any correlation assumption \u2014 a protocol that is simultaneously financially risky, technically complex and administratively centralized pays the full sum. Second, aggregation across Instances is a plain sum, so **spreading capital across Instances earns no diversification credit at the Agent level** even though the individual RRC calculations do model diversification internally.\n\nA.3.2.1.1.1 supplies the dual representation that makes requirements portable: a requirement may be stated as an absolute RRC amount or as a Capital Ratio Requirement (CRR), where RRC = invested capital \u00d7 CRR. The worked example is a 5% CRR on 100,000,000 USDS invested giving 5,000,000 USDS of RRC. CRR can be set in aggregate, per Instance, or per risk type within an Instance \u2014 so the same framework expresses both a modelled output and an administratively imposed number.\n\nA.3.2.1.1.3.1 flags the structure as unfinished: additional RRC types \"including legal risk and oracle risk, will be incorporated in future iterations.\" Because the composition rule is a sum, adding a type can only increase requirements \u2014 the framework is designed to be extended monotonically.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instance Total RRC = Financial + Smart Contract + Administrative RRC; Aggregate RRC is the sum over Active Instances, with no diversification credit between Instances or risk types.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "feae6251-a473-4fc9-a221-f0994f9b6d82",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:43.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1c1cbfca-c1a6-4c01-b8a5-5a143c889e2b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

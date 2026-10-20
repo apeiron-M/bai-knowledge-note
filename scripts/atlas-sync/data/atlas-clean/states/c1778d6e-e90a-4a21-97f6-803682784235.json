@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fc3f7b8c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fc3f7b8c-da3c-4c9c-875a-cc7d0ae55c76",
+      "targetTitle": "Sky Governance can re-enable an Agent's token emissions when"
+    },
+    {
+      "id": "lnk-e4ae01d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4ae01d1-3b26-4750-b5f7-ae99c7b9d628",
+      "targetTitle": "Sky Governance keeps a unilateral override to re-enable OSER"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Governance retains a Risk-Capital override that can re-enable PATTERN emissions despite them being 'permanently disabled'",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9f6f0369-1498-4dca-bbe8-dff52effddbd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4076ca73-b543-467f-b9b0-2ce9edac8276",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f0232bfe-decd-4563-9448-8700de684d13",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf38f1ad-c4b3-4748-9173-52925466a4eb",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The same provision that seals PATTERN's supply immediately reopens it for one actor. A.6.1.1.6.2.1.4.2.1.1.6: \"Sky Governance retains the ability to revert where Pattern is in violation of Risk Capital requirements and emissions are required by the Risk Framework.\"\n\nThere is a genuine tension on the face of the text: emissions are called *permanently* disabled and yet a named authority can revert them. The resolution is that \"permanent\" is scoped to Pattern's own governance layer, not to the system as a whole \u2014 which means the word is doing less work than it appears to, and a reader who stops at the first clause will misjudge the guarantee.\n\nThe carve-out is tightly conditioned by a **conjunction**: Pattern must be in violation of Risk Capital requirements *and* the Risk Framework must require emissions. Neither a Pattern funding shortfall alone nor a general Sky Governance preference is sufficient. That structure makes dilution a solvency remedy rather than a policy lever.\n\nThe economic reading is that PATTERN holders are implicitly the residual absorbers of Pattern's risk failures: if the Agent breaches its capital requirements, the repair mechanism issues claims against them. Non-dilution therefore holds precisely in the states of the world where the Agent is healthy, and lapses in the states where holders would most want it \u2014 an asymmetry worth understanding before treating the cap as a hard supply guarantee.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The exception fires only where Pattern violates Risk Capital requirements and the Risk Framework requires issuance, making the Agent's token supply a recapitalization resource of last resort.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Invocation's location in the Atlas document tree is its status, not a field it carries",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1e37b6ec-a138-4f46-9c6b-288f48c65138",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d8705260-e56e-4669-91a1-3d5bb1cb30b7",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7490be75-a99b-4e4d-be54-67a2470c8930",
+      "name": "state-machines",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every primitive's `In Progress Invocations` section states the movement rule explicitly. A.6.1.1.1.2.6.1.5: \"Once an Invocation is successfully completed, its subtree will be moved to A.6.1.1.1.2.6.1.3 - Active Instances.\" A.6.1.1.1.2.6.2.1.4 adds the failure branch: \"Invocations that are completed successfully are moved to the Active Instances Directory, whereas failed Invocations are Archived in the Hub Data Repository.\"\n\nThe archive is itself partitioned by *reason* for exit \u2014 `Failed Invocations` and `Suspended Instances` are separate destinations (A.6.1.1.1.2.6.2.1.5.1.1 and .5.1.2), so an instance that never launched is filed apart from one that launched and was stopped.\n\nMoving the subtree rather than flipping a status flag makes the two representations impossible to desynchronize. There is no way for a document to claim `Active` while sitting under `In Progress`, because the claim *is* the placement. It also means the tree is always a valid census: counting live exposures is a matter of enumerating one subtree's children.\n\nThe trade-off is that history becomes path-dependent. A stable identifier survives the move, but any reference by location breaks, and reconstructing an instance's lifecycle requires knowing which sections it passed through rather than reading a log in place.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Completed Invocations have their subtree physically moved to Active Instances and failed ones to the Hub Data Repository, so status cannot drift out of sync with placement.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b09722d7-bdf8-4cf4-9594-6aeca5de9ffc",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6a3e069e-3cfb-4f5a-9243-a297e4c976d1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

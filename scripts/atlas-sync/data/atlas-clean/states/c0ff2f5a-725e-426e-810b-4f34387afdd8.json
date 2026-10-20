@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Inflow limits are enforced by a per-Instance on-chain Integration account rather than by operator policy",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "43777408-7330-4284-bf1b-a08d0b94e527",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0bc4d455-8c7a-4d09-a8dc-3401079e54eb",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6951dfbe-7be2-48bc-9bf4-2b36250ac21a",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f2836188-7ea5-4918-849e-2a0a330bd0b6",
+      "name": "onchain-enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Instance Configuration Document in this chunk includes a Rate Limit Information slot stating that \"The specific `Integration` account contains the rate limit information to control inflows into the \u2026 Instance of the Allocation System Primitive\" (e.g. A.6.1.1.3.2.6.1.3.1.1.5.2.3 for Kamino PYUSD), followed by a single **Integration Account Address**.\n\nTwo consequences follow from putting the limit in a named on-chain account rather than in the Atlas text alone. First, the Atlas document is a *pointer to* the live constraint, not the constraint itself \u2014 the enforced value can be read from the chain and compared against what the Atlas claims it is, making divergence detectable. Second, the account is **per Instance**: Kamino PYUSD, Drift USDS, Drift USDC, Drift USDT and Drift PYUSD each have their own distinct Integration address.\n\nPer-Instance accounts mean a limit change for one venue cannot silently widen another. The blast radius of a parameter mistake, or of a compromised parameter-setting path, is confined to one conduit. This is the same containment logic as the Instance decomposition itself, expressed at the level of the enforcement mechanism.\n\nThe design also makes the rate limit a *live* object rather than a governance record: the Atlas describes the current state (\"The current `maxAmount` and `slope`\"), conceding that the on-chain account is authoritative and the document follows it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Instance names one `Integration` account address that holds its rate limit information, so the constraint is chain-enforced and independently auditable per venue instead of resting on",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

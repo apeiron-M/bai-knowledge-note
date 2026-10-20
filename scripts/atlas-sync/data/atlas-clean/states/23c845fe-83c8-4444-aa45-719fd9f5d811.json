@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f5330b05-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f5330b05-3371-4f1c-99da-a3b288bd535f",
+      "targetTitle": "Root Edit approval requires a three-day Snapshot poll with 1"
+    },
+    {
+      "id": "lnk-3bc273c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3bc273c4-00dd-43f8-85de-1990ee0de0b9",
+      "targetTitle": "Grove Artifact edits pass on a simple majority of votes cast"
+    },
+    {
+      "id": "lnk-6d4b94c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6d4b94c3-bb7f-465f-ab23-781975421683",
+      "targetTitle": "Pattern Root Edits require both an alignment finding and a q"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Root Edit approval requires 10% supply turnout and a majority of votes cast excluding abstentions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "49feee7e-4219-41f0-a60e-d200d037c3aa",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8b0ed040-6193-4684-8b56-71c6b97d3590",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fb27ca2-b467-449a-a950-43d43459c521",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7df87872-71d3-443f-ad9d-2afe9d43eb5e",
+      "name": "voting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.4.2.2.2.2.1.2.1.4 sets the Root Edit poll parameters: the Snapshot poll is \"open for three (3) days,\" and \"must have at least 10% of the circulating token supply participating and must have more than 50% of votes cast, excluding abstentions, in favor to be approved.\"\n\nThe two thresholds use different denominators, and that asymmetry is the substantive design. Quorum is measured against circulating supply and counts *participation*; the majority is measured against votes cast with abstentions removed. An abstention therefore contributes to quorum while being neutral on the merits.\n\nThe consequence is that abstention is a meaningful third option rather than a wasted vote. A large holder who does not want to decide a question can still enable the electorate to decide it, and conversely a bloc wanting to defeat a proposal cannot do so by staying home if others reach 10% \u2014 it must vote against.\n\nThe short 3-day window is the counterweight to the low 10% bar: little time to organize turnout, so proposals depend on pre-existing attention generated during the Forum and Facilitator-review stages that precede the poll.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Abstentions count toward the participation bar but not the majority, so abstaining is an active move that helps a proposal clear quorum without supporting it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

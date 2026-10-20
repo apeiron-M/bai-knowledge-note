@@ -1,0 +1,214 @@
+/**
+ * OpenRouter OAuth (PKCE) and key storage, entirely in the browser.
+ *
+ * OpenRouter is the only provider offering a browser-native flow that mints a
+ * key billed to the *user* — see the design spec's provider table. There is
+ * no client secret and no backend, so the whole exchange is safe to run
+ * client-side. Verified: both endpoints answer preflight with
+ * `access-control-allow-origin: *`.
+ *
+ * The flow is a full-page redirect, so the app remounts on return. The
+ * "return intent" (drive + composer draft) is written to sessionStorage before
+ * leaving and read exactly once on the way back; `DriveExplorer` uses it to
+ * restore the chat view instead of dropping the user on Search.
+ */
+
+const AUTH_URL = "https://openrouter.ai/auth";
+const TOKEN_URL = "https://openrouter.ai/api/v1/auth/keys";
+const KEY_PROBE_URL = "https://openrouter.ai/api/v1/key";
+
+const KEY_STORAGE = "bai-chat-credentials:v1";
+const VERIFIER_STORAGE = "bai-chat:pkce-verifier:v1";
+const RETURN_STORAGE = "bai-chat:oauth-return:v1";
+/**
+ * "A sign-in was started" — in localStorage, not sessionStorage, because a
+ * brand-new user often comes back in a different tab (see
+ * `takeInterruptedAttempt`). Holds the start time; older than
+ * `PENDING_TTL_MS` it is ignored, so an abandoned attempt cannot surface days
+ * later.
+ */
+const PENDING_STORAGE = "bai-chat:oauth-pending:v2";
+const PENDING_TTL_MS = 60 * 60 * 1000;
+
+export interface ReturnIntent {
+  driveId: string;
+  draft: string;
+}
+
+function base64Url(bytes: ArrayBuffer | Uint8Array): string {
+  const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  let bin = "";
+  for (const b of arr) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/** S256 challenge for a verifier (RFC 7636 §4.2). */
+export async function pkceChallenge(verifier: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(verifier),
+  );
+  return base64Url(digest);
+}
+
+function randomVerifier(): string {
+  // 64 random bytes → 86 base64url chars, within RFC 7636's 43–128 range.
+  return base64Url(crypto.getRandomValues(new Uint8Array(64)));
+}
+
+function authUrl(callback: string, challenge: string): string {
+  return (
+    `${AUTH_URL}?callback_url=${encodeURIComponent(callback)}` +
+    `&code_challenge=${encodeURIComponent(challenge)}` +
+    `&code_challenge_method=S256`
+  );
+}
+
+/** Trade a returned code for a key; null when OpenRouter refuses or answers without one. */
+async function exchangeCode(code: string, verifier: string): Promise<string | null> {
+  try {
+    const res = await fetch(TOKEN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, code_verifier: verifier, code_challenge_method: "S256" }),
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as { key?: unknown };
+    return typeof body.key === "string" && body.key ? body.key : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The flow for a host that runs sign-ins outside the page (the desktop app: the system
+ * browser returns to the host's own callback, not to this window). The verifier stays in
+ * memory here — it never leaves the page — and nothing navigates.
+ */
+export async function connectThroughHost(
+  signIn: (buildUrl: (callbackUrl: string) => string) => Promise<string>,
+): Promise<{ key: string } | null> {
+  const verifier = randomVerifier();
+  const challenge = await pkceChallenge(verifier);
+  let code: string;
+  try {
+    code = await signIn((callback) => authUrl(callback, challenge));
+  } catch {
+    return null;
+  }
+  const key = await exchangeCode(code, verifier);
+  if (!key) return null;
+  storeKey(key);
+  return { key };
+}
+
+/** Persist where to come back to, then hand the tab to OpenRouter. */
+export async function beginOAuth(intent: ReturnIntent): Promise<void> {
+  const verifier = randomVerifier();
+  sessionStorage.setItem(VERIFIER_STORAGE, verifier);
+  sessionStorage.setItem(RETURN_STORAGE, JSON.stringify(intent));
+  localStorage.setItem(PENDING_STORAGE, String(Date.now()));
+
+  // The callback must be this exact page so the app remounts where it left.
+  const callback = `${location.origin}${location.pathname}${location.search}`;
+  location.assign(authUrl(callback, await pkceChallenge(verifier)));
+}
+
+/** Read the post-redirect intent exactly once; subsequent reads are null. */
+export function readReturnIntent(): ReturnIntent | null {
+  const raw = sessionStorage.getItem(RETURN_STORAGE);
+  sessionStorage.removeItem(RETURN_STORAGE);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as { driveId?: unknown; draft?: unknown };
+    if (typeof parsed.driveId !== "string") return null;
+    return {
+      driveId: parsed.driveId,
+      draft: typeof parsed.draft === "string" ? parsed.draft : "",
+    };
+  } catch {
+    return null;
+  }
+}
+
+function stripCodeFromUrl(): void {
+  const url = new URL(location.href);
+  url.searchParams.delete("code");
+  history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+/**
+ * Exchange `?code=` for a key. Null when there is no code, or when there is
+ * one but no key came of it (no verifier in this tab, or OpenRouter refused) —
+ * the caller tells those apart by whether it saw a code.
+ *
+ * The code is stripped from the URL whatever the outcome: it is single-use
+ * and expires in ten minutes, so leaving it in place would make a reload look
+ * like a second, failing attempt.
+ */
+export async function completeOAuthFromUrl(): Promise<{ key: string } | null> {
+  const code = new URL(location.href).searchParams.get("code");
+  if (!code) return null;
+
+  // A code came back, so the attempt was not interrupted — whatever the
+  // exchange's outcome, the "did you get lost?" hint would be wrong.
+  localStorage.removeItem(PENDING_STORAGE);
+  const verifier = sessionStorage.getItem(VERIFIER_STORAGE);
+  sessionStorage.removeItem(VERIFIER_STORAGE);
+  stripCodeFromUrl();
+  if (!verifier) return null;
+
+  const key = await exchangeCode(code, verifier);
+  if (!key) return null;
+  storeKey(key);
+  return { key };
+}
+
+/**
+ * True, once, if Connect was started in the last hour and the user came back
+ * without a code.
+ *
+ * OpenRouter's login flow preserves our `/auth?callback_url=…` request, but
+ * its sign-up flow drops the query string, so a brand-new user finishes
+ * account creation logged in with nowhere to return to. They find their way
+ * back by hand: Back in the same tab, or the vault's address in a new one
+ * (often from the tab the verification email opened). Either way they land on
+ * the connect panel unconnected; rather than show it as if nothing happened,
+ * the panel says what happened and asks them to sign in once more — which now
+ * completes, because they are logged in.
+ *
+ * Not reported while a code is in the URL: the exchange is about to run and
+ * will clear the flag itself.
+ */
+export function takeInterruptedAttempt(): boolean {
+  const raw = localStorage.getItem(PENDING_STORAGE);
+  if (raw === null) return false;
+  if (new URL(location.href).searchParams.has("code")) return false;
+  localStorage.removeItem(PENDING_STORAGE);
+  const startedAt = Number(raw);
+  return Number.isFinite(startedAt) && Date.now() - startedAt < PENDING_TTL_MS;
+}
+
+export function getStoredKey(): string | null {
+  return localStorage.getItem(KEY_STORAGE);
+}
+
+export function storeKey(key: string): void {
+  localStorage.setItem(KEY_STORAGE, key);
+}
+
+export function clearKey(): void {
+  localStorage.removeItem(KEY_STORAGE);
+}
+
+/** Cheap probe so a pasted key fails at paste time, not mid-conversation. */
+export async function validateKey(key: string): Promise<boolean> {
+  try {
+    const res = await fetch(KEY_PROBE_URL, {
+      headers: { Authorization: `Bearer ${key}` },
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}

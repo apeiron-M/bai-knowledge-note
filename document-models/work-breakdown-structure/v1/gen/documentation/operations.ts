@@ -10,6 +10,7 @@ import type {
   SetOwnerAction,
   SetProjectRefAction,
   SetReferencesAction,
+  SetSowProjectRefAction,
 } from "./actions.js";
 
 export interface WorkBreakdownStructureDocumentationOperations {
@@ -36,6 +37,11 @@ export interface WorkBreakdownStructureDocumentationOperations {
   setProjectRefOperation: (
     state: WorkBreakdownStructureGlobalState,
     action: SetProjectRefAction,
+    dispatch?: SignalDispatch,
+  ) => void;
+  setSowProjectRefOperation: (
+    state: WorkBreakdownStructureGlobalState,
+    action: SetSowProjectRefAction,
     dispatch?: SignalDispatch,
   ) => void;
 }

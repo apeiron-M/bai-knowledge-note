@@ -7,18 +7,21 @@ import {
   AddExtractedClaimInputSchema,
   IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
+  RemoveExtractedClaimInputSchema,
   SetSourceStatusInputSchema,
 } from "../schema/zod.js";
 import type {
   AddExtractedClaimInput,
   IngestSourceInput,
   RecordExtractionStatsInput,
+  RemoveExtractedClaimInput,
   SetSourceStatusInput,
 } from "../types.js";
 import type {
   AddExtractedClaimAction,
   IngestSourceAction,
   RecordExtractionStatsAction,
+  RemoveExtractedClaimAction,
   SetSourceStatusAction,
 } from "./actions.js";
 
@@ -55,5 +58,14 @@ export const recordExtractionStats = (input: RecordExtractionStatsInput) =>
     { ...input },
     undefined,
     RecordExtractionStatsInputSchema,
+    "global",
+  );
+
+export const removeExtractedClaim = (input: RemoveExtractedClaimInput) =>
+  createAction<RemoveExtractedClaimAction>(
+    "REMOVE_EXTRACTED_CLAIM",
+    { ...input },
+    undefined,
+    RemoveExtractedClaimInputSchema,
     "global",
   );

@@ -1,0 +1,132 @@
+{
+  "links": [
+    {
+      "id": "lnk-a9c72742-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9c72742-4ac0-43de-9524-4c6cbee12485",
+      "targetTitle": "Freezer signers can only be changed by an Atlas Edit Proposa"
+    },
+    {
+      "id": "lnk-c5caf296-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5caf296-470c-4b8a-828b-ddfe78beaace",
+      "targetTitle": "Freezer signer composition is mandated as a fixed inter-orga"
+    },
+    {
+      "id": "lnk-8288f2ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8288f2ec-16d4-4c82-bb7e-88e78ceaf550",
+      "targetTitle": "Changing Freezer Multisig signers requires an Atlas Edit Pro"
+    },
+    {
+      "id": "lnk-33c8bec7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "33c8bec7-b610-4c01-b1c3-638eab25feaf",
+      "targetTitle": "The SBE-BEAM Operator Multisig hard-codes a three-party spli"
+    },
+    {
+      "id": "lnk-8a8d152e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a8d152e-51c0-45a5-97c5-d8bee00566de",
+      "targetTitle": "TENSION: Keel's Prime Relayer Multisig runs at 1-of-2 while "
+    },
+    {
+      "id": "lnk-9ea0b36b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9ea0b36b-c34e-4382-8005-cda9f12dc70a",
+      "targetTitle": "The Core Operator Relayer's 2-of-5 threshold lets either two"
+    },
+    {
+      "id": "lnk-a2a9060a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a2a9060a-cc0e-4cd7-b129-a9d992be63b0",
+      "targetTitle": "Soter Labs can change the subsidy multisig signers unilatera"
+    },
+    {
+      "id": "lnk-ad6015e3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad6015e3-7cb3-43a2-90ec-8c2f63693297",
+      "targetTitle": "The Secondary Relayer Multisig's 1-of-2 threshold contradict"
+    },
+    {
+      "id": "lnk-dff7f22d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dff7f22d-5159-482a-adf9-59ee72f42452",
+      "targetTitle": "The multisig modification rules require thresholds the curre"
+    },
+    {
+      "id": "lnk-edd46dc8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "edd46dc8-e37a-43d9-8a8b-516584b286de",
+      "targetTitle": "Every signer of the Demand Side Buffer multisig is controlle"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Relayer Multisig signers are self-administered while Freezer Multisig signers can only change by Atlas Edit Proposal",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e5fbb768-9ad5-4e75-b613-3fb16857629c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e787bfad-a2ce-4735-8eca-b5bf81c83620",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "99a525d3-4435-49f0-abef-bc38e42bb7c7",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8799d9a1-91d3-4811-a4fd-b9c33f0edcba",
+      "name": "authority-to-modify",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The two privileged multisigs in the Pattern Liquidity Layer have deliberately different amendment rules.\n\nFor the Relayer Multisig, A.6.1.1.6.2.6.1.2.1.2.2.1.5 says \"Operational GovOps Soter Labs can change the signers... **at any time**, so long as there are at least three (3) signers and at least two-thirds of signers are required to execute transactions.\" Authority is delegated wholesale, constrained only by two structural floors \u2014 a minimum signer count and a minimum threshold ratio \u2014 rather than by approval of any particular signer set.\n\nFor the Freezer Multisig, A.6.1.1.6.2.6.1.2.1.2.2.2.5 says \"Modification of the signers... **must be approved through an Atlas Edit Proposal**,\" with only two narrow exceptions: a signer self-reporting lost key access, or a signer asking to be removed \u2014 each requiring a public Sky Forum post.\n\nThe distinction tracks what each key can do. Relayer keys operate the system inside limits that admin sets and rate limits enforce, so rotating them is routine operational hygiene and demanding a governance vote for each change would create dangerous delay. Freezer keys are the check *on* the operator, so allowing the operator's employer to reshuffle them would let the supervised party choose its supervisors.\n\nThe two exceptions are carefully shaped to preserve that logic: both are ways for a signer to *reduce* their own participation, which cannot be used to pack the multisig.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Soter Labs may rotate Relayer signers at will subject to a three-signer, two-thirds floor; changing who holds the emergency brake requires ecosystem governance approval instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

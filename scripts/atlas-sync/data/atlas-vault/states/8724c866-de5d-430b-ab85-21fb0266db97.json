@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-98155eb6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98155eb6-84d6-42c7-bf34-2cf7894d97e7",
+      "targetTitle": "Each direction of an issuer conversion is a separate instanc"
+    },
+    {
+      "id": "lnk-c85fc41b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c85fc41b-efc0-4751-88a7-756c9384ee47",
+      "targetTitle": "doc-a15ea0d0"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's Liquidity Layer holds and routes rival stablecoins, not just its own",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "04096b56-751a-4e13-b5e8-cf8f9b268967",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6cf6b1f6-fd82-4f15-84f6-c31434aa5be1",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "daafdb68-1215-47f5-9791-c54552dfe2b4",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d5cca58-0e4c-441e-8e81-a764b4274d40",
+      "name": "stablecoins",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Reading the asset names across A.6.1.1.1.2.6.1.1.2.1, Spark's active exposures include USDC, USDT, Dai, pyUSD, USDe and sUSDe, USDG, rlUSD, ETH and Superstate's USTB \u2014 a tokenized Treasury product \u2014 in addition to USDS and sUSDS.\n\nA stablecoin issuer holding large positions in competing stablecoins looks paradoxical until the mandate is separated into its two halves. Driving USDS adoption requires depth in the pairs users actually trade, which means holding the other side. Earning risk-adjusted returns requires going where the yield is, which is frequently denominated in someone else's dollar.\n\nThe Curve, Uniswap v4 and Paxos Instances make the market-making role explicit: pools like sUSDS/USDT, pyUSD/USDS, USDG/USDS and rlUSD/USDS, plus dedicated USDC\u2194PYUSD and PYUSD\u2194USDG conversion Instances, exist to keep USDS convertible against the rest of the market on demand.\n\nThe consequence is that the reserves backing USDS carry other issuers' credit and depeg risk. USDS's stability is therefore not solely a function of Sky's own collateral quality \u2014 it inherits exposure to the counterparties whose tokens the Liquidity Layer holds to keep USDS liquid.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Active Instances cover USDC, USDT, Dai, pyUSD, USDe, USDG, rlUSD and tokenized treasuries \u2014 the issuer operates across the stablecoin market rather than confining itself to USDS.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "86f6f2e5-536d-4684-b573-8e2f52d7737f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6b337b04-4c84-4b5e-8f34-a1d39b4fa63e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

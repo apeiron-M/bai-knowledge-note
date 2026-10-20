@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4231db1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4231db1-4130-46d0-96c4-c37bd155907a",
+      "targetTitle": "The Morpho instance splits Curator and Guardian roles behind"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Morpho instances record third-party governance roles as instance parameters, admitting Spark's exposure to actors it does not control",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "25a61742-89fd-4617-a082-f9b01c7a6e68",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be8541d9-71c0-4b38-8575-136d25294da3",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39dcec9d-7f48-438e-8f05-b580597a6eb0",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a310db07-9dc4-4c0b-8f5f-a422e7baa525",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Morpho instances break the parameter template in a new direction. Alongside token and underlying addresses, each records an `Allocator Role Address` (A.6.1.1.1.2.6.1.3.1.8.2.2.2.3, .8.3.2.2.3, .8.4.2.2.3) and an `Instance-specific Operational Parameters` block holding a `Curator Role Address`, a `Guardian Role Address` (.8.2.4.1.1/.2, .8.3.4.1.1/.2, .8.4.4.1.1/.2) and a `Timelock: 240 hours (10 days)` (.8.2.4.2, .8.3.4.2, .8.4.4.2).\n\nNone of these are Spark's own controls. They are Morpho's vault governance: the curator sets which markets the vault lends into, the allocator moves funds between them, the guardian can veto. Spark's capital sits inside a structure whose composition can be changed by parties whose keys Spark does not hold.\n\nRecording them as instance parameters is the honest response. Everywhere else the Instance Configuration Document describes what Spark may do; here it also describes what someone else may do to Spark's position, which is the actual risk of a curated-vault venue.\n\nThe timelock is the mitigation and explains why it is documented at all. A ten-day delay on curator changes converts an unbounded governance risk into a bounded reaction window: Spark cannot prevent a reallocation into markets it dislikes, but it has ten days to observe the queued change and withdraw. The safety property is therefore not 'the vault behaves well' but 'Spark can always leave before a bad change lands' \u2014 which makes the timelock duration and Spark's exit speed the two numbers that matter, and puts both in one document.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Morpho vault documents an Allocator, Curator and Guardian address plus a 240-hour timelock \u2014 the venue's own permissioning becomes part of Spark's configuration surface.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5a533a7e-b79d-4c0f-b4fb-8e63d8a01eeb",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8c7da029-477c-4332-bfbc-a702c6d0342c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

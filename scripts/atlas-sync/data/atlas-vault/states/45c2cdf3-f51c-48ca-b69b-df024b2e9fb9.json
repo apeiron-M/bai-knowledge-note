@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-ab5d70d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab5d70d2-9582-4a55-bd57-3f7da20a197d",
+      "targetTitle": "The Genesis Capital Backstop mutualizes one Prime Agent's ex"
+    },
+    {
+      "id": "lnk-4b2fcd6d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4b2fcd6d-779c-4e7b-b693-7fcb160632ab",
+      "targetTitle": "Genesis Capital phase-out releases Agents from backstop liab"
+    },
+    {
+      "id": "lnk-c675d197-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c675d197-b1f2-41c0-8dee-66d6529971cd",
+      "targetTitle": "Phase-out speed is a feedback loop on surplus safety capital"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Genesis Capital is capped at an Agent's total capital, so the backstop shrinks exactly when Agents are impaired",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9f41286f-ab2a-40a5-8ec4-f77747974227",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c981703-3f24-477b-9cf5-18cd58e4693e",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "46b5845c-f2a1-49fe-baa8-ce991af748c8",
+      "name": "genesis-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e52f8084-a7a6-4f9c-9ca8-13e86c3508f5",
+      "name": "solvency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.6.6 defines the Genesis Capital of an Agent as \"the lesser of (1) the Eligible Genesis Capital of the Agent and (2) the total capital of the Agent,\" where Eligible Genesis Capital is what Sky contributed minus what has been phased out.\n\nThe lesser-of construction is honest accounting: Sky cannot claw back capital an Agent no longer has, so counting the full contribution as available backstop would overstate the safety net. The measure reports claimable value, not historical generosity.\n\nBut it makes the backstop procyclical. Aggregate Backstop Capital sums Genesis Capital across Agents (A.3.5.3.1.2), so a market event that impairs several Agents at once mechanically reduces the pool \u2014 and a Prime Agent loss large enough to reach the Genesis Capital Backstop is exactly the kind of event likely to impair peers simultaneously. Capacity is lowest when demand on it is highest.\n\nA second-order effect follows through the phase-out rules. A.3.7.1.6.6.2.1.1 pauses Genesis Capital phase-out whenever Aggregate Backstop Capital falls below 125 million USDS, so impairment automatically halts the release of Agents from backstop duty. That is the correct direction \u2014 the system stops shrinking its safety net when the net is thin \u2014 but it is a brake, not a refill: nothing in this document restores Genesis Capital once Agent capital is lost.\n\nAnyone modelling Sky's solvency should therefore treat Aggregate Backstop Capital as a correlated, state-dependent quantity rather than a fixed buffer.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Defined as the lesser of Eligible Genesis Capital and the Agent's total capital, the measure falls as an Agent loses money \u2014 reducing available backstop in the conditions that call for it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ee02d653-e291-46c6-aa4a-8e968cd357e7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:39.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6b256768-bb8b-49ca-84bd-4fec657d50ee",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

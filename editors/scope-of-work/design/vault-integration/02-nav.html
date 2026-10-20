@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>02 · Nav</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #1e1e2e;
+        --surface: #181825;
+        --deep: #11111b;
+        --hover: #313244;
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #e4e4e7;
+        --text-2: #d4d4d8;
+        --text-3: #9ca3af;
+        --muted: #6b7280;
+        --accent: #cba6f7;
+        --accent-text: #1e1e2e;
+        --green: #10b981;
+        --amber: #f59e0b;
+        --blue: #3b82f6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--deep);
+        color: var(--text);
+        font: 13px/1.45 "IBM Plex Sans", system-ui, sans-serif;
+      }
+      nav.docs {
+        display: flex;
+        gap: 14px;
+        padding: 10px 18px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+      }
+      nav.docs a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      nav.docs a.on,
+      nav.docs a:hover {
+        color: var(--accent);
+      }
+      .app {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: calc(100vh - 37px);
+      }
+      .side {
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        padding: 16px 12px;
+      }
+      .side .brand {
+        font-family: Fraunces, serif;
+        font-size: 16px;
+        padding: 4px 8px 16px;
+      }
+      .side .n {
+        padding: 6px 8px;
+        border-radius: 8px;
+        color: var(--text-3);
+        font-size: 12.5px;
+      }
+      .side .n.on {
+        background: var(--hover);
+        color: var(--text);
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .tab {
+        padding: 6px 10px;
+        border-radius: 8px;
+        color: var(--text-3);
+        font-size: 12.5px;
+      }
+      .tab.on {
+        background: var(--hover);
+        color: var(--text);
+      }
+      .tab .b {
+        margin-left: 6px;
+        font-size: 10px;
+        background: var(--accent-text);
+        color: var(--accent);
+        border: 1px solid rgba(203, 166, 247, 0.35);
+        border-radius: 999px;
+        padding: 0 6px;
+      }
+      .body {
+        padding: 20px 22px 40px;
+      }
+      .hd {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 8px;
+      }
+      .hd h2 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-3);
+      }
+      .btn {
+        background: var(--accent);
+        color: var(--accent-text);
+        border: 0;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font: 600 12px "IBM Plex Sans", sans-serif;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--text-3);
+        border: 1px solid var(--border);
+      }
+      .band {
+        margin-top: 22px;
+      }
+      .band .lbl {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 6px;
+      }
+      .card .t {
+        font-weight: 600;
+        font-size: 13.5px;
+      }
+      .chip {
+        display: inline-block;
+        font-size: 10px;
+        padding: 1px 8px;
+        border-radius: 999px;
+        border: 1px solid;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+      .chip.g {
+        color: var(--green);
+        border-color: rgba(16, 185, 129, 0.35);
+        background: rgba(16, 185, 129, 0.12);
+      }
+      .chip.a {
+        color: var(--amber);
+        border-color: rgba(245, 158, 11, 0.35);
+        background: rgba(245, 158, 11, 0.12);
+      }
+      .chip.p {
+        color: var(--accent);
+        border-color: rgba(203, 166, 247, 0.35);
+        background: rgba(203, 166, 247, 0.1);
+      }
+      .meta {
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--text-3);
+      }
+      .bar {
+        margin-top: 8px;
+        height: 4px;
+        background: var(--hover);
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+        width: 42%;
+      }
+      .callout {
+        margin-top: 18px;
+        font-size: 12.5px;
+        color: var(--text-3);
+        max-width: 560px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="docs">
+      <a href="index.html">hub</a>
+      <a href="01-layers.html">01 layers</a>
+      <a class="on" href="02-nav.html">02 nav</a>
+      <a href="03-author.html">03 author</a>
+      <a href="04-compile.html">04 compile</a>
+    </nav>
+    <div class="app">
+      <aside class="side">
+        <div class="brand">Knowledge Vault</div>
+        <div class="n on">Canonical notes</div>
+        <div class="n">In review</div>
+        <div class="n">Drafts</div>
+        <div class="n">Maps of content</div>
+      </aside>
+      <div class="main">
+        <div class="tabs">
+          <div class="tab">Chat</div>
+          <div class="tab">Search</div>
+          <div class="tab">Notes</div>
+          <div class="tab">Graph</div>
+          <div class="tab">Sources</div>
+          <div class="tab on">Projects <span class="b">3</span></div>
+        </div>
+        <div class="body">
+          <div class="band">
+            <div class="lbl">In progress · execution</div>
+            <div class="hd">
+              <h2>How the team starts. Uncompiled is fine.</h2>
+              <button class="btn">New Project</button>
+            </div>
+            <div class="card">
+              <span class="t">Paperless onboarding</span>
+              <span class="chip g">Active</span>
+              <div class="meta">by knowledge-agent · 🧑 liberuum · 11/22 goals</div>
+              <div class="bar"><i></i></div>
+            </div>
+            <div class="card">
+              <span class="t">Remote-first vault</span>
+              <span class="chip g">Active</span>
+              <span class="chip p">compiled · SOW-04</span>
+              <div class="meta">linked to Atlas H2 · 8/12 goals</div>
+              <div class="bar"><i style="width: 67%"></i></div>
+            </div>
+            <div class="card">
+              <span class="t">Peon ping packs</span>
+              <span class="chip a">Planning</span>
+              <div class="meta">no WBS yet</div>
+            </div>
+          </div>
+
+          <div class="band">
+            <div class="lbl">Scope of work · stakeholder overlay</div>
+            <div class="hd">
+              <h2>Compile into this. Click opens the SoW editor.</h2>
+              <button class="btn ghost">New scope</button>
+            </div>
+            <div class="card">
+              <span class="t">Atlas Platform — H2 2026</span>
+              <span class="chip p">Draft</span>
+              <div class="meta">
+                3 budget envelopes · 8 deliverables · 1 linked execution
+              </div>
+            </div>
+          </div>
+
+          <p class="callout">
+            One tab. Badge still counts live execution projects (3), not SoW
+            status. Clicking a SoW card does <code>setSelectedNode</code> —
+            same as today’s project cards. No second tab.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

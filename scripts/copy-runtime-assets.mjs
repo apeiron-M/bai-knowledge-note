@@ -157,3 +157,15 @@ console.log(
 );
 
 console.log("[runtime-assets] ok");
+
+// 5. Pipeline template → dist/node/pieces/knowledge-vault/templates/ (spec §7.5
+//    of the desktop app: the template ships with the piece it belongs to and is
+//    imported as @powerhousedao/knowledge-note/pieces/knowledge-vault/templates/pipeline.json).
+const templatesSrc = join("pieces", "knowledge-vault", "templates");
+const templatesProbe = join(templatesSrc, "pipeline.json");
+if (!existsSync(templatesProbe)) fail(`missing ${templatesProbe} — run scripts/export-workflow-template.mjs`);
+const templatesDest = join(distRoot, "node", "pieces", "knowledge-vault", "templates");
+rmSync(templatesDest, { recursive: true, force: true });
+mkdirSync(templatesDest, { recursive: true });
+for (const f of globSync(join(templatesSrc, "*.json"))) copyFileSync(f, join(templatesDest, f.split("/").pop()));
+console.log(`[runtime-assets] pipeline template → ${templatesDest}`);

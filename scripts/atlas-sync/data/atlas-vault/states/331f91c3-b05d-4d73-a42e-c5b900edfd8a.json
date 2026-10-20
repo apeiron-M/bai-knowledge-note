@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-67fae48a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67fae48a-fb1a-4e03-bbbb-af4007524eda",
+      "targetTitle": "doc-00cd8a8c"
+    },
+    {
+      "id": "lnk-f9cf6392-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9cf6392-1e72-4978-bcaa-482637178026",
+      "targetTitle": "Each Primitive Invocation records three workflow stages: ini"
+    },
+    {
+      "id": "lnk-5b1f0931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5b1f0931-5f21-4b1e-90e4-e5f5ea119971",
+      "targetTitle": "Each Primitive Instance carries its own Data Repository pres"
+    },
+    {
+      "id": "lnk-beb94181-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "beb94181-e00a-44b5-b74f-ef6516524777",
+      "targetTitle": "Invoking one Primitive Instance runs a chain of six Process "
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Primitive Invocation ends in an Artifact Edit Proposal, so operating requires amending the Agent's own constitution",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ffe7a8c6-e4f1-41d2-86c7-e3fb7f4c7f53",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b7353bd2-0f91-4f8d-8cee-fe0840d2eee3",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cba2b860-a6e0-4cbc-94a2-fcdb64db19bc",
+      "name": "invocation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40e69b5e-738a-4d66-abef-3188f5a6392a",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Instance Configuration Document in Obex's Artifact closes with a **Data Repository** containing exactly three branches, in the same order every time: **Initial Planning**, **Operational GovOps Review**, and **Artifact Edit Proposal** (A.6.1.1.5.2.1.1.3.1.3.x for Agent Creation, and identically at A.6.1.1.5.2.1.2.3.1.3.x, A.6.1.1.5.2.1.4.2.1.3.x and A.6.1.1.5.2.2.1.2.1.3.x).\n\nRead as a process rather than as storage, this is the Invocation lifecycle: someone plans the Invocation, Operational GovOps reviews it, and the result is proposed as an edit to the Artifact. The repository is the evidence trail for each stage.\n\nThe third stage is the load-bearing one. An Invocation is not complete when capital moves or a contract deploys \u2014 it is complete when the Agent's governing document is amended to record it. Doing anything materially new therefore requires changing the text that governs you, which forces every operational act through the same amendment scrutiny as a rule change.\n\nThat is an unusual and demanding design. It guarantees the Artifact is a live and complete description of the Agent rather than a stale charter, which is what makes tree-position-as-status meaningful elsewhere in the document. The cost is process weight on every action, and a standing incentive to characterise activity as falling under an existing Instance rather than requiring a new Invocation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Data Repository of every Instance Configuration Document has the same three branches \u2014 Initial Planning, Operational GovOps Review, Artifact Edit Proposal",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f98af1ee-c549-4812-8182-2e54be3e5f17",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e7acd1d3-afcc-444b-bfe4-c38df469a1fc",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:30.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-e78b51aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e78b51aa-9266-4b1b-ac1d-96aeb7802786",
+      "targetTitle": "New Spark risk parameters do not break existing loans \u2014 non-"
+    },
+    {
+      "id": "lnk-e8c50bfa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e8c50bfa-71ed-486b-9423-68c88f87eed4",
+      "targetTitle": "doc-8ec1e882"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Governance Acceptance clock starts at first end-user contact even if confidentiality has not lapsed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d33171e8-e4c8-4b6a-bf50-f783e2d202c2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b65d60e3-8bd0-4a5e-8a47-1df6150c5604",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2221b9e4-5152-444b-b66d-21c501be89ea",
+      "name": "confidentiality",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.10.6 sets a hard deadline with a two-branch trigger: products created under the framework \"must be publicly disclosed and receive explicit acceptance by Spark governance within **6 months of the earlier of**: (i) the deployments no longer being subject to confidentiality requirements, or (ii) the deployments having their **first interaction with end users** (excluding Designated Contributors).\" Anything not approved in that window \"must be wound down in an orderly fashion.\"\n\nBranch (ii) is what gives the provision force. Confidentiality obligations are set by a counterparty's contract, and a partner with an interest in staying quiet could extend them indefinitely \u2014 under branch (i) alone, an NDA renewed in perpetuity would mean a live product taking real user deposits and never facing a governance vote. Making user contact an independent trigger means the clock is controlled by Spark's own conduct, not by the partner's paperwork.\n\nThe exclusion of Designated Contributors from \"end users\" keeps testing from starting the clock prematurely, so the trigger fires on genuine public exposure rather than on internal readiness work.\n\nThe consequence of failure is stated as an obligation rather than a penalty: wind down, orderly. Combined with the framework's other defaults, the pattern is now unmistakable across the Spark Artifact \u2014 a delegate whose term is not renewed lapses, a loan that stops conforming is recalled, an Arkis policy left unexecuted forces divestment, and a confidential deployment that governance does not accept is unwound. In every case inaction produces retreat, and continuation requires an affirmative act.\n\nThat is what makes the confidentiality exception survivable. Secrecy is permitted, but it is permitted on a timer that only a governance vote can stop, and the vote requires the secret to be told first.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Disclosure and explicit approval are due within six months of the earlier of confidentiality ending or first non-contributor user interaction;",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cb3ac2e2-ce65-467a-afaf-907ffbf22352",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9bbe8546-ba2d-4442-8c11-f1d485c3471b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

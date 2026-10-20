@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-637c7bbc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "637c7bbc-bca3-485c-b618-2eab0206e1d5",
+      "targetTitle": "A Multi-Instance Coordinator Document holds the strategy tha"
+    },
+    {
+      "id": "lnk-973641da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "973641da-ccc0-4c06-a202-e29a6310443d",
+      "targetTitle": "Every Spark Liquidity Layer deployment is registered as a un"
+    },
+    {
+      "id": "lnk-887f54f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "887f54f3-4213-4e66-958c-ba2ed29a6f3d",
+      "targetTitle": "The Sky Allocation System Primitive was abstracted from the "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's cross-instance allocation strategy is an empty placeholder",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ea15c222-6254-4814-8804-78ac9a4bc6ae",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7bd77530-b07c-4df6-8d12-346c41742381",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7af4bf87-acbb-408a-9be4-1f385156fa06",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb83e72b-cef3-458c-b873-107d0820308b",
+      "name": "governance-gaps",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.3 is the Allocation Strategy document, and its entire content is: \"In the future, additional logic will be added herein regarding the strategy by which capital is allocated between different Instances of the Spark Liquidity Layer.\"\n\nThis is a significant hole given what the surrounding documents claim. The Multi-Instance Coordinator Document exists specifically to \"define Spark's overarching strategy and operational framework for managing across all Instances\" (A.6.1.1.1.2.6.1.2), and the Artifact is otherwise extraordinarily detailed \u2014 down to `abi.encodeCall` fragments and per-chain minimum transaction sizes.\n\nWhat is fully specified is the *envelope*: which venues are permitted, per-instance rate limits, minimum operation sizes, target balances. What is unspecified is the decision function inside it: given yields, risks and limits across a dozen venues, how much goes where. That decision is currently made by the off-chain ALM Planner that holds the Relayer role, following logic no Atlas document states.\n\nSo the deployed reality is a governed envelope with a discretionary interior. Constraints are auditable; allocation choices are not. For a mandate whose second half is \"deploying collateral backing USDS at attractive risk-adjusted returns,\" the criteria for what counts as attractive are exactly what the Artifact does not yet contain \u2014 making this arguably the single largest documentation gap in Spark's specification.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:57:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Allocation Strategy document says only that logic 'will be added herein' in future, so how capital is divided between venues is undocumented while the off-chain ALM Planner already decides it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "569ab666-029f-4cd7-8071-541496a46776",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "38650479-3f64-459f-bcce-a7c46d2a8e9f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

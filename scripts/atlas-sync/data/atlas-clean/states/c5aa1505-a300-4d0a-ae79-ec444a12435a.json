@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd185e80-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd185e80-2ce4-4c78-ba85-99cc22afa8f6",
+      "targetTitle": "doc-09fd3f14"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Provenance legitimacy is graded on three axes \u2014 mutability, visibility, and resistance to compromise",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9d08fd01-b360-4900-8133-ed2d694fd022",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "803d188d-feee-4f10-b467-8c06dcf5f3c0",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fb70ed6a-b762-486e-9d02-5341409e1553",
+      "name": "executive-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.5.1 requires that \"all actions in the Executive Sheet require sufficient provenance for their inclusion in the sheet and later in the Executive Vote,\" and states the evaluation criteria: \"the legitimacy of a provenance is assessed on the basis of its **mutability, visibility and resistance to compromise** by external malicious actors.\"\n\nThe striking thing is what is absent. Nothing in the test asks who spoke or what authority they hold. A payment recipient confirming their own payment can produce insufficient provenance, while the same fact recorded on chain is sufficient. Legitimacy attaches to the *record*, not the *speaker*.\n\nEach axis blocks a distinct attack. Low mutability means the authorization cannot be rewritten after the fact to match what executed. Visibility means anyone can independently check it, rather than only those with access to a private channel. Compromise resistance means an attacker who takes over an account cannot manufacture authority retroactively.\n\nThe procedural teeth are in the last sentence: \"If the Governance Point has any question whether a proposed Executive action has sufficient provenance, they must resolve that question of validity **before** including that action in the Executive Process.\" Doubt is disqualifying until settled, so the cost of ambiguity falls on the item seeking inclusion rather than on the reviewers who must later trust it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:25:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.5.1 makes authorization a property of the record's durability rather than the speaker's seniority, and puts the burden on inclusion: unresolved doubt blocks the action.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

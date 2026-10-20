@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-b2d6823f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b2d6823f-6981-448a-8fc0-1b4d863dc57d",
+      "targetTitle": "Emergency roles in the Liquidity Layer are strictly subtract"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Emergency response runs a fixed three-step sequence: revoke the compromised Actor, withdraw the full position, then burn the recovered USDS",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ec77e825-d194-46a8-b22b-eaacda2c2449",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b372bd0a-46fe-4f89-9d67-c26bb8a07a6d",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "72d869c2-1f4a-4eb7-9ec3-5769278d134c",
+      "name": "emergency-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Osero Liquidity Layer's Emergency Protocol (A.6.1.1.7.2.6.1.2.2.3) contains three ordered actions.\n\nFirst, A.6.1.1.7.2.6.1.2.2.3.1: the Freezer Multisig \"removes that Actor by calling `removeActor` on the AdministeredAgent contract,\" and the section confines the trigger tightly \u2014 it \"should only be taken if a Relayer Multisig's keys have been leaked or compromised and the Actor is in the control of an external bad actor.\" Second, .3.2: \"a Relayer Multisig, acting as an Actor, withdraws the Osero Liquidity Layer's full SparkLend USDS position through the Aave v3 Facet,\" centralizing liquidity in the ALM Proxy. Third, .3.3: \"the recovered USDS is repaid and burned through the USDS Facet.\"\n\nThe ordering is what makes the sequence safe. Revocation comes first so the compromised operator cannot front-run, redirect or repeat the unwind. Only then does a Relayer Multisig act \u2014 necessarily the *other* one, which is the operational justification for maintaining two Actors with identical powers.\n\nThe end state is deliberately maximal: position fully withdrawn, USDS fully burned. The Instance is not paused with exposure outstanding; it is unwound to zero, which is only executable because both the withdrawal and the burn limits are Unlimited.\n\nThe narrow trigger language is equally notable. The Freezer's power is scoped to external compromise of keys, not to disagreement with an operator's strategy \u2014 a poorly performing but uncompromised operator is not within its remit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Freezing precedes recovery so a compromised operator cannot interfere, and the surviving Relayer Multisig performs the unwind \u2014 which is why two Actors exist.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

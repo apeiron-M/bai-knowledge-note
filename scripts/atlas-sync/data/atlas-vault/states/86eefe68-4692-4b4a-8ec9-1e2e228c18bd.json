@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-d901d297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d901d297-1870-49ca-bcb3-3caf552a8aa1",
+      "targetTitle": "Freezer signers must justify freezing against Risk Capital r"
+    },
+    {
+      "id": "lnk-90461e4f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "90461e4f-2352-4eb5-b0ba-274c140d69f3",
+      "targetTitle": "Keel gives a hard covenant to stay at or below a 90% Encumbr"
+    },
+    {
+      "id": "lnk-d1c74ee9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1c74ee9-3bf0-4595-bb1c-bcfc32bcb0e8",
+      "targetTitle": "The 90% Encumbrance Ratio cap is a commitment by Grove Devel"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark commits in its Artifact to keeping the Encumbrance Ratio at or below 90%",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "156bf014-829f-4e82-9a1b-0e45c4768030",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5117b16f-157a-4d06-a6a0-8e79691342c1",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5ae40d08-75bb-4661-82f1-3aaa7c2d6e7e",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54d21cb8-c4ec-486e-9bdc-f6dec2bfb7d5",
+      "name": "solvency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.1.3.1 records a commitment in the Agent's own Artifact: \"Spark will continue to operate the Spark Liquidity Layer and agrees to stay at or below a 90% Encumbrance Ratio,\" referring to the definition at A.3.2.2.7.2.1.1.1 in the Core Atlas's Risk Capital framework. A.6.1.1.1.2.6.1.2.1.3.2 adds that Spark \"automatically inherits, and is subject to, the base class of operational requirements related to Total Risk Capital management,\" with modifications propagating automatically.\n\nThe substance is a leverage ceiling expressed as a commitment rather than a contract term. Encumbrance measures how much of the risk capital supporting the Liquidity Layer is already committed; a 90% ceiling reserves a margin of unencumbered capacity to absorb losses.\n\nWhat gives the number force is its wiring into other mechanisms. The Freezer Multisig's stated trigger is \"Spark is not complying with rules regarding Risk Capital or Asset Liability Management\" \u2014 so exceeding 90% is not a reporting matter but a condition under which the Liquidity Layer can be frozen by key-holders. Separately, Sky Governance's power to re-enable SPK emissions applies \"where Spark is in violation of Risk Capital requirements,\" making dilution the recapitalization route.\n\nThe ratio is therefore the hinge between Spark's operating freedom and the ecosystem's enforcement powers: comply and run the Layer autonomously, breach and face a freeze and potential dilution of the Agent's own token holders.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The commitment binds continued operation of the Liquidity Layer to a Risk Capital metric defined in the Core Atlas, and breaching it is an explicit trigger for the Freezer Multisig.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2354ceae-7b13-42f9-b4e2-9f7cb4b906dd",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a0618d20-5a21-4c6b-9cc2-f35467a89626",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

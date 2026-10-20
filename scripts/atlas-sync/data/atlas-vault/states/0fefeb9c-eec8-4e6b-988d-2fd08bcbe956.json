@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-d88336af-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d88336af-bf92-4313-9525-2651e28f7158",
+      "targetTitle": "Every Sky Primitive Instance is tracked through the same fou"
+    },
+    {
+      "id": "lnk-126f1cc1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "126f1cc1-c2f0-4c9b-a1dd-f1234aaee083",
+      "targetTitle": "Keel pre-builds the full document scaffolding for Primitives"
+    },
+    {
+      "id": "lnk-7e48fba3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7e48fba3-0f47-4e6c-913a-568860780359",
+      "targetTitle": "Grove ships complete document scaffolding for Primitives it "
+    },
+    {
+      "id": "lnk-8504af98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8504af98-8629-4b6e-9b77-729515121b69",
+      "targetTitle": "Spark's Artifact treats unfinished parameters as a declared "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark pre-registers full document scaffolding for primitives it has not activated",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c5df6c30-1082-46b3-99fc-08eea5429fc8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ce9f4fa-2a9f-4d3f-b7e5-e960b0c76e2c",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fcbf196a-a65b-46af-bd22-27360c6cc72d",
+      "name": "governance-artifacts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three primitives in this chunk have their entire structure laid out \u2014 Primitive Hub Document, Active/Completed Instances Directories, In Progress Invocations Directory, Hub Data Repository with Failed Invocations and Suspended Instances subtrees \u2014 and all three read `Inactive` at their `Global Activation Status`: the Risk Capital Rental Primitive (A.6.1.1.1.2.6.2.1.1), the Asset Liability Management Rental Primitive (A.6.1.1.1.2.6.3.1.1), and the Core Governance Reward Primitive (A.6.1.1.1.2.7.1.1.1).\n\nEvery slot is empty. Not one instance exists under any of them.\n\nThis is deliberate: a single `Global Activation Status` field acts as the master switch for a primitive Spark *may* use, with all the machinery for using it already reviewed and in place. Turning a primitive on becomes a one-field change plus an Invocation, rather than a structural amendment to the Artifact negotiated under time pressure.\n\nIt also makes the Agent's option set legible. A reader can enumerate exactly which Sky Primitives Spark is entitled to invoke and which it has actually invoked, and see the difference \u2014 the Artifact documents latent capability, not just current activity. The price is that most of the Artifact's volume describes things that are not happening, which makes the document far harder to read than the operation it describes.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Risk Capital Rental, ALM Rental and Core Governance Reward all carry Global Activation Status Inactive yet have complete hub, directory and archive structures already built.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "722d79e0-5aa2-4d97-b3dd-22ca6c15bd90",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "79ab8130-a888-46b3-965a-b4f6d1efd9a5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

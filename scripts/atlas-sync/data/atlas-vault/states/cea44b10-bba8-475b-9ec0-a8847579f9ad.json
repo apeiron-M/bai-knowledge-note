@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Execution-quality bounds are supplied by the caller per call rather than derived on-chain",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2c0ee10c-c965-4b56-97cb-b0fff10ba480",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "152c20e2-b0b4-4335-b3d0-f27ff237a4a9",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "67a2adeb-6239-4825-82b8-3260d81630fc",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.2.3.1.1 has the Allocator pass \"the minimum number of shares to receive (`minSharesOut`)\" into `basin_deposit`, and A.2.2.10.1.1.1.2.5.2.3.2.1 has it pass \"the minimum conversion rate (`minConversionRate`)\" into `basin_withdraw`. The Facet then refuses to complete unless the outcome satisfies the value it was handed (\u20262.3.1.3, \u20262.3.2.3).\n\nThis splits responsibility in a specific way: the *judgment* about a fair price is off-chain and per transaction, while the *guarantee* that the trade honours that judgment is on-chain and unconditional. The contracts never consult an oracle to decide what a good execution is.\n\nThe upside is that no price feed is added to the trust surface, and the bound can be tightened trade by trade based on live market conditions. The exposure is symmetric: a relayer supplying a deliberately loose minimum passes the check while accepting a bad fill, so this guard alone does not defend against a malicious operator.\n\nThat is why it sits behind the rate limit rather than in place of one. A.2.2.10.1.1.1.2.1.6 supplies the complementary form \u2014 a `maxSlippage` that is \"a configurable parameter... expressed as a decimal and must be a non-zero value\" \u2014 where the bound is configuration rather than a call argument, and so is set by whoever controls configuration instead of by the caller.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "minSharesOut and minConversionRate are arguments to basin_deposit and basin_withdraw, so the relayer sets the acceptable price while the contract only enforces the bound it was given.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ade9dc86-dccb-4276-937f-63b522545b39",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:11.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6a40fc76-bcc7-45c7-b843-4b9003fcb3e9",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:11.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

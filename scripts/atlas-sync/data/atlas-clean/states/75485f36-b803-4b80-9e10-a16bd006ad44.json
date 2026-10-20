@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a7a8daf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a7a8daf-38b3-4c1d-97f2-ab4baebd2e91",
+      "targetTitle": "Voting power is frozen at each proposal's snapshot block so "
+    },
+    {
+      "id": "lnk-ffbab9eb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffbab9eb-3184-4b61-97e9-6cc71f89b261",
+      "targetTitle": "When a Delegate is removed or compromised their delegators' "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A resigning Delegate must finish voting on live proposals while a removed one loses power instantly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9c8d8d71-cace-44ea-95ed-ca0a2af1b43f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8154bc0-c9f0-45c6-b737-7c34802b7603",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b615a40-26b9-4a9e-8c16-79aa7c0cf4ea",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7f97411e-7f86-4eda-9053-8ef888d2ccf7",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.3.1.4.5.1 lets a Delegate resign by posting a signed message from their Delegate wallet on the Sky Forum, but \"the offboarding **takes effect immediately after all active proposals conclude**.\" A.6.1.1.2.3.1.4.5.3 lets the Grove Foundation \"**immediately** offboard\" a delegate for breaching disclosure or conflict-of-interest duties, malicious or negligent conduct, or failure to provide acceptable KYC.\n\nSo the same event \u2014 a Delegate ceasing to hold power \u2014 happens at two different speeds depending on who initiates it and why.\n\nThe delay on voluntary exit protects the proposals already in flight. Voting power was fixed at each live proposal's snapshot block, so a delegate who walks away mid-window strands their delegators' stake: it cannot be redelegated before the snapshot and it will not be voted. Holding the delegate to the end of the window ensures the power committed to them is actually exercised, and it removes resignation as a way to silently withhold a bloc of votes from a contested proposal.\n\nThe immediacy of emergency removal answers the opposite risk. Where the concern is a compromised, conflicted or malicious delegate, every remaining hour of voting power is exposure, and a wind-down period would be the harm rather than the remedy.\n\nSo the framework is not choosing between continuity and containment in general \u2014 it decides case by case using the *reason* for departure as the discriminator. A delegate leaving in good standing is treated as an asset whose remaining duties should complete; one removed for cause is treated as a live risk to be cut off. The design assumes the Foundation can tell the difference, which is why the emergency grounds are enumerated rather than open-ended.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:55:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:55:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Voluntary offboarding takes effect only after all active proposals conclude, whereas emergency removal by the Grove Foundation is immediate",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

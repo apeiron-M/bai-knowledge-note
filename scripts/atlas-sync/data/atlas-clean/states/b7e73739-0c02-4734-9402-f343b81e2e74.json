@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-bac3aa10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bac3aa10-15a5-4a04-a5b9-45ccbccb0c52",
+      "targetTitle": "Operational GovOps can halt the surplus distribution if it d"
+    },
+    {
+      "id": "lnk-ced92e3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ced92e3e-b173-4cb3-b0b2-71167ca73775",
+      "targetTitle": "Operational GovOps rejects a Tracking Methodology it cannot "
+    },
+    {
+      "id": "lnk-f5868fd7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f5868fd7-cc67-4c39-a03d-4bd461611688",
+      "targetTitle": "doc-d738b722"
+    },
+    {
+      "id": "lnk-fab8fdba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fab8fdba-e5ba-4f51-bd2c-8bd7c7de89e1",
+      "targetTitle": "Operational GovOps can block the rebate surplus distribution"
+    },
+    {
+      "id": "lnk-fcfde764-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fcfde764-3d06-4039-9dc4-22118c5f382d",
+      "targetTitle": "Every Instance must ship with a pre-authorised path to drain"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operational GovOps can refuse to execute a rebate distribution and must publish its reasoning, with deadlock escalating to Core GovOps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "492c8332-c7d2-4c7a-8426-33f3016259e0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fde0de3e-ec06-454c-8245-d23f4972d2ba",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38edada3-a243-412b-b59f-d2168b866033",
+      "name": "governance-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6dc2d72c-bb63-4ca1-8dec-e04ccd90cfa4",
+      "name": "dispute-resolution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.3.2.2.1.2.1.3 builds a three-stage control around Grove's self-calculated rebate: \"Operational GovOps reviews Grove's calculation of the rebate before executing a return of surplus to token holders. In the event of any issues, Operational GovOps cannot execute the distribution. If Operational GovOps does not execute the distribution, Operational GovOps must post an explanation on the Sky Forum under the 'Grove Prime' category and work with Grove to resolve the disagreement. If Operational GovOps and Grove cannot resolve the disagreement, it must be escalated to Core GovOps.\"\n\nThe wording is unusually strong: \"cannot execute\" is a **prohibition, not a discretion**. Where an issue exists, GovOps is barred from paying out \u2014 it has no authority to wave through a calculation it doubts, which removes the possibility of a quiet accommodation between the Agent and its own operator.\n\nThe design then closes the two obvious failure modes of a blocking veto. A veto could be used silently \u2014 so explanation is mandatory and public, in the same forum category used for governance proposals. And a veto could produce indefinite stalemate \u2014 so unresolved disagreement \"must be escalated to Core GovOps,\" a Sky-level function outside the Grove relationship.\n\nThis is the Atlas's general shape for operational disputes: **self-calculation, independent blocking review, forced publicity, named escalation**. The party with the information does the arithmetic; the party with no stake in the answer holds the release; the ecosystem gets the record either way.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because Grove self-calculates the rebate it deducts, the check is a blocking review with a forced public explanation and a named escalation path \u2014 not an advisory sign-off.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

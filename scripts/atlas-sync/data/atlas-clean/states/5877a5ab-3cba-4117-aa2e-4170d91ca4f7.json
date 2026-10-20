@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-63be65ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "63be65ff-3c9d-4c38-b56e-956019624c6c",
+      "targetTitle": "The Artifact governs off-chain operational parameters that n"
+    },
+    {
+      "id": "lnk-900525e8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "900525e8-3497-4727-a293-cfc0afaa8c21",
+      "targetTitle": "The Artifact governs a class of off-chain parameters that no"
+    },
+    {
+      "id": "lnk-b8cd8c44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b8cd8c44-9d0c-4d99-8399-7e656e157d54",
+      "targetTitle": "The Artifact specifies steady-state operations in call-level"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Artifact governs off-chain operator settings as first-class parameters, not just on-chain state",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "24bb0b6c-d267-4e9e-9f13-b49e4354714c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a3da6c08-8242-4bc7-a395-6b766d4817bb",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "798a466d-ef6a-4d4d-853b-a489b5d0ca64",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65b247a4-5b47-47cf-9af6-9ee8c00c2f89",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.1.1.2 carves out a category the rest of the section does not: Off-chain Operational Parameters, described as \"protocol settings managed outside of smart contracts (off-chain), used by operators and off-chain systems to guide the functioning of the Keel Liquidity Layer.\" It holds `MAINNET_MIN_OPERATION_SIZE`, `DEBT_CEILING_BUFFER` and `SOLANA_MIN_OPERATION_SIZE`.\n\nThe move is to refuse the usual boundary. A settings value that only a relayer's tooling reads is normally left to operational discretion; here it is placed in `[Core]` Artifact text, which makes changing it a governance act subject to the same Root Edit process as any other provision. Operator behaviour that contracts cannot enforce is at least made *auditable* \u2014 a relayer transacting below the minimum operation size is violating the Artifact, even though nothing on-chain rejects the transaction.\n\nThe parameters themselves are instructive about what belongs in this class. A minimum operation size is an anti-noise and anti-gas-waste floor; a debt ceiling buffer keeps the vault from being driven to its hard limit, where operations would begin failing. Both are prudential margins that exist to keep the system away from its enforced edges rather than at them.\n\nAll three currently read \"this parameter will be specified in a future iteration of the Keel Artifact,\" so the category is established while the discipline it encodes is not yet in force.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Minimum operation size and debt ceiling buffer are defined as governed parameters 'managed outside of smart contracts' \u2014 and in Keel's case all of them are still unspecified.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

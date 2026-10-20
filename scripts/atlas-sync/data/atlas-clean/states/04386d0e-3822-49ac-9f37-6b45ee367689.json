@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-da0ae689-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da0ae689-b3e5-4ece-a22c-e404c341bd71",
+      "targetTitle": "Rate limits accrue continuously and are computed at call tim"
+    },
+    {
+      "id": "lnk-e84ef90f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e84ef90f-7397-44e2-8a10-8120a6d24463",
+      "targetTitle": "Unlimited is a reserved sentinel value that short-circuits a"
+    },
+    {
+      "id": "lnk-2b4dd9cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b4dd9cb-649a-43c3-ac5f-79b9b5a62150",
+      "targetTitle": "A rate limit's available capacity is min(slope x elapsed tim"
+    },
+    {
+      "id": "lnk-30154959-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "30154959-abc4-4fed-96aa-89d34aa0abc5",
+      "targetTitle": "Retuning a rate limit refills it: the two-argument setter gr"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are linearly recharging buckets capped at a maximum, not per-window quotas",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f41d20d1-5bf7-4eb2-8845-483d78b9dfd0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc843d19-8a0c-47e9-ab6c-334f5da68f79",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad77c506-6352-4bfe-9b10-2f88db96f1ce",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.3.1 gives the query implementation, and the formula defines the whole model: `getCurrentRateLimit` returns `_min(d.slope * (block.timestamp - d.lastUpdated) + d.lastAmount, d.maxAmount)`.\n\nThis is a token bucket, not a fixed window. Available capacity refills continuously at `slope` per second from whatever remained at the last update, and is clamped at `maxAmount`. Two parameters therefore express two independent risk statements: `maxAmount` bounds the largest single burst, and `slope` bounds the sustained rate over any longer horizon. A fixed-window quota cannot separate these, and permits a double-size burst across a window boundary.\n\nTwo sentinel values carry meaning. `maxAmount == type(uint256).max` short-circuits every path as unlimited, both in the query and in the trigger functions. `maxAmount == 0` is not a zero allowance but a *disabled key*: `triggerRateLimitDecrease` in A.2.2.10.1.1.1.2.5.3.4 opens with `require(maxAmount > 0, \"RateLimits/zero-maxAmount\")`, so an unconfigured limit blocks the operation entirely rather than permitting nothing-sized calls.\n\nThat distinction is the practical safety property: forgetting to configure a limit fails closed. It also explains the hedge attached elsewhere to capacity-restoring behaviour \u2014 restoration applies only \"where that rate limit is configured,\" because an unconfigured key has no bucket to refill.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "getCurrentRateLimit returns min(slope x elapsed time + lastAmount, maxAmount), so capacity regenerates continuously; maxAmount of zero disables a key and uint256 max marks it unlimited.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,132 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce28db5b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce28db5b-b20d-4746-b20b-a8138d872bab",
+      "targetTitle": "doc-76d2b8c2"
+    },
+    {
+      "id": "lnk-e07b186b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e07b186b-4e5d-4e76-b578-e38f2453ac2e",
+      "targetTitle": "The monthly reward calculation is time-triggered per Active "
+    },
+    {
+      "id": "lnk-d4e66123-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4e66123-e9a7-4e61-956b-8b0d005bc0a5",
+      "targetTitle": "The stUSDS Distribution Reward makes borrowers fund the refe"
+    },
+    {
+      "id": "lnk-87b19457-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87b19457-fb13-40a0-9814-f77ac954a05f",
+      "targetTitle": "Bug bounty rewards above one million USD are paid in monthly"
+    },
+    {
+      "id": "lnk-9adf06e5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9adf06e5-66ed-49c8-895e-5813f56b6c1e",
+      "targetTitle": "The 2025 Distribution Reward bonus excludes the Prime's own "
+    },
+    {
+      "id": "lnk-9cba4aa3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9cba4aa3-8b7e-4bcb-9274-c12b4ac462ef",
+      "targetTitle": "srUSDS makes losses visible as a falling conversion rate rat"
+    },
+    {
+      "id": "lnk-a0701f43-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0701f43-55aa-49bb-b94d-17be1ee60ef4",
+      "targetTitle": "doc-6b67dfc5"
+    },
+    {
+      "id": "lnk-b3756398-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b3756398-7fe3-4fa5-9345-f3d4b39d2611",
+      "targetTitle": "Continuous accrual is computed piecewise over sub-periods in"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Distribution Reward pays on USDS balances held, not on transactions or flows",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ae6c1924-3a79-4329-b3eb-27d2e5988677",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d024bb9b-a667-4191-8c31-339ab513980b",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a82e67d8-2055-4269-b649-eb03f3579a46",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.1.1 states the purpose: to incentivize Prime Agents and third parties to drive USDS adoption \"by providing a financial reward to these actors for **all USDS and sUSDS balances attributable to them**.\" A.2.2.9.1.2.1.2 sets the rate at 0.2% annualized on those balances, and A.2.2.9.1.2.1.3.2 computes each monthly payment as the average balance over the month times the annual rate divided by twelve.\n\nThe choice of base \u2014 **stock, not flow** \u2014 determines the behaviour it buys. A per-transaction or per-signup reward pays for acquisition events and is maximized by churn: bring a user in, get paid, repeat. Paying on average balance means an Integrator earns only while the deposit actually sits there, so retention and genuine usage are what accrue value.\n\nUsing the monthly *average* rather than a snapshot closes the obvious gaming route. A month-end measurement would reward temporary balance inflation on a single day; averaging makes the reward proportional to balance-time, which is the quantity Sky actually cares about.\n\nThe design also aligns the Integrator's incentive with Sky's own economics. USDS balances are what generate protocol revenue, so paying a fixed share of balance-time is a revenue share rather than a marketing spend \u2014 the reward scales with exactly the thing it is funded by. The rate is a parameter; the base is the design.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "0.2% annualized on average monthly USDS and sUSDS balances attributable to a Reward Code, paid monthly \u2014 rewarding retained deposits rather than volume or acquisition events.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7182e69e-c7cc-4fb3-9067-deba5e6bbe90",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "da857ecd-a4af-4d61-bf5d-d1d9227ff829",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

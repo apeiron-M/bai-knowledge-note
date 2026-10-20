@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-5890054a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5890054a-0491-4755-a1eb-ddbb0a9f41a8",
+      "targetTitle": "Rebate eligibility is tied to custody: all other-Agent token"
+    },
+    {
+      "id": "lnk-8a83972b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a83972b-65a0-4d7d-8046-f58957a56f75",
+      "targetTitle": "doc-f260e93f"
+    },
+    {
+      "id": "lnk-d507aaff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d507aaff-ccd0-4ca4-87c8-dbe41b289341",
+      "targetTitle": "Spark nets its Upkeep Rebate against the fees it owes rather"
+    },
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Launch Agent 7 self-calculates its rebate and deducts it at payment time rather than claiming it back",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5e93392e-4703-4bec-a5fe-e08fe588764e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45754a8f-685e-446b-8950-8c2bcb6fc38e",
+      "name": "upkeep-rebate",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ef4eea4c-73a1-41cd-82c4-2edc9d3bdd26",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.8.2.3.2.2.1.2.1.2 defines the mechanics tersely: \"When paying Ecosystem Upkeep fees, Launch Agent 7 deducts the rebate from the fees it pays.\"\n\nNetting rather than reimbursing has real consequences. No USDS needs to be sourced and returned, no separate rebate payment schedule exists, and the ecosystem never holds funds it will owe back \u2014 the fee and its offset settle in a single movement. It also means the rebate's timing is bound to the fee's timing, so an Agent cannot draw the benefit early.\n\nThe governance consequence is more interesting: because the Agent performs the deduction, the Agent is the party that computes the number. A.6.1.1.8.2.3.2.2.1.2.1.3 confirms this by making the next step a review of \"Launch Agent 7's calculation of the rebate.\" Self-assessment is the default, with external review as the check \u2014 the same structure as a tax return rather than an invoice.\n\nThat places weight on the custody rule that precedes it: self-assessment is only tolerable because the inputs to the calculation are visible at a fixed address, so the review can be substantive rather than a rubber stamp.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The rebate never moves as a separate transfer: it is netted against the Ecosystem Upkeep Fee the Agent owes, so the Agent both computes and applies its own reduction.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4a9e3368-95c6-4460-ab38-ab23e71da14b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d9ea2d6c-cc9e-49f7-bdea-194317a62770",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-77916668-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77916668-0269-4c7f-a25e-917677d36d57",
+      "targetTitle": "The Root Edit Primitive stays permanently Active despite hav"
+    },
+    {
+      "id": "lnk-b08925e2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b08925e2-c3d2-4d6f-99fd-feb19c45f1f4",
+      "targetTitle": "'Deployed only once' seals further Invocations while the sin"
+    },
+    {
+      "id": "lnk-682ccea7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "682ccea7-d389-4c67-a2ea-3c98814801a8",
+      "targetTitle": "A single-deployment Primitive Instance can encode a permanen"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Root Edit Primitive is deployed only once yet stays Active, making its single Instance a standing governance channel",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ac945ad8-b118-4cd1-a5ff-f6bf9dd6b42d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d717850-1bec-4b97-8034-4f654b66014a",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e88ef0e4-9177-4c2c-9caf-37f2482b31d0",
+      "name": "root-edit",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.2.2.1.4 and A.6.1.1.7.2.2.2.4 both state that \"because the Root Edit Primitive is deployed only once, no further Instances of the Primitive can be Invoked\" \u2014 the same closing language used for the Genesis Primitives. Yet its Global Activation Status (A.6.1.1.7.2.2.2.1.1) is `Active`, not `Completed`, and its single Instance sits in the Active Instances directory.\n\nThe contrast disambiguates two things the Hub structure otherwise conflates. \"One Instance only\" is a statement about how many configurations of the Primitive can exist; `Active` versus `Completed` is a statement about whether that configuration is still doing work. Genesis Primitives are both single-Instance and finished. Root Edit is single-Instance and permanent.\n\nThis is why the Root Edit Instance is the only one in the Osero Artifact whose Parameters document defers entirely to process: A.6.1.1.7.2.2.2.2.1.1 states that \"the parameters of the Root Edit Primitive are fully specified by the Operational Process Definition.\" A standing channel has no configuration values to record \u2014 its content *is* its protocol.\n\nThe reading rule that follows is practical: to know whether a Primitive is live machinery or a completed historical act, read the Global Activation Status, not the Invocation prohibition.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Unlike Genesis Primitives that close after completing, this one-shot deployment remains permanently `Active` \u2014 Instance count and process usage are separate dimensions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

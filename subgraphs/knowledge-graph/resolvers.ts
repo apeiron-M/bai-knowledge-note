@@ -1,18 +1,19 @@
-import type { ISubgraph } from "@powerhousedao/reactor-api";
-import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
+import type { BaseSubgraph } from "@powerhousedao/reactor-api";
+import { GraphQLError } from "graphql";
+import { getDb, getQuery, getWritableDb, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
+import { loadPlacedSources, loadSourceTimeline, sourceListRow, sourceRowStore } from "./helpers/source-timeline.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import {
   searchSimilar,
   getEmbedding,
-  upsertEmbedding,
-  sha256Hex,
 } from "../../processors/graph-indexer/embedding-store.js";
-import { embedQuery } from "./helpers/query-embedder.js";
+import { isCurrentNode } from "../../processors/graph-indexer/query.js";
+import { searchVault, searchWithEmbedding } from "./helpers/search.js";
 import {
-  RRF_K,
-  normalizeFusedScore,
-} from "../../processors/graph-indexer/query.js";
+  buildNeighbourhood,
+  type Neighbourhood,
+} from "./helpers/neighbourhood.js";
 
 type Resolver = (
   parent: unknown,
@@ -22,22 +23,134 @@ type Resolver = (
 ) => unknown;
 
 /**
- * Wraps a record of resolvers so that any `driveId` argument is
- * resolved to its canonical UUID before the resolver runs. This
- * fixes a class of "relation does not exist" errors when GraphQL
- * clients pass a slug — the GraphIndexerProcessor's namespace is
- * keyed by the drive's canonical UUID and a slug-driven query
- * looks up a non-existent SQL namespace.
+ * The context shape `assertCanRead` expects, derived rather than imported so
+ * this file does not depend on the exported name of reactor-api's context type.
  */
-function withCanonicalDriveIds<T extends Record<string, Resolver>>(
-  subgraph: ISubgraph,
+type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
+
+/**
+ * Resolvers that must not be served on a bare READ grant.
+ *
+ * One mutation because it writes: `knowledgeGraphReindex` DELETEs and rebuilds
+ * the projection (and CREATEs its tables when a namespace has none).
+ *
+ * Four queries because of what they expose rather than what they change:
+ * `knowledgeGraphDebug` serves the raw projection tables, and the three
+ * activity/history resolvers serve `input_json` diffs together with
+ * `signer_address` — real contributor Ethereum addresses. That is an audit log
+ * and an address book, not vault content.
+ *
+ * One query because of who it is FOR: `knowledgeGraphBridges` exposes nothing
+ * a reader could not already fetch — it returns nodes from the same graph —
+ * but it answers "which notes are load-bearing, and what would archiving one
+ * strand". That is a curation question, actionable only with write access, so
+ * it sits with the curation tools rather than with discovery. It is also the
+ * one query that reads the whole graph, which makes the narrower grant worth
+ * having on its own.
+ */
+export const PRIVILEGED_RESOLVERS = new Set([
+  "knowledgeGraphReindex",
+  "knowledgeGraphDebug",
+  "knowledgeGraphHistory",
+  "knowledgeGraphActivity",
+  "knowledgeGraphActivityByType",
+  "knowledgeGraphBridges",
+]);
+
+/**
+ * Drive-scoped guards for every resolver: authorize the caller against the
+ * drive, then resolve the drive's `driveId` argument to its canonical UUID.
+ *
+ * **Why the authorization lives here and not in the reactor.** This subgraph
+ * reads the graph-indexer's own relational tables, not the reactor, so it
+ * inherits none of the reactor's read gate: with `DEFAULT_PROTECTION=true` and
+ * every document protected, an anonymous `knowledgeGraphRecent` still returned
+ * full note bodies (measured: 12,696 characters) while the same content was
+ * correctly refused through `document()`. A processor is inside the trust
+ * boundary and sees everything; whatever it re-exposes is its own surface to
+ * gate. This is that gate, and it sits in the one wrapper every resolver
+ * already passes through so no resolver can be added ungated by omission.
+ *
+ * The check deliberately does no policy branching. `assertCanRead` /
+ * `assertCanWrite` already answer correctly for each configured policy — open
+ * under `OPEN`, admins-only under `ADMIN_ONLY`, per-drive grants under
+ * `DOCUMENT_PERMISSIONS` — and a grant on the drive inherits to every document
+ * beneath it. Testing `isSupremeAdmin` here instead would be wrong, because
+ * under `OPEN` it answers true for everyone, anonymous callers included.
+ *
+ * A slug is authorized identically to a UUID: `assertCanRead` resolves the
+ * identifier itself, and it runs before the canonical rewrite below, so the
+ * slug-aliasing path cannot skip the check.
+ */
+/**
+ * Per-request memo of authorization checks, keyed on the GraphQL context.
+ *
+ * `assertCanRead` walks the ancestor / protection / grant chain on every call,
+ * and a multi-alias query repeats it once per alias against the same drive.
+ * The context object is per-request, so this can never leak a decision across
+ * identities or requests — which is why it is a WeakMap on ctx rather than a
+ * process-level cache.
+ *
+ * The *promise* is memoized, not its result: concurrent aliases then share one
+ * in-flight check, and a refusal is shared too, so no alias can slip past a
+ * check that another alias already failed.
+ */
+const authorizedByCtx = new WeakMap<object, Map<string, Promise<unknown>>>();
+
+/** Exported for tests; the guard is the only production caller. */
+export async function assertOncePerRequest(
+  subgraph: BaseSubgraph,
+  ctx: unknown,
+  driveId: string,
+  privileged: boolean,
+): Promise<unknown> {
+  const check = (): Promise<unknown> =>
+    privileged
+      ? subgraph.assertCanWrite(driveId, ctx as SubgraphContext)
+      : subgraph.assertCanRead(driveId, ctx as SubgraphContext);
+
+  if (typeof ctx !== "object" || ctx === null) return check();
+
+  let perCtx = authorizedByCtx.get(ctx);
+  if (!perCtx) {
+    perCtx = new Map();
+    authorizedByCtx.set(ctx, perCtx);
+  }
+  const key = `${privileged ? "write" : "read"}:${driveId}`;
+  const cached = perCtx.get(key);
+  if (cached) return cached;
+  const pending = check();
+  perCtx.set(key, pending);
+  return pending;
+}
+
+function withDriveGuards<T extends Record<string, Resolver>>(
+  subgraph: BaseSubgraph,
   resolvers: T,
 ): T {
   const out: Record<string, Resolver> = {};
   for (const [name, fn] of Object.entries(resolvers)) {
+    const privileged = PRIVILEGED_RESOLVERS.has(name);
     out[name] = async (parent, args, ctx, info) => {
-      if (args && typeof args.driveId === "string") {
-        const canonical = await resolveCanonicalDriveId(subgraph, args.driveId);
+      const requested =
+        typeof args.driveId === "string" ? args.driveId : undefined;
+
+      if (requested === undefined) {
+        // Nothing to scope the check to. A privileged resolver fails closed
+        // rather than running unguarded.
+        if (privileged) {
+          // reactor-api's own ForbiddenError is not in its public type
+          // surface, so mirror the wire shape clients already handle.
+          throw new GraphQLError(`Forbidden: ${name} requires write access`, {
+            extensions: { code: "FORBIDDEN" },
+          });
+        }
+      } else {
+        await assertOncePerRequest(subgraph, ctx, requested, privileged);
+      }
+
+      if (requested !== undefined) {
+        const canonical = await resolveCanonicalDriveId(subgraph, requested);
         args = { ...args, driveId: canonical };
       }
       return fn(parent, args, ctx, info);
@@ -46,64 +159,54 @@ function withCanonicalDriveIds<T extends Record<string, Resolver>>(
   return out as T;
 }
 
-/**
- * Shared body of knowledgeGraphSearchByEmbedding (client-supplied vector) and
- * knowledgeGraphSemanticSearch (server-embedded query).
- *
- * SEMANTIC ranks purely by cosine similarity. HYBRID fuses semantic + keyword
- * via RRF in graphQuery.hybridSearch, which ranks well but produces ORDINAL
- * weights topping out at `2 / RRF_K` (~0.033). Those must not reach a UI as a
- * similarity: rendered as a percentage they cap at 3% regardless of how good
- * the match is. So `similarity` carries the rescaled 0..1 relevance while
- * `score` keeps the raw fused weight for callers doing their own maths.
- * Ordering is untouched — the rescale is monotonic.
- */
-async function searchWithEmbedding(
-  subgraph: ISubgraph,
-  driveId: string,
-  query: string,
-  embedding: number[],
-  mode: "SEMANTIC" | "HYBRID",
-  limit: number,
-) {
-  const db = getDb(subgraph, driveId);
-  const semanticHits = await searchSimilar(db, embedding, limit * 2);
-  const graphQuery = getQuery(subgraph, driveId);
+/** Neighbours computed per search, then sliced per hit. Also the arg ceiling. */
+const NEIGHBOUR_POOL = 25;
+/** What a caller gets from `related` without asking for a size. */
+const DEFAULT_RELATED_PER_HIT = 5;
 
-  if (mode === "SEMANTIC") {
-    const out = [];
-    for (const hit of semanticHits.slice(0, limit)) {
-      const node = await graphQuery.nodeByDocumentId(hit.documentId);
-      if (node) {
-        out.push({
-          node: { ...node, _driveId: driveId },
-          similarity: hit.similarity,
-          score: hit.similarity,
-          matchedBy: ["semantic"],
-        });
-      }
-    }
-    return out;
-  }
-
-  const hybridResults = await graphQuery.hybridSearch(
-    query,
-    semanticHits,
-    limit,
-  );
-  return hybridResults.map((r) => ({
-    node: { ...r.node, _driveId: driveId },
-    // Rescaled against the number of legs that actually produced this hit's
-    // ceiling: a note found by BOTH signals can reach 1.0, while a note only
-    // one leg could ever surface is judged against a single leg's maximum.
-    similarity: normalizeFusedScore(r.score, 2),
-    score: r.score,
-    matchedBy: r.matchedBy,
-  }));
-}
-
-export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
+export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> => {
   return {
+    SemanticResult: {
+      /**
+       * Per-hit neighbourhood. The parent resolver attaches a memoized loader
+       * rather than the data, so selecting `related` on twenty hits still
+       * costs the two queries it takes to read the whole neighbourhood once —
+       * and selecting nothing costs none.
+       */
+      related: async (
+        parent: {
+          node?: { documentId?: string };
+          _neighbourhood?: () => Promise<Neighbourhood>;
+        },
+        args: { limit?: number | null },
+      ) => {
+        const documentId = parent.node?.documentId;
+        if (!parent._neighbourhood || !documentId) return [];
+        const limit = Math.min(
+          NEIGHBOUR_POOL,
+          Math.max(0, args.limit ?? DEFAULT_RELATED_PER_HIT),
+        );
+        if (limit === 0) return [];
+        const graph = await parent._neighbourhood();
+        return (graph.byHit[documentId] ?? []).slice(0, limit);
+      },
+
+      /**
+       * Edges to other hits in the same result set. Same memoized loader as
+       * `related`, so selecting both is still the two queries the whole
+       * search costs.
+       */
+      linkedHits: async (parent: {
+        node?: { documentId?: string };
+        _neighbourhood?: () => Promise<Neighbourhood>;
+      }) => {
+        const documentId = parent.node?.documentId;
+        if (!parent._neighbourhood || !documentId) return [];
+        const graph = await parent._neighbourhood();
+        return graph.linksByHit[documentId] ?? [];
+      },
+    },
+
     KnowledgeGraphNode: {
       topics: async (parent: {
         documentId: string;
@@ -117,36 +220,27 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         }
         return [];
       },
+      // Degree fields are resolved per node on demand (one query each) so
+      // the common list queries stay one round-trip; select them only when
+      // you need them, as with `topics`.
+      inDegree: async (parent: { documentId: string; _driveId?: string }) => {
+        if (!parent._driveId) return 0;
+        const query = getQuery(subgraph, parent._driveId);
+        return query.knowledgeDegree(parent.documentId, "in");
+      },
+      outDegree: async (parent: { documentId: string; _driveId?: string }) => {
+        if (!parent._driveId) return 0;
+        const query = getQuery(subgraph, parent._driveId);
+        return query.knowledgeDegree(parent.documentId, "out");
+      },
     },
 
-    Mutation: withCanonicalDriveIds(subgraph, {
+    Mutation: withDriveGuards(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
-
-      knowledgeGraphUpsertEmbedding: (async (
-        _: unknown,
-        args: { driveId: string; documentId: string; embedding: number[] },
-      ) => {
-        // Legacy client-push path (headless backfill script). The processor
-        // self-embeds now, so this is a manual override. The content hash is
-        // computed from the indexed node text so the processor's hash gate
-        // agrees with pushed vectors instead of re-embedding them on the
-        // next unrelated operation.
-        const db = getDb(subgraph, args.driveId);
-        const graphQuery = getQuery(subgraph, args.driveId);
-        const node = await graphQuery.nodeByDocumentId(args.documentId);
-        const text = node
-          ? [node.title, node.description, node.content?.slice(0, 1500)]
-              .filter((x): x is string => !!x && x.trim().length > 0)
-              .join(" ")
-          : "";
-        const hash = text ? await sha256Hex(text) : "client-pushed";
-        await upsertEmbedding(db, args.documentId, args.embedding, hash);
-        return { documentId: args.documentId, ok: true };
-      }) as unknown as Resolver,
     }),
 
-    Query: withCanonicalDriveIds(subgraph, {
+    Query: withDriveGuards(subgraph, {
       // --- Core graph queries ---
       //
       // NOTE: `ensureGraphDoc` is intentionally NOT called from read
@@ -167,6 +261,18 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
       knowledgeGraphEdges: async (_: unknown, args: { driveId: string }) => {
         const query = getQuery(subgraph, args.driveId);
         return query.allEdges();
+      },
+
+      knowledgeGraphSourceTimeline: async (_: unknown, args: { driveId: string }) =>
+        loadSourceTimeline(subgraph.reactorClient, getQuery(subgraph, args.driveId), args.driveId, {
+          store: sourceRowStore(() => getWritableDb(subgraph, args.driveId)),
+        }),
+
+      knowledgeGraphSources: async (_: unknown, args: { driveId: string }) => {
+        const { sources } = await loadPlacedSources(subgraph.reactorClient, getQuery(subgraph, args.driveId), args.driveId, {
+          store: sourceRowStore(() => getWritableDb(subgraph, args.driveId)),
+        });
+        return sources.map(sourceListRow);
       },
 
       knowledgeGraphStats: async (_: unknown, args: { driveId: string }) => {
@@ -213,6 +319,15 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
+      knowledgeGraphNodesByType: async (
+        _: unknown,
+        args: { driveId: string; documentType: string },
+      ) => {
+        const query = getQuery(subgraph, args.driveId);
+        const nodes = await query.nodesByDocumentType(args.documentType);
+        return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
+      },
+
       knowledgeGraphBacklinks: async (
         _: unknown,
         args: { driveId: string; documentId: string },
@@ -230,10 +345,12 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphSearch: async (
         _: unknown,
-        args: { driveId: string; query: string; limit?: number },
+        args: { driveId: string; query: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
-        const nodes = await query.searchNodes(args.query, args.limit ?? 50);
+        const nodes = await query.searchNodes(args.query, args.limit ?? 50, {
+          includeArchived: args.includeArchived ?? false,
+        });
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
@@ -273,21 +390,24 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphByTopic: async (
         _: unknown,
-        args: { driveId: string; topic: string },
+        args: { driveId: string; topic: string; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
-        const nodes = await query.nodesByTopic(args.topic);
+        const nodes = await query.nodesByTopic(args.topic, {
+          includeArchived: args.includeArchived ?? false,
+        });
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
       knowledgeGraphRelatedByTopic: async (
         _: unknown,
-        args: { driveId: string; documentId: string; limit?: number },
+        args: { driveId: string; documentId: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
         const results = await query.relatedByTopic(
           args.documentId,
           args.limit ?? 10,
+          { includeArchived: args.includeArchived ?? false },
         );
         return results.map((r) => ({
           ...r,
@@ -297,10 +417,12 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphFullSearch: async (
         _: unknown,
-        args: { driveId: string; query: string; limit?: number },
+        args: { driveId: string; query: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
-        const nodes = await query.fullSearch(args.query, args.limit ?? 50);
+        const nodes = await query.fullSearch(args.query, args.limit ?? 50, {
+          includeArchived: args.includeArchived ?? false,
+        });
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
@@ -340,20 +462,30 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphSimilar: async (
         _: unknown,
-        args: { driveId: string; documentId: string; limit?: number },
+        args: { driveId: string; documentId: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const db = getDb(subgraph, args.driveId);
         const embedding = await getEmbedding(db, args.documentId);
         if (!embedding) return [];
 
-        const results = await searchSimilar(db, embedding, (args.limit ?? 10) + 1);
+        // Over-fetch: the source note itself and any archived neighbours
+        // come back from the vector store and are filtered out here.
+        const results = await searchSimilar(db, embedding, (args.limit ?? 10) * 2 + 1);
         const graphQuery = getQuery(subgraph, args.driveId);
 
+        // One query for every candidate, not one per candidate. Ranking is
+        // unchanged: `results` is already ordered by similarity and the loop
+        // below still walks it in that order.
+        const nodes = await graphQuery.nodesByDocumentIds(
+          results
+            .map((result) => result.documentId)
+            .filter((documentId) => documentId !== args.documentId),
+        );
         const semanticResults = [];
         for (const result of results) {
           if (result.documentId === args.documentId) continue;
-          const node = await graphQuery.nodeByDocumentId(result.documentId);
-          if (node) {
+          const node = nodes.get(result.documentId);
+          if (node && (args.includeArchived || isCurrentNode(node))) {
             semanticResults.push({
               node: { ...node, _driveId: args.driveId },
               similarity: result.similarity,
@@ -371,8 +503,9 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           driveId: string;
           query: string;
           embedding: number[];
-          mode: "SEMANTIC" | "HYBRID";
+          mode: "SEMANTIC";
           limit?: number;
+          includeArchived?: boolean | null;
         },
       ) => {
         return searchWithEmbedding(
@@ -382,6 +515,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           args.embedding,
           args.mode,
           args.limit ?? 20,
+          args.includeArchived ?? false,
         );
       },
 
@@ -390,47 +524,41 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         args: {
           driveId: string;
           query: string;
-          mode?: "SEMANTIC" | "HYBRID" | null;
+          mode?: "SEMANTIC" | null;
           limit?: number;
+          includeArchived?: boolean | null;
         },
       ) => {
-        // The query is embedded HERE so clients never load the model. Any
-        // failure on the embedding path — model unavailable, embedding store
-        // missing (e.g. a deployment without the pgvector bundle), no vectors
-        // pushed yet — degrades to keyword fullSearch instead of erroring.
-        // A search box must never be the thing that breaks.
         const limit = args.limit ?? 20;
-        const embedding = await embedQuery(args.query);
-        if (embedding) {
-          try {
-            return await searchWithEmbedding(
-              subgraph,
-              args.driveId,
-              args.query,
-              embedding,
-              args.mode ?? "HYBRID",
-              limit,
-            );
-          } catch (err) {
-            console.warn(
-              `[knowledgeGraph] embedding store unavailable, keyword fallback: ${err instanceof Error ? err.message : String(err)}`,
-            );
-          }
-        }
-        const graphQuery = getQuery(subgraph, args.driveId);
-        const keywordHits = await graphQuery.fullSearch(args.query, limit);
-        // Only one leg ran, so score these on the same rank-decay curve RRF
-        // uses and rescale against a SINGLE leg's ceiling. The old flat
-        // `similarity: 0` rendered every perfectly good keyword hit as "0%".
-        return keywordHits.map((node, rank) => {
-          const score = 1 / (RRF_K + rank);
-          return {
-            node: { ...node, _driveId: args.driveId },
-            similarity: normalizeFusedScore(score, 1),
-            score,
-            matchedBy: ["keyword"],
-          };
-        });
+        const hits = await searchVault(
+          subgraph,
+          args.driveId,
+          args.query,
+          args.mode ?? "SEMANTIC",
+          limit,
+          args.includeArchived ?? false,
+        );
+        // Built at most once per search, and only if `related` is selected.
+        let pending: Promise<Neighbourhood> | undefined;
+        const loadNeighbourhood = (): Promise<Neighbourhood> => {
+          pending ??= buildNeighbourhood(
+            getQuery(subgraph, args.driveId),
+            hits.map((hit) => ({
+              documentId: String(hit.node.documentId),
+              similarity: hit.similarity,
+              node: hit.node,
+            })),
+            {
+              limit: NEIGHBOUR_POOL,
+              includeArchived: args.includeArchived ?? false,
+            },
+          );
+          return pending;
+        };
+        return hits.map((hit) => ({
+          ...hit,
+          _neighbourhood: loadNeighbourhood,
+        }));
       },
 
       knowledgeGraphMissingEmbeddings: async (
@@ -506,6 +634,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
               createdAt: r.created_at,
               topics: [],
               updatedAt: r.updated_at,
+              documentType: r.document_type,
               _driveId: args.driveId,
             })),
             rawEdges: rawEdges.map((r) => ({

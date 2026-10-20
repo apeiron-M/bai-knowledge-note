@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-642ea8fb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "642ea8fb-a6eb-4fb8-96e6-5a9ae7d07014",
+      "targetTitle": "sUSDe cooldown has two entry points because a share-denomina"
+    },
+    {
+      "id": "lnk-acbe95d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "acbe95d1-dcdb-4a42-a90b-3f4926bd601f",
+      "targetTitle": "doc-c0f98c77"
+    },
+    {
+      "id": "lnk-7644760f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7644760f-8922-4c1d-b038-d8bd43aed8b5",
+      "targetTitle": "doc-43367d7f"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas gives conflicting units for the sUSDe cooldownShares return value that a rate limit is charged against",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cd2d1af5-9064-4851-9b04-c11a16c1796e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d56bc38-c7e8-4fa5-be1f-e16d35cc997a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c3221a2e-37ff-4a03-92ca-a4561b6ca84c",
+      "name": "ethena",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e2a69b50-fe41-4258-b539-700858d0fc23",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two sections document the same three lines of code and disagree about what they mean.\n\nA.6.1.1.2.2.6.1.2.2.1.2.1.2.10.6.2 says the call is made \"and the returned `cooldownAmount` of **USDe assets** is decoded from the result\", with A...2.1.2.10.6.3 adding that \"the resulting `cooldownAmount` of USDe is only known after the cooldown is initiated\" and is used to decrease `LIMIT_SUSDE_COOLDOWN`.\n\nA.6.1.1.2.2.6.1.3.1.4.2.3.2.2.1 says the operator must decode the result \"into a `uint256` value, representing the amount of **shares** that were actually cooled down (`cooldownAmount`)\", and A...4.2.3.2.3 then decreases the same `LIMIT_SUSDE_COOLDOWN` by it.\n\nThis is not a cosmetic wording difference. sUSDe is a yield-bearing share, so shares and assets diverge and the gap widens over time. `cooldownAssetsSUSDe` unambiguously debits the same key in USDe (A...4.2.3.1.2), so if the shares reading is correct then one rate-limit key is being charged in two different units depending on which entry point a relayer chooses \u2014 and the share-denominated charge would understate the exposure by the accrued yield factor.\n\nThe assets reading is the one consistent with the sibling function and with a limit that is supposed to be interpretable over time, so the instance-level text is most likely the error. But a reader of the Artifact alone cannot resolve it, and this is precisely the sort of ambiguity that duplicated documentation produces.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The general procedure calls the decoded value the resulting USDe assets; the instance procedure calls it the amount of shares actually cooled down \u2014 yet both debit the same LIMIT_SUSDE_COOLDOWN key.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-df5f0ffe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df5f0ffe-be36-41a2-93ea-fce960862c1c",
+      "targetTitle": "The Relayer role can be granted only by admin but revoked by"
+    },
+    {
+      "id": "lnk-c7bc11f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7bc11f1-449b-4ea9-ba23-e02d36b7d5bf",
+      "targetTitle": "Grove's emergency protocol is composed from ordinary relayer"
+    },
+    {
+      "id": "lnk-d0faa3cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0faa3cb-6f02-495a-b036-f44653e796f8",
+      "targetTitle": "A backstop Relayer exists so removing a compromised one does"
+    },
+    {
+      "id": "lnk-d1761716-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1761716-d67e-412a-8380-018ece0f6277",
+      "targetTitle": "Minting has no precondition beyond the caller's role and the"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The FREEZER role's only power is revoking a relayer, separating emergency response from both operations and configuration",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0148567a-1ec9-4b9f-947a-ca58883479d1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45b67f65-907a-4d8d-af72-1f190998b58c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc5a3c5b-f6b3-428f-be8c-1977448a45e9",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68a85b80-b91f-41a2-ad93-20d8cbb47e67",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.3 introduces the freezer functions of the `MainnetController`, and A...3.1 through A...3.1.3 show the entire surface: `removeRelayer(address relayer) external onlyRole(FREEZER)`, whose body is `_revokeRole(RELAYER, relayer)` followed by `emit RelayerRemoved(relayer)`.\n\nGrove therefore runs a clean three-way separation. `DEFAULT_ADMIN_ROLE` sets parameters \u2014 mint recipients, max slippage, tick bounds, TWAP windows, the Merkl distributor (A...3.1.1 through A...3.1.10). `RELAYER` executes operations within those parameters. `FREEZER` can do exactly one thing: take the relayer's keys away.\n\nThe asymmetry is the design. Emergency response needs to be fast, so the freezer should be held by an entity that can act without deliberation \u2014 and that is only safe if the role is **purely subtractive**. A freezer cannot appoint a replacement relayer, cannot redirect funds, and cannot loosen a limit, so compromising the freezer key buys an attacker a denial of service and nothing more.\n\nThe corresponding cost is that freezing is not a pause: outstanding approvals granted by earlier relayer actions survive revocation, and anything already delegated \u2014 an Ethena signer (A...10.1), a Merkl operator (A...14.1) \u2014 remains authorised, because revoking those requires a relayer. The freezer stops new actions; it does not unwind standing authority.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "removeRelayer calls _revokeRole(RELAYER, relayer) and emits an event \u2014 nothing else; the freezer cannot move funds, set parameters, or appoint anyone.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e76fadcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e76fadcc-ed6e-41e8-8d25-9f3fcd7ddf93",
+      "targetTitle": "The Arkis instance is bounded by off-chain parameters that n"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Arkis exposure limits forbid netting long against short, so a hedged book still consumes capacity",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d6e7c49c-040d-4da0-bee1-f454a7ae73f3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9bb43186-9afd-4774-8af7-86c4ffff7582",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1e00eda-bec1-4537-b054-d882b27fcb04",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.7.2.2.1.2 defines the Exposure Limit as \"the maximum aggregate **gross** exposure to a given asset\" and then specifies the arithmetic precisely: \"we use the higher of the sum of long exposure across all positions or short exposure across all positions, **without offsetting long and short exposure within each position**.\"\n\nA delta-neutral book \u2014 long spot, short perp \u2014 has approximately zero price risk and, under this rule, consumes the exposure limit as though it were fully directional.\n\nThat looks punitive until you ask what the limit is protecting against. Price risk is already handled: the signed haircuts stress each net position, and a hedged book passes easily. The exposure limit is a separate control aimed at the risks that survive a perfect hedge \u2014 the venue holding the short can halt withdrawals or socialize losses, the wrapped token in the long leg can fail its redemption, an oracle can misprice one leg during a dislocation, and the basis between the two can move violently even when the hedge is sound.\n\nNone of those net out. Two offsetting positions are two exposures to operational failure, not zero exposures, and a rule that permitted netting would let an unbounded amount of that risk accumulate at zero measured cost. The 2022 cycle is full of books that were flat on price and destroyed by a venue.\n\nSo Arkis runs two limits with different jobs: haircuts price *market* risk on net exposure, exposure limits bound *structural* risk on gross exposure. Enforcing the higher of long or short \u2014 rather than their sum \u2014 keeps the measure from double-counting a genuinely hedged position while still refusing to credit the hedge.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Gross exposure takes the higher of total long or total short across positions without offsetting within a position, because venue and counterparty risk does not net even when price risk does.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "727ded12-715d-474c-94b2-83168f01e201",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:07.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e57256b4-2217-46a5-9834-2f1720fd2c10",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

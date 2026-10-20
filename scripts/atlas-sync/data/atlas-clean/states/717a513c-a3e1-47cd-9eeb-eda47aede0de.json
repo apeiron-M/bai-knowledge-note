@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4323865-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4323865-ee64-4f96-ab66-5493e5331d8a",
+      "targetTitle": "The Governance Point independently re-verifies the Spell aga"
+    },
+    {
+      "id": "lnk-cdce3add-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdce3add-0bb4-47ba-add1-b53109d83a21",
+      "targetTitle": "The Executive Document hash check must prove the only differ"
+    },
+    {
+      "id": "lnk-b283e092-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b283e092-519c-4a48-9d74-db6746d7b8f1",
+      "targetTitle": "Ecosystem Spell Validation deliberately checks less than dev"
+    },
+    {
+      "id": "lnk-b8a089c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b8a089c4-0a9b-4b90-bf17-b7bf31d83ad5",
+      "targetTitle": "The deployed Spell is cast on a freshly deployed Tenderly te"
+    },
+    {
+      "id": "lnk-c99c7f8d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c99c7f8d-be7b-4d7a-bc9c-01c4f85335dc",
+      "targetTitle": "doc-216d0662"
+    },
+    {
+      "id": "lnk-efda5da4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "efda5da4-ce11-44ad-a8b6-55972a4449cf",
+      "targetTitle": "Aligned Delegates currently serve as the primary Ecosystem S"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spell teams are no longer required to publish the deployer of a smart contract",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d2deb758-27e9-4d85-9d5a-0d62402ec25f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06ce37a6-3db1-4112-9f9a-05e1dd19d4f8",
+      "name": "operational-security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "22c3db63-3fc1-408f-807a-e0f047d12d4a",
+      "name": "executive-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.1.1 records a change of position: \"The Spell teams need not share their identities. Therefore, it is no longer a requirement that Spell crafting teams publish the deployer of a smart contract. The Spell Checklists have been amended accordingly.\"\n\nThe phrasing (\"no longer\") marks this as a reversal, and the reasoning follows the same threat model that drives anonymity for Alignment Conservers (A.1.5.7) and the absolute non-disclosure of emergency responders (A.1.9.1.2.3). A named individual who deploys the contract that executes protocol changes is a coercion target with unusually direct leverage \u2014 pressure applied to them at the right moment affects what the protocol does.\n\nWhat is given up is a form of accountability that most on-chain governance treats as basic: knowing who deployed the code you are voting to execute. The Atlas compensates by relocating trust from identity to process. Verification is carried by the Crafter/Reviewer separation (A.1.10.2.1.11-12), cross-organization review from a rotating two-team Roster (A.1.10.2.2.2.1), the Governance Point's duty to \"verify that the delivered code matches the code reviewed and approved on GitHub\" (A.1.10.2.2.1.2), the hash of the Executive Document embedded in the Spell (A.1.10.2.1.3), and Ecosystem Spell Validation of the deployed bytecode (A.1.10.2.1.8).\n\nThat is a coherent bargain \u2014 process-based verification is arguably stronger than reputational verification, since it checks the artefact rather than trusting the author. But it makes the process controls load-bearing in a way they were not before: with no identifiable deployer, a failure of the review chain has no fallback layer of personal accountability behind it.\n\nThe detail that the Spell Checklists \"have been amended accordingly\" shows the change propagated into operational documents, not just principle.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.1.1 extends anonymity from Alignment Conservers to technical contributors, with the Spell Checklists amended accordingly \u2014 verification shifts entirely onto the code and process.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

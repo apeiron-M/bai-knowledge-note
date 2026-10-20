@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-a3412c09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a3412c09-e061-4254-aedf-0b6297a73cad",
+      "targetTitle": "doc-f901ae99"
+    },
+    {
+      "id": "lnk-c3a6dec7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3a6dec7-8634-42bf-8ee4-b0e6ad841861",
+      "targetTitle": "An Executive Vote expires after thirty days and can never ag"
+    },
+    {
+      "id": "lnk-e9894e4e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9894e4e-f65a-4371-a084-01ec2237e9c0",
+      "targetTitle": "An Executive Proposal that fails to move the hat is not reje"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Spell must carry an expiration date, capped at 90 days, and voters are told it explicitly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ebf3defe-9a08-457d-bdd0-ab3892fbf645",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac636a68-1558-49d5-ad56-791b9bb321d2",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc24bda1-f431-4c48-a8e4-64d7e508e224",
+      "name": "authorization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.8.2.4 requires that \"the Spell must always have an expiration date; it can't be more than 90 days in the future, and the typical expiration window is 30 days.\" A.1.10.2.4.8.3.5 requires the voter-facing summary to say so in prescribed words: \"If this Executive Proposal does not pass within 30 days, then it will expire and can no longer have any effect on the Sky Protocol.\"\n\nAn Executive Vote is therefore a time-limited grant of authority, not a permanent one. A Spell that passes but is never executed becomes inert, and re-authorization means going back to voters rather than reusing the old mandate.\n\nThe reasoning is the same as for StarGuard's `maxDelay` (A.1.10.2.3.2.3.1.1.2.4): an approved action carries the assumptions of the moment it was approved. Rates, balances, module states and other approved changes all move, and a mandate executed months later may do something quite different from what voters authorized in substance even while doing exactly what they authorized in text.\n\nThe pattern recurs at two layers \u2014 Spell expiry for Sky Core, `maxDelay` for whitelisted Agent Spells \u2014 which suggests a general principle rather than a local parameter: in this framework, authority decays by default and permanence must be argued for.\n\nRequiring the expiry to be *stated to voters* completes it. The time limit is part of what is being voted on, so a holder can weigh whether the window is short enough for the risk the action carries.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.8.2.4 makes a passed-but-unexecuted Spell die rather than persist; A.1.10.2.4.8.3.5 requires the expiry to be stated in the summary in fixed wording.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "35fc149e-db7d-47c1-9558-f62d367c6be9",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5b2bd051-8a9e-4d85-a1d1-a9759042fa94",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

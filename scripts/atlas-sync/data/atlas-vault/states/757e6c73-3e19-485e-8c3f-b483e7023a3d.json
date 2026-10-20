@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-75b6a94a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75b6a94a-5e59-4a13-a32c-614ff4cbe4b5",
+      "targetTitle": "Ethena exposure capacity is allocated to two named Agents by"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Exposure above the aggregate limit is not a Sky Direct Exposure and reverts to full Risk Capital treatment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5c7bb275-c7c2-4ff8-a134-fcde8415433f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2e6920b6-9fe9-4688-9054-16f026ee7e8a",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "18e63c92-184c-4288-b1c8-2d5b14e117aa",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.1.4.1 closes the obvious loophole in the Sky Direct Exposure regime: \"Any investments in assets that would otherwise qualify as Sky Direct Exposures by a Prime Agent **in excess of the aggregate exposure limit** are not Sky Direct Exposures and are subject to the customary requirements pursuant to A.2.4 - Sky Core Monthly Settlement Cycle and A.3.2 - Risk Capital.\"\n\nClassification is therefore by **quantity, not by asset type**. A Prime Agent holding a designated asset has two different positions in the same instrument: the tranche within the limit, which carries no Borrow Rate, no Risk Capital and no ASC requirement and yields entirely to Sky; and the tranche above it, which is an ordinary Allocation System exposure with the Agent's own capital behind it.\n\nWithout this rule, designating an asset class as a Sky Direct Exposure would let an Agent scale into it without limit and without capital, since the exemptions attach to the asset rather than the amount. The aggregate limit would be advisory.\n\nWhat makes it elegant is that the overflow is not prohibited \u2014 it is simply reclassified. An Agent that wants more of a designated asset can have it, on the same terms as any other allocation: post Risk Capital, pay the Base Rate, keep the yield. Sky's appetite for a position caps what Sky will hold, not what the Agent may hold, and the Agent's own risk-adjusted judgment governs above that line.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The same asset held by the same Agent is classified by size: the portion within the limit carries no capital charge, and the excess falls back under the Settlement Cycle and Risk Capital rules.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8020556c-4ac6-4fae-93f2-6b5faf4cfb2e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bf3928d7-4507-4f5f-829b-4539008dda8e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

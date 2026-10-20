@@ -1,4 +1,5 @@
-import type { LifecycleEvent } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import type { LifecycleEvent } from "document-models/knowledge-note";
+import { lifecycleKey } from "../lib/lifecycle-key.js";
 
 type LifecycleTimelineProps = { events: LifecycleEvent[] };
 
@@ -8,6 +9,16 @@ const STATUS_DOT: Record<string, string> = {
   CANONICAL: "bg-emerald-400",
   ARCHIVED: "bg-gray-500",
 };
+
+/** The same four words the status pill uses — the timeline showed raw enums. */
+const STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Draft",
+  IN_REVIEW: "In Review",
+  CANONICAL: "Canonical",
+  ARCHIVED: "Archived",
+};
+const statusLabel = (s: string | null | undefined) =>
+  s ? (STATUS_LABELS[s] ?? s) : "";
 
 export function LifecycleTimeline({ events }: LifecycleTimelineProps) {
   if (events.length === 0) {
@@ -26,7 +37,7 @@ export function LifecycleTimeline({ events }: LifecycleTimelineProps) {
           ? new Date(event.timestamp).toLocaleString()
           : "";
         return (
-          <div key={event.id} className="flex gap-3">
+          <div key={lifecycleKey(event, i)} className="flex gap-3">
             <div className="flex flex-col items-center">
               <div
                 className={`mt-1 h-2.5 w-2.5 rounded-full ${STATUS_DOT[event.toStatus ?? "DRAFT"]}`}
@@ -35,7 +46,7 @@ export function LifecycleTimeline({ events }: LifecycleTimelineProps) {
             </div>
             <div className="pb-3">
               <p className="text-xs font-medium text-gray-300">
-                {event.fromStatus} &rarr; {event.toStatus}
+                {statusLabel(event.fromStatus)} &rarr; {statusLabel(event.toStatus)}
               </p>
               <p className="text-xs text-gray-500">
                 {event.actor} &middot; {date}

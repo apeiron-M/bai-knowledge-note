@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-7b89b2a7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7b89b2a7-4156-49a3-86a9-ab6b638e6df4",
+      "targetTitle": "The Pioneer Incentive Pool pays a partner the Savings Rate o"
+    },
+    {
+      "id": "lnk-7656642c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7656642c-b436-4a61-a1a4-99ae59edb099",
+      "targetTitle": "Keel's allocation positions are addressed chain-then-protoco"
+    },
+    {
+      "id": "lnk-ef12846c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ef12846c-1503-431a-8ec2-c777bef4bdbd",
+      "targetTitle": "The Pioneer Chain Primitive funds a chain-level incentive po"
+    },
+    {
+      "id": "lnk-4a1308bc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4a1308bc-812f-4d72-a62f-c9372fb92188",
+      "targetTitle": "Osero's only live Demand Side deployment is a Pioneer Chain "
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's demand-side incentives operate at three different granularities: route, venue, and whole network",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8bb6794e-709a-4d31-81b4-ab7dd8394e40",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e67b5d4c-bdff-407c-a970-ab4895b7baa4",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b34c83f-e812-4c49-b7b0-5feda1054e5c",
+      "name": "distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cd473af4-4882-4afa-90f3-0a2e28633bcb",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Under Demand Side Stablecoin Primitives (A.6.1.1.3.2.5), Keel operates three distinct Primitives that all pay for USDS adoption but attach to different objects.\n\nThe **Distribution Reward Primitive** attaches to a *route*: its Instances are the Solana Bridge \u2014 tracked at a named LayerZero contract \u2014 and 1inch, an aggregator. The **Integration Boost Primitive** attaches to a *venue*: one Instance per protocol (Kamino, Drift, Save, Lifinity, MarginFi), each with its own reward address and a per-block comparison against the Sky Savings Rate. The **Pioneer Chain Primitive** (A.6.1.1.3.2.5.3) attaches to a *network*: its Solana Instance's only substantive identifier is \"Network: Solana,\" and its payload is a Pioneer Incentive Pool address.\n\nThe layering is what makes the strategy coherent rather than redundant. Getting USDS onto a new chain requires three different things to happen \u2014 someone must move it across, someone must hold it productively once there, and the chain's broader ecosystem must have reason to build around it \u2014 and each layer of incentive addresses one of those without being able to substitute for the others.\n\nIt also explains why the Distribution Reward tracking definition must net out balances already attributed elsewhere: with three overlapping layers pointed at the same USDS, double-payment is the default failure mode and must be excluded explicitly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Distribution Reward tracks bridge and aggregator flows, Integration Boost pays a single venue's USDS deposits, and Pioneer Chain funds an incentive pool for an entire chain.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8bde95b2-5e30-44b0-b0eb-7f34b75fdd8d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:42.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "63a61e57-0310-4b1e-b38b-26ae53b5e98f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

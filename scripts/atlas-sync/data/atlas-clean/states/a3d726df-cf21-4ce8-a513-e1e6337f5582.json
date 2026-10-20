@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The 24-hour margin call cure period is only safe because the Liquidation LTV overrides it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "52c7a687-6f56-4422-a45f-d51a600190eb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f926554b-47c8-4e92-9164-e8dd12fad670",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0628d21c-3d93-4b01-bb1d-2d52e560294f",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.8.2.4.2.3 grants a generous window: \"the maximum permitted margin call cure period is **24 hours** from the time the Maintenance LTV is breached.\" In crypto markets, 24 hours is long enough for a collateral asset to halve.\n\nWhat makes the grace tolerable is the clause in the Liquidation LTV definition (A.6.1.1.1.3.8.2.2.1.3): liquidation is permitted \"**regardless of whether there is an outstanding margin call in effect**.\"\n\nSo the cure period is a concession about *time*, not about *price*. A borrower whose position drifted from 85% to 86% gets a day to wire collateral \u2014 which is a real accommodation for an institutional counterparty operating in business hours, across banking systems, with humans in the loop. A borrower whose collateral gaps from 85% to 91% gets nothing; the cure clock is irrelevant because the price condition has already been met.\n\nWithout the override, the two provisions would combine into a disaster: a 24-hour contractual immunity beginning at exactly the moment a position starts failing, during which no liquidation could occur no matter how far the collateral fell. Every borrower would have an incentive to trip the maintenance level deliberately in a falling market to buy a day of protection.\n\nThe pairing is what makes the numbers legible. The maintenance-to-liquidation gap \u2014 5 points for BTC and ETH, 10 for XRP and HYPE \u2014 is the price buffer the grace period is allowed to consume. The cure period is not really 24 hours; it is 24 hours *or* five points of collateral value, whichever runs out first, and for volatile assets the second is usually the binding one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Liquidation may occur immediately above the Liquidation LTV 'regardless of whether there is an outstanding margin call', so the grace period yields on price but never on a collapsing position.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

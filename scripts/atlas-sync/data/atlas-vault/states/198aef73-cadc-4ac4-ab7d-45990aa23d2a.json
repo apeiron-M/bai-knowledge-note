@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-d7e104e5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d7e104e5-fdbf-43d5-9697-69fdf885bbec",
+      "targetTitle": "doc-b7bfae50"
+    },
+    {
+      "id": "lnk-eab3d88a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eab3d88a-1283-4905-8d7d-be740fbff13e",
+      "targetTitle": "doc-1be2674f"
+    },
+    {
+      "id": "lnk-fa3fc1d0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fa3fc1d0-0f93-4ccb-abdc-c6df084fea4e",
+      "targetTitle": "Sky pays 1% of Net Revenue to keep governance frontends main"
+    },
+    {
+      "id": "lnk-7d8e6ff2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d8e6ff2-5590-4faa-aec8-f834d863b7d8",
+      "targetTitle": "An Agent's SubProxy treasury account is controlled by Sky Go"
+    },
+    {
+      "id": "lnk-d7d13af2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d7d13af2-3b04-4eb9-b1a0-eab2aac06e8e",
+      "targetTitle": "First-party Instances omit the counterparty payment document"
+    },
+    {
+      "id": "lnk-ee3e5040-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee3e5040-dcc5-4a7f-945e-154bcf88f110",
+      "targetTitle": "Skybase's discretionary subsidy spending runs through a mult"
+    },
+    {
+      "id": "lnk-fc2ff598-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fc2ff598-0442-4a5c-9973-668b698eb85d",
+      "targetTitle": "A Prime Agent may be its own Integrator and earn the Distrib"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Where the Agent controls the Integrator, the Integrator leg of the Core Governance Reward is suppressed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9af39d3b-26e2-4e37-9645-7d2b932e476a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e6e98f9-6ffa-47b7-bb8d-cd331da0fb03",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f263d392-0097-4dc3-8723-125b09d33fea",
+      "name": "governance-rewards",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ddb67e3-87ee-4e4d-997d-7ae2e55b3f5d",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The only Custom Instance Parameter on the Core Governance Reward Instance is an Integrator Recipient declaration (A.6.1.1.4.2.7.1.2.1.1.3.1): \"The Integrator is Sky.money Frontend, which is controlled by Skybase. As such, no additional Integrator payment will be made.\"\n\nThe base primitive evidently contemplates two payees: the Agent that earns the governance reward, and an Integrator that operates the frontend through which governance activity flows. Those are normally distinct parties. Here they are the same, and the Instance uses its one customization slot to disable the second payment rather than route it to itself.\n\nThis is a self-dealing control written at exactly the right place. The generic primitive is not amended \u2014 no Core Atlas change, no argument about how integrator fees should work in general \u2014 and the fact pattern that creates the conflict (common control) is stated openly as the reason for the exception.\n\nIt is also the same reasoning as the Upkeep Rebate (A.6.1.1.4.2.3.2.2.1.1), which nets out upkeep charged twice on the same ecosystem value. Both provisions embody a principle the Atlas applies but never abstracts: a payment must correspond to a distinct party bearing a distinct cost, and where two roles collapse into one entity, one of the payments must go.\n\nNote what this reveals about the Custom Instance Parameters slot that reads \"if any\" and is empty almost everywhere else in the Artifact. Its purpose is precisely this: recording where an Agent's specific circumstances require deviation from the generic primitive, with the justification attached.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Sky.money Frontend Instance states that because Skybase controls the Integrator, 'no additional Integrator payment will be made' \u2014 closing a self-payment path the primitive would otherwise open.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0d21297e-2fc9-443d-9f18-8da2692e0b54",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:26.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fb14184f-8b43-4942-ad79-e4a073daba72",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

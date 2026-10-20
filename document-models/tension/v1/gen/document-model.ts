@@ -9,7 +9,7 @@ export const documentModel: DocumentModelGlobalState = {
   },
   extension: "",
   description:
-    "Unresolved contradiction \u2014 tracks conflicts between knowledge claims with involved references and resolution status",
+    "Unresolved contradiction \u2014 tracks conflicts between knowledge claims with involved references and resolution status.",
   specifications: [
     {
       state: {

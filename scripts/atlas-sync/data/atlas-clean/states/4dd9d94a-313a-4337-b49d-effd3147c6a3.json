@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d5bc66c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d5bc66c-a548-4094-b2e6-7184f25d68c5",
+      "targetTitle": "Obex's Liquidity Layer can mint 100 million USDS while its b"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are unlimited for Sky's own stablecoins and hard-capped for assets it must buy",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a26f32c2-4c3c-4a7d-9407-fdd3fa8e4b82",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df9ef4ab-21a2-4213-b1a8-b11225041dd3",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5898e5f8-8f10-44b7-ae0c-e516041adc50",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e765d88d-dd36-4fa6-979d-16ae205fe5c0",
+      "name": "usds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Comparing the limits within a single chain in A.6.1.1.1.2.6.1.2.1.1.3 reveals a consistent asymmetry. On Base, Unichain and Optimism, PSM deposits and withdrawals of **USDS and sUSDS** are `Unlimited`, while **USDC** deposits and withdrawals are capped at 50,000,000 with a 50,000,000/day slope. On Ethereum Mainnet, `LIMIT_USDS_MINT` is 1,000,000,000 with a matching daily slope \u2014 but `LIMIT_USDS_BURN` is `maxAmount`: 0, `slope`: 0.\n\nThe logic is about what a limit protects against. USDS and sUSDS are Sky's own liabilities: the ecosystem can always create more, and moving them between its own venues does not consume a scarce resource. USDC is someone else's liability that Sky must acquire, so a limit on USDC movement is a limit on real economic exposure and on how much can be extracted through a compromised path.\n\nThe zero burn limit is the sharpest instance. Burning USDS is not dangerous in itself, but withdrawing capacity that nobody currently needs is free risk reduction: the safest setting for an unused function is zero, and the value can be raised by governance when a use appears. This is default-deny applied to rate limits.\n\nThe practical reading is that the Liquidity Layer's guardrails are calibrated to counterparty exposure rather than to transaction size. Unlimited does not mean unimportant \u2014 it means the constrained resource lies elsewhere.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDS and sUSDS PSM deposits and withdrawals are Unlimited on Base, Unichain and Optimism while USDC sits at 50M/day and USDS burn capacity is set to exactly zero.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

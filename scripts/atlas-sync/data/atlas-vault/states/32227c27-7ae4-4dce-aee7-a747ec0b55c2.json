@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad521530-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad521530-f2c5-468f-9400-a59cc5805f96",
+      "targetTitle": "USDC-to-DAI swaps are all-or-nothing and loop the PSM's own "
+    },
+    {
+      "id": "lnk-b66da4bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b66da4bb-1384-40b9-b1a8-681053551d6d",
+      "targetTitle": "Large USDC swaps must iteratively refill the PSM and revert "
+    },
+    {
+      "id": "lnk-70cdd9a5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "70cdd9a5-a9c5-4b32-b399-19ad038f4039",
+      "targetTitle": "A Uniswap v3 swap that hits its price bound stops without re"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Large USDC-to-USDS swaps loop through psm.fill, so Keel's rebalancing can fail on PSM capacity rather than on its own limits",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "32156b8c-8c67-46e8-a736-2bcaccc01054",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6916f9bc-3b1c-4539-8bb1-e493739f1c91",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d70ad0a0-95a7-4ac0-beab-6c5f428389fb",
+      "name": "operational-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e1d13e8e-1c69-40a9-ab38-772b2bef2272",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.2.1.2.5.2.1 describes machinery the other swap does not need. The controller \"will calculate the swap limit per transaction based on the DAI balance held by the PSM\"; if the requested amount fits, it swaps directly; if not, it \"will split the swap into multiple smaller swaps: refill the PSM with DAI via `psm.fill`, recalculate the limit, swap the maximum allowed amount, update the remaining amount, and repeat until complete (reverting with 'DssLitePsm/nothing-to-fill' if PSM cannot be filled).\"\n\nThe direction matters. Going USDC to USDS consumes the PSM's DAI inventory, which is finite and shared with everyone else using it \u2014 so Keel's own rate limits are not the binding constraint here. A third party's activity can exhaust the fillable capacity and make a swap Keel is fully authorized to perform revert.\n\nThat is a live operational risk precisely because this swap appears in the emergency playbook: consolidating all recovered liquidity into USDS runs through `swapUSDCToUSDS`. The one moment Keel most needs the route is the moment system-wide stress makes PSM capacity most contested.\n\nThe loop-and-refill design mitigates the ordinary case well \u2014 a large swap is not rejected merely for exceeding per-transaction capacity \u2014 but it converts a capacity problem into a gas-and-iterations problem, and leaves a hard failure at the end of the line that no amount of retrying inside the transaction can avoid.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When the requested amount exceeds the PSM's DAI balance, the controller refills, recalculates and repeats until complete \u2014 reverting with 'DssLitePsm/nothing-to-fill' if the PSM cannot be filled.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "29fddbc6-6846-4a57-9b0a-11982eaba7d5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:39.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "39368b97-a4fa-4c63-aa55-b076bd84d302",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

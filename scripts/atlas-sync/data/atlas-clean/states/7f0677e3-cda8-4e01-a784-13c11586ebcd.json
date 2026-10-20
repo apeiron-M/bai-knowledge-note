@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-b5c79b81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5c79b81-0699-41fb-ba41-83b13e5f7bfa",
+      "targetTitle": "LayerZero bridge destinations are a governance-configured al"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The LayerZero bridge's minimum delivered amount is set from the OFT's own quote immediately before sending, leaving no shortfall tolerance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0cf81ee7-fb49-4a35-9545-6d776d3bd6f0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c9db189-4996-4ad1-8ee4-bd10c11afe3a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8b0d139d-5ffd-4235-813c-3769681c2e4c",
+      "name": "layerzero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96f20114-068d-482d-bd81-3c9b54d9f1c1",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.13.1.5 completes a procedure that looks unguarded when read one step earlier. The `SendParam` struct is built in A...13.1.4 with `minAmountLD` initialised to `0`, but that value never reaches the wire:\n\n```\n( ,, OFTReceipt memory receipt ) = ILayerZero(oftAddress).quoteOFT(sendParams);\nsendParams.minAmountLD = receipt.amountReceivedLD;\n```\n\nThe bound is therefore not a governance parameter and not a caller argument \u2014 it is the counterparty's **own prediction of what it will deliver**, captured in the same transaction and then held to. Setting `minAmountLD` equal to the quote rather than to the quote minus a tolerance means there is zero slack: if the actual credit falls even marginally below the quoted `amountReceivedLD`, the send reverts.\n\nThat is a defensible choice for OFT transfers specifically, because the gap between quote and delivery is deterministic (decimal-precision dust removal and configured fees), not market-driven. Contrast the Pendle path, where A...11.1.3 deliberately subtracts a rounding buffer of `5` from the router-facing minimum precisely because the arithmetic there can truncate.\n\nThe general form of the technique is worth naming: rather than trusting a counterparty or trying to model it, ask it to commit to a number and then enforce that number in the same call. It converts an unverifiable external process into a self-imposed constraint.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "quoteOFT returns amountReceivedLD and that exact value becomes sendParams.minAmountLD, so the zero in the struct literal is a placeholder and any delivery below the quote reverts.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

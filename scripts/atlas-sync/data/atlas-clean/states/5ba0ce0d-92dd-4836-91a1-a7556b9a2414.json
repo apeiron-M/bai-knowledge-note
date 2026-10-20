@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-5c80f495-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c80f495-0776-4d92-8d19-8baed16a90a5",
+      "targetTitle": "The Atlas contradicts itself on whether the Demand Absorptio"
+    },
+    {
+      "id": "lnk-e35bd9fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e35bd9fd-dae9-4310-84fe-3a884dbbe171",
+      "targetTitle": "Core Governance Rewards are already flowing while the compli"
+    },
+    {
+      "id": "lnk-fb822f75-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fb822f75-3b0b-470b-bd7c-b814df03c718",
+      "targetTitle": "Grove's rate limits are denominated inconsistently across In"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Continuous read-only access to all accounts is accepted as a full substitute for detailed monthly reporting",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "154be68c-6d7c-45a8-b024-d438ef1e905a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ed677b9-51c8-4e95-8b9b-42f3b00575b3",
+      "name": "real-world-assets",
+      "topicDocumentId": null
+    },
+    {
+      "id": "768def29-e7b7-48c0-b092-31952c91da8d",
+      "name": "transparency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.4.3.3 offers Arrangers two mutually exclusive routes to compliance. The first (A.3.4.3.3.1) is a detailed monthly report: cash balance, income and expenses with any item over $20,000 broken out and explained, market values for listed equities and debt, third-party or documented-methodology valuations for illiquid assets, full CUSIP-level detail on debt securities, USDS inflows, onchain repayments broken out by source, vault debt \u2014 and \"copies of original statements for all bank, brokerage, exchange, custodial, or other accounts.\"\n\nThe second (A.3.4.3.3.2) replaces all of that with \"public read-only access to all accounts\" covering asset balances, transaction amounts and hold-to-maturity or current yields, plus a publicly available dashboard (Makerburn, Daistats or equivalent) summarizing USDS flows to and from the vault.\n\nThe substitution is conceptually clean: periodic attestation and continuous observability are two ways to solve the same verification problem, and the Atlas treats them as equivalent rather than ranking them. Route one produces a curated snapshot that someone must audit; route two removes the intermediary entirely and lets anyone check at any time.\n\nThe second route is strictly better on latency and worse on interpretability. Raw account access has no reconciliation, no explanation of non-recurring items, and no valuation methodology for illiquid holdings \u2014 which is presumably why it is offered as an alternative rather than as a supplement, and why the reporting route demands narrative explanation precisely where numbers are ambiguous.\n\nBoth routes preserve one redaction: non-Arranger service provider names may be withheld, and under route one only \"if and only if that is a requirement of confidentiality agreements with the non-Arranger service providers.\" The Arranger's own identity and activity are never redactable \u2014 the confidentiality concession extends only to third parties who did not sign up to Sky's transparency regime.\n\nOffering a genuine choice matters practically: an Arranger operating through custodians that support public read-only views can comply almost for free, while one operating through institutions that do not can still participate by reporting. The requirement is calibrated to the counterparty's infrastructure rather than excluding those without it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An Arranger may either file an itemized monthly report with original account statements, or simply expose balances, transactions and yields publicly alongside a public inflow/outflow dashboard.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

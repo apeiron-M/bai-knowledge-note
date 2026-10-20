@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-a0d74e26-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0d74e26-633b-42c5-8224-024999b2a6ac",
+      "targetTitle": "Token transfer totals are summed independently by the Govern"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "USDS and Dai amounts are always rounded up so that residual rounding error favours the recipient",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "295ce3bc-aa71-40d6-b369-45682e66c425",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a1769f6-3b18-4416-aab2-138dcdd761db",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d924c15c-ce1e-4bd7-ae45-e3f8c7c5a3a3",
+      "name": "error-prevention",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.3.2.3 fixes numeric conventions for Executive Sheet transfers: \"The value of USDS and Dai must always be expressed as integers, with no decimal places, due to tests and helper functions used by developers requiring integer values. For USDS and Dai, values must always be **rounded up** to ensure recipients receive at least the expected amount. The values of SKY and other tokens must be listed to exactly two decimal places.\"\n\nThe interesting move is specifying the *direction* of an unavoidable error rather than only its magnitude. Rounding is forced by the tooling, so someone is always slightly over- or under-paid. Choosing \"up\" in advance means the residual is a fraction of a unit overpaid \u2014 an accounting rounding \u2014 instead of a shortfall, which is a failed obligation that generates a support ticket, a correction, and possibly another Spell to fix it.\n\nThe cost asymmetry is the whole argument: overpayment by a fraction of a dollar is noise, underpayment by the same amount is a broken promise. When error cannot be eliminated, it should be aimed at the cheaper failure.\n\nNote also the honesty of the stated reason for integers \u2014 not elegance, but that \"tests and helper functions used by developers require\" them. The governance document accommodates a real constraint from the toolchain rather than pretending the two layers are independent, and the fixed 2-decimal rule for SKY does the same job of eliminating writer discretion from the format.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:21:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:21:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rounding direction is specified rather than left to the writer: integers only because developer tooling requires them, rounded up so recipients get at least the expected amount.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

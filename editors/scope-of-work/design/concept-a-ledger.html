@@ -1,0 +1,2119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Concept A — Ledger · Scope of Work</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --canvas: #f6f7f9;
+        --panel: #ffffff;
+        --panel-2: #f0f2f5;
+        --ink: #1b2230;
+        --ink-2: #5b6474;
+        --ink-3: #8b94a5;
+        --rule: #e1e5eb;
+        --rule-2: #cbd2dc;
+        --meridian: #0e8a7a;
+        --meridian-soft: #ddf3ef;
+        --signal: #d98a00;
+        --signal-soft: #fbefd9;
+        --ember: #c2412b;
+        --ember-soft: #f9e1dc;
+        --slate: #6b7a90;
+        --slate-soft: #e7ebf1;
+        --focus: #2f5bff;
+        --r: 10px;
+        --r-s: 6px;
+        --display: "Bricolage Grotesque", Inter, system-ui, sans-serif;
+        --ui: Inter, system-ui, sans-serif;
+        --mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .dark {
+        --canvas: #0f141b;
+        --panel: #161c25;
+        --panel-2: #1c2330;
+        --ink: #e6eaf0;
+        --ink-2: #9aa5b5;
+        --ink-3: #6c778a;
+        --rule: #263040;
+        --rule-2: #33405a;
+        --meridian: #2fb8a4;
+        --meridian-soft: #12332e;
+        --signal: #f0a72b;
+        --signal-soft: #3a2e12;
+        --ember: #e4644e;
+        --ember-soft: #3e1f1a;
+        --slate: #8c9ab0;
+        --slate-soft: #232c3a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        font: 14px/1.45 var(--ui);
+        color: var(--ink);
+        background: var(--canvas);
+        -webkit-font-smoothing: antialiased;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        letter-spacing: 0.01em;
+      }
+      .muted {
+        color: var(--ink-2);
+      }
+      .faint {
+        color: var(--ink-3);
+      }
+      /* ── shell ── */
+      .app {
+        display: grid;
+        grid-template-rows: 52px 1fr;
+        height: 100vh;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 0 16px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--rule);
+      }
+      .topbar .crumbs {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        color: var(--ink-3);
+        font-size: 12.5px;
+      }
+      .topbar .crumbs b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+      .topbar .grow {
+        flex: 1;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 8px;
+        border: 1px solid var(--rule-2);
+        background: var(--panel);
+        font-weight: 500;
+        font-size: 13px;
+      }
+      .btn:hover {
+        background: var(--panel-2);
+      }
+      .btn.primary {
+        background: var(--ink);
+        color: var(--canvas);
+        border-color: var(--ink);
+      }
+      .btn.primary:hover {
+        opacity: 0.92;
+      }
+      .btn.ghost {
+        border-color: transparent;
+      }
+      .btn.sm {
+        height: 26px;
+        padding: 0 9px;
+        font-size: 12.5px;
+        border-radius: 7px;
+      }
+      .body {
+        display: grid;
+        grid-template-columns: 264px minmax(0, 1fr) 372px;
+        min-height: 0;
+      }
+      .body.no-inspector {
+        grid-template-columns: 264px minmax(0, 1fr) 0;
+      }
+      /* ── rail ── */
+      .rail {
+        border-right: 1px solid var(--rule);
+        background: var(--panel);
+        overflow: auto;
+        padding: 12px 10px;
+      }
+      .rail .sect {
+        margin-top: 14px;
+        padding: 0 6px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .rail .sect button {
+        color: var(--ink-3);
+        font-size: 12px;
+      }
+      .rail .sect button:hover {
+        color: var(--ink);
+      }
+      .node {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        text-align: left;
+        padding: 6px 8px;
+        border-radius: 7px;
+        color: var(--ink-2);
+        font-size: 13px;
+      }
+      .node:hover {
+        background: var(--panel-2);
+        color: var(--ink);
+      }
+      .node.active {
+        background: var(--slate-soft);
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .node .code {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        min-width: 26px;
+      }
+      .node .cnt {
+        margin-left: auto;
+        font-size: 11px;
+        color: var(--ink-3);
+        font-family: var(--mono);
+      }
+      .node.child {
+        padding-left: 26px;
+        font-size: 12.5px;
+      }
+      .node.child .ring {
+        margin-left: auto;
+      }
+      .ring {
+        --p: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--meridian) calc(var(--p) * 1%),
+          var(--rule) 0
+        );
+        position: relative;
+        flex: none;
+      }
+      .ring::after {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border-radius: 50%;
+        background: var(--panel);
+      }
+      /* ── canvas ── */
+      .canvas {
+        overflow: auto;
+        padding: 28px 36px 80px;
+      }
+      .doc {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+      .eyebrow {
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      h1.title {
+        font-family: var(--display);
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin: 6px 0 8px;
+      }
+      h2 {
+        font-family: var(--display);
+        font-size: 20px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        margin: 0;
+      }
+      h3 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+      }
+      .editable {
+        border-radius: 6px;
+        padding: 2px 6px;
+        margin-left: -6px;
+        transition: background 0.12s;
+      }
+      .editable:hover {
+        background: var(--panel-2);
+        cursor: text;
+      }
+      .editable:focus {
+        background: var(--panel);
+        outline: 2px solid var(--focus);
+      }
+      .desc {
+        max-width: 680px;
+        color: var(--ink-2);
+        font-size: 15px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+        background: var(--slate-soft);
+        color: var(--ink-2);
+        white-space: nowrap;
+      }
+      .chip::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.8;
+      }
+      .chip.DELIVERED,
+      .chip.FINISHED,
+      .chip.APPROVED {
+        background: var(--meridian-soft);
+        color: var(--meridian);
+      }
+      .chip.IN_PROGRESS,
+      .chip.SUBMITTED {
+        background: var(--signal-soft);
+        color: var(--signal);
+      }
+      .chip.BLOCKED,
+      .chip.REJECTED {
+        background: var(--ember-soft);
+        color: var(--ember);
+      }
+      .chip.CANCELED,
+      .chip.WONT_DO {
+        text-decoration: line-through;
+        opacity: 0.7;
+      }
+      .chip.TODO {
+        background: var(--slate-soft);
+        color: var(--slate);
+      }
+      .chip.DRAFT {
+        background: transparent;
+        border: 1px dashed var(--rule-2);
+        color: var(--ink-3);
+      }
+      .chip.DRAFT::before {
+        display: none;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        height: 20px;
+        padding: 0 7px;
+        border-radius: 5px;
+        font-size: 11.5px;
+        font-weight: 500;
+        background: var(--ember-soft);
+        color: var(--ember);
+      }
+      .tag.warn {
+        background: var(--signal-soft);
+        color: var(--signal);
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 26px 0;
+      }
+      .kpi {
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        padding: 14px 16px;
+      }
+      .kpi .l {
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+      .kpi .v {
+        font-family: var(--display);
+        font-size: 26px;
+        font-weight: 650;
+        letter-spacing: -0.02em;
+        margin-top: 2px;
+      }
+      .kpi .s {
+        font-size: 12px;
+        color: var(--ink-2);
+        margin-top: 2px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        padding: 18px 20px;
+      }
+      .section {
+        margin-top: 34px;
+      }
+      .section .hd {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .section .hd .grow {
+        flex: 1;
+      }
+      /* delivery spine */
+      .spine {
+        position: relative;
+        padding: 28px 0 8px;
+        margin: 6px 0 4px;
+      }
+      .spine .line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 44px;
+        height: 2px;
+        background: var(--rule-2);
+        border-radius: 2px;
+      }
+      .spine .fill {
+        position: absolute;
+        left: 0;
+        top: 44px;
+        height: 2px;
+        background: var(--meridian);
+        border-radius: 2px;
+        transition: width 0.6s ease;
+      }
+      .spine .notches {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: 8px;
+      }
+      .notch {
+        position: relative;
+        padding-top: 30px;
+        text-align: left;
+      }
+      .notch .dot {
+        position: absolute;
+        left: 0;
+        top: 9px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--panel);
+        border: 2px solid var(--rule-2);
+      }
+      .notch.done .dot {
+        background: var(--meridian);
+        border-color: var(--meridian);
+      }
+      .notch.live .dot {
+        border-color: var(--signal);
+        box-shadow: 0 0 0 4px var(--signal-soft);
+      }
+      .notch .code {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--ink-3);
+      }
+      .notch .t {
+        font-weight: 600;
+        font-size: 13.5px;
+        margin-top: 1px;
+      }
+      .notch .d {
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+      .notch button {
+        text-align: left;
+        display: block;
+        padding: 4px 6px 6px 0;
+        border-radius: 6px;
+      }
+      .notch button:hover .t {
+        color: var(--meridian);
+      }
+      .bar {
+        height: 6px;
+        background: var(--rule);
+        border-radius: 4px;
+        overflow: hidden;
+        min-width: 60px;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--meridian);
+        border-radius: 4px;
+        transition: width 0.4s;
+      }
+      .bar.signal i {
+        background: var(--signal);
+      }
+      /* matrix */
+      .matrix {
+        display: grid;
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        overflow: hidden;
+        background: var(--panel);
+      }
+      .matrix .c {
+        padding: 10px;
+        border-right: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        min-height: 64px;
+      }
+      .matrix .c:last-child {
+        border-right: 0;
+      }
+      .matrix .h {
+        background: var(--panel-2);
+        font-size: 12px;
+        color: var(--ink-2);
+        min-height: 0;
+      }
+      .matrix .rh {
+        background: var(--panel-2);
+        font-size: 12.5px;
+      }
+      .matrix .rh .code {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .matrix .rh b {
+        display: block;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .matrix .rh .money {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--ink-2);
+        margin-top: 4px;
+      }
+      .mini {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 8px;
+        border: 1px solid var(--rule);
+        border-radius: 7px;
+        background: var(--panel);
+        margin-bottom: 6px;
+        cursor: pointer;
+        font-size: 12.5px;
+      }
+      .mini:hover {
+        border-color: var(--rule-2);
+        background: var(--panel-2);
+      }
+      .mini.sel {
+        border-color: var(--focus);
+        box-shadow: 0 0 0 2px rgba(47, 91, 255, 0.15);
+      }
+      .mini .st {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--slate);
+        flex: none;
+      }
+      .mini.DELIVERED .st {
+        background: var(--meridian);
+      }
+      .mini.IN_PROGRESS .st {
+        background: var(--signal);
+      }
+      .mini.BLOCKED .st {
+        background: var(--ember);
+      }
+      .mini.CANCELED {
+        opacity: 0.55;
+        text-decoration: line-through;
+      }
+      .mini .code {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .mini .t {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mini .av {
+        margin-left: auto;
+      }
+      .av {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--slate-soft);
+        color: var(--ink-2);
+        font-size: 10px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        border: 1px solid var(--panel);
+      }
+      .avs {
+        display: inline-flex;
+      }
+      .avs .av + .av {
+        margin-left: -6px;
+      }
+      /* rows / tables */
+      .rows {
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        overflow: hidden;
+        background: var(--panel);
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 82px minmax(0, 1fr) 120px 140px 90px 28px;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--rule);
+        cursor: pointer;
+      }
+      .row:last-child {
+        border-bottom: 0;
+      }
+      .row:hover {
+        background: var(--panel-2);
+      }
+      .row.sel {
+        background: var(--slate-soft);
+      }
+      .row.hdr {
+        font-size: 11.5px;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        cursor: default;
+        background: var(--panel-2);
+      }
+      .row.hdr:hover {
+        background: var(--panel-2);
+      }
+      .row .t {
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .row .sub {
+        font-size: 12px;
+        color: var(--ink-3);
+        font-weight: 400;
+        margin-top: 1px;
+      }
+      .row .money {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        text-align: right;
+      }
+      .add {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 10px 14px;
+        color: var(--ink-3);
+        font-size: 13px;
+        border-top: 1px dashed var(--rule);
+      }
+      .add:hover {
+        color: var(--ink);
+        background: var(--panel-2);
+      }
+      .ledger {
+        display: grid;
+        grid-template-columns: 82px minmax(0, 1fr) 110px 70px 70px 110px;
+        gap: 12px;
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--rule);
+        align-items: center;
+        cursor: pointer;
+      }
+      .ledger:hover {
+        background: var(--panel-2);
+      }
+      .ledger.sel {
+        background: var(--slate-soft);
+      }
+      .ledger.hdr,
+      .ledger.tot {
+        cursor: default;
+        background: var(--panel-2);
+      }
+      .ledger.hdr {
+        font-size: 11.5px;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .ledger .money {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        text-align: right;
+      }
+      .ledger.tot .money {
+        font-weight: 600;
+      }
+      .ledger.tot {
+        border-bottom: 0;
+      }
+      .vspine {
+        position: relative;
+        padding-left: 26px;
+      }
+      .vspine::before {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: var(--rule-2);
+      }
+      .ms {
+        position: relative;
+        margin-bottom: 22px;
+      }
+      .ms::before {
+        content: "";
+        position: absolute;
+        left: -26px;
+        top: 6px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--panel);
+        border: 2px solid var(--rule-2);
+      }
+      .ms.done::before {
+        background: var(--meridian);
+        border-color: var(--meridian);
+      }
+      .ms.live::before {
+        border-color: var(--signal);
+        box-shadow: 0 0 0 4px var(--signal-soft);
+      }
+      .ms .hd {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .ms .hd .code {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+      .ms .hd input[type="date"] {
+        border: 1px solid transparent;
+        border-radius: 6px;
+        padding: 2px 6px;
+        background: transparent;
+        color: var(--ink-2);
+        font-size: 12.5px;
+      }
+      .ms .hd input[type="date"]:hover {
+        border-color: var(--rule-2);
+        background: var(--panel);
+      }
+      /* checklist */
+      .check {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 20px;
+        margin-top: 10px;
+      }
+      .ck {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        color: var(--ink-2);
+      }
+      .ck i {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 1.5px solid var(--rule-2);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-style: normal;
+        flex: none;
+      }
+      .ck.ok {
+        color: var(--ink);
+      }
+      .ck.ok i {
+        background: var(--meridian);
+        border-color: var(--meridian);
+        color: #fff;
+      }
+      .ck button {
+        color: var(--focus);
+        font-weight: 500;
+        margin-left: auto;
+        font-size: 12.5px;
+      }
+      /* inspector */
+      .inspector {
+        border-left: 1px solid var(--rule);
+        background: var(--panel);
+        overflow: auto;
+        padding: 0;
+      }
+      .no-inspector .inspector {
+        display: none;
+      }
+      .insp-hd {
+        position: sticky;
+        top: 0;
+        background: var(--panel);
+        padding: 14px 18px 10px;
+        border-bottom: 1px solid var(--rule);
+        z-index: 2;
+      }
+      .insp-hd .eyebrow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .insp-hd .x {
+        color: var(--ink-3);
+        font-size: 16px;
+        line-height: 1;
+      }
+      .insp-hd .x:hover {
+        color: var(--ink);
+      }
+      .field {
+        padding: 0 18px;
+        margin-top: 14px;
+      }
+      .field label {
+        display: block;
+        font-size: 11.5px;
+        color: var(--ink-3);
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      .in {
+        width: 100%;
+        height: 34px;
+        border: 1px solid var(--rule-2);
+        border-radius: 8px;
+        padding: 0 10px;
+        background: var(--panel);
+      }
+      .in:focus {
+        border-color: var(--focus);
+        outline: 0;
+      }
+      textarea.in {
+        height: auto;
+        min-height: 64px;
+        padding: 8px 10px;
+        resize: vertical;
+      }
+      select.in {
+        appearance: none;
+        background-image:
+          linear-gradient(45deg, transparent 50%, var(--ink-3) 50%),
+          linear-gradient(135deg, var(--ink-3) 50%, transparent 50%);
+        background-position:
+          calc(100% - 14px) 14px,
+          calc(100% - 9px) 14px;
+        background-size: 5px 5px;
+        background-repeat: no-repeat;
+        padding-right: 28px;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .three {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+      .seg {
+        display: inline-grid;
+        grid-auto-flow: column;
+        border: 1px solid var(--rule-2);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--panel-2);
+      }
+      .seg button {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--ink-2);
+      }
+      .seg button.on {
+        background: var(--panel);
+        color: var(--ink);
+        box-shadow: inset 0 0 0 1px var(--rule-2);
+      }
+      .range {
+        width: 100%;
+        accent-color: var(--meridian);
+      }
+      .calc {
+        margin: 8px 18px 0;
+        padding: 10px 12px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: var(--panel-2);
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+      .calc div {
+        display: flex;
+        justify-content: space-between;
+        padding: 2px 0;
+      }
+      .calc .tot {
+        border-top: 1px solid var(--rule-2);
+        margin-top: 4px;
+        padding-top: 6px;
+        font-weight: 600;
+      }
+      .hint {
+        padding: 0 18px;
+        font-size: 12px;
+        color: var(--ink-3);
+        margin-top: 6px;
+      }
+      .err {
+        color: var(--ember);
+      }
+      .insp-sec {
+        margin-top: 22px;
+        padding: 0 18px;
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      .krs {
+        margin: 8px 18px 0;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .kr {
+        display: flex;
+        gap: 8px;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--rule);
+        font-size: 13px;
+      }
+      .kr:last-child {
+        border-bottom: 0;
+      }
+      .kr a {
+        color: var(--focus);
+        text-decoration: none;
+        font-size: 12px;
+        margin-left: auto;
+      }
+      .danger {
+        margin: 26px 18px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12.5px;
+        color: var(--ink-3);
+      }
+      .danger button {
+        color: var(--ember);
+        font-weight: 500;
+      }
+      .empty {
+        padding: 40px 18px;
+        text-align: center;
+        color: var(--ink-3);
+        font-size: 13px;
+      }
+      .empty b {
+        display: block;
+        color: var(--ink-2);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .filters select,
+      .filters input {
+        height: 30px;
+        border: 1px solid var(--rule-2);
+        border-radius: 8px;
+        padding: 0 10px;
+        background: var(--panel);
+        font-size: 12.5px;
+      }
+      .team {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .member {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+      }
+      .member .av {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+      }
+      .member .n {
+        font-weight: 600;
+      }
+      .member .r {
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+      .member .s {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--ink-2);
+        text-align: right;
+      }
+      .toast {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: var(--canvas);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      kbd {
+        font-family: var(--mono);
+        font-size: 11px;
+        border: 1px solid var(--rule-2);
+        border-bottom-width: 2px;
+        border-radius: 4px;
+        padding: 0 5px;
+        color: var(--ink-2);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+      @media (max-width: 1180px) {
+        .body {
+          grid-template-columns: 220px minmax(0, 1fr) 320px;
+        }
+        .kpis {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="topbar">
+        <div class="crumbs">
+          Connect <span>›</span> Atlas drive <span>›</span>
+          <b id="crumbTitle">Atlas Platform — H2 2026</b
+          ><span class="faint">.sow</span>
+        </div>
+        <div class="grow"></div>
+        <span class="chip" id="sowStatusChip">In progress</span>
+        <button
+          class="btn"
+          id="submitBtn"
+          title="Moves the document to Submitted"
+        >
+          Submit for review
+        </button>
+        <button class="btn ghost" id="themeBtn" title="Toggle light / dark">
+          ◐
+        </button>
+      </header>
+      <div class="body" id="body">
+        <nav class="rail" id="rail" aria-label="Outline"></nav>
+        <main class="canvas" id="canvas"></main>
+        <aside class="inspector" id="inspector" aria-label="Inspector"></aside>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script>
+      // ─────────────────────────────── dummy document (shaped like the ScopeOfWork schema) ───────────────────────────────
+      const D = {
+        title: "Atlas Platform — H2 2026",
+        status: "IN_PROGRESS",
+        description:
+          "Ship the public API, the web console and the onboarding docs that let external teams build on Atlas without hand-holding.",
+        contributors: [
+          { id: "phd:alice", name: "Alice Ramos", role: "Backend lead" },
+          { id: "phd:bob", name: "Bob Chen", role: "Product" },
+          { id: "phd:dana", name: "Dana Okafor", role: "Docs" },
+          { id: "phd:eli", name: "Eli Novak", role: "Frontend" },
+        ],
+        roadmaps: [
+          {
+            id: "r1",
+            title: "Delivery 2026 H2",
+            description:
+              "The main delivery track. Everything on the critical path lives here.",
+            milestones: [
+              {
+                id: "m1",
+                code: "M1",
+                title: "Alpha",
+                target: "2026-09-30",
+                coordinators: ["phd:alice"],
+                deliverables: ["d1", "d2", "d5"],
+              },
+              {
+                id: "m2",
+                code: "M2",
+                title: "Beta",
+                target: "2026-11-15",
+                coordinators: ["phd:bob"],
+                deliverables: ["d3", "d6", "d7"],
+              },
+              {
+                id: "m3",
+                code: "M3",
+                title: "General availability",
+                target: "2026-12-20",
+                coordinators: ["phd:bob", "phd:dana"],
+                deliverables: ["d4", "d8"],
+              },
+            ],
+          },
+          {
+            id: "r2",
+            title: "Research track",
+            description:
+              "Exploratory work that de-risks the main track. Not on the critical path.",
+            milestones: [
+              {
+                id: "m4",
+                code: "R1",
+                title: "Discovery",
+                target: "2026-10-10",
+                coordinators: ["phd:eli"],
+                deliverables: ["d9"],
+              },
+            ],
+          },
+        ],
+        projects: [
+          {
+            id: "p1",
+            code: "PLT",
+            title: "Platform core",
+            owner: "phd:bob",
+            currency: "USD",
+            budgetType: "CAPEX",
+            abstract: "Runtime, storage and sync.",
+            deliverables: ["d1", "d3", "d4"],
+          },
+          {
+            id: "p2",
+            code: "API",
+            title: "Public API",
+            owner: "phd:alice",
+            currency: "USD",
+            budgetType: "OPEX",
+            abstract: "REST and GraphQL surface for partners.",
+            deliverables: ["d2", "d6", "d10"],
+          },
+          {
+            id: "p3",
+            code: "DOC",
+            title: "Docs & onboarding",
+            owner: "phd:dana",
+            currency: "EUR",
+            budgetType: "OPEX",
+            abstract: "Guides, reference and samples.",
+            deliverables: ["d5", "d7", "d8"],
+          },
+        ],
+        deliverables: [
+          {
+            id: "d1",
+            code: "PLT-01",
+            title: "Operation store on PGlite",
+            owner: "phd:alice",
+            status: "DELIVERED",
+            description: "Durable operation log with hash chain.",
+            progress: { kind: "pct", value: 100 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 80, margin: 20 },
+            krs: [{ t: "p99 write < 20ms", l: "#" }],
+          },
+          {
+            id: "d2",
+            code: "API-01",
+            title: "Auth & API keys",
+            owner: "phd:alice",
+            status: "IN_PROGRESS",
+            description: "Key issuance, rotation, scopes.",
+            progress: { kind: "sp", total: 21, completed: 13 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 21,
+              margin: 20,
+            },
+            krs: [{ t: "Keys rotate without downtime", l: "#" }],
+          },
+          {
+            id: "d3",
+            code: "PLT-02",
+            title: "Realtime sync channel",
+            owner: "phd:eli",
+            status: "BLOCKED",
+            description: "WebSocket transport for strands.",
+            progress: { kind: "pct", value: 35 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 120, margin: 20 },
+            krs: [],
+          },
+          {
+            id: "d4",
+            code: "PLT-03",
+            title: "Hardening & SLOs",
+            owner: null,
+            status: "TODO",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 60, margin: 20 },
+            krs: [],
+          },
+          {
+            id: "d5",
+            code: "DOC-01",
+            title: "Quickstart guide",
+            owner: "phd:dana",
+            status: "DELIVERED",
+            description: "Zero to first document in 10 minutes.",
+            progress: { kind: "bin", done: true },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 24, margin: 15 },
+            krs: [],
+          },
+          {
+            id: "d6",
+            code: "API-02",
+            title: "Webhooks",
+            owner: "phd:alice",
+            status: "IN_PROGRESS",
+            description: "Signed delivery with retries.",
+            progress: { kind: "sp", total: 13, completed: 5 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 13,
+              margin: 20,
+            },
+            krs: [],
+          },
+          {
+            id: "d7",
+            code: "DOC-02",
+            title: "API reference site",
+            owner: "phd:dana",
+            status: "TODO",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 40, margin: 15 },
+            krs: [],
+          },
+          {
+            id: "d8",
+            code: "DOC-03",
+            title: "Migration playbook",
+            owner: null,
+            status: "DRAFT",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 0, margin: 15 },
+            krs: [],
+          },
+          {
+            id: "d9",
+            code: "RES-01",
+            title: "Offline-first spike",
+            owner: "phd:eli",
+            status: "IN_PROGRESS",
+            description: "Can Connect work fully offline?",
+            progress: { kind: "bin", done: false },
+            anchor: null,
+            krs: [],
+          },
+          {
+            id: "d10",
+            code: "API-03",
+            title: "Rate limiting",
+            owner: "phd:eli",
+            status: "CANCELED",
+            description: "Superseded by gateway policy.",
+            progress: { kind: "pct", value: 10 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 8,
+              margin: 20,
+            },
+            krs: [],
+          },
+          {
+            id: "d11",
+            code: "",
+            title: "Partner sandbox environment",
+            owner: null,
+            status: "DRAFT",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: null,
+            krs: [],
+          },
+        ],
+      };
+      // ─────────────────────────────── derived values (same rules as the reducers) ───────────────────────────────
+      const $ = (s, r = document) => r.querySelector(s);
+      const byId = (id) => D.deliverables.find((d) => d.id === id);
+      const agent = (id) => D.contributors.find((c) => c.id === id);
+      const initials = (id) => {
+        const a = agent(id);
+        return a
+          ? a.name
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .slice(0, 2)
+          : "?";
+      };
+      const allMilestones = () =>
+        D.roadmaps.flatMap((r) =>
+          r.milestones.map((m) => ({ ...m, roadmap: r })),
+        );
+      const milestoneOf = (did) =>
+        allMilestones().find((m) => m.deliverables.includes(did));
+      const projectOf = (did) =>
+        D.projects.find((p) => p.deliverables.includes(did));
+      const ignored = (d) => d.status === "CANCELED" || d.status === "WONT_DO";
+      const pctOf = (d) => {
+        const p = d.progress;
+        if (!p) return 0;
+        if (p.kind === "pct") return p.value;
+        if (p.kind === "sp")
+          return p.total > 0 ? (p.completed / p.total) * 100 : 0;
+        return d.status === "IN_PROGRESS" ? 50 : p.done ? 100 : 0;
+      };
+      const isDone = (d) =>
+        d.status === "DELIVERED" ||
+        (d.progress?.kind === "bin" && d.progress.done);
+      function rollup(ids) {
+        const ds = ids.map(byId).filter((d) => d && !ignored(d));
+        if (!ds.length) return { kind: "pct", pct: 0, total: 0, done: 0 };
+        const allSP = ds.every((d) => d.progress?.kind === "sp");
+        if (allSP) {
+          const t = ds.reduce((a, d) => a + d.progress.total, 0),
+            c = ds.reduce((a, d) => a + d.progress.completed, 0);
+          return {
+            kind: "sp",
+            spTotal: t,
+            spDone: c,
+            pct: t ? (c / t) * 100 : 0,
+            total: ds.length,
+            done: ds.filter(isDone).length,
+          };
+        }
+        return {
+          kind: "pct",
+          pct:
+            Math.round(
+              (ds.reduce((a, d) => a + pctOf(d), 0) / ds.length) * 100,
+            ) / 100,
+          total: ds.length,
+          done: ds.filter(isDone).length,
+        };
+      }
+      const cost = (d) =>
+        d.anchor ? d.anchor.unitCost * d.anchor.quantity : 0;
+      const budget = (d) =>
+        d.anchor
+          ? Math.round(cost(d) * (1 + d.anchor.margin / 100) * 100) / 100
+          : 0;
+      const sumBudget = (ids) =>
+        ids
+          .map(byId)
+          .filter(Boolean)
+          .reduce((a, d) => a + budget(d), 0);
+      const sumCost = (ids) =>
+        ids
+          .map(byId)
+          .filter(Boolean)
+          .reduce((a, d) => a + cost(d), 0);
+      const money = (n, cur = "USD") =>
+        new Intl.NumberFormat("en", {
+          style: "currency",
+          currency: cur,
+          maximumFractionDigits: 0,
+        }).format(n);
+      const dateFmt = (s) =>
+        s
+          ? new Date(s + "T00:00:00").toLocaleDateString("en", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "—";
+      const today = new Date("2026-10-20T00:00:00");
+      const msState = (m) => {
+        const r = rollup(m.deliverables);
+        if (r.total && r.done === r.total) return "done";
+        if (
+          new Date(m.target) >= today &&
+          allMilestones()
+            .filter((x) => new Date(x.target) >= today)
+            .sort((a, b) => a.target.localeCompare(b.target))[0]?.id === m.id
+        )
+          return "live";
+        return "";
+      };
+      const STATUS_LABEL = {
+        DRAFT: "Draft",
+        TODO: "To do",
+        BLOCKED: "Blocked",
+        IN_PROGRESS: "In progress",
+        DELIVERED: "Delivered",
+        CANCELED: "Canceled",
+        WONT_DO: "Won't do",
+        SUBMITTED: "Submitted",
+        APPROVED: "Approved",
+        REJECTED: "Rejected",
+      };
+      const chip = (s) =>
+        `<span class="chip ${s}">${STATUS_LABEL[s] || s}</span>`;
+      const avatar = (id) =>
+        id
+          ? `<span class="av" title="${agent(id)?.name || id}">${initials(id)}</span>`
+          : `<span class="av" title="No owner" style="border:1px dashed var(--rule-2);background:transparent">·</span>`;
+      const badges = (d) =>
+        [
+          !projectOf(d.id) && `<span class="tag">Unfunded</span>`,
+          !milestoneOf(d.id) && `<span class="tag warn">Unscheduled</span>`,
+          projectOf(d.id) &&
+            (!d.anchor || d.anchor.quantity === 0) &&
+            `<span class="tag warn">Unquoted</span>`,
+        ]
+          .filter(Boolean)
+          .join(" ");
+      let uid = 100;
+      const newId = (p) => `${p}${++uid}`;
+      // ─────────────────────────────── ui state ───────────────────────────────
+      const S = {
+        view: { kind: "overview" },
+        sel: null,
+        filters: { status: "", project: "", milestone: "", q: "" },
+      };
+      function go(kind, id) {
+        S.view = { kind, id };
+        render();
+        $("#canvas").scrollTop = 0;
+      }
+      function select(id) {
+        S.sel = id;
+        render();
+      }
+      function toast(t) {
+        const e = $("#toast");
+        e.textContent = t;
+        e.classList.add("show");
+        clearTimeout(e._t);
+        e._t = setTimeout(() => e.classList.remove("show"), 1600);
+      }
+      // ─────────────────────────────── rail ───────────────────────────────
+      function renderRail() {
+        const v = S.view;
+        const act = (k, id) =>
+          v.kind === k && (id === undefined || v.id === id) ? "active" : "";
+        const unsched = D.deliverables.filter(
+          (d) => !milestoneOf(d.id) && !ignored(d),
+        ).length;
+        $("#rail").innerHTML = `
+    <button class="node ${act("overview")}" onclick="go('overview')">◫ <span>Overview</span></button>
+    <div class="sect">Roadmaps <button title="Add roadmap" onclick="addRoadmap()">+ add</button></div>
+    ${D.roadmaps
+      .map(
+        (
+          r,
+        ) => `<button class="node ${act("roadmap", r.id)}" onclick="go('roadmap','${r.id}')">▸ <span>${r.title}</span><span class="cnt">${r.milestones.length}</span></button>
+      ${r.milestones
+        .map((m) => {
+          const ru = rollup(m.deliverables);
+          return `<button class="node child ${act("milestone", m.id)}" onclick="go('milestone','${m.id}')"><span class="code">${m.code}</span><span>${m.title}</span><span class="ring" style="--p:${ru.pct}" title="${Math.round(ru.pct)}%"></span></button>`;
+        })
+        .join("")}`,
+      )
+      .join("")}
+    <div class="sect">Projects <button title="Add project" onclick="addProject()">+ add</button></div>
+    ${D.projects.map((p) => `<button class="node ${act("project", p.id)}" onclick="go('project','${p.id}')"><span class="code">${p.code}</span><span>${p.title}</span><span class="cnt">${money(sumBudget(p.deliverables), p.currency)}</span></button>`).join("")}
+    <div class="sect">Deliverables</div>
+    <button class="node ${act("deliverables")}" onclick="go('deliverables')">☰ <span>All deliverables</span><span class="cnt">${D.deliverables.length}</span></button>
+    ${unsched ? `<button class="node child" onclick="S.filters={status:'',project:'',milestone:'__none',q:''};go('deliverables')" style="color:var(--signal)">⚑ <span>Unscheduled</span><span class="cnt">${unsched}</span></button>` : ""}
+    <div class="sect">Team</div>
+    <button class="node ${act("team")}" onclick="go('team')">◉ <span>Contributors</span><span class="cnt">${D.contributors.length}</span></button>`;
+      }
+      // ─────────────────────────────── canvas views ───────────────────────────────
+      function deliverableRow(d) {
+        const m = milestoneOf(d.id),
+          p = projectOf(d.id);
+        const pc = pctOf(d);
+        return `<div class="row ${S.sel === d.id ? "sel" : ""}" onclick="select('${d.id}')">
+    <span class="mono faint">${d.code || "—"}</span>
+    <div><div class="t">${d.title || "<span class='faint'>Untitled deliverable</span>"} ${badges(d)}</div><div class="sub">${p ? p.code + " · " : ""}${m ? m.code + " " + m.title : ""}</div></div>
+    <div>${chip(d.status)}</div>
+    <div title="${Math.round(pc)}%"><div class="bar ${d.status === "BLOCKED" ? "signal" : ""}"><i style="width:${pc}%"></i></div><div class="faint" style="font-size:11px;margin-top:3px">${d.progress?.kind === "sp" ? `${d.progress.completed}/${d.progress.total} SP` : d.progress?.kind === "bin" ? (d.progress.done ? "Done" : "Not done") : Math.round(pc) + "%"}</div></div>
+    <div class="money">${d.anchor ? money(budget(d), p?.currency || "USD") : "<span class='faint'>—</span>"}</div>
+    <div>${avatar(d.owner)}</div></div>`;
+      }
+      const rowsHeader = `<div class="row hdr"><span>Code</span><span>Deliverable</span><span>Status</span><span>Progress</span><span style="text-align:right">Budget</span><span></span></div>`;
+
+      function viewOverview() {
+        const all = rollup(D.deliverables.map((d) => d.id));
+        const byCur = {};
+        D.projects.forEach(
+          (p) =>
+            (byCur[p.currency] =
+              (byCur[p.currency] || 0) + sumBudget(p.deliverables)),
+        );
+        const ms = allMilestones().sort((a, b) =>
+          a.target.localeCompare(b.target),
+        );
+        const next = ms.find((m) => new Date(m.target) >= today);
+        const doneMs = ms.filter((m) => msState(m) === "done").length;
+        const fillPct = ms.length > 1 ? (doneMs / (ms.length - 1)) * 100 : 0;
+        const checks = [
+          [
+            "Title and summary written",
+            !!D.title && !!D.description,
+            () => $("#docTitle")?.focus(),
+          ],
+          [
+            "At least one project with an owner",
+            D.projects.some((p) => p.owner),
+            () => go("project", D.projects[0]?.id),
+          ],
+          [
+            "A roadmap with dated milestones",
+            ms.length > 0 && ms.every((m) => m.target),
+            () => go("roadmap", D.roadmaps[0]?.id),
+          ],
+          [
+            "Every deliverable scheduled",
+            D.deliverables
+              .filter((d) => !ignored(d))
+              .every((d) => milestoneOf(d.id)),
+            () => {
+              S.filters = {
+                status: "",
+                project: "",
+                milestone: "__none",
+                q: "",
+              };
+              go("deliverables");
+            },
+          ],
+          [
+            "Every deliverable funded and quoted",
+            D.deliverables
+              .filter((d) => !ignored(d))
+              .every(
+                (d) => projectOf(d.id) && d.anchor && d.anchor.quantity > 0,
+              ),
+            () => {
+              S.filters = {
+                status: "",
+                project: "__none",
+                milestone: "",
+                q: "",
+              };
+              go("deliverables");
+            },
+          ],
+          [
+            "Every deliverable has an owner",
+            D.deliverables.filter((d) => !ignored(d)).every((d) => d.owner),
+            () => go("deliverables"),
+          ],
+        ];
+        return `<div class="doc">
+    <div class="eyebrow">Scope of work</div>
+    <h1 class="title editable" id="docTitle" contenteditable="true" spellcheck="false" onblur="D.title=this.textContent.trim();render()">${D.title}</h1>
+    <p class="desc editable" contenteditable="true" onblur="D.description=this.textContent.trim()">${D.description}</p>
+    <div class="kpis">
+      <div class="kpi"><div class="l">Budget</div><div class="v">${
+        Object.entries(byCur)
+          .map(([c, v]) => money(v, c))
+          .join(" · ") || "—"
+      }</div><div class="s">${D.projects.length} projects · derived from quotes</div></div>
+      <div class="kpi"><div class="l">Progress</div><div class="v">${Math.round(all.pct)}%</div><div class="s"><div class="bar" style="margin-top:6px"><i style="width:${all.pct}%"></i></div></div></div>
+      <div class="kpi"><div class="l">Deliverables</div><div class="v">${all.done}<span class="faint" style="font-size:18px"> / ${all.total}</span></div><div class="s">delivered · ${D.deliverables.filter((d) => d.status === "BLOCKED").length} blocked</div></div>
+      <div class="kpi"><div class="l">Next milestone</div><div class="v">${next ? next.code : "—"}</div><div class="s">${next ? next.title + " · " + dateFmt(next.target) : "nothing scheduled"}</div></div>
+    </div>
+    <section class="section"><div class="hd"><h2>Delivery</h2><span class="muted">${ms.length} milestones across ${D.roadmaps.length} roadmaps</span><div class="grow"></div><button class="btn sm" onclick="go('roadmap','${D.roadmaps[0]?.id}')">Open roadmap</button></div>
+      <div class="spine"><div class="line"></div><div class="fill" style="width:${fillPct}%"></div><div class="notches">${ms
+        .map((m) => {
+          const r = rollup(m.deliverables);
+          return `<div class="notch ${msState(m)}"><span class="dot"></span><button onclick="go('milestone','${m.id}')"><div class="code">${m.code} · ${m.roadmap.title}</div><div class="t">${m.title}</div><div class="d">${dateFmt(m.target)} · ${r.done}/${r.total} done</div></button></div>`;
+        })
+        .join("")}</div></div>
+    </section>
+    <section class="section"><div class="hd"><h2>Plan</h2><span class="muted">who funds what, and when it lands</span><div class="grow"></div><span class="faint" style="font-size:12px">click a card to inspect · drag &amp; drop is in Concept B</span></div>
+      ${matrix(ms)}
+    </section>
+    <section class="section"><div class="hd"><h2>Ready to submit?</h2><span class="muted">${checks.filter((c) => c[1]).length} of ${checks.length} complete</span></div>
+      <div class="card"><div class="check">${checks.map((c) => `<div class="ck ${c[1] ? "ok" : ""}"><i>${c[1] ? "✓" : ""}</i><span>${c[0]}</span>${c[1] ? "" : `<button onclick="(${c[2].toString()})()">Fix</button>`}</div>`).join("")}</div></div>
+    </section></div>`;
+      }
+      function matrix(ms) {
+        const cols = [{ id: "__none", code: "", title: "Unscheduled" }, ...ms];
+        const rows = [
+          ...D.projects,
+          {
+            id: "__none",
+            code: "",
+            title: "Unfunded",
+            currency: "USD",
+            deliverables: D.deliverables
+              .filter((d) => !projectOf(d.id))
+              .map((d) => d.id),
+          },
+        ];
+        const cell = (p, m) =>
+          p.deliverables
+            .map(byId)
+            .filter(
+              (d) =>
+                d &&
+                ((m.id === "__none" && !milestoneOf(d.id)) ||
+                  milestoneOf(d.id)?.id === m.id),
+            )
+            .map(
+              (d) =>
+                `<div class="mini ${d.status} ${S.sel === d.id ? "sel" : ""}" onclick="select('${d.id}')"><span class="st"></span><span class="code">${d.code}</span><span class="t">${d.title}</span>${avatar(d.owner)}</div>`,
+            )
+            .join("");
+        return `<div class="matrix" style="grid-template-columns:150px repeat(${cols.length},minmax(0,1fr))">
+    <div class="c h"></div>${cols.map((m) => `<div class="c h">${m.code ? `<span class="mono faint">${m.code}</span> ` : ""}<b>${m.title}</b>${m.target ? `<div class="faint" style="font-size:11px">${dateFmt(m.target)}</div>` : ""}</div>`).join("")}
+    ${rows.map((p) => `<div class="c rh"><span class="code">${p.code || "·"}</span><b>${p.title}</b>${p.id !== "__none" ? `<div class="money">${money(sumBudget(p.deliverables), p.currency)}</div><div class="bar" style="margin-top:6px"><i style="width:${rollup(p.deliverables).pct}%"></i></div>` : ""}</div>${cols.map((m) => `<div class="c">${cell(p, m)}</div>`).join("")}`).join("")}
+  </div>`;
+      }
+      function viewRoadmap(id) {
+        const r = D.roadmaps.find((x) => x.id === id);
+        if (!r) return viewOverview();
+        return `<div class="doc"><div class="eyebrow">Roadmap</div>
+    <h1 class="title editable" contenteditable="true" onblur="D.roadmaps.find(x=>x.id==='${r.id}').title=this.textContent.trim();render()">${r.title}</h1>
+    <p class="desc editable" contenteditable="true" onblur="D.roadmaps.find(x=>x.id==='${r.id}').description=this.textContent.trim()">${r.description || "Add a description…"}</p>
+    <section class="section"><div class="hd"><h2>Milestones</h2><span class="muted">in delivery order</span><div class="grow"></div><button class="btn sm" onclick="addMilestone('${r.id}')">+ Add milestone</button></div>
+      <div class="vspine">${r.milestones
+        .slice()
+        .sort((a, b) => a.target.localeCompare(b.target))
+        .map((m) => {
+          const ru = rollup(m.deliverables);
+          return `<div class="ms ${msState(m)}">
+        <div class="hd"><span class="code">${m.code}</span><h3 class="editable" contenteditable="true" onblur="milestone('${m.id}').title=this.textContent.trim();render()">${m.title}</h3><input type="date" value="${m.target}" onchange="milestone('${m.id}').target=this.value;render()"><span class="avs">${m.coordinators.map(avatar).join("")}</span><div class="grow" style="flex:1"></div><span class="muted" style="font-size:12px">${ru.done}/${ru.total} done · ${money(sumBudget(m.deliverables))}</span><button class="btn sm ghost" onclick="go('milestone','${m.id}')">Open</button></div>
+        <div class="rows">${m.deliverables.map(byId).filter(Boolean).map(deliverableRow).join("") || `<div class="empty"><b>No deliverables yet</b>Add one below or schedule an existing one from its inspector.</div>`}<button class="add" onclick="addDeliverable({milestone:'${m.id}'})">+ Add deliverable to ${m.code}</button></div></div>`;
+        })
+        .join("")}</div>
+    </section></div>`;
+      }
+      const milestone = (id) =>
+        allMilestones().find((m) => m.id === id) &&
+        D.roadmaps.flatMap((r) => r.milestones).find((m) => m.id === id);
+      function viewMilestone(id) {
+        const m = allMilestones().find((x) => x.id === id);
+        if (!m) return viewOverview();
+        const ru = rollup(m.deliverables);
+        return `<div class="doc"><div class="eyebrow">${m.roadmap.title} · milestone</div>
+    <div style="display:flex;align-items:baseline;gap:14px"><span class="mono" style="font-size:22px;color:var(--ink-3)">${m.code}</span><h1 class="title editable" contenteditable="true" onblur="milestone('${m.id}').title=this.textContent.trim();render()">${m.title}</h1></div>
+    <div style="display:flex;gap:18px;align-items:center;margin:6px 0 4px;flex-wrap:wrap"><label class="muted" style="font-size:12.5px">Target <input type="date" class="in" style="width:160px;display:inline-block;height:30px;margin-left:6px" value="${m.target}" onchange="milestone('${m.id}').target=this.value;render()"></label>
+      <span class="muted" style="font-size:12.5px">Coordinators <span class="avs">${m.coordinators.map(avatar).join("")}</span> <select class="in" style="width:auto;display:inline-block;height:30px" onchange="if(this.value){milestone('${m.id}').coordinators.push(this.value);render()}"><option value="">+ add</option>${D.contributors
+        .filter((c) => !m.coordinators.includes(c.id))
+        .map((c) => `<option value="${c.id}">${c.name}</option>`)
+        .join("")}</select></span></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><div class="l">Progress</div><div class="v">${Math.round(ru.pct)}%</div><div class="s">${ru.kind === "sp" ? `${ru.spDone}/${ru.spTotal} story points` : "average of deliverables"}</div></div><div class="kpi"><div class="l">Delivered</div><div class="v">${ru.done}<span class="faint" style="font-size:18px"> / ${ru.total}</span></div></div><div class="kpi"><div class="l">Budget in this milestone</div><div class="v">${money(sumBudget(m.deliverables))}</div><div class="s">sum of quotes, all currencies as USD in this mock</div></div></div>
+    <section class="section"><div class="hd"><h2>Deliverables</h2><div class="grow"></div><button class="btn sm" onclick="addDeliverable({milestone:'${m.id}'})">+ Add deliverable</button></div>
+      <div class="rows">${rowsHeader}${m.deliverables.map(byId).filter(Boolean).map(deliverableRow).join("")}</div></section></div>`;
+      }
+      function viewProject(id) {
+        const p = D.projects.find((x) => x.id === id);
+        if (!p) return viewOverview();
+        const ds = p.deliverables.map(byId).filter(Boolean);
+        const c = sumCost(p.deliverables),
+          b = sumBudget(p.deliverables);
+        const ru = rollup(p.deliverables);
+        return `<div class="doc"><div class="eyebrow">Project</div>
+    <div style="display:flex;align-items:baseline;gap:14px"><span class="mono editable" style="font-size:22px;color:var(--ink-3)" contenteditable="true" onblur="project('${p.id}').code=this.textContent.trim();render()">${p.code}</span><h1 class="title editable" contenteditable="true" onblur="project('${p.id}').title=this.textContent.trim();render()">${p.title}</h1></div>
+    <p class="desc editable" contenteditable="true" onblur="project('${p.id}').abstract=this.textContent.trim()">${p.abstract || "Add an abstract…"}</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+      <label class="muted" style="font-size:12.5px">Owner <select class="in" style="width:auto;display:inline-block;height:30px" onchange="project('${p.id}').owner=this.value||null;render()"><option value="">Unassigned</option>${D.contributors.map((a) => `<option value="${a.id}" ${p.owner === a.id ? "selected" : ""}>${a.name}</option>`).join("")}</select></label>
+      <label class="muted" style="font-size:12.5px">Currency <select class="in" style="width:auto;display:inline-block;height:30px" onchange="project('${p.id}').currency=this.value;render()">${["USD", "EUR", "DAI", "USDS"].map((x) => `<option ${p.currency === x ? "selected" : ""}>${x}</option>`).join("")}</select></label>
+      <label class="muted" style="font-size:12.5px">Budget type <select class="in" style="width:auto;display:inline-block;height:30px" onchange="project('${p.id}').budgetType=this.value">${["CAPEX", "OPEX", "OVERHEAD", "CONTINGENCY"].map((x) => `<option ${p.budgetType === x ? "selected" : ""}>${x}</option>`).join("")}</select></label></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><div class="l">Cost</div><div class="v">${money(c, p.currency)}</div><div class="s">Σ unit cost × quantity</div></div><div class="kpi"><div class="l">Budget</div><div class="v">${money(b, p.currency)}</div><div class="s">${c ? `implied margin ${Math.round((b / c - 1) * 1000) / 10}%` : "no quotes yet"}</div></div><div class="kpi"><div class="l">Progress</div><div class="v">${Math.round(ru.pct)}%</div><div class="s">${ru.done}/${ru.total} delivered</div></div></div>
+    <section class="section"><div class="hd"><h2>Ledger</h2><span class="muted">every deliverable this project funds</span><div class="grow"></div>
+      <label class="muted" style="font-size:12.5px">Set total budget <input class="in mono" style="width:130px;display:inline-block;height:30px;margin-left:6px" placeholder="${Math.round(b)}" onkeydown="if(event.key==='Enter'){setTotalBudget('${p.id}',this.value);this.value=''}"></label>
+      <button class="btn sm" onclick="addDeliverable({project:'${p.id}'})">+ Add deliverable</button></div>
+      <div class="rows"><div class="ledger hdr"><span>Code</span><span>Deliverable</span><span>Unit × qty</span><span style="text-align:right">Cost</span><span style="text-align:right">Margin</span><span style="text-align:right">Budget</span></div>
+      ${ds
+        .map(
+          (
+            d,
+          ) => `<div class="ledger ${S.sel === d.id ? "sel" : ""}" onclick="select('${d.id}')"><span class="mono faint">${d.code || "—"}</span><div><div class="t" style="font-weight:500">${d.title} ${badges(d)}</div><div class="faint" style="font-size:12px">${chip(d.status)} ${milestoneOf(d.id) ? `· ${milestoneOf(d.id).code}` : ""}</div></div>
+        <span class="mono muted">${d.anchor ? `${d.anchor.unitCost} × ${d.anchor.quantity} ${d.anchor.unit === "StoryPoints" ? "SP" : "h"}` : "—"}</span><span class="money">${d.anchor ? money(cost(d), p.currency) : "—"}</span><span class="money">${d.anchor ? d.anchor.margin + "%" : "—"}</span><span class="money">${d.anchor ? money(budget(d), p.currency) : "—"}</span></div>`,
+        )
+        .join("")}
+      <div class="ledger tot"><span></span><span>Total</span><span></span><span class="money">${money(c, p.currency)}</span><span class="money">${c ? Math.round((b / c - 1) * 1000) / 10 + "%" : "—"}</span><span class="money">${money(b, p.currency)}</span></div></div>
+      <p class="hint" style="padding:0;margin-top:8px">Budget is always derived: unit cost × quantity × (1 + margin). Setting a total budget re-derives every margin so the numbers round-trip.</p></section></div>`;
+      }
+      const project = (id) => D.projects.find((p) => p.id === id);
+      function viewDeliverables() {
+        const f = S.filters;
+        let ds = D.deliverables.filter(
+          (d) =>
+            (!f.status || d.status === f.status) &&
+            (!f.project ||
+              (f.project === "__none"
+                ? !projectOf(d.id)
+                : projectOf(d.id)?.id === f.project)) &&
+            (!f.milestone ||
+              (f.milestone === "__none"
+                ? !milestoneOf(d.id)
+                : milestoneOf(d.id)?.id === f.milestone)) &&
+            (!f.q ||
+              (d.title + " " + d.code)
+                .toLowerCase()
+                .includes(f.q.toLowerCase())),
+        );
+        return `<div class="doc"><div class="eyebrow">All deliverables</div><h1 class="title">${ds.length} <span class="faint" style="font-weight:500">of ${D.deliverables.length}</span></h1>
+    <div class="filters" style="margin-top:14px"><input placeholder="Search title or code…" value="${f.q}" oninput="S.filters.q=this.value;render()">
+      <select onchange="S.filters.status=this.value;render()"><option value="">Any status</option>${Object.keys(
+        STATUS_LABEL,
+      )
+        .slice(0, 7)
+        .map(
+          (s) =>
+            `<option value="${s}" ${f.status === s ? "selected" : ""}>${STATUS_LABEL[s]}</option>`,
+        )
+        .join("")}</select>
+      <select onchange="S.filters.project=this.value;render()"><option value="">Any project</option><option value="__none" ${f.project === "__none" ? "selected" : ""}>Unfunded</option>${D.projects.map((p) => `<option value="${p.id}" ${f.project === p.id ? "selected" : ""}>${p.code} ${p.title}</option>`).join("")}</select>
+      <select onchange="S.filters.milestone=this.value;render()"><option value="">Any milestone</option><option value="__none" ${f.milestone === "__none" ? "selected" : ""}>Unscheduled</option>${allMilestones()
+        .map(
+          (m) =>
+            `<option value="${m.id}" ${f.milestone === m.id ? "selected" : ""}>${m.code} ${m.title}</option>`,
+        )
+        .join("")}</select>
+      ${f.status || f.project || f.milestone || f.q ? `<button class="btn sm ghost" onclick="S.filters={status:'',project:'',milestone:'',q:''};render()">Clear</button>` : ""}<div class="grow" style="flex:1"></div><button class="btn sm" onclick="addDeliverable({})">+ New deliverable</button></div>
+    <div class="rows">${rowsHeader}${ds.map(deliverableRow).join("") || `<div class="empty"><b>Nothing matches</b>Loosen the filters or create the deliverable you were looking for.</div>`}</div></div>`;
+      }
+      function viewTeam() {
+        return `<div class="doc"><div class="eyebrow">Team</div><h1 class="title">Contributors</h1><p class="desc">People are referenced by PHID. Removing someone clears them as owner and coordinator everywhere.</p>
+  <div class="team" style="margin-top:18px">${D.contributors
+    .map((a) => {
+      const owns = D.deliverables.filter((d) => d.owner === a.id).length,
+        leads = D.projects.filter((p) => p.owner === a.id).length,
+        coord = allMilestones().filter((m) =>
+          m.coordinators.includes(a.id),
+        ).length;
+      return `<div class="member">${avatar(a.id)}<div><div class="n editable" contenteditable="true" onblur="agent('${a.id}').name=this.textContent.trim();render()">${a.name}</div><div class="r mono">${a.id}</div></div><div class="s">${leads ? leads + " project" + (leads > 1 ? "s" : "") + "<br>" : ""}${owns} deliverable${owns === 1 ? "" : "s"}${coord ? "<br>coordinates " + coord : ""}</div></div>`;
+    })
+    .join("")}
+    <button class="member" style="justify-content:center;color:var(--ink-3);border-style:dashed" onclick="addAgent()">+ Add contributor</button></div></div>`;
+      }
+      // ─────────────────────────────── inspector ───────────────────────────────
+      function renderInspector() {
+        const d = S.sel && byId(S.sel);
+        const body = $("#body");
+        if (!d) {
+          body.classList.add("no-inspector");
+          $("#inspector").innerHTML = "";
+          return;
+        }
+        body.classList.remove("no-inspector");
+        const p = projectOf(d.id),
+          m = milestoneOf(d.id);
+        const pr = d.progress || { kind: "pct", value: 0 };
+        const c = cost(d),
+          b = budget(d);
+        $("#inspector").innerHTML = `
+    <div class="insp-hd"><div class="eyebrow"><span>Deliverable</span><button class="x" onclick="select(null)" title="Close (Esc)">×</button></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:6px"><input class="in mono" style="width:90px" value="${d.code}" placeholder="CODE" onchange="upd('${d.id}',{code:this.value})"><input class="in" style="flex:1;font-weight:600" value="${d.title}" placeholder="What will be delivered?" onchange="upd('${d.id}',{title:this.value})"></div>
+      <div style="margin-top:8px;display:flex;gap:6px;align-items:center">${chip(d.status)} ${badges(d)}</div></div>
+    <div class="field two"><div><label>Status</label><select class="in" onchange="upd('${d.id}',{status:this.value})">${["DRAFT", "TODO", "IN_PROGRESS", "BLOCKED", "DELIVERED", "CANCELED", "WONT_DO"].map((s) => `<option value="${s}" ${d.status === s ? "selected" : ""}>${STATUS_LABEL[s]}</option>`).join("")}</select></div>
+      <div><label>Owner</label><select class="in" onchange="upd('${d.id}',{owner:this.value||null})"><option value="">Unassigned</option>${D.contributors.map((a) => `<option value="${a.id}" ${d.owner === a.id ? "selected" : ""}>${a.name}</option>`).join("")}</select></div></div>
+    <div class="field"><label>Description</label><textarea class="in" placeholder="What does done look like?" onchange="upd('${d.id}',{description:this.value})">${d.description || ""}</textarea></div>
+    <div class="insp-sec">Progress</div>
+    <div class="field"><div class="seg">${[
+      ["pct", "Percent"],
+      ["sp", "Story points"],
+      ["bin", "Done / not done"],
+    ]
+      .map(
+        ([k, l]) =>
+          `<button class="${pr.kind === k ? "on" : ""}" onclick="setKind('${d.id}','${k}')">${l}</button>`,
+      )
+      .join("")}</div></div>
+    ${
+      pr.kind === "pct"
+        ? `<div class="field"><input type="range" class="range" min="0" max="100" value="${pr.value}" oninput="setPct('${d.id}',this.value)"><div style="display:flex;justify-content:space-between" class="mono muted"><span>0%</span><b style="color:var(--ink)">${Math.round(pr.value)}%</b><span>100%</span></div></div>`
+        : pr.kind === "sp"
+          ? `<div class="field two"><div><label>Completed</label><input type="number" class="in mono" min="0" max="${pr.total}" value="${pr.completed}" onchange="setSP('${d.id}',this.value,null)"></div><div><label>Total</label><input type="number" class="in mono" min="0" value="${pr.total}" onchange="setSP('${d.id}',null,this.value)"></div></div>${pr.completed > pr.total ? `<div class="hint err">Completed cannot exceed total — the reducer rejects this.</div>` : ""}`
+          : `<div class="field"><label class="ck ${pr.done ? "ok" : ""}" style="cursor:pointer"><i>${pr.done ? "✓" : ""}</i><input type="checkbox" ${pr.done ? "checked" : ""} style="display:none" onchange="setDone('${d.id}',this.checked)"> Mark as delivered</label></div>`
+    }
+    ${["CANCELED", "WONT_DO"].includes(d.status) ? `<div class="hint err">Closed deliverables don't accept progress. Reopen it first.</div>` : `<div class="hint">Reaching 100% (or all points, or done) sets the status to Delivered automatically.</div>`}
+    <div class="insp-sec">Placement</div>
+    <div class="field two"><div><label>Milestone <span class="faint">(when)</span></label><select class="in" onchange="schedule('${d.id}',this.value)"><option value="">Unscheduled</option>${allMilestones()
+      .map(
+        (x) =>
+          `<option value="${x.id}" ${m?.id === x.id ? "selected" : ""}>${x.code} · ${x.title}</option>`,
+      )
+      .join("")}</select></div>
+      <div><label>Project <span class="faint">(who pays)</span></label><select class="in" onchange="fund('${d.id}',this.value)"><option value="">Unfunded</option>${D.projects.map((x) => `<option value="${x.id}" ${p?.id === x.id ? "selected" : ""}>${x.code} · ${x.title}</option>`).join("")}</select></div></div>
+    <div class="insp-sec">Quote</div>
+    <div class="field three"><div><label>Unit</label><select class="in" onchange="anchor('${d.id}',{unit:this.value})"><option value="Hours" ${d.anchor?.unit === "Hours" ? "selected" : ""}>Hours</option><option value="StoryPoints" ${d.anchor?.unit === "StoryPoints" ? "selected" : ""}>Story pts</option></select></div>
+      <div><label>Unit cost</label><input type="number" class="in mono" min="0" value="${d.anchor?.unitCost ?? ""}" placeholder="0" onchange="anchor('${d.id}',{unitCost:+this.value})"></div>
+      <div><label>Quantity</label><input type="number" class="in mono" min="0" value="${d.anchor?.quantity ?? ""}" placeholder="0" onchange="anchor('${d.id}',{quantity:+this.value})"></div></div>
+    <div class="field"><label>Margin <span class="faint">%</span></label><input type="range" class="range" min="0" max="100" value="${d.anchor?.margin ?? 0}" oninput="anchor('${d.id}',{margin:+this.value})"><div class="mono muted" style="text-align:right">${d.anchor?.margin ?? 0}%</div></div>
+    <div class="calc"><div><span>cost</span><span>${d.anchor ? `${d.anchor.unitCost} × ${d.anchor.quantity} = ${money(c, p?.currency)}` : "—"}</span></div><div><span>margin</span><span>${d.anchor ? `+ ${d.anchor.margin}% = ${money(b - c, p?.currency)}` : "—"}</span></div><div class="tot"><span>budget</span><span>${money(b, p?.currency)}</span></div></div>
+    ${!p && d.anchor ? `<div class="hint err">Quoted but unfunded — pick a project so this budget rolls up somewhere.</div>` : ""}
+    <div class="insp-sec">Key results</div>
+    <div class="krs">${d.krs.map((k, i) => `<div class="kr"><span>${k.t}</span><a href="${k.l}">link</a></div>`).join("")}<button class="kr add" style="border-top:0" onclick="const t=prompt('Key result');if(t){byId('${d.id}').krs.push({t,l:'#'});render()}">+ Add key result</button></div>
+    <div class="danger"><span>Created from ${p ? p.code : "nowhere"} · <kbd>Esc</kbd> closes</span><button onclick="removeDeliverable('${d.id}')">Remove deliverable</button></div>`;
+      }
+      // ─────────────────────────────── mutations (mirror the reducer actions) ───────────────────────────────
+      function upd(id, patch) {
+        Object.assign(byId(id), patch);
+        render();
+      }
+      function setKind(id, k) {
+        const d = byId(id);
+        if (["CANCELED", "WONT_DO"].includes(d.status))
+          return toast("Closed deliverables don't accept progress");
+        d.progress =
+          k === "pct"
+            ? { kind: "pct", value: 0 }
+            : k === "sp"
+              ? { kind: "sp", total: 10, completed: 0 }
+              : { kind: "bin", done: false };
+        if (d.status !== "DELIVERED") d.status = "IN_PROGRESS";
+        render();
+      }
+      function afterProgress(d) {
+        d.status = isDone(d) ? "DELIVERED" : "IN_PROGRESS";
+      }
+      function setPct(id, v) {
+        const d = byId(id);
+        d.progress = { kind: "pct", value: +v };
+        afterProgress(d);
+        render();
+      }
+      function setSP(id, c, t) {
+        const d = byId(id);
+        const p = d.progress;
+        const nc = c === null ? p.completed : +c,
+          nt = t === null ? p.total : +t;
+        if (nc > nt || nc < 0 || nt < 0) {
+          toast("Story points: completed must be ≤ total");
+          return render();
+        }
+        d.progress = { kind: "sp", total: nt, completed: nc };
+        afterProgress(d);
+        render();
+      }
+      function setDone(id, v) {
+        const d = byId(id);
+        d.progress = { kind: "bin", done: !!v };
+        afterProgress(d);
+        render();
+      }
+      function schedule(id, mid) {
+        allMilestones().forEach((m) => {
+          const real = milestone(m.id);
+          real.deliverables = real.deliverables.filter((x) => x !== id);
+        });
+        if (mid) milestone(mid).deliverables.push(id);
+        render();
+        toast(mid ? "Scheduled" : "Unscheduled");
+      }
+      function fund(id, pid) {
+        D.projects.forEach(
+          (p) => (p.deliverables = p.deliverables.filter((x) => x !== id)),
+        );
+        const d = byId(id);
+        if (pid) {
+          project(pid).deliverables.push(id);
+          d.anchor = d.anchor || {
+            unit: "Hours",
+            unitCost: 0,
+            quantity: 0,
+            margin: 0,
+          };
+        }
+        render();
+        toast(pid ? "Funded by " + project(pid).code : "Unfunded");
+      }
+      function anchor(id, patch) {
+        const d = byId(id);
+        d.anchor = {
+          unit: "Hours",
+          unitCost: 0,
+          quantity: 0,
+          margin: 0,
+          ...(d.anchor || {}),
+          ...patch,
+        };
+        if (
+          d.anchor.unitCost < 0 ||
+          d.anchor.quantity < 0 ||
+          d.anchor.margin < 0
+        ) {
+          toast("Quotes must be zero or positive");
+          return;
+        }
+        render();
+      }
+      function setTotalBudget(pid, v) {
+        const p = project(pid);
+        const total = +v;
+        const c = sumCost(p.deliverables);
+        if (!c) return toast("Quote at least one deliverable first");
+        if (total < c)
+          return toast(
+            `Total budget cannot be below cost (${money(c, p.currency)})`,
+          );
+        const margin = Math.round((total / c - 1) * 1000) / 10;
+        p.deliverables.map(byId).forEach((d) => {
+          if (d.anchor) d.anchor.margin = margin;
+        });
+        render();
+        toast(`Margins set to ${margin}% → ${money(total, p.currency)}`);
+      }
+      function addDeliverable({ milestone: mid, project: pid }) {
+        const id = newId("d");
+        const d = {
+          id,
+          code: "",
+          title: "",
+          owner: null,
+          status: "DRAFT",
+          description: "",
+          progress: { kind: "pct", value: 0 },
+          anchor: pid
+            ? { unit: "Hours", unitCost: 0, quantity: 0, margin: 0 }
+            : null,
+          krs: [],
+        };
+        D.deliverables.push(d);
+        if (mid) milestone(mid).deliverables.push(id);
+        if (pid) project(pid).deliverables.push(id);
+        S.sel = id;
+        render();
+        setTimeout(
+          () =>
+            $(
+              "#inspector input[placeholder='What will be delivered?']",
+            )?.focus(),
+          0,
+        );
+      }
+      function removeDeliverable(id) {
+        if (!confirm("Remove this deliverable everywhere?")) return;
+        D.deliverables = D.deliverables.filter((d) => d.id !== id);
+        D.projects.forEach(
+          (p) => (p.deliverables = p.deliverables.filter((x) => x !== id)),
+        );
+        D.roadmaps.forEach((r) =>
+          r.milestones.forEach(
+            (m) => (m.deliverables = m.deliverables.filter((x) => x !== id)),
+          ),
+        );
+        S.sel = null;
+        render();
+      }
+      function addMilestone(rid) {
+        const r = D.roadmaps.find((x) => x.id === rid);
+        const n = r.milestones.length + 1;
+        r.milestones.push({
+          id: newId("m"),
+          code: (r.milestones[0]?.code.replace(/\d+$/, "") || "M") + n,
+          title: "New milestone",
+          target: "2027-01-31",
+          coordinators: [],
+          deliverables: [],
+        });
+        render();
+      }
+      function addRoadmap() {
+        const id = newId("r");
+        D.roadmaps.push({
+          id,
+          title: "New roadmap",
+          description: "",
+          milestones: [],
+        });
+        go("roadmap", id);
+      }
+      function addProject() {
+        const id = newId("p");
+        D.projects.push({
+          id,
+          code: "NEW",
+          title: "New project",
+          owner: null,
+          currency: "USD",
+          budgetType: "OPEX",
+          abstract: "",
+          deliverables: [],
+        });
+        go("project", id);
+      }
+      function addAgent() {
+        const n = prompt("Contributor name");
+        if (!n) return;
+        D.contributors.push({
+          id: "phd:" + n.toLowerCase().replace(/\s+/g, "-"),
+          name: n,
+          role: "",
+        });
+        render();
+      }
+      // ─────────────────────────────── render ───────────────────────────────
+      function render() {
+        renderRail();
+        const v = S.view;
+        $("#canvas").innerHTML =
+          v.kind === "overview"
+            ? viewOverview()
+            : v.kind === "roadmap"
+              ? viewRoadmap(v.id)
+              : v.kind === "milestone"
+                ? viewMilestone(v.id)
+                : v.kind === "project"
+                  ? viewProject(v.id)
+                  : v.kind === "deliverables"
+                    ? viewDeliverables()
+                    : viewTeam();
+        renderInspector();
+        $("#crumbTitle").textContent = D.title;
+        const sc = $("#sowStatusChip");
+        sc.className = "chip " + D.status;
+        sc.textContent = STATUS_LABEL[D.status];
+        $("#submitBtn").style.display =
+          D.status === "DRAFT" || D.status === "IN_PROGRESS" ? "" : "none";
+      }
+      $("#themeBtn").onclick = () =>
+        document.documentElement.classList.toggle("dark");
+      $("#submitBtn").onclick = () => {
+        D.status = "SUBMITTED";
+        render();
+        toast("Submitted for review");
+      };
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") select(null);
+      });
+      render();
+    </script>
+  </body>
+</html>

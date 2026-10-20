@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The 90% Encumbrance Ratio cap is a commitment by Grove Development Company, not by Grove the Agent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c8311850-818f-41fa-b1b2-66ab954c5c43",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "620d93f6-83de-463e-8eda-92658610ae51",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "95738724-e637-4778-810e-fc70482a3589",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e3add3ef-6ab0-481e-86ce-8a264206f83c",
+      "name": "contributors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.3.1 names the obligor precisely: \"**Grove Development Company** will operate the Grove Liquidity Layer and **agrees** to stay at or below a 90% Encumbrance Ratio.\" A.6.1.1.2.2.6.1.2.1.3.2 adds that \"as operators of the Grove Liquidity Layer, Grove Development Company automatically inherits, and is subject to, the base class of operational requirements related to Total Risk Capital management defined in [the Sky Core Atlas]. Modifications to the base operational logic automatically propagate to the Grove Artifact.\"\n\nTwo unusual things are happening. First, the risk limit binds **a company rather than a protocol**. The Encumbrance Ratio is not enforced by a contract that reverts at 90%; it is a promise by the legal entity that operates the system. Breach is a matter of the entity's undertaking, which is why the Freezer's mandate (A.6.1.1.2.2.6.1.2.1.2.2.4.4) explicitly covers Risk Capital non-compliance \u2014 the enforcement is the brake, not the code.\n\nSecond, the company is subjected to **live-updating obligations**. The same automatic-propagation clause used for Instance operational logic is applied here to a contractor's duties: Sky can change what Grove Development Company must do, and the change takes effect without the company agreeing again.\n\nThat is a striking arrangement for an off-chain entity. Ordinary commercial contracts fix obligations at signature; this one makes them a live reference to a document the counterparty does not control. It is consistent with the Nested Contributor status (A.6.1.1.2.2.1.1.3.1.1.5) \u2014 a company sitting inside the ecosystem accepts ecosystem-level rulemaking over its own conduct \u2014 and it is another reason the three-year protection against removing Nested Contributors matters to the company.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The operating company personally agrees to the limit and automatically inherits Sky Core's Total Risk Capital requirements, so a private legal entity is bound by rules that change without its consent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2cec57c9-5820-4f0b-a05a-27ce720fd070",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:33.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "975020e5-978c-4205-bf54-30e303d10bf4",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:34.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-c359a5d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c359a5d7-0972-4362-88ad-cc8831a021fe",
+      "targetTitle": "Staking rewards currently bypass the revenue waterfall and a"
+    },
+    {
+      "id": "lnk-b510648f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b510648f-606b-4295-a991-d50465f9f643",
+      "targetTitle": "doc-177e4775"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SKY staking rewards are paid from Treasury revenue rather than from new token issuance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "19fd160d-d101-4b62-a0b3-33f1a28fd068",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a1425a7-892a-4b7e-bf65-927f96d1b5b6",
+      "name": "sky-staking",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac8d06d6-96e8-4642-adb3-3ede80942db3",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3486c9b8-348f-402c-9244-655383d4c424",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.2.1.1 states that \"USDS rewards and SKY rewards for SKY stakers are funded from the Staking Rewards allocation of the Sky Treasury Management Function ... and distributed continuously, pro-rata based on the SKY stake of eligible wallets. Distribution parameters are updated at each Monthly Settlement Cycle.\"\n\nThis is the staking-side consequence of Sky's no-new-emissions rule. Staking yield in most token systems is inflationary \u2014 holders are paid in newly minted supply, which is a transfer from non-stakers to stakers dressed up as a return. Here the reward budget is an *allocation of revenue* competing with other uses of the same Treasury Management Function output, including the buybacks that burn SKY.\n\nThat makes staking yield structurally honest and structurally constrained: it can only be as large as the protocol's earnings permit, and every unit paid to stakers is a unit not spent burning supply or accumulating reserves. Sky is choosing between two ways of returning value to SKY holders \u2014 direct yield to stakers versus scarcity for all holders \u2014 rather than manufacturing yield.\n\nThe cadence split is the operational detail that makes it work. Accrual is continuous so users are not exposed to snapshot timing, while the *parameters* governing distribution move only at the Monthly Settlement Cycle. Revenue arrives lumpily and must be reconciled periodically; users experience a smooth rate that steps once a month.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Staking Rewards allocation of the Treasury Management Function funds USDS and SKY rewards, distributed continuously pro-rata, with parameters reset each Monthly Settlement Cycle.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b4fdf165-d103-4e71-90fb-d242629f8dde",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2cc6420c-0ccc-4683-98d9-7bd6d6100d08",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

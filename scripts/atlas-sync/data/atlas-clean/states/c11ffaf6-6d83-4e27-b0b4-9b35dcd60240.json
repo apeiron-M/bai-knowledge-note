@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-c36562f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c36562f4-5d4f-4219-a452-683bb0630e6f",
+      "targetTitle": "The Loss Given Default formula as written in the Atlas alway"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reference implementation's probability-of-default computation is not a transcription of the published formula",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cf10a060-0d24-4ae6-ab65-87f338eb050b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "897546b9-2a14-444c-8c2f-8a6e8efe051c",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b3f79fbc-97b2-49b9-9b98-ba054f5217f9",
+      "name": "specification-defect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reference implementation follows the same five-step shape as A.3.2.2.1.1.1.1.1 \u2014 PD, LGD, asset correlation, Basel risk weight, RRC \u2014 but several inputs are computed differently from the printed formulas.\n\n**Drift.** The Atlas specifies the drift term as `\u03a3 w_U(r_c + r_s) \u2212 \u03a3 w_D(r_d + r_s) + \u03c1_UD \u03c3_U \u03c3_D \u2212 \u03c3_U\u00b2` (A.3.2.2.1.1.1.1.1.1.1\u2013.3). The code computes `drift_cd = eff_coll_rate + eff_stake_rate - eff_borrow_rate + (var_debt - var_coll) / 2`, replacing the covariance and variance adjustment with a half-difference of variances, and then subtracts `vol_cd**2 / 2` again when forming `a`, `d1` and `d2`.\n\n**Asset correlation.** A.3.2.2.1.1.1.1.1.3 gives `R = a(1 \u2212 e^{\u2212K\u00b7PD}) + b(1 \u2212 (1 \u2212 e^{\u2212K\u00b7PD}))`. The code normalizes the interpolation weight by dividing by `(1 \u2212 e^{\u2212K})`, so the weight reaches exactly 1 at PD = 1 rather than 0.99995. It also renames the parameters (`a_acc, b_acc, c_acc = 0.13, 10, 0.33`), which incidentally sidesteps a collision in the prose, where `K` denotes both the sensitivity coefficient (A.3.2.2.1.1.1.1.1.3.3) and the capital requirement (A.3.2.2.1.1.1.1.1.4).\n\n**Volatility and correlation inputs.** A.3.2.2.1.1.1.1.1.1.13 defines the correlation coefficient as \"the correlation of block-weighted log returns of those assets over the last 365 days.\" The code uses `volatility_30d`, `supply_apy_30d`, `borrow_apy_30d` and `staking_apy_30d` fields, and a `token_correlation_map` the file itself labels \"a dummy correlation map\" hardcoded \"for demo purposes,\" defaulting unknown pairs to correlation 0.\n\nThe code is explicitly a demo, so none of this is misconduct \u2014 but it means the reference implementation cannot be used to validate the specification, and the specification cannot be used to reproduce the reference implementation. A defaulting-to-zero correlation map in particular is the most consequential simplification available, since zero correlation between collateral and debt minimizes the modelled joint volatility that drives PD.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:24:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its drift, correlation and volatility inputs all differ: (var_debt \u2212 var_coll)/2 instead of the specified covariance terms, a normalized correlation interpolation, and 30-day vols with a",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

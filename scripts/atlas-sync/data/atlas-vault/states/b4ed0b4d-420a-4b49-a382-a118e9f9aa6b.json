@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Morpho market exposure is capped in two dimensions at once \u2014 an absolute size and a relative share",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8843b05f-74fd-4f76-b952-501bcc7a7dd4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "691c0052-aabf-45cc-81fc-5cf9113dfc09",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8957224e-e36a-49ac-8a42-036baafe891e",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Morpho USDT instance's `Market Exposure` block (A.6.1.1.1.2.6.1.4.3.1.1.4.1) lists each lending pool with three fields: a Pool ID, an **Absolute cap**, and a **Relative cap**. The wstETH/USDT 86% LLTV pool gets 250 million absolute / 100% relative; WBTC/USDT gets 100 million / 100%; cbBTC/USDT gets 250 million / 100%.\n\nTwo caps rather than one is the design point. An absolute cap bounds the loss from a single pool failing. A relative cap bounds *concentration* \u2014 what fraction of the instance's assets may sit in one market \u2014 which is the quantity that matters when the instance itself grows or shrinks. Whichever binds first governs.\n\nWithout the relative dimension, a fixed notional cap becomes progressively more permissive as the instance shrinks: 250 million is a modest slice of a large vault and the entire vault when the vault is small. Without the absolute dimension, a percentage cap scales the exposure to a single collateral type without limit as deposits grow.\n\nHere all three capped pools are set to 100% relative, meaning the concentration lever is present but not currently engaged \u2014 only the notional caps bind. The mechanism is available; the current configuration declines to use half of it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each pool carries both an absolute cap and a relative cap, so a limit can bind on notional size or on portfolio concentration, whichever binds first.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2c9b67af-59c0-4920-8a55-4cb57807ffa6",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "98db71a6-92c8-4ca2-ad55-f1a1fd57525e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

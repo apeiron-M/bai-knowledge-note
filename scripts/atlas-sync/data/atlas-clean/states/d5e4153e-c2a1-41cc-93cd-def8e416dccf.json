@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-da9fa40d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da9fa40d-b045-4b05-afac-60a4b72dc993",
+      "targetTitle": "Primitive Instances inherit a base class of operational logi"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent Primitive Instances inherit operational logic from the Sky Core Atlas, and edits to the base class propagate automatically",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ad3923e3-dd23-40dc-85a1-dc62a021fdf4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "990c4b1b-f4c7-4afa-86be-7ccc1f637e30",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3184e516-a503-45c9-8b62-7011f9061267",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5c595887-aa42-4d15-b808-01256f764c56",
+      "name": "rule-hierarchy",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.5.1.2.1.2.1 uses explicitly object-oriented language: \"This Instance inherits the base class of operational logic defined in [A.2.2.9.1.2.4.1 - Routine Protocol], subject to the qualifications specified in [A.2.2.9.1.2.1.3.3.1 - Near-Term Process].\" It then states the consequence outright: \"**Modifications to the base operational logic automatically propagate to this Instance.** In future iterations of the Grove Artifact, a version of the full process definition customized to Grove will be included herein.\"\n\nThis is inheritance with **live binding**, not copy-paste templating. The Agent Artifact does not contain the process; it contains a pointer to it. A change at the Sky Core level takes effect in Grove without a Grove proposal, a Facilitator review, or a token holder vote.\n\nThe benefits are real: no drift between Agents, one place to fix a bug in a shared process, and no duplication across however many Agents exist. The same pattern appears in A.6.1.1.2.2.5.1.2.1.1.2, where the Instance's Tracking Methodology is a reference to a shared \"Ethereum Mainnet General Tracking Methodology\" rather than a Grove-specific definition.\n\nThe cost is a genuine limit on Agent sovereignty. Grove's operating rules can be rewritten by an actor Grove does not control, through a process Grove's own governance does not participate in. Combined with A.6.1.1.2.2.2.2.2.1.2.1.6 (edits may not violate the Core Atlas), authority runs strictly downward: the parent can reach into the child, and the child cannot reach up.\n\nThe closing sentence also flags that this coupling is understood as temporary \u2014 a Grove-specific process definition is planned, which would convert live inheritance into a forked copy and change the propagation property entirely.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Grove's Distribution Reward Instance holds no process text of its own \u2014 it references a Sky Core Routine Protocol, so Sky can change how Grove operates without any Grove governance action.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

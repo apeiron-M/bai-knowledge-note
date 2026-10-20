@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d608ce3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d608ce3-538b-4b3a-a3f2-f43765cd23fc",
+      "targetTitle": "Every Skybase Primitive is wrapped in an identical Hub Docum"
+    },
+    {
+      "id": "lnk-d88336af-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d88336af-bf92-4313-9525-2651e28f7158",
+      "targetTitle": "Every Sky Primitive Instance is tracked through the same fou"
+    },
+    {
+      "id": "lnk-555d6953-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "555d6953-f566-49ea-83d2-63ba01f13b3f",
+      "targetTitle": "Every Sky Primitive Instance is wrapped in an identical Hub "
+    },
+    {
+      "id": "lnk-9d9f633c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d9f633c-63a3-4dbf-892b-c2f2c0e45f32",
+      "targetTitle": "Every Sky Primitive an Agent uses is tracked by a Hub Docume"
+    },
+    {
+      "id": "lnk-bdf52e59-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bdf52e59-3d95-474b-a584-ecac3987f492",
+      "targetTitle": "Every Primitive Instance is tracked through a Hub Document w"
+    },
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Sky Primitive instance is tracked through an identically shaped Hub Document with status-partitioned directories",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1821b1b4-fb69-4553-93f5-6157a493d1f5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9629cf5d-ef3e-4ede-b1df-691ac212442d",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "004765ef-104f-4ff8-b2f5-b1b3a51906a8",
+      "name": "agent-operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Launch Agent 7 repeats one structure verbatim for every primitive it uses. A Primitive Hub Document (A.6.1.1.8.2.1.1.1, A.6.1.1.8.2.1.2.1, A.6.1.1.8.2.1.3.1, A.6.1.1.8.2.1.4.1) \"organize[s] all base information relevant to Launch Agent 7's usage\" of that primitive, and always contains: a Global Activation Status, an Active Instances Directory, a Completed Instances Directory, an In Progress Invocations Directory, and a Hub Data Repository.\n\nThe Hub Data Repository in turn always contains an Archived Invocations/Instances subtree split into Failed Invocations and Suspended Instances (e.g. A.6.1.1.8.2.1.1.1.5.1.1 and .5.1.2).\n\nThe uniformity is the point. Because the shape is fixed, a reader or tool can locate any primitive's live state, history, and failures without knowing anything about what that primitive does \u2014 the Artifact is navigable by structure rather than by prose. It also means an empty directory is meaningful: absence of an Active Instance is a positive statement about the Agent's state, not missing documentation.\n\nThe cost is high boilerplate volume: most of the Artifact's units are structural scaffolding carrying no claim, which is the trade the design accepts in exchange for machine-legible uniformity.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each primitive gets a Hub Document exposing Active, Completed and In Progress Invocation directories plus a Hub Data Repository archiving failed Invocations and suspended Instances.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c167e305-f917-498b-9ff2-cb649b40edda",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "113cdf09-da2a-4c77-b5c8-3afef25412a1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-ae595532-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae595532-7ac4-4b93-89b4-e38ccb84ff79",
+      "targetTitle": "Grove's governance training wheels come off only when Sky de"
+    },
+    {
+      "id": "lnk-feb1971f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "feb1971f-05cd-4c9b-ad2f-cade495acceb",
+      "targetTitle": "Root administrative control of Grove's Liquidity Layer is he"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky's Core Council Risk Advisor holds a pre-vote veto over any Grove decision that raises on-chain risk",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "119435c4-0657-4266-92d0-880e69fa96f4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a3bfc0f8-7e3a-4e2a-a12a-baba3f7515ff",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9f4e6bfe-6148-4552-b596-71bba41bd7b6",
+      "name": "risk-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3aad202b-247d-40d7-9764-792afb320f44",
+      "name": "core-council",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.2.2.2.1.2.4 states that during GROVE's initial decentralization phase, \"all decisions on the parameters specified in [the Allocation System Primitive] resulting in an increase in the on-chain risk to the protocol will be subject to approval by the Core Council Risk Advisor,\" and that \"a proposal cannot move to the Root Edit Token Holder Vote without the Core Council Risk Advisor's approval.\"\n\nThe placement of the gate is what makes it powerful. It is not a veto over enacted decisions \u2014 it is a veto over *whether the vote happens at all*. GROVE holders never get to express a preference on a risk-increasing proposal the Advisor has not cleared, so there is no on-record disagreement between Grove's electorate and Sky's risk function.\n\nTwo carve-outs define the boundary of trust: onboarding Morpho vaults on Ethereum Mainnet \"controlled by Sky Governance and backed by cbBTC, ETH, or stETH,\" and onboarding \"Laniakea Halo class assets, once that framework is live.\" Both exemptions share a logic \u2014 the risk has already been assessed elsewhere in the Sky system, either because Sky Governance controls the vault and the collateral is blue-chip, or because a dedicated classification framework has done the work. The Advisor's review is reserved for genuinely novel exposure.\n\nThe structural point is that an Agent's autonomy in the Atlas is **scoped by risk direction**: Grove is free to reduce risk on its own authority and constrained only when increasing it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Risk-increasing Allocation System changes cannot reach a token holder poll without its approval; only Sky-controlled Morpho vaults on major collateral and Laniakea Halo assets are exempt.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-755dfa6b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "755dfa6b-c0d0-47ed-a050-5eb2d3d3fb01",
+      "targetTitle": "High-frequency payment records are Active Data edited direct"
+    },
+    {
+      "id": "lnk-e7836576-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e7836576-6ae7-41be-8a79-a332c71bf258",
+      "targetTitle": "Active Data lets a named Responsible Party edit records insi"
+    },
+    {
+      "id": "lnk-8d5ba41b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d5ba41b-a2d4-4f69-bf08-54e2f9df93bc",
+      "targetTitle": "doc-44dfb4c7"
+    },
+    {
+      "id": "lnk-55b9cf58-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "55b9cf58-1da2-4d56-a7a7-4cada6ced8b9",
+      "targetTitle": "A governed Core parameter in the Compound Instance contains "
+    },
+    {
+      "id": "lnk-ba9e8147-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba9e8147-84cf-4e1f-bcf3-529214c93fa8",
+      "targetTitle": "Keel's Save Instance measures deposits under the partner's f"
+    },
+    {
+      "id": "lnk-e437b800-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e437b800-2066-48d7-9d2e-f9de7baf216a",
+      "targetTitle": "The same kind of datum is governed differently across the tw"
+    },
+    {
+      "id": "lnk-f196b1a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f196b1a1-ca8f-4d3b-ac76-a24691e09274",
+      "targetTitle": "Budget Controllers are the single sanctioned path from Atlas"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Artifacts separate Active Data from Core text, letting a named party edit payment records directly without a Root Edit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cab9f774-68e1-456e-8d51-5eed180ec754",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "febcbb57-d92a-4517-a1e7-2d8beace8d87",
+      "name": "active-data",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2cf5069-930a-4e7f-a269-09b03b434c68",
+      "name": "agent-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "35cc5da9-a2d4-4d7e-aa69-cc7abe8ddff1",
+      "name": "auditability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Several nodes in this chunk are tagged `[Active Data Controller]` rather than `[Core]`. A.6.1.1.3.2.5.1.3.1.3.4 states that \"the Distribution Reward payments for the Solana Bridge Instance... are defined as Active Data,\" updated such that \"the Responsible Party is Operational GovOps\" and \"the Update Process must follow the protocol for 'Direct Edit'.\" The 1inch Instance (\u20263.2.3.4) and the Kamino Integration Boost (A.6.1.1.3.2.5.2.2.1.3.4) carry the same controller, each governing a child `[Active Data]` list of payments.\n\nThis is the Atlas solving a problem that would otherwise make it unusable. Weekly incentive payments are facts, not policy; routing each one through proposal, alignment review, a 3-day poll and a Facilitator-executed edit would be absurd. So the document type-separates its own contents: `[Core]` text changes only by Root Edit, while `[Active Data]` changes by Direct Edit under a declared Responsible Party.\n\nThe controller node is the security boundary. It does not contain data \u2014 it names *who* may write and *by what process*, and it is itself `[Core]`, so the write permission can only be changed through full governance. Delegation is therefore constitutionally granted but operationally cheap.\n\nThe trade-off is that a large surface of the Artifact becomes editable by one role without prior review. What constrains it is that the record is public, append-oriented, and paired with the rebate/distribution checks GovOps is separately subject to \u2014 after-the-fact scrutiny rather than pre-approval.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:03:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Distribution Reward and Integration Boost payment lists are marked Active Data with Operational GovOps as Responsible Party and a 'Direct Edit' update process, bypassing the amendment pipeline.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "25523e0c-57f0-4731-9afd-7974ca93e9be",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:03:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c853f0a2-0916-43d0-a911-e0c880063751",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:03:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

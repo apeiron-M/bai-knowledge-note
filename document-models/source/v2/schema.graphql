@@ -1,0 +1,159 @@
+scalar Unknown
+scalar DateTime
+scalar Address
+scalar AttachmentRef
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+enum SourceType {
+    ARTICLE
+    PAPER
+    BOOK_CHAPTER
+    TRANSCRIPT
+    DOCUMENTATION
+    CONVERSATION
+    WEB_PAGE
+    MANUAL_ENTRY
+}
+
+enum SourceStatus {
+    INBOX
+    EXTRACTING
+    EXTRACTED
+    ARCHIVED
+}
+
+type SourceProvenance {
+    url: String
+    author: String
+    publishedAt: DateTime
+    method: String
+    tool: String
+}
+
+type ExtractionStats {
+    claimCount: Int!
+    skippedCount: Int!
+    skipRate: Float!
+    extractedAt: DateTime
+    extractedBy: String
+}
+
+# a piece of the source the content points at — a figure, a formula cut out as an
+# image, a table, a page, a clip. Content-addressed like the original; `role` is
+# free text so a new kind of attachment needs no model change.
+type SourceAttachment {
+    id: OID!
+    ref: AttachmentRef!
+    mimeType: String!
+    fileName: String
+    sizeBytes: Int
+    role: String
+    page: Int
+    alt: String
+    width: Int
+    height: Int
+    attachedAt: DateTime!
+}
+
+type SourceState {
+    title: String
+    description: String
+    content: String
+    sourceType: SourceType
+    status: SourceStatus
+    provenance: SourceProvenance
+    extractedClaims: [String!]!
+    extractionStats: ExtractionStats
+    # attachments referenced from `content` as ![alt](attachment://…); what makes those refs claimed
+    attachments: [SourceAttachment!]!
+    # the artefact this source was derived from. The vault's premise is that a
+    # source is the unrecoverable anchor, so the original bytes are kept here
+    # rather than discarded at ingestion. Content-addressed: see the attachment store.
+    originalFile: AttachmentRef
+    originalFileName: String
+    originalMimeType: String
+    originalSizeBytes: Int
+    originalAttachedAt: DateTime
+    # what produced `content` from the original, so a re-ingest can say what changed
+    convertedBy: String
+    createdAt: DateTime
+    createdBy: String
+}
+
+# source-management
+
+input IngestSourceInput {
+    title: String!
+    content: String!
+    sourceType: SourceType!
+    description: String
+    url: String
+    author: String
+    publishedAt: DateTime
+    method: String
+    tool: String
+    createdAt: DateTime!
+    createdBy: String
+}
+
+input SetSourceStatusInput {
+    status: SourceStatus!
+}
+
+input AddExtractedClaimInput {
+    claimRef: String!
+}
+
+input RecordExtractionStatsInput {
+    claimCount: Int!
+    skippedCount: Int!
+    skipRate: Float!
+    extractedAt: DateTime!
+    extractedBy: String
+}
+
+input RemoveExtractedClaimInput {
+    claimRef: String!
+}
+
+input AttachOriginalFileInput {
+    originalFile: AttachmentRef!
+    originalFileName: String
+    originalMimeType: String
+    originalSizeBytes: Int
+    convertedBy: String
+    attachedAt: DateTime!
+}
+
+input AddAttachmentInput {
+    id: OID!
+    ref: AttachmentRef!
+    mimeType: String!
+    fileName: String
+    sizeBytes: Int
+    role: String
+    page: Int
+    alt: String
+    width: Int
+    height: Int
+    attachedAt: DateTime!
+}
+
+input RemoveAttachmentInput {
+    id: OID!
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-9c63930c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c63930c-c360-4c25-bb65-2532852323d2",
+      "targetTitle": "Obex calculates its own rebate but Operational GovOps holds "
+    },
+    {
+      "id": "lnk-b7e73739-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7e73739-0c02-4734-9402-f343b81e2e74",
+      "targetTitle": "Operational GovOps can refuse to execute a rebate distributi"
+    },
+    {
+      "id": "lnk-c882b7e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c882b7e9-0f83-4bd4-8738-8ac0df244ac8",
+      "targetTitle": "Keel calculates its own rebate but Operational GovOps must v"
+    },
+    {
+      "id": "lnk-90cebc50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "90cebc50-f445-4f4d-9818-5c31d2d55747",
+      "targetTitle": "doc-e98e8b5a"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operational GovOps can block but not correct Pattern's rebate calculation, with disputes escalating to Core GovOps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b8c0c85f-f4cf-440e-b167-e6384b987609",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac10a201-216c-4310-ae02-046f7324f96d",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b6b5ceb-143e-4dbe-b097-ed022d95793c",
+      "name": "upkeep-rebate",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0ab91c22-1471-49e2-b254-bb9cee27774c",
+      "name": "checks-and-balances",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Upkeep Rebate routine protocol defines a three-step flow. Pattern \"keeps all tokens of other Agents it holds in its SubProxy account\" (A.6.1.1.6.2.3.2.2.1.2.1.1) \u2014 a single, known custody location that makes holdings independently observable. Pattern then \"deducts the rebate from the fees it pays\" (A.6.1.1.6.2.3.2.2.1.2.1.2), i.e. self-assesses and self-applies. Finally, \"Operational GovOps reviews Pattern's calculation of the rebate before executing a return of surplus to token holders\" (A.6.1.1.6.2.3.2.2.1.2.1.3).\n\nThe reviewer's power is deliberately shaped: \"In the event of any issues, Operational GovOps **cannot execute the distribution**.\" It is a blocking power, not an amending one \u2014 GovOps cannot substitute a corrected number and proceed. It must \"post an explanation on the Sky Forum under the 'Pattern Prime' category and work with Pattern to resolve the disagreement,\" and if unresolved, \"it must be escalated to Core GovOps.\"\n\nThis is a clean separation between the party with the information (Pattern, which knows its own holdings) and the party with the veto (GovOps, which controls the distribution rail). Neither can act alone: Pattern cannot pay out over an objection, and GovOps cannot impose its own figure. Deadlock is not left open \u2014 it has a named exit at Core GovOps.\n\nThe cost is that the enforcement point is *downstream of the deduction*. Pattern's rebate reduces the fees it pays immediately, while review binds only the later surplus distribution to token holders \u2014 so the leverage GovOps holds is over payments to Pattern's holders, not over the fee reduction itself.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Pattern self-calculates and self-deducts the rebate; GovOps reviews before any surplus reaches token holders and must publicly explain a refusal to execute rather than substituting its own figure.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

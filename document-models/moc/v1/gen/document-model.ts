@@ -9,7 +9,7 @@ export const documentModel: DocumentModelGlobalState = {
   },
   extension: "",
   description:
-    "Map of Content \u2014 navigation and synthesis document organizing knowledge notes by topic. Hub \u2192 domain \u2192 topic hierarchy with core ideas, tensions, and traversal hints",
+    "Map of Content \u2014 navigation and synthesis document organizing knowledge notes by topic. Hub \u2192 domain \u2192 topic hierarchy with core ideas, tensions, and traversal hints.",
   specifications: [
     {
       state: {

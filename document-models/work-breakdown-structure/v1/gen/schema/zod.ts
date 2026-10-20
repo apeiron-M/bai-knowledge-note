@@ -18,6 +18,7 @@ import type {
   SetOwnerInput,
   SetProjectRefInput,
   SetReferencesInput,
+  SetSowProjectRefInput,
   UpdateGoalDescriptionInput,
   WorkBreakdownStructureState,
 } from "./types.js";
@@ -185,6 +186,15 @@ export function SetReferencesInputSchema(): z.ZodObject<
   });
 }
 
+export function SetSowProjectRefInputSchema(): z.ZodObject<
+  Properties<SetSowProjectRefInput>
+> {
+  return z.object({
+    sowProjectId: z.string().nullish(),
+    sowRef: z.string().nullish(),
+  });
+}
+
 export function UpdateGoalDescriptionInputSchema(): z.ZodObject<
   Properties<UpdateGoalDescriptionInput>
 > {
@@ -203,5 +213,7 @@ export function WorkBreakdownStructureStateSchema(): z.ZodObject<
     owner: z.string().nullish(),
     projectRef: z.string().nullish(),
     references: z.array(z.url()),
+    sowProjectId: z.string().nullish(),
+    sowRef: z.string().nullish(),
   });
 }

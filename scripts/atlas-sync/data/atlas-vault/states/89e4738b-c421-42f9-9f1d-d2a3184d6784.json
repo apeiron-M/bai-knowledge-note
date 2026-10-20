@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-96b7cfa2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96b7cfa2-b90e-437c-bb0b-25fe38c54d20",
+      "targetTitle": "Top-tier Ranked Delegates must police their peers' vote expl"
+    },
+    {
+      "id": "lnk-b9ef17e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9ef17e6-137d-45e1-9e63-573c4b854642",
+      "targetTitle": "doc-7bb388c0"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ranked Delegates are liveness-tested by surprise Signal messages on a schedule known only to the Core Facilitator",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3624ba8b-30d7-4361-90a1-5eb544776671",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f28e4bc9-3da2-4182-95be-30e49fa41571",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a74905e-886d-4854-8242-7475e66f565d",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.6.4.3.3.1 requires every Ranked Delegate to \"maintain an active Signal account to facilitate communications related to emergency / urgent situations,\" explicitly \"regardless of whether an RD has been appointed to the Emergency Response Group,\" and to give their username to the Core Facilitator, who keeps an internal registry updated frequently \"because the ranked RDs are continually changing.\"\n\nThe enforcement mechanism is the notable part: \"The Core Facilitator must check the active status of the RDs' Signal accounts by sending test messages and confirming the RDs' timely response; this must be done regularly, on a schedule known only to the Core Facilitator. If an RD fails to timely respond to the test messages, the Core Facilitator must remove them from RD status.\"\n\nThis is a **liveness probe**, and the secrecy of the schedule is what makes it one. A published testing cadence measures whether a delegate can be reachable at known times; an unannounced one measures whether they are reachable, which is the property an emergency actually needs. The same logic underlies unannounced fire drills and randomized audits \u2014 the observation must be unpredictable or the measurement collapses into preparation.\n\nA.1.6.4.3.3 puts the full weight behind it: failing to correctly use required emergency communications tools makes an RD \"completely ineligible to receive RD income,\" with a Level 3 seat transferring to the next highest-delegated AD.\n\nWhat makes this more than administrative is what it reveals about the delegate role's real content. Ranked Delegates are not merely voters \u2014 they are on-call responders whose availability is a funded obligation. Universal coverage rather than group-limited coverage means the emergency response capacity does not depend on which delegates happen to hold Emergency Response Group appointments at the time.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:24:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.6.4.3.3.1 requires an active Signal account regardless of Emergency Response Group membership, with failure to respond to unannounced test messages costing RD status.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c3a44afb-0ae6-469f-a0d6-31399bf6f369",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:24:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "28c632ae-0f2d-48a0-898b-baa1bbd1e681",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:24:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

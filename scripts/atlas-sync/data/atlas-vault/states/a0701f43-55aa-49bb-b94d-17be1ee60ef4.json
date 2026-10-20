@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The SPK airdrop formula rewards net exposure, subtracting looped positions scaled by their liquidation threshold",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7d863bed-7616-4b3c-8dd3-a2f0a37fd86e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5acbf377-b27c-476f-9446-6dd6c8e6fd77",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11f99c40-19cc-43e6-ab80-0d9381813af3",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.2.2.1.1 gives the \"full anti-cheat\" airdrop calculation:\n\n`Airdrop = 80% * (DAI Borrows + USDS Borrows \u2212 sDAI Supplies \u00d7 sDAI Liquidation Threshold \u2212 sUSDS Supplies \u00d7 sUSDS Liquidation Threshold) + 20% * (ETH Supplies \u2212 ETH Borrows / ETH Liquidation Threshold)`\n\nThe naive version of this program \u2014 reward borrowing, reward ETH supply \u2014 is trivially farmed. Deposit sUSDS, borrow USDS against it, redeposit, repeat: each turn of the loop inflates the measured borrow with no new capital and no economic risk. The reward would go to whoever recycles fastest, not to whoever brings real liquidity.\n\nThe subtraction terms remove exactly the borrowing that a user's own collateral could have generated. Scaling by the liquidation threshold is what makes it precise: if sUSDS has an 80% threshold, then 100 of sUSDS supplied can support at most 80 of borrowing, so 80 is deducted. A pure loop nets to approximately zero; a user who borrowed against collateral held *elsewhere* keeps their full score.\n\nThe ETH leg divides rather than multiplies \u2014 `ETH Borrows / ETH Liquidation Threshold` \u2014 because it is running the same logic in reverse, converting a borrow back into the supply that must be backing it, and deducting that.\n\nThe design principle is that an incentive should be paid on the quantity you actually want, not on an observable that correlates with it. Here the wanted quantity is net capital brought to the protocol, and the formula reconstructs it from gross positions using the protocol's own risk parameters \u2014 which means the anti-cheat logic updates automatically whenever those thresholds change.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Borrow rewards deduct sDAI and sUSDS supplies times their liquidation thresholds, and ETH rewards deduct ETH borrows divided by the ETH threshold, so circular wash positions score near zero.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5bd4b531-d644-4064-ba87-6a881be03158",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "87a30464-c589-47d0-9bed-44fe3ce1d86d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

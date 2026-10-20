@@ -4,7 +4,10 @@ import {
   useGraphMetadata,
   type DriveFileNode,
   type DriveTreeNode,
+  type GraphEdgeMetadata,
+  type GraphNodeMetadata,
 } from "./use-graph-metadata.js";
+import { sameDriveNode, useStableList } from "../../shared/use-stable-list.js";
 
 export type KnowledgeNoteInfo = {
   id: string;
@@ -21,6 +24,8 @@ export type KnowledgeNoteInfo = {
     targetDocumentId: string | null;
     targetTitle: string | null;
     linkType: string | null;
+    reason: string | null;
+    confidence: string | null;
   }[];
   provenance: {
     author: string | null;
@@ -39,9 +44,12 @@ export type KnowledgeNoteInfo = {
  * before the GraphIndexerProcessor finishes its historical replay.
  *
  * Returns `{ notes, noteMap, isLoading, error, refetch }`. The
- * `isLoading` is true only on the very first fetch; subsequent
- * refetches keep returning the previous nodes so the sidebar doesn't
- * flicker.
+ * `isLoading` is true only until the very first fetch settles;
+ * subsequent refetches keep returning the previous nodes so the sidebar
+ * doesn't flicker. It can also be true while a cached snapshot is
+ * already rendered (see `useGraphMetadata`), so consumers should treat
+ * `isLoading && notes.length === 0` as "show a loading state" and plain
+ * `isLoading` as "this may be stale".
  */
 export type UseKnowledgeNotesResult = {
   notes: KnowledgeNoteInfo[];
@@ -50,10 +58,20 @@ export type UseKnowledgeNotesResult = {
   serverFileNodes: DriveFileNode[];
   /** Authoritative full drive tree (folders + files) from the reactor. */
   serverAllNodes: DriveTreeNode[];
+  /** The graph index's nodes and edges, as fetched — for views that need them raw. */
+  graphNodes: GraphNodeMetadata[];
+  graphEdges: GraphEdgeMetadata[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
 };
+
+/** Notes by id. The hook's map and every consumer that needs one use this. */
+export function indexNotes(notes: KnowledgeNoteInfo[]): Map<string, KnowledgeNoteInfo> {
+  const m = new Map<string, KnowledgeNoteInfo>();
+  for (const n of notes) m.set(n.id, n);
+  return m;
+}
 
 export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   // Connect's local drive-document cache can be stale (we've observed
@@ -61,8 +79,15 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   // metadata hook now also fetches the drive's authoritative file-node
   // list from the reactor; prefer that source. Fall back to the local
   // cache only if the server fetch hasn't completed or returned empty.
-  const cachedFileNodes = useFileNodesInSelectedDrive();
+  // Wrapped in `useStableList`: the upstream hook re-`filter()`s on every
+  // render, so without this every render invalidated `knowledgeFileNodes` →
+  // `notes` (a fresh object per note) → `noteMap` → the Pixi scene rebuild.
+  const cachedFileNodes = useStableList(
+    useFileNodesInSelectedDrive(),
+    sameDriveNode,
+  );
   const {
+    nodes: graphNodes,
     nodeMap,
     edges,
     fileNodes: serverFileNodes,
@@ -73,7 +98,7 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   } = useGraphMetadata();
 
   const fileNodes =
-    serverFileNodes.length > 0 ? serverFileNodes : (cachedFileNodes ?? []);
+    serverFileNodes.length > 0 ? serverFileNodes : cachedFileNodes;
 
   const knowledgeFileNodes = useMemo(
     () => fileNodes.filter((n) => n.documentType === "bai/knowledge-note"),
@@ -96,6 +121,8 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
         targetDocumentId: e.targetDocumentId,
         targetTitle: e.targetTitle,
         linkType: e.linkType,
+        reason: e.reason,
+        confidence: e.confidence,
       });
     }
     return map;
@@ -145,17 +172,15 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
     });
   }, [knowledgeFileNodes, nodeMap, linksBySource]);
 
-  const noteMap = useMemo(() => {
-    const m = new Map<string, KnowledgeNoteInfo>();
-    for (const n of notes) m.set(n.id, n);
-    return m;
-  }, [notes]);
+  const noteMap = useMemo(() => indexNotes(notes), [notes]);
 
   return {
     notes,
     noteMap,
     serverFileNodes,
     serverAllNodes,
+    graphNodes,
+    graphEdges: edges,
     isLoading,
     error,
     refetch,

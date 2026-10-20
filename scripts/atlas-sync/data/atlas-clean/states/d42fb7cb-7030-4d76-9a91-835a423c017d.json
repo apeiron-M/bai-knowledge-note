@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-d8beebaa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d8beebaa-9ca8-4e69-857e-9448b77bb203",
+      "targetTitle": "Each Executive Sheet item carries three independent confirma"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Content Liaisons cannot edit the Executive Sheet, so their confirmation is a comment that the Governance Point transcribes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "03fa2d0b-6ad2-4748-be93-dbadb067036a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2046e0ba-2c53-4065-aa59-4ecbd89abcdc",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d214a0c-b469-46bf-a197-5994d7a2d0fe",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.5.3 specifies an odd-looking two-step: \"The Content Liaisons do not have access to edit the Executive Sheet, and therefore leave a comment in the document at the appropriate cell to provide confirmation. After the Content Liaisons confirm their items by leaving a comment, the Governance Point edits the Executive Sheet from 'Unconfirmed' to 'Confirmed'.\"\n\nThe indirection is a feature. The party attesting cannot alter the artifact they attest to, which means a Liaison cannot quietly adjust a value and then confirm the adjusted version. Write access stays with one accountable role while attestation is distributed to many \u2014 and each confirmation exists twice, as the Liaison's comment and as the Governance Point's status cell, so a discrepancy between them is detectable.\n\nThe comment is the actual provenance; A.1.10.2.4.5.1.5 classifies such Google Sheets comments as strong comment type provenance, which is why they must survive as a record rather than being replaced by the status flag.\n\nOne detail carries real weight: \"the comments are only made for cells of the type 'Derived'.\" Liaisons confirm \"addresses, token amounts, parameter values, etc.\" \u2014 the concrete, checkable specifics \u2014 not the high-level Input Action. Their attestation is a claim about facts within their competence, not endorsement of a policy, which keeps the sign-off narrow enough to be meaningful.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:25:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Attestation and record-keeping are split between parties, and comments attach only to Derived cells \u2014 confirmation binds concrete values like addresses and amounts, never high-level intent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

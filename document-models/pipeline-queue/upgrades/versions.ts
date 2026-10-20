@@ -1,3 +1,3 @@
-export const supportedVersions = [1] as const;
+export const supportedVersions = [1, 2] as const;
 
-export const latestVersion = supportedVersions[0];
+export const latestVersion = supportedVersions[1];

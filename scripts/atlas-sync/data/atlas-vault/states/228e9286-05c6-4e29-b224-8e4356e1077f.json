@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-3fbd8b7e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3fbd8b7e-76f1-4d8a-8cfa-b1ebf1747575",
+      "targetTitle": "Grove interposes a five-contract scaffold between itself and"
+    },
+    {
+      "id": "lnk-6116bfbd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6116bfbd-55ae-4970-a5c3-341ae46646bf",
+      "targetTitle": "The only Grove Instance with complete RRC Framework coverage"
+    },
+    {
+      "id": "lnk-b9e8335b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9e8335b-05b4-4fcd-829c-d20960fd3f86",
+      "targetTitle": "Value-bearing token positions need bounds on the reported pr"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove keeps fully specified Instances Active with all limits set to zero rather than deleting them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "47989bdb-39c0-442b-a1e5-f008b81c1fc6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d075570-b70c-4af6-b49d-dda28b2a6c28",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13e9e387-6532-4399-a89e-ce45eb3d24b2",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65fb1e04-cffd-43f8-8d2f-ae0f3ffd3928",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Maple syrupUSDC Instance sits under a heading stating that Instances \"with `Active` Status are stored herein,\" and it carries a complete configuration: token address, underlying asset address, an inflow RateLimitID (`0x99a69e57\u2026`), and a Max Exchange Rate call. Yet A.6.1.1.2.2.6.1.3.1.13.1.2.4.1 sets deposit `maxAmount`: **0** and `slope`: **0**, A.6.1.1.2.2.6.1.3.1.13.1.2.4.2 sets withdrawal `maxAmount`: **0**, and A.6.1.1.2.2.6.1.3.1.13.1.2.5.2 states \"the Maximum Exposure for this Instance is **0 USD**.\"\n\nZero is doing something a deletion could not. Removing the Instance would discard the ratified addresses, the risk assessment, and the role mappings \u2014 all of which would have to be re-approved before Grove could ever use the venue again. Zeroing the limits retains that approved scaffolding while making the conduit economically inert.\n\nThe result is a third state between \"approved and in use\" and \"not approved\": **pre-cleared but closed**. Restarting the allocation becomes a single parameter change against configuration that has already passed review, which is materially faster than a fresh approval \u2014 and materially less scrutinised.\n\nThat is the trade-off worth naming. Dormant-but-Active Instances are a standing inventory of venues Grove can re-enter cheaply. It makes the response to a returning opportunity fast, at the cost that the review which authorized the venue may be arbitrarily stale by the time the limits are raised again. A reader auditing Grove's real risk surface must therefore read the rate limits, not the Instance list \u2014 the list overstates what is live, and understates what could become live quickly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Maple syrupUSDC retains addresses, RateLimitIDs and Covered risk status while carrying maxAmount 0 and Maximum Exposure 0 USD, so reactivation needs only a parameter change, not re-ratification.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c4c88346-042b-4e5e-9008-0a272adb74a0",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e361f605-0530-4a94-afd4-74437e764197",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

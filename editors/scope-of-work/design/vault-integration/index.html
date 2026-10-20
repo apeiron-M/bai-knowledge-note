@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Vault × SoW — integration flows</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #1e1e2e;
+        --surface: #181825;
+        --deep: #11111b;
+        --hover: #313244;
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #e4e4e7;
+        --text-2: #d4d4d8;
+        --text-3: #9ca3af;
+        --muted: #6b7280;
+        --accent: #cba6f7;
+        --accent-text: #1e1e2e;
+        --accent-soft: rgba(203, 166, 247, 0.12);
+        --green: #10b981;
+        --blue: #3b82f6;
+        --amber: #f59e0b;
+        --red: rgb(248, 113, 113);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(1200px 500px at 10% -10%, rgba(203, 166, 247, 0.08), transparent 50%),
+          var(--bg);
+        color: var(--text);
+        font: 15px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 48px 28px 80px;
+      }
+      .kicker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      h1 {
+        font-family: Fraunces, Georgia, serif;
+        font-size: 42px;
+        font-weight: 650;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin: 8px 0 12px;
+      }
+      .lead {
+        max-width: 640px;
+        color: var(--text-3);
+        font-size: 16px;
+      }
+      .lead a {
+        color: var(--accent);
+      }
+      .stack {
+        margin: 40px 0 28px;
+        display: grid;
+        gap: 8px;
+      }
+      .layer {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 14px;
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 140px 1fr auto;
+        gap: 16px;
+        align-items: center;
+      }
+      .layer .who {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .layer h2 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .layer p {
+        margin: 0;
+        color: var(--text-3);
+        font-size: 13px;
+      }
+      .arrow {
+        text-align: center;
+        color: var(--accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 36px;
+      }
+      a.card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: var(--deep);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px 22px;
+        min-height: 140px;
+      }
+      a.card:hover {
+        border-color: var(--accent);
+        background: var(--surface);
+      }
+      a.card .n {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--accent);
+      }
+      a.card h3 {
+        margin: 8px 0 6px;
+        font-family: Fraunces, serif;
+        font-size: 22px;
+        font-weight: 500;
+      }
+      a.card p {
+        margin: 0;
+        color: var(--text-3);
+        font-size: 13.5px;
+      }
+      .note {
+        margin-top: 36px;
+        padding: 16px 18px;
+        border-left: 3px solid var(--accent);
+        background: var(--accent-soft);
+        color: var(--text-2);
+        font-size: 13.5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="kicker">Knowledge Vault · integration</div>
+      <h1>Tasks first.<br />Scope is a compilation.</h1>
+      <p class="lead">
+        How <code style="color: var(--accent)">bai/project</code>,
+        <code style="color: var(--accent)">bai/wbs</code> and
+        <code style="color: var(--accent)">powerhouse/scopeofwork</code>
+        share one Projects tab. Read the
+        <a href="PLAN.md">plan</a>, then walk the four screens.
+      </p>
+
+      <div class="stack">
+        <div class="layer">
+          <div class="who">stakeholder</div>
+          <div>
+            <h2>Scope of Work</h2>
+            <p>Roadmap, milestones, budget envelopes, named deliverables.</p>
+          </div>
+          <div class="who">read ↓</div>
+        </div>
+        <div class="arrow">compile ↑ · report ↓</div>
+        <div class="layer">
+          <div class="who">team · agents</div>
+          <div>
+            <h2>Project + Goals (WBS)</h2>
+            <p>
+              Team, vault notes, shipped URLs. Goal tree with blockers and
+              notes. This is how work starts.
+            </p>
+          </div>
+          <div class="who">write ↑</div>
+        </div>
+      </div>
+
+      <div class="cards">
+        <a class="card" href="01-layers.html">
+          <div class="n">01</div>
+          <h3>Layers</h3>
+          <p>Why three documents, and which English words map to which.</p>
+        </a>
+        <a class="card" href="02-nav.html">
+          <div class="n">02</div>
+          <h3>Nav</h3>
+          <p>One Projects tab. Execution band first, SoW band under it.</p>
+        </a>
+        <a class="card" href="03-author.html">
+          <div class="n">03</div>
+          <h3>Author</h3>
+          <p>Brief → tasks → knowledge. No SoW gate.</p>
+        </a>
+        <a class="card" href="04-compile.html">
+          <div class="n">04</div>
+          <h3>Compile</h3>
+          <p>Bind an existing project to a SoW deliverable. Notes stay put.</p>
+        </a>
+      </div>
+
+      <p class="note">
+        Finding: knowledge notes already live on <b>bai/project</b>
+        (<code>knowledgeRefs</code>). SoW does not get its own copy. After
+        compile, the SoW inspector shows those notes read-only by following
+        the execution link.
+      </p>
+    </div>
+  </body>
+</html>

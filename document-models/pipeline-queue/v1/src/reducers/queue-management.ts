@@ -1,12 +1,19 @@
 import type { PipelineQueueQueueManagementOperations } from "document-models/pipeline-queue/v1";
 import {
+  DuplicateTaskIdError,
   InvalidTaskStatusError,
+  TaskAlreadyAssignedError,
   TaskNotFoundError,
 } from "../../gen/queue-management/error.js";
 
 export const pipelineQueueQueueManagementOperations: PipelineQueueQueueManagementOperations =
   {
     addTaskOperation(state, action) {
+      if (state.tasks.some((t) => t.id === action.input.id)) {
+        throw new DuplicateTaskIdError(
+          `Task ${action.input.id} already exists`,
+        );
+      }
       const phaseEntry = state.phaseOrder.find(
         (p) => p.taskType === action.input.taskType,
       );
@@ -31,6 +38,11 @@ export const pipelineQueueQueueManagementOperations: PipelineQueueQueueManagemen
     assignTaskOperation(state, action) {
       const task = state.tasks.find((t) => t.id === action.input.taskId);
       if (!task) throw new TaskNotFoundError("Task not found");
+      if (task.assignedTo) {
+        throw new TaskAlreadyAssignedError(
+          `Task ${task.id} is already assigned to ${task.assignedTo}`,
+        );
+      }
       task.assignedTo = action.input.assignedTo;
       task.status = "IN_PROGRESS";
       task.updatedAt = action.input.updatedAt;

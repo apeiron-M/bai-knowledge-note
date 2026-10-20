@@ -1,0 +1,125 @@
+{
+  "links": [
+    {
+      "id": "lnk-dcde2e29-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dcde2e29-d825-4999-8046-beb953d0c1e4",
+      "targetTitle": "doc-07ebaa4b"
+    },
+    {
+      "id": "lnk-d0b938c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0b938c0-f312-466e-831a-4ced55f508bb",
+      "targetTitle": "Keel's governance runs on forum posts and GitHub pull reques"
+    },
+    {
+      "id": "lnk-956c8d5f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "956c8d5f-0701-4b3b-9555-8218360192da",
+      "targetTitle": "Skybase must obtain per-grant governance consent for post-Ge"
+    },
+    {
+      "id": "lnk-a8b21694-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b21694-9635-446c-be32-f47ccf413fa4",
+      "targetTitle": "doc-b52443d0"
+    },
+    {
+      "id": "lnk-fcb931ad-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fcb931ad-6f14-49f9-a218-7eed723f7913",
+      "targetTitle": "Under Direct Edit the Responsible Party proposes the change "
+    },
+    {
+      "id": "lnk-fda2c3ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fda2c3ee-be4b-4349-b09c-78cedd40e983",
+      "targetTitle": "Spark's governance process is written against a Powerhouse s"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Until Powerhouse supports Artifact edits, Skybase governance runs on forum posts, cryptographic holdings proofs and a GitHub pull request",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e6682f9f-29b1-4a08-9cbf-226f1cc40d0f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e78d93d1-6a6a-4864-8159-58e04d4760f5",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "03c6136c-a3b9-4791-9cb7-9e21e6dde54d",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "afeea273-5033-426c-a5d7-d12a8299b18a",
+      "name": "tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two paired \"Short-Term Transitionary Measures\" sections describe how the Root Edit process actually operates before its intended platform exists.\n\nOn the input side (A.6.1.1.4.2.2.2.2.1.2.1.1.2): proposals are posted to the Sky Forum under \"Skybase Prime\", the title must contain the text \"Skybase Artifact Edit Proposal\", and \"the post must include cryptographic proof that the author controls an account holding the required percentage\" of supply. Wallet-signature proof substitutes for the platform's on-chain eligibility check.\n\nOn the output side (A.6.1.1.4.2.2.2.2.1.2.1.5.1): \"the Operational Facilitator works with the Core Facilitator to update the Atlas GitHub repository ... to reflect proposals approved by Prime Governance.\" So the authoritative text of an approved edit lands as a pull request in github.com/sky-ecosystem/next-gen-atlas.\n\nThis is a candid record of a governance system whose formal design outruns its tooling. The interim arrangement changes the trust model in a specific way: the Core Facilitator \u2014 a role outside Skybase \u2014 becomes a necessary co-signer for enacting Skybase's own approved edits, a dependency the intended Powerhouse flow does not have.\n\nIt also relocates the integrity questions. A forum title convention and a hand-verified signature are the eligibility gate, and repository write access is the enactment gate, so the practical attack surface is social and infrastructural rather than on-chain.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:59:04.918Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Transitionary measures make the Sky Forum the submission venue and the next-gen-atlas repository the system of record, with Core Facilitator involvement standing in for platform tooling.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6bc9dfae-9b54-4a36-ad82-90e2991fccca",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f48b7a95-ab74-4a70-beb3-15c023790d62",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -123,9 +123,11 @@ export type NoteSchemaConfig = {
 
 export type PipelineConfig = {
   autoChain: Scalars["Boolean"]["output"];
-  depth: Scalars["String"]["output"];
+  depth: PipelineDepth;
   extractionSelectivity: Scalars["Float"]["output"];
 };
+
+export type PipelineDepth = "DEEP" | "QUICK" | "STANDARD";
 
 export type ToggleExtractionCategoryInput = {
   active: Scalars["Boolean"]["input"];
@@ -153,7 +155,7 @@ export type UpdateMaintenanceThresholdInput = {
 
 export type UpdatePipelineConfigInput = {
   autoChain?: InputMaybe<Scalars["Boolean"]["input"]>;
-  depth?: InputMaybe<Scalars["String"]["input"]>;
+  depth?: InputMaybe<PipelineDepth>;
   extractionSelectivity?: InputMaybe<Scalars["Float"]["input"]>;
   updatedAt: Scalars["DateTime"]["input"];
 };

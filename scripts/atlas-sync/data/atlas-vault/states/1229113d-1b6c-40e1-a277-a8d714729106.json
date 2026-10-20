@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-8fe0bdbc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8fe0bdbc-567a-4470-9367-06beb4d9f5f6",
+      "targetTitle": "doc-03c3bbe3"
+    },
+    {
+      "id": "lnk-ed8ed7ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed8ed7ce-1f2c-4630-acd3-2641cc55149f",
+      "targetTitle": "doc-406ed72b"
+    },
+    {
+      "id": "lnk-a9c09416-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9c09416-0867-4eaa-b4a7-a020a3e0c43b",
+      "targetTitle": "Only capital that is presently deployable counts as Risk Cap"
+    },
+    {
+      "id": "lnk-9fd3dbb1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9fd3dbb1-5404-45a8-a1d6-05d9a33b017d",
+      "targetTitle": "Operational deviation from an Instance Configuration Documen"
+    },
+    {
+      "id": "lnk-ef0c1b12-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ef0c1b12-f573-4a9f-9568-e52604dc7c9b",
+      "targetTitle": "doc-ed84fb3a"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "On-chain Verifiable Risk Capital is deliberately not equivalent to Total Risk Capital",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1f7f166f-16df-41d5-a605-f0c7c58ea55a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "14e52952-ece0-4a33-9cd4-357ae54b872f",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "411c34cf-840e-4230-89b3-6acd957412a4",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.2.1.3.1 defines OVRC as the on-chain, verifiable risk-capital components a near-real-time monitor can track, then states plainly: \"OVRC is not necessarily equivalent to Total Risk Capital (TRC). A Prime Agent's actual TRC cannot be determined definitively without accounting for off-chain agreements, encumbrances or other relevant conditions affecting capital eligibility or availability.\"\n\nA.2.2.10.1.1.3.2.1.2.3.1 gives the concrete failure modes: \"On-chain data alone... cannot definitively prove the full eligibility and unimpaired availability of a Prime Agent's capital position,\" naming Prime-initiated off-chain contractual pledges, bridged assets whose \"economic value or redeemability... is compromised by issues with their originating bridge,\" and assets \"encumbered by derivative structures or other off-chain commitments.\"\n\nThe important direction is that the error is one-sided. Every named failure mode makes visible capital *less* usable than it appears, so OVRC systematically overstates rather than understates a Prime's true position. A monitor reading only chain state is therefore not conservative \u2014 it is optimistic, which is the wrong bias for a solvency control.\n\nNaming the residual gap rather than claiming on-chain verifiability is what justifies keeping a human attestation regime alongside automation. A.2.2.10.1.1.3.2.1.2.3.1 extends this even to the fully-automated future state: the TRC Report \"may remain necessary to cover elements of TRC verification that are not fully able to be automated or require explicit Prime Agent declaration.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "OVRC is what an autonomous monitor can see; off-chain pledges, impaired bridged assets and derivative encumbrances can make real TRC lower, so the gap must be closed by Prime attestation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "02fd26fb-7ac9-443e-8ae9-29e61b409fe5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f3f788d2-bf95-42af-9149-3e69d46edf32",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:28.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

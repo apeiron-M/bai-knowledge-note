@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel cannot raise its own rate limits: writing them is admin-only, spending them is controller-only, and reading them is public",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7210461b-fd51-44cc-b00e-b74143bdc388",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1632866f-3ef3-41a6-a1ed-9f4d13e90862",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "87f5e285-1063-43cb-96c4-65ef7d3a7283",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e78d4e15-596d-475d-a183-d42c2e0d37c6",
+      "name": "auditability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Rate Limit Management section splits three ways. `setRateLimitData(...)` is declared `public override onlyRole(DEFAULT_ADMIN_ROLE)` (A.6.1.1.3.2.6.1.2.2.1.1.3.2); `triggerRateLimitDecrease(...)` is `external override onlyRole(CONTROLLER)` (\u20263.5); and of both read functions the text says plainly \"anyone can query\" (\u20263.1, \u20263.4).\n\nSince \"the rate limit configuration serves as whitelisting,\" admin-only writes mean Sky Governance \u2014 which holds `DEFAULT_ADMIN_ROLE` via the Keel Proxy \u2014 decides both which venues Keel may touch and how much it may move. Keel's tokenholders vote to *propose* an allocation Instance; the limit that makes it operable is set one level above them. An Agent under pressure cannot widen its own constraints.\n\nThe controller-only decrement is the matching restriction on the other side: capacity is consumed only through the Controller's own accounted operations, never adjusted by an operator directly, so consumption always corresponds to a real action that emitted an event.\n\nPublic reads complete the arrangement. Keel's remaining headroom on every limit is world-readable state, so KEEL holders, partners and the Freezer signers can all see how close the Agent is running to its ceilings without asking Keel. Combined with the `RateLimitDataSet` and `RateLimitDecreaseTriggered` events, both the budget and its consumption are externally monitorable in real time.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setRateLimitData carries onlyRole(DEFAULT_ADMIN_ROLE) and triggerRateLimitDecrease onlyRole(CONTROLLER), while getRateLimitData and getCurrentRateLimit are open to anyone.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4bddae87-8661-4762-bacf-f49d7b317fa2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c5b8c31c-2376-4317-a31b-b094e5085e37",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

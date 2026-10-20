@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-e78b51aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e78b51aa-9266-4b1b-ac1d-96aeb7802786",
+      "targetTitle": "New Spark risk parameters do not break existing loans \u2014 non-"
+    },
+    {
+      "id": "lnk-d5db2373-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d5db2373-5049-45c3-8216-63fff545d12d",
+      "targetTitle": "doc-f9c06f8f"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's emergency lane is distinguished by permission to reopen the terms of existing positions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c3f15927-b91e-45d2-a685-849996d715c8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ab2e84d-25e4-4750-8f2a-d87a8afec31c",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7dfceb92-9155-44b4-be76-f0ed27e6a8dd",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.7.2.5.5 sets the trigger and the powers: \"if market conditions or other factors create an **immediate and severe risk of capital impairment**, Spark and Arkis are empowered to implement immediate changes to risk parameters and configuration,\" including \"preventing new loans or draws on existing loans, **adjusting risk parameters of existing positions including increasing margin requirements or haircuts**, demanding immediate repayment, up to and including liquidating high risk positions.\" A.6.1.1.1.3.8.2.5.5 grants a narrower version for offchain lending \u2014 parameters, draw prevention and accelerated repayment, but no unilateral liquidation power.\n\nRead against the non-emergency clause, the difference is not speed but *retroactivity*. Non-emergency updates respect the agreed loan duration; emergency powers reach into live positions and change the terms under which they are margined. That is the line the emergency declaration buys the right to cross.\n\nDefining it this way is unusually precise. Most emergency provisions are written as \"may take any necessary action,\" which is unbounded and therefore untrustworthy. Here the powers are enumerated and escalate in a stated order \u2014 stop new exposure, tighten existing exposure, demand repayment, liquidate \u2014 so a counterparty can price the worst case and an observer can judge whether the response was proportionate.\n\nThe cost is that the trigger is self-assessed. \"Immediate and severe risk of capital impairment\" has no threshold, no oracle, and no external adjudicator, and for Arkis the power is held jointly by Spark and by the counterparty operating the margin engine. The narrower offchain grant is the tell: where a third-party collateral agent holds the liquidation function, Spark's emergency powers stop short of it.\n\nIt is also worth noting what this is *not*. These are product-level powers inside two lending programs. Spark's ecosystem-level and Agent-level emergency response protocols (A.6.1.1.1.3.1.5, .1.6) remain unwritten.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Where non-emergency updates only bind new business, an immediate and severe risk of capital impairment authorizes raising margin and haircuts on live positions, demanding repayment, and liquidating.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1be34c81-14de-43d4-8241-41bcd6d738be",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:29.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f3d346e5-53e4-4576-8f4d-4da98cf9f64c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

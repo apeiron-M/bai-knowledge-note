@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-afe9c3ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "afe9c3ef-7d13-4cb7-aa6e-ec7080f34508",
+      "targetTitle": "Launch Agent 7's Ecosystem Upkeep Fee is charged on market c"
+    },
+    {
+      "id": "lnk-c2dccbf9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2dccbf9-f63f-4efa-a709-a2eac6c6d852",
+      "targetTitle": "Obex's Ecosystem Upkeep Fee is assessed on market capitalisa"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's Ecosystem Upkeep Fee is charged on market capitalization rather than on revenue or profit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "446a3641-57c4-4c53-b0b4-12998291afb6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1605327-4ec7-412a-a1fd-43ab59077785",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ecf3631b-4560-428a-aef0-78d2cc7b8361",
+      "name": "upkeep-fee",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a90792c-4338-486c-b5fd-2132848c5380",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.3.1.2.1.1.1 sets the terms of Spark's Ecosystem Upkeep Fee Primitive Instance: \"Spark will pay 0.50% of its market capitalization per year in USDS.\"\n\nThe choice of base is the design decision, not the rate. A fee on revenue or profit would flex with performance and be reducible through accounting discretion; a fee on market capitalization tracks the *value the ecosystem's support has created* and is computed from an external, hard-to-manipulate number. An Agent that grows in market value pays more for upkeep even if it is unprofitable.\n\nThat is deliberately a hard obligation. It behaves like a carrying cost on the Agent's existence rather than a share of its earnings, so it penalizes valuation without cash generation and cannot be minimized by reinvesting everything. Denominating it in USDS also makes the payment a source of standing USDS demand rather than a transfer of the Agent's own token.\n\nThe fee is live but its mechanics are not: A.6.1.1.1.2.3.1.2.1.2.1.1 says \"the process to pay 0.50% of Spark's market capitalization per year in USDS will be specified in future iterations of the Spark Artifact.\" The obligation exists without a defined measurement window, valuation source, or payment cadence \u2014 leaving the material questions (which market cap, measured when) open.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:32:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "0.50% of market cap per year, payable in USDS \u2014 a levy that scales with the Agent's valuation and falls due regardless of whether the Agent earned anything.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

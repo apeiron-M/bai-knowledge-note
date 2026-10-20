@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7a511652-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7a511652-97bc-4ea8-b83a-ec875fc97e5b",
+      "targetTitle": "Instance emergency procedures are the routine functions call"
+    },
+    {
+      "id": "lnk-a33bbd50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a33bbd50-47ab-44db-b267-5f97d650e509",
+      "targetTitle": "An Unlimited outflow rate limit describes only Spark's own t"
+    },
+    {
+      "id": "lnk-7644760f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7644760f-8922-4c1d-b038-d8bd43aed8b5",
+      "targetTitle": "doc-43367d7f"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ethena's documented emergency exit deliberately uses the share-denominated path that has no rate-limit precheck",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2afc8e2c-9873-4332-99d7-d228f291b716",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "430ce429-b9ca-4731-ad80-c64518de3928",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff28ec9e-dae5-442a-ad7f-ed3aed219543",
+      "name": "emergency-procedures",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3bb1411f-33db-4011-943f-a1b0ceff3a57",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.3.1.4.2.3.4 defines an `Emergency Procedure To Withdraw Ethena Balances` as exactly two actions: `mainnetController.cooldownSharesSUSDe(susde.balanceOf(address(proxy)))` (.3.4.1) and then `mainnetController.unstakeSUSDe()` (.3.4.2), each cross-referencing the detailed process definition.\n\nTwo details make this more than a convenience runbook. First, the size argument is read from chain state \u2014 the proxy's entire sUSDe balance \u2014 so the procedure is self-sizing and cannot be mis-specified by an operator under pressure. Second, it uses `cooldownSharesSUSDe`, the variant that carries no `rateLimited` precheck and instead decrements the limit from the realized amount afterwards.\n\nThat second choice is what makes the procedure work as an emergency measure. A full-balance cooldown will in general exceed whatever remains of `LIMIT_SUSDE_COOLDOWN`; routed through the assets variant it would revert precisely when it is most needed. The shares variant executes first and accounts second, so the rate limit records the drawdown rather than preventing the escape.\n\nThe generalisable principle is that an exit path must not be gated by the same limits that govern routine operation, or the risk controls become the thing that traps the capital. Spark implements that not with an override or a break-glass role, but by routing the emergency through the one function whose accounting is retroactive \u2014 which is elegant, and also means the overshoot hole in that function is load-bearing rather than incidental.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The full-balance escape is cooldownSharesSUSDe(susde.balanceOf(proxy)) followed by unstakeSUSDe() \u2014 sizing the call from the live balance and relying on post-hoc accounting to avoid being blocked.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5ddad915-72a3-4572-87a4-d774e129f1de",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d39637c8-ac72-48a4-9941-14e9e6543611",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

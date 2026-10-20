@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-b750b57e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b750b57e-dc27-468a-b806-df2c38fbf14e",
+      "targetTitle": "All three savings products share one vault implementation an"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "All four Risk Curation instances share a single Curator multisig and a single Guardian multisig",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4732306e-4837-43d6-b68f-0387356326a0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ca31a10-5410-4f4b-91d1-db6d594631b6",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56fd655a-ba10-455c-8741-d0d973670b55",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39159bde-22d5-40ad-87e3-dfba48a4300f",
+      "name": "governance-tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The four approved instances (A.6.1.1.1.3.9.7.2.1 through .2.4) are the Spark USDS Morpho Vault, the Blue Chip USDC and USDT vaults on Ethereum Mainnet, and the Spark USDC Morpho Vault on Base. Their role configuration is byte-identical: Curator is Soter Labs via Gnosis Safe `0x0f963A8A8c01042B69054e787E5763ABbB0646A3` at a 3-of-5 threshold; Guardian is the Spark Foundation via Gnosis Safe `0xf5748bBeFa17505b2F7222B23ae11584932C908B`, also 3-of-5.\n\nThe independence requirement at A.6.1.1.1.3.9.6.3.1 is satisfied \u2014 Soter Labs and the Spark Foundation are separate entities with separate safes. But that clause is written \"for each specific smart contract instance,\" and it constrains the Curator/Guardian pairing *within* an instance. Nothing in the framework addresses correlation *across* instances, and here it is total.\n\nThe consequences are arithmetic. Three of Soter Labs' five signers can queue transactions against all four vaults, spanning two chains and three assets. Three of the Spark Foundation's five signers hold the cancellation power for all four; if that safe is unavailable \u2014 key loss, quorum failure, an incapacitated signer set \u2014 the framework's only real-time defence is gone everywhere at once, and the fallback is the Spark subdao proxy moving at governance speed.\n\nThis is a reasonable operational choice: five distinct guardian sets would cost five times the coordination and would likely be staffed from the same small pool anyway, producing false rather than real diversification. The point is that the framework's carefully specified independence buys protection against *one role* failing, not against *one organization* failing, and a reader who sees a rigorous five-dimensional independence clause may reasonably assume more isolation than the configuration provides.\n\nThe framework's own vocabulary anticipates variation \u2014 each instance separately records its Curator, Guardian, control mechanism and threshold (A.6.1.1.1.3.9.7.1.3, .1.5) \u2014 and all four currently record the same answers.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:53:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Soter Labs curates and the Spark Foundation guards every approved vault through the same two 3-of-5 Gnosis Safes, so independence holds between roles but not across instances.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

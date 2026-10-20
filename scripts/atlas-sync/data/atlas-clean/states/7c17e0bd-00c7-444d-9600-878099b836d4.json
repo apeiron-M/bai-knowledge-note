@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Root Edit review applies two independent tests: alignment with the Atlas and operational feasibility for GovOps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "40e0b002-bd48-4ca5-875e-ea292a6fc07e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07de0f3f-79db-4b45-8a6e-0c1a5863ead4",
+      "name": "root-edit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ec7421e-33a6-4ee0-86ed-62078acb7cf4",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.8.2.2.2.2.1.2.1.3 attaches a second requirement to a positive review: \"If the proposal is aligned, the Operational Facilitator must respond to the Forum post to announce their finding. In this Forum post, the Operational Facilitator must also confirm that the proposal is feasible for Operational GovOps to operationalize.\"\n\nThe two tests are of different kinds. Alignment is normative \u2014 does the change respect the Sky Core Atlas and the Agent's own Artifact. Feasibility is operational \u2014 can the people and systems that run the Agent actually carry it out. Bundling both into one gate prevents a class of failure where governance approves something correct in principle that no one can execute, leaving the Artifact describing an Agent that does not exist.\n\nThe feasibility confirmation is also a commitment device pointed at the Executor. The Facilitator and Operational GovOps both come from the same Executor Agent (Ozone), so a public feasibility confirmation is the Executor stating on the record that it will be able to implement the change if it passes.\n\nWhat the text does not do is give feasibility its own failure path. Only misalignment has a defined negative outcome; an aligned-but-infeasible proposal has no specified disposition, which is a gap in the routine protocol.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An aligned proposal must additionally be confirmed as something Operational GovOps can actually execute, so unimplementable-but-aligned proposals are caught before a vote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

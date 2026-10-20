@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-799eb130-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "799eb130-f85f-4f2e-ba03-48585b32fe4b",
+      "targetTitle": "Triggering an Atlas Edit Proposal requires posting a bond th"
+    },
+    {
+      "id": "lnk-ef6f62ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ef6f62ce-dfb7-46ee-beaf-3b4be486ccf2",
+      "targetTitle": "Delegate pay is conditioned on explanation quality that the "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas gives two different penalties for the same triggering failure, one capped and one total",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2c7bc07e-e47f-40eb-b2bf-4804d9d7f7b0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55f7a6c7-31e8-4f7b-811d-4c32b3c409c0",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c388ea7-bbe2-4797-be53-ecdb82b2d5ee",
+      "name": "accountability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two provisions in the same Section quantify the triggering penalty differently.\n\nA.1.11.2.3 (Rejecting A Proposal For Misalignment): \"If the Facilitator rejects an Atlas Edit Weekly Cycle Proposal for misalignment, the Ranked Delegate who triggered the poll **loses their AD buffer**\" \u2014 unqualified, reading as the whole buffer.\n\nThe Action Tenet at A.1.11.2.1.3.0.4.2 covers the same trigger and both failure paths: \"If the Proposal is voted down **or rejected for misalignment**, the RD will lose **an amount of USDS from their AD Buffer equal to the Triggering Threshold**\" \u2014 an explicit cap. A.1.11.2.1.3 and A.1.12.2.1.2 use the capped formulation for the voted-down path, and the scenario at A.1.11.2.1.3.0.4.2.1.1 repeats the capped wording for both paths.\n\nThe gap matters in practice because the two readings differ enormously for a well-capitalized delegate: a bounded, predictable cost of sponsorship versus the loss of an entire buffer. That difference determines whether a delegate will sponsor a good-faith proposal that a Facilitator might read as misaligned.\n\nThe weight of the surrounding text \u2014 three passages using the capped amount, including one specifically addressing misalignment rejection \u2014 suggests A.1.11.2.3 is loose drafting rather than a deliberately harsher rule for facilitator rejection. But since A.1.11.2.3 is the Core document and the cap sits in an Action Tenet, resolving it by inference rather than amendment leaves the sponsor's actual downside ambiguous.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.11.2.3 says a delegate whose proposal is rejected for misalignment loses their AD Buffer, while A.1.11.2.1.3.0.4.2 caps the loss at an amount equal to the Triggering Threshold.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e2e1f106-b4f0-4114-8c66-c6c03e50796c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "be35f003-4bcf-4464-920f-d2f70ea5a26a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

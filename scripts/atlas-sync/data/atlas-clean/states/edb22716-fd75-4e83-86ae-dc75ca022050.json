@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-eff423ca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eff423ca-5040-45ed-a760-ba11d055b31e",
+      "targetTitle": "A primitive marked Globally Active with no Instances is auth"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Sky Primitive catalogue applies to every Agent regardless of mandate, so Obex runs stablecoin Primitives despite being an incubator",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5c99197a-e7fd-4b50-a201-8cee1050a18f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "011f742b-91bd-4d37-b58d-f7cc6abdb2fb",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1181e821-2a12-4596-b173-2f39ef44b129",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0fec403a-10dc-45f5-ae4c-a9cc847d3ad6",
+      "name": "agent-artifacts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Obex's Artifact implements the full Primitive catalogue, not a subset matched to its mandate. Under Demand Side Stablecoin Primitives, the Distribution Reward Primitive is `Active` (A.6.1.1.5.2.5.1.1.1) and the Integration Boost Primitive is `Active` (A.6.1.1.5.2.5.2.1.1), while the Pioneer Chain Primitive is `Inactive` (A.6.1.1.5.2.5.3.1.1). Under Supply Side Stablecoin Primitives, the Allocation System Primitive is `Active` (A.6.1.1.5.2.6.1.1.1). Token SkyLink is `Inactive` (A.6.1.1.5.2.4.1.1.1).\n\nObex is defined as an incubator whose output is other Agents. Yet its live operating surface includes rewarding USDS distribution, boosting integrations, and running a liquidity layer that deploys capital into lending protocols. The Primitive framework does not carve Agents into specialisms \u2014 every Agent's Artifact carries every Primitive, and activation status alone distinguishes what it actually does.\n\nThe benefit is comparability and composability. Any two Agents can be diffed field-by-field, and an Agent that expands into new activity does so by activating an existing branch rather than by inventing structure. It also means Sky can change a Primitive's specification once and have it propagate to every Agent's implementation.\n\nThe practical reading for an auditor is that an Agent's stated purpose understates its risk surface. Obex's introduction describes incubation; its activation statuses describe an entity that also holds other Agents' tokens, earns stablecoin distribution rewards, and lends on Ethereum. The Primitives, not the prose, define what the Agent can do.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Distribution Reward, Integration Boost and the Allocation System Primitive are all `Active` for Obex, whose stated purpose is producing Agents rather than distributing USDS or deploying capital.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

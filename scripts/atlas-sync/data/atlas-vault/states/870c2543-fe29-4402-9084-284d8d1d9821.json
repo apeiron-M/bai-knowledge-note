@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-d69f028f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d69f028f-9586-4513-bf5d-d25b9bc3683e",
+      "targetTitle": "Omni Documents are the residual category that keeps non-Prim"
+    },
+    {
+      "id": "lnk-b576bce2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b576bce2-795e-4898-9772-ccb6a0593360",
+      "targetTitle": "Agent Artifacts are assembled from configured Primitive Inst"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Agent Artifact must contain a single Omni subtree with pre-declared emergency response protocols",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5c526c4d-e663-4771-9ab8-2f1aa3c1cbf8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b741ac8e-af46-4caf-af69-a1fc25f17ac9",
+      "name": "agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e8c5d29d-1f77-4b84-b988-399a739fbabe",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Although A.1.14.2.5.1 says \"in general Omni Documents may have whatever content an Agent desires,\" it then imposes a mandatory skeleton on the free-form layer.\n\nA.1.14.2.5.1.1 fixes the shape: \"All Agent Artifacts must contain exactly one (1) Omni Document subtree. The head of this subtree is the Root Omni Document. All Omni Documents must be located in this subtree.\" A single rooted tree means every piece of non-primitive logic has one discoverable location \u2014 there is no second place to look, and nothing can hide outside the hierarchy.\n\nA.1.14.2.5.1.2 requires a `Governance Information Unrelated To Root Edit Primitive` document as a direct child, defining \"governance processes of the Agent unrelated to token holder voting.\" This is a deliberate residual category: whatever governance an Agent has that is *not* voting must still be written down in a known place.\n\nUnder it, two documents are compulsory and their split is the interesting part. A.1.14.2.5.1.2.1 requires a `Sky Ecosystem Emergency Response` document for \"situations that impact the entire Sky Ecosystem,\" while A.1.14.2.5.1.2.2 requires an `Agent-Specific Emergency Response` document for \"situations solely impacting the Agent, versus the broader Sky Ecosystem.\"\n\nForcing that distinction in advance is the substantive requirement. An Agent's duties diverge sharply between the two cases \u2014 in a systemic event it may have to act against its own short-term interest, and Sky Core may suspend its functions under A.1.14.1.5.4 \u2014 so the Atlas makes each Agent commit to both protocols while calm, rather than deciding mid-incident which kind of emergency it is having.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Exactly one Root Omni Document heads the subtree, which must carry a governance document whose children specify both an ecosystem-wide and an Agent-only emergency response protocol.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "519cb9b2-a580-4595-81ef-b5437088d5dd",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f62cec9d-03ec-4c4e-80dc-495cb9cf88bb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

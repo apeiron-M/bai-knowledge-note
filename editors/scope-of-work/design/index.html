@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Scope of Work — design concepts</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --canvas: #f6f7f9;
+        --panel: #fff;
+        --ink: #1b2230;
+        --ink-2: #5b6474;
+        --ink-3: #8b94a5;
+        --rule: #e1e5eb;
+        --meridian: #0e8a7a;
+        --signal: #d98a00;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          14px/1.5 Inter,
+          system-ui,
+          sans-serif;
+        color: var(--ink);
+        background: var(--canvas);
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 36px 28px;
+      }
+      h1 {
+        font-family: "Bricolage Grotesque", Inter, sans-serif;
+        font-size: 34px;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px;
+      }
+      .lead {
+        color: var(--ink-2);
+        font-size: 15px;
+        max-width: 720px;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin: 26px 0 18px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: 12px;
+        padding: 18px 20px;
+        text-align: left;
+        cursor: pointer;
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+      .card:hover {
+        border-color: #cbd2dc;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      }
+      .card.on {
+        outline: 2px solid var(--ink);
+      }
+      .card .k {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-3);
+        letter-spacing: 0.06em;
+      }
+      .card h2 {
+        font-family: "Bricolage Grotesque", Inter, sans-serif;
+        font-size: 20px;
+        margin: 4px 0 6px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--ink-2);
+        font-size: 13px;
+      }
+      .card .best {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--meridian);
+        font-weight: 500;
+      }
+      .rec {
+        font-size: 12px;
+        color: var(--signal);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      iframe {
+        width: 100%;
+        height: 78vh;
+        border: 1px solid var(--rule);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .bar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 8px 0 10px;
+        font-size: 12.5px;
+        color: var(--ink-3);
+      }
+      .bar a {
+        color: var(--ink-2);
+      }
+      kbd {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        border: 1px solid #cbd2dc;
+        border-bottom-width: 2px;
+        border-radius: 4px;
+        padding: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Scope of Work — three concepts to play with</h1>
+      <p class="lead">
+        Each is a self-contained mockup with realistic dummy data. Budgets and
+        progress are computed live with the same rules as the reducers. Click,
+        edit, drag; nothing is saved. The full rationale is in
+        <a href="README.md">README.md</a>.
+      </p>
+      <div class="cards">
+        <a
+          class="card on"
+          href="#a"
+          onclick="
+            show('a', this);
+            return false;
+          "
+          ><div class="k">
+            CONCEPT A · <span class="rec">recommended shell</span>
+          </div>
+          <h2>Ledger</h2>
+          <p>
+            Outline rail · document canvas · inspector. The plan reads
+            top-to-bottom like a proposal; every field edits in place; the
+            inspector holds the heavy controls (progress, placement, quote).
+            Overview carries the delivery spine and the plan matrix.
+          </p>
+          <div class="best">
+            Best for: day-to-day editing with the hierarchy always visible
+          </div></a
+        >
+        <a
+          class="card"
+          href="#b"
+          onclick="
+            show('b', this);
+            return false;
+          "
+          ><div class="k">CONCEPT B</div>
+          <h2>Board</h2>
+          <p>
+            The projects × milestones matrix as the home screen. Drag a card to
+            reschedule (column) or refund (row). Tabs for a filterable table
+            with bulk edit, a budget ledger, and the team. Editing happens in a
+            slide-over drawer.
+          </p>
+          <div class="best">
+            Best for: overview and re-planning; power users
+          </div></a
+        >
+        <a
+          class="card"
+          href="#c"
+          onclick="
+            show('c', this);
+            return false;
+          "
+          ><div class="k">CONCEPT C</div>
+          <h2>Flow</h2>
+          <p>
+            Starts from an <b>empty</b> document. Six guided steps with
+            completeness meters, a live summary rail, and a review screen that
+            is exactly what a reviewer sees. Submit unlocks when the checklist
+            is green.
+          </p>
+          <div class="best">
+            Best for: first-time population; proposal authors
+          </div></a
+        >
+      </div>
+      <div class="bar">
+        <span
+          >Tips: <kbd>Esc</kbd> closes inspectors · ◐ toggles dark mode ·
+          Concept C has “Load example data” in the right rail ·</span
+        ><a id="open" href="concept-a-ledger.html" target="_blank"
+          >open this concept in its own tab ↗</a
+        >
+      </div>
+      <iframe
+        id="frame"
+        src="concept-a-ledger.html"
+        title="Concept preview"
+      ></iframe>
+    </div>
+    <script>
+      const files = {
+        a: "concept-a-ledger.html",
+        b: "concept-b-board.html",
+        c: "concept-c-flow.html",
+      };
+      function show(k, el) {
+        document
+          .querySelectorAll(".card")
+          .forEach((c) => c.classList.remove("on"));
+        el.classList.add("on");
+        document.getElementById("frame").src = files[k];
+        document.getElementById("open").href = files[k];
+        location.hash = k;
+      }
+      const h = location.hash.replace("#", "");
+      if (files[h]) {
+        show(h, document.querySelector(`.card[href='#${h}']`));
+      }
+    </script>
+  </body>
+</html>

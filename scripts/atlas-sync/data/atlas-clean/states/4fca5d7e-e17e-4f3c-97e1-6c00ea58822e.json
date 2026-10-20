@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-d6bccfc1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d6bccfc1-2969-4c18-aa09-775297ee40fa",
+      "targetTitle": "Reserved Reward Code ranges and published Integrator lists l"
+    },
+    {
+      "id": "lnk-7c631921-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c631921-2b67-480f-85ad-cb623444df2a",
+      "targetTitle": "Prospective Instances are fully pre-provisioned at the Plann"
+    },
+    {
+      "id": "lnk-a8d70c95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8d70c95-1463-4e06-ab92-0d2380a85e35",
+      "targetTitle": "Integrator applications are handled centrally today but will"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Agent-level Invocation writes directly into Sky Core Atlas Active Data, moving the Integrator from Onboarding to Current",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f75381a1-5e42-4f16-803f-d94a411e267f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "88d7eadb-f4dc-49f8-a1b9-30295a68f5c6",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "83762c0b-c4fa-487f-aa93-4c12c6388424",
+      "name": "active-data",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Most stages of the Invocation chain report \"No Sky Core Atlas documents are updated as the output of this process.\" Two do not. A.2.2.9.1.2.3.1.4.1.1 adds the Integrator name and Reward Code to the List Of Onboarding Integrators at the planning stage, and A.2.2.9.1.2.3.6.4.1.1\u2013.2 completes the transition once the Artifact Update succeeds: delete the Integrator from the Onboarding list, and write its name, Reward Code and Tracking Methodology into the List Of Current Integrators.\n\nThe structural point is that a single Agent's internal Invocation has **write effects on ecosystem-level documents**. The Sky Core Atlas is not merely a rulebook the Agent obeys; it is a shared registry the Agent's own workflow mutates through defined Required Outputs, with Operational GovOps as the responsible party.\n\nThat is what keeps the two lists trustworthy for the purpose A.2.2.9.1.2.1.1.3 assigns them \u2014 letting Prime Agents onboard partners \"without having to go through a single party.\" The registry stays accurate because updating it is a mandatory output of the process that changes the underlying fact, not a separate bookkeeping task someone might skip.\n\nThe timing is also meaningful. An Integrator appears in the Onboarding list as soon as planning begins and moves to Current only after the token holder vote and Artifact update. The lists therefore distinguish intent from ratified fact, and the `Current Integrators` entry carries the exact Reward Code and methodology from the approved proposal \u2014 the same values written into the Instance Configuration Document (A.2.2.9.1.2.3.6.3), so the ecosystem registry and the Agent's Artifact cannot diverge.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Required Outputs at A.2.2.9.1.2.3.6.4.1 delete the Integrator from the Onboarding list and add it, with Reward Code and methodology, to the Current Integrators list.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

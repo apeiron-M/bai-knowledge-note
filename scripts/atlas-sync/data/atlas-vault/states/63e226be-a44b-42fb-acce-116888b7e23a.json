@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-f11a43c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f11a43c0-c874-450f-bce7-2ab74cfabfd9",
+      "targetTitle": "Spark Savings v2 inverts the schema by recording an Asset Su"
+    },
+    {
+      "id": "lnk-809cbdbd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "809cbdbd-3d41-4ece-b4ab-7f4eb9552037",
+      "targetTitle": "Spark Savings v2 is deployed on Robinhood Chain and X Layer "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's collateral is deployed into direct competitors of its own lending market",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0f7b0475-3f4e-40d6-8a3f-fd66bed8d280",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff49442a-71ca-4c67-be56-df445d7ead78",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c578ae4-a714-4bf3-8c39-558f4aa9cb14",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e8cd4db5-605a-449e-8c39-dbd60f7dc0fa",
+      "name": "capital-strategy",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Ethereum Mainnet allocation directory (A.6.1.1.1.2.6.1.1.2.1) lists Active Instances at Aave, Maple, Ethena, Fluid, Morpho, Curve, Uniswap v4 and Arkis \u2014 alongside SparkLend and Spark Savings v2. Base and Arbitrum repeat the pattern with Morpho, Fluid and Aave.\n\nSpark is simultaneously operating a lending market and supplying capital to the lending markets it competes with. This is the same posture visible in the Integration Boost, which pays Aave to hold USDS, and it follows from the same logic: the Agent's mandate is to deploy collateral at attractive risk-adjusted returns, and the best available return is frequently at someone else's venue.\n\nThe implicit ranking is clear. Return and diversification outrank protocol loyalty. Concentrating the entire balance sheet in SparkLend would tie the collateral backing USDS to the fortunes of a single codebase and a single borrower set \u2014 a worse outcome than funding a competitor.\n\nThe trade-off is dependency. Capital in Aave, Morpho or Ethena is subject to those protocols' governance, their oracle choices and their smart contract risk, none of which Sky controls. The Atlas's answer is the granular Instance structure: each external venue is admitted individually, with its own configuration, rather than through a blanket permission to chase yield.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:24:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Aave, Morpho, Fluid, Maple and Ethena all appear as active allocation venues alongside SparkLend, so the Liquidity Layer treats rival protocols as yield destinations rather than rivals to starve.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b9f09249-0bfe-4432-9db8-ec2b5328472b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:24:02.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "44905cf8-c10e-4ad1-8ee1-9cbeb3c90ed1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:24:02.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

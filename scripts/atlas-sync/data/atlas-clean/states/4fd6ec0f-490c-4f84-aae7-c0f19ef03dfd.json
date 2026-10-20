@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-aae381d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aae381d4-861f-49c5-a769-649a33ebb565",
+      "targetTitle": "Peg defense may be funded by generating new USDS and borrowi"
+    },
+    {
+      "id": "lnk-c2522ca4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2522ca4-e6a1-4f95-99a9-18fc876a48be",
+      "targetTitle": "Collateral qualifies as peg-stabilizing by the price it comm"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Peg Defense Event obliges every Prime Agent to buy USDS at 6.25% of its reserve requirement every six hours",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "044db8c3-b54e-45af-8b4e-aaa4e5ce34b6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9667c5c-3e5d-475d-93e4-e30e56296dd4",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd4c4bfd-8c2c-41ca-8ac4-6c3fea57d027",
+      "name": "crisis-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.3.2.4.1 defines a Peg Defense Event mechanically: \"a situation where the average price of USDS on DEXes that are connected via LayerZero falls below 0.999 USD per USDS.\" No committee declares it. A.3.3.2.4.1.1 requires the Core Council Risk Advisor to build a real-time tool computing that average and notifying Sky and all Prime Agents the moment it triggers.\n\nThe obligation (A.3.3.2.4.2) is then automatic and quantified: \"all Prime Agents must immediately begin to buy USDS at a rate of at least 6.25% of their Actively Stabilizing Collateral requirement every six (6) hours,\" with periods running consecutively from onset and the requirement re-measured at the start of each.\n\n6.25% per six hours is 25% per day \u2014 the entire ASC requirement deployed over four days, and since ASC is 5% of the portfolio, roughly 1.25% of each Agent's collateral portfolio spent buying USDS daily for as long as the event persists. The rate-limiting is deliberate: an instruction to \"defend the peg\" without a cadence either produces panic dumping of the whole reserve on day one or produces nothing at all while each Agent waits for others to act. A fixed per-period rate makes the collective response predictable and sustainable, and makes non-compliance individually visible.\n\nRe-measuring the requirement at the start of each period creates a self-scaling response. As an Agent spends reserves and its portfolio shrinks, subsequent obligations shrink with it \u2014 the defense tapers automatically rather than running to exhaustion.\n\nThe obligation has no stated end other than the price recovering, and A.3.3.2.4.2 places the burden of endurance on the Agent: each \"is responsible for monitoring its Actively Stabilizing Collateral requirement and maintaining sufficient capacity to satisfy this obligation for the duration of the Peg Defense Event.\" Capacity planning for an indefinite crisis is the Agent's problem, not Sky's.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The trigger is objective \u2014 average USDS price on LayerZero-connected DEXes below 0.999 \u2014 and the obligation runs in consecutive six-hour periods, re-measured at the start of each.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

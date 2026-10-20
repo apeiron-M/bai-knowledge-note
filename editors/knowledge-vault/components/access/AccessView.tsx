@@ -1,0 +1,378 @@
+/**
+ * Access — the vault's authorization dashboard, admin-only.
+ *
+ * Tabs are the audit's microgoal sequence, not a filing scheme: "is anything
+ * exposed?" is a different question from "who can see this document?", and only
+ * one screen can answer each well. Exposure is the landing tab (Concept A),
+ * People and Documents are the working surfaces (Concept B).
+ *
+ * **Admin-only, and honestly so.** The server already refuses `documentAccess`
+ * and every mutation to a non-admin, so this gate is not the control — it
+ * exists so a reader gets a sentence instead of a wall of FORBIDDEN. It is
+ * derived by asking the server rather than inferred from a grant list, because
+ * a supreme admin from the ADMINS env var holds no grant rows at all and would
+ * be misclassified by any local check.
+ */
+import { useCallback, useEffect, useState } from "react";
+import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
+import { useVaultIdentity } from "../../../shared/use-vault-identity.js";
+import { VaultLoader } from "../../../shared/vault-loader.js";
+import { AddressChip, Card, Hint, INHERIT_NOTE, Notice } from "./parts.js";
+import { describeAddress, seedEns } from "./use-ens.js";
+import { ExposureTab } from "./ExposureTab.js";
+import { PeopleTab } from "./PeopleTab.js";
+import { DocumentsTab } from "./DocumentsTab.js";
+import { AccessMap } from "./AccessMap.js";
+import {
+  cachedScan,
+  documentAccess,
+  fetchAccessMap,
+  invalidateScan,
+  documentProtection,
+  driveNodes,
+  grantDocument,
+  operationTypes,
+  revokeDocument,
+  type DriveNode,
+  type Grant,
+  type Level,
+  scanDocumentGrants,
+  type Protection,
+  type ScanState,
+} from "./use-auth-api.js";
+
+type Tab = "exposure" | "people" | "map" | "documents";
+
+const TABS: { key: Tab; label: string; hint: string }[] = [
+  { key: "exposure", label: "Exposure", hint: "Is anything open?" },
+  { key: "people", label: "People", hint: "Who can reach the vault" },
+  { key: "map", label: "Who has what", hint: "Every grant, across every document" },
+  { key: "documents", label: "Documents", hint: "One document, and its operations" },
+];
+
+export function AccessView() {
+  const driveId = useSelectedDriveId();
+  const { address, ensName } = useVaultIdentity();
+
+  const [tab, setTab] = useState<Tab>("exposure");
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [protection, setProtection] = useState<Protection | null>(null);
+  const [grants, setGrants] = useState<Grant[]>([]);
+  const [nodes, setNodes] = useState<DriveNode[]>([]);
+  // Documents the drive tree still lists but the reactor has deleted. They are
+  // not part of the vault, so they are excluded from the tree, the counts and
+  // the access map rather than explained.
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const [opsByModel, setOpsByModel] = useState<Record<string, string[]>>({});
+  const [notice, setNotice] = useState<string | null>(null);
+  const [scan, setScan] = useState<ScanState | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  // Renown already knows the signed-in user's ENS name, so prime the cache
+  // rather than asking the public gateway for an address we can resolve
+  // locally.
+  useEffect(() => {
+    if (address) seedEns(address, ensName);
+  }, [address, ensName]);
+
+  useEffect(() => {
+    if (!driveId || nodes.length === 0) return;
+    const cached = cachedScan(driveId);
+    if (cached) {
+      setScan(cached);
+      if (cached.missingIds.length > 0) setDeletedIds(new Set(cached.missingIds));
+      return;
+    }
+    let live = true;
+    // One server-side query first. Only fall back to asking per document when
+    // the subgraph is unavailable — an older deployment, or authorization
+    // switched off — because the scan is ~1,500 round trips.
+    void fetchAccessMap(driveId).then((server) => {
+      if (!live) return;
+      if (server) {
+        setScan(server);
+        return;
+      }
+      void scanDocumentGrants(driveId, nodes, (state) => {
+      if (!live) return;
+      setScan(state);
+        if (state.missingIds.length > 0) {
+          setDeletedIds((prev) => {
+            const next = new Set(prev);
+            for (const id of state.missingIds) next.add(id);
+            return next;
+          });
+        }
+      });
+    });
+    return () => {
+      live = false;
+    };
+  }, [driveId, nodes]);
+
+  const load = useCallback(async () => {
+    if (!driveId) return;
+    setLoading(true);
+
+    // `documentAccess` is the admin test: it is ADMIN-gated server-side, so a
+    // refusal is the answer rather than an error.
+    const access = await documentAccess(driveId);
+    const admin = access.data !== undefined;
+    setIsAdmin(admin);
+    setGrants(access.data?.documentAccess.permissions ?? []);
+
+    if (admin) {
+      const [prot, tree, ops] = await Promise.all([
+        documentProtection(driveId),
+        driveNodes(driveId),
+        operationTypes(),
+      ]);
+      setProtection(prot.data?.documentProtection ?? null);
+      setNodes(tree.data ?? []);
+      setOpsByModel(ops);
+    }
+    setLoading(false);
+  }, [driveId]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  if (!driveId) {
+    return <p className="p-6 text-sm opacity-70">No drive selected.</p>;
+  }
+
+  if (loading && isAdmin === null) {
+    return (
+      <div className="flex h-full">
+        <VaultLoader label="Loading who has access…" />
+      </div>
+    );
+  }
+
+  /**
+   * `documentAccess` answering at all means canManage passed, which is one of:
+   * supreme admin, owner, or an ADMIN grant. If neither of the latter two
+   * holds, the viewer must be on the server's ADMINS list — the only way to
+   * surface a principal the API cannot enumerate.
+   */
+  const liveNodes =
+    deletedIds.size === 0 ? nodes : nodes.filter((n) => !deletedIds.has(n.id));
+
+  const mine = address?.toLowerCase() ?? "";
+  const viewerIsSupremeAdmin =
+    isAdmin === true &&
+    mine !== "" &&
+    protection?.ownerAddress?.toLowerCase() !== mine &&
+    !grants.some(
+      (g) => g.userAddress.toLowerCase() === mine && g.permission === "ADMIN",
+    );
+
+  if (isAdmin === false) {
+    return (
+      <div className="p-6">
+        <Card>
+          <h2 className="text-base font-semibold">Access settings are admin-only</h2>
+          <p className="mt-2 text-sm" style={{ color: "var(--bai-text-secondary)" }}>
+            Managing who can read and write this vault requires <strong>ADMIN</strong>{" "}
+            on the drive, or membership of the server&apos;s <code>ADMINS</code>{" "}
+            list. You are signed in
+            {address ? (
+              <>
+                {" "}
+                as <span className="font-mono text-xs">{address}</span>
+              </>
+            ) : null}
+            , and hold read-level access at most.
+          </p>
+          <Hint>
+            An existing administrator can raise your level here, under People.
+          </Hint>
+        </Card>
+      </div>
+    );
+  }
+
+  /**
+   * Re-read the access map after a per-document change. The cached scan is
+   * dropped first, otherwise a stale entry would be served straight back and
+   * the row would appear not to have changed.
+   */
+  const reloadMap = async () => {
+    if (!driveId) return;
+    invalidateScan(driveId);
+    const server = await fetchAccessMap(driveId);
+    if (server) setScan(server);
+  };
+
+  const changeDocumentGrant = (
+    documentId: string,
+    addr: string,
+    level: Level,
+  ) =>
+    void (async () => {
+      setBusy(true);
+      const res = await grantDocument(documentId, addr, level);
+      setBusy(false);
+      setNotice(res.error ?? `${await describeAddress(addr)} now has ${level} there.`);
+      await reloadMap();
+    })();
+
+  const revokeDocumentGrant = (documentId: string, addr: string) =>
+    void (async () => {
+      setBusy(true);
+      const res = await revokeDocument(documentId, addr);
+      setBusy(false);
+      setNotice(
+        res.error ?? `Removed ${await describeAddress(addr)} from that document.`,
+      );
+      await reloadMap();
+    })();
+
+  const changeLevel = (addr: string, level: Level) =>
+    void (async () =>
+      apply(
+        () => grantDocument(driveId, addr, level),
+        `${await describeAddress(addr)} now has ${level} across the vault.`,
+      ))();
+  const revoke = (addr: string) =>
+    void (async () =>
+      apply(
+        () => revokeDocument(driveId, addr),
+        `Removed ${await describeAddress(addr)}.`,
+      ))();
+
+  async function apply(
+    fn: () => Promise<{ error?: string }>,
+    success: string,
+  ) {
+    setBusy(true);
+    const res = await fn();
+    setBusy(false);
+    setNotice(res.error ?? success);
+    await load();
+  }
+
+  return (
+    <div className="flex flex-col gap-5 overflow-y-auto p-6">
+      <header className="flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight">Access</h1>
+          <p className="mt-0.5 text-xs" style={{ color: "var(--bai-text-tertiary)" }}>
+            Who can read and write this vault, and what they may change.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {address ? <AddressChip address={address} you /> : null}
+          <button
+            type="button"
+            onClick={() => void load()}
+            disabled={loading}
+            className="rounded-md border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-40"
+            style={{
+              borderColor: "var(--bai-border)",
+              color: "var(--bai-text-secondary)",
+            }}
+          >
+            {loading ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
+      </header>
+
+      {/* Segmented control: the tabs are the audit's microgoal order, so they
+          read as one grouped choice rather than four loose links. */}
+      <nav
+        className="inline-flex w-fit gap-0.5 rounded-xl border p-1"
+        style={{
+          borderColor: "var(--bai-border)",
+          backgroundColor: "var(--bai-deep)",
+        }}
+      >
+        {TABS.map((t) => {
+          const active = tab === t.key;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setTab(t.key)}
+              title={t.hint}
+              aria-current={active ? "page" : undefined}
+              className="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
+              style={{
+                backgroundColor: active ? "var(--bai-surface)" : "transparent",
+                color: active ? "var(--bai-accent)" : "var(--bai-text-tertiary)",
+                boxShadow: active ? "0 1px 2px rgba(0,0,0,0.25)" : undefined,
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </nav>
+
+      {tab === "exposure" ? (
+        <ExposureTab
+          protection={protection}
+          grants={grants}
+          documentCount={liveNodes.length}
+          driveName="This vault"
+          myAddress={address ?? ""}
+          viewerIsSupremeAdmin={viewerIsSupremeAdmin}
+          busy={busy}
+          onChangeLevel={changeLevel}
+          onRevoke={revoke}
+        />
+      ) : tab === "map" ? (
+        <Card>
+          <AccessMap
+            driveGrants={grants}
+            scan={scan}
+            busy={busy}
+            onChangeGrant={changeDocumentGrant}
+            onRevokeGrant={revokeDocumentGrant}
+          />
+        </Card>
+      ) : tab === "people" ? (
+        <PeopleTab
+          grants={grants}
+          ownerAddress={protection?.ownerAddress ?? null}
+          myAddress={address ?? ""}
+          viewerIsSupremeAdmin={viewerIsSupremeAdmin}
+          busy={busy}
+          onGrant={changeLevel}
+          onChangeLevel={changeLevel}
+          onRevoke={revoke}
+        />
+      ) : (
+        <>
+          <DocumentsTab
+            driveId={driveId}
+            driveName="This vault (drive)"
+            nodes={liveNodes}
+            operationTypesByModel={opsByModel}
+            onChanged={() => {
+              void load();
+              void reloadMap();
+            }}
+          />
+          {/* The same summary as the "Who has what" tab, below the picker.
+              An admin working document-by-document still needs to see where
+              else a grant exists, and to fix it without navigating away. */}
+          <Card>
+            <AccessMap
+              driveGrants={grants}
+              scan={scan}
+              busy={busy}
+              onChangeGrant={changeDocumentGrant}
+              onRevokeGrant={revokeDocumentGrant}
+            />
+          </Card>
+        </>
+      )}
+
+      <Hint>{INHERIT_NOTE}</Hint>
+      {notice ? <Notice>{notice}</Notice> : null}
+    </div>
+  );
+}

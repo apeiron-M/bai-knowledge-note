@@ -11,6 +11,17 @@ import {
   GenerateReportInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<HealthReportPHState> = (
   state,
   action,
@@ -21,7 +32,7 @@ const stateReducer: StateReducer<HealthReportPHState> = (
   }
   switch (action.type) {
     case "GENERATE_REPORT": {
-      GenerateReportInputSchema().parse(action.input);
+      memoizedSchema(GenerateReportInputSchema).parse(action.input);
 
       healthReportReportManagementOperations.generateReportOperation(
         (state as any)[action.scope],
@@ -33,7 +44,7 @@ const stateReducer: StateReducer<HealthReportPHState> = (
     }
 
     case "ADD_CHECK": {
-      AddCheckInputSchema().parse(action.input);
+      memoizedSchema(AddCheckInputSchema).parse(action.input);
 
       healthReportReportManagementOperations.addCheckOperation(
         (state as any)[action.scope],

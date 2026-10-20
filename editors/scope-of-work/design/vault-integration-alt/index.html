@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Vault × SoW — alternative integration (real vault chrome)</title>
+<style>
+:root{
+  --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
+  --bai-border:rgba(255,255,255,.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
+  --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
+  --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,.1);
+  --bai-status-draft:#f59e0b; --bai-status-review:#3b82f6; --bai-status-canonical:#10b981; --bai-status-archived:#6b7280;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bai-bg);color:var(--bai-text);
+  font:13px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.mockbar{display:flex;gap:6px;align-items:center;padding:10px 16px;background:var(--bai-deep);
+  border-bottom:1px solid var(--bai-border);position:sticky;top:0;z-index:20}
+.mockbar b{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--bai-accent);margin-right:8px}
+.mockbar button{background:transparent;border:1px solid var(--bai-border);color:var(--bai-text-tertiary);
+  border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+.mockbar button.on{background:var(--bai-hover);color:var(--bai-accent);border-color:var(--bai-accent)}
+.app{display:flex;height:calc(100vh - 41px);min-height:680px}
+
+/* ---------- left sidebar (VaultSidebar) ---------- */
+.side{width:236px;flex:none;background:var(--bai-surface);border-right:1px solid var(--bai-border);
+  display:flex;flex-direction:column;overflow:hidden}
+.side-h{padding:12px;border-bottom:1px solid var(--bai-border)}
+.side-h p{margin:0;font-size:12px;font-weight:600;color:var(--bai-text-secondary)}
+.side-h span{font-size:10px;color:var(--bai-text-muted)}
+.side-tabs{display:flex;gap:2px;padding:8px;border-bottom:1px solid var(--bai-border)}
+.side-tabs div{flex:1;text-align:center;font-size:10px;padding:4px 2px;border-radius:5px;color:var(--bai-text-muted);cursor:pointer}
+.side-tabs div.on{background:var(--bai-hover);color:var(--bai-accent)}
+.side-body{overflow:auto;padding:6px 8px;flex:1}
+.grp{margin:6px 0 2px;display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--bai-text-muted)}
+.grp .c{margin-left:auto;font-variant-numeric:tabular-nums}
+.nrow{padding:5px 7px;border-radius:6px;font-size:11.5px;color:var(--bai-text-tertiary);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.nrow:hover{background:var(--bai-hover)}
+.dot{width:6px;height:6px;border-radius:99px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+/* ---------- top bar + tabs ---------- */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;
+  border-bottom:1px solid var(--bai-border);background:var(--bai-surface)}
+.tabs{display:flex;align-items:center;gap:4px}
+.tab{display:flex;align-items:center;gap:6px;border-radius:6px;padding:6px 12px;font-size:12px;
+  font-weight:500;color:var(--bai-text-tertiary);cursor:pointer;border:0;background:transparent;font-family:inherit}
+.tab.on{background:var(--bai-hover);color:var(--bai-accent)}
+.tab .pill{border-radius:99px;padding:1px 6px;font-size:10px;background:var(--bai-hover);color:var(--bai-text-muted)}
+.tab.on .pill{background:var(--bai-accent-soft);color:var(--bai-accent)}
+.top-r{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--bai-text-muted)}
+.btn{border:1px solid var(--bai-border);background:transparent;color:var(--bai-text-tertiary);
+  border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+.btn.acc{background:var(--bai-accent);color:var(--bai-accent-text);border-color:var(--bai-accent);font-weight:600}
+.pane{flex:1;overflow:auto;padding:18px 20px 60px}
+.screen{display:none} .screen.on{display:block}
+
+/* ---------- work tab ---------- */
+.toolrow{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.seg{display:flex;border:1px solid var(--bai-border);border-radius:7px;overflow:hidden}
+.seg span{padding:5px 11px;font-size:11px;color:var(--bai-text-tertiary);cursor:pointer}
+.seg span.on{background:var(--bai-accent-soft);color:var(--bai-accent);font-weight:600}
+.chipf{border:1px solid var(--bai-border);border-radius:99px;padding:4px 10px;font-size:11px;color:var(--bai-text-muted);cursor:pointer}
+.chipf.on{border-color:var(--bai-accent);color:var(--bai-accent);background:var(--bai-accent-soft)}
+.spacer{flex:1}
+
+.sowgrp{margin-bottom:10px;border:1px solid var(--bai-border);border-radius:12px;background:var(--bai-deep);overflow:hidden}
+.sowhead{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer}
+.sowhead:hover{background:var(--bai-hover)}
+.caret{color:var(--bai-text-faint);font-size:10px;width:10px}
+.sowname{font-size:13px;font-weight:600;color:var(--bai-text)}
+.sowmeta{font-size:11px;color:var(--bai-text-muted)}
+.chip{border-radius:99px;border:1px solid;padding:1px 8px;font-size:10px;font-weight:600}
+.c-draft{color:var(--bai-status-draft);border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.1)}
+.c-prog{color:var(--bai-status-review);border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.1)}
+.c-appr{color:var(--bai-status-canonical);border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.1)}
+.c-arch{color:var(--bai-status-archived);border-color:rgba(107,114,128,.35);background:rgba(107,114,128,.1)}
+.sowbody{padding:6px 12px 12px;display:grid;gap:8px}
+.budget{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--bai-text-muted);
+  padding:2px 2px 8px;border-bottom:1px dashed var(--bai-border);margin-bottom:4px}
+.bar{height:5px;border-radius:99px;background:var(--bai-hover);overflow:hidden;flex:1;max-width:180px}
+.bar i{display:block;height:100%;background:var(--bai-accent)}
+
+.card{width:100%;text-align:left;border:1px solid var(--bai-border);background:var(--bai-surface);
+  border-radius:12px;padding:11px 14px;cursor:pointer}
+.card:hover{border-color:var(--bai-accent);background:var(--bai-hover)}
+.crow1{display:flex;align-items:center;gap:8px}
+.cname{flex:1;min-width:0;font-size:13px;font-weight:500;color:var(--bai-text-secondary);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crow2{display:flex;align-items:center;gap:12px;margin-top:7px;font-size:11px;color:var(--bai-text-muted);flex-wrap:wrap}
+.tchip{border:1px solid var(--bai-border);border-radius:99px;padding:1px 7px;font-size:10px;color:var(--bai-text-tertiary)}
+.you{border-color:var(--bai-accent);color:var(--bai-accent);background:var(--bai-accent-soft)}
+.prog{display:flex;align-items:center;gap:7px;margin-top:8px}
+.blocked{color:rgb(248,113,113);font-weight:600}
+.link{color:var(--bai-accent);text-decoration:none}
+.deliv{border-left:2px solid var(--bai-border);margin:8px 0 0 4px;padding-left:10px;display:grid;gap:5px}
+.dline{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--bai-text-tertiary)}
+.dline .st{font-size:10px;width:74px;flex:none}
+.ok{color:var(--bai-status-canonical)} .todo{color:var(--bai-text-muted)} .wip{color:var(--bai-status-review)}
+.unaff{border-style:dashed}
+
+h2{font-family:Georgia,serif;font-size:19px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--bai-text-muted);font-size:12px;margin:0 0 16px;max-width:720px}
+.note{border:1px solid var(--bai-border);border-left:3px solid var(--bai-accent);background:var(--bai-deep);
+  border-radius:8px;padding:11px 13px;font-size:12px;color:var(--bai-text-tertiary);margin:16px 0;max-width:860px}
+.note b{color:var(--bai-text-secondary)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--bai-accent);
+  background:var(--bai-accent-soft);padding:1px 5px;border-radius:4px}
+
+/* ---------- join diagram ---------- */
+.join{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0;max-width:1000px}
+.col{border:1px solid var(--bai-border);border-radius:12px;background:var(--bai-surface);padding:12px}
+.col h4{margin:0 0 3px;font-size:12px;color:var(--bai-text)}
+.col .who{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint);margin-bottom:9px}
+.item{border:1px solid var(--bai-border);border-radius:7px;padding:6px 9px;font-size:11.5px;
+  color:var(--bai-text-tertiary);margin-bottom:5px;background:var(--bai-deep)}
+.item.hl{border-color:var(--bai-accent);color:var(--bai-text-secondary)}
+.item .t{font-size:9.5px;color:var(--bai-text-faint);font-family:ui-monospace,monospace}
+.dupwarn{border-left:3px solid rgb(248,113,113)}
+table{border-collapse:collapse;width:100%;max-width:920px;font-size:12px;margin:12px 0}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--bai-border);vertical-align:top}
+th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint);font-weight:600}
+td code{white-space:nowrap}
+.mine-h{display:flex;align-items:baseline;gap:10px;margin:18px 0 8px}
+.mine-h span{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--bai-text-faint)}
+.mine-h .c{font-size:11px;color:var(--bai-text-muted)}
+.grow{display:grid;gap:6px}
+.gitem{display:flex;align-items:center;gap:10px;border:1px solid var(--bai-border);border-radius:9px;
+  background:var(--bai-surface);padding:8px 11px;font-size:12px}
+.gitem .src{margin-left:auto;font-size:10.5px;color:var(--bai-text-faint)}
+</style>
+</head>
+<body>
+
+<div class="mockbar">
+  <b>alt proposal</b>
+  <button class="on" data-s="work">1 · Work tab (SoW-grouped)</button>
+  <button data-s="mine">2 · Mine</button>
+  <button data-s="join">3 · The join</button>
+  <button data-s="why">4 · Why this differs</button>
+</div>
+
+<div class="app">
+  <!-- ============ left sidebar ============ -->
+  <div class="side">
+    <div class="side-h">
+      <p>Knowledge Vault</p>
+      <span>982 notes · 58 MOCs · 403 sources</span>
+    </div>
+    <div class="side-tabs">
+      <div class="on">Notes</div><div>MOCs</div><div>Signals</div><div>Tree</div>
+    </div>
+    <div class="side-body">
+      <div class="grp">Canonical <span class="c">975</span></div>
+      <div class="nrow"><i class="dot" style="background:var(--bai-status-canonical)"></i>Flowable's engine issues UPDATE…</div>
+      <div class="nrow"><i class="dot" style="background:var(--bai-status-canonical)"></i>The auth stream is strictly time…</div>
+      <div class="nrow"><i class="dot" style="background:var(--bai-status-canonical)"></i>Grants are walked in list order…</div>
+      <div class="nrow"><i class="dot" style="background:var(--bai-status-canonical)"></i>An uninitialized auth policy lea…</div>
+      <div class="nrow"><i class="dot" style="background:var(--bai-status-canonical)"></i>Reactor authorization uses a lay…</div>
+      <div class="grp">In review <span class="c">3</span></div>
+      <div class="nrow"><i class="dot" style="background:var(--bai-status-review)"></i>Document permissions support gro…</div>
+      <div class="grp">Archived <span class="c">4</span></div>
+      <div class="nrow"><i class="dot" style="background:var(--bai-status-archived)"></i>The vault's Powerhouse knowledge…</div>
+    </div>
+  </div>
+
+  <!-- ============ main ============ -->
+  <div class="main">
+    <div class="top">
+      <div class="tabs">
+        <button class="tab">💬 Chat</button>
+        <button class="tab">🔍 Search</button>
+        <button class="tab">📝 Notes <span class="pill">982</span></button>
+        <button class="tab">🕸 Graph</button>
+        <button class="tab">📚 Sources <span class="pill">403</span></button>
+        <button class="tab on">🎯 Work <span class="pill">9</span></button>
+      </div>
+      <div class="top-r">
+        <span class="tchip you">liberuum.eth</span>
+        <button class="btn">Getting started</button>
+        <button class="btn">+ Create</button>
+        <button class="btn">⚙</button>
+      </div>
+    </div>
+
+    <div class="pane">
+
+      <!-- ---------------- screen 1: work tab ---------------- -->
+      <div class="screen on" id="s-work">
+        <h2>One tab, grouped by scope of work</h2>
+        <p class="sub">Execution projects nest under the SoW that funds them. Uncompiled work sits in its own group at the bottom, so nothing gates on a PM. Each group header carries the SoW's own status and budget rollup — the stakeholder numbers — while the cards stay exactly today's <code>ProjectCard</code>. Project, team, goal and deliverable names are live vault data; budgets and SOW codes are illustrative.</p>
+
+        <div class="toolrow">
+          <div class="seg"><span class="on">All work</span><span>Mine</span><span>My teams</span></div>
+          <span class="chipf on">Active</span>
+          <span class="chipf">Planning</span>
+          <span class="chipf">Blocked</span>
+          <span class="chipf">Completed</span>
+          <div class="spacer"></div>
+          <button class="btn">+ New scope</button>
+          <button class="btn acc">+ New project</button>
+        </div>
+
+        <!-- SoW group 1 -->
+        <div class="sowgrp">
+          <div class="sowhead">
+            <span class="caret">▾</span>
+            <span class="sowname">Paperless × Powerhouse — client demo</span>
+            <span class="chip c-prog">IN PROGRESS</span>
+            <span class="sowmeta">3 envelopes · 7 deliverables · 1 execution</span>
+            <div class="spacer"></div>
+            <a class="link" href="#">Open scope →</a>
+          </div>
+          <div class="sowbody">
+            <div class="budget">
+              <span>Budget</span><span style="color:var(--bai-text-secondary)">42,000 USDS</span>
+              <div class="bar"><i style="width:61%"></i></div><span>61% committed</span>
+              <div class="spacer"></div><span>4 / 7 delivered</span>
+            </div>
+            <button class="card">
+              <div class="crow1">
+                <span class="cname">Paperless × Powerhouse demo</span>
+                <span class="chip c-appr">Active</span>
+              </div>
+              <div class="crow2">
+                <span>by Frank + BAI</span>
+                <span class="tchip">Frank</span><span class="tchip you">liberuum</span>
+                <span class="tchip">Teep</span><span class="tchip">Apeiron</span>
+                <span>Due 28 Aug</span>
+              </div>
+              <div class="prog">
+                <div class="bar" style="max-width:260px"><i style="width:82%"></i></div>
+                <span style="font-size:11px;color:var(--bai-text-muted)">27/33 goals · 10 notes cited</span>
+              </div>
+              <div class="deliv">
+                <div class="dline"><span class="st ok">DELIVERED</span>Live Paperless↔Powerhouse integration<span class="src" style="margin-left:auto;font-size:10px;color:var(--bai-text-faint)">SOW-03 · goal “Step 3”</span></div>
+                <div class="dline"><span class="st wip">IN PROGRESS</span>Expense invoicing flow<span class="src" style="margin-left:auto;font-size:10px;color:var(--bai-text-faint)">SOW-04 · goal “Step 4”</span></div>
+                <div class="dline"><span class="st todo">PLANNED</span>Automated payments<span class="src" style="margin-left:auto;font-size:10px;color:var(--bai-text-faint)">SOW-05 · goal “Step 5”</span></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- SoW group 2 -->
+        <div class="sowgrp">
+          <div class="sowhead">
+            <span class="caret">▾</span>
+            <span class="sowname">Powerhouse — internal platform H2</span>
+            <span class="chip c-draft">DRAFT</span>
+            <span class="sowmeta">2 envelopes · 11 deliverables · 2 executions</span>
+            <div class="spacer"></div>
+            <a class="link" href="#">Open scope →</a>
+          </div>
+          <div class="sowbody">
+            <div class="budget">
+              <span>Budget</span><span style="color:var(--bai-text-secondary)">not quoted</span>
+              <div class="bar"><i style="width:9%"></i></div><span>9% complete</span>
+              <div class="spacer"></div><span>1 / 11 delivered</span>
+            </div>
+            <button class="card">
+              <div class="crow1">
+                <span class="cname">Auth Scope Enforcement</span>
+                <span class="chip c-appr">Active</span>
+              </div>
+              <div class="crow2">
+                <span>by thegoldenmule</span><span class="tchip">thegoldenmule</span>
+                <span>no target date</span>
+              </div>
+              <div class="prog">
+                <div class="bar" style="max-width:260px"><i style="width:2%"></i></div>
+                <span style="font-size:11px;color:var(--bai-text-muted)">1/42 goals · 8 notes cited</span>
+              </div>
+              <div class="deliv">
+                <div class="dline"><span class="st todo">PLANNED</span>Sync serving gated by the policy<span class="src" style="margin-left:auto;font-size:10px;color:var(--bai-text-faint)">SOW-08 · goal “Stage 8”</span></div>
+                <div class="dline"><span class="st todo">PLANNED</span>Permission-table migration<span class="src" style="margin-left:auto;font-size:10px;color:var(--bai-text-faint)">SOW-09 · goal “Stage 9”</span></div>
+              </div>
+            </button>
+            <button class="card">
+              <div class="crow1"><span class="cname">Reactor</span><span class="chip c-appr">Active</span></div>
+              <div class="crow2"><span>by thegoldenmule</span><span class="tchip">thegoldenmule</span><span style="color:var(--bai-text-faint)">no deliverables · empty WBS</span></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- unaffiliated -->
+        <div class="sowgrp unaff">
+          <div class="sowhead">
+            <span class="caret">▾</span>
+            <span class="sowname" style="color:var(--bai-text-tertiary)">Not in a scope of work</span>
+            <span class="sowmeta">where new work starts · compile when a PM picks it up</span>
+            <div class="spacer"></div>
+            <button class="btn">Compile into scope…</button>
+          </div>
+          <div class="sowbody">
+            <button class="card">
+              <div class="crow1"><span class="cname">Peon ping packs</span><span class="chip c-draft">Planning</span></div>
+              <div class="crow2"><span>by liberuum</span><span class="tchip you">liberuum</span><span style="color:var(--bai-text-faint)">no WBS yet</span></div>
+            </button>
+          </div>
+        </div>
+
+        <div class="note">
+          <b>Why grouping beats a second band.</b> You said there will be several SoWs for different
+          projects, teams and companies. A flat “scope of work” band under the project list answers
+          “which SoWs exist”; it does not answer <i>whose work is this</i>. Grouping makes the SoW
+          the spine, so a PM for one company collapses the others, and the tab badge can be scoped
+          to what you actually own.
+        </div>
+      </div>
+
+      <!-- ---------------- screen 2: mine ---------------- -->
+      <div class="screen" id="s-mine">
+        <h2>Mine — the view that makes this a work system</h2>
+        <p class="sub">Same tab, <code>Mine</code> selected. One question — “what am I on the hook for?” — answered across all three layers and every SoW in the drive. This is the view that cannot be built today, because a person is written five different ways.</p>
+
+        <div class="toolrow">
+          <div class="seg"><span>All work</span><span class="on">Mine</span><span>My teams</span></div>
+          <span class="chipf on">liberuum.eth</span>
+          <div class="spacer"></div>
+          <span style="font-size:11px;color:var(--bai-text-muted)">resolved via Renown profile → ENS → address</span>
+        </div>
+
+        <div class="mine-h"><span>Assigned goals</span><span class="c">6 open · 2 blocked · across 2 WBS documents</span></div>
+        <div class="grow">
+          <div class="gitem"><span class="chip c-prog">IN PROGRESS</span>Step 4.b — expense invoicing: map Paperless fields to invoice lines<span class="src">Paperless demo · WBS</span></div>
+          <div class="gitem"><span class="chip c-draft">TODO</span>Paperless-invoice package refinements — tolerance fix<span class="src">Paperless demo · WBS</span></div>
+          <div class="gitem"><span class="chip c-draft">TODO</span>Step 5 — automated payments: prepare the payout flow<span class="src">Paperless demo · WBS</span></div>
+          <div class="gitem"><span class="chip c-arch">BLOCKED</span>Peon ping packs — waiting on registry publish<span class="src">no WBS · project only</span></div>
+        </div>
+
+        <div class="mine-h"><span>Deliverables I own</span><span class="c">2 · in 1 scope of work</span></div>
+        <div class="grow">
+          <div class="gitem"><span class="chip c-prog">IN PROGRESS</span>SOW-04 · Expense invoicing flow<span class="src">12 / 20 story points</span></div>
+          <div class="gitem"><span class="chip c-draft">TODO</span>SOW-05 · Automated payments<span class="src">0 / 16 story points</span></div>
+        </div>
+
+        <div class="mine-h"><span>Projects I'm on</span><span class="c">2 of 4</span></div>
+        <div class="grow">
+          <div class="gitem">Paperless × Powerhouse demo<span class="src">team member · powerhouse/invoice package</span></div>
+          <div class="gitem">Peon ping packs<span class="src">owner</span></div>
+        </div>
+
+        <div class="note dupwarn">
+          <b>This screen is blocked on identity, not on UI.</b> A person is currently
+          <code>Agent.id: PHID</code> in SoW, <code>owner: ID</code> on SoW deliverables,
+          <code>owner: String</code> on <code>bai/project</code>, <code>TeamMember.id: OID</code> +
+          <code>name</code> in its team array, and <code>assignee: String</code> on WBS goals. The
+          live vault already has <code>assignee: "Frank &amp; liberuum"</code> — two people in one
+          string — and <code>owner: "Frank + BAI"</code>. Nothing can aggregate that. Pick one key
+          (the Ethereum address, resolved for display through the Renown profile endpoint you
+          already have working) and this view is a filter, not a feature.
+        </div>
+      </div>
+
+      <!-- ---------------- screen 3: the join ---------------- -->
+      <div class="screen" id="s-join">
+        <h2>The join already exists — it is just not wired</h2>
+        <p class="sub">The three lists below are copied from the live vault; the SOW codes and story-point prices are illustrative, since no scope-of-work document exists yet. The Paperless project's <code>deliverables[]</code> and its WBS's top-level goals are the same list, typed twice by hand. A SoW deliverable is a third copy with a price on it.</p>
+
+        <div class="join">
+          <div class="col">
+            <h4>SoW · Deliverable</h4>
+            <div class="who">stakeholder · priced</div>
+            <div class="item hl">SOW-04 · Expense invoicing flow<div class="t">20 pts × 140 · owner: liberuum</div></div>
+            <div class="item">SOW-05 · Automated payments<div class="t">16 pts × 140</div></div>
+            <div class="item">SOW-06 · Marketing materials<div class="t">8 pts × 140</div></div>
+          </div>
+          <div class="col">
+            <h4>bai/project · deliverables[]</h4>
+            <div class="who">execution · shipped artifact</div>
+            <div class="item hl">Expense invoicing flow<div class="t">PLANNED · goalRef → “Step 4” ✅ already exists</div></div>
+            <div class="item">Automated payments<div class="t">PLANNED · goalRef → “Step 5”</div></div>
+            <div class="item">Marketing materials (video, posts…)<div class="t">PLANNED · goalRef → “Marketing materials”</div></div>
+          </div>
+          <div class="col">
+            <h4>bai/wbs · top-level goals</h4>
+            <div class="who">the team's own words</div>
+            <div class="item hl">Step 4 — Expense invoicing<div class="t">3 children · 1 done</div></div>
+            <div class="item">Step 5 — Automated payments<div class="t">4 children · 0 done</div></div>
+            <div class="item">Marketing materials — by 28 Aug<div class="t">2 children · 2 done</div></div>
+          </div>
+        </div>
+
+        <div class="note">
+          <b>So the glue is one field, not three.</b> <code>bai/project.Deliverable</code> already has
+          <code>goalRef: OID</code> pointing at a WBS goal. Add <code>sowDeliverableId: OID</code>
+          next to it and the row becomes the join between all three layers. Plus
+          <code>sowRef: PHID</code> + <code>sowProjectId: OID</code> on the project itself, so a
+          project knows which envelope funds it. <b>Zero changes to the SoW model</b> — the back-link
+          is a query over the drive's projects, which the vault already does every 30 s.
+        </div>
+
+        <table>
+          <tr><th>Layer pair</th><th>Cardinality</th><th>Link</th></tr>
+          <tr><td>SoW <code>Project</code> ↔ <code>bai/project</code></td><td>1 : 1</td><td><code>sowRef</code> + <code>sowProjectId</code> on the project</td></tr>
+          <tr><td>SoW <code>Deliverable</code> ↔ <code>project.deliverable</code></td><td>1 : 1</td><td><code>sowDeliverableId</code> on the existing deliverable row</td></tr>
+          <tr><td><code>project.deliverable</code> ↔ WBS goal</td><td>1 : 1</td><td><code>goalRef</code> — <b>already shipped</b></td></tr>
+          <tr><td>WBS goal ↔ its tasks</td><td>1 : n</td><td><code>parentId</code> — already shipped</td></tr>
+        </table>
+      </div>
+
+      <!-- ---------------- screen 4: why ---------------- -->
+      <div class="screen" id="s-why">
+        <h2>Where this differs from the first plan</h2>
+        <p class="sub">The first plan gets the big calls right: three models, one tab, author bottom-up, report top-down, no cascades, knowledge stays on the execution project. Three things I would change.</p>
+
+        <table>
+          <tr><th></th><th>First plan</th><th>This proposal</th><th>Why</th></tr>
+          <tr>
+            <td><b>Compile unit</b></td>
+            <td><code>bai/project</code> ↔ SoW <b>deliverable</b>, 1:1</td>
+            <td><code>bai/project</code> ↔ SoW <b>project</b>; deliverable ↔ top-level WBS goal</td>
+            <td>Paperless has <b>one</b> team of 4, 10 cited notes, 7 deliverables. Project-per-deliverable means 7 projects, the roster copied 7×, knowledge scattered 7×. It also makes <code>bai/wbs</code> a real WBS: deliverables at the top, tasks below.</td>
+          </tr>
+          <tr>
+            <td><b>SoW model</b></td>
+            <td>add <code>executionRef: PHID</code> to <code>Deliverable</code></td>
+            <td>leave it alone; link from the vault side</td>
+            <td><code>powerhouse/scopeofwork</code> is upstream (<code>@powerhousedao/project-management</code> 1.0.6) and the vendored copy <b>already</b> diverges — <code>Progress</code> union → flat type, <code>marginPinned</code>, <code>targetBudget</code>. Every field added here is a merge conflict later.</td>
+          </tr>
+          <tr>
+            <td><b>Nav</b></td>
+            <td>two bands in “Projects”: execution, then scope</td>
+            <td>one list <b>grouped by SoW</b>, + “Not in a scope” group, + Mine / My teams</td>
+            <td>Several SoWs across teams and companies. Bands answer “which SoWs exist”; groups answer “whose work is this”. Grouping is already the vault's idiom (<code>GROUP_ORDER</code>, <code>STATUS_ORDER</code>).</td>
+          </tr>
+          <tr>
+            <td><b>Sequencing</b></td>
+            <td>nav bands → schema glue → compile picker</td>
+            <td><b>identity first</b>, then grouping, then the one join field</td>
+            <td>“Users and teams report their work” is the stated goal and it is blocked by five spellings of a person, not by the compile link.</td>
+          </tr>
+        </table>
+
+        <div class="note">
+          <b>Also worth knowing before you promise deep links.</b> The SoW editor navigates by React
+          state only — <code>go(view)</code> with a <code>View</code> union, no routing. Clicking a
+          deliverable in the vault cannot open that deliverable in the SoW editor until the editor
+          accepts an initial view. Its <code>PlanMatrix</code> (projects × milestones) and roadmap /
+          milestone / project / team views already exist, so the top-down half is largely built —
+          only <code>Deliverable</code> has an inspector, which is exactly where the execution chip goes.
+        </div>
+
+        <div class="note">
+          <b>Upstream nit.</b> SoW uses <code>owner: ID</code> and <code>coordinators: [ID!]!</code>.
+          The house rule in this repo's CLAUDE.md is explicit: never use <code>ID</code> in a
+          document model — <code>OID</code> for in-document, <code>PHID</code> for cross-document.
+          Worth filing against <code>project-management</code> rather than fixing only in the fork.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const btns = document.querySelectorAll(".mockbar button");
+  btns.forEach(b => b.addEventListener("click", () => {
+    btns.forEach(x => x.classList.toggle("on", x === b));
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("on"));
+    document.getElementById("s-" + b.dataset.s).classList.add("on");
+  }));
+</script>
+</body>
+</html>

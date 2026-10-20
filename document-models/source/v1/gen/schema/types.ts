@@ -96,6 +96,10 @@ export type RecordExtractionStatsInput = {
   skippedCount: Scalars["Int"]["input"];
 };
 
+export type RemoveExtractedClaimInput = {
+  claimRef: Scalars["String"]["input"];
+};
+
 export type SetSourceStatusInput = {
   status: SourceStatus;
 };

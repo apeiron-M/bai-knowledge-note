@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-afe9c3ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "afe9c3ef-7d13-4cb7-aa6e-ec7080f34508",
+      "targetTitle": "Launch Agent 7's Ecosystem Upkeep Fee is charged on market c"
+    },
+    {
+      "id": "lnk-cb7d749f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cb7d749f-c60e-4a70-831f-77a7cfdac330",
+      "targetTitle": "Keel's Ecosystem Upkeep Fee is charged on market capitalizat"
+    },
+    {
+      "id": "lnk-572fe357-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572fe357-a42e-43fa-a25a-47f159b00a74",
+      "targetTitle": "The Ecosystem Upkeep Fee is levied on an Agent's market capi"
+    },
+    {
+      "id": "lnk-ada71bc5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ada71bc5-239f-4ef0-a49d-f36c66ed9dd7",
+      "targetTitle": "Spark's Ecosystem Upkeep Fee is charged on market capitaliza"
+    },
+    {
+      "id": "lnk-b53372cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b53372cc-5ddb-4873-9f8e-652153a7a228",
+      "targetTitle": "Pattern's Ecosystem Upkeep Fee is charged on market capitali"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Skybase's Ecosystem Upkeep Fee is assessed on market capitalization rather than on revenue or profit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "61d4e9f8-5765-4bc4-8331-0f58482eb793",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b71fa758-98b4-4b60-bd0d-4d8fe326d674",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f63f7bf3-ffc7-465c-a48a-7446864de64a",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43e2e7f6-a3e9-46ba-94d6-cbf7e96f5ed2",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.4.2.3.1.2.1.1.1 states the terms in one line: \"Skybase will pay 0.50% of its market capitalization per year in USDS.\"\n\nThe rate is a parameter; the *basis* is a design decision. Charging on market capitalization rather than revenue, fees, or profit makes the obligation independent of the Agent's business model \u2014 which is what lets a single Upkeep Primitive apply uniformly across Agents doing very different things, an interface operator and a lending protocol alike. It also makes the fee unavoidable through accounting: there is no cost line to inflate to shrink it.\n\nThe trade-offs are structural. The burden is pro-cyclical in valuation and blind to cash generation, so a pre-revenue Agent with a highly valued token owes real USDS, and a token re-rating raises the bill without raising the Agent's ability to pay. Denominating in USDS rather than SKYBASE compounds this: the Agent must source stable value, so it cannot settle its ecosystem obligations by printing its own token.\n\nThe fee is therefore best read as ground rent on the value the Agent captures from being part of Sky, rather than as a tax on its activity. Notably, A.6.1.1.4.2.3.1.2.1.2.1.1 defers the actual payment process to \"future iterations of the Skybase Artifact,\" so the liability is fixed before the collection mechanism exists.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "0.50% of market cap per year, payable in USDS, means the levy tracks how the market values the Agent \u2014 rising in bull markets regardless of whether the Agent generates cash.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4e5f0e8c-478f-4cf2-9fe2-6fe84d205c8c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "09d37a74-0634-4a38-83fd-4db89666d536",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

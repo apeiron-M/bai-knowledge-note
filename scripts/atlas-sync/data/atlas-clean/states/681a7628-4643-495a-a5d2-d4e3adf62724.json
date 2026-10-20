@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-6f2b999d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f2b999d-a463-407a-bffe-0eda86e25d4a",
+      "targetTitle": "doc-867cb3fa"
+    },
+    {
+      "id": "lnk-9fc3eb36-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9fc3eb36-cf8e-4d99-9aae-e7e02521bd6f",
+      "targetTitle": "Allocation Instances are modeled as bidirectional conduits w"
+    },
+    {
+      "id": "lnk-9d85d180-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d85d180-7a94-4ed7-88f3-58b0b8766466",
+      "targetTitle": "Pattern's activated Primitive set confines it to Ethereum Ma"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Pattern's only recorded live allocation is a Maple position keyed to USDC, not to USDS",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "00f96073-d153-4d43-a9e3-dda06af32bf7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49f1901f-efd8-43ec-9e25-d3fc343f8c6e",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9621b7fd-a9bd-4393-8efa-13c4960cc708",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f46a1ff-98af-466d-aaeb-fd5bd95a94df",
+      "name": "credit",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.1.2.1.1 names Maple as the sole protocol directory under Ethereum Mainnet, and A.6.1.1.6.2.6.1.1.2.1.1.1 points to the \"Ethereum Mainnet - Maple USDC Instance Configuration Document\" as its one active instance.\n\nTwo things are worth reading off this. First, the venue is consistent with the mandate: Pattern exists to supply liquidity to on-chain and off-chain credit, and Maple is a lending protocol rather than a trading or staking venue. The Artifact's stated strategy and its actual first deployment agree, which is not guaranteed in a document of this size.\n\nSecond, the instance is keyed to **USDC**. Whatever the surrounding Supply Side Stablecoin machinery is for, this particular allocation is identified by a stablecoin Sky does not issue \u2014 while Pattern's Ecosystem Upkeep Fee is denominated in USDS (A.6.1.1.6.2.3.1.2.1.1.1). The Agent therefore carries an asset-side exposure and a liability-side denomination in two different stablecoins, and the naming makes that visible at the directory level without any accompanying discussion of the basis risk.\n\nBecause this is the only allocation instance recorded, Pattern's live credit exposure is also undiversified by protocol: a single counterparty failure at Maple is a failure of the Agent's entire recorded allocation book.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The single Active Instance under Ethereum Mainnet is 'Maple USDC', pairing the Agent's credit mandate with a private-credit lending protocol while its ecosystem fee is owed in USDS.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

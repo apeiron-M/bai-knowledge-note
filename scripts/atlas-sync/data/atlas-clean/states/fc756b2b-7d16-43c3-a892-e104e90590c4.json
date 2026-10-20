@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Pattern's Maple conduit throttles deposits but leaves withdrawals unlimited",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ced76921-9c1d-4e0c-b874-4dfe22dd090b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2630a1a2-71fd-430e-a0ec-992abd4db98b",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b1b8b87-8084-4ce1-9575-132e1eae8365",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b73a31d-d8b4-426c-960c-b879e5641de8",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Maple USDC instance configures its two directions asymmetrically. Inflow: \"`maxAmount`: 100,000,000 USDC, `slope`: 20,000,000 USDC per day\" (A.6.1.1.6.2.6.1.3.1.1.1.2.4.1). Outflow: \"`maxAmount`: Unlimited\" (A.6.1.1.6.2.6.1.3.1.1.1.2.4.2).\n\nThe principle this expresses is that a rate limit is a control on **building exposure**, not on unwinding it. Throttling entry bounds how fast the Agent can concentrate capital in one counterparty and gives observers time to react to a mistake. Throttling exit would do the opposite of protecting anyone: in a stress event the limit would trap capital inside a failing venue and convert a credit problem into a liquidity problem.\n\nThe asymmetry also matches the ecosystem-level design seen elsewhere in the Liquidity Layer, where burning USDS restores mint capacity rather than consuming a separate allowance. In both cases the reversing action is deliberately unconstrained.\n\nOne caveat is worth holding onto: an unlimited *contract-level* withdrawal limit does not make exit instant, because Maple redemptions are asynchronous and settle only when the vault processes them. The unlimited setting removes Pattern's own brake on exit; it does not remove the counterparty's. The protection is therefore against self-inflicted delay, not against illiquidity at the venue.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Inflow is capped at 100,000,000 USDC with a 20,000,000 per day slope while the withdrawal maxAmount is 'Unlimited' \u2014 rate limits govern risk accumulation, never the ability to exit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

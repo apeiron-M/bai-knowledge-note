@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Relayer role can be granted only by admin but revoked by admin or Freezer, and revocation is the Freezer's sole power",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "979156c0-d6de-496b-a967-b496bba07ed7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "91265132-01cc-4a84-818b-2d9e2c77c4e7",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4a7b9f9-e077-4849-8adf-67cf663aa9e0",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1096f305-a90f-448e-932e-c5282802af08",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.2.2.1.1.2 sets an asymmetry precisely: \"The Relayer Role may be granted to an address by any address holding the `DEFAULT_ADMIN_ROLE`. The Relayer Role may be removed from an address by any address holding the `DEFAULT_ADMIN_ROLE` **or the `FREEZER_ROLE`**.\"\n\nA.6.1.1.6.2.6.1.2.2.1.1.4 then describes the Freezer in a single line: \"the address of the emergency role that can remove a compromised Relayer,\" and the emergency protocol at A.6.1.1.6.2.6.1.2.2.3.1 confirms the mechanics \u2014 `removeRelayer` revokes the relayer role and emits `RelayerRemoved`.\n\nTwo design principles are visible. First, **asymmetric difficulty**: adding capability is harder than removing it. In an incident, speed matters more than deliberation for subtraction, while the reverse holds for addition. Second, **minimal emergency scope**: the emergency actor cannot mint, transfer, redeploy, or appoint. It can only take a permission away. That makes the Freezer key materially safer to distribute widely, because a compromised Freezer can cause a denial of service but not a theft.\n\nThe residual risk is precisely that denial of service. Whoever can reach the Freezer threshold can halt Pattern's operations by removing its relayer, and the recovery path runs through Sky Governance as admin to re-grant the role \u2014 a slow path by design. Note also that despite its name, the role does not freeze contracts or funds; it disables the actor.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Granting operational authority requires the highest role while removing it is deliberately easier; the emergency role can subtract permissions but cannot move assets or add anyone.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a7da8a38-aa5d-48a0-bba7-bb983b0c36d2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c94ab96f-2014-4167-9050-9bb1c4f19720",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:34.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky deprecates its own Core Vaults by pricing users out rather than by switching them off",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "90286abb-5b13-4810-b8b3-ebfb26838a27",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "81f1a6f4-9f4d-41a7-901d-98c88de6ef34",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "950c90ef-6763-420a-a6e0-8b97f1c9594f",
+      "name": "endgame-transition",
+      "topicDocumentId": null
+    },
+    {
+      "id": "48199f15-9f2e-407f-ae98-08588fff434a",
+      "name": "native-vault-engine",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.1 states that \"the Sky Core Vaults are gradually being deprecated over time to incentivize users to migrate to SparkLend and other borrowing platforms offered by Prime Agents,\" and A.3.7.1.1.2.3 makes the instrument explicit: \"The Stability Fees must be gradually increased over time to incentivize users to migrate.\"\n\nThe method matters more than the goal. Sky could deprecate the Native Vault Engine by setting debt ceilings to zero and forcing existing positions to unwind. Instead it raises the *price* of borrowing from Core and lets each user decide when leaving becomes rational. Positions are never invalidated; they merely become uncompetitive against Prime Agent venues.\n\nThis avoids the harm the Atlas itself documents in A.3.7.1.5.1 \u2014 users liquidated by parameter changes they did not anticipate \u2014 and preserves the appearance of an orderly market rather than an administrative closure.\n\nIt also has a revenue side effect. Because Stability Fee income flows to the Surplus Buffer (A.3.7.1.1.2.3), the deprecation lever is simultaneously a revenue lever: Core earns more per unit of remaining Core debt while that debt shrinks. The transition is therefore self-funding for as long as any borrowers remain, which weakens the urgency to complete it.\n\nThe residual set is deliberately narrow \u2014 during the transition Core Vaults keep only \"a limited set of collateral types and risk parameters.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Stability Fees 'must be gradually increased over time' to push borrowers toward SparkLend and Prime Agent platforms, so migration is driven by a rate lever instead of a shutdown.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "48127640-1236-4d90-984f-3c4a38c66ee4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:06.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "32c40d63-adb8-4831-9277-7d43464a7610",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

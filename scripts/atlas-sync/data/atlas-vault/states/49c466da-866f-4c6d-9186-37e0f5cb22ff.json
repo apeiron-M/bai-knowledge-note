@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-4c20d15c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4c20d15c-8702-459f-894a-501947050a4d",
+      "targetTitle": "Failed Invocations and Suspended Instances get permanent arc"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Failed Invocations and Suspended Instances are archived rather than deleted",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1ed7f8ec-4c97-4b9a-b0fa-9422b3818fd2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c0af1ae6-74f6-4e16-b93f-84e046b406c5",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1465ce3-aa7c-4a63-bf91-46ed044ce658",
+      "name": "accountability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.1.1.1.5.1 establishes that \"the subtrees for archived Invocations and Instances of the ... Primitive are stored here,\" with dedicated children for failed Invocations (.5.1.1) and Suspended Instances (.5.1.2). The structure is replicated for every Primitive in the Artifact.\n\nReserving named storage for failure is a design choice with governance consequences. An Invocation that did not work out does not vanish from the Artifact; it is relocated into an archive that remains part of the governed document tree. The same holds for Instances that were switched off mid-life rather than completed.\n\nThe effect is that the Artifact records attempts, not just outcomes. A reader can distinguish \"this Primitive was never used\" from \"this Primitive was used and the Invocation failed\" \u2014 a distinction that disappears in any system where unsuccessful actions are simply removed.\n\nThis is also what makes the Global Activation Status trustworthy. A status of `Inactive` means something only if there is somewhere else for the residue of past activity to be, so the archive is a precondition for reading current state off the Hub.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every Primitive Hub reserves fixed subtrees for failures and suspensions, so the record of what was attempted and stopped survives inside the Artifact itself.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9ba93738-4fcf-4136-8efd-264a71610114",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6fea057d-4764-4e9b-80cb-0130dc08f30e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

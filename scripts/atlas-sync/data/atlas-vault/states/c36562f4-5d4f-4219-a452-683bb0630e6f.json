@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Loss Given Default formula as written in the Atlas always evaluates to zero or below, which cannot be its intent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "78079a00-1b78-4bd2-9e15-5d22c9ff051a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55fdfa63-4172-4412-b990-d2985a4e3491",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0dfcd767-452d-4c8e-b90e-91b9f0e42633",
+      "name": "specification-defect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.1.1.2 gives the second step of the lending-market capital calculation as:\n\n`LGD = min(1 - (1 - LP) * (1 - S) / LT, 0)`\n\nand clarifies that \"`min` is the mathematical minimum function that returns the lower of the two specified parameters.\"\n\nTaken literally the expression can never exceed 0. Loss Given Default is the fraction of exposure lost when a default occurs, and it is multiplied through to the capital requirement in A.3.2.2.1.1.1.1.1.4 (`K = [LGD \u00d7 N(...) \u2212 PD \u00d7 LGD]`) and then into RRC. An LGD of 0 makes K zero and therefore Instance Financial RRC zero for every position, which contradicts the entire purpose of the Article.\n\nThe intended semantics are recoverable from the inputs. Liquidation Penalty `LP` and Slippage `S` are recovery-reducing haircuts and Liquidation Threshold `LT` is the debt-to-collateral ratio at which liquidation may occur, so `(1 \u2212 LP)(1 \u2212 S)/LT` is a recovery rate and `1 \u2212 recovery` is the loss fraction. What the formula needs is a bound preventing a *negative* LGD when recovery exceeds 1 \u2014 i.e. `max(..., 0)` \u2014 or possibly a cap at 1. As printed, the bound is applied in the wrong direction.\n\nThis is worth flagging rather than silently correcting because the Atlas is the normative specification that implementations are expected to follow, and A.3.2.2.1.1.1.1.5 says a reference implementation is included \u2014 so the reference code, not the prose, is currently the operative definition of this step. It is also a reminder that the surrounding text is precise about conventions (all parameters as decimals, \"3% should be specified as 0.03\"; slippage \"should not exceed 25%\"), which makes a directional error in the formula easy to read past.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.3.2.2.1.1.1.1.1.2 specifies LGD = min(1 \u2212 (1\u2212LP)(1\u2212S)/LT, 0); since LGD is a loss fraction feeding a capital charge, the outer bound is almost certainly a max/floor written the wrong way round.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c6ca5846-739a-42d6-95c7-70c9c4280203",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2229dfac-5be5-432e-aa27-a5364923e631",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:23.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

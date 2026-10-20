@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4b41dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4b41dda-9a74-4a12-8f29-58d5f5ad9301",
+      "targetTitle": "Emergency-response multisigs are exempt from signer and thre"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Where Solana verification tooling is weaker, the framework substitutes cross-verification between signers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "11e241da-abae-487d-9733-acbcb21f8660",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c4a5ea2e-ad15-442f-a873-332a78994129",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5849e8d8-4085-4536-b978-3a60fcef9a61",
+      "name": "multisig",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.2.2.2.3.4 makes an unusual admission for a security policy: \"[v]erification tooling for SVM Multisig transactions is currently more limited than for EVM environments. Signers should exercise additional caution and may cross-verify transactions with other signers prior to execution.\"\n\nMost frameworks state uniform requirements and let reality diverge silently. Naming the asymmetry is more useful, because it tells signers *where* their tooling is weakest rather than letting them assume equal assurance across chains \u2014 and misplaced confidence is the actual risk when the same person signs on both.\n\nThe substitute is social. Where a simulator or a decoder cannot independently confirm a transaction, two signers reasoning about it separately is the remaining check. That is a real control \u2014 independent review catches errors \u2014 but it is weaker than machine verification and it consumes the scarce commodity in emergency operations: signer time.\n\nThe SVM requirements themselves are correspondingly more manual. A.2.11.1.3.2.2.2.2.3.1 asks signers to verify \"the sender, recipient addresses, asset type, transfer amounts, configuration changes, and associated instructions\" and to confirm \"that no unauthorized interactions are included\" \u2014 an enumeration check on a full instruction list, done by eye, where the EVM path has decoded calldata and simulation to lean on.\n\nThe honest reading is that multi-chain expansion carries an uneven security cost, and the Atlas prices it in caution rather than pretending parity.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas states plainly that SVM multisig tooling lags EVM and responds by asking signers to exercise additional caution and check transactions with each other before execution.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3e92ad95-7aba-4a36-8185-757795b8eeff",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:38.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0232f874-456c-4730-9451-3354e369f23b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:38.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

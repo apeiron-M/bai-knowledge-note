@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-d42fb7cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d42fb7cb-7030-4d76-9a91-835a423c017d",
+      "targetTitle": "doc-859c3074"
+    },
+    {
+      "id": "lnk-d8beebaa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d8beebaa-9ca8-4e69-857e-9448b77bb203",
+      "targetTitle": "Each Executive Sheet item carries three independent confirma"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Content Liaison for an item is by definition the party that requested it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "07042172-3220-441e-9b43-a3b93a8b16b0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d4b8576-8a51-4e63-9a22-2a7164d06382",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d13fefe9-47b6-4bc7-ba0e-9400ea92bc4b",
+      "name": "accountability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Recording roles after the GovOps meeting, A.1.10.2.4.3.2.1 states that \"the identity of the Content Liaison is determined as the party that originally requested the item for inclusion.\"\n\nThe role is therefore not assigned but derived. Requesting something in an Executive Vote automatically makes you responsible for confirming that the Executive Sheet says what you meant \u2014 the \"Liaison Confirm\" field of A.1.10.2.4.2.3.1 belongs to you.\n\nThis puts intent-verification with the only party who can actually perform it. The Governance Point can check that an instruction is well-formed and the Technical Point that it is executable, but neither can know whether \"Increase SSR by 3.00 percentage points\" is the number the requester intended. That knowledge exists only at the source.\n\nIt also removes a category of blameless failure. Nobody can be assigned to double-check someone else's intention and then be faulted for missing a misinterpretation. By making the requester the confirmer, a mis-specified item traces to a single identifiable party who both wanted it and signed off on its wording \u2014 and the requester's own interest in the outcome supplies the motivation, requiring no Inner Incentive from a third-party reviewer.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:21:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.3.2.1 ties confirmation duty to origin, so whoever wants a change is the one who must attest it was transcribed correctly \u2014 no separate reviewer is assigned to intent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b3851931-829a-43c6-9256-75283af36787",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "69f09b49-2385-4204-853b-8b7237ae2324",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

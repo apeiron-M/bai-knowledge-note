@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "exportedAt": "2026-10-10T00:00:00.000Z",
+  "placeholders": [
+    "{{CONNECTION_ID}}",
+    "{{DRIVE_ID}}",
+    "{{LLM_MODEL}}",
+    "{{NOW}}",
+    "{{PIECE_VERSION}}",
+    "{{WORKFLOW_NAME}}"
+  ],
+  "workflow": {
+    "documentType": "powerhouse/workflow",
+    "operations": [
+      {
+        "type": "SET_WORKFLOW_NAME",
+        "input": {
+          "name": "{{WORKFLOW_NAME}}"
+        }
+      },
+      {
+        "type": "SET_WORKFLOW_DESCRIPTION",
+        "input": {
+          "description": "While the pipeline is idle, every few minutes: notes it left unwoven (orphans in no Map of Content) get links to the vault as it is now and a place in a MoC."
+        }
+      },
+      {
+        "type": "SET_TRIGGER",
+        "input": {
+          "id": "5b0f3c3e-2a8e-4c1f-9d6e-1f0a7b2c4d91",
+          "config": {
+            "drive": "{{DRIVE_ID}}",
+            "batch": 6,
+            "include_unlinked": false,
+            "pollEverySeconds": 300
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "triggerName": "unwoven-notes",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}"
+        }
+      },
+      {
+        "type": "ADD_STEP",
+        "input": {
+          "id": "9c4e7a1d-6b2f-4e58-8a3c-2d9f1e6b7a40",
+          "key": "reweave",
+          "name": "Reweave notes",
+          "config": {
+            "mode": "write",
+            "drive": "{{DRIVE_ID}}",
+            "model": "{{LLM_MODEL}}",
+            "note_ids": "{{trigger.payload.note_ids}}"
+          },
+          "position": {
+            "x": 320,
+            "y": 0
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "actionName": "reweave-notes",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}",
+          "timeoutSeconds": 3600,
+          "propertySettings": [
+            {
+              "mode": "EXPRESSION",
+              "prop": "note_ids"
+            }
+          ]
+        }
+      },
+      {
+        "type": "ADD_EDGE",
+        "input": {
+          "id": "e1a2b3c4-d5e6-4f70-8a9b-0c1d2e3f4a5b",
+          "to": "9c4e7a1d-6b2f-4e58-8a3c-2d9f1e6b7a40",
+          "from": "5b0f3c3e-2a8e-4c1f-9d6e-1f0a7b2c4d91",
+          "port": "next"
+        }
+      },
+      {
+        "type": "SET_POLICY",
+        "input": {
+          "concurrency": "QUEUE",
+          "runTimeoutSeconds": 0,
+          "onFailure": "NOTIFY"
+        }
+      },
+      {
+        "type": "PUBLISH_WORKFLOW",
+        "input": {
+          "publishedAt": "{{NOW}}"
+        }
+      },
+      {
+        "type": "SET_WORKFLOW_STATUS",
+        "input": {
+          "status": "ENABLED"
+        }
+      }
+    ]
+  }
+}

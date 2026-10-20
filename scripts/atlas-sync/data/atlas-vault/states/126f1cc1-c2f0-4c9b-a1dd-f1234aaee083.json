@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7e48fba3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7e48fba3-0f47-4e6c-913a-568860780359",
+      "targetTitle": "Grove ships complete document scaffolding for Primitives it "
+    },
+    {
+      "id": "lnk-2ee40ba6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ee40ba6-4d70-4fe8-b13f-e32e83ed1b6a",
+      "targetTitle": "Keel may deploy idle funds through discretionary GovOps appr"
+    },
+    {
+      "id": "lnk-dfa3d86b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dfa3d86b-c746-4dc6-8692-f4b6c2cc2131",
+      "targetTitle": "doc-a0fd0ea4"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel pre-builds the full document scaffolding for Primitives it has not activated",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8427b40b-9a22-4de2-8109-201443c0d9fd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5148e22b-2b11-4316-b4e9-9c5dbf88f1bf",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "669285b0-b302-41e9-a341-6e60212b1177",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "10f57273-7a36-46a5-9ec1-5f37084c1599",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three Primitives in this chunk \u2014 Risk Capital Rental (A.6.1.1.3.2.6.2.1.1), Asset Liability Management Rental (A.6.1.1.3.2.6.3.1.1) and the Core Governance Reward Primitive (A.6.1.1.3.2.7.1.1.1) \u2014 each declare a **Global Activation Status** of `Inactive`. Yet each already has a complete Primitive Hub Document, an Active Instances Directory, a Completed Instances Directory, an In Progress Invocations Directory, a Hub Data Repository, and Failed Invocations / Suspended Instances archive branches.\n\nThe structure exists before the capability is switched on. Activation is therefore a *status change on an existing document*, not an act of construction \u2014 turning a Primitive on does not require agreeing on how it will be recorded, because that was settled in advance.\n\nThe **Global Activation Status** field is also distinct from any Instance's status. A Primitive can be globally inactive while its Instance directories exist and are empty; conversely a globally active Primitive (the Allocation System Primitive) can have Instances in several different states at once. Two independent switches, at two different levels.\n\nThe pattern's value is that it separates the political question (should Keel use Risk Capital Rental at all?) from the procedural question (where would the records go?). Only the first has to be answered under time pressure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Risk Capital Rental, Asset Liability Management Rental and Core Governance Reward all carry Global Activation Status `Inactive` while already holding complete Hub Documents, Directories and",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ede4d34c-9ba9-470c-8562-1200e852d511",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6683abcc-793b-4561-8f04-37061af35a93",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

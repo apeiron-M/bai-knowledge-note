@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-897fcf37-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "897fcf37-664f-47ef-aa95-fea8a4e8bc1e",
+      "targetTitle": "doc-10b2adc4"
+    },
+    {
+      "id": "lnk-d48e1fbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d48e1fbe-f38d-4cc4-9680-9e6d58dff5cb",
+      "targetTitle": "Exchange conduits acquire a slippage bound and a second rech"
+    },
+    {
+      "id": "lnk-fb822f75-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fb822f75-3b0b-470b-bd7c-b814df03c718",
+      "targetTitle": "Grove's rate limits are denominated inconsistently across In"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The slope-to-maxAmount ratio, not maxAmount alone, decides whether a Grove rate limit throttles cumulative flow or merely caps transaction size",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c10051b7-fe06-4133-8089-1b52c00814b5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e77294a5-ffcf-4798-a241-bfce09a30dfd",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c98e77d-0082-45ce-8486-a12ce0d1af38",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "91a43c22-7067-4122-b341-f7c487d28748",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Grove's rate limits are always stated as two numbers. A.6.1.1.2.2.6.1.3.1.10.1.2.4.1 gives Ripple RLUSD deposits `maxAmount`: 50,000,000 USDC and `slope`: 50,000,000 USDC per day. A.6.1.1.2.2.6.1.3.1.11.1.2.4.1 gives Agora AUSD deposits `maxAmount`: 10,000,000 USDC and `slope`: **100,000,000** USDC per day.\n\nRead as a refilling bucket \u2014 `maxAmount` the capacity, `slope` the replenishment rate \u2014 these two configurations are qualitatively different controls even though both look like \"a limit\":\n\n- **Ripple**: capacity equals one day of slope. Exhausting it costs a full day to restore. This genuinely throttles cumulative flow.\n- **Agora**: slope is ten times capacity, so a drained bucket refills in roughly 2.4 hours. The 10,000,000 figure functions as a cap on how much can move *at once*, not on how much can move per day \u2014 the daily reachable total is nearer the slope.\n\nSo the pair encodes two independent policies: `maxAmount` limits burst size (and therefore blast radius of a single bad transaction or compromised operator), while `slope` limits sustained accumulation. Reading either number in isolation misstates the control. A reviewer approving \"a 10M limit\" on Agora is in fact approving up to ~100M of daily inflow.\n\nThis also explains why the Atlas records both values for every direction of every Instance rather than a single headline number: the ratio *is* the risk parameter.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "maxAmount is refill capacity and slope its per-day replenishment: Agora's 10M cap with 100M/day slope refills in about 2.4 hours, while Ripple's 50M/50M-per-day pair binds for a full day.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5afc142b-ca5f-46fb-96a5-652355f77b1c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "beac23a8-915a-4dbe-8648-12c0645381f6",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:10.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

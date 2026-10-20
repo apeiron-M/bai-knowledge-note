@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-ebd79d5e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ebd79d5e-a27e-4086-bb10-5b9698ba2a04",
+      "targetTitle": "Tokens misdirected to DssBlow2 are unrecoverable and do not "
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky documents inbound payment instructions in its constitution because there is no accounts-receivable function to correct mistakes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "50e1503c-f809-4ed8-a608-49e0e311f283",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c10e4dec-2181-4158-a3e1-50d035d403cd",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f86bc7dc-6dd3-4d24-8695-62f803ea8939",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94d4db5a-46a4-44c4-9c80-408cb0eb3e58",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.6 opens an Article whose stated subject is administrative plumbing: it \"defines maintenance or housekeeping mechanisms and contracts used to administer the Sky Ecosystem,\" and A.4.6.1 narrows to \"standard procedures for sending tokens to Sky.\" A.4.6.1.1 is titled for the residual case \u2014 the process for returning tokens \"when no specific process exists.\"\n\nIt is worth asking why a constitutional document contains a payment address. In a conventional organization, a misdirected payment is fixed by a finance team: they identify it, reverse it, or credit it manually, and the instructions themselves are informal because errors are recoverable.\n\nOn-chain, none of that holds. There is no counterparty who can reverse a transfer, no discretion to credit a payment that the ledger did not record, and \u2014 as the DssBlow2 provisions make explicit \u2014 no recovery for an asset sent somewhere that cannot process it. The instructions *are* the mechanism. Publishing them in the Atlas gives them a single authoritative location, makes them changeable only through governance, and creates a citable rule for the follow-on question of who bears the loss when they are not followed.\n\nThe design lesson generalizes beyond Sky: in systems where operations are irreversible, operational documentation must be treated as normative rather than as a wiki page. The presence of a catch-all \"no specific process exists\" default is the other half of the same insight \u2014 unanticipated inbound value will arrive, and a system without a defined default acquires stranded assets and undischarged obligations by accident.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.4.6 elevates \"maintenance or housekeeping mechanisms\" to a governed Article, publishing named contracts and per-asset routing as normative rules rather than leaving them to operator convention.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cacb5151-36c7-4e35-a3c7-2cbd6842cd4b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "17e5ab68-1364-443a-a754-3d3c8660cf03",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

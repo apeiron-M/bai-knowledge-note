@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operational Executor Agents are eventually meant to post collateral and act as insurers of the Primes they supervise",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6b114d79-7b08-46a6-bf31-114731d3a194",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06d060d6-49de-4ebb-9fe9-aca35510464e",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4904298-f366-482d-9240-e5c4b13a8591",
+      "name": "supervision",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.7.2.2.1 states the current position and the intended one in a single paragraph: \"In the near term there are no penalties for Operational Executor Agents for failure of the Prime Agents they supervise to maintain appropriate levels of capital. In future iterations of the Risk Framework, Operational Executor Agents will be required to put up collateral and act as 'insurers' of all activities by the Prime Agents they supervise with regard to the Sky Primitives. At that point Core GovOps will be able to seize this collateral in the event of failure to obtain compensation for breaches of the Risk Capital requirement by the Prime Agent.\"\n\nThe design converts supervision from an advisory role into a capitalized one. A supervisor with money at stake has the same interest in the supervised Agent's prudence as Sky does, which removes the need for Sky to verify the supervision itself. It also creates a second layer of loss absorption below Sky, in the same way junior capital sits below senior \u2014 the Executor's collateral is what Sky reaches when the Agent's own remedies are exhausted.\n\nThe existing sanction is structural rather than financial. A.3.2.2.7.2.2.2 lets Core GovOps terminate the Executor Accord where it determines the Executor \"is not appropriately supervising\" the Agent \u2014 subject to an expedited Executive Vote \u2014 and the consequence lands hard on the *supervised* party: \"The Prime Agent must suspend all operations until a new Executor Accord is voted on and formally integrated into the Agent's Artifact,\" with Core GovOps arranging a stand-in Executor in the meantime.\n\nThat coupling is worth noticing. A Prime Agent cannot operate without a valid Executor Accord, so removing a negligent supervisor halts the Agent it was supervising. Discipline aimed at the Executor is transmitted to the Agent, which gives the Agent a direct interest in its supervisor's diligence \u2014 a mutual-hostage arrangement standing in for the collateral that does not exist yet.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Today they face no penalty for a supervised Agent's capital breach; the plan is seizable collateral backing all Prime activity, with Accord termination forcing the Prime to suspend operations.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

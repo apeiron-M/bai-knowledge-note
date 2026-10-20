@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-bf95bbe5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bf95bbe5-cfdd-4310-ad3c-c440b6c65085",
+      "targetTitle": "The Process Definition schema currently governs only the Dis"
+    },
+    {
+      "id": "lnk-b576bce2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b576bce2-795e-4898-9772-ccb6a0593360",
+      "targetTitle": "Agent Artifacts are assembled from configured Primitive Inst"
+    },
+    {
+      "id": "lnk-9b6e4b41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b6e4b41-5aba-4768-a2d3-0306c5c2ec99",
+      "targetTitle": "doc-26305752"
+    },
+    {
+      "id": "lnk-64a84978-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64a84978-757e-4ccf-ac48-f1e22e14a910",
+      "targetTitle": "doc-3cdbc66a"
+    },
+    {
+      "id": "lnk-92a6e578-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "92a6e578-9c60-4b55-bf9a-1c961147437a",
+      "targetTitle": "Required Outputs must be explicitly correlated to the Input "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Process Definitions are the first-class objects that turn governance logic into document-driven workflows",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "df60ed10-76f2-431c-a5e6-3419ee66a72e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a179077d-a078-4a87-b663-f1772af11733",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0205e81-61b4-4539-8d1c-ca1936055554",
+      "name": "process-definition",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.2 states that \"Process Definitions function as the first-class objects through which Sky Primitives transform high-level governance logic into actionable document-driven workflows,\" and that all of them are \"structured according to a common data schema - a set of fields that describe when they can start, how they run step by step, and what they must input or produce upon completion.\"\n\nThe four schema components are named in the subdocuments: Process Initiation Logic (A.2.2.2.1), Process Flow (A.2.2.2.2), Required Primitive Inputs (A.2.2.2.3), and Required Outputs (A.2.2.2.4). Together they specify a Primitive's behaviour entirely in terms of **document state changes** \u2014 Process Flow steps \"can both consume and produce relevant Document data,\" and Required Inputs are the Artifact Documents and fields \"that must be manipulated using the Powerhouse interface.\"\n\nThe layering is the important part: \"This common data schema aligns the entire ecosystem, while each Agent Artifact automatically references and extends the universal rules to incorporate the Agent's unique Instance-level strategies, parameters and document-driven process flows.\" One universal definition, many Agent-specific extensions \u2014 inheritance applied to governance procedure.\n\nWhat this buys is auditability without uniformity. Any actor can read any Agent's process in a shape they already know, and know which fields must be filled and which documents must change, while Agents still differ in parameters and strategy. The trade-off is that a Primitive's semantics are only as expressive as the schema's four fields allow.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A common schema \u2014 initiation logic, process flow, required inputs, required outputs \u2014 is defined once at Sky Core level and extended per Agent at the Instance layer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "427363b8-4ada-4dee-befb-c1f6f28e3059",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "34482fd3-d6e7-4b94-b576-97b137128f43",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

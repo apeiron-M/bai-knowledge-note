@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-5a264486-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5a264486-ad75-4d21-b70a-5f790ade8ecd",
+      "targetTitle": "Grove separates execution authority from asset custody by ro"
+    },
+    {
+      "id": "lnk-b5c79b81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5c79b81-0699-41fb-ba41-83b13e5f7bfa",
+      "targetTitle": "LayerZero bridge destinations are a governance-configured al"
+    },
+    {
+      "id": "lnk-9812ed69-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9812ed69-950b-4291-a097-30ceb92851eb",
+      "targetTitle": "doc-da54c961"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove pays the LayerZero messaging fee from the proxy and names the proxy as refund address, so leftover native gas returns to the treasury",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f50c204b-f358-46d0-ac1a-ed6a51f50732",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "055dbbbd-0936-4af6-b49a-122d8836716a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9e573be-b4e0-4c80-a71f-108c59cc2894",
+      "name": "layerzero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6acb40f0-132f-4354-9eb0-e576ba639eba",
+      "name": "smart-contract-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.13.1.6 executes the bridge with a value-bearing call:\n\n```\nproxy.doCallWithValue{value: fee.nativeFee}(\n    oftAddress,\n    abi.encodeCall(ILayerZero.send, (sendParams, fee, address(proxy))),\n    fee.nativeFee\n);\n```\n\nTwo details carry weight. First, the fee is quoted in the same transaction via `quoteSend` (A...13.1.5) and forwarded exactly, so the controller never guesses at cross-chain gas costs. Second, the third argument to `send` is the refund address, and it is `address(proxy)` \u2014 **not** the relayer who initiated and funded the call.\n\nLayerZero refunds unused executor gas to that address. Directing refunds to the proxy keeps every flow of value, including incidental ones, converging on the entity that holds Grove's balance sheet. The alternative \u2014 refunding the caller \u2014 would create a small, repeated leak of ecosystem funds to whoever operates the relayer key, growing with volume and with the volatility of gas estimates.\n\nThe pattern is the same principle as routing all token approvals from the proxy (A...7.1.5) applied to native currency: authority to act is delegated to the relayer, but never economic benefit. It also means the relayer must supply native gas up front on a `payable` function (A...13.1.1) while any surplus comes back to Grove, which is a deliberate asymmetry in Grove's favour.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "doCallWithValue forwards fee.nativeFee and passes address(proxy) as the refund recipient, keeping fee custody and fee refunds aligned with asset custody rather than with the calling relayer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "56191945-774f-479d-ad4f-303d46f129cf",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bc726124-1aaa-4a1b-9d63-3c53066b1fd3",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:10.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

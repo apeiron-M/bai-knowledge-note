@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-7ce5fb67-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ce5fb67-a151-4d10-accd-9d93dd809fd0",
+      "targetTitle": "The ALM Proxy is hardcoded as the recipient of every positio"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Custody is separated from decision logic: the ALM Proxy holds the funds and only executes what the Controller directs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "37487621-04ba-4474-9ddd-895dddb52bb6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "95e6dde9-e816-45eb-ab21-102a7b0471fa",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e2f18bfe-1cd3-466c-aaf2-7186d31bf578",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.6.1.2.1.1.1.2.1.1 states that \"the ALM Proxy custodies the Instance's funds and routes calls to external contracts as directed by the Controller contract.\"\n\nThe division is deliberate and narrow. The ALM Proxy is a passive holder and executor: it has the assets and the ability to call outward, but no logic about what should be done. The Controller has all of that logic and none of the assets.\n\nThis is the standard defence against a single-contract compromise, applied at the Agent level. An attacker who finds a flaw in the Controller reaches a contract with no balance; one who reaches the ALM Proxy directly finds a contract that acts only on the Controller's instruction. Value extraction requires defeating both.\n\nIt also makes emergency response coherent. The unwind procedures at A.6.1.1.7.2.6.1.2.2.3.2 and .3.3 work by \"centraliz[ing]\" liquidity in the ALM Proxy and then burning from there \u2014 a recovery plan that only makes sense because one known contract is the single custody point for the Instance.\n\nThe residual dependency is the pathway itself: everything the Agent holds is reachable through one proxy whose behaviour is determined by whichever address currently holds the Controller-facing roles, which is why the role and multisig structure around it carries so much of the Artifact's detail.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The contract holding Osero's assets contains no strategy, and the contract containing strategy holds no assets, so an exploit must compromise both to move funds.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "33eb702f-bed6-4d07-9e70-774779098553",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0ff40933-e6cb-4f8a-9c13-7e03ca329934",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

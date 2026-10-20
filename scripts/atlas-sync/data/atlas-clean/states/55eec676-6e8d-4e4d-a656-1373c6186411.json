@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-c85fc41b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c85fc41b-efc0-4751-88a7-756c9384ee47",
+      "targetTitle": "doc-a15ea0d0"
+    },
+    {
+      "id": "lnk-9ca71c26-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9ca71c26-fbf3-47a9-8832-2779f3d61ed7",
+      "targetTitle": "SparkLend's kinked interest rate curve is a self-correcting "
+    },
+    {
+      "id": "lnk-cc7bc213-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cc7bc213-1475-4f21-a6c2-a347d26dd3ae",
+      "targetTitle": "doc-c4b24c64"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SparkLend calibrates Slope 2 by asset class, at 300% for volatile collateral against 15% for stablecoins",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fa6d60b1-f282-403e-9e64-d6a2fe9aab5e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4dd816b8-a633-42ed-9941-38f4025fd997",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d80205c-4465-4b37-96e3-639422f50a5c",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Slope 2 \u2014 the borrow rate at 100% utilization \u2014 is set in two distinct bands across the Ethereum deployment. Every dollar-pegged market sits at 15%: USDS, USDT, USDC, pyUSD, Dai (A.6.1.1.1.3.2.1.1.2.1.3, .1.5, .1.9, .1.18, and Dai in the preceding chunk). Volatile collateral sits an order of magnitude higher: WBTC, weETH, rETH, LBTC, tBTC, ezETH, rsETH, cbBTC and sUSDS all at 300%, wstETH at 200%, WETH at 75%.\n\nThe banding does not track credit risk \u2014 sUSDS and cbBTC are among the better-collateralized assets here and both sit at 300%. It tracks **exit urgency**. Slope 2 is the rate that only bites when the pool is fully lent out and no supplier can withdraw. The question it answers is: how bad is it if withdrawals are blocked in this asset for a day?\n\nFor a stablecoin, moderately bad and recoverable \u2014 the asset is not moving, and 15% is enough to pull repayment without punishing normal peak usage. For volatile collateral, potentially catastrophic: a supplier locked out of wstETH during a 20% drawdown loses far more to the price than to any rate, so the curve must make full utilization effectively unreachable rather than merely expensive. A 300% annualized rate does that.\n\nThe corollary is that Slope 2 is a liquidity-insurance premium priced in the asset's own volatility, and the two-band structure means SparkLend is making an asset-class judgment, not a per-asset one \u2014 the same simplification visible in the kill switch's uniform 0.95 thresholds.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The penalty rate at full utilization tracks how urgently suppliers may need to exit an asset, not its credit quality \u2014 stables cluster at 15%, crypto collateral at 100\u2013300%.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

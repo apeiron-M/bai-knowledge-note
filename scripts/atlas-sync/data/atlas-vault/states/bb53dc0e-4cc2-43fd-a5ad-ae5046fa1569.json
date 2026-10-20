@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-e56505e5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e56505e5-7176-422a-9d82-f45320828ce6",
+      "targetTitle": "The maxExchangeRate protection was retrofitted and one activ"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's controllers now refuse deposits unless a maxExchangeRate has been set, converting a discretionary guard into a precondition",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "13a66bb7-aa84-41c7-a0c7-2bff684480bd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4f7ea1a4-84a0-496a-bbd7-d353e55ba0e1",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cecfdd4b-d068-4277-bb69-532045fff49a",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2d72fb1-03fc-476c-b33c-eaf66d85a1da",
+      "name": "oracles",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.3.2.2.4.3 records, for the Steakhouse Prime Instant USDC Morpho Vault V2 Instance: \"**Controllers now have protections that require a `maxExchangeRate` to be set for deposits.** The following ensures 1 share can represent at most 2 USDC \u2014 `setMaxExchangeRate(STEAKHOUSE_PRIME_INSTANT_USDC_V2, 1e18, 2e6)`.\"\n\nThe word doing the work is *require*. Before this change, bounding the accepted share price was something a diligent operator would configure; after it, a deposit into an unconfigured vault simply fails. The control has moved from the class of things that can be forgotten into the class of things that block the transaction.\n\nThis is the difference between a checklist and an interlock. Checklists degrade \u2014 under time pressure, across staff changes, on the tenth similar allocation. An interlock does not, because the omission is not silently tolerated; it is the failure mode.\n\nThe placement matters too: the requirement is on **deposits**. Grove is protected at the moment it converts assets into shares, which is the moment an inflated exchange rate would cause it to receive too few shares for its money. A bound applied only at exit would be far weaker, because by then the mispricing has already been paid for.\n\nThe word \"now\" also dates the provision, marking it as a retrofit to controller code rather than an original design property. That framing invites the obvious follow-up question about Instances configured before the retrofit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.6.1.1.2.2.6.1.3.3.2.2.4.3 states controllers 'now have protections that require a maxExchangeRate to be set for deposits', so the valuation bound is enforced by code rather than left to",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0af19eb2-2b5c-4617-aa17-af8bbbf60ddd",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:33.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2d9e2204-c225-40f2-9c68-01fb5572cb92",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:33.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-757e6c73-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "757e6c73-3e19-485e-8c3f-b483e7023a3d",
+      "targetTitle": "Exposure above the aggregate limit is not a Sky Direct Expos"
+    },
+    {
+      "id": "lnk-672baf9a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "672baf9a-ea2c-483c-b001-f39d2b4c12ad",
+      "targetTitle": "The Allocation System lets a Prime Agent borrow USDS at the "
+    },
+    {
+      "id": "lnk-3af79abc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3af79abc-81f1-40cc-9254-6da5c4d8899c",
+      "targetTitle": "Sky pays Agents exactly the spread between its own Base Rate"
+    },
+    {
+      "id": "lnk-4cff389f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4cff389f-2d12-436d-8edd-73108dbfaa1c",
+      "targetTitle": "The Core Facilitator sets Sky Direct Exposure limits by Foru"
+    },
+    {
+      "id": "lnk-69369e0c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "69369e0c-b922-4fd6-b331-6d4943b5622c",
+      "targetTitle": "doc-8ce7251b"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Direct Exposures are held by Sky but operated through a Prime Agent's Allocation System, reducing the Agent to an implementer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "42d3695d-1587-49a9-b70d-ba99f8db2788",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6bf65360-efdb-48a2-a5c5-44b49a758f77",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f12a602-4f14-4794-afce-ee4c7491a5e2",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.1 defines Sky Direct Exposures as \"exposures that are held directly by Sky but implemented through the Allocation System of a Prime Agent.\" Four consequences follow, each justified by the same clause \u2014 that the exposure is Sky's, not the Agent's:\n\n- No Agent Credit Line Borrow Rate is payable on funds financing the exposure, and \"all yield on Sky Direct Exposures is also due exclusively to Sky and is not retained by the Prime Agent\" (A.2.2.10.1.1.1.1.5).\n- No Risk Capital must be held against them (A.2.2.10.1.1.1.1.6).\n- No Actively Stabilizing Collateral is required, and the exposures do not count toward the Agent's ASC requirements either (A.2.2.10.1.1.1.1.7).\n\nThe result is a clean inversion of the Allocation System's normal economics. In the standard case the Agent posts equity, pays the Base Rate, and keeps the spread. Here it posts nothing, pays nothing, and earns nothing from the position \u2014 it supplies only operational capability, and Sky holds both the return and the risk.\n\nThis is how Sky takes direct positions without building its own execution infrastructure. The current list is concrete: Treasury Bills via Grove, Peg Stability Modules via Spark or Grove on non-mainnet chains, and Uniswap USDS/USDT pools via Spark. These are low-risk balance-sheet holdings where paying an Agent a spread to intermediate would be pure cost.\n\nThe symmetry is what makes it coherent: because the Agent bears no economic exposure, requiring it to hold capital against the position would be charging it for someone else's risk \u2014 and the final clause of A.2.2.10.1.1.1.1.7 closes the reverse loophole by refusing to let those balances count toward the Agent's own collateral requirements.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No Borrow Rate is owed, all yield goes to Sky, and no Risk Capital or Actively Stabilizing Collateral is required \u2014 the Agent contributes execution while Sky keeps both the return and the risk.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "21329089-3ff2-4eb6-ae68-7aa2667d97d3",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "df57a90a-d9b1-4791-85cd-018d71a0356c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

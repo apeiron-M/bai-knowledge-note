@@ -2,7 +2,37 @@
 
 This folder holds the canonical scripts and a committed dataset
 (`data/knowledge-vault/`, 543 docs) so anyone with a fresh clone can
-recreate the vault on a clean local reactor in one command.
+recreate the vault on a clean local reactor in one command. A full snapshot
+of the production vault goes in `data/powerhouse-knowledge/`, which is
+**gitignored**: the repo is public and the vault holds internal content, so
+each person downloads it themselves (see *Datasets*).
+
+
+## Authentication
+
+The Switchboard reads identity from the request's bearer, not from the signed
+actions inside the payload. Every script here sends `PH_ACCESS_TOKEN` when it is
+set, and omits the header when it is not — a missing header is an anonymous
+caller (fine on a host with authorization off), while a malformed one is a hard
+401.
+
+```bash
+export PH_ACCESS_TOKEN="$(ph access-token | tail -1)"
+```
+
+Tokens are Renown delegation credentials and last **7 days**, so this is a
+per-session export. `grants.py` requires one unconditionally, because managing
+access needs ADMIN.
+
+Manage who can reach a drive — grants go on the drive and inherit to every
+document beneath it, so one row per person covers the whole vault:
+
+```bash
+python3 scripts/drive-sync/grants.py --drive <id> --list
+python3 scripts/drive-sync/grants.py --drive <id> --read 0xabc… --write 0xdef…   # dry run
+python3 scripts/drive-sync/grants.py --drive <id> --read 0xabc… --apply
+python3 scripts/drive-sync/grants.py --drive <id> --revoke 0xabc… --apply
+```
 
 ---
 
@@ -69,9 +99,9 @@ Three things to check before you start:
   and is keyed to the *previous* target's document ids, so a stale one makes
   the upload skip documents it wrongly believes already exist. It is
   deliberately absent from the committed dataset.
-- **Semantic search needs a separate step.** Embeddings are computed
-  client-side and pushed, so run `embed-backfill.mjs` against the remote after
-  the upload; `reindex` does not create them.
+- **Semantic search fills itself in.** The graph-indexer processor embeds
+  server-side, on content change and via a hash-gated sweep on boot. Watch
+  `knowledgeGraphMissingEmbeddings` drain; `reindex` does not create them.
 
 ---
 
@@ -142,33 +172,28 @@ the drive and re-fans-out per relationship type from
 
 ---
 
-## After upload: backfill embeddings (semantic search)
+## After upload: embeddings (semantic search)
 
-Reindexing does **not** compute embeddings — vectors are pushed by
-clients via `knowledgeGraphUpsertEmbedding`, normally by the Connect
-drive-app when someone opens the vault (`use-embedding-backfill.ts`).
-After a headless upload, `knowledgeGraphSimilar` and
-`knowledgeGraphSearchByEmbedding` return nothing until embeddings
-exist. Backfill them without opening Connect:
+Reindexing does **not** compute embeddings, but you no longer need to do
+anything about it: the graph-indexer processor embeds server-side, on every
+content change and via a hash-gated backfill sweep on boot.
 
-```bash
-bun scripts/drive-sync/embed-backfill.mjs --drive <drive-uuid-or-slug>
-# optionally: --endpoint http://localhost:4001/graphql
+After a headless upload, start the reactor and watch the queue drain:
+
+```graphql
+{ knowledgeGraphMissingEmbeddings(driveId: "<drive-uuid>") }
 ```
 
-The script queries `knowledgeGraphMissingEmbeddings`, embeds
-`title + " " + description` per node with `Supabase/gte-small` (q8 —
-the same model/quantization the browser uses, so vectors are
-interchangeable), and pushes each via the upsert mutation. The model
-(~34 MB) downloads from the Hugging Face hub on first run and is
-cached. ~385 docs take about 2 minutes; re-runs are incremental
-(only missing embeddings are computed). Verify with:
+It should reach `[]` shortly after boot. Until it does,
+`knowledgeGraphSimilar` and `knowledgeGraphSemanticSearch` return partial
+results.
 
-```bash
-switchboard query '{ knowledgeGraphMissingEmbeddings(driveId: "<UUID>") }'
-```
-
----
+> **Removed 2026-09-14.** The client-push path — the
+> `knowledgeGraphUpsertEmbedding` mutation and the `embed-backfill.mjs`
+> script — is gone. The processor self-embeds, so the mutation was dead
+> weight, and it let any caller with write access store an arbitrary vector
+> under a hash the staleness gate would then agree with, permanently
+> poisoning semantic search for that note.
 
 ## Refreshing the dataset from a live reactor
 
@@ -192,6 +217,114 @@ full refresh.
 
 ---
 
+## Datasets
+
+| Directory | Source | Snapshot | Contents |
+|---|---|---|---|
+| `data/knowledge-vault/` | the original local vault | 2026-05 | 543 docs, 2,211 cross-refs — the historical baseline |
+| `data/powerhouse-knowledge/` | **the remote vault** `powerhouse-knowledge` (`c5893e1b-854b-49b1-b8aa-6b133ab87969` on `switchboard.knowledge-vault.vetra.io`) | **2026-10-06** (verified: `verify-backup.py`, 0 mismatches) | 2,842 docs: 2,051 notes, 674 sources, 85 MoCs, 16 tensions, **9 WBS**, **4 scopes of work**, 3 singletons; 15 folders; **8,623 edges, 3,603 with a reason** |
+
+The second snapshot is **not committed** (`.gitignore`): the repository is
+public and the production vault holds internal content such as meeting notes.
+Download it yourself — this needs a READ grant on the drive and your own
+Renown bearer:
+
+```bash
+export PH_ACCESS_TOKEN="$(ph access-token | tail -1)"
+python3 scripts/drive-sync/download.py \
+    --endpoint https://switchboard.knowledge-vault.vetra.io/graphql/r \
+    --drive c5893e1b-854b-49b1-b8aa-6b133ab87969 \
+    --out scripts/drive-sync/data/powerhouse-knowledge --concurrency 4
+python3 scripts/drive-sync/verify-backup.py \
+    --data scripts/drive-sync/data/powerhouse-knowledge \
+    --endpoint https://switchboard.knowledge-vault.vetra.io/graphql/r --sample 12
+```
+
+About 7 minutes for the 2026-10-06 size. `download.py` skips documents it
+already has, so delete the directory first for a full refresh.
+
+It exists so a full copy of the production vault can be
+stood up on a local reactor — first use: **testing Switchboard authorization**
+(`AUTH_ENABLED`, `DOCUMENT_PERMISSIONS_ENABLED`, `ADMINS`, …) against real
+data before touching the remote. Verified against the live drive at download
+time with `verify-backup.py` (completeness, per-type edge totals, and a
+12-document sample of the relationship table against the graph dump: 0
+mismatches).
+
+### Two files the newer snapshot adds
+
+- **`edges.json`** — every knowledge edge in the drive from **one**
+  `knowledgeGraphEdges` call, with `reason` and `confidence`. This is now the
+  default source for the per-doc `links[]` / `coreIdeas[]` / `childRefs[]`
+  arrays (`download.py --relationships graph`): one request instead of seven
+  per document, and the only read path that sees edge metadata —
+  `documentOutgoingRelationships` returns documents, not edge rows. The old
+  per-type fan-out remains as `--relationships table` for a Switchboard
+  without the knowledgeGraph subgraph. The dump is a projection, so
+  `verify-backup.py` spot-checks it against the table.
+- **`auth.json`** — `{docId: state.auth}` for every document: the access
+  policy in the document's own auth scope. All 2,842 are uninitialized
+  (`version: 0`) today; after an authorization experiment, diffing this file
+  shows exactly which documents gained a policy.
+
+### Restoring it locally — what comes back and what does not
+
+`upload.py` restores everything it has a handler for: notes, MoCs, sources
+and the three singletons with their topics, provenance,
+metadata and **articulated edges** — a link carrying `reason`/`confidence`
+is dispatched as an `ADD_RELATIONSHIP` action with `metadata`, which is how
+`switchboard docs link --reason` writes it; the native `addRelationship`
+mutation has no metadata argument and would silently drop all 3,603 reasons.
+
+A `powerhouse/scopeofwork` restores too, via `handlers/scope_of_work.py`:
+the document's own fields, contributors, deliverables (with key results,
+progress, budget anchors), project envelopes, roadmaps and milestones, plus
+each envelope's `knowledgeRefs` remapped through `id_map` — which is what
+gives the restored scope its `CITES` edges into the vault.
+
+Two things inside a scope of work are deliberately **not** written when
+their target is unrestorable: an envelope's `wbsRef` (`LINK_PROJECT_WBS`)
+and a deliverable's `goalRef` (`LINK_DELIVERABLE_GOAL`). Both point into a
+`bai/wbs` document, so until WBS has a handler they would be dangling
+references; the handler skips them rather than storing a broken link. The
+visible consequence is that the restored scope has no `DELIVERED_BY` edge.
+
+`bai/wbs` restores through `handlers/wbs.py`: the goal tree emitted
+parents-first (`CREATE_GOAL` rejects a child whose parent does not exist
+yet), then per-goal status, outcomes, assignees, notes and dependencies,
+plus `owner`, `references` and the `sowRef`/`sowProjectId` back-pointer.
+**Goal ids are intra-document OIDs and are restored verbatim, never through
+`id_map`** — that is precisely what makes a scope of work's `goalRef` valid
+again, so restore the WBS and the SoW's 19 goal links resolve.
+
+`bai/tension` restores through `handlers/tension.py`: `CREATE_TENSION` plus
+the terminal transition, because status is not settable — `RESOLVE_TENSION`
+and `DISSOLVE_TENSION` are the only ways out of OPEN. `involvedRefs` are
+remapped and are where the graph's `INVOLVES` edges come from.
+
+**Tension duplication.** The graph-indexer opens a tension for every
+`CONTRADICTS` pair not already covered by one (any status suppresses a new
+one). A clean full run is safe: documents land in Phase 2/3, relationships
+in Phase 4, so these tensions exist before the edges that would trigger
+auto-creation. Restoring into a drive that **already** holds indexer-created
+tensions duplicates the overlapping pairs — match on title and skip, as the
+2026-09-08 restore did (7 of 13 skipped, 6 restored).
+
+Every document type in the 2026-10-06 snapshot has a handler, so the whole
+vault restores. (The 3 retired `bai/project` documents of the September
+snapshot are gone from the vault.) `upload.py` skips unknown types rather
+than failing.
+
+### Verify a snapshot
+
+```bash
+python3 scripts/drive-sync/verify-backup.py \
+    --data scripts/drive-sync/data/powerhouse-knowledge \
+    --endpoint https://<switchboard-host>/graphql/r --sample 12
+```
+
+---
+
 ## Troubleshooting
 
 **Upload skips Phase 2 (already-uploaded ids found).**
@@ -204,6 +337,22 @@ on every commit; default `PGLITE_FLUSH_INTERVAL_MS=100` (set by
 switchboard) coalesces them, but for the fastest local iteration just
 use `PH_PGLITE_IN_MEMORY=1` (no disk writes at all). Restart vetra
 after changing this env.
+
+**A restored MoC is missing its `RELATES_TO` edges.**
+Fixed 2026-09-08. `handlers/moc.py` looped over `coreIdeas` (`CORE_IDEA`)
+and `childRefs` (`CHILD_MOC`) but never over `links[]`, so every
+MoC-sourced `RELATES_TO` was dropped while Phase 4 still reported
+`0 failures` — 201 edges on the `powerhouse-knowledge` snapshot, across 26
+MoCs. If you restored a vault before that date, re-run the link phase or
+compare per-type edge totals against `edges.json` before trusting them.
+
+**`ADD_PROJECT_DELIVERABLE` / `ADD_MILESTONE_DELIVERABLE` are not link
+operations.** Both *create* a deliverable and reject an id that already
+exists (`Deliverable with ID … already exists`). To put an existing
+deliverable in a project or milestone set, use `ADD_DELIVERABLE_IN_SET`
+with `projectId` or `milestoneId`. Getting this wrong loses every
+membership row while the surrounding actions still apply, and the job still
+reports success — read `project.scope.deliverables` back to check.
 
 **Connect dead-letters ~1–2 % of docs on the first sync after upload.**
 A known upstream sync-envelope race — see
@@ -226,7 +375,6 @@ dev.246+ — match your vetra version.
 | `upload.sh` | Bash wrapper that enforces `switchboard config` profile is `local` before delegating to `upload.py`. Use it in CI/automation to prevent accidental remote uploads. |
 | `download.py` | Snapshot a vault from any reactor (works against `/graphql/r` on local or remote). |
 | `reindex.py` / `reindex.sh` | Force the `knowledgeGraph` subgraph to rebuild from `DocumentRelationship`. |
-| `embed-backfill.mjs` | Compute + push embeddings for nodes missing them (headless counterpart of the Connect drive-app backfill). Required for semantic search after a headless upload. |
 | `compare.py` | Diff two `data/` dumps to detect drift between snapshots. |
 | `cleanup-duplicates.py` | Operator tool to dedupe drive-level node entries (rare). |
 | `lib/gql.py` | Direct GraphQL helpers used by `upload.py` (no subprocess overhead). |

@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-c2522ca4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2522ca4-e6a1-4f95-99a9-18fc876a48be",
+      "targetTitle": "Collateral qualifies as peg-stabilizing by the price it comm"
+    },
+    {
+      "id": "lnk-bd57c466-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd57c466-c291-4dc3-a204-661f22a48ef6",
+      "targetTitle": "Grove takes accounting ownership of the Peg Stability Module"
+    },
+    {
+      "id": "lnk-ce67a188-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce67a188-3b62-424d-bd29-2edefce66a73",
+      "targetTitle": "The destination address a payer uses encodes the accounting "
+    },
+    {
+      "id": "lnk-d979d3b0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d979d3b0-8322-4975-8c5a-565873e06386",
+      "targetTitle": "The PSM is priced as a zero-capital-requirement route to ASC"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Base Rate is steered by collateral composition, not by the USDS price directly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7d02200e-7322-498c-857c-504d6e1a754e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ba4b545-03a7-4723-8997-cc9249c6e736",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13e6df28-4743-4a79-9bc1-254b40253bda",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.1.1 states the Base Rate's two objectives: ensuring \"(1) a sufficient level of Cash Stablecoins and (2) price stability of USDS and other Stablecoins produced by the Sky Ecosystem.\" A.3.1.1.1.1.1 then supplies the actual observable the agents watch, and it is not the price.\n\n**PSM ASC** is defined as the level of Actively Stabilizing Collateral held in the Lite Peg Stability Module, expressed as a percentage of the Sky Collateral Portfolio. The guidance is a step function on that ratio: above 30%, cut the Base Rate by ~2%; between 24% and 26%, hold; below 20%, raise by ~2%, with intermediate steps of ~1% and ~0.3%.\n\nThe direction of the loop is the mechanism. A high share of instantly-redeemable collateral means the system is over-liquid \u2014 it is paying to hold buffer it does not need \u2014 so the rate falls, USDS becomes less attractive to hold, supply contracts and the buffer shrinks. A low share means the redemption buffer is thin, so the rate rises to attract deposits and rebuild it.\n\nThe consequence is that Sky's key interest rate is a **balance-sheet composition control**, not a peg-defence reflex. Because the buffer depletes before the peg breaks, the rate reacts to a leading indicator: by the time the price moved, the ratio would already have crossed the bands. The 24\u201326% hold band also builds in deliberate hysteresis, so the rate is not adjusted for noise around a single target level.\n\nThe tradeoff is that the control variable is a ratio with two moving parts. The same PSM ASC reading can be produced by the buffer growing or by the rest of the collateral portfolio shrinking, and the guidance does not distinguish them \u2014 one of several reasons the table is explicitly non-binding.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rate guidance is indexed to PSM ASC \u2014 Actively Stabilizing Collateral in the Lite PSM as a share of the collateral portfolio \u2014 turning the interest rate into a lever on balance-sheet liquidity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "204cf4d4-9eed-4000-9ba5-919cd01bb1c8",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "042e8d4c-70a9-4b8a-b707-38984da740c9",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

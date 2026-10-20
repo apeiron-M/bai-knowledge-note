@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-c78e6e71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c78e6e71-0b23-4ca3-bd0b-c6124367284e",
+      "targetTitle": "Responsibility for identifying which contracts are in scope "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Audit credit is capped, decaying and firm-gated: no audit set can eliminate smart-contract risk, and unlisted firms count for nothing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9159ea92-b22f-41e8-a1c7-c3a6ec823302",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d68ef47-cf77-4676-beb3-7c75ad3bb42a",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "733bd331-840f-49dd-bc31-e7d54a106a2d",
+      "name": "smart-contract-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.2.2.5 computes the Audit Factor as a product across firms, `AF = \u03a0[1 \u2212 effAuditValue \u00d7 decayFactor]`, where each audit's effective value is `effectivenessCoefficient \u00d7 coverage` (A.3.2.2.1.2.2.5.1). Four design choices in that expression do most of the work.\n\n**No audit is conclusive.** The effectiveness coefficient is 0.8 for a top-tier firm and 0.5 for a mid-tier firm (A.3.2.2.1.2.2.5.1.2.1.1\u2013.2), and coverage is `LinesOfCodeCovered / TotalLinesOfCode`. A single perfect-coverage top-tier audit therefore removes at most 80% of base risk. Zero is only approached by stacking multiple independent firms \u2014 the multiplicative form rewards diversity of reviewers over depth from one.\n\n**Audits expire.** The decay factor is 1 for audits up to two years old, falls linearly as `(10 \u2212 auditAge)/8` between two and ten years, and is 0 at ten years or more (A.3.2.2.1.2.2.5.2). Security evidence is treated as perishable, which is correct for code whose dependencies and environment change even when it does not.\n\n**One audit per firm.** \"The audit from each audit firm with the highest product of Effective Audit Value and Delay factor should be included\" \u2014 repeated engagements with the same firm do not compound. This blocks the cheapest way to inflate the factor and encodes the assumption that a firm's second look finds correlated bugs.\n\n**Auditors are whitelisted.** A.3.2.2.1.2.2.5.1.2.2 provides that \"audits from firms other than the ones specified herein may not be included,\" naming four top-tier firms (ChainSecurity, OpenZeppelin, ConsenSys Diligence, Trail Of Bits) and roughly thirty mid-tier ones, with the Protocol Security Workstream Lead required to \"review this categorization on a regular basis.\"\n\nThe whitelist is the governance-heavy part: an Atlas-level list of approved vendors, maintained by a single named role, that materially determines the capital cost of every integration. It is effective against audit-shopping and creates a real barrier for new audit firms, whose work is worth exactly zero to a Prime Agent until the list is updated.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Effectiveness is 0.8 for top-tier and 0.5 for mid-tier firms times line-coverage, values decay to zero over ten years, only the best audit per firm counts, and the firm list is governance-maintained.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4deb33bb-274a-42e2-9505-53780bcd2b89",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b83b1102-beb6-4713-b023-421e20a18624",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

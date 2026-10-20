@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SKY supply falls monotonically because buybacks are funded from revenue while emissions are closed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ecbba9ab-406c-4a20-a350-2131ffa3f1e4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11fc3359-9dde-4717-b65b-c6e905e418b1",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc3cd4ef-3a42-4d01-b0c5-5f941ae68b39",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.1.2.2.3 pairs the emissions ban with its opposite flow: \"At the same time that no new SKY tokens are issued, SKY tokens are bought back and burned on a regular basis, using a portion of the Net Revenue of the Protocol as dictated by the Treasury Management Function... As a result, the total supply of SKY tokens will continue to decrease over time.\"\n\nThe conclusion is stated as an inevitability, but it is really a conjunction of two provisions that could each fail independently. Supply only falls if (a) the emissions ban in A.4.1.2.2.2 holds, and (b) Net Revenue is positive and the Treasury Management Function actually allocates a share to burning. The Atlas is explicit that the burn share is set by that Function and executed by the Smart Burn Engine under the *Stability* Scope \u2014 meaning the deflationary property of the Protocol Scope's token is contingent on decisions made in a different Scope.\n\nThat contingency is what makes the claim interesting rather than decorative. \"Deflationary tokenomics\" here is not a hardcoded schedule like a halving; it is an emergent result of profitability plus policy. In a sustained loss-making regime, burns stop and the SKY Backstop exception can turn the supply curve the other way.\n\nThe design payoff is that token value accrual is tied directly to revenue rather than to a promise: holders are paid in scarcity, funded by cash the protocol actually earned.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:15:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Deflation is the product of two independent provisions \u2014 no new emissions plus scheduled revenue-funded burns via the Smart Burn Engine \u2014 so it holds only while the protocol is profitable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-900525e8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "900525e8-3497-4727-a293-cfc0afaa8c21",
+      "targetTitle": "The Artifact governs a class of off-chain parameters that no"
+    },
+    {
+      "id": "lnk-e76fadcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e76fadcc-ed6e-41e8-8d25-9f3fcd7ddf93",
+      "targetTitle": "The Arkis instance is bounded by off-chain parameters that n"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Artifact governs off-chain operational parameters that no smart contract enforces",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "012d9fbc-6319-41c8-9db3-e5309264fa0a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2174b60d-d4ce-4e8d-b0d1-f6d238d2c9d5",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f96e7c57-c9c9-498e-b650-816bbfa36205",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a2c77c95-15d8-42f3-9431-dd88b8d4c363",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.1.2 defines a category the on-chain address listings do not cover: \"the off-chain operational parameters for the Grove Liquidity Layer. These operational parameters are protocol settings managed outside of smart contracts (off-chain), used by operators and off-chain systems to guide the functioning of the Grove Liquidity Layer.\"\n\nThe two examples are revealing about what belongs here. `MAINNET_MIN_OPERATION_SIZE` (A...2.1.1) is a **floor**, not a ceiling \u2014 it prevents dust operations that waste gas and clutter the audit trail. Enforcing a floor on-chain would add cost to every transaction to prevent a problem that harms only the operator, so it is cheaper to hold operators to it than to encode it. `DEBT_CEILING_BUFFER` (A...2.1.2) is a **margin of safety below a hard limit**: the contract enforces the ceiling, the operator is expected to stop short of it.\n\nBoth share a shape \u2014 they are conservative practices *inside* what the contracts already permit. That is exactly the class of rule that cannot be enforced by the thing it constrains, because tightening the contract to enforce it would remove the flexibility the margin exists to preserve.\n\nDocumenting them in the Artifact anyway is the meaningful move. It converts operator convention into a **governed commitment**: violating a published off-chain parameter is a breach of the Artifact even though no transaction reverts. Enforcement is by review and reputation rather than by code, which is weaker, but it beats leaving the practice undocumented and unauditable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Minimum operation size and debt ceiling buffer are declared as settings 'managed outside of smart contracts' for operators and off-chain systems, so compliance rests on operator discipline, not code.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "02b169f4-c646-4026-971e-c45fd52208f3",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fe057d8c-403e-4551-aa13-9c072a3d587c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

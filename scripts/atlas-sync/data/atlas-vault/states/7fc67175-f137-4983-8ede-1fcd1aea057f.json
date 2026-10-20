@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-fded20c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fded20c3-c983-4903-9b46-b6286e44635f",
+      "targetTitle": "doc-795fa3f2"
+    },
+    {
+      "id": "lnk-d80bd838-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d80bd838-e7be-4c2a-b5c8-02003590f788",
+      "targetTitle": "Filing a late or incomplete incident report is itself a sepa"
+    },
+    {
+      "id": "lnk-851b18a0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "851b18a0-b917-4056-acbf-25ee6f7a8145",
+      "targetTitle": "The emergency contact mechanism must bypass do-not-disturb w"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Incident reporting is tiered by severity and the reporter, not the recipient, must chase acknowledgement",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ab5f5537-d218-424c-b466-ccc76312b6fc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d347bf6f-ba77-4a29-a380-b7a9d85c4a34",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "711e2e77-0540-4199-9c09-90e2baad94e3",
+      "name": "incident-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three tiers carry three clocks. Security incidents \"must be reported immediately upon discovery\" and include key compromise or suspected compromise, account takeover of email or communication platforms, device theft or loss, suspicious activity, phishing attempts, and \"[c]ompromise or suspected infiltration of communication channels\" (A.2.11.1.3.2.2.1.2.1.1). Operational issues \u2014 lost access, hardware failure, channel failures, verification tool malfunctions, \"[o]perational difficulties preventing adherence to security procedures\" \u2014 report \"within 24 hours\" (A.2.11.1.3.2.2.1.2.1.2).\n\nThe unusual provision is the follow-up duty. The emergency process (A.2.11.1.3.2.2.1.2.2) requires the reporting signer to \"follow up with the Protocol Security Workstream Lead if no acknowledgement is received within 24 hours\"; the standard process sets 48 hours. Responsibility for closing the loop stays with the reporter rather than transferring on transmission.\n\nThat inversion matters because unacknowledged reports are a classic silent failure: the signer believes they have escalated, the Lead never saw the message, and everyone is comfortable while a compromised key sits live. Placing the duty on the person who knows the incident is real is the only assignment that fails loudly.\n\nThe emergency sequence also puts containment before notification \u2014 \"take immediate actions to secure the situation ..., including isolating affected devices\" comes first, then notify participants through the primary channel, then report to the Lead. Note the ordering tension the taxonomy creates: if the communication channel itself is the compromised asset, the prescribed notification route is the one an attacker is reading.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Security incidents report immediately, operational issues within 24 hours, near misses when practical \u2014 and if no acknowledgement arrives within 24 or 48 hours the reporting signer must follow up.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5f53353f-7595-49d1-a680-afafd25f9e6c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:44.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "300360f2-61c9-447a-bae3-91ddd97972d4",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

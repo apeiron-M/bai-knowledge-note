@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-fa3fc1d0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fa3fc1d0-0f93-4ccb-abdc-c6df084fea4e",
+      "targetTitle": "Sky pays 1% of Net Revenue to keep governance frontends main"
+    },
+    {
+      "id": "lnk-e2da530b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2da530b-2ba5-4970-8c4d-84267e43f0c0",
+      "targetTitle": "Every reward payment must be recorded against a transaction "
+    },
+    {
+      "id": "lnk-f7ac2376-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7ac2376-1114-4136-a819-5956fbed6291",
+      "targetTitle": "The long-term Distribution Reward design has Executors pay r"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Core Governance Reward is inbound revenue, and the Artifact tracks money received with the same schema it uses for money paid",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "51f83644-1807-4294-b52e-3fd83306c95d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d41985d-b029-44e4-8570-6524185e7e3e",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e658a48-de01-4099-940b-118d8f80e065",
+      "name": "governance-rewards",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f99a21d4-9c11-495c-a8e1-00917ff26a7f",
+      "name": "auditability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Core Governance Reward Primitive is `Active` (A.6.1.1.4.2.7.1.1.1) with one Instance: Sky.money Frontend. Its Active Data controller describes \"payments **received by** Skybase for Governance Rewards\" (A.6.1.1.4.2.7.1.2.1.2.1), and the destination is Skybase's own SubProxy Account on Ethereum Mainnet (\u20262.1.0.6.2) \u2014 the same address recorded as a Genesis parameter at A.6.1.1.4.2.1.1.3.1.1.2.\n\nThis reverses the direction of every other primitive in the Artifact. Distribution Rewards and Integration Boosts flow out to partners; the Core Governance Reward flows in, compensating Skybase for operating governance infrastructure the ecosystem depends on.\n\nWhat is notable is that the accounting machinery is unchanged. The payment table carries the same six fields used for outbound partner payments \u2014 Reward Period, Payee, Payment Address, Amount Paid, Transaction Hash, Transaction Date \u2014 with the single adaptation of annotating the field as \"Payee (Skybase)\". Same schema, same Active Data classification, same Responsible Party in Operational GovOps, same Direct Edit protocol.\n\nThe consequence is that the Agent's revenue is exactly as auditable as its spending, and by the same party. Operational GovOps \u2014 external to Skybase \u2014 maintains the record of what Skybase is paid, so the Agent does not self-report its own income. Reusing one schema for both directions also means a reader can reconcile inbound against outbound without translating between two accounting conventions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Skybase is paid for hosting the governance frontend into its own SubProxy account, recorded in a payment table whose Payee field is annotated '(Skybase)'.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

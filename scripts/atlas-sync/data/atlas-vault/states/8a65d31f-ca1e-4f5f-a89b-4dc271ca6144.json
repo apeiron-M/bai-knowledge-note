@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Utilization is time-weighted over a one-day interval so the rate cannot be gamed by momentary borrowing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "16853fd9-0130-451d-beab-86a558ce1f11",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "171087fc-77c4-4833-9213-1c9f7c01d6de",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06e6e0c1-17c3-4b79-a067-a7ccf033c539",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0def4916-4325-4b39-a598-e3b256969150",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.2.1.4 defines `Utilization` as \"the percent of funds in the stUSDS contract that are used to fund borrowing against staked SKY,\" and A.4.4.1.3.2.1.4.1 constrains how it is read: \"calculated as a time-weighted utilization over a one (1) day interval.\"\n\nAn instantaneous utilization reading would be directly manipulable, because utilization is a ratio of two user-controlled quantities. A borrower could spike it to raise a rate, or a large depositor could dilute it to suppress one, holding the position only long enough to be observed. Since the value feeds a rate that determines real payments, that is a profitable attack, not a theoretical one.\n\nTime-weighting removes the leverage. A spike held for a minute contributes a minute's worth of weight out of a day, so manipulation costs scale with duration \u2014 an attacker must fund the distorted position for a meaningful fraction of the window to move the number, which usually costs more than the rate distortion is worth.\n\nThe one-day window is a deliberate midpoint. Shorter windows track genuine conditions faster but are cheaper to manipulate; much longer windows leave the rate stale during real liquidity crunches, exactly when it needs to be recruiting deposits. A day is long enough to make manipulation expensive and short enough that the incentive to supply responds within a business cycle.\n\nThe secondary benefit is fairness: lenders are compensated for capital that was actually deployed across the interval, rather than for whatever the ratio happened to be at a settlement instant.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Using a duration-weighted average instead of an instantaneous reading means a flash spike in borrowing barely moves the rate, and lenders are paid for capital actually deployed over time.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8a16a0f2-7f8e-4154-be90-a2c21f3fa6c4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:26.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "65017115-6da0-470e-be46-9cd1c5f63aea",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

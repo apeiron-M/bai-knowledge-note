@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f100e7d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f100e7d7-8166-4430-8190-027518581818",
+      "targetTitle": "Definition Directory and Navigation Hub are both specified a"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Terms should be defined once at a location covering all their uses, not repeated per document",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3f2249ee-1633-4a1b-8eb8-7c3ecb6821cc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aecce015-5b1d-413a-8f82-a3870fcb7369",
+      "name": "atlas-documents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9b3b94c0-4f86-4682-ab8d-16407de79ea5",
+      "name": "definitions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.2.2.2.22 states the placement rule for Definition Documents: \"To the extent possible it should be avoided to have the same term defined multiple times in the Atlas, and instead always put a single definition at a location in the Atlas that covers all of its use. The main exception to this principle should be when relatively niche terms are present in two different Scopes.\"\n\nThis is a normalization rule with a governance rationale rather than a tidiness rationale. Duplicate definitions in a tree where higher documents govern the interpretation of lower ones create a live hazard: two copies drift apart, and then which copy applies becomes an argument about tree position rather than about meaning. Because contradictions between Atlas Documents are a defect the Core Facilitator must expend interpretation authority to repair (A.1.1.2.1), every duplicated definition is a pre-loaded contradiction.\n\n\"A location that covers all of its use\" is the operative instruction and it is a real constraint: it forces a definition **upward** to the common ancestor of every document that uses the term. Defining a widely-used term locally is a placement error even if the text is correct.\n\nThe Scope-crossing exception is the pragmatic limit. The common ancestor of two Scopes is the Atlas root, and hoisting a niche term into the Immutable layers to avoid duplication would be far worse than two copies \u2014 it would make a minor term permanent. So the rule yields where normalization would collide with the mutability hierarchy.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.2.2.2.22 makes single-definition placement the rule, with the sole sanctioned exception being niche terms appearing in two different Scopes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ce33b172-9e76-4081-8103-a49aa07ebf0d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:39.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "189671af-44f1-41ce-a8ad-dba7ff87e5e5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

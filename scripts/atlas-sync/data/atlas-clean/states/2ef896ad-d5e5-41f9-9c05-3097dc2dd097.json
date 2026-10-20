@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-cdce3add-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdce3add-0bb4-47ba-add1-b53109d83a21",
+      "targetTitle": "The Executive Document hash check must prove the only differ"
+    },
+    {
+      "id": "lnk-f4323865-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4323865-ee64-4f96-ab66-5493e5331d8a",
+      "targetTitle": "The Governance Point independently re-verifies the Spell aga"
+    },
+    {
+      "id": "lnk-3180c65a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3180c65a-319e-4130-abf1-c1727d763026",
+      "targetTitle": "The Executive Document's hash is computed twice with indepen"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Only the address field of the Executive Document may be modified after the Spell is deployed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "48dda916-a87f-4592-b675-5875d341c9c6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4eb861e-f7e1-48bc-9865-59c1d8f940a2",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a8f74635-ab00-4b8f-a8d3-88d7d4b2a399",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.11.1.3 requires the Spell address to be added to the Executive Document by a new pull request, and states the constraint: \"**Only the 'address' field in the Executive Document is permitted to be modified after the Spell has been deployed.**\"\n\nThis is what makes the earlier hash meaningful. The document was hashed and merged in Step 8 (A.1.10.2.4.8.5.1) and used as the Reviewers' source of truth in Step 9. If arbitrary edits were possible afterwards, the reviewed reference and the published reference could differ, and nothing downstream would notice.\n\nThe single exception exists because the value is genuinely unknowable earlier \u2014 A.1.10.2.4.8.3.9 has all \"$\" placeholders replaced \"except for the Spell address, which remains unknown at this stage,\" since the address only exists once the contract is deployed. The document is therefore complete-but-for-one-blank by construction, and the blank is filled by a mechanical fact rather than an editorial choice.\n\nThe verification is scoped to match: A.1.10.2.4.11.1.4 has any member of the Core Facilitator team \"confirm that the 'address' field in the Executive Document has been updated with the correct Spell address\" \u2014 one field, one question, no re-reading. A narrow permitted change makes a cheap and reliable check possible, which is the practical reason to prefer one mutable field over a general amendment power.\n\nThe residual risk is concentrated rather than eliminated: the address is the one thing an attacker would most want to change, since it redirects every voter to a different contract. That is why the field's review is mandatory even though the edit looks trivial.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.11.1.3 freezes the reviewed document with exactly one exception \u2014 the one value that could not exist earlier \u2014 and a second Core Facilitator member verifies that field.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

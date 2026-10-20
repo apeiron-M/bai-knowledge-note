@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-8b58f1bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b58f1bb-e6a6-4e37-91e4-f1d66478cbe7",
+      "targetTitle": "RRC framework coverage is Pending for every venue outside th"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RRC coverage flips in both directions across chains, so the flag tracks review batches rather than protocol or chain",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a36bf0fe-61c6-49ac-91b0-9fcf53429b8e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69667610-dc31-4112-9f60-be1ae73bb5f3",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d409708-12e7-4136-b4ee-0c86edecc525",
+      "name": "risk-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d46dbe0-b7d2-4e51-ba2a-cbad5b2c5295",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The per-chain coverage verdicts in this chunk contradict each other in both directions. Base Fluid sUSDS reads \"**`Covered`**\" (A.6.1.1.1.2.6.1.3.2.2.1.1) and Arbitrum Fluid likewise (.3.1.1.1), while the Ethereum Fluid instance reads `Pending`. Base Aave USDC reads \"**`Pending`**\" (.2.3.1.1) and Arbitrum Aave USDC the same (.3.2.1.1), while the Ethereum Aave instances read `Covered` \u2014 as does Avalanche Aave v3 USDC (.4.1.1.1). Base Morpho Blue is `Covered` where all three Ethereum Morpho instances are `Pending`.\n\nSo coverage is not a property of the protocol: Aave is both Covered and Pending, Fluid is both, Morpho is both. Nor is it a property of the chain: Base holds Covered and Pending instances side by side, and so does Ethereum.\n\nThe most plausible remaining explanation is that the flag records whether *this document* has been through review, and that reviews are done in batches \u2014 a chain rollout here, a protocol family there \u2014 rather than by any systematic sweep of the venue set.\n\nThat reading is more useful than the alternative and also more deflating. It means a `Covered` flag says a review happened, not that the venue type is understood, and a `Pending` flag says no one has got to this document yet, not that the venue is riskier. Any attempt to reason about Spark's risk-review completeness by protocol or by chain will produce a coherent-looking answer that is not supported by how the flag is actually being applied.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Fluid is Pending on Ethereum but Covered on Base and Arbitrum, while Aave is Covered on Ethereum and Avalanche but Pending on Base and Arbitrum \u2014 neither dimension predicts the verdict.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "91d7bb80-3f08-44f9-a105-e2a3173a34c4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "20d19231-dfd1-4a0f-9aca-865b269c4290",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

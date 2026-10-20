@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's custody quorum requires signers from at least two independent entities, not merely three signatures",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "87138b65-7855-4690-9c7d-a1a9a52dc88a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9aa2f85b-16be-4ecd-bedf-d3f0f9134de1",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1093804-a9b7-460a-ac78-2be73fca9bc3",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.7.2.7.3 and A.6.1.1.1.3.8.2.7.3 state the rule identically: \"Accounts must require a quorum of at least 3 signers for Critical Actions. **It must not be possible for quorum to be met with signers from a single entity** (no single entity will have enough signers to meet the quorum alone, and each critical action will therefore require approval from signers from at least 2 independent entities).\"\n\nA plain 3-of-N threshold protects against individual key loss and individual malice. It does not protect against an *organization* \u2014 one firm holding three signer slots can act alone, and a compromise of that firm's infrastructure, a coordinated internal fraud, or a court order directed at it captures the account outright. The independence condition converts the threshold from a count of keys into a count of organizations, so an attacker must breach two separate legal entities with separate infrastructure and separate incentives.\n\nThe eligible signer sets are small and named: Spark Asset Foundation \"including legal council,\" Phoenix Labs, and the Spark Operational Facilitator (Arkis) or Spark Operational Executor Agent (offchain). Including legal counsel as an eligible signer is a deliberate diversification of *type* as well as entity \u2014 a lawyer's incentives, employer and threat surface differ from an engineer's, so collusion requires crossing a professional boundary too.\n\nThe residual weakness is that these entities are not fully independent in the economic sense. Phoenix Labs is a Nested Contributor to Spark; the Facilitator serves Spark; the Foundation funds both. Independence here is organizational and operational rather than adversarial \u2014 enough to defeat a single compromise, not enough to defeat a captured Spark.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Critical Actions need three signers with the explicit condition that no single entity can meet quorum alone, so compromising one organization is structurally insufficient.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

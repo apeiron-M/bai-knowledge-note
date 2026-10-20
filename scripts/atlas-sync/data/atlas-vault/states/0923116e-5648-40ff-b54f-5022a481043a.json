@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-1f4cbfc1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1f4cbfc1-cdec-4445-9191-27b2211cde60",
+      "targetTitle": "The Debt Floor blocks both minting below the minimum and rep"
+    },
+    {
+      "id": "lnk-d22b14aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d22b14aa-f0dd-4ae0-bbcd-b19afaf05693",
+      "targetTitle": "The Stability Fee is created by minting new Dai into the bor"
+    },
+    {
+      "id": "lnk-976787e4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "976787e4-cab8-48c8-b6cb-db21d836e851",
+      "targetTitle": "Collateral auctions start above market price and step downwa"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Local Liquidation Limit caps how much debt can be auctioned at once per vault type, forcing liquidations to queue",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4ed6a158-f20f-4f11-8318-a3869c08f994",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cd45201b-49f2-4699-9230-c2ff11f5892e",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43f0b4bb-ecd1-4ab7-824f-4e377890141d",
+      "name": "liquidations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4f2540fc-947f-467a-b8d1-1c77ed3f292d",
+      "name": "risk-parameters",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.1.2.5.8 defines the Local Liquidation Limit (`hole`) as \"the maximum amount of Dai debt for which collateral auctions can be active at any one time within a particular vault type. When the total Dai value of auctions exceeds this maximum... no more collateral can be auctioned using that vault type until others are completed.\"\n\nThis is a deliberate refusal to liquidate on demand. In a sharp price fall, many vaults become eligible simultaneously; without a cap, the protocol would dump all of that collateral into the same falling market, deepening the fall that triggered the liquidations. The cap converts a simultaneous flood into a queue and gives keeper capital time to recycle between auctions.\n\nThe cost is explicit undercollateralization risk. Positions that cannot be auctioned keep deteriorating while they wait, so `hole` trades the certainty of bad debt from a market crash against the certainty of bad debt from a self-inflicted price cascade.\n\nThe limit being *local* \u2014 one per vault type, with each type given its own value \u2014 is what keeps the throttle from becoming a shared bottleneck: congestion in one collateral does not block liquidation of another. It also means the system has no single aggregate liquidation cap at this layer, so total simultaneous auction exposure is the sum of the per-type limits.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When active auctions for a vault type exceed hole in Dai debt, no further collateral of that type can be auctioned until existing auctions complete \u2014 a per-collateral throttle, not a global one.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "24cc2dc3-b171-4d44-9017-cd7d05619e32",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "13f3e83c-9e45-450f-8420-78387db0aa7c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:54.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

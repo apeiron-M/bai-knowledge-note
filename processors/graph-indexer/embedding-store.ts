@@ -35,10 +35,17 @@ import type { DB } from "./schema.js";
 export const ACTIVE_MODEL = "Supabase/gte-small@q8";
 export const ACTIVE_DIMS = 384;
 
+/**
+ * Write surface. Only a real namespaced Kysely satisfies this — the query
+ * builder returned by `RelationalDbProcessor.query` has no `insertInto`.
+ */
 type EmbeddingDb = Pick<
   Kysely<DB>,
   "selectFrom" | "insertInto" | "deleteFrom"
 >;
+
+/** Read surface: what the search path needs, and all a read handle provides. */
+type EmbeddingReadDb = Pick<Kysely<DB>, "selectFrom">;
 
 export async function sha256Hex(text: string): Promise<string> {
   const data = new TextEncoder().encode(text);
@@ -102,7 +109,7 @@ export async function getStoredHash(
 }
 
 export async function getEmbedding(
-  db: EmbeddingDb,
+  db: EmbeddingReadDb,
   documentId: string,
 ): Promise<number[] | null> {
   const row = await db
@@ -134,7 +141,7 @@ type MatrixCache = {
 // matrix; the self-invalidation probe below handles content changes.
 const caches = new WeakMap<object, MatrixCache>();
 
-async function loadMatrix(db: EmbeddingDb): Promise<MatrixCache | null> {
+async function loadMatrix(db: EmbeddingReadDb): Promise<MatrixCache | null> {
   const probe = await db
     .selectFrom("note_embeddings")
     .select((eb) => [
@@ -197,7 +204,7 @@ async function loadMatrix(db: EmbeddingDb): Promise<MatrixCache | null> {
  * active model — callers treat that as "semantic unavailable".
  */
 export async function searchSimilar(
-  db: EmbeddingDb,
+  db: EmbeddingReadDb,
   embedding: number[],
   limit: number,
 ): Promise<Array<{ documentId: string; similarity: number }>> {

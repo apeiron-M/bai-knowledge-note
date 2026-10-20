@@ -46,9 +46,12 @@ def test_links_are_returned_as_crossrefs_not_scalars(tmp_path):
         "topics": [],
     }
     scalars, crossrefs = build_actions(state, _new_id_map(tmp_path))
-    assert all(a["type"] != "ADD_LINK" for a in scalars)
+    assert all(a["type"] not in ("ADD_LINK", "ADD_RELATIONSHIP") for a in scalars)
     assert len(crossrefs) == 1
-    assert crossrefs[0]["type"] == "ADD_LINK"
+    assert crossrefs[0]["type"] == "ADD_RELATIONSHIP"
+    assert crossrefs[0]["scope"] == "document"
+    assert crossrefs[0]["input"]["relationshipType"] == "BUILDS_ON"
+    assert "metadata" not in crossrefs[0]["input"]
 
 
 def test_crossref_link_remaps_target_id(tmp_path):
@@ -59,7 +62,7 @@ def test_crossref_link_remaps_target_id(tmp_path):
         "topics": [],
     }
     _, crossrefs = build_actions(state, id_map)
-    assert crossrefs[0]["input"]["targetDocumentId"] == "NEW-ID"
+    assert crossrefs[0]["input"]["targetId"] == "NEW-ID"
 
 
 def test_crossref_link_drops_when_target_unmapped_and_unmapped_is_required(tmp_path):
@@ -115,3 +118,24 @@ def test_empty_state_produces_no_actions(tmp_path):
     scalars, crossrefs = build_actions(state, _new_id_map(tmp_path))
     assert scalars == []
     assert crossrefs == []
+
+
+def test_link_reason_and_confidence_become_relationship_metadata(tmp_path):
+    """download.py stores each edge's reason/confidence on the link entry; the
+    handler must carry them as ADD_RELATIONSHIP metadata or a restore drops
+    every articulated edge (the native addRelationship mutation cannot)."""
+    state = {
+        "topics": [],
+        "links": [{"id": "l1", "targetDocumentId": "t", "linkType": "RELATES_TO",
+                   "reason": "A explains the mechanism B relies on", "confidence": "grounded"}],
+    }
+    _, crossrefs = build_actions(state, _new_id_map(tmp_path))
+    assert crossrefs[0]["input"]["metadata"] == {
+        "reason": "A explains the mechanism B relies on", "confidence": "grounded"}
+
+
+def test_link_without_reason_has_no_metadata_key(tmp_path):
+    state = {"topics": [], "links": [{"id": "l1", "targetDocumentId": "t", "linkType": "RELATES_TO",
+                                      "reason": "", "confidence": None}]}
+    _, crossrefs = build_actions(state, _new_id_map(tmp_path))
+    assert "metadata" not in crossrefs[0]["input"]

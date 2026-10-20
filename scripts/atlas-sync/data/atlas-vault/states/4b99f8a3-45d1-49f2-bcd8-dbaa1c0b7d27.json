@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0fe6527-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b0fe6527-cbc2-4485-bcfd-6c0c4df2943b",
+      "targetTitle": "CCTP transfers are metered by a global limit and a per-desti"
+    },
+    {
+      "id": "lnk-9803d54f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9803d54f-dea8-4a0e-a9de-f6f892810195",
+      "targetTitle": "CCTP transfers are split across messages at runtime using th"
+    },
+    {
+      "id": "lnk-fd96d0ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd96d0ac-d150-4056-b3c8-2e96f09f7e73",
+      "targetTitle": "Cross-chain USDC movement depends on Circle's CCTP under a d"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CCTP bridging charges two rate limits at once, an aggregate and a per-destination one, and refuses a zero mint recipient",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5ccf9b81-a29a-4af3-9089-14949de19791",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b695fed1-9a7b-4fab-a295-de463e4dac97",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b20ce5f-27c7-4906-8f73-a048d9709ed1",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2987f468-9225-4feb-a6fa-685aafd758f4",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.2.1.2.6.1.1 lists the checks in order: the contract \"will trigger a rate limit decrease for the CCTP limit ID and amount,\" then \"trigger a rate limit decrease for a domain-specific key and amount,\" then \"require that `mintRecipient` is not zero, reverting if it is,\" then split the amount against Circle's \"burn limit per message\" into as many transfers as needed.\n\nThe double decrement implements a two-tier risk budget, matching the two limits recorded earlier in the Artifact: `LIMIT_USDC_TO_CCTP` bounds everything Keel bridges out of Ethereum in aggregate, while `LIMIT_USDC_TO_DOMAIN` bounds what may go to a single destination such as Solana. Neither alone would do the job \u2014 an aggregate-only limit would allow the whole budget to concentrate on the riskiest chain, and per-domain-only limits would sum to an unbounded total as domains are added.\n\nThe zero-address guard is a small but pointed check. Since the mint recipient is admin-configured per domain, a zero value means the domain was never configured; without the guard, a bridge into an unconfigured domain would burn USDC on Ethereum and mint it to nobody. The revert converts a silent, irreversible loss into a failed transaction.\n\nSplitting against the per-message burn limit is a third-party constraint, not a Sky one \u2014 the same pattern as the PSM fill loop. Keel's operational logic is substantially shaped by the transaction-level ceilings of the external protocols it rides on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "transferUSDCToCCTP decrements both the global CCTP limit and a domain-specific key, requires a non-zero mintRecipient, and splits transfers exceeding Circle's per-message burn limit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c31b5706-b31c-4888-98ca-dd838b02426b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ca113df4-4603-4f89-948d-b80f691e995b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

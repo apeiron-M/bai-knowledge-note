@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-b08925e2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b08925e2-c3d2-4d6f-99fd-feb19c45f1f4",
+      "targetTitle": "'Deployed only once' seals further Invocations while the sin"
+    },
+    {
+      "id": "lnk-76028aba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "76028aba-22f4-4683-a127-f98ceeae172a",
+      "targetTitle": "Skybase's primitives fall into three lifecycle classes disti"
+    },
+    {
+      "id": "lnk-77916668-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77916668-0269-4c7f-a25e-917677d36d57",
+      "targetTitle": "The Root Edit Primitive stays permanently Active despite hav"
+    },
+    {
+      "id": "lnk-f75a126d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f75a126d-fb18-4947-a919-30e1b397aed2",
+      "targetTitle": "Every Scaffold Artifact ships with all Sky Primitives presen"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's Root Edit, Upkeep Fee and Upkeep Rebate Primitives are singletons that can never be re-invoked",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "14de1226-9480-482c-9dbb-60834834cdbb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c12d67ec-a32f-45b4-ae32-f02e9c8eb111",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7001f0f2-cab3-4c37-a84f-d0fd466a914f",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d802410e-de0d-45ca-a6ba-ed6d3ce13527",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Although the Root Edit, Ecosystem Upkeep Fee and Upkeep Rebate Primitives are all classed as ongoing (Operational and Ecosystem Upkeep) rather than Genesis Primitives, each closes itself after one Invocation. A.6.1.1.2.2.2.2.1.4 and A.6.1.1.2.2.2.2.4: \"Because the Root Edit Primitive is deployed only once, no further Instances of the Primitive can be Invoked.\" A.6.1.1.2.2.3.1.1.4 and A.6.1.1.2.2.3.2.1.4 say the same for the two upkeep Primitives.\n\nThe contrast is with the Executor Accord Primitive (A.6.1.1.2.2.2.1.4) and the Light Agent Primitive (A.6.1.1.2.2.2.3.4), whose In Progress Invocations directories remain live and explicitly describe how future Invocations graduate into Active Instances.\n\nThe distinction is not Genesis-versus-Operational but **singleton-versus-multiple**: capabilities that describe a relationship Grove can have many of (executors, light agents) stay re-invocable, while capabilities that define a single global rule for the Agent (how it is amended, what it pays) are instantiated once.\n\nFor Root Edit specifically this is a real safety property. One Instance means one amendment procedure. There is no way to stand up a second, competing Root Edit Instance with a lower threshold or a friendlier reviewer and route proposals through it \u2014 forum-shopping between amendment paths is structurally impossible.\n\nThe corresponding rigidity is that changing how Grove is amended must itself go through the single existing amendment process, which is the standard bootstrap problem for any self-amending rule set.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each is 'deployed only once', so there is exactly one amendment path and one upkeep arrangement \u2014 no parallel or competing instances of the same governance capability can coexist.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

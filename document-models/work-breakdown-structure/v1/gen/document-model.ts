@@ -7,7 +7,7 @@ export const documentModel: DocumentModelGlobalState = {
     name: "BAI",
     website: "",
   },
-  extension: ".wbs",
+  extension: "",
   description:
     "A hierarchy of goals for a project: statuses, assignees, dependencies, block reasons, outcomes and notes. No automatic cascades \u2014 every change is an explicit operation.",
   specifications: [
@@ -20,10 +20,10 @@ export const documentModel: DocumentModelGlobalState = {
         },
         global: {
           schema:
-            "type WorkBreakdownStructureState {\n  projectRef: PHID\n  owner: String\n  goals: [Goal!]!\n  references: [URL!]!\n}\n\ntype Goal {\n  id: OID!\n  description: String!\n  status: GoalStatus!\n  parentId: OID\n  assignee: String\n  dependencies: [OID!]!\n  blockReason: String\n  outcome: String\n  notes: [Note!]!\n}\nenum GoalStatus { TODO IN_PROGRESS BLOCKED IN_REVIEW COMPLETED WONT_DO }\n\ntype Note { id: OID!  note: String!  author: String  timestamp: DateTime }",
+            "type WorkBreakdownStructureState {\n  projectRef: PHID\n  owner: String\n  goals: [Goal!]!\n  references: [URL!]!\n  # the scope-of-work document and the envelope (SoW Project) this tree delivers;\n  # both null when the work is not yet compiled into a scope\n  sowRef: PHID\n  sowProjectId: OID\n}\n\ntype Goal {\n  id: OID!\n  description: String!\n  status: GoalStatus!\n  parentId: OID\n  assignee: String\n  dependencies: [OID!]!\n  blockReason: String\n  outcome: String\n  notes: [Note!]!\n}\nenum GoalStatus { TODO IN_PROGRESS BLOCKED IN_REVIEW COMPLETED WONT_DO }\n\ntype Note { id: OID!  note: String!  author: String  timestamp: DateTime }",
           examples: [],
           initialValue:
-            '{\n  "projectRef": null,\n  "owner": null,\n  "goals": [],\n  "references": []\n}',
+            '{"projectRef": null, "owner": null, "goals": [], "references": [], "sowRef": null, "sowProjectId": null}',
         },
       },
       modules: [
@@ -358,6 +358,20 @@ export const documentModel: DocumentModelGlobalState = {
               schema: "input SetProjectRefInput {\n  projectRef: PHID\n}",
               template: "",
               reducer: "state.projectRef = action.input.projectRef || null;",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "7c7df17d-82ed-4e73-a80d-bd18ab6ac653",
+              name: "SET_SOW_PROJECT_REF",
+              description:
+                "Link (or unlink) the scope-of-work project this work breakdown structure delivers \u2014 the SoW document and the envelope inside it.",
+              schema:
+                "input SetSowProjectRefInput {\n  # omit or null both to unlink\n  sowRef: PHID\n  sowProjectId: OID\n}",
+              template:
+                "Link (or unlink) the scope-of-work project this work breakdown structure delivers \u2014 the SoW document and the envelope inside it.",
+              reducer: "",
               errors: [],
               examples: [],
               scope: "global",

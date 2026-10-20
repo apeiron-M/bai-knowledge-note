@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-7b21277e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7b21277e-9ead-4196-b6f1-b7f05cc87157",
+      "targetTitle": "Withdrawals decrement the rate limit by the decoded realized"
+    },
+    {
+      "id": "lnk-c337beaf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c337beaf-62f1-4a7b-8667-4b72e808cc69",
+      "targetTitle": "Rate limits are denominated in normalised value via the pool"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are charged at whichever point in the call the true amount becomes knowable",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fdbc2a55-e2d0-43f8-9e06-48b51a8aa320",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "86295d21-96c4-4a33-8421-a31ce024fed3",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b9eda8dc-8319-4b50-9ddd-def3bd75d710",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a75635d0-1a08-4d2d-82f2-91716df6c295",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The chunk is explicit and unusually self-aware about *when* a rate limit is decreased. A...8.1.5 decreases `LIMIT_CURVE_SWAP` \"before the exchange is executed\" and A...8.2.5 decreases `LIMIT_CURVE_DEPOSIT` \"before liquidity is added\" \u2014 both from caller-supplied inputs that are already known. Conversely A...7.2.4 notes that `withdrawAave` \"is rate limited at the end of the function rather than before\", using the decoded `amountWithdrawn`; A...8.3.6 likewise charges `LIMIT_CURVE_WITHDRAW` from the actually withdrawn tokens \"after liquidity is removed\"; and A...9.1.7 charges the Uniswap swap limit by `startingBalance - endingBalance`.\n\nThe organising rule is information availability. Where the debited quantity is an input, charge before and get pre-authorisation semantics. Where the quantity is only produced by the external protocol, charge after and get accuracy.\n\nThe trade-off is real in the post-hoc cases: the external interaction has already happened by the time the limit is consulted, so a rate limit can be *overdrawn* in the sense that the breach is detected only as the decrease reverts \u2014 which then reverts the whole transaction. Atomicity is doing the work that ordering does in the pre-charge cases.\n\nThe deeper point is that a rate limit charged against a requested amount and one charged against a realised amount are different controls. Grove uses both, deliberately, and the Atlas records which is which per function rather than leaving it to implementation habit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Curve swaps and deposits debit up front from known inputs; withdrawAave and removeLiquidityCurve debit at the end from returned amounts \u2014 accuracy is preferred over pre-authorisation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f0e90e1e-d8cf-4f38-8333-873fe04da33e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "25e1ab01-6099-4f5d-9a40-28384f6cc6e4",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

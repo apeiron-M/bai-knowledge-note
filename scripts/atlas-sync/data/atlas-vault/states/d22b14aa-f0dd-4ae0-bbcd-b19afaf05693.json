@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-e4c50bf3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4c50bf3-4aa1-4944-bf56-429d857b60b2",
+      "targetTitle": "Sky deprecates its own Core Vaults by pricing users out rath"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Stability Fee is created by minting new Dai into the borrower's own debt, not collected from an external payer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4a1af80d-4024-471c-aa03-d8caaabef36a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a9f3a2d-d019-445b-8a50-7d2f89048cde",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cbfa9d17-9259-4656-9494-a771e86fa16a",
+      "name": "stability-fee",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8dac69b4-fd7c-4d09-8519-4b86e1097754",
+      "name": "surplus-buffer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.1.2.3 describes the Stability Fee as \"an annual percentage fee charged on the Dai generated on Vaults... expressed as an annual percentage yield but... charged on a per-block basis in Dai. The Dai from this fee is minted, added to the Dai debt for the vault, and then transferred into the Surplus Buffer.\"\n\nThe sequence is the claim. No borrower sends a payment; the protocol mints Dai, increases the borrower's outstanding debt by the same amount, and credits the new Dai to the Surplus Buffer. Revenue recognition and liability creation are one operation.\n\nThree consequences follow. First, revenue accrues continuously and without any collection risk or borrower action \u2014 a raised Stability Fee starts earning immediately. Second, the newly minted Dai is *not* unbacked: it is matched by the debt added to the vault, which is in turn backed by collateral, so the fee expands supply only in step with a claim on collateral. Third, an unmanaged vault silently grows its debt toward the Liquidation Ratio, meaning a fee increase is also a slow liquidation pressure on passive positions \u2014 which is exactly the mechanism used to deprecate Core Vaults in the same document.\n\nBecause each vault type has its own independently adjustable Stability Fee, this gives Sky a per-collateral revenue and pressure dial rather than a single system-wide rate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The fee accrues per block, is minted, added to the vault's Dai debt, and transferred to the Surplus Buffer \u2014 so protocol revenue and borrower liability are the same accounting entry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "37e098c0-f6de-48ad-b126-3deec412446b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e02be316-23e1-49cd-b6f7-d6efad37a79a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

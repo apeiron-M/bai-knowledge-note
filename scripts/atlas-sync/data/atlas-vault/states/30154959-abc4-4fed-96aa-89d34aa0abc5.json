@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Retuning a rate limit refills it: the two-argument setter grants full capacity immediately",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5a3f9c2d-f7a4-4f70-a588-1f44797201e3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3e81ccca-6625-4b1f-a0d3-3339beb799c6",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96892627-7477-476e-b4fc-757bf1bcc9eb",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4449732c-7e65-494f-a02e-0b3108767578",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.3.2 defines two overloads. The full one takes `lastAmount` and `lastUpdated` explicitly, guarded by `require(lastAmount <= maxAmount)` and `require(lastUpdated <= block.timestamp)`. The convenience one is:\n\n```\nfunction setRateLimitData(bytes32 key, uint256 maxAmount, uint256 slope) external override {\n    setRateLimitData(key, maxAmount, slope, maxAmount, block.timestamp);\n}\n```\n\nIt starts the bucket **full**. So an administrative adjustment is not only a change to future capacity \u2014 it silently restores present capacity, discarding any consumption that had occurred since the last update. A key that had been drained to zero by legitimate activity becomes fully available the moment its parameters are touched, even if the change was a reduction in `maxAmount`.\n\nThis is a governance hazard rather than a code defect: a routine \"lower this limit\" action can transiently *increase* available capacity relative to a moment earlier. Anyone tightening a limit in response to an ongoing incident needs the four-argument overload with an explicit `lastAmount`, not the convenient one.\n\nThe backdating allowance in the full overload is the other side of the same design. Permitting `lastUpdated` in the past lets an admin set a limit that presents as already partially replenished \u2014 useful for migrations that must not create a discontinuity, and a capability that requires the same care.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setRateLimitData(key, maxAmount, slope) delegates with lastAmount = maxAmount and lastUpdated = now, so an admin adjusting a limit also erases whatever the controller had already consumed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9adf7464-1a5b-41aa-b81c-c54f62968217",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5aa5a946-09b3-4391-ad85-a01f3f1aaf8e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-c09cc9d6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c09cc9d6-7753-40e4-8e14-41d6a0eff318",
+      "targetTitle": "Junior capital sourced by spending SPJ capacity permanently "
+    },
+    {
+      "id": "lnk-6338431d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6338431d-b3c8-43b0-a210-406ea68e0193",
+      "targetTitle": "Risk Capital is tranched into Junior and Senior layers with "
+    },
+    {
+      "id": "lnk-9806be34-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9806be34-7f86-4361-af0c-90b138c2b69c",
+      "targetTitle": "Rented Junior Risk Capital never moves: PEJRC counts for the"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Senior capital enablement is priced by the capital's distance from the Agent, and the ratios cap total leverage near 3.6x own capital",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1bbfffe4-4864-431e-b2cb-ca0801c7da47",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b81e6548-8b8c-443f-bbda-dabb09f38478",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ae691efc-38b6-4727-bed2-0198524b423a",
+      "name": "leverage-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.2.2.1 sets the External Per Internal ratio at **1.00**: an Agent may source external junior capital only up to the amount of its own. A.3.2.2.2.2.2 then sets Senior Per Junior ratios that differ by the *provenance* of the junior capital:\n\n- Internal Junior Risk Capital \u2014 **1.00**\n- EPI-acquired Prime External JRC (rented from another Prime) \u2014 **0.75**\n- EPI-acquired Tokenized External JRC (retail sUSDS deposits) \u2014 **0.50**\n- SPJ-acquired External JRC \u2014 **zero**\n\nThe ordering is a statement about the reliability of loss absorption. The Agent's own capital, held in its own treasury under its own root governance, enables senior capital one-for-one. Capital designated by a peer Prime under an Ecosystem Accord \u2014 which never leaves the lender's treasury (A.3.2.1.2.2.1.1.2) \u2014 enables three quarters as much. Anonymous tokenized capital from external depositors enables half. Nominal amounts are equal; enablement power is not.\n\nThe worked example makes the aggregate effect concrete: 20m internal, 10m Prime-external and 10m tokenized junior capital enables 32.5m of senior capital. Chaining the constraints from 20m of own capital gives at most 20m of EPI-sourced external junior (EPI = 1.00), and a junior pool weighted at roughly 32.5m of senior enablement \u2014 a total Risk Capital figure in the low 70m range from 20m of genuinely own money, or about 3.6x.\n\nThat multiple is the framework's real answer to \"how levered may a Prime Agent be,\" and it is assembled from three separate ratios rather than stated anywhere as a single number. Anyone auditing the framework's conservatism has to derive it, which is a legibility cost worth noting: a change to any one of the four SPJ values silently moves system-wide leverage.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SPJ is 1.00 for internal junior capital, 0.75 for capital rented from another Prime, 0.50 for tokenized retail capital and 0 for SPJ-sourced capital; EPI is 1.00.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

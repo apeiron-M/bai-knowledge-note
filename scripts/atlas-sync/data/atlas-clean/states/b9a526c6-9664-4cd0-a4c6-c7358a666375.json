@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4323865-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4323865-ee64-4f96-ab66-5493e5331d8a",
+      "targetTitle": "The Governance Point independently re-verifies the Spell aga"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deployment and handover each require both Spell Reviewers to approve, with test results published alongside the handover approval",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4ace6465-8f6c-4adc-a0ec-e415d18171eb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d63773b-e9f4-442f-9c32-9c3e2c0534d9",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d2046f4-a716-4719-8ded-e6ecd4b4a7f5",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Spell passes two distinct Reviewer gates. At A.1.10.2.4.10.2, Reviewers check the pre-deployment steps and \"indicate their approval in a comment to the GitHub pull request, such as 'good to deploy'\" \u2014 and \"the Spell Crafter **may only proceed with the Spell deployment when approvals have been received from the two Spell Reviewers**.\" At A.1.10.2.4.10.8, after deployment and archival, they re-review the pull request, \"run tests locally,\" and each \"posts a comment approving the handover of the Spell (e.g. 'good to handover'), **including a copy of the test results**.\"\n\nStaging matters because the artifact changes between the gates. The first approval covers code intended for deployment; the second covers a deployed contract at a concrete address, with archival changes applied. Re-approval means nobody's earlier signature is silently reused for a different object.\n\nRequiring a copy of the test results is the stronger of the two demands. A verdict is unfalsifiable and cheap \u2014 \"tests pass\" is one line whether or not they were run. Pasted output is checkable, reproducible by anyone reading the thread, and dated, so a later investigation can see what was actually observed rather than what was concluded. It also makes running tests *locally*, as A.1.10.2.4.10.8 requires, verifiable rather than assumed \u2014 CI output alone would not show that an independent environment reproduced the result.\n\nTwo approvals rather than one means the redundancy is real at every gate: a single compromised or careless Reviewer cannot advance a Spell, which is the same two-party pattern the Atlas applies to novel designs, transfer sums and document hashes.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Approval is staged rather than one-shot \u2014 'good to deploy' then 'good to handover' \u2014 and the second gate demands the evidence, not just the verdict.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

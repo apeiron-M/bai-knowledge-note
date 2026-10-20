@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a4d503b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3a4d503b-0729-48b8-badc-d8c039dcb697",
+      "targetTitle": "doc-6d04d8ab"
+    },
+    {
+      "id": "lnk-897fcf37-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "897fcf37-664f-47ef-aa95-fea8a4e8bc1e",
+      "targetTitle": "doc-10b2adc4"
+    },
+    {
+      "id": "lnk-712ae57e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "712ae57e-f3af-40db-9611-273b3ebdabe5",
+      "targetTitle": "A rate limit whose slope exceeds its maxAmount is a burst co"
+    },
+    {
+      "id": "lnk-8d7c588d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d7c588d-9525-426a-89fa-dfff83e7abe3",
+      "targetTitle": "The Tokenized Treasury Interim Deployment's combined $5m all"
+    },
+    {
+      "id": "lnk-acad0d22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "acad0d22-6394-44a8-8cab-b1bc87f53a30",
+      "targetTitle": "Grove's own rate limit can allow an Ethena mint that still f"
+    },
+    {
+      "id": "lnk-b9e8335b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9e8335b-05b4-4fcd-829c-d20960fd3f86",
+      "targetTitle": "Value-bearing token positions need bounds on the reported pr"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's treasury operations are governed by refilling rate limits, not fixed caps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8c77c2be-fbe2-4868-a742-b208d6cbc36f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94a0ba8c-81d7-4b4e-9841-0dcba5f1f4c7",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eaefd783-08aa-4745-86c2-edafb53edff1",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "230d359e-d522-47da-916b-0c03814c5e8e",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every entry under A.6.1.1.2.2.6.1.2.1.1.3 has the same two-field shape. For USDS minting on Ethereum Mainnet (A.6.1.1.2.2.6.1.2.1.1.3.1.1.1): \"`maxAmount`: 500,000,000 USDS\" and \"`slope`: 500,000,000 USDS per day.\"\n\nThis is a **token bucket**, not a quota. `maxAmount` is the bucket's capacity \u2014 the largest single burst possible when full. `slope` is the refill rate. The two together answer different questions: capacity bounds how much damage one compromised transaction sequence can do before anything replenishes; slope bounds sustained throughput and therefore how long a hostile actor would need to drain a given amount.\n\nSetting slope equal to maxAmount, as most Grove limits do, means the full allowance regenerates in a day. The bucket therefore imposes a **daily** ceiling, and its practical effect is to guarantee a human-scale reaction window: no single day's activity can exceed the cap, so monitoring and the Freezer Role have at least 24 hours to interrupt an attack before it can repeat.\n\nThe design choice this encodes is that Grove's risk controls target **rate of change** rather than absolute position size. Position limits live in the individual Instance Configuration Documents; the Liquidity Layer's controller-wide limits bound how quickly capital can be moved, minted, burned or bridged regardless of which Instance it ends up in.\n\nA.6.1.1.2.2.6.1.2.1.1.3.2 confirms the layering explicitly: these are \"controller-wide rate limits... Instance-specific rate limits are specified in each Instance Configuration Document.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every limit is a pair \u2014 maxAmount is the instantaneous ceiling and slope the per-day replenishment \u2014 so the constraint is on velocity of capital movement rather than on total size.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

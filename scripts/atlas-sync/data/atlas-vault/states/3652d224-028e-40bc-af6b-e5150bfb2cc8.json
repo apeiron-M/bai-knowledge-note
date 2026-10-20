@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-c3006998-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3006998-378b-4de2-9fda-8dd8721fc58c",
+      "targetTitle": "The voter-facing Executive Document is reviewed only inside "
+    },
+    {
+      "id": "lnk-cdce3add-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdce3add-0bb4-47ba-add1-b53109d83a21",
+      "targetTitle": "The Executive Document hash check must prove the only differ"
+    },
+    {
+      "id": "lnk-fd7060b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd7060b8-ae56-4aee-b653-4cd81b459199",
+      "targetTitle": "Spell Reviewers work from the Executive Document while the C"
+    },
+    {
+      "id": "lnk-a0b5cc73-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0b5cc73-8402-4096-8b3e-ec6173000db7",
+      "targetTitle": "doc-b36dac32"
+    },
+    {
+      "id": "lnk-c88ad516-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c88ad516-12c9-468d-a433-95bcdc28202e",
+      "targetTitle": "The Executive Document must describe every action in future-"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Executive Document is hashed into the Spell code so the human-readable proposal is bound to the executable",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "be1fee03-b703-46b2-86b7-5a2fd1b9b200",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ce53d9f-f663-4f9f-9737-eba10732fa1d",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3dec096f-8f7b-4b0f-8fec-25ce8531191a",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.1.3 describes the Executive Document as \"a formal, plain-English Markdown document that serves as the primary communication tool for presenting the contents of an Executive Vote to the community,\" designed \"to be accessible to both technical and non-technical members\" and published on the Voting Portal where delegates review it before voting. Then the mechanism that makes it more than documentation: \"The contents of the Executive Document are hashed and included within the Spell code to provide an additional layer of verification.\"\n\nThis closes the gap that governance-by-description always leaves open. Voters read prose; contracts execute bytecode; ordinarily nothing connects the two except the good faith of whoever wrote the description. A voter who cannot read Solidity is trusting an unverifiable claim that the code does what the text says.\n\nEmbedding the document's hash in the Spell makes the pairing checkable by anyone. If the deployed Spell's embedded hash does not match the hash of the published document, either the code or the description was swapped after review \u2014 detectable without reading either. The Spell effectively carries a commitment to which description it claims to implement.\n\nWhat the hash does **not** do is worth stating precisely: it proves the code was deployed alongside *that* description, not that the code *does* what the description says. Semantic correspondence still depends on human review \u2014 the Spell Reviewers, the Governance Point's verification that \"the delivered code matches the code reviewed and approved on GitHub,\" and Ecosystem Spell Validation. The hash removes substitution attacks, not misrepresentation.\n\nThe document is also intentionally single-authored: \"The Core Facilitator is responsible for producing and finalizing the Executive Document; and any changes must be made by them.\" One accountable author, one hash, one artefact voters can point to.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.1.3 embeds a hash of the plain-English document within the Spell, making the description and the code cryptographically inseparable rather than merely conventionally paired.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dc89a314-0da8-4c6b-8a6e-32be38457538",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e6dc9864-ee88-4a18-bf3d-d16dbca1d75c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

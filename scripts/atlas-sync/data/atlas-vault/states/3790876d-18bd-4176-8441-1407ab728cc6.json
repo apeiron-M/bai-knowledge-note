@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-712ae57e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "712ae57e-f3af-40db-9611-273b3ebdabe5",
+      "targetTitle": "A rate limit whose slope exceeds its maxAmount is a burst co"
+    },
+    {
+      "id": "lnk-7c7859a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c7859a6-84a5-4065-8ebe-c70b3bca11e2",
+      "targetTitle": "Grove sets AMM swap parameters by venue archetype rather tha"
+    },
+    {
+      "id": "lnk-f521cdfd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f521cdfd-ec47-4667-a2dc-6849412763b2",
+      "targetTitle": "doc-8109372e"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's swap burst caps are tuned per pool while the daily throughput slope is held constant across pools",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5edc2300-bb7a-4e66-b64d-0c2bca2ead46",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "42dcb7ca-528e-4a21-ab75-289135c487bb",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b5f09ba2-1b98-4b23-92b0-534c71d606bb",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2cb1399-25b9-4050-94dd-74f375e68dcf",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three Curve swap instances share two of their three parameters and differ in the third. AUSD/USDC (A...6.4.2.4.3) and PYUSD/USDS (A...6.6.2.4.3) both set `maxAmount` 5,000,000 with a 100,000,000-per-day slope and 0.1% `maxSlippage`. RLUSD/USDC (A...6.1.2.4.3) sets `maxAmount` 20,000,000 with the same slope and the same slippage.\n\nThe division of labour between the two limit parameters becomes clear when read across pools. `slope` is a throughput budget \u2014 how much converting Grove may do in a day \u2014 and that is a statement about Grove, so it is the same everywhere. `maxAmount` is a per-execution size cap, and price impact for a given trade size depends entirely on the depth of the specific pool, so it is the parameter that must be calibrated per venue. A 0.1% slippage tolerance is only achievable in a thin pool at a smaller size, which is why the two newer pairs get a quarter of RLUSD/USDC's cap.\n\nThe same pool can also carry both limit shapes for different activities. The Curve RLUSD/USDC pool has a swap instance with the burst shape and a separate \"LP Deposits\" instance (A...6.3) with `maxAmount` 25,000,000 and a 25,000,000-per-day slope \u2014 a one-day refill, the accumulation shape \u2014 plus its own distinct inflow and outflow RateLimitIDs (A...6.3.2.3.1, A...6.3.2.3.2). Holding liquidity in a pool and trading through it are budgeted independently because they are different exposures.\n\nOne reconciliation hazard: the swap budget is filed under a dedicated \"Swap RateLimitID\" for RLUSD/USDC but under \"Inflow RateLimitID\" for AUSD/USDC and PYUSD/USDS, whose outflow IDs read `N/A` while their deposit and withdrawal limits read `N/A - swaps only` (A...6.4.2.3, A...6.6.2.3). The same role is recorded under two different field names, so the register cannot be reconciled to on-chain keys by field name alone.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "AUSD/USDC and PYUSD/USDS allow 5 million per burst against RLUSD/USDC's 20 million, all three with a 100 million per day slope and 0.1% max slippage.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b43cfcbf-dc63-4639-9c66-7b9f33f38af7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eb7d1457-b900-48bb-97ab-79a28b467499",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -31,6 +31,9 @@ from handlers import (
     pipeline_queue,
     health_report,
     vault_config,
+    scope_of_work,
+    tension as tension_handler,
+    wbs as wbs_handler,
 )
 
 
@@ -41,6 +44,9 @@ HANDLERS = {
     "bai/pipeline-queue": pipeline_queue,
     "bai/health-report": health_report,
     "bai/vault-config": vault_config,
+    "powerhouse/scopeofwork": scope_of_work,
+    "bai/tension": tension_handler,
+    "bai/wbs": wbs_handler,
 }
 
 # Order Phase 2 doc creation by type so cross-doc refs resolve naturally:
@@ -52,6 +58,9 @@ TYPE_ORDER = {
     "bai/pipeline-queue": 3,
     "bai/health-report": 4,
     "bai/vault-config": 5,
+    "bai/tension": 6,
+    "bai/wbs": 7,
+    "powerhouse/scopeofwork": 8,
 }
 
 
@@ -341,12 +350,38 @@ def phase_4_apply_crossrefs(deferred: dict[str, list[dict]]) -> None:
         for a in actions:
             if a.get("type") == "ADD_RELATIONSHIP":
                 inp = a.get("input") or {}
-                try:
-                    gql.add_relationship(
-                        doc_id,
-                        inp["targetId"],
-                        inp.get("relationshipType") or "child",
+                # A cross-ref that reaches here without an explicit type
+                # is a caller bug. Defaulting to "child" (the reactor's
+                # drive-containment type) would silently exclude the edge
+                # from the knowledge graph, since the graph indexer only
+                # projects the seven knowledge relationship types. Fall
+                # back to the weakest knowledge type and say so loudly.
+                rel_type = inp.get("relationshipType")
+                if not rel_type:
+                    rel_type = "RELATES_TO"
+                    print(
+                        f"  WARN {doc_id} -> {inp['targetId']}: "
+                        "ADD_RELATIONSHIP had no relationshipType; "
+                        "defaulting to RELATES_TO"
                     )
+                try:
+                    if inp.get("metadata"):
+                        # The native mutation cannot carry metadata; the
+                        # action form can, and the reactor stores it on the
+                        # DocumentRelationship row exactly as the CLI's
+                        # `docs link --reason` does.
+                        gql.mutate_document(doc_id, [{
+                            "type": "ADD_RELATIONSHIP",
+                            "scope": "document",
+                            "input": {
+                                "sourceId": doc_id,
+                                "targetId": inp["targetId"],
+                                "relationshipType": rel_type,
+                                "metadata": inp["metadata"],
+                            },
+                        }])
+                    else:
+                        gql.add_relationship(doc_id, inp["targetId"], rel_type)
                     doc_applied += 1
                 except Exception as e:
                     doc_failed += 1
@@ -372,7 +407,11 @@ def main() -> int:
     args = parse_args()
     data_dir = Path(args.data)
     manifest = json.loads((data_dir / "manifest.json").read_text())
-    id_map = IdMap(data_dir / "id-map.json")
+    # See IdMap: a mapping only means anything against the target it was
+    # built for. Bind it here so a reused --data directory fails loudly
+    # instead of skipping documents it never created on this reactor.
+    target = f"{gql.SUPERGRAPH_ENDPOINT}#{getattr(args, 'existing_drive', None) or args.drive_name}"
+    id_map = IdMap(data_dir / "id-map.json", target=target)
 
     print(f"[upload] data:        {data_dir}")
     print(f"[upload] drive name:  {args.drive_name}")

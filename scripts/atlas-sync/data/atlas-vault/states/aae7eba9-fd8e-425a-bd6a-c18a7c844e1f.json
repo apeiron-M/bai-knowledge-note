@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chesterton's Fence binds every reviewer, not just the party proposing a change",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "18cf1c05-9878-41a9-a8e1-8caccac7c971",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f6f545d1-58b4-400c-be3f-c0917947b74a",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab23fabe-6e8f-43af-a75e-3bf51b2e0f96",
+      "name": "change-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.7.4.5 states the principle that \"changes must not be made to the current state of affairs unless the reasoning behind the current state of affairs is understood and can be explained,\" requiring that context \"such as the reasoning, actions, and history\" be \"known and can be explained by the party proposing the change.\"\n\nThe extension is what distinguishes this from the familiar aphorism: \"Changes must not be approved by team members or otherwise accepted **until all parties responsible for overseeing, checking, or reviewing the change are aware of the context** behind the current state of affairs as it exists before the change is enacted.\"\n\nUnderstanding is therefore a property the whole review set must have, not a hurdle the proposer clears. A reviewer who does not know why a parameter was set the way it was cannot meaningfully approve changing it \u2014 they can only confirm the change is implemented as described, which is a much weaker check that looks identical in the record.\n\nThis has a cost the provision accepts silently: it makes review non-delegable to whoever happens to be available, and it means institutional memory is a hard input to the process. Where the reasoning behind a current state has been lost, the principle blocks the change until it is reconstructed \u2014 which is exactly what makes the Atlas's own habit of recording reasoning, not just outcomes (A.1.10.2.4.3.1.3.1), a load-bearing dependency rather than good hygiene.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.7.4.5 blocks approval until all overseeing parties can explain why the current state exists, making shared historical context a precondition rather than the proposer's homework.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2ea14171-5b34-4e26-bd04-476750a8d97a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1221251c-42dc-4d6f-bc41-6e5b22a5c480",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

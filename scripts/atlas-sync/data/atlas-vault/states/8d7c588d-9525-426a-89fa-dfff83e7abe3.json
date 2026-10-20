@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd8448ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd8448ea-82e1-400d-b64a-e37d623abc9d",
+      "targetTitle": "doc-b71a3ab3"
+    },
+    {
+      "id": "lnk-c0ff2f5a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0ff2f5a-725e-426e-810b-4f34387afdd8",
+      "targetTitle": "Inflow limits are enforced by a per-Instance on-chain Integr"
+    },
+    {
+      "id": "lnk-e76fadcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e76fadcc-ed6e-41e8-8d25-9f3fcd7ddf93",
+      "targetTitle": "The Arkis instance is bounded by off-chain parameters that n"
+    },
+    {
+      "id": "lnk-f6b6ddb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f6b6ddb2-a191-4a90-bc43-80266197723c",
+      "targetTitle": "Grove states some exposure ceilings at asset level across In"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Tokenized Treasury Interim Deployment's combined $5m allocation cap is not enforced by its per-Instance rate limits, which sum to twice that",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "11399820-190a-4086-a5d0-b34be15eae2e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d07e8a7e-2015-42a0-8620-c9d2a60b1cd4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9a149fe0-02c5-43c8-885b-525f5e0f6ad6",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "805b58da-af2b-40ed-93e5-222cd56b8100",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.14.1.2.5.1.1 and A.6.1.1.2.2.6.1.3.1.14.2.2.5.1.1 state, identically, that \"the maximum allocation for the Tokenized Treasury Basin Interim Deployments is **$5 million, combined across the JTRSY and BUIDL Instances**.\"\n\nThe rate limits do not implement that. A.6.1.1.2.2.6.1.3.1.14.1.2.4.1 gives JTRSY an inflow `maxAmount` of 5,000,000 USDS with a 5,000,000 USDS per day slope, and .14.2.2.4.1 gives BUIDL exactly the same. Filling both to their on-chain limits produces $10 million of allocation while every enforced constraint is satisfied \u2014 the shared ceiling is breached without any limit being exceeded.\n\nThe Atlas elsewhere shows it knows how to close this gap. The Grove Diamond PAU Uniswap Instance registers an **Aggregate Deposit RateLimitID** with a \"normalized\" cap sitting above its per-asset limits, precisely so that spending across two legs cannot exceed one ceiling. No equivalent aggregate exists across JTRSY and BUIDL, even though the ceiling is explicitly written as a combined figure and both Instances point at the same Basin architecture.\n\nSo the $5 million cap is an operational constraint, honoured by whoever executes, not a coded one. Nothing on-chain prevents its breach, and the Instance documents do not name a monitoring process that would detect one \u2014 both Instances' *Instance-specific Operational Processes* sections (.14.1.3 and .14.2.3) are empty boilerplate.\n\nThis is the sharpest form of a general risk: where a mandate is expressed as an aggregate but enforcement is per-Instance, the number of Instances multiplies the real ceiling. The gap widens with every Instance added under the same combined cap.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "JTRSY and BUIDL each carry a 5,000,000 USDS inflow limit while sharing a single $5 million combined ceiling; unlike the Diamond PAU Instance, no aggregate rate limit spans them.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c1783b14-1567-40f9-9752-aa9f1f69e991",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:44.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "14141d1b-5ad8-4b4f-b44e-37250e12db60",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

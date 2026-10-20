@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-618502d9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "618502d9-e9a2-4944-9202-bf743a39b546",
+      "targetTitle": "Sky Governance pre-confirms that the 500M SKY funding transf"
+    },
+    {
+      "id": "lnk-956c8d5f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "956c8d5f-0701-4b3b-9555-8218360192da",
+      "targetTitle": "Skybase must obtain per-grant governance consent for post-Ge"
+    },
+    {
+      "id": "lnk-cdf9a25c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdf9a25c-c1b4-43ba-ada0-1cd9d7e08e93",
+      "targetTitle": "The Chronicle Point Reward Instance is identified by a Chain"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas records ecosystem grants for the record but defers to onchain data as authoritative",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "13665990-02b6-4cce-bb10-966793e0cf2e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b12ec52-cad9-45e8-9ca9-bd368fbb576e",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9470a2fb-00d1-4888-8808-4684f2583044",
+      "name": "onchain-references",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.13.1.1.1 and A.2.13.1.2.1 record the August 2025 grants to the Sky Frontier Foundation and the Fortification Foundation. Two details carry more weight than the amounts.\n\nFirst, the epistemic disclaimer: \"[t]he amounts above are rounded down; refer to onchain data for exact figures.\" The Atlas explicitly subordinates itself to chain state for a matter of fact it is reporting. This is the same stance as pinning the Chronicle reward base to a Chainlog key rather than an address \u2014 where a fact exists onchain, the Atlas points at it rather than claiming to be the record. It also means these sections are historical documentation, not authorization: the transfers are described as \"approved and disbursed.\"\n\nSecond, the composition. Alongside 50,000,000 USDS and 1,977,443,914 SKY, the Frontier grant carried a USDS/SKY UNI-V2 LP position and a scatter of unrelated holdings \u2014 ENS, stkAAVE, COMP, AAVE, WETH, and 35.41 DAI. These are the accumulated long-tail assets a protocol acquires over years of governance participation and integrations, moved out in the same operation as the headline allocation. The Fortification Foundation received 10,000,000 USDS and 200,000,000 SKY.\n\nBoth grants share one transaction hash, so a single Spell funded both foundations. Read together with the standing authorizations letting Executor Agents transfer Genesis Capital to the Sky Frontier Foundation without per-transfer governance decisions, the Foundations are becoming a significant asset-holding layer whose holdings are recorded in the Atlas only after the fact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The August 2025 Foundation grants list rounded-down amounts across USDS, SKY, an LP position and stray governance tokens, both executed in one transaction, with chain state named as authoritative.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bf64e1f2-594f-4e1f-8d6f-0de1e9e68e3f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d1f28eb0-ec4a-4a35-a400-3cb357fbd1ba",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

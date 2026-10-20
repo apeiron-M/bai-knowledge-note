@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Relayer operation is gated by the same three preconditions: role, active flag, and rate limit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2b54ac1c-0dff-4bab-9583-303f591b3d12",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ce34a78d-92c6-4178-80e2-250c9af92981",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "037ebdee-2488-4d8a-b7e2-852571dac11f",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4fbe9027-bdc9-4808-b476-cce65d101f13",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The function signatures quoted throughout A.6.1.1.1.2.6.1.2.2.1.2.1.2 share a shape. `mintUSDS`, `burnUSDS`, `swapUSDSToUSDC`, `swapUSDCToUSDS` and `transferUSDCToCCTP` are each declared `onlyRole(RELAYER)` and `isActive`, and each is followed by a `rateLimited(...)` clause naming the relevant limit. The generic ERC-4626 and Aave procedures repeat the same three preconditions in prose: \"Spark Liquidity Layer contract `isActive`, ALM Proxy has sufficient underlying asset, and the ... amount is within instance-specific `RateLimits`.\"\n\nThe uniformity is what makes the security model comprehensible. Three orthogonal questions \u2014 *who* is asking, *is the system running*, and *is there capacity* \u2014 are answered at every entry point, so no operation can accidentally omit one.\n\nThe `isActive` modifier is the mechanism behind the Freezer role. A freeze does not have to be applied venue by venue or limit by limit: flipping one flag causes every Relayer entry point to reject, atomically and completely. That is why a single Freezer Multisig can halt the whole Liquidity Layer across a chain, and why the emergency response is fast enough to be worth having.\n\nThe design lesson is that a uniform guard triple is a stronger property than any individual limit. Adding a new Controller function means satisfying the same three checks, so the safety envelope extends to new integrations by construction rather than by review.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Controller function carries onlyRole(RELAYER), isActive, and a rateLimited check \u2014 so authorization, the global freeze and capacity are enforced uniformly rather than per integration.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6ee24170-a9a9-4f68-81e4-df03fcc04556",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "36f88e31-28da-4b0f-8bc6-914a67a09dc7",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

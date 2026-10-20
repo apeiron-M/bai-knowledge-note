@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-e3da8d2c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e3da8d2c-e615-4e60-b838-601e5013a817",
+      "targetTitle": "Uniswap V3 price bounds are anchored to the pool's TWAP tick"
+    },
+    {
+      "id": "lnk-7d55ddf5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d55ddf5-2687-4d9d-b00d-407824b071b1",
+      "targetTitle": "New Uniswap V3 positions may only be minted inside governanc"
+    },
+    {
+      "id": "lnk-2a9f84c6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a9f84c6-61cb-498c-87b3-6a048d248016",
+      "targetTitle": "Grove guards stable-stable LP positions with a TWAP oracle c"
+    },
+    {
+      "id": "lnk-1dc0f024-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1dc0f024-610e-4f1e-a076-1040f3a38f47",
+      "targetTitle": "Uniswap v4 instances add a fourth control category: where on"
+    },
+    {
+      "id": "lnk-b6845b31-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b6845b31-65e3-4e75-8682-8f88fbea0f33",
+      "targetTitle": "Maximum tick deviation is the only governance-configured con"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's Uniswap V3 activity is fenced by governance-set tick bounds, price-impact caps and a TWAP window",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "523ae218-47cc-4f24-a4a6-abb495034d0f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d35bf59-1597-43cd-9dd3-6587a0abdf0c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc60d1cf-ce93-4657-a9f8-c6052e5df5cc",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d9aa90ac-2453-480d-aa34-013bbe319152",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Four `DEFAULT_ADMIN_ROLE`-only setters bound how the Liquidity Layer may touch a Uniswap V3 pool. `setUniswapV3PoolMaxTickDelta` (A.6.1.1.2.2.6.1.2.2.1.2.1.1.4) \"bounds the maximum tick movement permitted when swapping through the pool, constraining the acceptable price impact of a swap.\" `setUniswapV3AddLiquidityLowerTickBound` and `...UpperTickBound` (A...1.5, A...1.6) \"constrain[] the lower end\" and the upper end \"of the price range within which the Grove Liquidity Layer may add liquidity.\" `setUniswapV3TwapSecondsAgo` (A...1.7) \"defines the length of the time-weighted average price window used when the contract consults the pool for pricing.\"\n\nTogether these encode a specific threat model. The **tick delta cap** is anti-sandwich and anti-fat-finger: a swap that would move the pool beyond the permitted range reverts rather than executing at a manipulated price. The **tick bounds** stop a relayer from concentrating liquidity at an absurd price range, which is how an LP position gets drained by a range chosen badly or maliciously. The **TWAP window** ensures pricing decisions read an average rather than the instantaneous spot price, which is what a flash-loan manipulation moves.\n\nThe division of labour is the notable part. These are all set by the **admin \u2014 Sky Governance via the Grove Proxy** (A.6.1.1.2.2.6.1.2.2.1.1.1.1) \u2014 while the actual swapping and liquidity provision is done by relayers Grove controls. Grove chooses when and how much; Sky Governance defines the envelope within which those choices must fall.\n\nThe bounds validation is mutually referential \u2014 the lower bound must be strictly less than the current upper, and the upper strictly greater than the current lower \u2014 so the pair can never be set into an empty or inverted range, and each change is checked against live state rather than in isolation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Admin-only parameters constrain the price range where liquidity may be added, the maximum tick movement a swap may cause, and the length of the averaging window used to price the pool.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

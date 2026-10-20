@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-f14aa461-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f14aa461-6831-48d4-9a06-126811771f85",
+      "targetTitle": "doc-6b9d9473"
+    },
+    {
+      "id": "lnk-d9f3d709-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d9f3d709-763f-416d-b3b4-89830a6be9d8",
+      "targetTitle": "doc-912e9a16"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Legacy account consolidation is booked as a one-time expense to reproduce the accounting the canonical path would have produced",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e1b85834-a062-4e7e-8bfc-80d7688a64c6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2640af7a-b90a-4c9a-8d92-7f9da5748cd0",
+      "name": "accounting",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e0a8ea72-ca85-4014-abe6-3741e2af8cec",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2.2.2.1.6.4 makes consolidation \"recognized as a one-time expense for purposes of A.2.3.1.2.1 - Step 0: Net Revenue,\" and states the reasoning explicitly: \"This achieves the same result as if the funds in Legacy Accounts had been returned to the Sky Surplus Buffer and subsequently transferred to the relevant downstream account.\"\n\nThe move is worth noticing because it is the sole exception to the rule that only Surplus Buffer outflows count as Expenses. Consolidation moves money between two non-Surplus accounts, so under the plain rule it would be invisible \u2014 funds would appear in the Core Council Buffer having never passed through Net Revenue, permanently understating cumulative Expenses.\n\nRather than carve out an exemption, the Atlas books the economically equivalent entry. The stated justification is a counterfactual: describe the path the funds *should* have taken, then record whatever that path would have recorded. This keeps the aggregate books reconcilable without physically routing legacy funds through the Surplus Buffer, which would be operationally wasteful and might not even be possible for some accounts.\n\nThe generalisable principle is that when a one-off operation bypasses your accounting boundary, the honest fix is to recognise the entry the canonical route would have generated \u2014 not to widen the boundary or ignore the event. Labelling it \"one-time\" also matters: it signals that the charge is not an operating expense and should be excluded when reading Net Revenue as a run-rate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rather than exempting the transfers, the Atlas recognises them in Step 0 so the result matches funds having returned to the Sky Surplus Buffer and then flowed out to the downstream account.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

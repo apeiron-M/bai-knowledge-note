@@ -9,7 +9,7 @@ export const documentModel: DocumentModelGlobalState = {
   },
   extension: "",
   description:
-    "Derivation record \u2014 audit trail of vault configuration decisions backed by research claims, dimension rationale, and coherence checks",
+    "Derivation record \u2014 audit trail of vault configuration decisions backed by research claims, dimension rationale, and coherence checks.",
   specifications: [
     {
       state: {

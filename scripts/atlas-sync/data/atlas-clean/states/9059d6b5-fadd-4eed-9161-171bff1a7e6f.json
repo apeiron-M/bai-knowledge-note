@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-dc0ffce7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc0ffce7-8c92-4589-9087-72c34106efd5",
+      "targetTitle": "doc-fcd495e3"
+    },
+    {
+      "id": "lnk-cea44b10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cea44b10-bba8-475b-9ec0-a8847579f9ad",
+      "targetTitle": "Execution-quality bounds are supplied by the caller per call"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Allocation decisions are made by an off-chain planner; the on-chain contracts only bound what it may do",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "00f83259-f043-4a92-b732-8c484f9bf84a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f123a084-66d2-4dfd-8019-0b03f4b62627",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6bc2a32a-e95e-4ccc-9c0e-2221831e0f2c",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d16af811-0b02-4e53-bc73-3c2f2c542045",
+      "name": "onchain-enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.5.2.6.1.2.2.1.1.2 defines the Relayer as \"the address for the Obex Liquidity Layer **ALM Planner off-chain system** that calls functions on `Controller` contracts to perform actions on behalf of the `ALMProxy` contract.\" The `ALM_CONTROLLER_ROLE` in turn \"can call the `call` functions on the `ALMProxy` contract and update `RateLimits`,\" and controller contracts \"are accessed and modified via the Relayer Role\" (A.6.1.1.5.2.6.1.2.2.1.1.3).\n\nThe division of labour is clean. Strategy \u2014 how much USDS to mint, which vault to enter, when to rotate \u2014 lives off-chain in a planner that can hold market data, models and human judgement. The contracts hold none of that; every function description in this chunk follows the same shape: verify the caller's role, check the rate limit, execute, emit.\n\nThis is what makes the guardrails credible without making the system rigid. Encoding allocation strategy on-chain would freeze it; encoding only constraints leaves strategy free to evolve while keeping the worst case bounded regardless of what the planner decides \u2014 including if the planner is wrong, buggy, or compromised.\n\nIt also locates the real trust boundary. The Atlas documents the contracts exhaustively \u2014 every function signature, every revert condition \u2014 while the planner that actually decides is described in a single clause. A reader auditing this system can verify the *bounds* completely from the Artifact and the chain, and can verify the *decisions* not at all. That is a deliberate allocation of verifiability, and A.6.1.1.5.2.6.1.2.3 confirms the gap is known: \"In the future, additional logic will be added herein regarding the strategy by which capital is allocated between different Instances.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The RELAYER_ROLE is held by the ALM Planner off-chain system, so the chain never chooses where capital goes \u2014 it enforces rate limits and venue permissions on choices made elsewhere.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

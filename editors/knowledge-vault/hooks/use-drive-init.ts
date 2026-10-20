@@ -1,12 +1,16 @@
+import { authHeaders } from "../../shared/authed-fetch.js";
 import { useEffect } from "react";
 import {
   useSelectedDrive,
   useNodesInSelectedDrive,
-  addDocument,
-  addFolder,
 } from "@powerhousedao/reactor-browser";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
+import {
+  createDocumentRemote,
+  createFolderRemote,
+} from "../../shared/remote-reactor.js";
+import { triggerVaultPull } from "../../shared/vault-pull.js";
 
 /**
  * Authoritatively fetch the drive's tree from the reactor (NOT from
@@ -21,10 +25,10 @@ async function fetchDriveNodes(driveId: string): Promise<Node[] | null> {
   try {
     const res = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({
         query:
-          "query DriveNodes($id: String!){document(identifier:$id){document{state}}}",
+          "query DriveNodes($id: String!){document(idOrSlug:$id){document{state}}}",
         variables: { id: driveId },
       }),
     });
@@ -51,7 +55,7 @@ async function fetchDriveNodes(driveId: string): Promise<Node[] | null> {
  *   /knowledge/inbox/      <- unprocessed captures
  *   /knowledge/insights/   <- synthesized insights
  * /sources/                <- archived source material
- * /projects/               <- bai/project + bai/wbs documents
+ * /projects/               <- powerhouse/scopeofwork + bai/wbs documents
  * /ops/                    <- operational coordination
  *   /ops/sessions/         <- session transcripts
  *   /ops/health/           <- health reports
@@ -133,19 +137,39 @@ export function useDriveInit() {
     driveSyncSeen.add(driveId);
     void (async () => {
       const serverNodes = await fetchDriveNodes(driveId);
+      // An UNREADABLE tree is not an EMPTY tree. `fetchDriveNodes` answers
+      // null when the Switchboard refused (no session, no grant) or could not
+      // be reached, and falling through to the local cache — always empty for
+      // a remote-first drive — read that as "fresh drive, scaffold it": twelve
+      // folder creates and three singleton creates, every one refused, with a
+      // toast each. Nothing is lost by waiting: the check runs again on the
+      // next open, and a drive that IS empty answers `[]`, not null.
+      if (serverNodes === null) {
+        console.info(
+          `[VaultInit] Drive ${driveId.slice(0, 8)} tree is not readable in this session; skipping the initialisation check.`,
+        );
+        return;
+      }
       // Use whichever source has more entries — the reactor query is
       // authoritative, but if the local cache happens to have more
       // (race during the fetch), take the union via cache.
       const truth =
-        serverNodes && serverNodes.length >= (nodes ?? []).length
-          ? serverNodes
-          : (nodes ?? []);
+        serverNodes.length >= (nodes ?? []).length ? serverNodes : (nodes ?? []);
       void initDrive(driveId, truth);
     })();
   }, [driveId]);
 }
 
-// ─── Single sequential init: folders then singletons ───
+/**
+ * ─── Single sequential init: folders then singletons ───
+ *
+ * Every write here goes to the Switchboard, not to reactor-browser's
+ * local `addFolder`/`addDocument`. This drive runs in remote-first mode
+ * (`hooks/use-remote-first.ts`): its sync channel is neutralised, so a
+ * local create materialises a node in this browser tab's replica and
+ * nowhere else — the vault would look initialised until the next reload
+ * and be empty for every other client.
+ */
 async function initDrive(driveId: string, existingNodes: Node[]) {
   try {
     // Phase 1: Create folders
@@ -166,16 +190,16 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
         : undefined;
 
       try {
-        const result = await addFolder(driveId, folder.name, parentId);
-        folderIds.set(path, result.id);
-        await new Promise((r) => setTimeout(r, 500));
+        const newId = await createFolderRemote({
+          driveId,
+          name: folder.name,
+          parentFolderId: parentId,
+        });
+        folderIds.set(path, newId);
       } catch (err) {
         console.error(`[VaultInit] Failed to create folder /${path}/:`, err);
       }
     }
-
-    // Wait for reactor to process all folder operations
-    await new Promise((r) => setTimeout(r, 1500));
 
     // Phase 2: Create singletons
     const existingTypes = new Set(
@@ -195,17 +219,20 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
       const parentFolderId = folderIds.get(singleton.folderPath);
 
       try {
-        await addDocument(
+        await createDocumentRemote({
+          documentType: singleton.type,
+          name: singleton.name,
           driveId,
-          singleton.name,
-          singleton.type,
           parentFolderId,
-        );
-        await new Promise((r) => setTimeout(r, 1000));
+          targetFolderPath: singleton.folderPath,
+        });
       } catch (err) {
         console.error(`[VaultInit] Failed to create ${singleton.name}:`, err);
       }
     }
+
+    // Nothing synced these nodes into the browser — pull the tree.
+    triggerVaultPull();
   } catch (err) {
     console.error("[VaultInit] Drive initialization failed:", err);
   }

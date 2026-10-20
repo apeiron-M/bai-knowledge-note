@@ -1,0 +1,97 @@
+{
+  "mode": "full",
+  "checks": [
+    {
+      "id": "d17fa0da-e09b-49d3-93df-580cd4dd7b88",
+      "status": "PASS",
+      "message": "All 1479 knowledge notes carry title, noteType and provenance (author=atlas-extract, sourceOrigin=DERIVED); 0 missing any of the three. Scoped to knowledge notes: the 23 MoC nodes report null author/sourceOrigin because the bai/moc model has no provenance field, which is a model difference and not a violation.",
+      "category": "SCHEMA_COMPLIANCE",
+      "affectedItems": []
+    },
+    {
+      "id": "420775e4-324d-4ba8-8476-d3667e68a015",
+      "status": "WARN",
+      "message": "1 orphan: 'The Sky Ecosystem Atlas' (ba363e33-7542-4ce3-9fdf-f69644dece8d), a HUB-tier MoC that is the root of the MoC hierarchy. It has 15 outgoing CHILD_MOC and 22 outgoing CORE_IDEA edges and zero incoming edges, which is correct by design for a root. Reported as WARN rather than PASS because the check as defined counts it; no incoming edge was fabricated to clear it.",
+      "category": "ORPHAN_DETECTION",
+      "affectedItems": [
+        "ba363e33-7542-4ce3-9fdf-f69644dece8d"
+      ]
+    },
+    {
+      "id": "fd00ac5c-2a84-4b54-b71a-72b8c03fa58a",
+      "status": "PASS",
+      "message": "Average 7.25 knowledge links per note counting both incoming and outgoing (10717 note-incident edge ends over 1479 notes). Minimum degree is 4 and every note has >=2, so the connectivity floor holds everywhere. Caveat carried to recommendations: 1479 DERIVED_FROM edges resolve to 16 targets with no graph_nodes row, so note-to-source links exist but are invisible to graph analysis.",
+      "category": "LINK_HEALTH",
+      "affectedItems": []
+    },
+    {
+      "id": "cb31d8f5-3b0e-44d6-ada4-02152d1df565",
+      "status": "PASS",
+      "message": "1479 of 1479 notes have a description and all fall in the 50-200 char ideal band (min 83, median 181, mean 178, p95 198, max 200). 0 are under 30 chars, 0 exceed 200, and 0 reuse more than 70% of their title's words. Note the margin: p95 is 198 and max is exactly 200, so descriptions sit at the cliff where SET_DESCRIPTION fails silently and any future edit risks rejection.",
+      "category": "DESCRIPTION_QUALITY",
+      "affectedItems": []
+    },
+    {
+      "id": "9e37e8ae-5781-4c4c-99e6-2bffe8aeb454",
+      "status": "WARN",
+      "message": "5 tensions exist and all 5 are OPEN; none resolved or dissolved. They involve 24 note references in total and record genuine specification defects rather than vault errors. Open tensions are expected in this methodology, but 5 unadjudicated ones with no resolution activity is a standing debt, so this is WARN.",
+      "category": "THREE_SPACE_BOUNDARIES",
+      "affectedItems": [
+        "4a76b9e2-1059-4b69-bd74-df6ed3f7e57b",
+        "81050e66-8bbc-4ff0-9261-efaf93ebd6a8",
+        "b5f08318-e758-4c48-af12-7f1c71649054",
+        "ca86f48c-51b6-4039-b8ec-0fa3bc35129d",
+        "f61b85ec-c232-4147-9e4b-1c813cc8a231"
+      ]
+    },
+    {
+      "id": "3c31ae27-9cc1-462e-949c-b790bc9b4321",
+      "status": "WARN",
+      "message": "No source is stuck: all 18 are EXTRACTED, none in INBOX or EXTRACTING, and recorded claims total 1479, matching the note count exactly. The queue holds 0 tasks with 0 PENDING and 0 FAILED. WARN for three reasons: completedCount is 0 and lastProcessedAt is null so the corpus bypassed queue tracking entirely; 2 sources are EXTRACTED with 0 claims and 0 skips; and the aggregate skip rate is 86.2%, far above the <10% target.",
+      "category": "PROCESSING_THROUGHPUT",
+      "affectedItems": [
+        "074e91d4-abe5-41d0-bf2c-04d17db38d9a",
+        "1751e4a7-46c6-4bbf-bfa0-4690e65bc424"
+      ]
+    },
+    {
+      "id": "078cbc6c-65ef-4b8d-9afc-7ff39a4f8e1b",
+      "status": "PASS",
+      "message": "0 DRAFT notes older than 30 days: there are no DRAFT, IN_REVIEW or ARCHIVED notes at all, as all 1479 are CANONICAL. The corpus was created 2026-08-17, one day before this run, so nothing could yet be 30 days stale. This check is weakly informative here and will stay weak while every node shares the reindex updatedAt stamp.",
+      "category": "STALE_NOTES",
+      "affectedItems": []
+    },
+    {
+      "id": "5a6bf126-da7d-41ab-bbbf-d46bdd3003a9",
+      "status": "WARN",
+      "message": "Note-level coverage is complete: all 1479 notes have at least one incoming CORE_IDEA edge, and the hierarchy is intact across 23 MoCs (1 HUB, 6 DOMAIN, 16 TOPIC) with 22 CHILD_MOC edges and no disconnected MoC (minimum MoC degree 12). The gap is topic-level: 168 of 197 topics with 3+ notes have no corresponding MoC, 26 of them with 20+ notes, the largest being liquidity-layer (80), access-control (74), security (71) and sky-primitives (69). Matching used title words because MoCs carry no topic tags, so the 168 is a proxy count.",
+      "category": "MOC_COHERENCE",
+      "affectedItems": []
+    }
+  ],
+  "generatedAt": "2026-08-18T20:30:00.000Z",
+  "generatedBy": "knowledge-agent",
+  "graphMetrics": {
+    "density": 0.003354177552293145,
+    "mocCount": 23,
+    "noteCount": 1479,
+    "mocCoverage": 1,
+    "orphanCount": 1,
+    "connectionCount": 7562,
+    "danglingLinkCount": 16,
+    "averageLinksPerNote": 7.2461
+  },
+  "overallStatus": "WARN",
+  "recommendations": [
+    "Graph blind spot: 1479 DERIVED_FROM edges point at 16 distinct targets that have no graph_nodes row. Those targets are bai/source documents, which the indexer does not project, so every note-to-source provenance link is invisible to orphan detection, traversal and semantic search.",
+    "Decide whether HUB-tier roots should be exempt from orphan detection. The single orphan is the root MoC 'The Sky Ecosystem Atlas' (15 outgoing CHILD_MOC, 22 outgoing CORE_IDEA, 0 incoming), which is correct by design for a hierarchy root.",
+    "Methodology grounding: 0 of 1479 notes carry a methodology-grounding section. Measured via knowledgeGraphFullSearch at limit 2000 (no truncation): 'Methodology grounding' 0 hits, 'grounding' 0 hits, 'Ars Contexta' 0 hits, while controls returned 'multisig' 114 and 'Spark' 225, so the search works and the zero is real. This corpus is Atlas governance material extracted by atlas-extract and the connect-phase grounding step was never run on it; whether Ars Contexta grounding is in scope for Atlas content is a judgment call, not a defect this report can settle.",
+    "Aggregate extraction skip rate is 86.2% (9264 skipped vs 1479 claims kept across 18 sources), far above the <10% target for domain-relevant sources. Per-source rates run from 33% to 92%. Either the Atlas sources are mostly non-claim boilerplate, in which case the target is wrong for this corpus, or extraction was too conservative and material was lost. Re-review one high-skip source (Spark: 233 kept, 2173 skipped) to decide which.",
+    "2 of 18 sources are marked EXTRACTED with claimCount 0 AND skippedCount 0, meaning nothing was ever assessed: 'A.6.1.2.2 - Operational-Executor-Agent-Ozone' and 'A.6.1.2.3 - Core-Council-Executor-Agent-1'. Their EXTRACTED status is misleading; re-run extraction or archive them.",
+    "The pipeline queue holds 0 tasks with completedCount 0 and lastProcessedAt null, so all 1479 notes entered the vault without queue tracking. Nothing is stuck, but there is no per-phase handoff record for this corpus and throughput cannot be audited from the queue.",
+    "All 23 MoC documents carry zero topic tags, so there is no machine-checkable topic-to-MoC mapping. MOC_COHERENCE had to fall back to title-word matching, which is a proxy. Tag each MoC with the topics it organizes to make coverage measurable.",
+    "168 of 197 topics with 3+ notes have no corresponding MoC; 26 of those have 20+ notes. Largest gaps: liquidity-layer (80), access-control (74), security (71), sky-primitives (69), allocation-system (52), risk-controls (50), emergency-response (44), executive-process (41). Run /synthesize on the 20+ clusters.",
+    "All 1502 graph nodes share one updatedAt value (2026-08-18T19:14:00.538Z, the reindex stamp), so updatedAt reflects indexing rather than content edits and cannot support staleness detection. The 23 MoC nodes additionally have a null createdAt.",
+    "5 tensions are OPEN and none has been resolved or dissolved. They encode real specification defects found in the Atlas (a zero-valued LGD formula, a 1-of-2 multisig that fails its own majority rule, an unenforced aggregate cap, a rating cap that makes two risk bands unreachable, and a weak independence guarantee). Each needs adjudication by someone with authority over the source spec."
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Two Uniswap v4 instances list Token Addresses that belong to the corresponding Curve pools",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5aabfb69-df3a-4ed5-a260-8b95025fb069",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49c88d0b-0bf3-4672-a189-3fec5c57e5ea",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be53267b-9b5c-4de6-96fd-91b9d638f0fb",
+      "name": "documentation-quality",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Uniswap v4 PYUSD/USDS instance records Token Address `0xa632d59b9b804a956bfaa9b48af3a1b74808fc1f` (A.6.1.1.1.2.6.1.3.1.11.1.2.2.1). The Curve pyUSD/USDS Pool instance records Token Address `0xA632D59b9B804a956BfaA9b48Af3A1b74808FC1f` (.7.4.2.2.1) \u2014 the same address, differing only in checksum casing. The Uniswap v4 USDT/USDS instance records `0x00836Fe54625BE242BcFA286207795405ca4fD10` (.11.2.2.2.1), which the Curve sUSDS/USDT instance also records as its Token Address (.7.1.2.2.1).\n\nBoth cannot be right. A Curve pool's LP token is a deployed ERC-20 belonging to that pool; a Uniswap v4 pool has no LP token at all, which is precisely why the other two v4 instances list only a Pool ID. The v4 entries also reuse the pair labels `PYUSDUSDS` and `USDTUSDS`, and the Curve instances use `PYUSDUSDS` and `sUSDSUSDT`.\n\nThe most economical explanation is that the v4 documents were created by copying the nearest equivalent Curve instance and updating the parameters that obviously differ \u2014 target protocol, ticks, fee \u2014 while carrying the address and token label across.\n\nThis matters beyond tidiness because addresses are the part of the Artifact that is mechanically checkable, and these are the entries a verifier would use to confirm which contract Spark is authorised to touch. It is also the second copy-paste fossil in this Artifact, after the Morpho placeholder names embedded in the Fluid ERC-4626 runbook: the template-cloning workflow that keeps the schema uniform is itself the source of these defects.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The v4 PYUSD/USDS and USDT/USDS instances repeat 0xa632d59b\u2026 and 0x00836Fe5\u2026 \u2014 the exact addresses recorded as Curve pool tokens elsewhere in the same Artifact, which cannot both be correct.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7387542f-62f1-49fe-aacd-6c9f91ec1711",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "76aed288-8811-4272-95b5-77f8b39e4179",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:23.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

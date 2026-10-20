@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b43161dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b43161dc-72e7-4256-9a32-5057dba7099f",
+      "targetTitle": "Distribution attribution rests on a per-Instance Reward Code"
+    },
+    {
+      "id": "lnk-b494a110-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b494a110-214d-4d86-8ff0-e2f1eea43fa6",
+      "targetTitle": "New Tracking Methodologies are permitted only if double coun"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Tracking Methodology is pluggable per Instance because some venues cannot be measured by the general method",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "11da1ad8-9351-42d8-ba96-2671511f8694",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0db70895-b8de-4511-965d-438bbe402af9",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "59498643-b88c-486b-b7fd-a98ea8ec41a7",
+      "name": "distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1aec982-f31f-48ec-9240-943cd6f25b82",
+      "name": "attribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Six of the eight Instances point at the same generic rule, \"A.2.2.9.1.2.1.1.2.1 - Ethereum Mainnet General Tracking Methodology.\" Two do not, and the exceptions reveal why the slot is pluggable.\n\nCoW Swap (A.6.1.1.4.2.5.1.2.4.1.2) uses a bespoke methodology: \"on-chain Settlement Events on the CoW Swap settlement contract ... are checked for where they coincide perfectly with USDS deposit transactions into sUSDS.\" A batch-settlement venue does not produce the per-user transaction pattern the general method reads, so attribution has to be reconstructed by correlating settlement events with deposits \u2014 hence the demanding \"coincide perfectly\" test.\n\nMOM (A.6.1.1.4.2.5.1.2.7.1.2) stacks two methodologies, Ethereum Mainnet General *and* Base Tracking, because the partner's users span chains. Attribution is therefore additive across networks rather than being a single-chain measurement.\n\nThe general lesson is that a distribution reward program cannot use one measurement rule: how demand becomes observable depends on the counterparty's architecture. Making the methodology a named, per-Instance parameter that references shared, separately-maintained rule documents keeps venue-specific measurement from being reinvented per deal while still allowing exceptions.\n\nIt also localizes a real integrity risk. Correlation-based attribution \u2014 matching settlements to deposits \u2014 is inherently more contestable than direct code tagging, so the CoW Swap Instance is the one where measurement disputes are most likely, and the Atlas at least makes that visible by naming the method rather than hiding it in an integration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Most Instances use the Ethereum Mainnet General Tracking Methodology; CoW Swap needs settlement events that coincide perfectly with sUSDS deposits, and MOM stacks Mainnet plus Base.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c378b13b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c378b13b-b805-4451-a32b-a3306f27cd0b",
+      "targetTitle": "Only borrow interest above the SKY Borrow Minimum Rate is pa"
+    },
+    {
+      "id": "lnk-882f073a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "882f073a-5766-4894-9afb-c877c3f7c254",
+      "targetTitle": "The SKY Borrow Minimum Rate is a no-arbitrage floor equal to"
+    },
+    {
+      "id": "lnk-900d8207-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "900d8207-753e-4da9-a4a2-638ab4361e26",
+      "targetTitle": "Final settlement of unabsorbable losses cuts the USDS target"
+    },
+    {
+      "id": "lnk-b5f534f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5f534f9-b518-4dee-83af-6f6a81a48b2f",
+      "targetTitle": "Sky's financial risk framework is an explicit adaptation of "
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Liquidation shortfalls on SKY-backed loans are absorbed by a proportional haircut to stUSDS balances",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "baea796e-0059-419c-a53d-95173d92cf05",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e0055542-6863-4d1b-94a7-ed9062ec8626",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1182023-7495-4f25-858c-6d61263f69e3",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bcb23dc2-9ce1-4675-913a-5bcd15bf4446",
+      "name": "liquidation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.3 states the consequence of segregated risk capital in concrete terms: \"In the event that the liquidation of a borrower's staked SKY collateral does not cover the outstanding debt, stUSDS balances will be subject to a haircut proportional to the shortfall. This mechanism ensures that the Sky Protocol is isolated from losses originating from the SKY-backed borrowing facility.\"\n\nMost lending designs bury bad debt in a protocol-level deficit and leave its resolution to future governance \u2014 a recapitalization, a reserve drawdown, or an implicit socialization across unrelated users. Sky instead specifies the write-down in advance, names who bears it, and makes it automatic and proportional.\nThree properties follow. The loss is **bounded** to the stUSDS pool, so no other Sky product can be impaired by it. It is **immediate**, so there is no window in which stUSDS trades at a fictitious par while insolvency accumulates. And it is **pre-agreed** \u2014 holders \"accept the risk associated with providing capital for SKY-backed borrowing\" by depositing, which removes the political question of who should pay when a loss lands.\n\nThe cost is that stUSDS is not principal-protected and its unit value can fall. It behaves like a tranche of a credit fund rather than a deposit, and the yield in the stUSDS Rate is the compensation for exactly this. Anyone modelling stUSDS should treat the haircut as the defining feature, not a remote tail scenario: it is the mechanism by which the protocol's isolation is purchased.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The loss-absorption mechanism is explicit: if liquidating a borrower's staked SKY does not cover the debt, every stUSDS holder is written down pro-rata, isolating the Sky Protocol.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

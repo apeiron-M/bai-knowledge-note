@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-8f5cc32e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8f5cc32e-9b3d-45ba-80ab-8f4eae71a9ff",
+      "targetTitle": "Interim Deployments let a Prime allocate real capital before"
+    },
+    {
+      "id": "lnk-b5e85c87-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5e85c87-1546-40f6-afbd-d171fb56bc9d",
+      "targetTitle": "Every Active Instance publishes whether its risk capital fig"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Prime's pro-forma RRC estimate is explicitly provisional and is superseded by Sky Core's official figure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "bd98c9fc-700b-4dfb-8c68-f56cb544c22d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2e95105-eac7-4e37-9f23-b51d757cd126",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a85636f-afb9-4229-8c66-b4532e8c77ec",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.2.1.3.1 has the Prime Agent prepare \"an initial pro-forma Instance Required Risk Capital (RRC) estimate,\" serving \"as the basis for the Prime's capital planning prior to the availability of official RRC figures from Sky Core,\" and requires it to \"strictly adhere to the implementation of RRC-models defined in A.3.2 - Risk Capital.\"\n\nA.2.2.10.1.1.2.2.3 then closes the loop: once deployed, an Instance's RRC \"will be officially determined and tracked via the Sky Core RRC Dashboard... This official RRC figure supersedes the Prime-prepared pro-forma RRC.\"\n\nThe design resolves a genuine sequencing problem. Capital planning must happen before an Instance exists, but the party with the strongest incentive to understate required capital is the one proposing the Instance. Rather than pick between blocking planning and trusting the proposer, the Atlas allows a self-prepared number, constrains it to prescribed models, and gives it a definite expiry.\n\nTwo checks bound the interim. The estimate is not self-certifying \u2014 A.2.2.10.1.1.2.3 requires the pro-forma RRC to \"be approved by the Core Council Risk Advisor, before the parameters of the Instance can be updated for normal operation.\" And prescribing the model means disagreement is about inputs rather than methodology, which is far easier to review.\n\nThe useful generalisation: where a number must exist before the authority that owns it can produce one, make the provisional version method-bound, externally approved, and explicitly overridden later.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The self-prepared number must follow the Atlas RRC models and be approved by the Core Council Risk Advisor; once deployed, the Sky Core RRC Dashboard figure takes over as authoritative.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

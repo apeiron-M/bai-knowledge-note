@@ -72,7 +72,7 @@ export const vaultConfigConfigManagementOperations: VaultConfigConfigManagementO
     updatePipelineConfigOperation(state, action) {
       if (!state.pipeline)
         state.pipeline = {
-          depth: "standard",
+          depth: "STANDARD",
           autoChain: false,
           extractionSelectivity: 0.1,
         };

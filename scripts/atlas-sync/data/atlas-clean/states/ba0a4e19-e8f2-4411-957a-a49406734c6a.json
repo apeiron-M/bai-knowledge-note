@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-f910e738-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f910e738-5f90-44aa-96d7-67d489e989e8",
+      "targetTitle": "Coverage is claims-made with a 24-month retroactivity window"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Legal recourse converts a smart-contract exploit from a total loss into a financing cost, cutting measured exposure to a tenth",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b43b9c32-1c85-4ac9-9679-671f0221222b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c549d5f2-c424-48a5-8134-3326c13f1259",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50556d4d-9991-4040-98f9-f80f855de026",
+      "name": "legal-recourse",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.2.4.2.1 defines Legal Recourse Assets as \"Real World Assets where legal recourse can be used to recover the assets even if the smart contract is technically hacked or exploited.\" The exposure used for smart-contract and administrative capital is then (A.3.2.2.1.2.4.2.2):\n\n`Exposure = Equivalent Loss \u00d7 Effective Age + Raw Exposure \u00d7 (1 \u2212 Effective Age)`\n\nwith `Equivalent Loss = Raw Exposure \u00d7 Expected Frozen Duration \u00d7 Litigation Financing Costs`, an Expected Frozen Duration of 0.5 years and Litigation Financing Costs of 20% per year \u2014 so Equivalent Loss is 10% of raw exposure.\n\nThe modelling claim is precise and worth stating: for an asset with enforceable offchain claims, a hack does not destroy value, it *freezes* value. The economic loss is the cost of financing the gap until recovery \u2014 six months at a 20% annual cost of borrowing against the recovery right \u2014 not the principal. A 1bn USDS position becomes a 100m USDS exposure for capital purposes.\n\nThe blend weight is the trust dial. Effective Age is the same TVL-scaled seasoning measure used by the Lindy Adjustment Factor (A.3.2.2.1.2.2.4.3) but \"cannot exceed one (1) year\" here. A newly deployed wrapper is treated at full raw exposure regardless of its legal wrapper; a seasoned one converges to the 10% figure. Recourse is therefore credited only once the contracts have also demonstrated they work \u2014 the legal claim is not allowed to substitute for operational evidence early on.\n\nThe assumption doing the heaviest lifting is the 0.5-year frozen duration. It presumes that recourse is not merely available but *fast* \u2014 a contested cross-border recovery against an anonymous exploiter is not a six-month process, and if the true duration were three years the Equivalent Loss would be 60% rather than 10%. The framework's treatment of tokenized RWAs rests substantially on that one parameter.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "For Legal Recourse Assets, Equivalent Loss = raw exposure \u00d7 0.5 years frozen \u00d7 20% litigation financing = 10%; exposure blends toward that figure as the contracts season, capped at one year.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-b7e73739-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7e73739-0c02-4734-9402-f343b81e2e74",
+      "targetTitle": "Operational GovOps can refuse to execute a rebate distributi"
+    },
+    {
+      "id": "lnk-bac3aa10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bac3aa10-15a5-4a04-a5b9-45ccbccb0c52",
+      "targetTitle": "Operational GovOps can halt the surplus distribution if it d"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operational GovOps must verify Osero's rebate arithmetic and cannot execute the distribution if it finds a problem",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fdc25afd-0716-47b1-80d1-d5604d766012",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e9b04bc-8716-4398-a431-d89a2fc04c99",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e062774-8f33-40b0-a0d8-c7b9d797d23e",
+      "name": "govops",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.3.2.2.1.2.1.3 assigns the check: \"Operational GovOps reviews Osero's calculation of the rebate before executing a return of surplus to token holders. In the event of any issues, Operational GovOps cannot execute the distribution.\"\n\nThe separation is between the party with the information and the party with the hands. Osero computes the rebate \u2014 it knows its own holdings \u2014 but cannot move the surplus. Operational GovOps executes but does not compute. Neither side can complete a distribution alone, which is what makes a self-favouring calculation ineffective.\n\nThe prohibition is phrased as an incapacity, not a discretion: GovOps \"cannot execute\" where issues exist. That removes the option of executing under protest, and it removes any argument that a disputed distribution should proceed while the disagreement is worked out. The default on doubt is stop.\n\nNotably, GovOps is not empowered to substitute its own figure. It can block but not correct, which keeps responsibility for the number with Osero and prevents the reviewer from quietly becoming the calculator.\n\nThis review sits inside the same Ozone Executor Accord relationship that supplies Osero's Operational Facilitator, so the verifier of Osero's payouts is again an actor specified outside Osero's own Artifact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Osero calculates, an external party validates, and a defective calculation halts the payout rather than being corrected unilaterally by either side.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1765dd1d-97f7-4316-8493-d4f21e721084",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3f386887-8620-4fb9-a042-9edee0d34d28",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:54.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

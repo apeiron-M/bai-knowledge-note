@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-9211d280-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9211d280-e6b0-4121-89f5-82e407cc050f",
+      "targetTitle": "Asynchronous ERC-7540 vaults break the immediacy of an emerg"
+    },
+    {
+      "id": "lnk-40c011d6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "40c011d6-acb4-4f6a-8cb8-b4459bede3ef",
+      "targetTitle": "Keel's async-vault support splits deposits and redemptions i"
+    },
+    {
+      "id": "lnk-5a264486-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5a264486-ad75-4d21-b70a-5f790ade8ecd",
+      "targetTitle": "Grove separates execution authority from asset custody by ro"
+    },
+    {
+      "id": "lnk-44e8047c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44e8047c-5d76-46f8-8a58-a3666664937a",
+      "targetTitle": "Grove never claims Merkl rewards itself; it authorises an ex"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's asynchronous vault positions pass through a pending state that is neither asset nor share",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "59c13890-c158-4d9f-916a-2045c4f0587f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "458cae2b-65bc-4537-b171-8eeabeb5d531",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b28537b0-92f0-4b63-b05a-8283841447cc",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8181bc1f-782f-47be-9789-1afedf443c60",
+      "name": "counterparties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.5 explains the standard Grove's RWA positions actually use: \"ERC-7540 extends the ERC4626 standard to support **asynchronous** deposit and redemption flows, where a request is submitted in one transaction and the resulting shares or assets are claimed in a later transaction once the request has been fulfilled.\"\n\nThe four resulting operations \u2014 `requestDepositERC7540`, `claimDepositERC7540`, `requestRedeemERC7540`, `claimRedeemERC7540` \u2014 mean every entry and exit is **two-phase**. In `requestDeposit` the assets leave the proxy immediately (A...5.1.5: \"transferring the `amount` of the asset from the `proxy` into the vault\"), but the shares arrive only when someone later calls claim.\n\nThat intermediate window is the interesting part. During it Grove holds neither the underlying asset nor a vault share \u2014 it holds an off-balance-sheet **entitlement** whose fulfilment depends on the issuer acting. This is unavoidable for real-world credit, where subscription and redemption settle on the issuer's schedule rather than the blockchain's, and it is exactly why asynchronous vaults exist. But it means Grove's onchain token balances systematically understate its position, and any accounting of holdings has to query pending requests separately.\n\nThe Artifact sets \"the `proxy` as both the controller and owner of the request\" in both request functions, which is what keeps the entitlement retrievable to the proxy rather than to whichever relayer submitted it. The claim functions read `maxMint` and `maxWithdraw` to discover what is claimable, so the amount is determined by the vault at claim time and not carried in Grove's own state.\n\nThe redemption side inherits the same asymmetry as the Instance directories suggest: exiting a real-world credit position is a request, not a trade.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ERC-7540 splits entry and exit into request and claim transactions, so between the two the ALM Proxy holds a fulfilled-but-unclaimed entitlement rather than either the underlying or the vault token.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "df272382-ed6d-4307-a966-f36978554842",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4b05f7aa-1067-4ead-8e1b-eccc2ba3f954",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

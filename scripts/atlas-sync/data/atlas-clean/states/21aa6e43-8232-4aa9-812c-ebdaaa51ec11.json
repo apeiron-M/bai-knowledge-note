@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-5742860f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5742860f-e980-468a-9200-e7a4c12088c1",
+      "targetTitle": "Invocation state transitions are physical subtree moves betw"
+    },
+    {
+      "id": "lnk-b76c656f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b76c656f-e30d-42ac-81e5-8fa577b0b8fa",
+      "targetTitle": "An Invocation's location in the Atlas document tree is its s"
+    },
+    {
+      "id": "lnk-49c466da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "49c466da-866f-4c6d-9186-37e0f5cb22ff",
+      "targetTitle": "Failed Invocations and Suspended Instances are archived rath"
+    },
+    {
+      "id": "lnk-2ade31dd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ade31dd-b226-4d07-ac84-f511097ec31c",
+      "targetTitle": "A node's directory placement can contradict the status its o"
+    },
+    {
+      "id": "lnk-a9781b49-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9781b49-a145-43c7-b812-a619b80346ae",
+      "targetTitle": "An Invocation's lifecycle stage is encoded by where its docu"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove encodes each Primitive Instance's lifecycle state as its location in the document tree, with state transitions performed by moving subtrees",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c5f8395d-b84c-4d73-b1da-721d1b57fce4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3464fbd8-01ef-4052-84f8-7d9b013f504d",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4675a49b-e6ff-4f5c-8a6a-f908bee9c4b3",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f308df68-6741-459a-a1ac-840bf7d2ac25",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Primitive in Grove's Artifact carries the same Hub Document skeleton \u2014 Global Activation Status, an Active Instances Directory, a Completed Instances Directory, an In Progress Invocations Directory, and a Hub Data Repository containing Archived Invocations/Instances split into Failed Invocations and Suspended Instances (A.6.1.1.2.2.6.2.1.1\u2013.5.1.2, mirrored at .6.3.1 and .7.1.1).\n\nThe transitions are stated as physical moves. A.6.1.1.2.2.6.1.5: \"Once an Invocation is successfully completed, **its subtree will be moved to** Active Instances.\" A.6.1.1.2.2.6.2.1.4: successful Invocations \"are moved to the Active Instances Directory, whereas **failed Invocations are Archived** in the Hub Data Repository.\"\n\nSo an Instance's status is not a field on the Instance \u2014 it is where the Instance lives. The design eliminates a whole class of inconsistency: a status attribute can disagree with reality, get updated in one place and not another, or be set without the corresponding work happening. A location cannot disagree with itself, and it makes every state observable by inspection rather than by query.\n\nThe archive branch carries the other half of the value. Failed Invocations are **archived, not deleted**, and Suspended Instances get their own destination. The tree therefore retains the record of allocations Grove attempted and did not complete \u2014 the negative history that a live-state-only view would erase, and the part most useful for assessing how a risk process actually performs.\n\nThe cost is that a state change is a document edit, so transitions are only as reliable as the governance process that performs them, and an Instance can sit in the wrong node until someone moves it. The scheme trades the risk of a stale field for the risk of a stale tree.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "In Progress Invocations move to Active Instances on success and to an Archive on failure, so the document structure is the state machine and no separate status field can drift from it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

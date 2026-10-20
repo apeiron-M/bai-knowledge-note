@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-ab5d70d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab5d70d2-9582-4a55-bd57-3f7da20a197d",
+      "targetTitle": "The Genesis Capital Backstop mutualizes one Prime Agent's ex"
+    },
+    {
+      "id": "lnk-45c2cdf3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "45c2cdf3-f51c-48ca-b69b-df024b2e9fb9",
+      "targetTitle": "doc-69d262b0"
+    },
+    {
+      "id": "lnk-7d2b8961-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d2b8961-867c-4a01-90d6-25df708dee1a",
+      "targetTitle": "Core Council Buffer expenses are booked to Core Council Exec"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A negative Surplus Buffer is reclassified as Allocated Genesis Capital rather than recorded as a deficit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c1ef1915-0226-4382-adcb-3b309e90682b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b30909d-d97f-4143-82a0-28638f4093fb",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30a6efe6-69b2-4983-8bf2-3754fa058976",
+      "name": "capital-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d7eabca9-41d4-4109-b203-76d6e083e1c9",
+      "name": "genesis-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.5.3.1.3 states flatly: \"Allocated Genesis Capital is the negative of the Surplus Buffer,\" and interprets it as \"the funds Sky Core has deployed into the Genesis Agents to bootstrap innovation and Agent diversity.\"\n\nThis is an accounting identity doing conceptual work. When the Surplus Buffer goes negative, the deficit is not written off or treated as a hole \u2014 it is read as the mirror image of capital that now sits inside Genesis Agents. The money did not vanish; it moved to a different balance sheet in the ecosystem.\n\nA.3.5.3.1.2 completes the loop: Aggregate Backstop Capital is the Genesis Capital held in Genesis Agent SubProxies **minus** Allocated Genesis Capital. So the negative buffer is netted directly against the capital that backs USDS, which means bootstrapping Agents does not silently inflate the measured safety net \u2014 the funding source is deducted from the funded pool.\n\nTwo things follow. First, the reclassification is what makes a negative `khump` threshold defensible (A.3.5.2.2): a negative buffer denotes deployment, not distress. Second, the honesty of the whole scheme depends on Genesis Capital actually being recoverable; if deployed capital is impaired, the identity still shows a clean netting while the real backstop has shrunk.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Allocated Genesis Capital is defined as the negative of the Surplus Buffer and is subtracted from Genesis Capital, so a shortfall at Sky Core appears as capital deployed into Agents.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c37dd7d3-e815-4cde-813b-103136ca7fe1",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:30.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0eec5bbc-d781-4de2-90b6-e5dddc97b5c2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

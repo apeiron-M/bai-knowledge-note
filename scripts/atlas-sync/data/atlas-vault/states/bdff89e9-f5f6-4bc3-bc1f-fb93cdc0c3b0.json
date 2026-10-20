@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-c2dccbf9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2dccbf9-f63f-4efa-a709-a2eac6c6d852",
+      "targetTitle": "Obex's Ecosystem Upkeep Fee is assessed on market capitalisa"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's Ecosystem Upkeep Fee is levied on its market capitalization rather than its revenue or assets",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cc4857b2-0256-439e-b3b0-962076a79e41",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d632d126-1145-4c66-8262-03f4fe981560",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "afb98d2d-1345-4747-98c1-3a283d1a0cdd",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "519e6935-65f8-4f22-8cb5-7ac4a6a438d6",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.3.1.2.1.1.1 sets the terms of Grove's Ecosystem Upkeep Fee in one line: \"Grove will pay 0.50% of its market capitalization per year in USDS.\"\n\nThe **choice of base** is the claim, not the rate. Charging on market capitalization rather than on revenue, AUM, or profit makes the fee a function of how the market values the Agent. Consequences follow directly: the fee rises in bull markets when the Agent is least strained and falls in drawdowns when it is most strained, so the levy is counter-cyclical from Sky's perspective and pro-cyclical relief from Grove's. It also cannot be avoided by an Agent that grows large but reports no profit, which a revenue-based fee could be.\n\nDenominating payment in **USDS** rather than GROVE means the fee is a genuine cash outflow to the ecosystem, not a circular token transfer \u2014 Grove must earn or acquire stablecoins to pay it, which ties the Agent's obligations to real yield rather than to its own token issuance.\n\nThe gap is operational: A.6.1.1.2.2.3.1.2.1.2.1.1 states that \"the process to pay 0.50% of Grove's market capitalization per year in USDS will be specified in future iterations of the Grove Artifact.\" The Primitive's Global Activation Status is `Active` and the obligation is stated in the present tense, yet no payment mechanism, measurement date, or averaging method for market capitalization is defined \u2014 which for a price-referenced fee is where most of the disputable detail lives.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The obligation tracks GROVE's token price, not Grove's profitability or AUM, and the process for actually paying it is explicitly deferred to a future iteration of the Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "eca4dbd7-b2ad-4107-8f54-222b5a6e96e1",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0f702c50-f38c-404b-8e8e-3b8ae0ab019a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

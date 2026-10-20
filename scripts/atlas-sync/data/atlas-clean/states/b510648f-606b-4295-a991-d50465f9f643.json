@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-bf5df908-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bf5df908-ccdc-4b83-a874-e3b452a21719",
+      "targetTitle": "Distribution of Agent tokens received by Sky is governed by "
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Stakers choose which asset their rewards arrive in, and Agent tokens require explicit opt-in",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7eebc2a3-f986-4939-81df-63776f661607",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "da60982a-22cc-4e03-a862-799937765626",
+      "name": "sky-staking",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b3fe042-d892-4eae-9522-335d425fda2e",
+      "name": "token-rewards",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4fd6bc5-142e-456b-92d8-b1ca8fc794cf",
+      "name": "agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.2 states that \"SKY stakers may choose between receiving USDS, SKY, or Agent Token rewards,\" and A.4.4.1.2.1.2 adds the mechanism for the third option: Agent Tokens \"are distributed continuously, pro-rata by staked SKY, among wallets that have opted to receive a specific Agent Token.\"\n\nThe design turns one stake into several distinct economic positions. The same locked SKY can express a preference for stable cash flow (USDS), compounding governance weight (SKY), or leveraged exposure to a particular Agent's success \u2014 without the staker having to move capital between products.\n\nThe opt-in requirement is doing real work rather than being a UX nicety. Agent tokens are volatile, Agent-specific claims; pushing them onto every staker by default would impose unwanted exposure, create tax and accounting events for people who never asked for them, and let an Agent buy the appearance of distribution without any expression of demand. Requiring election means the pro-rata pool for each Agent Token consists only of wallets that actively want it \u2014 which also makes the opt-in set a genuine signal of interest.\n\nThe consequence worth noting is that rewards are rival: choosing an Agent Token means forgoing USDS or SKY from the same stake. Staker allocation therefore functions as a lightweight, continuous market-style vote on which Agents are worth backing, implemented purely through reward routing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A staker elects USDS, SKY or Agent Token rewards; Agent tokens are distributed pro-rata only \"among wallets that have opted to receive a specific Agent Token\", so exposure is never assigned by",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

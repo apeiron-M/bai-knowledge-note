@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ba505758-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba505758-db5c-451a-a4eb-79c313ba32d0",
+      "targetTitle": "Grove calibrates each maxExchangeRate against the vault's re"
+    },
+    {
+      "id": "lnk-b9e8335b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9e8335b-05b4-4fcd-829c-d20960fd3f86",
+      "targetTitle": "Value-bearing token positions need bounds on the reported pr"
+    },
+    {
+      "id": "lnk-bb53dc0e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb53dc0e-4cc2-43fd-a5ad-ae5046fa1569",
+      "targetTitle": "Grove's controllers now refuse deposits unless a maxExchange"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's maxExchangeRate bound carries roughly 2x headroom because it must not block legitimate share-price accretion",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "23a72a23-1ae6-458e-aa7a-affc9d91a87c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43c8d178-302e-4866-b919-17ca72151d0c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23e3ddbb-edff-4212-845d-801bf6e0497b",
+      "name": "oracles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e16847ac-2d29-4a89-aa03-57c8ab576c75",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Steakhouse Prime call `setMaxExchangeRate(STEAKHOUSE_PRIME_INSTANT_USDC_V2, 1e18, 2e6)` is annotated in A.6.1.1.2.2.6.1.3.3.2.2.4.3 as ensuring \"1 share can represent **at most 2 USDC**.\" The Maple syrupUSDC equivalent is `setMaxExchangeRate(MAPLE_SYRUP_USDC, 1e6, 3e6)`.\n\nBoth are loose by design, and the reason is structural. These are yield-bearing vault shares: their price against the underlying rises monotonically as interest accrues, and it is *supposed to*. A tight bound would therefore expire \u2014 the vault would grow into its own limit and deposits would halt for an entirely benign reason. The bound must accommodate every unit of legitimate yield the position will ever earn before it is reconfigured, which for a share price starting near parity means allowing something like a doubling.\n\nThe consequence is that this control has coarse resolution. It will catch a corrupted or manipulated rate provider reporting an absurd share price, and it will not catch a rate that is wrong by ten or thirty percent. It is a sanity bound, not a valuation check.\n\nSo the guard sits at one end of a spectrum whose other end is the Staleness Threshold: freshness bounds catch a feed that has stopped, magnitude bounds catch a feed that has gone haywire, and nothing here catches a feed that is confidently and plausibly wrong. That residual risk is what the counterparty diligence and the RRC Framework are for \u2014 the on-chain parameters explicitly do not cover it.\n\nThe practical implication for maintenance: because headroom is consumed by real yield over time, a maxExchangeRate is a parameter that silently tightens. It needs periodic review against the actual share price, or it becomes an outage waiting to happen.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Setting 1 share to at most 2 USDC lets a yield-bearing vault's price double before deposits halt, so the guard catches gross corruption of a valuation feed rather than subtle mispricing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

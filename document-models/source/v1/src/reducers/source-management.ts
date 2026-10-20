@@ -1,4 +1,5 @@
 import type { SourceSourceManagementOperations } from "document-models/source/v1";
+import { ClaimNotFoundError } from "../../gen/source-management/error.js";
 
 export const sourceSourceManagementOperations: SourceSourceManagementOperations =
   {
@@ -24,6 +25,12 @@ export const sourceSourceManagementOperations: SourceSourceManagementOperations 
       state.status = action.input.status;
     },
     addExtractedClaimOperation(state, action) {
+      // Idempotent on claimRef: a claim is listed once, however many times an
+      // extraction, a sync or a retry asserts it. Re-adding is a no-op, not an
+      // error, so pipelines can assert membership without reading state first.
+      if (state.extractedClaims.includes(action.input.claimRef)) {
+        return;
+      }
       state.extractedClaims.push(action.input.claimRef);
     },
     recordExtractionStatsOperation(state, action) {
@@ -34,5 +41,17 @@ export const sourceSourceManagementOperations: SourceSourceManagementOperations 
         extractedAt: action.input.extractedAt,
         extractedBy: action.input.extractedBy || null,
       };
+    },
+    removeExtractedClaimOperation(state, action) {
+      if (!state.extractedClaims.includes(action.input.claimRef)) {
+        throw new ClaimNotFoundError(
+          `Claim ${action.input.claimRef} is not listed on this source`,
+        );
+      }
+      // Every occurrence: this also repairs lists that grew duplicates before
+      // ADD_EXTRACTED_CLAIM became idempotent.
+      state.extractedClaims = state.extractedClaims.filter(
+        (ref) => ref !== action.input.claimRef,
+      );
     },
   };

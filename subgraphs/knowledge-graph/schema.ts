@@ -13,8 +13,30 @@ export const schema: DocumentNode = gql`
     author: String
     sourceOrigin: String
     createdAt: String
+    """
+    When the document entered this vault: its header's creation time.
+    createdAt is when it was written, which for an imported note can be
+    weeks earlier. Null until the document's next operation or a reindex
+    on an index that predates the field.
+    """
+    addedAt: String
     topics: [String!]!
     updatedAt: String!
+    """
+    The document's kind: bai/knowledge-note, bai/moc, bai/research-claim,
+    bai/tension or bai/observation. Tensions and observations are indexed
+    so search finds them and a note can show what involves it; they are
+    not knowledge nodes and never count as orphans.
+    """
+    documentType: String
+    """
+    Incoming knowledge edges (RELATES_TO, BUILDS_ON, …, CORE_IDEA, CHILD_MOC).
+    Derived edges (INVOLVES, PROMOTED_TO) are excluded — the same population
+    the orphan predicate uses, so inDegree = 0 means "orphan".
+    """
+    inDegree: Int!
+    """Outgoing knowledge edges, same population as inDegree."""
+    outDegree: Int!
   }
 
   type KnowledgeGraphEdge {
@@ -24,12 +46,37 @@ export const schema: DocumentNode = gql`
     linkType: String
     targetTitle: String
     updatedAt: String!
+    """
+    Why this edge exists — the articulation test in data. Set through the
+    relationship's metadata (ADD_RELATIONSHIP / UPDATE_RELATIONSHIP with
+    { reason, confidence }); null for edges never articulated.
+    """
+    reason: String
+    """grounded | established | speculative — the author's confidence in the link."""
+    confidence: String
+    """The full relationship metadata object as stored, serialized."""
+    metadataJson: String
   }
 
   type GraphStats {
+    """Every indexed node, all kinds. Divide by the per-kind counts below."""
     nodeCount: Int!
+    """Knowledge edges only (derived INVOLVES / PROMOTED_TO are excluded)."""
     edgeCount: Int!
+    """Knowledge nodes (notes, MoCs, research claims) with no incoming knowledge edge."""
     orphanCount: Int!
+    noteCount: Int!
+    mocCount: Int!
+    claimCount: Int!
+    tensionCount: Int!
+    openTensionCount: Int!
+    observationCount: Int!
+    """Scope-of-work documents (projects live inside them as envelopes)."""
+    scopeCount: Int!
+    """Work breakdowns — the goal trees that deliver envelopes."""
+    wbsCount: Int!
+    """Knowledge edges carrying a reason. Coverage = this / edgeCount."""
+    articulatedEdgeCount: Int!
   }
 
   type ConnectionResult {
@@ -56,23 +103,77 @@ export const schema: DocumentNode = gql`
   }
 
   """
-  A ranked search hit. The 'similarity' field is ALWAYS a 0..1 relevance and
-  is always monotonic with the order results are returned in, so it is safe
-  to render as a percentage in any mode:
-    - SEMANTIC  -> cosine similarity of the query and note embeddings.
-    - HYBRID    -> the fused rank score rescaled onto 0..1 (see 'score').
-  The 'score' field carries the RAW underlying number for callers doing their
-  own maths: cosine in SEMANTIC mode, the Reciprocal Rank Fusion weight in
-  HYBRID mode. An RRF weight is ordinal and tops out at ~0.033, so never
-  render 'score' as a percentage - use 'similarity'.
-  The 'matchedBy' field explains WHY a note matched: "semantic", "keyword",
-  or both.
+  One edge, always written source -> target so there is no direction to
+  decode. Carries the articulation ('reason') when the link has one.
+  """
+  type GraphVia {
+    from: String!
+    fromTitle: String
+    to: String!
+    toTitle: String
+    linkType: String
+    reason: String
+    confidence: String
+  }
+
+  """
+  A node one link away from a search hit. This is what turns a result list
+  into a map: the searcher sees not just which notes match, but what those
+  notes connect to and how.
+  """
+  type GraphNeighbour {
+    documentId: String!
+    title: String
+    description: String
+    noteType: String
+    status: String
+    documentType: String
+    """How many of this search's hits touch this node. Convergence is signal."""
+    hitCount: Int!
+    """Rank within this response. Not comparable across responses."""
+    score: Float!
+    """The edges that reached it, narrowed to this hit."""
+    via: [GraphVia!]!
+  }
+
+  """
+  A ranked search hit. 'similarity' is the cosine similarity of the query and
+  note embeddings — a true 0..1 relevance, safe to compare, threshold and
+  render as a percentage. 'score' carries the same number for callers doing
+  their own maths. 'matchedBy' is always ["semantic"].
   """
   type SemanticResult {
     node: KnowledgeGraphNode!
     similarity: Float!
     score: Float!
     matchedBy: [String!]!
+    """
+    Nodes one knowledge link from this hit, ranked. Costs no extra query per
+    hit — the whole result set's neighbourhood is read once and sliced — but
+    it IS two extra queries for the search as a whole, so it is only computed
+    when selected.
+
+    Ordering is global across the result set: a node that several hits point
+    at sorts above one that only this hit points at. Empty on hits from
+    'knowledgeGraphSimilar' and 'knowledgeGraphSearchByEmbedding', which do
+    not expand.
+    """
+    related(limit: Int): [GraphNeighbour!]!
+    """
+    Edges from this hit to OTHER hits in the same result set.
+
+    These can never appear in 'related', which by definition excludes nodes
+    that are themselves hits — and that exclusion is exactly wrong for
+    correctness. Semantic search naturally returns both sides of a
+    disagreement, so the CONTRADICTS edge joining two hits is invisible
+    without this field: a reader sees two confident claims and no sign that
+    one disputes the other.
+
+    Written source -> target like every other edge; the same hit-to-hit edge
+    is reported on BOTH of its ends. Shares the neighbourhood 'related'
+    reads, so selecting both costs no more than selecting one.
+    """
+    linkedHits: [GraphVia!]!
   }
 
   type HybridResult {
@@ -83,12 +184,6 @@ export const schema: DocumentNode = gql`
 
   enum SearchMode {
     SEMANTIC
-    HYBRID
-  }
-
-  type UpsertEmbeddingResult {
-    documentId: ID!
-    ok: Boolean!
   }
 
   type OperationRecord {
@@ -101,6 +196,17 @@ export const schema: DocumentNode = gql`
     summary: String
     signerAddress: String
     signerApp: String
+    """did:key of the app instance whose key signed this operation."""
+    signerKey: String
+    """
+    The signature tuple as stored: "timestamp, did:key, actionHash,
+    prevStateHash, 0xsig". ECDSA P-256 / SHA-256 over
+    "Signed Operation:\n" + len + timestamp + did + hash + prevStateHash.
+    Verifiable by any reader with the did:key alone.
+    """
+    signature: String
+    """The action's input, JSON-encoded — what this operation changed."""
+    inputJson: String
   }
 
   type GraphDebugInfo {
@@ -117,9 +223,153 @@ export const schema: DocumentNode = gql`
     errors: [String!]!
   }
 
+  """
+  One addition to the vault: what a person added at once — a file's folder,
+  a pasted source or a sources/batch call, a workflow's burst, an agent's
+  session — or notes that arrived without a source (written here, imported,
+  or with no recorded source), grouped the same way.
+  """
+  type KnowledgeGraphTimelineAddition {
+    id: String!
+    "file, text, feed, agent; or, for notes without a source: written (made in the vault), imported (an import), unsourced (no source recorded)"
+    kind: String!
+    "The folder's name, or the source's title"
+    title: String!
+    folderId: String
+    "When its first source entered the vault (header creation time)"
+    addedAt: String!
+    lastAddedAt: String!
+    "Who added its first source: the source's createdBy, which any reader of the source document already sees"
+    addedBy: String
+    fileName: String
+    mimeType: String
+    sizeBytes: Float
+    method: String
+    tool: String
+    url: String
+    sourceType: String
+    sources: Int!
+    extracted: Int!
+    "INBOX and EXTRACTING: still to be read"
+    waiting: Int!
+    archived: Int!
+    sourceIds: [String!]!
+    notes: Int!
+    firstNoteAt: String
+    lastNoteAt: String
+    "The earliest written date of its notes, when a day or more before it was added"
+    writtenFrom: String
+    "The topics it started: MoCs most of whose notes came from it and that did not exist before it; a MoC with no such majority goes to the latest addition at or before it"
+    topicIds: [String!]!
+    "Knowledge links (relates to, builds on, contradicts, supersedes) among its own notes"
+    linksWithin: Int!
+    "Knowledge links between its notes and notes of earlier additions"
+    linksToEarlier: Int!
+    earlier: [KnowledgeGraphTimelineEarlier!]!
+    tags: [KnowledgeGraphTimelineTag!]!
+    "Its most linked notes"
+    topNotes: [KnowledgeGraphTimelineNoteRef!]!
+    "Its first sources by arrival (at most 5), to open one directly; the rest are in its folder"
+    firstSources: [KnowledgeGraphTimelineSourceRef!]!
+  }
+
+  type KnowledgeGraphTimelineSourceRef {
+    documentId: String!
+    title: String!
+  }
+
+  type KnowledgeGraphTimelineEarlier {
+    additionId: String!
+    links: Int!
+  }
+
+  type KnowledgeGraphTimelineTag {
+    name: String!
+    count: Int!
+  }
+
+  type KnowledgeGraphTimelineNoteRef {
+    documentId: String!
+    title: String!
+  }
+
+  "A note's arrival: addedAt falls back to writtenAt on an index that predates added_at"
+  type KnowledgeGraphTimelineArrival {
+    documentId: String!
+    addedAt: String
+    writtenAt: String
+    additionId: String
+  }
+
+  type KnowledgeGraphTimelineTopic {
+    documentId: String!
+    title: String!
+    addedAt: String
+    writtenAt: String
+    additionId: String
+  }
+
+  type KnowledgeGraphTimelineTotals {
+    sources: Int!
+    notes: Int!
+    topics: Int!
+    links: Int!
+  }
+
+  "A source as the Sources list shows it: its row in the index, never its text."
+  type KnowledgeGraphSourceRow {
+    documentId: ID!
+    "The drive folder it sits in."
+    parentFolder: ID
+    name: String
+    title: String!
+    description: String
+    status: String!
+    sourceType: String
+    author: String
+    url: String
+    "When it entered the vault."
+    addedAt: String!
+    "The state's createdAt: one instant for every source of a batch."
+    createdAt: String
+    createdBy: String
+    updatedAt: String
+    extractedAt: String
+    publishedAt: String
+    "The original file's attachment ref."
+    originalFile: String
+    originalFileName: String
+    originalAttachedAt: String
+    originalSizeBytes: Float
+    "How many notes it says it became."
+    claimCount: Int!
+  }
+
+  "What was added to the vault, when, and what each addition became."
+  type KnowledgeGraphSourceTimeline {
+    additions: [KnowledgeGraphTimelineAddition!]!
+    notes: [KnowledgeGraphTimelineArrival!]!
+    topics: [KnowledgeGraphTimelineTopic!]!
+    totals: KnowledgeGraphTimelineTotals!
+  }
+
   extend type Query {
     knowledgeGraphNodes(driveId: ID!): [KnowledgeGraphNode!]!
     knowledgeGraphEdges(driveId: ID!): [KnowledgeGraphEdge!]!
+    """
+    The source timeline: every addition (a file's folder, a paste, a
+    workflow's burst, an agent's session) with when it arrived and what it
+    became, plus each note's and topic's arrival. Sources are read from the
+    reactor; notes, topics and links from the index.
+    """
+    knowledgeGraphSourceTimeline(driveId: ID!): KnowledgeGraphSourceTimeline!
+    """
+    Every source of the vault as a list row, in one answer: read from the
+    index's kept rows, so the Sources view paints at once instead of reading
+    each source document. Sources the index has no current row for are read
+    once and kept.
+    """
+    knowledgeGraphSources(driveId: ID!): [KnowledgeGraphSourceRow!]!
     knowledgeGraphStats(driveId: ID!): GraphStats!
     knowledgeGraphNodeByDocumentId(
       driveId: ID!
@@ -135,16 +385,26 @@ export const schema: DocumentNode = gql`
       driveId: ID!
       status: String!
     ): [KnowledgeGraphNode!]!
+    """Every node of one document type, e.g. "bai/tension"."""
+    knowledgeGraphNodesByType(
+      driveId: ID!
+      documentType: String!
+    ): [KnowledgeGraphNode!]!
     knowledgeGraphBacklinks(
       driveId: ID!
       documentId: String!
     ): [KnowledgeGraphEdge!]!
     knowledgeGraphDensity(driveId: ID!): Float!
 
+    """
+    Keyword search on title + description. ARCHIVED notes are excluded —
+    they are no longer held as current — unless includeArchived is true.
+    """
     knowledgeGraphSearch(
       driveId: ID!
       query: String!
       limit: Int
+      includeArchived: Boolean
     ): [KnowledgeGraphNode!]!
     knowledgeGraphTriangles(driveId: ID!, limit: Int): [Triangle!]!
     knowledgeGraphBridges(driveId: ID!): [KnowledgeGraphNode!]!
@@ -154,16 +414,22 @@ export const schema: DocumentNode = gql`
     ): [KnowledgeGraphEdge!]!
 
     knowledgeGraphTopics(driveId: ID!): [TopicInfo!]!
-    knowledgeGraphByTopic(driveId: ID!, topic: String!): [KnowledgeGraphNode!]!
+    knowledgeGraphByTopic(
+      driveId: ID!
+      topic: String!
+      includeArchived: Boolean
+    ): [KnowledgeGraphNode!]!
     knowledgeGraphRelatedByTopic(
       driveId: ID!
       documentId: String!
       limit: Int
+      includeArchived: Boolean
     ): [RelatedNode!]!
     knowledgeGraphFullSearch(
       driveId: ID!
       query: String!
       limit: Int
+      includeArchived: Boolean
     ): [KnowledgeGraphNode!]!
     knowledgeGraphByAuthor(
       driveId: ID!
@@ -173,6 +439,11 @@ export const schema: DocumentNode = gql`
       driveId: ID!
       origin: String!
     ): [KnowledgeGraphNode!]!
+    """
+    The most recently edited nodes, newest first. 'since' is an ISO instant
+    and filters on the same edit time, so a note created long ago but
+    changed today is included. The mirror of knowledgeGraphStale.
+    """
     knowledgeGraphRecent(
       driveId: ID!
       limit: Int
@@ -183,6 +454,7 @@ export const schema: DocumentNode = gql`
       driveId: ID!
       documentId: String!
       limit: Int
+      includeArchived: Boolean
     ): [SemanticResult!]!
     knowledgeGraphSearchByEmbedding(
       driveId: ID!
@@ -190,18 +462,25 @@ export const schema: DocumentNode = gql`
       embedding: [Float!]!
       mode: SearchMode!
       limit: Int
+      includeArchived: Boolean
     ): [SemanticResult!]!
     """
-    Semantic/hybrid search from plain query text — the query is embedded
+    Semantic search from plain query text — the query is embedded
     SERVER-side, so clients never need the model. Falls back to keyword
     fullSearch transparently when the embedder or embeddings are unavailable,
     so it is always safe to call.
+
+    Select 'related' on the result to get each hit's neighbourhood in the
+    same round trip. A flat hit list hides most of what the vault knows
+    about a question: the notes that match are a small fraction of the
+    notes connected to them.
     """
     knowledgeGraphSemanticSearch(
       driveId: ID!
       query: String!
       mode: SearchMode
       limit: Int
+      includeArchived: Boolean
     ): [SemanticResult!]!
     knowledgeGraphMissingEmbeddings(driveId: ID!): [ID!]!
 
@@ -234,18 +513,10 @@ export const schema: DocumentNode = gql`
 
   extend type Mutation {
     """
-    Backfill the graph index by reading all bai/knowledge-note and bai/moc documents
-    in the drive. Use when the processor missed historical operations.
+    Backfill the graph index by reading every indexed document in the drive
+    (knowledge notes, MoCs, research claims, tensions, observations). Use when
+    the processor missed historical operations.
     """
     knowledgeGraphReindex(driveId: ID!): ReindexResult!
-    """
-    Store or update a pre-computed embedding for a document.
-    Called by browser clients after running the embedding model locally.
-    """
-    knowledgeGraphUpsertEmbedding(
-      driveId: ID!
-      documentId: ID!
-      embedding: [Float!]!
-    ): UpsertEmbeddingResult!
   }
 `;

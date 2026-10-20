@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-9274096a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9274096a-6f64-48e0-b89b-53b30e7254cd",
+      "targetTitle": "doc-64d713ea"
+    },
+    {
+      "id": "lnk-cf7e2907-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf7e2907-72c3-4a58-b337-2b5e5c06a362",
+      "targetTitle": "A generic ERC-4626 adaptor lets Spark onboard any compliant "
+    },
+    {
+      "id": "lnk-b750b57e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b750b57e-dc27-468a-b806-df2c38fbf14e",
+      "targetTitle": "All three savings products share one vault implementation an"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every new vault type must be added to the SP-BEAM and inherits default bounds, so no rate can be left unbounded by omission",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "80f9b2c7-5252-4172-923a-2f749e7fb91c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "187f6e69-0f50-4e2e-859f-c5c41c923189",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ef8bdd8-1d77-44b9-954b-9c5526ec92cf",
+      "name": "sp-beam",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00d59037-f385-442f-b8b6-40e6e8c05e8a",
+      "name": "defaults",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.3.2 requires that \"when new vaults are added to the protocol, they must also be added to the SP-BEAM,\" and that \"unless specified otherwise within the relevant subdocument herein, the SP-BEAM parameters for any newly added Native Vault type shall default to match the parameters defined herein for the ETH-A vault type.\" A.3.7.1.3.3 states the identical rule for Allocator Vaults, defaulting to ALLOCATOR-SPARK-A.\n\nThe pattern is worth naming because it inverts the usual failure mode of parameterized systems. Normally an omission means *absent* configuration \u2014 a new vault type simply is not in the module, and either cannot be operated through it or, worse, is operable without bounds. Here an omission means *inherited* configuration, so the safe state is the default state and forgetting to configure a new vault produces conservative behaviour rather than a gap.\n\nThe two chosen templates also reveal a deliberate class distinction visible in the parameter tables: Native Vault types default to a `min` of 200 basis points, while Allocator Vaults default to a `min` of 0. Prime Agents borrowing through Allocator Vaults can be charged nothing, whereas end-user Core Vaults always carry a floor rate \u2014 consistent with Core Vaults being deprecated and Allocator Vaults being the intended channel for ecosystem liquidity.\n\nThe requirement is also a coupling obligation: adding a vault is not complete until its rate is inside the bounded-delegation envelope.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "New Native Vaults default to the ETH-A parameters and new Allocator Vaults to ALLOCATOR-SPARK-A unless a subdocument says otherwise, making bounded delegation the fallback state.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

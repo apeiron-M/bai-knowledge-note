@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove runs a monolithic controller alongside a shared Diamond facet controller, selecting facets rather than reimplementing integrations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "87cb81eb-5525-4e32-9a72-f5fd93f33ea5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ec420c5-5edd-4bcf-9c75-3a69d43bc436",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ed72147-6a21-4443-bffa-9c66cfb723ea",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2fcec360-81ec-42d3-9d82-bbcb016bb941",
+      "name": "smart-contract-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.2 states that \"The Diamond PAU Controller functions for the Grove Liquidity Layer **are** the shared Diamond PAU Controller functions specified in A.2.2.10.1.1.1.2.5.2\", and that only the *choice* of facets is Grove-specific. Grove selects four: Basin (A...2.2.1), USDS (A...2.2.2), PSM (A...2.2.3) and Uniswap v3 (A...2.2.4).\n\nSo two controller architectures coexist. The monolithic `MainnetController` carries Grove's long tail of integrations \u2014 Ethena, Pendle, Merkl, LayerZero, the DAI-USDS migrator \u2014 each specified in full within Grove's own Artifact. The Diamond controller carries capabilities that multiple Sky agents need, specified once at the ecosystem level and composed per agent by facet selection.\n\nThe division tracks reuse. An integration used by one agent gains nothing from being a shared facet and would impose ecosystem-wide review on agent-specific code. An integration used by many becomes a single audited implementation with no per-agent variation \u2014 the same chain-invariance argument that governs the Foreign Controller, applied across agents instead of across chains.\n\nA...2.2.3 also records a dependency that no amount of internal design can remove: PSM swaps \"require the ALM Proxy to be whitelisted on the Lite PSM.\" Grove's ability to use a shared facet is contingent on a permission granted elsewhere in Sky, so capability here is the intersection of code Grove deploys and standing granted to it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Basin, USDS, PSM and Uniswap v3 facets are specified once ecosystem-wide in A.2.2.10 and merely referenced by Grove, so common integrations are shared while Grove-specific ones stay in its monolith.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

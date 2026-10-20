@@ -35,4 +35,10 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
     setProjectRefOperation(state, action) {
       state.projectRef = action.input.projectRef || null;
     },
+    setSowProjectRefOperation(state, action) {
+      // A missing or null pair unlinks; the same setter style as
+      // setProjectRef, so the vault clears it without a second operation.
+      state.sowRef = action.input.sowRef || null;
+      state.sowProjectId = action.input.sowProjectId || null;
+    },
   };

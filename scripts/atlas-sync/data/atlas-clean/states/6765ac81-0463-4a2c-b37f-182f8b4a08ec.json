@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-977282df-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "977282df-248c-461c-a5b6-87b2dbaaaa85",
+      "targetTitle": "Spark Liquidity Layer rate limits are deliberately asymmetri"
+    },
+    {
+      "id": "lnk-6f17a3a3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f17a3a3-11b1-4a7b-ae1e-0e1f5dbad32b",
+      "targetTitle": "A daily slope larger than maxAmount turns the rate limit int (copy) 1"
+    },
+    {
+      "id": "lnk-efd8dd25-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "efd8dd25-46ec-4688-aec2-e84ac5a1836b",
+      "targetTitle": "For Spark's own savings products the flow rate limits are re"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Instance rate limits are directional: inflows are capped while outflows are left unlimited",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a89f0c8d-22fa-44d4-b1c2-2139e37931ec",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3db76ccd-d9be-4c0d-abc3-980df358c1ad",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8c05e44-a38e-4551-9aa9-33e2a8b8d154",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "783b9103-71a7-4e3e-bdbe-24216e74cf52",
+      "name": "risk-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Instance Configuration Documents carry separate inflow and outflow limits. For the SparkLend USDS Instance, A.6.1.1.1.2.6.1.3.1.1.1.2.4.1 sets inflow at `maxAmount`: 200,000,000 USDS with `slope`: 400,000,000 USDS per day, while A.6.1.1.1.2.6.1.3.1.1.1.2.4.2 sets outflow to `maxAmount`: Unlimited, `slope`: Unlimited.\n\nThe asymmetry is the design. Building exposure to a venue is throttled; unwinding it is not. That is the correct direction for a risk control \u2014 a limit exists to bound how fast risk can be taken on, and a limit on exit would bound how fast risk can be shed, which is the opposite of what a risk control should do.\n\nIt is the same pattern that appears at the global level, where reversing an operation credits the forward limit rather than consuming a separate one, and it is what makes the pre-written emergency wind-down executable in a single pass at full balance.\n\nThe inflow numbers show a second choice: `slope` (400M/day) exceeds `maxAmount` (200M), so the bucket refills fully in half a day. The instantaneous cap is doing the real work \u2014 bounding any single move to 200M \u2014 while sustained daily throughput is deliberately generous. Read together, the parameters say: no large sudden concentration into one venue, but no meaningful friction on steady rebalancing, and no friction at all on getting out.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:57:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:57:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The SparkLend USDS Instance permits 200M USDS inflow with a 400M/day slope but Unlimited outflow \u2014 the same easy-to-exit asymmetry the global limits use, applied per venue.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ed8ed7ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed8ed7ce-1f2c-4630-acd3-2641cc55149f",
+      "targetTitle": "doc-406ed72b"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Only capital that is presently deployable counts as Risk Capital \u2014 in-flight assets and uncodified commitments are excluded",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e8220dd3-ff04-4faf-9686-15d5bb82d076",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a9820b27-53ad-403a-ae25-1987d4b8a3a5",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9cd7c958-c47d-4625-ade7-cd1223e4fa81",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.2.1 defines Total Risk Capital as \"capital that is currently eligible, available, and verifiably under the Prime's control,\" and adds the operative test: \"it must be currently deployable towards covering its Required Risk Capital obligations.\"\n\nTwo exclusions follow and both bite in ordinary operation. \"In-flight capital (e.g., assets being bridged) does not contribute towards a Prime's TRC\" \u2014 so an Agent moving capital between chains has a temporary hole in its coverage, and must either pre-fund or accept the gap. And commitments for future capital, including rental Accords for Prime-External or Tokenized External Junior Risk Capital \"that have been agreed upon by counterparties but are not yet formally codified within the Atlas, cannot contribute towards a Prime's TRC until such formalization is complete.\"\n\nThe principle is that risk capital is only real if it can absorb a loss *at the moment the loss happens*. A loss event does not wait for a bridge to finalize or for a governance process to ratify an agreement, so anything that is merely promised or merely in transit is treated as absent.\n\nThis makes the definition adversarial rather than accounting-based. The obvious way to appear well-capitalized is to count committed capital, and the obvious way to be genuinely well-capitalized is to hold it \u2014 A.3.2.1.2.1 refuses the first. A.3.2.1.2 supplies the consequence: \"Prime Agents must maintain at all times a level of TRC that exceeds their Aggregate RRC or be subject to penalties,\" with \"at all times\" ruling out period-end window dressing.\n\nThe cost is capital inefficiency at exactly the awkward moments \u2014 cross-chain rebalancing and onboarding new capital providers both require the Agent to be over-capitalized during the transition.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Total Risk Capital must be eligible, available and verifiably controlled; bridging assets and agreed-but-not-yet-Atlas-codified rental Accords contribute nothing until formalization completes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "95a32c4b-28a5-40d2-9ce1-10203d8a92e7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2af7700c-2286-4bb5-a6d6-03bfbc367337",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

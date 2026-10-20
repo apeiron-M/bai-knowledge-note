@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-6cd816bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6cd816bd-4e9e-4e6e-b291-811dfae7bea6",
+      "targetTitle": "Osero has no defined route for expert review of technically "
+    },
+    {
+      "id": "lnk-eef82f0a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eef82f0a-4f7d-4618-a5d9-816fd69ab448",
+      "targetTitle": "doc-9d215bf6"
+    },
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Only the routine Root Edit path is specified \u2014 non-routine conditions and expert review are empty placeholders",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b5733839-111b-4875-bcf8-85cc72e42316",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ceca217e-80a7-4b86-878e-6d1669e9faab",
+      "name": "root-edit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "abd3b7c2-a233-48f1-abf9-d19985dd6ae4",
+      "name": "specification-gaps",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Root Edit Operational Process Definition declares three protocols: Routine (A.6.1.1.8.2.2.2.2.1.2.1), Non-Routine (A.6.1.1.8.2.2.2.2.1.2.2), and Emergency (A.6.1.1.8.2.2.2.2.1.2.3). Only two carry substance. The Non-Routine Protocol says only that the documents herein \"define the process for using the Root Edit Primitive to update the Launch Agent 7 Agent Artifact in non-routine conditions\" \u2014 with no such process given, and no definition of what makes conditions non-routine.\n\nSeparately, A.6.1.1.8.2.2.2.2.1.2.1.2 defers the expert layer: \"A future iteration of the Launch Agent 7 Artifact will specify guidelines for obtaining specialized review of proposals requiring advanced technical or financial analysis.\"\n\nBoth gaps land on the same actor. With no non-routine path and no expert advisors, every proposal \u2014 including ones requiring advanced financial analysis of a structured-credit Agent \u2014 is reviewed inside seven days by the Operational Facilitator alone, and the only defined deviation from the routine timeline is the Emergency Protocol, which shortens rather than deepens review.\n\nThat is a notable mismatch for an Agent whose business is institutional credit facilities: proposal complexity is likely to exceed what a generalist alignment review can assess, and the mechanism intended to close that gap is explicitly not yet written.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Non-Routine Protocol has no content, and specialized technical or financial review of complex proposals is deferred to a future Artifact iteration, leaving the emergency path as the only",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cc171658-50b7-4b01-a1ca-19ba6636ae23",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8eff4d90-c9cd-46de-ad5e-4dc924ef7b7c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:14.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

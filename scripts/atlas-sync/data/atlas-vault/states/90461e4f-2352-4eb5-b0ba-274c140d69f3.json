@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-d1c74ee9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1c74ee9-3bf0-4595-bb1c-bcfc32bcb0e8",
+      "targetTitle": "The 90% Encumbrance Ratio cap is a commitment by Grove Devel"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel gives a hard covenant to stay at or below a 90% Encumbrance Ratio",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "514f5f3b-4ca7-495d-885c-1c00a1ef1f9d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8e1344ca-32d0-4389-b042-78ae70e98574",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "80ddb4b3-ee31-476e-9727-ff8612cd0cd5",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05e93834-452c-4a82-b050-2d8f9fff1ffe",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.1.3.1 is one sentence long and does a great deal: \"Keel will operate the Keel Liquidity Layer and agrees to stay at or below a 90% Encumbrance Ratio,\" referring to the Core Atlas definition at A.3.2.2.7.2.1.1.1.\n\nThe framing as an *agreement* rather than a parameter is what makes it enforceable in the way the rest of the section needs. The Freezer Multisig's usage standard authorizes a freeze when \"Keel is not complying with rules regarding Risk Capital or Asset Liability Management\" \u2014 a standard that requires a bright line to be actionable. The 90% covenant supplies it: compliance is checkable, and a breach is a named condition rather than a judgment call about prudence.\n\nDefining the ratio upstream in the Risk Capital article rather than in Keel's Artifact matters too. Keel cannot redefine the metric it is measured by through a Root Edit, so tokenholders can vote on strategy but not on the arithmetic of their own leverage limit.\n\nThe residual 10% margin is the interesting judgment. It concedes that an Agent operating at nearly full encumbrance is acceptable, which is a high-utilization stance \u2014 the buffer against adverse moves is thin by design, and the compensating controls are the rate limits, the debt ceiling buffer parameter, and a freeze that can be pulled by two external signers.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The commitment is stated as part of Keel's agreement to operate the Liquidity Layer and refers to the Core Atlas definition, making leverage a bounded promise rather than an operational preference.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "02f7cae0-2177-49c4-82e2-141ae9aef56b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7b1b9aac-f289-422e-a098-8a018b557616",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:18.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

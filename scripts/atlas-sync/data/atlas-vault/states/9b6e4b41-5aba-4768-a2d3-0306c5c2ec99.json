@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-b576bce2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b576bce2-795e-4898-9772-ccb6a0593360",
+      "targetTitle": "Agent Artifacts are assembled from configured Primitive Inst"
+    },
+    {
+      "id": "lnk-b63d405c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b63d405c-487a-4cde-a4b8-dbc1a51efe84",
+      "targetTitle": "A Sky Primitive is a standardized interface through which Ag"
+    },
+    {
+      "id": "lnk-9b847103-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b847103-bec0-4692-b44d-ba4a62bdcde9",
+      "targetTitle": "Prime Agents are barred from touching Sky Protocol resources"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Primitive specifications name generic Document types, which resolve to each Agent's own Instance of that type",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "50cb8e04-555f-4f06-a2ad-f46e1f6fb2a0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "87a55b1a-2978-4efe-922f-62fbe15941ab",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf2b6e57-14fa-406f-aa69-813a8bfac56e",
+      "name": "agent-artifacts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.2.4.2 fixes the reference semantics of the Sky Primitives Data Schema: \"references to an Agent Artifact Document are made in terms of the generic Document type... In practice, each Agent has its own Instance of that Document type in its Artifact. Thus, when a Primitive's process flow indicates that an Agent Artifact Document must be updated, it is to be interpreted as referring to the _specific Instance_ of that Document type in the Prime Agent's Artifact.\"\n\nThis is late binding applied to governance text. A Primitive's universal specification is written once, against types; resolution to a concrete document happens per Agent at execution time. Without this rule, either every Agent would need its own copy of every Primitive specification, or the universal specifications would have to name documents that do not exist for most Agents.\n\nIt is the mechanism that makes the layering in A.2.2.2 work \u2014 \"each Agent Artifact automatically references and extends the universal rules\" \u2014 and it explains why Agent Artifacts must be built from a standard Document type list (A.1.2.2.2) rather than arbitrary documents. Type conformance is what makes an Agent addressable by universal Primitive rules at all.\n\nThe constraint it imposes: an Agent cannot restructure its Artifact away from the standard Document types without becoming unreachable by the Primitives that reference them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Universal Primitive rules are written against Document types rather than concrete documents, so one specification applies unmodified to every Agent Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "10c415ae-2f10-4243-857e-e3ee4d54edde",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "40122c03-92d7-4f57-912a-5e096ff5f784",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

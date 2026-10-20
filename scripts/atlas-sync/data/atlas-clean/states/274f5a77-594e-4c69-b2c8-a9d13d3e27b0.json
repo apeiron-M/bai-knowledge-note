@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-a0b3b01b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0b3b01b-9831-4f38-a69a-e7c9fcc8fdf3",
+      "targetTitle": "Emergency bypasses are one-directional ratchets: restriction"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Permissionless circuit-breaker activation silently stops working for oracles that have no next price",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3cee6236-a40b-42af-933a-f3f6e53a1162",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e46a28ae-ace4-4206-a704-f1a223db0397",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85199e25-35e5-4323-b3af-a4f0d0015d4e",
+      "name": "operational-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.2.4 gives the liquidations circuit breaker four graduated levels \u2014 from Level 0 (liquidations enabled) through Level 3 (no new liquidations, no resets, no bidding) \u2014 and, notably, \"allows for **permissionless activation** of the circuit breaker, if the price decrease in a collateral exceeds a preset percentage value between oracle price updates,\" tripping Level 2 \"because both new auctions and resets reference the current oracle price.\"\n\nThe trigger condition is `next_oracle_price < current_oracle_price * breaker_price_tolerance`, with the tolerance currently 0.5 (A.1.10.3.2.4.1, A.1.10.3.2.4.1.1) \u2014 a halving between updates trips the breaker without anyone deciding.\n\nThen the quiet sentence: \"In instances where the price oracle model does not support the price delay function, **the permissionless activation of the liquidation circuit breaker ceases to function, since there is no next oracle price**.\"\n\nThe mechanism depends on a two-value comparison that only delayed oracles provide. For collateral using an oracle without a next-price stage, the automatic protection simply does not exist \u2014 and nothing about the breaker's configuration would show that. The parameter is set, the contract is deployed, the level is 0; the trigger is just unreachable.\n\nThis is the more dangerous class of failure than an outage, because it produces no signal. Governance can still trip the breaker manually via the CLIPPER_MOM path, so the collateral is not undefended \u2014 but the fast, automatic, human-independent layer is absent precisely for the oracle types where nobody has been told to look.\n\nThe practical implication is that the effective coverage of this safeguard is a function of which oracle model each collateral uses, and that mapping is not recorded alongside the breaker's parameters.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.3.2.4.1 notes that where the price model lacks a delay function the automatic trigger 'ceases to function', so an automated safeguard has a failure mode that raises no alarm.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

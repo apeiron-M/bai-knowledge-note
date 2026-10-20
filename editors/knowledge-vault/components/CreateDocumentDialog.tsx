@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  addDocument,
   setSelectedNode,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
 import { useFolderMap } from "../hooks/use-drive-init.js";
+import { createDocumentRemote } from "../lib/remote-reactor.js";
+import { triggerVaultPull } from "../hooks/use-remote-first.js";
 
 type CreateDocumentDialogProps = {
   open: boolean;
@@ -25,7 +26,6 @@ const DOC_TYPE_FOLDER: Record<string, string> = {
   "bai/tension": "ops",
   "bai/health-report": "ops/health",
   "bai/research-claim": "research",
-  "bai/project": "projects",
   "bai/wbs": "projects",
 };
 
@@ -67,16 +67,22 @@ export function CreateDocumentDialog({
       const parentFolderId = targetFolder
         ? folderMap.get(targetFolder)
         : undefined;
-      const result = await addDocument(
-        driveId,
-        name.trim(),
+      // Create on the Switchboard: the vault is server-authoritative, and
+      // a locally-created document could never persist (the drive's
+      // replica exceeds Chrome's IndexedDB value limit) nor sync (the
+      // channel is scoped to the drive document).
+      const newId = await createDocumentRemote({
         documentType,
+        name: name.trim(),
+        driveId,
         parentFolderId,
-      );
+        targetFolderPath: targetFolder,
+      });
+      // The local tree learns about the new node via the (scoped) sync
+      // channel; nudge it so the node appears immediately.
+      triggerVaultPull();
       onClose();
-      if (result?.id) {
-        setSelectedNode(result.id);
-      }
+      setSelectedNode(newId);
     } catch (err) {
       console.error("[CreateDocument] Failed:", err);
       setLoading(false);

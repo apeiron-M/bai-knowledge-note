@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Primitive's Global Activation Status and each instance's Status are independent lifecycles",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cdaf7739-24c7-4a51-bc0f-b5c847d82d5e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b6619470-0c08-4771-ae19-352da2827483",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90edeb30-cb49-4d77-9ffb-4a51d9a868e8",
+      "name": "state-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.1.3.1 establishes a two-level state model. Each valid Invocation updates the Agent Artifact with a specific *instance* of a Primitive \u2014 \"each Invocation of the Token SkyLink Primitive launches a SkyLink deployment to a specific blockchain\" \u2014 and \"A Primitive instance thus has its own Status or life cycle that is independent of the Primitive's Global Activation Status.\"\n\nInstance Status is a strict three-value enum, and A.2.2.1.3.2 requires exactly one at all times: `Active` (fully operational for its intended purpose), `Suspended` (was Active, may be again \u2014 cited causes include underperformance, security issues, or breaching Risk Capital or Asset Liability Management requirements), and `Completed` (terminal, either permanently ceased or a single-Invocation deployment that has achieved its outcome, such as the Prime Transformation Primitive).\n\nThe separation is what makes Primitives operationally usable. A.2.2.1.3.3 shows the payoff: an Agent \"may run multiple Integration Boost instances in parallel (each with its own markets and configurations), toggling them on or off as needed, without affecting the underlying Integration Boost Primitive's Global Activation Status.\" Global status is a *permission*; instance status is *operations*.\n\nThe two levels also carry different governance weights. Global status changes post-launch require a token holder vote plus Operational Executor Facilitator review (A.2.2.1.2.4.1.3), while instance changes can run through Root Edit governance or an appropriately configured Omni Document (A.2.2.1.3.3). Day-to-day operational agility is deliberately cheaper than changing what the Agent is permitted to do at all.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "One activated Primitive can back many instances \u2014 parallel Integration Boost configurations, per-chain SkyLink deployments \u2014 each suspended or resumed without touching global status.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "42b95f87-7618-4d07-8344-1eff56367197",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fd05a3c0-7d12-4c84-914b-ee7e722b7dc1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

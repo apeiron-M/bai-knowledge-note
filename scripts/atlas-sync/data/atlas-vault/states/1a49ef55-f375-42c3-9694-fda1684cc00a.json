@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-3e961adc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3e961adc-5fc3-48c9-938a-0dc5d7830f5d",
+      "targetTitle": "Instance-specific operational processes exist only to deviat"
+    },
+    {
+      "id": "lnk-aba43fe4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aba43fe4-1bdd-4b9b-852f-7a49abe20a8f",
+      "targetTitle": "Instance documents may deviate from general processes even t"
+    },
+    {
+      "id": "lnk-8db86fa0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8db86fa0-cadd-4fb0-a08a-50b2d7a996e9",
+      "targetTitle": "Instance-specific processes are defined as deviations from a"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Instance-specific operational processes may deviate from Keel's general Liquidity Layer processes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "12c26112-afc9-4f47-8a22-4b1d011f3cbc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c769515-09e7-43be-8f75-be4e81595e59",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49e2be25-4440-481b-836e-662d0aeec4fa",
+      "name": "operational-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf3d8e35-fe43-4db2-83ab-6abf3a4c4d6d",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Instance Configuration Document closes with an **Instance-specific Operational Processes** section, worded identically every time: \"The documents herein contain operational procedures or monitoring requirements unique to this Instance that deviate from or otherwise supplement the general Keel Liquidity Layer processes\" (e.g. A.6.1.1.3.2.6.1.3.1.1.5.3).\n\nThe operative word is **deviate**. This is not only an extension point for extra monitoring \u2014 it explicitly contemplates per-Instance procedure that departs from the general rule. General Keel Liquidity Layer process therefore functions as a *default* that Instance-level configuration can override, rather than as a minimum standard every Instance must meet.\n\nThat is a real design trade-off. It buys the ability to integrate a venue whose mechanics genuinely do not fit the general process \u2014 a new chain, an unusual withdrawal path \u2014 without amending the general process for everyone. The cost is that the effective operating rules for any given position cannot be read off the general document alone; you must also read that Instance's override slot.\n\nPaired with the equally uniform **Off-chain Operational Parameters** slot, the Instance Configuration Document is best read as a per-venue override surface layered over shared defaults.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every Instance Configuration Document reserves a slot for procedures or monitoring that \"deviate from or otherwise supplement\" the general processes, making general process a default rather than",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a664ccbb-8313-4d2c-98c6-44f3836ceef6",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cc1f0663-0d8b-44d1-a388-6ac6487a5c7f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

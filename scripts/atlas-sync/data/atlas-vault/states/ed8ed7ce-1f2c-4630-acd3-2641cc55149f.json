@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Risk capital must be accounted in its dynamic states, including capital in transit and fees that consume it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b68ea317-e35c-440c-a081-5daa24d65bb8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3141d3e1-66bb-4fb8-8231-9b011b63d05a",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "28c119ba-c32f-4b7a-9dae-e2bd2d14f12b",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.2.1.2.2 requires \"dynamic-state accounting\" because TRC components \"in dynamic, pending, or off-chain states... can impact the true risk capital available to a Prime Agent.\" Four categories are named: rental Accords \"committed to by the parties, but not yet codified in the Atlas\"; \"capital in transit, e.g., assets that are committed to be IJRC, but currently moving between chains via bridges or locked in Cross-Chain Transfer Protocol (CCTP) messages awaiting finality\"; operational expenditures funded by TRC such as \"blockchain transaction fees, oracle service fees, audit costs\"; and any off-chain factor impairing deployability.\n\nThe unifying principle is that risk capital is only real if it is *available at the moment loss occurs*. Each category breaks availability differently \u2014 an uncodified Accord is not yet enforceable, bridged capital is unreachable until finality, and spent capital is simply gone.\n\nThe operational-expenditure item is the most easily missed. Gas, oracle subscriptions and audits are running costs that in ordinary accounting sit far away from solvency, yet when funded from IJRC they continuously erode the buffer. Requiring them tracked \"in real-time or near real-time\" means a Prime can drift into shortfall through routine operations with no allocation decision taken.\n\nThe same section demands the related distinction \"between capital directly held by the Prime Agent and capital that is encumbered (e.g., PEJRC where the lending Prime retains custody but the capital is contractually committed)\" \u2014 rented capital counts for the borrower while sitting in the lender's custody, which is exactly why the TRC Report must name the counterparty, the expiry and the governing Accord for every such position.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "TRC systems must track committed-but-uncodified rental Accords, assets stuck in bridges or CCTP messages awaiting finality, and gas, oracle and audit costs drawn from IJRC in near real time.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "709dfb0f-ea64-4005-a5b8-0df497a24fdd",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "50c289c9-be6c-440a-8b0a-675e49a691d4",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

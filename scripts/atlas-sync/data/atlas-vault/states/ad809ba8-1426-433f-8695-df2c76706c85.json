@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-d5dc369d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d5dc369d-8d51-4040-9bd9-7336c98701fd",
+      "targetTitle": "Where Artifact logic is ambiguous the Executor Agent must do"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Agent Artifact must be accurate and unambiguous, not merely compliant",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dd92e9d9-2a69-4b48-9ae2-33e99c1769a8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9758adb8-c53a-498b-96ad-097f4fad0771",
+      "name": "agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c292627-ffbc-449a-ace2-588d1523bd5a",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.14.2.10.1 lists what each Agent must keep true of its Artifact: it \"provides clear authorization for all actions taken by the Agent\"; it \"accurately reflects the current state of the Agent and its operations\"; it \"conforms to all specifications in the Sky Core Atlas, including... the specifications for each of the Sky Primitives\"; and it \"is free of significant ambiguities or contradictions.\" Where the Agent has an Operational Executor Agent, \"this responsibility is shared by Operational GovOps and the Operational Facilitator.\"\n\nThe second and fourth criteria are the demanding ones, because they are not about permission at all. **Accuracy** makes stale documentation a governance breach: an Artifact describing operations the Agent no longer runs is defective even if every action it authorizes is legitimate. **Freedom from ambiguity** makes unclear drafting a breach in itself, independent of whether anyone has yet been misled.\n\nBoth follow necessarily from the rest of the architecture. Executors execute the text deterministically and must refuse when it is ambiguous (A.1.14.2.7.2.1.1), so a vague Artifact does not merely read poorly \u2014 it halts the Agent. Sky Core supervises Agents by reading their Artifacts, so an inaccurate one silently disables oversight. And A.1.14.2.6.1 makes the Artifact the sole vehicle for governance action, so drift between text and reality means the Agent is acting without authorization by definition.\n\nThe underlying principle is that in a system where documents *are* the machine, documentation quality is not hygiene \u2014 it is correctness.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Four standing requirements: it must authorize every action the Agent takes, reflect the Agent's current state, conform to Sky Primitive specifications, and be free of significant ambiguities or",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "72b5001b-1806-49bc-a265-6b992cc348c9",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3f686938-ba87-47d7-b361-553126879b9d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

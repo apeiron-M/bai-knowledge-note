@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-a4576670-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4576670-0b93-4071-9768-6651d8aa51c5",
+      "targetTitle": "Instances are pre-registered as Active with their risk envel"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The gap between max yield and current yield is pre-authorized discretionary headroom for the vault operator",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "80f51edf-d487-4326-90bc-ee66fbe9b235",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cff67769-62ce-4430-803d-e013b115b804",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ccd148c5-21a2-4470-bbdb-dfd6e2e0935f",
+      "name": "yield-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Spark Savings v2 risk block records two yield figures rather than one: a `Max yield` and a `Current yield (at launch)`. The recorded pairs are 10% / 0% for Avalanche USDC (A.6.1.1.1.2.6.1.3.4.2.1.4.2.1), 6% / 3.2% for Robinhood Chain USDG (A.6.1.1.1.2.6.1.3.5.1.1.4.2.1), and 6% / 0% for X Layer USDT (A.6.1.1.1.2.6.1.3.6.1.1.4.2.1).\n\nGovernance therefore approves a **band**, not a rate. Everything between launch and the ceiling is delegated to the setter role.\n\nThe rationale is competitive: savings rates must respond to market conditions on a timescale far shorter than a governance cycle, and an instance launched at 0% is a live venue awaiting demand rather than a mispriced one. The ceiling caps the worst case \u2014 the maximum liability Sky can accrue per unit of deposit \u2014 while leaving the operating point to whoever is watching the market.\n\nThe corresponding cost is that the Artifact's stated yields become stale immediately. A reader cannot infer Sky's current cost of funds from the Atlas; only the ceiling is authoritative, and the two numbers can diverge arbitrarily far within the band without any recorded governance event.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instances launch below their governed ceiling \u2014 USDG at 3.2% against a 6% max, USDC and USDT at 0% against 10% and 6% \u2014 letting rates be moved competitively without a new governance vote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

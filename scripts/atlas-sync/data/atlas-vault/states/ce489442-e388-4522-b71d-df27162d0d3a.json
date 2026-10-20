@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f3a655f6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f3a655f6-b1d3-4e47-bcd0-7de0923dd95c",
+      "targetTitle": "Deployment verification requirements scale with whether the "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky deploys new modules on-chain seven to eight days before the Spell that authorizes them, so deployment is not activation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1dbabca0-ff91-423b-84ff-9565eadc78cf",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d6e9ed37-d448-4b84-b4f1-57019466f48c",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8de6489a-e915-4713-a91b-c1e686844ea8",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.3.2.1.2.1.1 states flatly that \"the module is usually deployed eight or seven days prior to the Spell.\" The new contract therefore exists on mainnet, at a known address, more than a week before SKY holders vote on anything concerning it.\n\nWhat makes this safe is the separation of *existence* from *authority*. The Forum Post requirements in A.1.10.2.3.2.1.2.1.2.1 include confirming that \"authority is given to the protocol owner: `MCD_PAUSE_PROXY` in the case of SKY and denied from the deployer address,\" plus \"instructions to be added to the Executive Sheet, such as adding the module to the chainlog, defining parameters for the module... further authorization that needs to be done to different module elements.\"\n\nSo the object of the Executive Vote is not \"deploy this code\" but \"grant this already-deployed, already-audited, already-publicly-inspectable code a place in the chainlog and a set of permissions.\" The governance act is an authority transfer.\n\nThe consequence is a real gain and a real cost. The gain: by vote time the code is immutable, its address is fixed, and anyone can read it \u2014 reviewers verify an artifact rather than a promise. The cost: the deployer holds transient privileges during the gap, which is exactly why explicit denial of the deployer address is an itemized checklist requirement rather than an assumed default.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Contracts sit on chain with no power until an Executive Spell grants authority to the protocol owner and denies the deployer; governance approves a wiring-up, not a deployment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3fb8b185-3d1b-452a-9b1a-635d3e1fd60e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:06.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2f1eda74-1f10-4bdd-aa0c-4c6714fe4bbc",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

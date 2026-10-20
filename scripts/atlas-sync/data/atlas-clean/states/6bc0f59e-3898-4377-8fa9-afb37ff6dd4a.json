@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-c496027e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c496027e-c685-4683-8573-f53724c310e4",
+      "targetTitle": "Deployment and initialization scripts are treated as protoco"
+    },
+    {
+      "id": "lnk-f1feee13-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1feee13-357e-4e83-8f8f-c8fc6ae247e9",
+      "targetTitle": "The Technical Scope Forum Post is the only link binding an o"
+    },
+    {
+      "id": "lnk-8c0acd77-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c0acd77-d331-45af-a3ce-f2a276294b32",
+      "targetTitle": "The deployed-versus-repository code comparison has a defined"
+    },
+    {
+      "id": "lnk-a0678bd8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0678bd8-cc7b-455c-a6d5-29c477825f13",
+      "targetTitle": "The initialization library must be importable by a compliant"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deployment verification is explicitly outside audit scope and must be a separate review",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a7a00962-27a3-4a22-b7df-f518880ab2e5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "67cb9d83-d5ed-499f-b5cb-d78e1f94baee",
+      "name": "audit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d9d62da7-c6e4-4775-b99f-65d5bfb6bc2f",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.7.1.1.2.1 ends with a boundary statement: \"**Deployment verification, including confirmation of address correctness and on-chain state, is not within the scope of an audit of deployment and initialization scripts and must be performed as a separate deployment verification review.**\"\n\nThe distinction is between a script being correct and a deployment being correct. An audit examines logic: given these parameters, does the library do the right thing? Verification examines a fact: were these the parameters used, is this the resulting on-chain state, is this the right address?\n\nSaying so explicitly prevents a specific and plausible failure. Once code is \"audited,\" everyone downstream tends to treat the deployment as covered, and the actual parameters used on the day \u2014 the values that determine what the contract is \u2014 end up unexamined because each party assumes the other side handled it. That gap is exactly where an incorrect address or a wrong role grant survives.\n\nThe Atlas provides the separate review elsewhere: the Smart Contract Deployment Verification process at A.1.10.2.3.2.1, the Forum post attestations that constructor arguments match the Init script, and the tiered verification requirements at A.1.10.2.5.2.1.1.\n\nThere is a general methodological point here worth extracting: a verification artifact should state what it does *not* cover. An audit report with an unstated boundary will be relied on for more than it establishes, and no one will notice until the uncovered part fails.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.7.1.1.2.1 excludes address correctness and on-chain state from script audits, so 'it was audited' can never be read as covering how the code was actually deployed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

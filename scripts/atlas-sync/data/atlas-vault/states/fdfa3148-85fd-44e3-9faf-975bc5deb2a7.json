@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Discretion beyond the documented list is permitted but must be repaid with a public postmortem and a proposed Atlas edit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "66be2808-a9d3-4412-8a67-b6202d14316d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49f59e28-63af-4ab3-a604-8a2e48336cad",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4cd6fb7-c779-4d30-b087-4501ba3cb1e6",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two independent provisions in this material use the same construction. A.1.10.4.1.1.1.0.4.1 (an Action Tenet) states that the list of instances justifying multisig use \"is not intended to be exhaustive,\" but that for edge cases the Core Council \"must ensure that a postmortem is publicly published on the Sky Forum which justifies the use of the multisig\" and \"should also consider proposing an edit to the Target Document so that the edge case is explicitly included.\" A.1.10.5.2.2 gives the Core Facilitator discretion to develop and use a Standby Spell not listed in the Atlas, but requires that \"the new Standby Spell is subsequently added to the subdocuments below.\"\n\nThe shared pattern is a ratchet. Enumerations in the Atlas are treated as illustrative rather than exhaustive \u2014 so operators are never blocked by a gap in the catalogue \u2014 but every excursion outside the catalogue creates a documentation debt that must be settled by amending the catalogue.\n\nThis resolves a real dilemma in rule design. Exhaustive lists make a framework brittle against novel situations; open-ended discretion makes it unaccountable. The ratchet gets both: operators act on judgment now, and the text absorbs that judgment afterwards, so the same excursion is no longer an excursion the second time.\n\nThe cost is that it only works if the write-back actually happens. Unpaid documentation debt turns the mechanism back into unbounded discretion, which is why both provisions assign the duty to a named role rather than leaving it to good practice.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both the SparkLend multisig examples and the Standby Spell catalogue are explicitly non-exhaustive, and both require any off-list use to be written back into the Atlas afterwards.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b08daa72-dbf7-4632-8f3c-adadaf8ca476",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b3ce53d0-cf94-4c7f-b652-556fe4fb00cb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

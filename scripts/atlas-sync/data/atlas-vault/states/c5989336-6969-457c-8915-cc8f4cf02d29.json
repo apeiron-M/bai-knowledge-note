@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-cb86b4ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cb86b4ac-5230-4d95-9c54-1598c1276834",
+      "targetTitle": "The Atlas explicitly permits a Prime to accept a shortfall p"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Market-driven capital increases are due immediately, while governance-driven increases phase in over 28 days",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2379def7-dc9c-4d32-9a6a-73989ccf6f58",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55598483-4dd5-44a7-af07-9ada672e8c1e",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d7b893a4-1ab8-4aee-a04f-4fcf68c9cb47",
+      "name": "fairness",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Atlas treats the same capital shortfall very differently depending on what caused it.\n\nMarket movement (A.3.2.2.6.1.1): \"To the extent that a market or external variable changes in a way that increases the Aggregate Required Risk Capital, the Prime Agent is **immediately** responsible for supplying additional Total Risk Capital, as necessary, and is subject to penalties for any period in which this Total Risk Capital is not provided. It is the responsibility of the Prime Agent to maintain sufficient capital so that they remain well capitalized in the face of changes to market conditions.\"\n\nGovernance action (A.3.2.2.6.2.1): a change to the framework's implementation or to a Sky Governance parameter phases in \u2014 \"50% of the additional Total Risk Capital ... within seven (7) calendar days of the change, and the remaining 50% on a pro rata basis over the following twenty one (21) calendar days.\"\n\nThe distinction is a fairness principle with teeth. Volatility is the risk an Agent was paid to take and could have pre-funded against, so there is no grace period and penalties accrue from the first minute. A methodology change is a unilateral act by the counterparty writing the rules, and demanding instant compliance would mean Sky could force-liquidate its own Agents by amending a parameter.\n\nThe phase-in also protects Sky from itself. Without it, a well-intentioned tightening applied to every Agent at once would trigger simultaneous deleveraging across the ecosystem \u2014 the crowded-exposure scenario A.3.2.1.1.5.3 identifies as the systemic danger \u2014 turning a prudential improvement into the shock it was meant to prevent.\n\nA.3.2.2.6.2.2 goes further during the current build-out: no penalties at all for failing to supply capital required by framework changes, though Operational GovOps \"must reduce the exposure to Allocation Conduits managed by the Prime Agent\" if the Agent does not work in good faith to the stated timeline. Exposure reduction substitutes for a fine \u2014 the remedy is to shrink the risk rather than to charge for it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A variable moving against an Agent obliges it to supply capital at once with penalties running; a methodology or parameter change gives 50% within 7 days and the rest pro rata over 21 more.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "475bca37-6442-4a7a-a5f2-0812d5f5117e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:44.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d273b47f-fa2a-4dac-abd6-29b48305cdfd",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

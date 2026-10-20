@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-c675d197-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c675d197-b1f2-41c0-8dee-66d6529971cd",
+      "targetTitle": "Phase-out speed is a feedback loop on surplus safety capital"
+    },
+    {
+      "id": "lnk-a5a208ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a5a208ce-c3b4-4ffd-8660-f3b0cb065abf",
+      "targetTitle": "doc-8e3c962f"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collateral auctions start above market price and step downward, resetting on whichever of price drawdown or elapsed time is breached first",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "12ebf6d5-f11a-47cf-9c36-d50d7ca9f584",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4de3cce0-a9df-4cd2-9ccc-6f34112038e6",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e19a21f-4352-48f5-89ef-c25fd7569039",
+      "name": "liquidations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc09ba59-2a2b-493d-b653-9c7e82b5036a",
+      "name": "auctions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.1.2.5.1 establishes the auction form: \"Collateral auctions use a falling price auction, where the price starts high and decreases according to the function defined in this parameter\" \u2014 an Exponential Stair Step driven by `cut` (the depth of each price drop) and `step` (the time between drops).\n\nA.3.7.1.1.2.5.2 explains why the start price is deliberately wrong: the `buf` multiplier \"is intended to be greater than 1.0x because Liquidations 2.0 uses falling price auctions. This means that it is generally preferable for the auction price to begin above the market price and then fall to the correct value.\" Price discovery replaces price estimation \u2014 the protocol never has to know the market price, only to descend through it, and the first buyer willing to transact reveals it. Overshooting upward is free (nobody buys); starting too low would sell collateral cheaply and irreversibly.\n\n`cut` and `step` jointly set the descent speed, which trades settlement latency against sale price: fast descent settles quickly but may clear below fair value, slow descent risks the market moving further away during the auction.\n\nTwo independent guards end a stalled auction. A.3.7.1.1.2.5.3 defines `cusp` as the maximum percentage drop in the *auction* price (not the market price) before a reset, and A.3.7.1.1.2.5.4 defines `tail` as the maximum elapsed duration. Both documents state they \"overlap\" in that \"an auction will need to be reset once either maximum is exceeded.\" One bounds how far the price can fall on a stale start price; the other bounds how long a bad auction can occupy liquidation capacity. Whichever binds first wins.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Liquidations 2.0 uses falling-price auctions with a buf multiplier above 1.0x, an exponential stair-step decline set by cut and step, and dual reset triggers cusp and tail.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

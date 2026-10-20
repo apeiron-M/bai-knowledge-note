@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-df5f0ffe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df5f0ffe-be36-41a2-93ea-fce960862c1c",
+      "targetTitle": "The Relayer role can be granted only by admin but revoked by"
+    },
+    {
+      "id": "lnk-a4937777-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4937777-e2ec-4f89-8101-20f235546bd9",
+      "targetTitle": "doc-150f53f4"
+    },
+    {
+      "id": "lnk-b2d6823f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b2d6823f-6981-448a-8fc0-1b4d863dc57d",
+      "targetTitle": "Emergency roles in the Liquidity Layer are strictly subtract"
+    },
+    {
+      "id": "lnk-d0faa3cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0faa3cb-6f02-495a-b036-f44653e796f8",
+      "targetTitle": "A backstop Relayer exists so removing a compromised one does"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Freezer Role can revoke a Relayer but never grant one, so emergency power can only subtract",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c279b0e9-8d8e-4b78-95f9-9c6746dbe941",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b379eec6-1669-428a-bcb7-c739c63726f7",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "542d6749-5b72-43a6-9ba2-862a380d5559",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43f67d0a-5c8c-44c2-8c06-00b73e585e9c",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.1.2 states the asymmetry precisely: \"the Relayer Role may be granted to an address by any address holding the `DEFAULT_ADMIN_ROLE`. The Relayer Role may be removed from an address by any address holding the `DEFAULT_ADMIN_ROLE` **or** the `FREEZER_ROLE`.\" A.6.1.1.3.2.6.1.2.2.1.1.1.4 then defines the freezer minimally: \"the address of the emergency role that can remove a compromised Relayer.\"\n\nThis is what makes a low-threshold emergency role safe to hand to a fast-moving group. A compromised or captured Freezer Multisig cannot install an operator of its choosing, cannot move funds, and cannot grant itself anything \u2014 its entire capability is destructive. The worst outcome of freezer capture is a halted Liquidity Layer, which is also the *intended* outcome of legitimate use.\n\nThe general principle is worth extracting: emergency authority should be monotonic in the safe direction. Any role that can both add and remove privileges is as dangerous as the privileges it manages, whereas a subtract-only role can be given a 2-of-5 threshold and still not be a route to theft.\n\nIt also clarifies the division with the admin. Recovery \u2014 restoring a relayer after a freeze \u2014 requires `DEFAULT_ADMIN_ROLE`, which sits with Sky Governance. Stopping is cheap and fast; restarting is deliberately expensive and slow.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RELAYER_ROLE may be granted solely by DEFAULT_ADMIN_ROLE, while either the admin or the FREEZER_ROLE can remove it \u2014 the freezer is defined as the role that removes a compromised relayer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

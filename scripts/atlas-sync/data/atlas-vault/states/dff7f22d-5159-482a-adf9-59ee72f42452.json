@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4b41dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4b41dda-9a74-4a12-8f29-58d5f5ad9301",
+      "targetTitle": "Emergency-response multisigs are exempt from signer and thre"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The multisig modification rules require thresholds the current multisigs do not meet",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d3df475c-b35d-46a4-8769-a2950d6eb77b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4064de41-2682-42b0-8518-cda17bc2ce35",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "031430ee-67f9-4313-9a05-f2bf379d1d59",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c30a0dec-d623-4a26-a848-12c40ba894c0",
+      "name": "internal-contradiction",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two Modification provisions set constraints on future changes. A.6.1.1.1.2.6.1.2.1.2.2.1.5: Phoenix Labs may change Prime Relayer signers \"so long as there are at least two (2) signers and at least a **majority** of signers are required to execute transactions.\" A.6.1.1.1.2.6.1.2.1.2.2.2.5: Soter Labs may change Core Operator signers \"so long as there are at least three (3) signers and at least **two-thirds** of signers are required to execute transactions.\"\n\nNeither current configuration satisfies its own constraint. The Prime Relayer is 1-of-2 (A.6.1.1.1.2.6.1.2.1.2.2.1.2) \u2014 one of two is not a majority. The Core Operator Relayer is 2-of-5 (A.6.1.1.1.2.6.1.2.1.2.2.2.2) \u2014 two of five is 40%, well below two-thirds.\n\nRead literally this is a live inconsistency, and it cuts in an awkward direction: the standing configurations are *weaker* than any configuration a modifier would be permitted to install. Rotating a signer while honouring the rule would require raising the threshold, meaning the rule cannot be complied with without changing the operational posture.\n\nThe charitable reading is that the constraints were written as forward-looking hardening targets while the present thresholds reflect operational reality, and that the mismatch has simply not been reconciled. Either way it is exactly the kind of provision that produces disputes at the moment it matters \u2014 during an emergency signer rotation \u2014 and it is worth flagging as an unresolved defect rather than a subtlety.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Future signer changes must keep a majority (Prime Relayer) or two-thirds (Core Operator) requirement, yet the live configurations are 1-of-2 and 2-of-5 \u2014 neither satisfies its own rule.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bf879e0e-cdad-434c-80e4-033b0a64e593",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d76a04a1-507a-450e-8d5a-9db136377308",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-de476be7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de476be7-c28f-43a3-ad46-0dd7655ad8dc",
+      "targetTitle": "Stablecoin conversion routes are themselves governed Instanc"
+    },
+    {
+      "id": "lnk-d5a576f5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d5a576f5-3797-4275-86b4-8a69393157e5",
+      "targetTitle": "Grove's Tokenized Treasury Instances disable every optional "
+    },
+    {
+      "id": "lnk-ddba144b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ddba144b-b914-4541-824a-d82dc8a9751d",
+      "targetTitle": "Grove holds a standing authorization to swap stablecoins int"
+    },
+    {
+      "id": "lnk-f6b6ddb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f6b6ddb2-a191-4a90-bc43-80266197723c",
+      "targetTitle": "Grove states some exposure ceilings at asset level across In"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove models two-way convertibility through a centralized issuer as two independent one-way conduits with no netting",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0d10a3e4-ca9a-4fa7-8b2f-2c9a2e5ee3df",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d8bd95a-6ffa-425e-9c5f-3634e0bf3bd0",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "14853ebc-00ae-41c8-ab3b-154702c1e124",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0da86c01-0ea4-429d-9191-5ab6634d1e46",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.7.2.1 configures \"USDG To USDC Via Paxos\" on Robinhood Chain: Asset Supplied USDG, Token to Receive USDC, Token Address and Underlying Asset Address both the same USDG contract, a Paxos Deposit Address, and a single `transferAssets` RateLimitID capped at 50,000,000 USDG per day. It is the mirror image of the Ethereum \"USDC To USDG Via Paxos\" Instance, which has the identical shape with the assets swapped.\n\nGrove has not modelled this as one convertibility relationship with Paxos. It has modelled two conduits, each with its own identifier, its own limit, and its own document.\n\nThe separation is correct for the risk being managed. Each direction is a distinct off-chain obligation \u2014 sending USDC and awaiting USDG is a different exposure from sending USDG and awaiting USDC, with a different asset at stake and a different settlement path. A single bidirectional limit would let capacity consumed on one leg constrain the other for no risk-related reason.\n\nThe consequence is that the limits do not net. Grove can have 50,000,000 outbound in each direction on the same day, so the daily credit extendable to Paxos across both conduits is 100,000,000 rather than 50,000,000, and no document states that combined figure.\n\nThis also completes a dependency chain worth seeing whole. Grove's Robinhood Chain Morpho position is denominated in USDG; the only documented route between USDG and the wider stablecoin world is these two Paxos conduits; and the vault Instance's own outflow RateLimitID is deferred to \"a future iteration of the Grove Artifact.\" Exiting the Robinhood Chain position therefore runs through a centralized issuer, and the 100 million USDS total-USDG ceiling is doing more work than its placement suggests.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDC To USDG on Ethereum and USDG To USDC on Robinhood Chain are separate Instances, each with its own transferAssets limit, so 50m of outbound credit in one direction never offsets the other.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "434af3db-3410-4753-be46-aed96bf4cfbe",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:11.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4d97605c-6cf6-41b4-876a-28079c73ee49",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:11.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

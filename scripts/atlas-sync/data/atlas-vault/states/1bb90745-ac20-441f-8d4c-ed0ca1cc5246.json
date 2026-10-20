@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-9639e9c2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9639e9c2-236d-4563-b454-155147ef9705",
+      "targetTitle": "Spark's minimum lending rate is the greater of the Sky Savin"
+    },
+    {
+      "id": "lnk-e78b51aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e78b51aa-9266-4b1b-ac1d-96aeb7802786",
+      "targetTitle": "New Spark risk parameters do not break existing loans \u2014 non-"
+    },
+    {
+      "id": "lnk-b5a3e305-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5a3e305-0030-452a-8629-631c07995905",
+      "targetTitle": "Spark's emergency lane is distinguished by permission to reo"
+    },
+    {
+      "id": "lnk-d289671d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d289671d-a34c-436b-b198-2170552ed431",
+      "targetTitle": "The Spark and Grove borrow subsidy decays linearly from SOFR"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A rising benchmark turns a compliant Spark loan into a non-conforming one that must be recalled or repriced",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e7189fa9-b76f-4f9c-8385-d4e4b4993218",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fc31ff4-0cb3-4db2-8eb6-a2f3230c9db9",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f3d830ec-d393-4cdb-b9bb-46a93fde9f83",
+      "name": "lending-policy",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.7.2.5.3 names both directions in which a loan can fall through the floor: \"either due to variation in the borrow rate itself (e.g., via profit sharing mechanisms) **or because the benchmark rate(s) have increased**, Spark must recall the debt or adjust the borrow rate at the earliest opportunity.\" The offchain equivalent at A.6.1.1.1.3.8.2.5.3 imposes the same obligation.\n\nThe second clause is the consequential one. A fixed-rate loan issued at SSR + 0.5% is compliant on day one and becomes non-conforming the moment Sky raises the SSR past it \u2014 through no act of the borrower and no change in the loan. The rate floor is therefore not an origination test but a **standing covenant**, re-evaluated against a moving external benchmark for the life of the loan.\n\nThis explains the tenor limits elsewhere in these sections: fixed terms are capped at one month for Arkis (A.6.1.1.1.3.7.2.4.2.1) and six months for offchain lending (A.6.1.1.1.3.8.2.4.2.1), and evergreen loans \"automatically extended at the current terms until recalled\" are the preferred structure. A long fixed-rate loan is a large bet that Sky's own funding cost will not rise \u2014 precisely the bet that sank fixed-rate lenders in 2022 \u2014 and short tenor plus a recall duty is how Spark avoids taking it.\n\nThe remedy is disjunctive and that matters: recall **or** reprice. Spark is not required to destroy a good relationship over a benchmark move, only to stop subsidizing it. The borrower's real position is that their rate is renegotiable upward on Sky's schedule, which is a materially different product from a term loan.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:03:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Borrow Rate Shortfall is triggered either by the charged rate falling or by the benchmark rising, making the floor a continuous condition of the loan rather than a test applied at origination.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6a19763a-a173-422e-a426-aefa38717be4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:03:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5d7c2108-5c57-4760-9f12-b722b4fbd239",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:03:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

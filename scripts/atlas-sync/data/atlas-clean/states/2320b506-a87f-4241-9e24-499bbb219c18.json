@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a4403aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3a4403aa-b792-46d6-91da-eb838e8cbeaf",
+      "targetTitle": "Grove's USDS-to-USDC swaps route through the legacy DAI migr"
+    },
+    {
+      "id": "lnk-ad521530-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad521530-f2c5-468f-9400-a59cc5805f96",
+      "targetTitle": "USDC-to-DAI swaps are all-or-nothing and loop the PSM's own "
+    },
+    {
+      "id": "lnk-44bb4868-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44bb4868-e639-4b3e-b935-6149258474f8",
+      "targetTitle": "USDS replaced Dai as a 1:1 convertible successor rather than"
+    },
+    {
+      "id": "lnk-7d0921d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d0921d2-92fe-49e2-9af9-78994d22dd87",
+      "targetTitle": "Zero PSM fees with no authorized-party carve-outs make USDS'"
+    },
+    {
+      "id": "lnk-b66da4bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b66da4bb-1384-40b9-b1a8-681053551d6d",
+      "targetTitle": "Large USDC swaps must iteratively refill the PSM and revert "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "USDS converts to USDC only by routing through DAI and the legacy PSM",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "bc186565-8453-4d94-adeb-e5124bcaa2dc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39779c21-cef3-44ae-acfe-63dbcf114b80",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15f11b7e-e248-43ed-9d35-60b735aa86fe",
+      "name": "usds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1190d41a-171c-4b01-aef4-e9543f51e0c0",
+      "name": "legacy-dependencies",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.2.1.2.1.2.4.1 walks through `swapUSDSToUSDC` and it is a two-hop path. First, \"USDS is swapped to DAI in a 1:1 ratio through the `daiUsds` contract.\" Then \"DAI is swapped to USDC in the PSM at a 1:1 ratio with no fee, using the `buyGemNoFee` function.\" `swapUSDCToUSDS` runs the same route in reverse, and the amounts are converted between 18 and 6 decimals via `psmTo18ConversionFactor`.\n\nUSDS has no direct USDC facility of its own. Its dollar convertibility is inherited from DAI's Peg Stability Module, with the `daiUsds` contract acting as a 1:1 bridge between the new unit and the old one. Even the revert string is legacy: `DssLitePsm/nothing-to-fill`.\n\nThe upside is that this reuses the most battle-tested piece of the ecosystem's peg machinery, at zero fee, rather than building a new one. USDS gets DAI's stability guarantees on day one.\n\nThe cost is a dependency chain on the critical path. Every USDS\u2194USDC conversion passes through two additional contracts, and both the 1:1 swap and the PSM's no-fee redemption must hold for the route to work as documented. Anything that impairs DAI's PSM \u2014 depletion, deprecation, a parameter change introducing a fee \u2014 propagates directly into Spark's ability to source USDC, which is the asset most of its external venues actually need.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:54:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "swapUSDSToUSDC swaps USDS to DAI 1:1 via the daiUsds contract, then DAI to USDC through the PSM's buyGemNoFee at 1:1 with no fee \u2014 inherited Maker plumbing on the critical path.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

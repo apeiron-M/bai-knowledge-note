@@ -9,7 +9,7 @@ export const documentModel: DocumentModelGlobalState = {
   },
   extension: "",
   description:
-    "Bundled research claim \u2014 one of 249 interconnected claims about tools for thought, knowledge management, and agent-native cognitive architecture. Read-heavy, populated by maintainers",
+    "Bundled research claim \u2014 one of 249 interconnected claims about tools for thought, knowledge management, and agent-native cognitive architecture. Read-heavy, populated by maintainers.",
   specifications: [
     {
       state: {

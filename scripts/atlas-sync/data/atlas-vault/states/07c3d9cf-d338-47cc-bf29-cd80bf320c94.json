@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-a0b3b01b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0b3b01b-9831-4f38-a69a-e7c9fcc8fdf3",
+      "targetTitle": "Emergency bypasses are one-directional ratchets: restriction"
+    },
+    {
+      "id": "lnk-ad9a3a44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad9a3a44-2b7f-4142-8c07-f1047b77fd89",
+      "targetTitle": "Fast emergency powers act only over a scope that can be chan"
+    },
+    {
+      "id": "lnk-64f9c4ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64f9c4ea-0f98-4710-82d9-cb6932635836",
+      "targetTitle": "doc-ae8142b6"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every exception to the GSM Pause Delay must document the specific attack it enables",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "18216cbe-37c6-41a4-bd8b-ac6896a6cac2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d89f6962-436f-40b1-b402-45d6f7e139e9",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "db638694-33af-4bb0-bc15-5e2516ed2a8c",
+      "name": "transparency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The twelve pause-delay exceptions in A.1.10.3.2 share a template: what the bypass does, why it exists, and then a clause naming the harm it makes possible.\n\nExecutive Drop: \"a malicious attacker may be able to delay or permanently block a legitimate governance proposal\" (A.1.10.3.2.1). Oracle Freeze: oracles \"may be frozen by an attacker in order to either: Prevent an expensive liquidation. Take advantage of a significant drop in collateral prices to mint unbacked USDS\" (A.1.10.3.2.2). Direct Deposit Breaker: \"a given line of USDS credit is unexpectedly shut down\" (A.1.10.3.2.5). Dynamic Debt Ceiling: \"a theoretical griefing attack on the IAM that prevents debt from being accessible\" (A.1.10.3.2.6). The SP-BEAM, stUSDS BEAM and SBE-BEAM exceptions each name \"malicious action by whitelisted operators\" (A.1.10.3.2.10.2 to .10.4). Even a side effect is disclosed: triggering SPLITTER_MOM \"also disables these rewards until the activation is reversed\" (A.1.10.3.2.8).\n\nThe discipline is the notable thing, not any individual entry. Emergency powers are normally documented by their justification alone \u2014 the crisis they answer \u2014 because that is the persuasive part. Requiring the enabled attack to be written down alongside converts each exception into an explicit trade whose cost is on the record and can be revisited.\n\nIt also produces a usable artifact: read together, these clauses are a catalogue of Sky's fast-path attack surface, written by Sky. An attacker's shortlist and the defenders' shortlist are the same document, which is a deliberate bet that visibility helps defenders more than attackers.\n\nEach exception's mitigation is named too \u2014 bounded parameters, a paired MOM contract, locked time \u2014 so the record is a trade rather than a confession.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Across A.1.10.3.2.1 to .12 each bypass carries a 'risk opened up by this exceptional functionality' clause, making the cost of each emergency power part of the Atlas record.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a5104f60-c9e4-482e-9417-3f16992153f7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "63c19d14-7a69-4f79-a753-3017be913ce6",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

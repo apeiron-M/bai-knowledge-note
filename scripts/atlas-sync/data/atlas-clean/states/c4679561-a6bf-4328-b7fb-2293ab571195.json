@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The SP-BEAM concentrates key custody and approval far more than the SBE-BEAM does, despite controlling ecosystem-wide rates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "13290eed-79b2-441c-ae91-fcaef2115a80",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "77034e8d-c69d-432b-8a55-0819fd6b8dd3",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "09b2dfce-edd0-4949-a0ad-c8a38a34c08d",
+      "name": "sp-beam",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec8a731c-976d-4487-a77f-05cb174daebf",
+      "name": "tension",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two provisions, read together, show a governance asymmetry inside the Stability Scope.\n\nA.3.7.1.3.5.1 and A.3.7.1.3.5.1.3 make the SP-BEAM Operator Multisig \"controlled by Core GovOps\" with \"three (3) addresses controlled by Core GovOps\" and a 2/3 threshold \u2014 one organization holds every key and can reach the threshold alone. A.3.7.1.3.5.1.5 lets Core GovOps change the signers \"at any time, so long as there are at least three (3) signers and at least a majority of signers are required,\" so the composition invariant constrains arithmetic only, not who holds the keys.\n\nThe approval chain is correspondingly short. A.3.7.1.3.6.1 requires the Core Council Risk Advisor to post the request to the Sky Forum, and A.3.7.1.3.6.2 then obliges the Operators to \"prepare and execute the proposed changes in a timely manner.\" The Operator is a mechanical executor \u2014 A.3.7.1.3.6 says its use of authority \"must wholly adhere to instructions provided by the Core Council Risk Advisor\" \u2014 and no third party signs off.\n\nCompare the Smart Burn Engine's SBE-BEAM (A.3.5.2.4.5.1.3, A.3.5.2.4.6.2): keys split two-two-two across the Core Facilitator, Core GovOps and Operational GovOps with a 4/6 threshold no single body can reach, plus a mandatory public agreement from the Core Facilitator before execution.\n\nSo the module that sets Stability Fees and the savings rates for the entire ecosystem has weaker key separation and one fewer human check than the module that tunes surplus throughput. The SP-BEAM's `min`/`max`/`step`/`tau` envelope is doing more of the safety work in exchange, and both routes converge on the same post-hoc transparency duty (A.3.7.1.3.6.3).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its Operator Multisig is 2-of-3 with all three signers controlled by Core GovOps, and the Update Process requires only a Risk Advisor forum post \u2014 no independent second approver.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

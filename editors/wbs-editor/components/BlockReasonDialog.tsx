@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useEventCallback } from "../../shared/use-event-callback.js";
 
 type BlockReasonDialogProps = {
   open: boolean;
@@ -37,14 +38,18 @@ export function BlockReasonDialog({
     }
   }, [open]);
 
+  // `onCancel` arrives from `StatusChipMenu` as an inline arrow, and a
+  // StatusChipMenu is rendered once per goal row — so on a 65-goal tree this
+  // listener was removed and re-added ~130 times per render pass.
+  const cancel = useEventCallback(onCancel);
   useEffect(() => {
     if (!open) return;
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onCancel();
+      if (e.key === "Escape") cancel();
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [open, onCancel]);
+  }, [open, cancel]);
 
   if (!open) return null;
 

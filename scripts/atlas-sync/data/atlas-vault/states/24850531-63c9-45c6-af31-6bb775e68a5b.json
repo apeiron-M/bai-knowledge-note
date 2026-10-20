@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-4103d0d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4103d0d2-d8bf-46bc-a3da-4c8031a65bce",
+      "targetTitle": "A negative Surplus Buffer is reclassified as Allocated Genes"
+    },
+    {
+      "id": "lnk-dfa7ce3a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dfa7ce3a-0fb8-4a2d-a5d5-3c4530bfe893",
+      "targetTitle": "The Kicker Module lets the Smart Burn Engine keep accumulati"
+    },
+    {
+      "id": "lnk-d9f3d709-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d9f3d709-763f-416d-b3b4-89830a6be9d8",
+      "targetTitle": "doc-912e9a16"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Surplus Buffer is a derived accounting difference, not a stored balance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2a34fd57-cbaa-41fb-ad3d-2bf8a132ee12",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ead31504-4b8b-4bb7-aaed-e5e795c1709b",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c4f9f5d-2e76-45ed-afd9-9bcc13ec66f2",
+      "name": "surplus-buffer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8440f0e9-0b6d-44f0-832e-554c1bcd9cf4",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.5.1 defines the Surplus Buffer as \"the difference between Sky's assets and liabilities,\" with protocol revenue increasing it and expenses decreasing it.\n\nA.3.5.1.1.1 makes the definition concrete and reveals its nature: the current value is obtained from Sky's central accounting contract (the Vat) as the difference between the Vow contract's assets (the `dai` function called with the Vow's address) and its liabilities (the `sin` function called with the same address). Nothing stores \"the surplus\" \u2014 it is computed on demand from two independently maintained ledgers.\n\nTwo consequences follow. First, the Surplus Buffer is a *net* figure and therefore signed: liabilities can exceed assets, which is why downstream mechanisms such as the Kicker Module must be built to handle a negative buffer rather than assuming a non-negative pot of funds. Second, because the value is derived rather than transferred, every accounting event anywhere in the protocol changes it without any explicit \"top up the buffer\" operation.\n\nThis framing is what makes the Surplus Buffer usable as the single scalar that gates surplus distribution: it is a live solvency measure, not a treasury account.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It equals the Vow contract's assets minus its liabilities as recorded in the Vat, so revenue and expenses move it implicitly and it can legitimately go negative.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bab9555a-38b9-40c4-b10a-f2a7c7e5ef86",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:42.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "818bf498-949a-4a87-875e-a1034085e553",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

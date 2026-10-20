@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-4605ed72-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4605ed72-a615-4c17-8445-facf7569ef1c",
+      "targetTitle": "A Relayer can only bridge to destinations an admin has pre-r"
+    },
+    {
+      "id": "lnk-b5c79b81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5c79b81-0699-41fb-ba41-83b13e5f7bfa",
+      "targetTitle": "LayerZero bridge destinations are a governance-configured al"
+    },
+    {
+      "id": "lnk-6dba1c92-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6dba1c92-90a6-48ac-931f-5c565c2cfb92",
+      "targetTitle": "CCTP refuses to bridge to a domain with no configured mint r"
+    },
+    {
+      "id": "lnk-627b1d54-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "627b1d54-84d0-4253-9762-2c61f112927d",
+      "targetTitle": "doc-a205511d"
+    },
+    {
+      "id": "lnk-8aec403f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8aec403f-31eb-4422-a0fd-7ef05dd7e893",
+      "targetTitle": "doc-5349f900"
+    },
+    {
+      "id": "lnk-accd5991-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "accd5991-dfb7-4dde-91b7-72d118c001c2",
+      "targetTitle": "The Foreign Controller reuses the mainnet controller's proce"
+    },
+    {
+      "id": "lnk-be22b5ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "be22b5ee-e5c9-411a-a8e4-1f703aea6c04",
+      "targetTitle": "Centrifuge cross-chain share transfers resolve the bridging "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Cross-chain destinations are pinned in admin-only mappings so a relayer can move value but never redirect it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a200e5b5-5921-4f77-8399-4bda7d8d6f7f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f502a8a2-e165-40d5-ab9c-4425fb5acdd8",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d149082-727c-488b-985c-959214e79ac9",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c4b8fe31-838b-4cc8-a139-6c424178d8a8",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three parallel setters, all gated on `DEFAULT_ADMIN_ROLE`, fix where bridged funds may land. `setMintRecipient` associates a recipient with a `destinationDomain` \"such that any tokens minted on this domain will go to this recipient\" (A.6.1.1.2.2.6.1.2.2.1.2.1.1.1.2). `setLayerZeroRecipient` does the same per `destinationEndpointId` (A...1.2.2). `setCentrifugeRecipient` does it per `centrifugeId` (A...1.8.2).\n\nThe security property this buys is precise and important. Bridging is the operation where a mistake or a compromise is **irreversible** \u2014 funds sent to an attacker-controlled address on a foreign chain are gone, and no rate limit refund or freeze recovers them. By storing destinations in a mapping only governance can write, the relayer's authority is reduced to *how much* and *when*. The *where* is not a parameter it supplies.\n\nThis is the same separation seen in the Uniswap bounds and the ERC-4626 exchange-rate ceiling: **the relayer operates inside an envelope; only the admin defines the envelope**. Here the envelope is a whitelist of exactly one address per destination.\n\nThe consequence is that adding a chain is a two-step governance act rather than an operational one \u2014 the destination must be registered before any value can be sent, which is consistent with the per-chain relay receivers and Instance entries recorded elsewhere in the Artifact.\n\nThe residual risk is not the relayer but the registration itself. A wrong or malicious mapping write sends every subsequent transfer on that domain to the wrong place, and nothing downstream would catch it. That single write is therefore one of the highest-consequence actions in the whole system, which is why it sits with `DEFAULT_ADMIN_ROLE` and its Executive Vote latency rather than with any operational role.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Mint recipients per CCTP domain, LayerZero recipients per endpoint and Centrifuge recipients per chain id are all set by DEFAULT_ADMIN_ROLE, leaving relayers no choice of destination address.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

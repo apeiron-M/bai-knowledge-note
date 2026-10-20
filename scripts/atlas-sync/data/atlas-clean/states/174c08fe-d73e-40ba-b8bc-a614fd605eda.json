@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c3626818-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3626818-9af3-40af-9603-03898e7b5b02",
+      "targetTitle": "doc-bfdfd5a8"
+    },
+    {
+      "id": "lnk-c95f8048-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c95f8048-7021-404f-94eb-5e388245cf64",
+      "targetTitle": "Reversing an operation credits its rate limit rather than co"
+    },
+    {
+      "id": "lnk-71879e3c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "71879e3c-d380-44dd-a080-bf2631a3c4c9",
+      "targetTitle": "Rate limits are a continuously refilling allowance that repa"
+    },
+    {
+      "id": "lnk-5bd60377-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5bd60377-9334-4215-88cb-082e4c582f64",
+      "targetTitle": "DssBlow2 credits the Surplus Buffer by burning the incoming "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Burning USDS refunds mint capacity rather than consuming a burn allowance, making the limit a net exposure cap",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d15974fc-d082-4817-850b-8e716247a8b0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c93a7282-b18d-4b1d-bfc8-819b6d80b48e",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ded186c3-f3eb-4717-9494-bf395596d819",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a229d192-ad87-49b8-865f-8925cd46e063",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.1.2.2 spells out an easily-missed property: \"Burning USDS **restores** previously consumed mint capacity. The operator's call increases (refunds) the `LIMIT_USDS_MINT` rate limit by `usdsAmount`, reversing the decrease applied when that USDS was minted. Internally `_cancelRateLimit` calls `rateLimits.triggerRateLimitIncrease(LIMIT_USDS_MINT, usdsAmount)`; **it does not check or consume a separate burn allowance**.\"\n\nThis converts `LIMIT_USDS_MINT` from a flow limit into a **position limit**. A gross-flow limit would count every mint against a daily budget regardless of subsequent repayment, so an operator rebalancing frequently would exhaust the allowance without ever increasing exposure. Refunding on burn means the consumed amount tracks **outstanding debt**, not cumulative activity.\n\nTwo consequences follow. Repayment is **never blocked** \u2014 there is no allowance to run out of, so Grove can always deleverage, which is the same principle as the uncapped homeward bridging path (A.6.1.1.2.2.6.1.2.1.1.3.1.2.3). And round-tripping is free, so operational churn does not consume risk budget.\n\nThe trade-off is that the limit no longer bounds *velocity* of minting. An operator can mint, burn and re-mint repeatedly within a day, exceeding the nominal daily figure in gross terms while never exceeding it in net terms.\n\nThis also sits awkwardly with A.6.1.1.2.2.6.1.2.1.1.3.1.1.2, which lists a `LIMIT_USDS_BURN` parameter for the monolithic controller on Ethereum Mainnet (value \"to be specified in a future iteration\"). If burning consumes no burn allowance, it is unclear what that parameter would govern \u2014 the parameter list and the function specification do not obviously describe the same system.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "burnUSDS triggers a rate limit increase on LIMIT_USDS_MINT and 'does not check or consume a separate burn allowance', so unwinding is always permitted and restores headroom immediately.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { generateId } from "document-model/core";
-import type { NoteStatus } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import type { NoteStatus } from "document-models/knowledge-note";
 
 type StatusBarProps = {
   status: NoteStatus | null;
+  /** Rendered immediately after the status pill — the note-type chip. */
+  slot?: ReactNode;
   provenanceAuthor: string | null;
   hasProvenance: boolean;
+  /** Lifecycle buttons (archive, approve, …). Off on the read header. */
+  showActions?: boolean;
   onSubmitForReview: (
     id: string,
     actor: string,
@@ -38,11 +42,20 @@ type StatusBarProps = {
   ) => void;
 };
 
-const STATUS_STYLES: Record<string, string> = {
-  DRAFT: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-  IN_REVIEW: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-  CANONICAL: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  ARCHIVED: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+const STATUS_TONE: Record<string, { background: string; color: string }> = {
+  DRAFT: { background: "var(--bai-warn-soft)", color: "var(--bai-warn)" },
+  IN_REVIEW: { background: "var(--bai-info-soft)", color: "var(--bai-info)" },
+  CANONICAL: { background: "var(--bai-ok-soft)", color: "var(--bai-ok)" },
+  ARCHIVED: { background: "var(--bai-hover)", color: "var(--bai-text-muted)" },
+};
+
+/** The action that moves the note on, in the same tones. */
+const ACTION_TONE: Record<string, { background: string; color: string }> = {
+  submit: { background: "var(--bai-accent)", color: "var(--bai-accent-text)" },
+  approve: { background: "var(--bai-ok-soft)", color: "var(--bai-ok)" },
+  reject: { background: "var(--bai-danger-soft)", color: "var(--bai-danger)" },
+  archive: { background: "var(--bai-hover)", color: "var(--bai-text-tertiary)" },
+  restore: { background: "var(--bai-warn-soft)", color: "var(--bai-warn)" },
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -67,8 +80,10 @@ type ActionFormState = {
 
 export function StatusBar({
   status,
+  slot,
   provenanceAuthor,
   hasProvenance,
+  showActions = true,
   onSubmitForReview,
   onApprove,
   onReject,
@@ -77,7 +92,7 @@ export function StatusBar({
 }: StatusBarProps) {
   const [form, setForm] = useState<ActionFormState>(null);
   const currentStatus = status ?? "DRAFT";
-  const style = STATUS_STYLES[currentStatus] ?? STATUS_STYLES.DRAFT;
+  const tone = STATUS_TONE[currentStatus] ?? STATUS_TONE.DRAFT;
   const label = STATUS_LABELS[currentStatus] ?? currentStatus;
 
   function openForm(
@@ -132,81 +147,82 @@ export function StatusBar({
     restore: "Restore to Draft",
   };
 
-  const ACTION_COLORS: Record<string, string> = {
-    submit: "bg-blue-600 hover:bg-blue-700",
-    approve: "bg-emerald-600 hover:bg-emerald-700",
-    reject: "bg-red-600 hover:bg-red-700",
-    archive: "bg-gray-600 hover:bg-gray-700",
-    restore: "bg-amber-600 hover:bg-amber-700",
-  };
-
-  return (
+    return (
     <div className="space-y-2">
       <div className="flex items-center gap-3">
         <span
-          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${style}`}
+          className="inline-flex items-center rounded-full px-3 py-1 text-[11.5px] font-semibold uppercase tracking-wider"
+          style={tone}
         >
           {label}
         </span>
+        {slot}
 
-        {!hasProvenance && currentStatus === "DRAFT" && (
-          <span className="text-[10px] text-amber-400/70">
-            Set provenance first \u2192
+        {showActions && !hasProvenance && currentStatus === "DRAFT" && (
+          <span className="text-[10px]" style={{ color: "var(--bai-warn)" }}>
+            {"Set provenance first \u2192"}
           </span>
         )}
 
-        {hasProvenance && currentStatus === "DRAFT" && !form && (
+        {showActions && hasProvenance && currentStatus === "DRAFT" && !form && (
           <button
             type="button"
             onClick={() => openForm("submit")}
-            className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
+            className="rounded-lg px-3 py-1.5 text-xs font-semibold"
+            style={ACTION_TONE.submit}
           >
             Submit for Review
           </button>
         )}
 
-        {currentStatus === "IN_REVIEW" && !form && (
+        {showActions && currentStatus === "IN_REVIEW" && !form && (
           <>
             <button
               type="button"
               onClick={() => openForm("approve")}
-              className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+              className="rounded-lg px-3 py-1.5 text-xs font-semibold"
+              style={ACTION_TONE.approve}
             >
               Approve
             </button>
             <button
               type="button"
               onClick={() => openForm("reject")}
-              className="rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
+              className="rounded-lg px-3 py-1.5 text-xs font-semibold"
+              style={ACTION_TONE.reject}
             >
               Reject
             </button>
           </>
         )}
 
-        {currentStatus === "CANONICAL" && !form && (
+        {showActions && currentStatus === "CANONICAL" && !form && (
           <button
             type="button"
             onClick={() => openForm("archive")}
-            className="rounded bg-gray-600 px-3 py-1 text-xs font-medium text-white hover:bg-gray-700"
+            className="rounded-lg px-3 py-1.5 text-xs font-semibold"
+            style={ACTION_TONE.archive}
           >
             Archive
           </button>
         )}
 
-        {currentStatus === "ARCHIVED" && !form && (
+        {showActions && currentStatus === "ARCHIVED" && !form && (
           <button
             type="button"
             onClick={() => openForm("restore")}
-            className="rounded bg-amber-600 px-3 py-1 text-xs font-medium text-white hover:bg-amber-700"
+            className="rounded-lg px-3 py-1.5 text-xs font-semibold"
+            style={ACTION_TONE.restore}
           >
             Restore to Draft
           </button>
         )}
 
-        <span className="ml-auto text-[10px] text-gray-600">
-          {FLOW_HINT[currentStatus]}
-        </span>
+        {showActions && (
+          <span className="ml-auto text-[10px] text-gray-600">
+            {FLOW_HINT[currentStatus]}
+          </span>
+        )}
       </div>
 
       {form && (
@@ -269,7 +285,8 @@ export function StatusBar({
               disabled={
                 !form.actor.trim() || (needsComment && !form.comment.trim())
               }
-              className={`rounded px-3 py-1 text-xs font-medium text-white disabled:opacity-40 ${ACTION_COLORS[form.action]}`}
+              className={`rounded px-3 py-1 text-xs font-medium  disabled:opacity-40`}
+              style={ACTION_TONE[form.action]}
             >
               {ACTION_LABELS[form.action]}
             </button>

@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-8ffaac44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ffaac44-7a55-4d0f-b235-4cb1a2c5420d",
+      "targetTitle": "The Diamond PAU replaces the monolithic controller with a fa"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Diamond PAU runs at a hundredth of the monolithic controller's limits, marking it as a live pilot beside the production system",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "982d9348-abf4-4b19-9c15-1273fa973fcc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e0d438c9-9f35-4647-a1a5-cb2ae62fabb5",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "da45b704-49e3-441a-ba65-62482d1950a0",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2170e5b9-f1e3-4981-b19b-ecffd7ee9763",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Comparing A.6.1.1.2.2.6.1.2.1.1.3.1.1 (monolithic ALM, Ethereum Mainnet) with A.6.1.1.2.2.6.1.2.1.1.3.2 (Diamond PAU, Ethereum Mainnet) shows a deliberate two-order-of-magnitude gap. The monolith's USDS mint limit is 500,000,000 with a matching daily slope; the Diamond PAU's is 5,000,000. The same ratio holds for the USDS-for-USDC PSM swap limit.\n\nRead alongside the separate capitalization in A.6.1.1.2.2.6.1.2.1.1.1.1.1.1 \u2014 ALLOCATOR-BLOOM-A funds the monolith, ALLOCATOR-GROVE-A funds the Diamond PAU \u2014 the picture is a **strangler-fig migration**. The new architecture is deployed in production against real capital, with its own vault and its own controller, but sized so that a failure is survivable while the old system continues carrying the book.\n\nTwo details make the Diamond PAU look like the intended successor rather than a permanent niche. It has a **symmetric** limit set \u2014 both USDS mint and USDS burn are specified, and both PSM directions (USDS\u2192USDC and USDC\u2192USDS) are populated \u2014 whereas the monolith's burn limit and several of its domain limits are still marked \"will be specified in a future iteration.\" And its architecture is the one the Sky Core Atlas shares across Agents.\n\nThe practical reading for anyone assessing Grove's risk surface is that there are currently **two independent execution paths** into the same protocols, with different code, different vaults, different rate limits and different role wiring. Any statement about Grove's controls has to specify which path it describes.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its controller-wide USDS mint, burn and PSM swap allowances are two orders of magnitude below the monolith's, and it is capitalized from a separate Allocator Vault.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

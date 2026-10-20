@@ -17,6 +17,17 @@ import {
   UpdateVocabularyInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<VaultConfigPHState> = (
   state,
   action,
@@ -27,7 +38,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
   }
   switch (action.type) {
     case "INITIALIZE_CONFIG": {
-      InitializeConfigInputSchema().parse(action.input);
+      memoizedSchema(InitializeConfigInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.initializeConfigOperation(
         (state as any)[action.scope],
@@ -39,7 +50,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
     }
 
     case "UPDATE_DIMENSION": {
-      UpdateDimensionInputSchema().parse(action.input);
+      memoizedSchema(UpdateDimensionInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.updateDimensionOperation(
         (state as any)[action.scope],
@@ -51,7 +62,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
     }
 
     case "UPDATE_VOCABULARY": {
-      UpdateVocabularyInputSchema().parse(action.input);
+      memoizedSchema(UpdateVocabularyInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.updateVocabularyOperation(
         (state as any)[action.scope],
@@ -63,7 +74,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
     }
 
     case "UPDATE_PIPELINE_CONFIG": {
-      UpdatePipelineConfigInputSchema().parse(action.input);
+      memoizedSchema(UpdatePipelineConfigInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.updatePipelineConfigOperation(
         (state as any)[action.scope],
@@ -75,7 +86,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
     }
 
     case "UPDATE_MAINTENANCE_THRESHOLD": {
-      UpdateMaintenanceThresholdInputSchema().parse(action.input);
+      memoizedSchema(UpdateMaintenanceThresholdInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.updateMaintenanceThresholdOperation(
         (state as any)[action.scope],
@@ -87,7 +98,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
     }
 
     case "ADD_EXTRACTION_CATEGORY": {
-      AddExtractionCategoryInputSchema().parse(action.input);
+      memoizedSchema(AddExtractionCategoryInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.addExtractionCategoryOperation(
         (state as any)[action.scope],
@@ -99,7 +110,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
     }
 
     case "TOGGLE_EXTRACTION_CATEGORY": {
-      ToggleExtractionCategoryInputSchema().parse(action.input);
+      memoizedSchema(ToggleExtractionCategoryInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.toggleExtractionCategoryOperation(
         (state as any)[action.scope],
@@ -111,7 +122,7 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
     }
 
     case "TOGGLE_FEATURE": {
-      ToggleFeatureInputSchema().parse(action.input);
+      memoizedSchema(ToggleFeatureInputSchema).parse(action.input);
 
       vaultConfigConfigManagementOperations.toggleFeatureOperation(
         (state as any)[action.scope],

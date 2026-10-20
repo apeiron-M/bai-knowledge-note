@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The kill switch watches only pegged derivatives, leaving stablecoin depegs uncovered",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f9c2d8ed-332a-4034-bf06-988ddbf23d7c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "293bc1cb-69da-4f55-a690-8916ac5e7a20",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2040819b-fb67-4929-b71e-21e87431396a",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2187e596-4bc4-4d2b-8eb6-160785ba41f3",
+      "name": "governance-tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The kill switch is framed as protection against \"a depeg on key collateral assets\" (A.6.1.1.1.3.2.1.1.4). Its live coverage (.4.1) is six pairs, every one a derivative tracking a crypto asset, and every one at the same threshold: wstETH/ETH 0.95, LBTC/BTC 0.95, weETH/ETH 0.95, rETH/ETH 0.95, cbBTC/BTC 0.95, WBTC/BTC 0.95 (the last with a named ChainLink oracle).\n\nNo dollar-pegged asset appears. USDS, USDC, USDT, pyUSD, Dai and sUSDS are all live SparkLend markets in this same chunk, several as collateral, and none is monitored.\n\nTwo readings are possible and the Artifact does not choose between them. The charitable one: an LST or wrapped BTC that trades 5% below its reference has almost certainly suffered a redemption or custody failure, so the ratio is a clean solvency signal \u2014 whereas stablecoins routinely wobble on liquidity alone, and a 0.95 trigger would fire on noise. The uncharitable one: the assets Sky is most exposed to are exactly the ones with no automatic circuit breaker.\n\nThe uniform 0.95 is itself worth noting. Six assets with materially different redemption mechanics, liquidity depths and issuer risk share one number, which suggests the threshold was chosen as a generic \"clearly broken\" line rather than calibrated per asset. That is defensible for a blunt global halt \u2014 but it means the switch will fire late for a tightly-pegged asset and early for a volatile one, and the Artifact records no rationale either way.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All six monitored pairs are liquid-staking or wrapped-BTC assets at a uniform 0.95 ratio; USDS, USDC, USDT and pyUSD have no threshold despite being core SparkLend collateral and debt.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4656deb4-dbf1-41f2-bee0-cccc3ee25f28",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4659fbd7-662b-4f4f-af17-b557743e5d5d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

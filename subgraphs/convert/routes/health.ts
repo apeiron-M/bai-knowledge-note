@@ -1,0 +1,67 @@
+import type { RouteContext } from "@powerhousedao/shared/processors";
+import { requireUser } from "../lib/authorize.js";
+import type { ConvertRouteDeps } from "../lib/deps.js";
+import { jsonError, OK_CACHE } from "../lib/respond.js";
+import { DEFAULT_MAX_UPLOAD_BYTES } from "./convert.js";
+
+/** The body of a health answer for a vault that has no conversion service. */
+const unconfiguredHealth = {
+  ok: false,
+  backend: null,
+  ready: false,
+  missing: [],
+  formats: [],
+  configured: false,
+  source: null,
+};
+
+/** The body of a health answer when the service is configured but unreachable. */
+const unreachableHealth = {
+  ok: false,
+  backend: null,
+  ready: false,
+  missing: [],
+  formats: [],
+  configured: true,
+};
+
+/**
+ * Health answers **200 in every case**, including "not configured" and "the
+ * service is down". A probe reading health is asking what the state is, and a
+ * 503 here would report a working vault as broken — the vault works fine
+ * without conversion, only the new capability is absent. `configured` says
+ * whether a service was configured at all; `ok` says whether it answered.
+ */
+export function createHealthRoute(deps: ConvertRouteDeps) {
+  return async function handleConvertHealth(
+    _request: Request,
+    ctx: RouteContext,
+  ): Promise<Response> {
+    try {
+      requireUser(ctx);
+      // The vault's own cap, not the service's: a client checks a file against it before uploading.
+      const maxUploadBytes = deps.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES;
+      if (!deps.service) {
+        return Response.json(
+          { ...unconfiguredHealth, maxUploadBytes },
+          { headers: OK_CACHE },
+        );
+      }
+      try {
+        const health = await deps.service.health();
+        return Response.json(
+          { ...health, configured: true, source: deps.source ?? null, maxUploadBytes },
+          { headers: OK_CACHE },
+        );
+      } catch {
+        // Configured but unreachable is a *state*, not a failed request.
+        return Response.json(
+          { ...unreachableHealth, source: deps.source ?? null, maxUploadBytes },
+          { headers: OK_CACHE },
+        );
+      }
+    } catch (error) {
+      return jsonError(error);
+    }
+  };
+}

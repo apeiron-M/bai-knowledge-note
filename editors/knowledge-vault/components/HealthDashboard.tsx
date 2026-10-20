@@ -1,10 +1,11 @@
 import { useMemo } from "react";
-import {
-  setSelectedNode,
-  useDocumentsInSelectedDrive,
-} from "@powerhousedao/reactor-browser";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { generateId } from "document-model/core";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import {
+  useReactorDocsWithRefetch,
+  type ReactorDocSpec,
+} from "../hooks/use-reactor-docs.js";
 
 const STATUS_BADGE: Record<string, string> = {
   PASS: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
@@ -21,11 +22,27 @@ type HealthCheck = {
 };
 
 export function HealthDashboard() {
-  const documents = useDocumentsInSelectedDrive();
   // Links live in the reactor's DocumentRelationship table now — read
   // them via the subgraph projection rather than from note doc state
   // (which no longer carries inline `links[]`).
-  const { notes: subgraphNotes } = useKnowledgeNotes();
+  const { notes: subgraphNotes, serverFileNodes } = useKnowledgeNotes();
+
+  // Targeted server reads: the health-report singleton plus the small
+  // observation/tension sets. Agents write these server-side, so poll.
+  const opsSpecs = useMemo<ReactorDocSpec[]>(
+    () =>
+      serverFileNodes
+        .filter((n) =>
+          ["bai/health-report", "bai/observation", "bai/tension"].includes(
+            n.documentType,
+          ),
+        )
+        .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
+    [serverFileNodes],
+  );
+  const { docs: documents } = useReactorDocsWithRefetch(opsSpecs, {
+    pollMs: 30_000,
+  });
 
   // Read from bai/health-report document (written by agent via /health skill)
   const agentReport = useMemo(() => {
@@ -63,14 +80,14 @@ export function HealthDashboard() {
     return state;
   }, [documents]);
 
-  // Compute live health from documents (fallback + real-time awareness)
+  // Compute live health from the subgraph projection + server tree —
+  // no per-document reads for the (potentially thousands of) notes.
   const health = useMemo(() => {
     const docs = documents ?? [];
-    const notes = docs.filter(
-      (d) => d.header.documentType === "bai/knowledge-note",
+    const mocs = serverFileNodes.filter((n) => n.documentType === "bai/moc");
+    const sources = serverFileNodes.filter(
+      (n) => n.documentType === "bai/source",
     );
-    const mocs = docs.filter((d) => d.header.documentType === "bai/moc");
-    const sources = docs.filter((d) => d.header.documentType === "bai/source");
     const observations = docs.filter(
       (d) => d.header.documentType === "bai/observation",
     );
@@ -78,32 +95,18 @@ export function HealthDashboard() {
       (d) => d.header.documentType === "bai/tension",
     );
 
-    // Extract note state — links come from the subgraph projection
-    // (graph_edges mirrored from DocumentRelationship), not from inline
-    // state, since notes no longer carry their own `links[]`.
-    const linksBySource = new Map<
-      string,
-      Array<{ targetDocumentId: string | null }>
-    >();
-    for (const n of subgraphNotes) {
-      linksBySource.set(
-        n.id,
-        n.links.map((l) => ({ targetDocumentId: l.targetDocumentId })),
-      );
-    }
-    const noteStates = notes.map((d) => {
-      const state = (d.state as unknown as { global: Record<string, unknown> })
-        .global;
-      return {
-        id: d.header.id,
-        title: (state.title as string) ?? d.header.name,
-        status: (state.status as string) ?? "DRAFT",
-        noteType: (state.noteType as string) ?? null,
-        description: (state.description as string) ?? null,
-        links: linksBySource.get(d.header.id) ?? [],
-        topics: (state.topics as Array<{ name: string }>) ?? [],
-      };
-    });
+    // Note metadata comes entirely from the subgraph projection: title,
+    // status, type, description, topics AND links (graph_edges mirrored
+    // from DocumentRelationship).
+    const noteStates = subgraphNotes.map((n) => ({
+      id: n.id,
+      title: n.title ?? n.name,
+      status: n.status ?? "DRAFT",
+      noteType: n.noteType,
+      description: n.description,
+      links: n.links.map((l) => ({ targetDocumentId: l.targetDocumentId })),
+      topics: n.topics,
+    }));
 
     const noteIds = new Set(noteStates.map((n) => n.id));
     const edgeCount = noteStates.reduce(
@@ -282,7 +285,7 @@ export function HealthDashboard() {
       checks,
       recommendations,
     };
-  }, [documents, subgraphNotes]);
+  }, [documents, subgraphNotes, serverFileNodes]);
 
   return (
     <div className="p-4 space-y-6">

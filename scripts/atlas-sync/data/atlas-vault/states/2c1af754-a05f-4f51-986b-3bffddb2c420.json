@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-fc3f7b8c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fc3f7b8c-da3c-4c9c-875a-cc7d0ae55c76",
+      "targetTitle": "Sky Governance can re-enable an Agent's token emissions when"
+    },
+    {
+      "id": "lnk-82a54fd1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "82a54fd1-5aa4-4cb4-bdec-468bafb4ebd7",
+      "targetTitle": "KEEL token emissions are permanently disabled beyond Genesis"
+    },
+    {
+      "id": "lnk-ebd79d5e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ebd79d5e-a27e-4086-bb10-5b9698ba2a04",
+      "targetTitle": "Tokens misdirected to DssBlow2 are unrecoverable and do not "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Agent's irreversible disabling of token emissions can still be reverted by Sky Governance under the Risk Framework",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "39c5ca19-0816-4030-bad9-fd5144737123",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60e7dc90-4abe-4412-aed5-cfbdd0a53a4c",
+      "name": "token-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39895817-9822-496c-8cb0-3253c8d47819",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.5.4.2.7 requires the Agent Token Primitive to state whether emissions beyond current supply have been irreversibly disabled, and then qualifies the word 'irreversibly': \"Once Disabled is set to `True`, the action cannot be undone **by the Agent**. Sky Governance retains the ability to revert the Disabled setting where the Agent is in violation of Risk Capital requirements and emissions are required by the Risk Framework.\"\n\nThe asymmetry is the claim. An Agent's strongest possible promise to its token holders \u2014 that their stake can never be diluted \u2014 is unilateral and one-directional. It removes the Agent's own optionality without removing Sky's. Holders relying on a hard supply cap are relying on a cap with a named exception they do not control.\n\nThe justification is coherent from the ecosystem's side: emissions are a recapitalization tool. If an Agent breaches Risk Capital requirements, diluting existing holders may be the only way to restore solvency, and an Agent that had locked emissions could otherwise render itself unrescuable. This is the same reasoning as the ban on deactivating the Root Edit Primitive (A.2.2.1.2.4.2.1.2) \u2014 the Atlas systematically refuses to let Agents destroy the mechanisms needed to fix them.\n\nThe cost is credibility. A supply cap that a third party can lift on a condition the holder cannot verify in advance is a weaker commitment than the word \"irreversibly\" suggests, and the exception's trigger \u2014 the Risk Framework \u2014 is defined outside this document.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Once set to True the Agent can never undo it, but Sky retains the power to re-enable emissions where the Agent breaches Risk Capital requirements \u2014 so the commitment binds only one party.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "da4e9aee-11cd-450f-9982-471144ec2f9d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:44.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f1c1133f-9c7a-4a5c-a006-49d41a8a3786",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-bc5aa103-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bc5aa103-87ae-4e05-a546-c0b23822ebed",
+      "targetTitle": "The Pioneer Incentive Pool pays the Savings Rate on unreward"
+    },
+    {
+      "id": "lnk-c03f6e16-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c03f6e16-0bc2-4324-95f2-5d822a63d178",
+      "targetTitle": "Pioneer Prime status can be held once per chain and once per"
+    },
+    {
+      "id": "lnk-ee0fb5b3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee0fb5b3-6584-405a-9fa7-55e1f459d935",
+      "targetTitle": "A single marking event makes a USDS balance reward-eligible "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Pioneer Prime is credited with every untagged USDS balance on its chain, and keeps that tag for ten years after the phase ends",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "749903f4-3dfa-4756-bfcd-ba855d745a8a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd079f35-b68c-4b30-88bd-fbc6379cb6e1",
+      "name": "pioneer-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "adf1448e-02f8-4233-afe1-e4fb0edc5f2a",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.3.1.3 grants the Pioneer Prime an attribution default rather than a payment. During the Pioneer Phase, \"the Pioneer Prime counts as having tagged, for the purposes of calculating the Distribution Reward, all USDS and sUSDS accounts and balances on the Pioneer Chain that have not been tagged by another Prime. At the end of the Pioneer Phase, all untagged USDS accounts and balances are one-time tagged by the Pioneer Prime, and this tag will remain normally for the following ten (10) years unless tagged by a different Prime, or retagged.\" A.2.2.9.3.1.3.1 fixes the Phase at three years from designation.\n\nThis inverts the Distribution Reward's normal mechanics. Ordinarily a balance earns nothing until an Integrator marks it through a Tracking Methodology at deposit time (A.2.2.9.1.2.1.1.2), and attribution goes to the most recent marking event. On a Pioneer Chain, the Pioneer Prime is the **residual claimant**: everything not actively claimed by someone else is theirs.\n\nThe economics are substantial. The Pioneer earns on organic adoption it did not individually originate, which is the point \u2014 someone must be paid for the unglamorous work of making USDS present and usable on a new chain, and per-deposit attribution cannot capture that. The three-year window plus a ten-year tail on the terminal snapshot means a successful chain launch pays for well over a decade.\n\nThe last-marking-wins rule still applies throughout, so the default is contestable: another Prime can tag any specific balance and take it, during or after the Phase. The Pioneer's grant is over the *unclaimed remainder*, not an exclusive right to the chain.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "During a three-year Pioneer Phase the default attribution flips: balances nobody else marked count as the Pioneer's, then are one-time tagged at phase end for the standard decade.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "796db4ef-8059-45c8-8034-dcb18673e18a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e95a3910-434e-4a89-aed5-636d5ba19af1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

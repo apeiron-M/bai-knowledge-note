@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-9ca71c26-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9ca71c26-fbf3-47a9-8832-2779f3d61ed7",
+      "targetTitle": "SparkLend's kinked interest rate curve is a self-correcting "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SparkLend prices Dai administratively as a spread over the Sky Savings Rate instead of by utilization",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7cd99a0d-897b-422c-88c1-0c0b1c52ed9d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "32415e4e-132b-4bf2-be36-8d4fe07db093",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a560301f-6b02-4adb-9ca1-871668ac678b",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.2.1.1.1.3 defines the Interest Rate Model by base rate, Slope 1, Slope 2 and utilization \u2014 then carves out one exception: \"**All markets except Dai use this IRM.** The IRM for Dai is independent of utilization and is defined as a spread over the Sky Savings Rate... The spread is determined by the Core Facilitator, in consultation with the Core Council Risk Advisor.\" The live configuration confirms it: Dai's Slope 1 is literally recorded as `SSR + 1.25%` (A.6.1.1.1.3.2.1.1.2.1.2).\n\nThe distinction is between a price and a policy. A utilization-driven rate is discovered: it moves against supply and demand in that specific market and needs no one's judgment. Dai's rate is *set*, by a Sky Core role, against Sky's own savings rate.\n\nThe reasoning is arbitrage closure. Dai is Sky's own liability, and anyone can earn the SSR by holding it directly. If SparkLend's Dai borrow rate were allowed to float below SSR, borrowing Dai on SparkLend to deposit into the Sky Savings Rate would be a riskless profit paid for by Sky. Pegging the borrow rate to SSR plus a fixed spread makes that loop structurally unprofitable at any utilization level, which a market-determined rate cannot guarantee.\n\nThe consequence is that for its own stablecoin, SparkLend is not an independent market \u2014 it is a distribution surface for a rate decided elsewhere in Sky. The 1.25% spread is Spark's margin for providing that surface, and the Core Facilitator, not Spark, controls the input. It is a concrete instance of what \"infrastructure inherited from Sky Core\" (A.6.1.1.1.3.2) means: Spark operates the venue, Sky Core still sets the price.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:24:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every other market uses the utilization-driven Interest Rate Model; Dai's rate is SSR plus a spread set by the Core Facilitator, making SparkLend a distribution channel for Sky policy rate.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "51f0f6c5-6b6e-41ca-9770-0e959c304890",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:24:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "381d2408-454f-4efe-b51c-3d026975e1b5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:24:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

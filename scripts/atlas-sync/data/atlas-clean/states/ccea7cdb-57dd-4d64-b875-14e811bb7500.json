@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-e5a02153-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5a02153-ac11-402b-88ff-73961e274570",
+      "targetTitle": "A SkyLink bridge only becomes usable after third-party audit"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Token SkyLink feasibility is gated on the target chain supporting LayerZero's Omnichain Fungible Token standard",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "efb971a1-be1e-42a9-9b98-62be77712b8c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e07718e3-0d29-4779-9c7e-0f62b70c18b5",
+      "name": "skylink",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a36c728-96ec-4901-8acd-dae5b22439e0",
+      "name": "external-dependency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.8.1.1.1.1.1 lists what a Prime Agent must establish before proposing a bridge, and one item is a hard technical precondition: \"The Prime Agent confirms that the target chain supports LayerZero or can be integrated easily with the LayerZero Omnichain Fungible Token standard.\"\n\nThis is a rare instance of the Atlas naming a specific third-party technology inside a Primitive's requirements. Elsewhere the Atlas specifies interfaces, processes, and document states while leaving implementation open; here the feasibility test for expanding Sky's multichain footprint is delegated to another protocol's coverage and roadmap.\n\nThe practical consequence is a bounded expansion surface. Chains LayerZero does not reach are not merely harder to bridge to \u2014 under this criterion they fail feasibility analysis at step one, before audit costs or volume estimates are even considered. Sky's addressable multichain market is therefore approximately LayerZero's.\n\nThe wording leaves a little room: \"or can be integrated easily with\" the OFT standard admits chains not natively supported, but the standard itself remains the reference point. Recording this as an explicit dependency matters because the rest of the SkyLink design \u2014 shared ownership, volume-based reimbursement, audit registry \u2014 is standard-agnostic, so the coupling sits in one clause that could be revised without disturbing the surrounding mechanism.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas names a specific external standard as a precondition for bridging, so Sky's multichain reach is bounded by a third-party protocol's chain coverage.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

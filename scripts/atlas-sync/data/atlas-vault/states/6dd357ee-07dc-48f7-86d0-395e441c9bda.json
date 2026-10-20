@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-e1d71a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1d71a1e-87e0-4275-aa75-b39e43faf3a3",
+      "targetTitle": "The Tip JRC mechanism makes an Agent's own capital absorb th"
+    },
+    {
+      "id": "lnk-8b003df1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b003df1-9bbd-43e3-90d6-5ca45f3f6b1b",
+      "targetTitle": "Spark and Grove contract around the protocol's own loss-allo"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Loss allocation depends on how events are grouped, and the Atlas defers the grouping process to a future iteration",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6c09b90c-ecfd-40e6-a10c-486945577ed1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "81916410-4c66-4a17-98e2-7036e21e9f1e",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fecaad64-0f57-493b-b82b-880cf867537a",
+      "name": "open-question",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.2.2.1.2.3 is unusually candid about a gap. It establishes that JRC loss allocation rules \"are applied independently based on the total losses attributed to each distinct risk event,\" then states why that matters: \"the classification of a distinct risk event (classifying losses as one large event versus multiple smaller ones) can dictate whether the Tip JRC threshold is breached.\"\n\nThe consequences are binary. If the threshold is breached, excess losses are shared pro-rata between the Agent's remaining internal capital and all external junior capital. \"Conversely, if the threshold is not breached for an event, the loss is contained entirely within the Tip layer and absorbed solely by IJRC.\" Whether an external capital provider loses money at all can therefore turn on a classification judgment.\n\nAnd then: \"The operational process for the determination of distinct risk events will be defined in a future iteration of the Atlas.\"\n\nThis is a live tension rather than a drafting oversight \u2014 the section names the problem precisely and leaves it open. Every party has a clear directional interest: the Agent wants correlated losses aggregated into one large event (pushing past the Tip and sharing the pain), while external providers want them split into small independent events (each contained in the Tip). Real incidents naturally present ambiguously \u2014 a depeg cascading across three markets over two days can be described either way.\n\nUntil the process exists, the Tip JRC mechanism's incentive properties are only as strong as the discretion applied to event boundaries, and prospective external junior capital providers are being asked to price an exposure whose allocation rule is not yet written.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Tip JRC threshold applies per distinct risk event, so classifying losses as one large event or several small ones determines whether external capital shares them at all \u2014 yet no procedure exists.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "16c2beee-99e1-4e3e-a0a2-31315e201735",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cc89789c-6d9b-407c-9aea-d2da4d3b6802",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

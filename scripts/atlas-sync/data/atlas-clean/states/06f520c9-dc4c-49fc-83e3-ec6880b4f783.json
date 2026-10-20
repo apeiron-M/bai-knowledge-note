@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-bea23f52-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bea23f52-e7ed-4457-aae2-b7cb8be1f822",
+      "targetTitle": "Sky treats an exploit in any protocol sharing SparkLend's co"
+    },
+    {
+      "id": "lnk-11601f2f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11601f2f-5f44-4d64-abf2-db372e9ddb8b",
+      "targetTitle": "doc-09816576"
+    },
+    {
+      "id": "lnk-499806ad-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "499806ad-101d-4719-b2aa-6812022651ce",
+      "targetTitle": "Spark does not yet control SparkLend \u2014 parameters and collat"
+    },
+    {
+      "id": "lnk-99ba2219-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "99ba2219-0375-4aa5-bca3-368aef0ad250",
+      "targetTitle": "doc-5abd9d89"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark owes Aave a perpetual 10% revenue share for the codebase SparkLend is built on",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7fbc8c66-76ec-4971-9998-458bdc7b3361",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e05c8b31-9d50-41c4-89cc-7c1396b9a25a",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f6dbdbb6-aa27-4b3d-bc98-553ff87c874f",
+      "name": "revenue",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.2.1.2.3 records an obligation rather than a policy: \"Spark Protocol **must** pay out 10% of the income it generates from operating the borrowing and lending functionality of the protocol that is based on the Aave codebase.\"\n\nTwo features make this more than a line item. First, the scoping is by *provenance of code*, not by product: the share attaches specifically to income from functionality \"based on the Aave codebase.\" That draws a line through Spark's revenue between what it built and what it forked, and implies the boundary must be maintained as the protocol evolves \u2014 new functionality written from scratch presumably falls outside it, which creates a quiet incentive to migrate away from the inherited code over time.\n\nSecond, it is stated as a hard requirement inside the Agent's own Alignment Artifact. A fork's obligation to its upstream is normally a social expectation or an off-chain agreement; encoding it as a Core provision makes non-payment a governance violation rather than a business decision, and makes the obligation visible to every SPK holder evaluating Spark's economics.\n\nIt also sets the real cost of the inheritance discussed elsewhere in this section. SparkLend arrives with Sky Core still holding the controls *and* with a 10% claim on its lending revenue \u2014 the price of not having built the lending engine. Whether that price falls as Spark replaces inherited components is exactly the question the provenance-based scoping leaves open.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "10% of income from the Aave-derived borrowing and lending functionality must be paid out, turning an open-source fork into a standing financial obligation inside the Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

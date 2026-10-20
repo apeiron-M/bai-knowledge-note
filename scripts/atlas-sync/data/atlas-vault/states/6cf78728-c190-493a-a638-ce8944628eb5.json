@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-ba257f36-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba257f36-c008-4700-a781-39bea3e71e05",
+      "targetTitle": "Validators must not trust the Spell repository's own tooling"
+    },
+    {
+      "id": "lnk-b283e092-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b283e092-519c-4a48-9d74-db6746d7b8f1",
+      "targetTitle": "Ecosystem Spell Validation deliberately checks less than dev"
+    },
+    {
+      "id": "lnk-f8c24a5e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f8c24a5e-005b-40fb-bfb7-0b9cb3817eff",
+      "targetTitle": "An incomplete or noncompliant input invalidates a Primitive "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Spell deployed with CREATE2 automatically fails validation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4792d5ab-3a54-431c-bef9-5ee5b9af2036",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff8a17eb-e498-4257-b97f-36f6ef6beeef",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2b3de2ba-21b8-4ce0-b002-0478189594b8",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.12.3.1.6 requires validators to ensure that \"no contract, neither the Spell Executive contract (DssSpell / DssExec) nor the Spell Action contract (DssSpellAction / DssAction) \u2014 was deployed using the `CREATE2` opcode.\" The procedure is explicit: find the contract creation transaction under Etherscan's internal transactions tab, decode it with a tool such as Tenderly, and confirm the opcode is `CREATE`. \"If `CREATE2` is used, the Spell fails validation.\"\n\nThe Atlas gives no rationale, so the property being protected has to be read off the difference between the opcodes. A `CREATE` address is derived from the deployer and its nonce \u2014 it is a consequence of deployment history and cannot be chosen. A `CREATE2` address is derived from a salt and the init code, so it can be computed and committed to before the contract exists, and is reproducible by anyone with the same inputs.\n\nFor an artifact whose entire security model is \"the code at this address is what was reviewed,\" address determinism decoupled from history is an unwelcome property. It enables addresses to be published before code is finalized and, in general, weakens the assumption that an address uniquely and historically corresponds to one deployment event.\n\nWhat is most notable methodologically is that the check reaches past the contract's content to *how it came into being*. Source code, bytecode, compiler settings and deployment opcode are all treated as attributes of the thing being validated. A Spell with perfect code deployed the wrong way still fails.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.3.1.6 makes the deployment opcode part of the validated artifact, requiring validators to decode the creation transaction and confirm plain CREATE for both contracts.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f092f008-7333-450c-8bbd-9da891d6a8e4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4ddbb0a4-06ec-49df-b9c5-1d5650f88bb9",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

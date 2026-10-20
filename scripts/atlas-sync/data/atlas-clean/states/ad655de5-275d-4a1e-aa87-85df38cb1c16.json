@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Maple's asynchronous redemption forced Obex to add Instance-specific functions the general vault standards do not cover",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2bdfd103-9164-4d33-9f09-430fd2860de7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc31952c-d82b-4e75-b72f-fbc190dde525",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c0cc81b0-4ba6-42a3-b7ee-0751972fc0df",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fe3fd839-d410-4ec1-8f36-f37d67412761",
+      "name": "operational-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Maple USDC Instance is the case where the Instance-specific Operational Processes slot \u2014 reserved everywhere for procedures \"that deviate from or otherwise supplement the general \u2026 Liquidity Layer processes\" \u2014 actually carries content. It defines two calls: `requestMapleRedemption(address mapleToken, uint256 shares)` (A.6.1.1.5.2.6.1.3.1.1.1.3.1.1) and `cancelMapleRedemption(address mapleToken, uint256 shares)` (\u20263.1.2).\n\nThe first is a two-phase exit: the contract \"will submit a redemption request to the vault. Assets will not be received immediately; they must be claimed in a separate step after the vault processes the redemption\" \u2014 the same shape as the generic ERC-7540 path, but Maple-specific. The second has no generic equivalent anywhere in the general process definitions: the ability to *retract* a pending redemption, \"removing the specified number of shares from the pending redemption.\"\n\nCancellation matters because an asynchronous redemption is a standing commitment to exit at whatever terms apply when the vault processes it. Without a cancel, an operator who requests an exit and then sees conditions change is locked into the consequence of a decision made under stale information.\n\nOne detail is a genuine trap. `cancelMapleRedemption` \"will check that a rate limit exists for the asset. If no rate limit exists the transaction will revert.\" Because rate limit configuration is also the whitelist, and only Sky Governance can write it, **removing Maple's rate limit would strand any pending redemption in an uncancellable state**. Delisting a venue and unwinding positions in it are therefore order-dependent operations, and nothing in the Artifact records that dependency.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "requestMapleRedemption and cancelMapleRedemption fill the Instance-level \"deviate or supplement\" slot, giving the relayer a way to withdraw a pending redemption request before it settles.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

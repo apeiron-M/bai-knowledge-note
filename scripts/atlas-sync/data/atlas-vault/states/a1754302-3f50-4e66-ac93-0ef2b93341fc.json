@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-a25340b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a25340b8-4612-4e4c-9ac2-6df404e5e66c",
+      "targetTitle": "The startup capital and creation fee gating all Agent creati"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Paying capital and the creation fee produces a Proto-Agent with no ecosystem functionality at all",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d22203c1-0c73-4d67-9631-cdb2a3619f58",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d4c78eb-8aee-48fc-b7ee-9a9742e63974",
+      "name": "agent-lifecycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f8627848-96a0-44f9-b5e5-de689c6abb40",
+      "name": "proto-agent",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.3 establishes that the Agent Creation Primitive cannot be reached directly: \"Because an Agent Artifact does not yet exist at this stage, the prerequisite requirements set forth herein must be met, including off-chain obligations and governance outputs. Only after satisfying these prerequisites does the Agent Creation Primitive become accessible.\"\n\nThe prerequisite is economic \u2014 deploy startup capital and pay the creation fee (A.2.2.3.1) \u2014 and what it produces is deliberately hollow. A.2.2.3.2.1: \"Core GovOps creates a Proto-Agent with no specific functionality in the ecosystem.\" Only then is a Scaffold Artifact prepared (A.2.2.3.2.2), and only then can the Founder Invoke the Agent Creation Primitive to \"establish its identity by declaring its name, as well as articulate its intended vision, business model or ecosystem goals\" (A.2.2.5.1).\n\nThe ordering is the design claim: **capital first, identity second, capability third**. A prospective Agent cannot occupy a name, publish a vision, or accumulate any ecosystem standing before it has paid. That makes squatting and speculative Agent registration economically impossible rather than merely discouraged.\n\nControl is likewise derived from the payment: A.2.2.3.2.3 assigns Founder Access to \"the address deploying the start-up capital.\" Authority over the new Artifact is not granted by application or identity check \u2014 it attaches mechanically to whichever address funded it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Payment buys only a Scaffold Artifact and an empty identity; name, vision, and every capability come later through Primitive Invocation, so economic commitment precedes existence.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bc308fae-66c4-4800-864a-a3315f97f587",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0ddde3ba-fb9f-4b04-b51b-2f8388eb82cb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:28.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

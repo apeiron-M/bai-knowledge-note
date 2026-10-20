@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-9b847103-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b847103-bec0-4692-b44d-ba4a62bdcde9",
+      "targetTitle": "Prime Agents are barred from touching Sky Protocol resources"
+    },
+    {
+      "id": "lnk-71282825-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "71282825-9a9b-4eb3-8552-14a934a4ce50",
+      "targetTitle": "The Executor Accord separates a Prime Agent's strategy from "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A closed strategy is separated across three parties and must pass a compatibility review before capital moves",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7a421a44-1156-4ea8-8eb5-25cb607d1deb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bfb13f48-2fec-4d66-83c7-657c0b431eda",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "492b93eb-6023-4f82-a313-5350a7e3227e",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.2.2.5.3.1 gives the Prime Foundation ownership of the allocation strategy and has it \"contract with the Development Company for the development and execution of the strategies.\" A.2.8.2.2.2.5.3.2 has that company \"execute the strategy and relay the results to the Operational Executor Agent.\" A.2.8.2.2.2.5.3.3 then interposes a check: the Executor Agent \"will conduct a principled compatibility analysis to ensure the strategy aligns with the Sky Atlas and the relevant Prime Artifact. Once validated, the Operational Executor Agent executes the capital allocation in question.\"\n\nThe chain matters because the strategy is secret. Nobody outside can review it, so the ecosystem's assurance comes from *who is allowed to move funds*: only the Executor Agent, and only after checking the proposed allocation against public rules. The strategy stays proprietary; its outputs must still be defensible against the Artifact.\n\nThe review is described as \"principled compatibility\" rather than approval of the strategy's merits \u2014 the Executor is not second-guessing whether the trade is good, only whether it is permitted. That is the right scope for a party that has no window into the reasoning, and it matches the Atlas's insistence elsewhere that Executors follow instructions rather than exercise judgment.\n\nA.2.8.2.2.2.5.3.4 supplies the accountability loop from the other direction: \"Prime token holders will retain governance rights, including the ability to revoke the Operational Executor Agent's Executor Accord through a vote if necessary.\" The gatekeeper can be removed by the Prime's own electorate.\n\nThat cuts both ways. It prevents an Executor from obstructing a Prime indefinitely, and it means the compliance gate is ultimately held in place by the willingness of tokenholders \u2014 whose interests may align with deployment \u2014 to keep a reviewer they can fire.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Foundation owns the strategy, a Development Company runs it, and the Operational Executor Agent validates it against the Atlas and Artifact before allocating capital.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4ea509f3-9136-4d24-abf4-16a5e9a32ad2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cd451146-453b-4293-80ad-c41beeac0d80",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

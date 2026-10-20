@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-ddba144b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ddba144b-b914-4541-824a-d82dc8a9751d",
+      "targetTitle": "Grove holds a standing authorization to swap stablecoins int"
+    },
+    {
+      "id": "lnk-88dba96b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "88dba96b-9ada-4467-95be-c34f95234b91",
+      "targetTitle": "The DAI-USDS migrator is the one Liquidity Layer swap with n"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's USDS-to-USDC swaps route through the legacy DAI migrator and the Lite PSM at par with no fee",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "86408f8a-efbc-4e6a-afb2-a2b4abaed450",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a310cd2-6e04-4bf6-a6ea-71b371ac561e",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d75d5371-fd56-4f62-a965-444fc38d2ac0",
+      "name": "stablecoins",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2be8db5a-4ff3-4d33-b539-80e4fc85299d",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.3.1 decomposes `swapUSDSToUSDC` into a three-hop path. First the amount is scaled: \"convert the 6-decimal `usdcAmount` into the 18-decimal `usdsAmount` using `psmTo18ConversionFactor`.\" Then USDS is approved to and swapped through `daiUsds`, \"the contract that facilitates a 1:1 swap between USDS and DAI.\" Finally \"DAI is exchanged for USDC through the PSM at a 1:1 ratio with no fee, using `buyGemNoFee`.\"\n\nThe notable fact is that **USDS does not swap to USDC directly**. The Peg Stability Module Grove uses is denominated in DAI, so USDS must first be converted into its predecessor. A.6.1.1.2.2.6.1.2.1.1.4.2 confirms the plumbing dependency from the permissions side: Grove's ALM Proxy \"has been whitelisted on the Lite PSM,\" which \"allows it to call `buyGemNoFee` and `sellGemNoFee` on the `MCD_LITE_PSM_USDC_A` contract\" \u2014 a contract whose very name marks it as Maker-era infrastructure.\n\nTwo implications follow. Grove's ability to convert into USDC \u2014 the entry point for most of its allocation targets \u2014 depends on a **legacy contract and a per-address whitelist granted outside Grove's own governance**. And the `NoFee` variants mean the conversion is genuinely costless, which is why the rate-limit-based controls carry the whole burden of restraint: nothing about the swap's economics discourages doing it repeatedly.\n\nThe rate limit is charged in **USDC terms** (`LIMIT_USDS_TO_USDC`, decremented by `usdcAmount`) even though the input is USDS, which is consistent with the limits being about the asset Grove ends up able to deploy rather than the asset it started with.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDS is converted 1:1 to DAI through the daiUsds migrator, then DAI is exchanged for USDC via buyGemNoFee, with a decimal conversion factor bridging 18-decimal USDS and 6-decimal USDC.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

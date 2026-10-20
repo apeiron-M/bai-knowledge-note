@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-b76c656f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b76c656f-e30d-42ac-81e5-8fa577b0b8fa",
+      "targetTitle": "An Invocation's location in the Atlas document tree is its s"
+    },
+    {
+      "id": "lnk-7c631921-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c631921-2b67-480f-85ad-cb623444df2a",
+      "targetTitle": "Prospective Instances are fully pre-provisioned at the Plann"
+    },
+    {
+      "id": "lnk-a9781b49-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9781b49-a145-43c7-b812-a619b80346ae",
+      "targetTitle": "An Invocation's lifecycle stage is encoded by where its docu"
+    },
+    {
+      "id": "lnk-d4e2dff0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4e2dff0-611e-4b90-9bae-422b1007ec01",
+      "targetTitle": "Skybase publishes prospective distribution partners with a P"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Invocation Status and Instance Status are two separate state vocabularies covering before and after an Instance exists",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "62067799-abad-4b35-b940-c71505939cc9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "26991193-0237-4d09-bcdf-d8315bb0f5a7",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cacb3e2f-063d-4777-b61b-fb9c191504a2",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "927f4069-1381-4373-8f2a-e092f646dc84",
+      "name": "lifecycle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The four prospective Instances each carry a document type the live Instances do not have: an Invocation Status (A.6.1.1.4.2.5.1.4.1.1 and siblings), whose value is `Planning`. Active and Completed Instances have no such document \u2014 their state is expressed by which directory holds them, using the Instance Status vocabulary of `Active`, `Completed` and `Suspended`.\n\nSo the Atlas maintains two disjoint status languages. Invocation Status describes the progress of the *process of creating* an Instance; Instance Status describes the condition of an Instance that already exists. Nothing sits in both at once.\n\nThe distinction avoids a real modelling error. If prospective Instances were given an Instance Status, the natural value would be something like `Inactive` \u2014 which the Atlas already uses for a different meaning elsewhere: the Light Agent and Token SkyLink Primitives are `Inactive` as *whole primitives that have been switched off*, not as things being built. Keeping the vocabularies separate stops \"not yet\" from being confused with \"turned off.\"\n\nIt also means the two questions an observer might ask have separate answers in separate places: what is Skybase running (read the Active directories) versus what is Skybase in the middle of starting (read the In Progress directories and their Invocation Statuses). The `Planning` value additionally implies later Invocation Status values exist for subsequent stages, giving the Invocation itself a progress track distinct from the Instance's lifecycle.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "`Planning` is an Invocation Status held only by in-progress subtrees; Active, Completed and Suspended are Instance Statuses, so a prospective Instance is never described as inactive.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d3a46e4f-f363-458a-8b84-f613906bb1f5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f09b061d-6703-436b-ab9a-5755aee2dcb1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

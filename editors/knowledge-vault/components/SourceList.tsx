@@ -1,22 +1,59 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import {
   setSelectedNode,
-  useDocumentsInSelectedDrive,
   useSelectedDriveId,
-  deleteNode,
 } from "@powerhousedao/reactor-browser";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
+import type { useConvertHealth } from "../hooks/use-convert-health.js";
+import type { IntakeBatch } from "../hooks/use-intake-batch.js";
+import { IntakeLanding } from "./intake/IntakeLanding.js";
+import { IntakePanel } from "./intake/IntakePanel.js";
+import { SourceFolderBar } from "./SourceFolderBar.js";
+import { isHexAddress, shortAddress } from "../../shared/identity.js";
+import { LoadingPanel } from "./LoadingStates.js";
+import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import {
+  useReactorDocsWithRefetch,
+  type ReactorDocSpec,
+} from "../hooks/use-reactor-docs.js";
+import {
+  deleteDocumentRemote,
+  mutateDocumentRemote,
+} from "../lib/remote-reactor.js";
+import { prefetchOnHover } from "../lib/prefetch.js";
+import { triggerVaultPull } from "../hooks/use-remote-first.js";
+import { filterSources, toSourceRow, SOURCE_SORT_OPTIONS, sortSources, type SourceRow } from "../lib/source-search.js";
+import { useSourceRows } from "../hooks/use-source-rows.js";
+import { vaultIndexOf } from "../lib/intake-model.js";
+import {
+  describeStatuses,
+  folderContents,
+  readOpenFolder,
+  sourceView,
+  writeOpenFolder,
+} from "../lib/source-tree.js";
 
-type DeleteTarget = { id: string; title: string } | null;
+type DeleteTarget =
+  | { kind: "source"; id: string; title: string }
+  /**
+   * A folder takes its sources with it. `sourceIds` is resolved when the
+   * prompt opens, so the confirmation can say how many documents are about
+   * to go — "delete this folder" and "delete these twenty sources" are
+   * different decisions and the user is making the second one.
+   */
+  | { kind: "folder"; id: string; title: string; sourceIds: string[] }
+  | null;
 
 function DeleteModal({
   target,
   driveId,
   onClose,
+  onDeleted,
 }: {
   target: DeleteTarget;
   driveId: string | undefined;
   onClose: () => void;
+  onDeleted: () => void;
 }) {
   const [deleting, setDeleting] = useState(false);
 
@@ -26,7 +63,25 @@ function DeleteModal({
     if (!driveId || !target) return;
     setDeleting(true);
     try {
-      await deleteNode(driveId, target.id);
+      if (target.kind === "folder") {
+        // Documents first, folder second. DELETE_NODE on a folder drops its
+        // descendants from the drive, so doing it the other way round would
+        // leave every source inside answering findDocuments while belonging
+        // to no drive — unreachable from the app and invisible to the
+        // pipeline.
+        for (const id of target.sourceIds) {
+          await deleteDocumentRemote(id, driveId);
+        }
+        await mutateDocumentRemote(driveId, [
+          { type: "DELETE_NODE", input: { id: target.id }, scope: "global" },
+        ]);
+      } else {
+        // Server-side delete removes the document AND its drive node in
+        // one call; the scoped sync channel delivers the tree change.
+        await deleteDocumentRemote(target.id, driveId);
+      }
+      triggerVaultPull();
+      onDeleted();
     } finally {
       setDeleting(false);
       onClose();
@@ -60,7 +115,7 @@ function DeleteModal({
               className="text-sm font-semibold"
               style={{ color: "var(--bai-text)" }}
             >
-              Delete Source
+              {target.kind === "folder" ? "Delete Folder" : "Delete Source"}
             </h3>
             <p
               className="mt-1.5 text-xs"
@@ -73,7 +128,14 @@ function DeleteModal({
               >
                 {target.title}
               </span>
-              ? This will remove the source and its history from the vault.
+              ?{" "}
+              {target.kind === "folder"
+                ? target.sourceIds.length === 0
+                  ? "The folder is empty, so only the folder is removed."
+                  : `This also deletes ${target.sourceIds.length} source${
+                      target.sourceIds.length === 1 ? "" : "s"
+                    } inside it, with their history. This cannot be undone.`
+                : "This will remove the source and its history from the vault."}
             </p>
           </div>
         </div>
@@ -101,6 +163,16 @@ function DeleteModal({
   );
 }
 
+/** `BOOK_CHAPTER` → "Book chapter": the reader's word, not the schema's enum. */
+const typeLabel = (sourceType: string) => {
+  const words = sourceType.toLowerCase().replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+};
+
+/** A signer address is noise at full length; six and four characters identify it, the tooltip has the rest. */
+const byLabel = (createdBy: string) =>
+  isHexAddress(createdBy) ? shortAddress(createdBy) : createdBy;
+
 const STATUS_COLORS: Record<string, string> = {
   INBOX: "bg-amber-500/20 text-amber-300 border-amber-500/30",
   EXTRACTING: "bg-blue-500/20 text-blue-300 border-blue-500/30",
@@ -108,15 +180,60 @@ const STATUS_COLORS: Record<string, string> = {
   ARCHIVED: "bg-gray-500/20 text-gray-400 border-gray-500/30",
 };
 
-export function SourceList() {
+/** The nearest scrolling ancestor — the explorer's content pane — so a folder change can start at the top. */
+function scrollParentOf(el: HTMLElement | null): HTMLElement | null {
+  for (let p = el?.parentElement ?? null; p; p = p.parentElement) {
+    const overflow = getComputedStyle(p).overflowY;
+    if (overflow === "auto" || overflow === "scroll") return p;
+  }
+  return null;
+}
+
+export function SourceList({
+  intake,
+  convert,
+  homeSignal = 0,
+}: {
+  /** The batch, owned by `DriveExplorer` so it survives a tab switch. */
+  intake: IntakeBatch;
+  convert: ReturnType<typeof useConvertHealth>;
+  /**
+   * Bumped when the Sources tab is clicked while this list is already open:
+   * like the tab bars people know from their phones, clicking the tab you are
+   * on takes you back to its top level.
+   */
+  homeSignal?: number;
+}) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
-  // Work queues start open (small, actionable); the ever-growing terminal
-  // groups start collapsed to a one-line header with the count.
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("pipeline");
+  const searchRef = useRef<HTMLInputElement>(null);
+  // "/" focuses the filter from anywhere in the list, like GitHub.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (
+        t &&
+        (t.tagName === "INPUT" ||
+          t.tagName === "TEXTAREA" ||
+          t.isContentEditable)
+      )
+        return;
+      e.preventDefault();
+      searchRef.current?.focus();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  // Work queues and the extracted set start open. Archived stays collapsed
+  // so a long history doesn't bury the live sources.
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     INBOX: true,
     EXTRACTING: true,
-    EXTRACTED: false,
+    EXTRACTED: true,
     ARCHIVED: false,
   });
   const toggleGroup = useCallback(
@@ -124,28 +241,222 @@ export function SourceList() {
       setOpenGroups((prev) => ({ ...prev, [status]: !prev[status] })),
     [],
   );
-  const documents = useDocumentsInSelectedDrive();
   const driveId = useSelectedDriveId();
+  // Source ids come from the authoritative server tree; the doc states
+  // come from the reactor directly. Polls because agents move sources
+  // through the extraction lifecycle server-side.
+  const {
+    serverFileNodes,
+    serverAllNodes,
+    isLoading: treeLoading,
+  } = useKnowledgeNotes();
+  // The list's rows, all in one server answer from the index. Only a server
+  // that predates the query makes the list read each source document.
+  const server = useSourceRows(driveId);
+  const readDocuments = server.unsupported;
+  const treeSources = useMemo(
+    () => serverFileNodes.filter((n) => n.documentType === "bai/source"),
+    [serverFileNodes],
+  );
+  const sourceSpecs = useMemo<ReactorDocSpec[]>(
+    () =>
+      readDocuments
+        ? treeSources.map((n) => ({ id: n.id, documentType: n.documentType, name: n.name }))
+        : [],
+    [readDocuments, treeSources],
+  );
+  const {
+    docs: documents,
+    isLoading: docsLoading,
+    refetch: refetchDocs,
+  } = useReactorDocsWithRefetch(sourceSpecs, {
+    pollMs: 20_000,
+    // Switching tabs unmounts this view. `retainKey` lets the hook paint
+    // the source documents it already holds while the drive tree reloads,
+    // so coming back shows the list immediately and refreshes behind it.
+    retainKey: "source-list",
+  });
+  // The tab badge counts tree nodes (instant); the list needs the doc
+  // states (async). Show a loading panel instead of a false "empty" —
+  // but only when we have NOTHING to show: under stale-while-revalidate
+  // `docsLoading` stays true while a partially cached list is already on
+  // screen, and a spinner over real content would be a regression.
+  const isLoading = readDocuments
+    ? (treeLoading && sourceSpecs.length === 0) || docsLoading
+    : server.rows === null && server.error === null;
+  const refetch = readDocuments ? refetchDocs : server.refetch;
 
-  const sources = useMemo(() => {
-    return (documents ?? [])
-      .filter((d) => d.header.documentType === "bai/source")
-      .map((d) => {
-        const state = (
-          d.state as unknown as { global: Record<string, unknown> }
-        ).global;
-        return {
-          id: d.header.id,
-          name: d.header.name,
-          title: (state.title as string) ?? d.header.name,
-          sourceType: (state.sourceType as string) ?? null,
-          status: (state.status as string) ?? "INBOX",
-          claimCount: ((state.extractedClaims as string[]) ?? []).length,
-          createdBy: (state.createdBy as string) ?? null,
-        };
-      });
-  }, [documents]);
+  // The tree decides which sources exist (a delete shows at once); a source
+  // the rows do not carry yet is asked for again.
+  const treeIds = useMemo(() => new Set(treeSources.map((n) => n.id)), [treeSources]);
+  const serverRows = useMemo(
+    () => (server.rows ?? []).filter((r) => treeLoading || treeIds.has(r.id)),
+    [server.rows, treeIds, treeLoading],
+  );
+  const { refetch: refetchRows, rows: rowsNow } = server;
+  useEffect(() => {
+    if (readDocuments || !rowsNow || treeLoading) return;
+    const have = new Set(rowsNow.map((r) => r.id));
+    if ([...treeIds].some((id) => !have.has(id))) {
+      const t = setTimeout(refetchRows, 1_500);
+      return () => clearTimeout(t);
+    }
+  }, [readDocuments, rowsNow, treeIds, treeLoading, refetchRows]);
 
+  const sources = useMemo<SourceRow[]>(
+    () =>
+      readDocuments
+        ? documents
+            .filter((d) => d.header.documentType === "bai/source")
+            .map((d) =>
+              toSourceRow(
+                d.header,
+                (d.state as unknown as { global: Record<string, unknown> }).global,
+              ),
+            )
+        : serverRows,
+    [readDocuments, documents, serverRows],
+  );
+
+  // What the vault already holds, for the intake: each original by its content
+  // ref, where its sources are and when it came in, and the folder names under
+  // /sources. A file dropped again is recognised before it is read; null while
+  // the sources are still loading, so a drop waits for the answer.
+  const vaultIndex = useMemo(() => {
+    if (isLoading) return null;
+    const byId = new Map(serverAllNodes.map((n) => [n.id, n]));
+    const root = serverAllNodes.find(
+      (n) => n.kind === "folder" && !n.parentFolder && n.name === "sources",
+    );
+    const folderOf = (id: string) => {
+      const parent = byId.get(byId.get(id)?.parentFolder ?? "");
+      return parent && parent.id !== root?.id ? parent.name : null;
+    };
+    const text = (value: unknown) => (typeof value === "string" ? value : null);
+    const held = readDocuments
+      ? documents
+          .filter((d) => d.header.documentType === "bai/source")
+          .map((d) => {
+            const global = (d.state as unknown as { global: Record<string, unknown> })
+              .global;
+            return {
+              originalRef: text(global.originalFile),
+              folderName: folderOf(d.header.id),
+              addedAt: text(global.originalAttachedAt) ?? text(global.createdAt),
+              title: text(global.title),
+            };
+          })
+      : serverRows.map((r) => ({
+          originalRef: r.originalFile,
+          folderName: folderOf(r.id),
+          addedAt: r.originalAttachedAt ?? r.createdAt,
+          title: r.title,
+        }));
+    return vaultIndexOf(
+      held,
+      root
+        ? serverAllNodes
+            .filter((n) => n.kind === "folder" && n.parentFolder === root.id)
+            .map((n) => n.name)
+        : [],
+    );
+  }, [readDocuments, documents, serverRows, serverAllNodes, isLoading]);
+  const { setVault } = intake;
+  useEffect(() => {
+    setVault(vaultIndex);
+  }, [setVault, vaultIndex]);
+
+  // The filter narrows what the groups show; an active query also opens
+  // every group, because a match hidden behind a collapsed header is a
+  // search that looks broken.
+  const searching = query.trim().length > 0;
+  const matching = useMemo(
+    () => filterSources(sources, query),
+    [sources, query],
+  );
+  const sortOption =
+    SOURCE_SORT_OPTIONS.find((option) => option.value === sort) ??
+    SOURCE_SORT_OPTIONS[0];
+
+  // Which folder is open; null is /sources itself. A search flattens the
+  // view for the same reason it opens every status group.
+  //
+  // Persisted because opening a source unmounts this list: without it you
+  // came back to the root every time, which makes a folder of twenty
+  // chapters unusable. sessionStorage rather than a module variable so a
+  // reload keeps your place, and per tab so two windows can sit in
+  // different folders. A stale id is harmless — `sourceView` falls back to
+  // the root when the folder is gone.
+  const [folderId, setFolderIdState] = useState<string | null>(readOpenFolder);
+  const setFolderId = useCallback((id: string | null) => {
+    setFolderIdState(id);
+    writeOpenFolder(id);
+  }, []);
+  // Every move between folders starts at the top of the new one; otherwise a
+  // click on a folder far down the list lands mid-way into its contents.
+  const navigate = useCallback(
+    (id: string | null) => {
+      setFolderId(id);
+      scrollParentOf(rootRef.current)?.scrollTo({ top: 0 });
+    },
+    [setFolderId],
+  );
+  // "Open in Sources" from the intake: land on the folder a document became.
+  const openFolderByName = useCallback(
+    (folderName: string) => {
+      const folder = serverAllNodes.find(
+        (n) => n.kind === "folder" && n.name === folderName,
+      );
+      setQuery("");
+      navigate(folder ? folder.id : null);
+    },
+    [serverAllNodes, navigate],
+  );
+  const view = useMemo(
+    () =>
+      sourceView(matching, serverAllNodes, folderId, { flatten: searching }),
+    [matching, serverAllNodes, folderId, searching],
+  );
+  const visible = view.sources;
+
+  // One level up: the back button's destination, also reachable with Alt+↑,
+  // the "up" key of the desktop file managers.
+  const parentId =
+    view.breadcrumb.length > 1
+      ? view.breadcrumb[view.breadcrumb.length - 2].id
+      : undefined;
+  useEffect(() => {
+    if (parentId === undefined) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowUp" || !e.altKey || e.metaKey || e.ctrlKey) return;
+      const t = e.target as HTMLElement | null;
+      if (
+        t &&
+        (t.tagName === "INPUT" ||
+          t.tagName === "TEXTAREA" ||
+          t.isContentEditable)
+      )
+        return;
+      e.preventDefault();
+      navigate(parentId);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [parentId, navigate]);
+
+  // The Sources tab clicked while already here: back to the top level.
+  const seenHome = useRef(homeSignal);
+  useEffect(() => {
+    if (homeSignal === seenHome.current) return;
+    seenHome.current = homeSignal;
+    setQuery("");
+    navigate(null);
+  }, [homeSignal, navigate]);
+
+  const sortedVisible = useMemo(() => {
+    if (sortOption.field === "pipeline") return visible;
+    return sortSources(visible, sortOption.field, sortOption.direction);
+  }, [visible, sortOption]);
   const grouped = useMemo(() => {
     const groups: Record<string, typeof sources> = {
       INBOX: [],
@@ -153,15 +464,15 @@ export function SourceList() {
       EXTRACTED: [],
       ARCHIVED: [],
     };
-    for (const s of sources) {
+    for (const s of sortedVisible) {
       const bucket = groups[s.status] ?? groups.INBOX;
       bucket.push(s);
     }
     return groups;
-  }, [sources]);
+  }, [sortedVisible]);
 
   return (
-    <div className="p-4 space-y-4">
+    <div ref={rootRef} className="p-4 space-y-4">
       {/* Header with create button */}
       <div className="flex items-center justify-between">
         <h2
@@ -170,55 +481,282 @@ export function SourceList() {
         >
           Sources ({sources.length})
         </h2>
-        <button
-          type="button"
-          onClick={() => setCreateOpen(true)}
-          className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors hover:opacity-80"
-          style={{
-            backgroundColor: "var(--bai-accent)",
-            color: "var(--bai-accent-text)",
-          }}
-        >
-          <svg
-            className="h-3.5 w-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
+            className="rounded-md px-3 py-1.5 text-xs font-medium transition-colors hover:opacity-80"
+            style={{
+              color: "var(--bai-text-tertiary)",
+              border: "1px solid var(--bai-border)",
+            }}
+            title="Create a source from text you paste"
           >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          Ingest Source
-        </button>
+            Paste text
+          </button>
+          <button
+            type="button"
+            onClick={intake.open}
+            className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors hover:opacity-80"
+            style={{
+              backgroundColor: "var(--bai-accent)",
+              color: "var(--bai-accent-text)",
+            }}
+          >
+            <svg
+              className="h-3.5 w-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Add sources
+          </button>
+        </div>
       </div>
 
-      {sources.length === 0 ? (
+      {/* The intake, above the folder list: shown when asked for or while a batch exists. */}
+      {intake.visible && (
+        <IntakePanel
+          batch={intake}
+          maxUploadBytes={convert.maxUploadBytes}
+          configured={convert.configured}
+          onOpenFolder={openFolderByName}
+        />
+      )}
+
+      {/* Filter */}
+      {sources.length > 0 && (
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <svg
+              className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2"
+              style={{ color: "var(--bai-text-faint)" }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+          </svg>
+          <input
+            ref={searchRef}
+            type="text"
+            role="searchbox"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setQuery("");
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
+            placeholder="Filter sources by title, author, URL, type…  ( / )"
+            aria-label="Filter sources"
+            className="w-full rounded-lg text-sm outline-none placeholder:opacity-50 focus:border-[#cba6f7]/50"
+            // Padding inline, not via Tailwind: Connect's global input
+            // styles outrank the utility classes here and the text ended
+            // up under the magnifier.
+            style={{
+              backgroundColor: "var(--bai-bg)",
+              color: "var(--bai-text)",
+              border: "1px solid var(--bai-border)",
+              padding: "8px 88px 8px 38px",
+              boxSizing: "border-box",
+            }}
+          />
+          {searching && (
+            <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-2">
+              <span
+                className="text-[10px]"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                {visible.length} of {sources.length}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  searchRef.current?.focus();
+                }}
+                className="rounded p-0.5 text-xs hover:bg-white/10"
+                style={{ color: "var(--bai-text-muted)" }}
+                aria-label="Clear filter"
+                title="Clear (Esc)"
+              >
+                &times;
+              </button>
+            </div>
+          )}
+          </div>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            aria-label="Sort sources"
+            className="h-[38px] shrink-0 rounded-lg text-xs outline-none"
+            style={{
+              backgroundColor: "var(--bai-surface)",
+              color: "var(--bai-text)",
+              border: "1px solid var(--bai-border)",
+              padding: "0 28px 0 12px",
+              minWidth: 180,
+              boxSizing: "border-box",
+            }}
+          >
+            {SOURCE_SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {isLoading && sources.length === 0 ? (
+        <LoadingPanel label="Loading sources…" />
+      ) : sources.length === 0 ? (
+        // The empty Sources view is the intake landing; once a batch is
+        // open the panel above says everything the landing would.
+        intake.visible ? null : (
+          <div className="min-h-[60vh]">
+            <IntakeLanding
+              accept={intake.accepts}
+              maxUploadBytes={convert.maxUploadBytes}
+              configured={convert.configured}
+              settled={convert.settled}
+              ocrEngine={convert.ocrEngine}
+              onFiles={intake.onFiles}
+            />
+          </div>
+        )
+      ) : searching && visible.length === 0 ? (
         <div
-          className="flex h-64 items-center justify-center rounded-xl"
+          className="flex h-32 items-center justify-center rounded-xl"
           style={{
             backgroundColor: "var(--bai-surface)",
             border: "1px solid var(--bai-border)",
           }}
         >
-          <div className="text-center">
-            <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
-              No sources yet
-            </p>
-            <p
-              className="mt-1 text-xs"
-              style={{ color: "var(--bai-text-faint)" }}
-            >
-              Ingest source material to start the extraction pipeline
-            </p>
-          </div>
+          <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
+            No sources match “{query.trim()}”
+          </p>
         </div>
       ) : (
         <>
+          {/* Inside a folder: where you are, and the way back out. */}
+          {view.breadcrumb.length > 1 && (
+            <SourceFolderBar
+              trail={view.breadcrumb}
+              total={view.total}
+              onNavigate={navigate}
+            />
+          )}
+
+          {/* Folders first: a book is one row, not twenty chapters. */}
+          {view.folders.map((folder) => (
+            // A row, not a button: it holds its own delete control, and a
+            // button inside a button is invalid and unreachable by keyboard.
+            <div
+              key={folder.id}
+              className="group flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors hover:border-[var(--bai-accent)]"
+              style={{
+                backgroundColor: "var(--bai-surface)",
+                border: "1px solid var(--bai-border)",
+                boxShadow: "0 1px 0 rgba(0,0,0,0.25)",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => navigate(folder.id)}
+                className="flex flex-1 items-center gap-2 text-left min-w-0"
+                aria-label={`Open folder ${folder.name}`}
+              >
+                <svg
+                  className="h-4 w-4 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{ color: "var(--bai-accent)" }}
+                  aria-hidden="true"
+                >
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                </svg>
+                <span
+                  className="flex-1 truncate text-sm font-medium"
+                  style={{ color: "var(--bai-text)" }}
+                >
+                  {folder.name}/
+                </span>
+              </button>
+              <span
+                className="shrink-0 rounded-full px-2 py-0.5 text-[10px]"
+                style={{
+                  backgroundColor: "var(--bai-hover)",
+                  color: "var(--bai-text-tertiary)",
+                }}
+              >
+                {describeStatuses(folder.byStatus) ||
+                  `${folder.count} ${folder.count === 1 ? "source" : "sources"}`}
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteTarget({
+                    kind: "folder",
+                    id: folder.id,
+                    title: folder.name,
+                    // Resolved from the tree, not from the visible rows: a
+                    // filtered or collapsed view must not make the prompt
+                    // understate what is about to be deleted.
+                    sourceIds: folderContents(serverAllNodes, folder.id)
+                      .sourceIds,
+                  });
+                }}
+                aria-label={`Delete folder ${folder.name}`}
+                title="Delete folder and its sources"
+                className="shrink-0 rounded p-1 opacity-0 transition-opacity hover:bg-red-500/10 focus:opacity-100 group-hover:opacity-100"
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{ color: "var(--bai-text-faint)" }}
+                  aria-hidden="true"
+                >
+                  <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                </svg>
+              </button>
+            </div>
+          ))}
+
+          {/* An empty folder would otherwise be a breadcrumb over blank space,
+              which reads as a failed load rather than an empty folder. */}
+          {view.folders.length === 0 && visible.length === 0 && (
+            <div
+              className="flex h-24 items-center justify-center rounded-xl"
+              style={{
+                backgroundColor: "var(--bai-surface)",
+                border: "1px solid var(--bai-border)",
+              }}
+            >
+              <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
+                This folder has no sources yet
+              </p>
+            </div>
+          )}
+
           {(["INBOX", "EXTRACTING", "EXTRACTED", "ARCHIVED"] as const).map(
             (status) => {
               const items = grouped[status];
               if (items.length === 0) return null;
-              const isOpen = openGroups[status] ?? false;
+              const isOpen = searching || (openGroups[status] ?? false);
               return (
                 <div key={status}>
                   <button
@@ -243,90 +781,118 @@ export function SourceList() {
                     {status.replace("_", " ")} ({items.length})
                   </button>
                   {isOpen && (
-                  <div className="space-y-1">
-                    {items.map((source) => (
-                      <div
-                        key={source.id}
-                        className="group flex items-center gap-3 rounded-lg px-4 py-3"
-                        style={{
-                          backgroundColor: "var(--bai-bg)",
-                          border: "1px solid var(--bai-border)",
-                        }}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setSelectedNode(source.id)}
-                          className="flex flex-1 items-center gap-3 text-left min-w-0"
-                        >
-                          <div className="flex-1 min-w-0">
-                            <p
-                              className="truncate text-sm font-medium"
-                              style={{ color: "var(--bai-text-secondary)" }}
-                            >
-                              {source.title}
-                            </p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              {source.sourceType && (
-                                <span
-                                  className="rounded px-1.5 py-0.5 text-[10px]"
-                                  style={{
-                                    backgroundColor: "var(--bai-hover)",
-                                    color: "var(--bai-text-muted)",
-                                  }}
-                                >
-                                  {source.sourceType}
-                                </span>
-                              )}
-                              {source.createdBy && (
-                                <span
-                                  className="text-[10px]"
-                                  style={{ color: "var(--bai-text-faint)" }}
-                                >
-                                  by {source.createdBy}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          {source.claimCount > 0 && (
-                            <span
-                              className="text-[10px]"
-                              style={{ color: "var(--bai-text-faint)" }}
-                            >
-                              {source.claimCount} claims
-                            </span>
-                          )}
-                          <span
-                            className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium ${STATUS_COLORS[source.status]}`}
-                          >
-                            {source.status}
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteTarget({
-                              id: source.id,
-                              title: source.title,
-                            });
+                    <div className="space-y-1">
+                      {items.map((source) => (
+                        <div
+                          key={source.id}
+                          className="group flex items-center gap-3 rounded-lg px-4 py-3"
+                          style={{
+                            // One step lighter than the page and the folder
+                            // card above it (`--bai-overlay`), with a hairline
+                            // tinted toward the accent, so a source reads as
+                            // "inside" its folder rather than another folder.
+                            backgroundColor: "var(--bai-overlay)",
+                            border:
+                              "1px solid color-mix(in srgb, var(--bai-accent) 18%, var(--bai-border))",
                           }}
-                          className="shrink-0 rounded p-1.5 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
-                          style={{ color: "var(--bai-text-faint)" }}
-                          title="Delete source"
                         >
-                          <svg
-                            className="h-3.5 w-3.5"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
+                          <button
+                            type="button"
+                            onClick={() => setSelectedNode(source.id)}
+                            {...prefetchOnHover(source.id)}
+                            aria-label={`${source.title}${source.sourceType ? `, ${source.sourceType}` : ""}`}
+                            className="flex flex-1 items-center gap-3 text-left min-w-0"
                           >
-                            <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                            <svg
+                              className="h-4 w-4 shrink-0"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              style={{ color: "var(--bai-text-tertiary)" }}
+                              aria-hidden="true"
+                            >
+                              <path d="M7 3h7l5 5v13H7z" />
+                              <path d="M14 3v5h5M9 13h7M9 17h5" />
+                            </svg>
+                            <div className="flex-1 min-w-0">
+                              <p
+                                className="truncate text-sm font-medium"
+                                style={{ color: "var(--bai-text-secondary)" }}
+                              >
+                                {source.title}
+                              </p>
+                              {/* Secondary, not faint: these are read, not
+                                  decoration — both pass AA on the card in
+                                  either theme. */}
+                              <div className="mt-1 flex min-w-0 items-center gap-2">
+                                {source.sourceType && (
+                                  <span
+                                    className="shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium"
+                                    style={{
+                                      backgroundColor: "var(--bai-hover)",
+                                      color: "var(--bai-text-secondary)",
+                                    }}
+                                  >
+                                    {typeLabel(source.sourceType)}
+                                  </span>
+                                )}
+                                {source.createdBy && (
+                                  <span
+                                    className="truncate text-[11px]"
+                                    style={{
+                                      color: "var(--bai-text-tertiary)",
+                                    }}
+                                    title={`Added by ${source.createdBy}`}
+                                  >
+                                    Added by {byLabel(source.createdBy)}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            {source.claimCount > 0 && (
+                              <span
+                                className="shrink-0 text-[11px]"
+                                style={{ color: "var(--bai-text-tertiary)" }}
+                              >
+                                {source.claimCount}{" "}
+                                {source.claimCount === 1 ? "claim" : "claims"}
+                              </span>
+                            )}
+                            <span
+                              className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium ${STATUS_COLORS[source.status]}`}
+                            >
+                              {source.status}
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteTarget({
+                                kind: "source",
+                                id: source.id,
+                                title: source.title,
+                              });
+                            }}
+                            className="shrink-0 rounded p-1.5 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
+                            style={{ color: "var(--bai-text-faint)" }}
+                            aria-label={`Delete source ${source.title}`}
+                            title="Delete source"
+                          >
+                            <svg
+                              className="h-3.5 w-3.5"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               );
@@ -345,6 +911,7 @@ export function SourceList() {
         target={deleteTarget}
         driveId={driveId}
         onClose={() => setDeleteTarget(null)}
+        onDeleted={refetch}
       />
     </div>
   );

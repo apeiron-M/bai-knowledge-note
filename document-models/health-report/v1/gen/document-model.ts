@@ -9,7 +9,7 @@ export const documentModel: DocumentModelGlobalState = {
   },
   extension: "",
   description:
-    "Vault diagnostics \u2014 point-in-time health report with graph metrics, check results, and recommendations",
+    "Vault diagnostics \u2014 point-in-time health report with graph metrics, check results, and recommendations.",
   specifications: [
     {
       state: {

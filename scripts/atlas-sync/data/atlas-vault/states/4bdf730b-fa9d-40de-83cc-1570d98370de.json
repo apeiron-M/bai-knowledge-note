@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-4f9031dd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4f9031dd-df6f-49eb-a94c-46e7724a9c5e",
+      "targetTitle": "Rate changes flow through a bounded external access module i"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Using the Linear Interpolation Module requires exactly the same governance process as changing the parameter directly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7563ead3-5b35-4926-a66f-136120841f7b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "094f88b6-d074-4cdb-8cb2-2c158bc952f5",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b9fad45a-feeb-4e65-bb62-bea9631dad00",
+      "name": "parameter-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.2.13.2.1.2 fixes the authorization rule for the Linear Interpolation Module: \"The process to utilize the Linear Interpolation Module to adjust a parameter must follow the same governance process required to modify the designated parameter.\" If direct modification only needs an Executive Vote, the lerp can ride in that vote; if it requires a prior Governance Poll, \"utilizing the Linear Interpolation Module for that parameter must also be preceded by a Governance Poll.\"\n\nThis closes an obvious loophole. A lerp is strictly more powerful than a one-shot change \u2014 it commits to a whole path of future values and executes them without further votes or the GSM Pause Delay. Without process inheritance, proposers could route politically expensive changes through the tool and reach the same endpoint under a lighter approval bar.\n\nThe generalizable principle is that automation tooling must not become a privilege-escalation path: the authority required is a property of the *parameter being touched*, never of the mechanism used to touch it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "If a parameter needs a prior Governance Poll, so does any lerp that adjusts it; the tool inherits the parameter's authority level instead of creating a cheaper path.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b9fcd554-469d-461b-ae5c-843c27638b9d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "95adb0fc-17b3-459e-a771-aa19ea02404c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:15.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

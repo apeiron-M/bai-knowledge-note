@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark Savings v2 inverts the schema by recording an Asset Supplied By Users, so one template covers both outbound allocation and inbound deposits",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8e814e86-731a-4eca-9d64-a5bf3012d18e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "042ef892-2cfd-4019-8740-f53ee757b748",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8cdfd7ab-00ba-4081-8dd5-b05d268b4eeb",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f223a1eb-7bba-42da-818e-3957fc8b2318",
+      "name": "savings",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every instance up to this point has carried the field `Asset Supplied By Spark Liquidity Layer`. The Spark Savings v2 instances replace it with `Asset Supplied By Users`: wETH for the ETH instance (A.6.1.1.1.2.6.1.3.1.9.1.2.1.3), USDC (.9.2.2.1.3) and USDT (.9.3.2.1.3), each paired with a receipt token \u2014 spETH, spUSDC, spUSDT \u2014 and a `Target Protocol` of \"Spark Savings Protocol\".\n\nThe direction of capital reverses. In a SparkLend or Aave instance the Spark Liquidity Layer is the depositor and an external protocol is the venue. Here the public is the depositor and Spark is the venue: these are Spark's own savings products, registered in the same Allocation System Primitive tree, under the same `Active` status, with the same document shape.\n\nUnifying both under one registry is a real design position. It means the Artifact holds a single inventory of everywhere value flows through Spark, whether outward into third-party protocols or inward from users, and one governance process amends both.\n\nIt also means a single field name is the only thing distinguishing 'Spark is the counterparty taking risk' from 'Spark is the counterparty others take risk on'. Everything downstream differs \u2014 the relevant controls, who is protected, what failure looks like \u2014 yet the structural signal is one word in one slot. A reader scanning `Asset Supplied By...` values without reading the field name would classify these instances exactly backwards.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Where every other instance names the Asset Supplied By Spark Liquidity Layer, the Savings instances name what users deposit",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

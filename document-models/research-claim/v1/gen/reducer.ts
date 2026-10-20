@@ -13,6 +13,17 @@ import {
   UpdateClaimContentInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<ResearchClaimPHState> = (
   state,
   action,
@@ -23,7 +34,7 @@ const stateReducer: StateReducer<ResearchClaimPHState> = (
   }
   switch (action.type) {
     case "CREATE_CLAIM": {
-      CreateClaimInputSchema().parse(action.input);
+      memoizedSchema(CreateClaimInputSchema).parse(action.input);
 
       researchClaimClaimManagementOperations.createClaimOperation(
         (state as any)[action.scope],
@@ -35,7 +46,7 @@ const stateReducer: StateReducer<ResearchClaimPHState> = (
     }
 
     case "ADD_RESEARCH_CONNECTION": {
-      AddResearchConnectionInputSchema().parse(action.input);
+      memoizedSchema(AddResearchConnectionInputSchema).parse(action.input);
 
       researchClaimClaimManagementOperations.addResearchConnectionOperation(
         (state as any)[action.scope],
@@ -47,7 +58,7 @@ const stateReducer: StateReducer<ResearchClaimPHState> = (
     }
 
     case "REMOVE_RESEARCH_CONNECTION": {
-      RemoveResearchConnectionInputSchema().parse(action.input);
+      memoizedSchema(RemoveResearchConnectionInputSchema).parse(action.input);
 
       researchClaimClaimManagementOperations.removeResearchConnectionOperation(
         (state as any)[action.scope],
@@ -59,7 +70,7 @@ const stateReducer: StateReducer<ResearchClaimPHState> = (
     }
 
     case "UPDATE_CLAIM_CONTENT": {
-      UpdateClaimContentInputSchema().parse(action.input);
+      memoizedSchema(UpdateClaimContentInputSchema).parse(action.input);
 
       researchClaimClaimManagementOperations.updateClaimContentOperation(
         (state as any)[action.scope],

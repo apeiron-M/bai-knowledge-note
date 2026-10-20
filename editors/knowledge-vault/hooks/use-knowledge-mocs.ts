@@ -9,6 +9,8 @@ export type MocTier = "HUB" | "DOMAIN" | "TOPIC";
 export type MocInfo = {
   id: string;
   title: string;
+  /** What the map covers, from the projection; null when it has none. */
+  description?: string | null;
   tier: MocTier | null;
   noteCount: number;
   coreIdeas: { noteRef: string; contextPhrase: string }[];
@@ -29,6 +31,13 @@ const TIER_RANK: Record<MocTier, number> = {
 const UNTIERED_RANK = 99;
 
 const MOC_NOTE_TYPE_RE = /^MOC \((HUB|DOMAIN|TOPIC)\)$/;
+
+/** MoCs by id. The hook's map and every consumer that needs one use this. */
+export function indexMocs(mocs: MocInfo[]): Map<string, MocInfo> {
+  const m = new Map<string, MocInfo>();
+  for (const moc of mocs) m.set(moc.id, moc);
+  return m;
+}
 
 /**
  * Sidebar/GraphView source for MoC documents.
@@ -84,20 +93,27 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
 
       const coreIdeas: MocInfo["coreIdeas"] = [];
       const childRefs: string[] = [];
+      // The same target can be linked through BOTH edge types — the hub
+      // carries CHILD_MOC (hierarchy) and CORE_IDEA (graph-visible)
+      // edges to each child MoC. Dedupe here so no consumer (sidebar
+      // tree, graph links, editor hierarchy card) renders duplicates.
+      const seenChildren = new Set<string>();
+      const seenIdeas = new Set<string>();
       const sourceEdges = edgesBySource.get(node.documentId) ?? [];
       for (const edge of sourceEdges) {
-        if (edge.linkType === "CHILD_MOC") {
-          childRefs.push(edge.targetDocumentId);
+        const target = edge.targetDocumentId;
+        if (
+          edge.linkType === "CHILD_MOC" ||
+          (edge.linkType === "CORE_IDEA" && mocIds.has(target))
+        ) {
+          if (!seenChildren.has(target)) {
+            seenChildren.add(target);
+            childRefs.push(target);
+          }
         } else if (edge.linkType === "CORE_IDEA") {
-          // MoC → note core idea; on legacy data CORE_IDEA also pointed
-          // at child MoCs, so fall back to target-type for disambiguation.
-          if (mocIds.has(edge.targetDocumentId)) {
-            childRefs.push(edge.targetDocumentId);
-          } else {
-            coreIdeas.push({
-              noteRef: edge.targetDocumentId,
-              contextPhrase: "",
-            });
+          if (!seenIdeas.has(target)) {
+            seenIdeas.add(target);
+            coreIdeas.push({ noteRef: target, contextPhrase: "" });
           }
         }
       }
@@ -105,6 +121,7 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
       mocs.push({
         id: node.documentId,
         title: node.title ?? "(untitled)",
+        description: node.description,
         tier,
         noteCount: coreIdeas.length,
         coreIdeas,
@@ -121,9 +138,6 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
       return a.title.localeCompare(b.title);
     });
 
-    const mocMap = new Map<string, MocInfo>();
-    for (const moc of mocs) mocMap.set(moc.id, moc);
-
-    return { mocs, mocMap };
+    return { mocs, mocMap: indexMocs(mocs) };
   }, [nodeMap, edges]);
 }

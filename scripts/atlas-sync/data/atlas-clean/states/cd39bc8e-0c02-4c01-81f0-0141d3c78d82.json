@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove keeps a fully scaffolded but Inactive Executor Transformation Primitive despite being a Prime Agent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0595606e-f7b5-4845-b2f3-d3b5a515cd8d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cd70a9a8-d43b-4d6c-ba1b-b1180cc8d24f",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6942e6f6-b43f-4023-877f-914f89a7c32d",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3fe1680f-2ac9-4fac-b298-0086c35b09a0",
+      "name": "agent-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.1.2.3.1.1.1 declares flatly that \"Grove is a Prime Agent,\" and the Prime Transformation Primitive's Global Activation Status (A.6.1.1.2.2.1.2.1.1) reads `Completed`. Yet A.6.1.1.2.2.1.3 still carries a complete Executor Transformation Primitive subtree \u2014 Hub Document, all four status directories, Hub Data Repository with Failed and Suspended subtrees \u2014 with Global Activation Status (A.6.1.1.2.2.1.3.1.1) reading `Inactive`.\n\nThe observation is about how the Atlas is built rather than about Grove specifically: **Primitive slots are instantiated uniformly, and non-applicability is expressed as a status value rather than as absence**. An unused capability is present-and-off, not missing.\n\nThis has a real benefit. Every Agent Artifact has the same shape at the same addresses, so cross-Agent comparison and tooling work by position, and activating a dormant capability is a status change rather than a structural amendment.\n\nIt also explains the Atlas's low signal density. A large fraction of any Agent Artifact consists of correctly-formed empty containers, which is why extracting claims from these documents means distinguishing `Inactive` scaffolding from live specification.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its Prime Transformation Primitive is Completed while the Executor path stays Inactive with empty directories \u2014 the Atlas instantiates every Primitive slot for every Agent, used or not.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

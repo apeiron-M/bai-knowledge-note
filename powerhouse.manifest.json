@@ -48,12 +48,12 @@
       "name": "VaultConfig"
     },
     {
-      "id": "bai/project",
-      "name": "Project"
-    },
-    {
       "id": "bai/wbs",
       "name": "Work Breakdown Structure"
+    },
+    {
+      "id": "powerhouse/scopeofwork",
+      "name": "ScopeOfWork"
     }
   ],
   "apps": [
@@ -127,17 +127,17 @@
       ]
     },
     {
-      "id": "project-editor",
-      "name": "Project Editor",
+      "id": "wbs-editor",
+      "name": "WBS Editor",
       "documentTypes": [
-        "bai/project"
+        "bai/wbs"
       ]
     },
     {
-      "name": "WBS Editor",
-      "id": "wbs-editor",
+      "id": "scope-of-work",
+      "name": "Scope of Work",
       "documentTypes": [
-        "bai/wbs"
+        "powerhouse/scopeofwork"
       ]
     }
   ],
@@ -151,7 +151,86 @@
     {
       "id": "knowledge-graph",
       "name": "KnowledgeGraphSubgraph"
+    },
+    {
+      "id": "access",
+      "name": "AccessSubgraph"
+    },
+    {
+      "id": "http",
+      "name": "HttpSubgraph"
+    },
+    {
+      "id": "convert",
+      "name": "ConvertSubgraph"
     }
   ],
-  "config": []
+  "pieces": [
+    {
+      "id": "@powerhousedao/piece-knowledge-vault",
+      "name": "Knowledge Vault"
+    }
+  ],
+  "config": [
+    {
+      "name": "AUTH_ENABLED",
+      "type": "var",
+      "description": "\"true\" or \"false\". Verify Renown bearer tokens and resolve the caller's identity.",
+      "required": true
+    },
+    {
+      "name": "ADMINS",
+      "type": "var",
+      "description": "Comma-separated Ethereum addresses that bypass every permission check (supreme admins). Give it at least two.",
+      "required": true
+    },
+    {
+      "name": "DOCUMENT_PERMISSIONS_ENABLED",
+      "type": "var",
+      "description": "\"true\" or \"false\". Enable per-document READ/WRITE/ADMIN grants; runs the permission migrations at boot.",
+      "required": true
+    },
+    {
+      "name": "DEFAULT_PROTECTION",
+      "type": "var",
+      "description": "\"true\" or \"false\". Documents are protected by default and need an explicit grant to read or write.",
+      "required": true
+    },
+    {
+      "name": "REQUIRE_AUTHENTICATED_CALLER",
+      "type": "var",
+      "description": "\"true\" or \"false\". Reject anonymous GraphQL callers with 401 before any resolver runs. Requires AUTH_ENABLED=true.",
+      "required": true
+    },
+    {
+      "name": "CONVERT_SERVICE_URL",
+      "type": "var",
+      "description": "Base URL of the document conversion service, e.g. http://127.0.0.1:5011. Unset is supported: GET convert/health reports configured=false and POST convert answers 503 CONVERT_NOT_CONFIGURED.",
+      "required": false
+    },
+    {
+      "name": "CONVERT_SERVICE_API_KEY",
+      "type": "var",
+      "description": "Sent as X-Api-Key when the conversion service requires one. Omit for a service that is not authenticated; when set, the URL is treated as a managed deployment and is not probed at boot.",
+      "required": false
+    },
+    {
+      "name": "CONVERT_SERVICE_LOCAL",
+      "type": "var",
+      "description": "Assume the conversion service is reachable at http://127.0.0.1:5011 when CONVERT_SERVICE_URL is unset. A development convenience; nothing is started.",
+      "required": false
+    },
+    {
+      "name": "CONVERT_SERVICE_AUTOSTART",
+      "type": "var",
+      "description": "Deprecated, kept so existing setups keep working: now means only 'assume the conversion service is on http://127.0.0.1:5011'. It no longer starts anything — the engine ships as its own container image. Prefer CONVERT_SERVICE_URL, or CONVERT_SERVICE_LOCAL for the same localhost default.",
+      "required": false
+    },
+    {
+      "name": "EMBEDDER_CDN_BASE",
+      "type": "var",
+      "description": "Test override for where the graph indexer fetches its embedding model and onnxruntime wasm from. Normally derived from the module URL, so a deployed Switchboard needs nothing here; set it (e.g. http://localhost:8000/dist/node/) to exercise the deployed path from a local checkout.",
+      "required": false
+    }
+  ]
 }

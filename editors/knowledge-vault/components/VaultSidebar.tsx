@@ -1,79 +1,200 @@
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect, useLayoutEffect } from "react";
 import {
-  isFileNodeKind,
   setSelectedNode,
   useNodesInSelectedDrive,
-  useSelectedDrive,
+  useSelectedNode,
 } from "@powerhousedao/reactor-browser";
+import { ancestorFolderIds } from "../lib/folder-path.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
-import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
-import type { GraphFocus } from "./GraphViewPixi.js";
-import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
+import { LoadingLine, Spinner } from "./LoadingStates.js";
+import {
+  VaultPlaces,
+  type VaultPlace,
+  type VaultPlaceId,
+} from "./VaultPlaces.js";
+import {
+  altStepDelta,
+  stepId,
+  VaultContextList,
+  type VaultContextListProps,
+} from "./VaultContextList.js";
+import { VaultMenu, type VaultMenuItem } from "./VaultMenu.js";
+import { VaultGlyph } from "./VaultGlyph.js";
+import { VaultIcon } from "./vault-icons.js";
+import { SIDEBAR_CSS } from "./sidebar-css.js";
+import { useFrameWidth } from "./VaultShell.js";
 
 type VaultSidebarProps = {
+  /** Only to tell a background refresh from a first load. */
   notes: KnowledgeNoteInfo[];
-  mocs: MocInfo[];
-  /** When set, sidebar content is replaced by the graph highlight neighborhood. */
-  graphFocus?: GraphFocus | null;
-  onClearGraphFocus?: () => void;
+  /**
+   * True until the first vault metadata fetch settles. Drives the
+   * skeletons below: without it the sidebar renders zero-count groups
+   * and "nothing here" copy while the data is still in flight.
+   */
+  isLoading?: boolean;
+  /**
+   * The list of what you are in (a source folder, a topic map, a graph
+   * selection). While it is set it takes the sidebar's height; the places
+   * fold into one row of icons above it.
+   */
+  context?: VaultContextListProps;
+  /**
+   * The sidebar owns its width and tells the shell, whose first column
+   * follows it: a dragged width, the rail's, or `undefined` for the shell's
+   * own default.
+   */
+  onWidthChange?: (px: number | undefined) => void;
+  /** The place you are in; none while a view that belongs to no place shows (search, activity…). */
+  place?: VaultPlaceId;
+  /** A Vault settings view or document is showing: its row at the foot is the current one. */
+  settingsActive?: boolean;
+  places?: VaultPlace[];
+  onSelectPlace?: (id: VaultPlaceId) => void;
+  /** The vault's name, at the top of the sidebar. */
+  vaultName?: string;
+  /** Ids of the vault's largest topics: its glyph beside the name. */
+  glyphSeeds?: string[];
+  /**
+   * "This vault": the menu under the name and behind Vault settings. The
+   * `files` entry opens the drive tree here; every other key goes to
+   * `onMenuSelect`.
+   */
+  menuItems?: VaultMenuItem[];
+  onMenuSelect?: (key: string) => void;
+  onSearch?: () => void;
+  /** The search view is the one showing. */
+  searchActive?: boolean;
+  onAddSources?: () => void;
+  /** Beside Add sources: the other things a person can add (a note, a topic, pasted text). */
+  createItems?: VaultMenuItem[];
+  onCreate?: (key: string) => void;
+  onGettingStarted?: () => void;
+  /** The vault's latest chats, newest first; the sidebar shows four. */
+  recentChats?: { id: string; title: string }[];
+  /** The chat on screen, marked among them. */
+  activeChatId?: string | null;
+  onOpenChat?: (id: string) => void;
+  /** "All chats": the palette, on the chats. */
+  onAllChats?: () => void;
 };
 
-const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
-const STATUS_COLORS: Record<string, string> = {
-  DRAFT: "bg-amber-400",
-  IN_REVIEW: "bg-blue-400",
-  CANONICAL: "bg-emerald-400",
-  ARCHIVED: "bg-gray-500",
-};
-const STATUS_LABELS: Record<string, string> = {
-  DRAFT: "Drafts",
-  IN_REVIEW: "In Review",
-  CANONICAL: "Canonical",
-  ARCHIVED: "Archived",
-};
+/** How many recent chats the sidebar lists (design: "Recent chats"). */
+const RECENT_CHATS = 4;
 
-type SidebarSection = "notes" | "mocs" | "signals" | "folders";
+/** What the sidebar body shows: a context's list, the drive tree, or the places. */
+export type SidebarBody = "context" | "folders" | "places";
+
+/**
+ * The one place that decides what the sidebar body shows. A context wins,
+ * then the drive tree while it is open, then the places alone.
+ */
+export function sidebarBody(hasContext: boolean, treeOpen: boolean): SidebarBody {
+  return hasContext ? "context" : treeOpen ? "folders" : "places";
+}
+
+/** Below this frame width the sidebar is the icon rail (design: 720–899 px). */
+export const RAIL_BELOW = 900;
+/** The labelled icon rail's width (design: 78 px). */
+export const RAIL_WIDTH = 78;
+
+/**
+ * Full sidebar or labelled icon rail. The rail when the reader collapsed the
+ * sidebar, or when the frame is too narrow for both columns. An unmeasured
+ * frame (0) keeps the full sidebar.
+ */
+export function sidebarMode(frameWidth: number, collapsed: boolean): "full" | "rail" {
+  return collapsed || (frameWidth > 0 && frameWidth < RAIL_BELOW) ? "rail" : "full";
+}
 
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
-const DEFAULT_WIDTH = 256;
 
+/** "⌘ K" on a Mac, "Ctrl K" elsewhere. */
+function searchShortcut(): string {
+  const platform = typeof navigator === "undefined" ? "" : navigator.platform;
+  return /mac/i.test(platform) ? "⌘ K" : "Ctrl K";
+}
+
+/**
+ * The note tree while a context shows its list. Where the browser has
+ * `content-visibility` (Chrome/Edge 85+, Firefox 125+, Safari 18+) its rows
+ * keep their rendering state, so bringing them back costs nothing; elsewhere
+ * it is simply not displayed.
+ */
+const HIDDEN_TREE_STYLE =
+  typeof CSS !== "undefined" && CSS.supports("content-visibility", "hidden")
+    ? ({ contentVisibility: "hidden" } as const)
+    : ({ display: "none" } as const);
+
+const SELECTED_ROW_STYLE = {
+  backgroundColor: "var(--bai-hover)",
+} as const;
+
+type OpenMenu = "head" | "add" | "foot" | null;
+
+/**
+ * The vault's one navigation column. Top to bottom: the vault (its menu),
+ * search and adding, the places — or, while you are in something, that
+ * thing's list under a row of the places' icons — and at the foot this
+ * vault's settings and the guide. There is no bar above the content: the
+ * sidebar holds everything (design: docs/design/vault-view).
+ */
 export function VaultSidebar({
   notes,
-  mocs,
-  graphFocus = null,
-  onClearGraphFocus,
+  isLoading = false,
+  context,
+  onWidthChange,
+  place,
+  settingsActive = false,
+  places = [],
+  onSelectPlace,
+  vaultName = "",
+  glyphSeeds = [],
+  menuItems = [],
+  onMenuSelect,
+  onSearch,
+  searchActive = false,
+  onAddSources,
+  createItems = [],
+  onCreate,
+  onGettingStarted,
+  recentChats = [],
+  activeChatId = null,
+  onOpenChat,
+  onAllChats,
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
-  const [section, setSection] = useState<SidebarSection>("notes");
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
-    ARCHIVED: true,
-  });
-  const [createSourceOpen, setCreateSourceOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
+  const [treeOpen, setTreeOpen] = useState(false);
+  const [menu, setMenu] = useState<OpenMenu>(null);
+  const closeMenu = useCallback(() => setMenu(null), []);
+  const selectedNode = useSelectedNode();
+  const selectedId = selectedNode?.id;
+  const [collapsed, setCollapsed] = useState(false);
+  const frameWidth = useFrameWidth();
+  const mode = sidebarMode(frameWidth, collapsed);
+  const forcedRail = mode === "rail" && !collapsed;
+  // Null until the user drags: the shell's column (and its breakpoints) set
+  // the width until then.
+  const [sidebarWidth, setSidebarWidth] = useState<number | null>(null);
+  const rootRef = useRef<HTMLElement>(null);
   const resizing = useRef(false);
+  useLayoutEffect(() => {
+    onWidthChange?.(mode === "rail" ? RAIL_WIDTH : (sidebarWidth ?? undefined));
+  }, [onWidthChange, mode, sidebarWidth]);
   // File nodes only — no doc state fetch. `useDocumentsInSelectedDrive`
   // would suspend-and-throw on any orphan id missing from the cache,
   // freezing the whole drive editor in retry-loops.
   const allNodes: Node[] | undefined = useNodesInSelectedDrive();
-  const fileNodes = useMemo(
-    () =>
-      (allNodes ?? []).filter(
-        (n): n is Node & { kind: "file"; documentType: string } =>
-          isFileNodeKind(n),
-      ),
-    [allNodes],
-  );
-  const [selectedDrive] = useSelectedDrive();
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       resizing.current = true;
       const startX = e.clientX;
-      const startWidth = sidebarWidth;
+      const startWidth =
+        rootRef.current?.getBoundingClientRect().width ?? MIN_WIDTH;
 
       function onMouseMove(ev: MouseEvent) {
         if (!resizing.current) return;
@@ -91,692 +212,363 @@ export function VaultSidebar({
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [sidebarWidth],
+    [],
   );
 
-  // Drive header has the name; no doc-state fetch needed.
-  const vaultName = selectedDrive?.header.name || "Knowledge Vault";
+  const q = search.trim().toLowerCase();
 
-  const observations = useMemo(() => {
-    return fileNodes
-      .filter((n) => n.documentType === "bai/observation")
-      .map((n) => ({
-        id: n.id,
-        title: n.name,
-        category: null as string | null,
-        status: "PENDING" as const,
-      }));
-  }, [fileNodes]);
+  const hasContext = context !== undefined;
+  const body = sidebarBody(hasContext, treeOpen);
 
-  const tensions = useMemo(() => {
-    return fileNodes
-      .filter((n) => n.documentType === "bai/tension")
-      .map((n) => ({
-        id: n.id,
-        title: n.name,
-        status: "OPEN" as const,
-      }));
-  }, [fileNodes]);
+  // Alt+ArrowUp / Alt+ArrowDown hop along the context's list, unless the
+  // reader is typing somewhere.
+  useEffect(() => {
+    const ctx = context;
+    if (!ctx) return;
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target;
+      const typing =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA");
+      const delta = altStepDelta(e.key, e.altKey, typing);
+      if (delta === undefined) return;
+      const next = stepId(
+        ctx.items.map((item) => item.id),
+        ctx.activeId,
+        delta,
+      );
+      if (next === undefined) return;
+      e.preventDefault();
+      ctx.onOpen(next);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [context]);
 
-  const filtered = useMemo(() => {
-    if (!search.trim()) return notes;
-    const q = search.toLowerCase();
-    return notes.filter(
-      (n) =>
-        (n.title ?? n.name).toLowerCase().includes(q) ||
-        (n.noteType ?? "").toLowerCase().includes(q) ||
-        n.topics.some((t) => t.name.toLowerCase().includes(q)),
-    );
-  }, [notes, search]);
+  useEffect(() => {
+    if (!selectedId) return;
+    document
+      .querySelector("[data-sidebar-active=\"true\"]")
+      ?.scrollIntoView({ block: "nearest" });
+  }, [selectedId, body]);
 
-  const grouped = useMemo(() => {
-    const groups: Record<string, KnowledgeNoteInfo[]> = {};
-    for (const s of STATUS_ORDER) groups[s] = [];
-    for (const note of filtered) {
-      const status = note.status ?? "DRAFT";
-      (groups[status] ?? groups.DRAFT).push(note);
+  // A loading state is only honest while there is nothing to show. Once
+  // any data has arrived — including a cached snapshot that the live fetch
+  // will replace — we render it and show a quieter refresh hint instead.
+  const showTreeSkeleton = isLoading && (allNodes?.length ?? 0) === 0;
+  const isRefreshing = isLoading && notes.length > 0;
+
+  // The drive tree is the heaviest part of the sidebar: a row per node, ~2,000 in a
+  // large vault. Memoised, and kept mounted (hidden) while a context's list is
+  // up, so going back to the tree neither rebuilds nor remounts it.
+  const treeContent = useMemo(
+    () =>
+      showTreeSkeleton ? (
+        <LoadingLine label="Loading drive tree…" />
+      ) : (
+        <FolderTreeView
+          nodes={allNodes ?? []}
+          query={q}
+          selectedId={selectedId}
+        />
+      ),
+    [showTreeSkeleton, allNodes, q, selectedId],
+  );
+
+  // The tree scrolls under its header in its own box; while a context's list
+  // hides it, its position is kept, and clearing the context puts it back
+  // where the reader had scrolled it.
+  const treeRef = useRef<HTMLDivElement>(null);
+  const treeScrollTop = useRef(0);
+  useLayoutEffect(() => {
+    const el = treeRef.current;
+    if (el && !hasContext) el.scrollTop = treeScrollTop.current;
+  }, [hasContext]);
+
+  const selectPlace = (id: VaultPlaceId) => {
+    setTreeOpen(false);
+    onSelectPlace?.(id);
+  };
+  const selectMenu = (key: string) => {
+    if (key === "files") {
+      setCollapsed(false);
+      setTreeOpen(true);
+      return;
     }
-    return groups;
-  }, [filtered]);
-
-  const noteMap = useMemo(() => {
-    const map = new Map<string, KnowledgeNoteInfo>();
-    for (const n of notes) map.set(n.id, n);
-    return map;
-  }, [notes]);
-
-  const mocMap = useMemo(() => {
-    const map = new Map<string, MocInfo>();
-    for (const m of mocs) map.set(m.id, m);
-    return map;
-  }, [mocs]);
-
-  const connectionItems = useMemo(() => {
-    if (!graphFocus) return [];
-    const selectedId = graphFocus.selectedId;
-    // Selected node first, then neighbors in stable focusedIds order.
-    const ordered = [
-      selectedId,
-      ...graphFocus.focusedIds.filter((id) => id !== selectedId),
-    ];
-    return ordered.map((id) => {
-      const note = noteMap.get(id);
-      if (note) {
-        return {
-          id,
-          title: note.title ?? note.name,
-          kind: "Note" as const,
-          meta: note.noteType,
-          topics: note.topics,
-          isSelected: id === selectedId,
-        };
-      }
-      const moc = mocMap.get(id);
-      if (moc) {
-        return {
-          id,
-          title: moc.title,
-          kind: "MoC" as const,
-          meta: moc.tier,
-          topics: [] as { id: string; name: string }[],
-          isSelected: id === selectedId,
-        };
-      }
-      return {
-        id,
-        title: id.slice(0, 12),
-        kind: "Unknown" as const,
-        meta: null as string | null,
-        topics: [] as { id: string; name: string }[],
-        isSelected: id === selectedId,
-      };
-    });
-  }, [graphFocus, noteMap, mocMap]);
-
-  const selectedConnectionTitle =
-    connectionItems.find((i) => i.isSelected)?.title ?? "Selected node";
-
-  // Collapsed: show a thin strip with toggle button
-  if (!sidebarOpen) {
-    return (
-      <div
-        className="flex h-full w-10 shrink-0 flex-col items-center border-r py-3"
-        style={{
-          backgroundColor: "var(--bai-deep)",
-          borderColor: "var(--bai-border)",
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(true)}
-          className="sidebar-collapse-btn rounded p-1.5 transition-colors"
-          style={{ color: "var(--bai-text-muted)" }}
-          title="Open sidebar"
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M13 17l5-5-5-5M6 17l5-5-5-5" />
-          </svg>
-        </button>
-      </div>
-    );
-  }
+    onMenuSelect?.(key);
+  };
+  // The rail has no room for the drive tree: its entry waits for a wider frame.
+  const vaultMenuItems = forcedRail ? menuItems.filter((i) => i.key !== "files") : menuItems;
+  const vaultMenu = (placement: "below" | "above") => (
+    <VaultMenu
+      label={vaultName ? `${vaultName}: this vault` : "This vault"}
+      heading="This vault"
+      items={vaultMenuItems}
+      placement={placement}
+      onSelect={selectMenu}
+      onClose={closeMenu}
+    />
+  );
+  const rail = mode === "rail";
 
   return (
-    <div
-      className="relative flex h-full shrink-0 flex-col border-r"
-      style={{
-        width: sidebarWidth,
-        backgroundColor: "var(--bai-deep)",
-        borderColor: "var(--bai-border)",
-      }}
+    <aside
+      ref={rootRef}
+      className="vault-sidebar"
+      data-mode={mode}
+      aria-label={vaultName ? `Vault ${vaultName}` : "Vault"}
     >
-      {/* Resize handle */}
-      <div
-        className="sidebar-resize-handle absolute right-0 top-0 z-10 h-full w-1 cursor-col-resize"
-        onMouseDown={handleMouseDown}
-      />
-
-      {/* Header */}
-      <div
-        className="border-b px-3 py-3"
-        style={{ borderColor: "var(--bai-border)" }}
-      >
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(false)}
-            className="sidebar-collapse-btn shrink-0 rounded p-1 transition-colors"
-            style={{ color: "var(--bai-text-faint)" }}
-            title="Collapse sidebar"
-          >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedNode(undefined)}
-            className="sidebar-vault-name flex-1 text-left text-sm font-semibold transition-colors truncate min-w-0"
-            style={{ color: "var(--bai-text)" }}
-            title="Back to vault overview"
-          >
-            {vaultName}
-          </button>
-          <button
-            type="button"
-            onClick={() => setCreateSourceOpen(true)}
-            className="flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors"
-            style={{
-              backgroundColor: "var(--bai-accent-soft)",
-              color: "var(--bai-accent)",
-            }}
-            title="Paste raw content — articles, notes, transcripts — for AI extraction"
-          >
-            <svg
-              className="h-3 w-3"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Add Source
-          </button>
-          <CreateDocumentDialog
-            open={createSourceOpen}
-            documentType="bai/source"
-            documentTypeLabel="Source"
-            onClose={() => setCreateSourceOpen(false)}
-          />
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="px-3 py-2">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search..."
-          className="sidebar-search-input w-full rounded-md border px-3 py-1.5 text-xs outline-none"
-          style={{
-            borderColor: "var(--bai-border)",
-            backgroundColor: "var(--bai-bg)",
-            color: "var(--bai-text-secondary)",
-          }}
+      <style aria-hidden="true">{SIDEBAR_CSS}</style>
+      {!rail && (
+        <div
+          className="sidebar-resize-handle absolute right-0 top-0 z-10 h-full w-1 cursor-col-resize"
+          onMouseDown={handleMouseDown}
+          aria-hidden="true"
         />
-      </div>
+      )}
 
-      {/* Section tabs */}
-      <div className="flex gap-px px-3 pb-1">
-        {(
-          [
-            ["notes", "Notes"],
-            ["mocs", "MOCs"],
-            ["signals", "Signals"],
-            ["folders", "Tree"],
-          ] as const
-        ).map(([key, label]) => (
+      {/* The vault: its name opens this vault's menu. */}
+      <div className="vs-head">
+        <div className="vs-anchor" style={{ flex: 1, minWidth: 0, width: rail ? "100%" : undefined }}>
           <button
-            key={key}
             type="button"
-            onClick={() => {
-              if (graphFocus) onClearGraphFocus?.();
-              setSection(key);
-            }}
-            className={`sidebar-tab flex-1 rounded-md py-1 text-[10px] font-medium transition-colors`}
-            style={
-              section === key
-                ? {
-                    backgroundColor: "var(--bai-hover)",
-                    color: "var(--bai-accent)",
-                  }
-                : { color: "var(--bai-text-faint)" }
-            }
+            className="vs-ident"
+            title={vaultName}
+            aria-haspopup="menu"
+            aria-expanded={menu === "head"}
+            onClick={() => setMenu(menu === "head" ? null : "head")}
           >
-            {label}
-            {key === "signals" && observations.length + tensions.length > 0 && (
-              <span className="ml-1 text-amber-400">
-                {observations.length + tensions.length}
-              </span>
-            )}
+            <VaultGlyph seeds={glyphSeeds} />
+            <span className="vs-name">{vaultName}</span>
+            <span className="vs-chev">
+              <VaultIcon name="down" size={14} />
+            </span>
           </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto px-2 pb-4">
-        {graphFocus ? (
-          <div className="space-y-1">
-            <div className="mb-1 flex items-start gap-2 px-2 py-1.5">
-              <div className="min-w-0 flex-1">
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  Connections ({connectionItems.length})
-                </p>
-                <p
-                  className="truncate text-xs font-medium"
-                  style={{ color: "var(--bai-text-secondary)" }}
-                  title={selectedConnectionTitle}
-                >
-                  {selectedConnectionTitle}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onClearGraphFocus?.()}
-                className="sidebar-collapse-btn shrink-0 rounded p-1 transition-colors"
-                style={{ color: "var(--bai-text-faint)" }}
-                title="Clear selection"
-              >
-                <svg
-                  className="h-3.5 w-3.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            {connectionItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setSelectedNode(item.id)}
-                className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
-                style={
-                  item.isSelected
-                    ? {
-                        backgroundColor: "var(--bai-hover)",
-                      }
-                    : undefined
-                }
-              >
-                <span
-                  className="sidebar-note-title truncate text-xs font-medium"
-                  style={{
-                    color: item.isSelected
-                      ? "var(--bai-accent)"
-                      : "var(--bai-text-secondary)",
-                  }}
-                >
-                  {item.isSelected ? "● " : ""}
-                  {item.title}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className="rounded px-1.5 py-0.5 text-[10px]"
-                    style={{
-                      backgroundColor: "var(--bai-hover)",
-                      color: "var(--bai-text-tertiary)",
-                    }}
-                  >
-                    {item.kind}
-                    {item.meta ? ` · ${item.meta}` : ""}
-                  </span>
-                  {item.topics.slice(0, 2).map((t) => (
-                    <span
-                      key={t.id}
-                      className="text-[10px]"
-                      style={{
-                        color: "var(--bai-accent)",
-                        opacity: 0.6,
-                      }}
-                    >
-                      #{t.name}
-                    </span>
-                  ))}
-                </div>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <>
-            {section === "notes" && (
-              <>
-                {STATUS_ORDER.map((status) => {
-                  const groupNotes = grouped[status];
-                  if (groupNotes.length === 0) return null;
-                  const isCollapsed = collapsed[status] ?? false;
-                  return (
-                    <div key={status} className="mb-1">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setCollapsed((c) => ({
-                            ...c,
-                            [status]: !isCollapsed,
-                          }))
-                        }
-                        className="sidebar-row flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs"
-                        style={{ color: "var(--bai-text-muted)" }}
-                      >
-                        <span
-                          className={`h-2 w-2 rounded-full ${STATUS_COLORS[status]}`}
-                        />
-                        <span className="flex-1 text-left font-medium">
-                          {STATUS_LABELS[status]}
-                        </span>
-                        <span style={{ color: "var(--bai-text-faint)" }}>
-                          {groupNotes.length}
-                        </span>
-                        <svg
-                          className={`h-3 w-3 transition-transform ${isCollapsed ? "" : "rotate-90"}`}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M9 18l6-6-6-6" />
-                        </svg>
-                      </button>
-                      {!isCollapsed && (
-                        <div className="ml-1 space-y-px">
-                          {groupNotes.map((note) => (
-                            <button
-                              key={note.id}
-                              type="button"
-                              onClick={() => setSelectedNode(note.id)}
-                              className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
-                            >
-                              <span
-                                className="sidebar-note-title truncate text-xs font-medium"
-                                style={{ color: "var(--bai-text-secondary)" }}
-                              >
-                                {note.title ?? note.name}
-                              </span>
-                              <div className="flex items-center gap-1.5">
-                                {note.noteType && (
-                                  <span
-                                    className="rounded px-1.5 py-0.5 text-[10px]"
-                                    style={{
-                                      backgroundColor: "var(--bai-hover)",
-                                      color: "var(--bai-text-tertiary)",
-                                    }}
-                                  >
-                                    {note.noteType}
-                                  </span>
-                                )}
-                                {note.topics.slice(0, 2).map((t) => (
-                                  <span
-                                    key={t.id}
-                                    className="text-[10px]"
-                                    style={{
-                                      color: "var(--bai-accent)",
-                                      opacity: 0.6,
-                                    }}
-                                  >
-                                    #{t.name}
-                                  </span>
-                                ))}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            )}
-
-            {section === "mocs" && (
-              <div className="space-y-1">
-                {mocs.length === 0 ? (
-                  <p
-                    className="px-2 py-4 text-center text-xs"
-                    style={{ color: "var(--bai-text-faint)" }}
-                  >
-                    No MOCs yet
-                  </p>
-                ) : (
-                  <>
-                    {(["HUB", "DOMAIN", "TOPIC"] as const).map((tier) => {
-                      const tierMocs = mocs.filter((m) => m.tier === tier);
-                      if (tierMocs.length === 0) return null;
-                      return (
-                        <div key={tier}>
-                          <p
-                            className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                            style={{ color: "var(--bai-text-faint)" }}
-                          >
-                            {tier}
-                          </p>
-                          {tierMocs.map((moc) => (
-                            <button
-                              key={moc.id}
-                              type="button"
-                              onClick={() => setSelectedNode(moc.id)}
-                              className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                            >
-                              <svg
-                                className="h-3.5 w-3.5 shrink-0"
-                                style={{
-                                  color: "var(--bai-accent)",
-                                  opacity: 0.6,
-                                }}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 6v6l4 2" />
-                              </svg>
-                              <span
-                                className="sidebar-note-title truncate text-xs"
-                                style={{ color: "var(--bai-text-secondary)" }}
-                              >
-                                {moc.title}
-                              </span>
-                              <span
-                                className="ml-auto text-[10px]"
-                                style={{ color: "var(--bai-text-faint)" }}
-                              >
-                                {moc.noteCount}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      );
-                    })}
-                    {(() => {
-                      const untiered = mocs.filter((m) => m.tier === null);
-                      if (untiered.length === 0) return null;
-                      return (
-                        <div key="untiered">
-                          <p
-                            className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                            style={{ color: "var(--bai-text-faint)" }}
-                          >
-                            UNTIERED
-                          </p>
-                          {untiered.map((moc) => (
-                            <button
-                              key={moc.id}
-                              type="button"
-                              onClick={() => setSelectedNode(moc.id)}
-                              className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                            >
-                              <svg
-                                className="h-3.5 w-3.5 shrink-0"
-                                style={{
-                                  color: "var(--bai-accent)",
-                                  opacity: 0.6,
-                                }}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 6v6l4 2" />
-                              </svg>
-                              <span
-                                className="sidebar-note-title truncate text-xs"
-                                style={{ color: "var(--bai-text-secondary)" }}
-                              >
-                                {moc.title}
-                              </span>
-                              <span
-                                className="ml-auto text-[10px]"
-                                style={{ color: "var(--bai-text-faint)" }}
-                              >
-                                {moc.noteCount}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      );
-                    })()}
-                  </>
-                )}
-              </div>
-            )}
-
-            {section === "signals" && (
-              <div className="space-y-3">
-                {observations.length > 0 && (
-                  <div>
-                    <p
-                      className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      Observations ({observations.length})
-                    </p>
-                    {observations.map((obs) => (
-                      <button
-                        key={obs.id}
-                        type="button"
-                        onClick={() => setSelectedNode(obs.id)}
-                        className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                      >
-                        <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
-                        <span
-                          className="sidebar-note-title truncate text-xs"
-                          style={{ color: "var(--bai-text-secondary)" }}
-                        >
-                          {obs.title}
-                        </span>
-                        {obs.category && (
-                          <span
-                            className="rounded px-1 py-0.5 text-[10px]"
-                            style={{
-                              backgroundColor: "var(--bai-hover)",
-                              color: "var(--bai-text-muted)",
-                            }}
-                          >
-                            {obs.category}
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {tensions.length > 0 && (
-                  <div>
-                    <p
-                      className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      Tensions ({tensions.length})
-                    </p>
-                    {tensions.map((ten) => (
-                      <button
-                        key={ten.id}
-                        type="button"
-                        onClick={() => setSelectedNode(ten.id)}
-                        className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                      >
-                        <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
-                        <span
-                          className="sidebar-note-title truncate text-xs"
-                          style={{ color: "var(--bai-text-secondary)" }}
-                        >
-                          {ten.title}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {observations.length === 0 && tensions.length === 0 && (
-                  <p
-                    className="px-2 py-4 text-center text-xs"
-                    style={{ color: "var(--bai-text-faint)" }}
-                  >
-                    No pending signals
-                  </p>
-                )}
-              </div>
-            )}
-
-            {section === "folders" && <FolderTreeView nodes={allNodes ?? []} />}
-          </>
+          {menu === "head" && vaultMenu("below")}
+        </div>
+        {!forcedRail && (
+          <button
+            type="button"
+            className="vs-iconbtn"
+            onClick={() => setCollapsed((c) => !c)}
+            title={collapsed ? "Expand the sidebar" : "Collapse the sidebar"}
+            aria-label={collapsed ? "Expand the sidebar" : "Collapse the sidebar"}
+          >
+            <VaultIcon name={collapsed ? "expand" : "collapse"} />
+          </button>
         )}
       </div>
 
-      <style>{`
-        .sidebar-collapse-btn:hover {
-          background-color: var(--bai-hover);
-          color: var(--bai-accent);
-        }
-        .sidebar-vault-name:hover {
-          color: var(--bai-accent);
-        }
+      {onSearch && (
+        <button
+          type="button"
+          className="vs-search"
+          onClick={onSearch}
+          aria-current={searchActive ? "page" : undefined}
+          title={`Search the vault (${searchShortcut()})`}
+        >
+          <VaultIcon name="search" />
+          <span className="lbl">Search</span>
+          <kbd>{searchShortcut()}</kbd>
+        </button>
+      )}
+
+      {onAddSources && (
+        <div className="vs-add vs-anchor">
+          <button
+            type="button"
+            className="vs-add-main"
+            data-split={createItems.length > 0 ? "" : undefined}
+            onClick={onAddSources}
+            title="Add sources"
+          >
+            <VaultIcon name="plus" />
+            <span className="lbl">Add sources</span>
+          </button>
+          {createItems.length > 0 && (
+            <button
+              type="button"
+              className="vs-add-more"
+              aria-label="More to add"
+              title="Write a note, start a topic, paste text"
+              aria-haspopup="menu"
+              aria-expanded={menu === "add"}
+              onClick={() => setMenu(menu === "add" ? null : "add")}
+            >
+              <VaultIcon name="down" size={14} />
+            </button>
+          )}
+          {menu === "add" && (
+            <VaultMenu
+              label="Add to the vault"
+              heading="Add to the vault"
+              items={createItems}
+              placement="below"
+              onSelect={(key) => onCreate?.(key)}
+              onClose={closeMenu}
+            />
+          )}
+        </div>
+      )}
+
+      {/* A context's list and the tree scroll on their own, under the places'
+          icons and their header; the places alone scroll as one list. */}
+      <div className="vs-body" data-scroll={!rail && body !== "places" ? "inner" : undefined}>
+        {rail || body === "places" ? (
+          <VaultPlaces places={places} active={place} onSelect={selectPlace} />
+        ) : (
+          <VaultPlaces places={places} active={place} onSelect={selectPlace} variant="icons" />
+        )}
+
+        {/* What you asked lately; the places' list only, not the rail or a context. */}
+        {!rail && body === "places" && onOpenChat && recentChats.length > 0 && (
+          <nav className="vs-chats" aria-label="Recent chats">
+            <h2>Recent chats</h2>
+            {recentChats.slice(0, RECENT_CHATS).map((chat) => (
+              <button
+                key={chat.id}
+                type="button"
+                className="vs-chat"
+                title={chat.title}
+                aria-current={chat.id === activeChatId ? "page" : undefined}
+                onClick={() => onOpenChat(chat.id)}
+              >
+                {chat.title}
+              </button>
+            ))}
+            {onAllChats && (
+              <button type="button" className="vs-chat vs-chat-all" onClick={onAllChats}>
+                All chats
+              </button>
+            )}
+          </nav>
+        )}
+
+        {/* Refreshing hint: data is on screen but may be a cached snapshot. */}
+        {!rail && body !== "context" && isRefreshing && (
+          <div className="flex items-center gap-1.5 px-2">
+            <Spinner className="h-2.5 w-2.5" />
+            <span className="text-[11px]" style={{ color: "var(--bai-text-tertiary)" }}>
+              Refreshing…
+            </span>
+          </div>
+        )}
+
+        {!rail && context && <VaultContextList key={context.place} {...context} />}
+
+        {!rail && body === "folders" && (
+          <div className="flex flex-col gap-2">
+            <div className="vs-list-head">
+              <button
+                type="button"
+                className="vs-iconbtn"
+                onClick={() => setTreeOpen(false)}
+                title="Back to the places"
+                aria-label="Back to the places"
+              >
+                <VaultIcon name="back" />
+              </button>
+              <b>Files and folders</b>
+            </div>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Filter this list…"
+              aria-label="Filter the files"
+              className="sidebar-search-input w-full rounded-md border px-3 py-1.5 text-xs outline-none"
+              style={{ color: "var(--bai-text-secondary)" }}
+            />
+          </div>
+        )}
+        {/* Kept mounted once opened, and hidden while a context's list shows
+            (see HIDDEN_TREE_STYLE); inert keeps its rows out of the tab order
+            and the accessibility tree meanwhile. */}
+        {!rail && treeOpen && (
+          <div
+            ref={treeRef}
+            className="vs-tree"
+            onScroll={(e) => {
+              if (!hasContext) treeScrollTop.current = e.currentTarget.scrollTop;
+            }}
+            inert={hasContext}
+            aria-hidden={hasContext ? true : undefined}
+            style={hasContext ? HIDDEN_TREE_STYLE : undefined}
+          >
+            {treeContent}
+          </div>
+        )}
+      </div>
+
+      {/* This vault's settings and the guide, at the foot. */}
+      <div className="vs-foot">
+        <div className="vs-anchor">
+          <button
+            type="button"
+            className="vs-row"
+            title="Vault settings"
+            aria-current={settingsActive ? "page" : undefined}
+            aria-haspopup="menu"
+            aria-expanded={menu === "foot"}
+            onClick={() => setMenu(menu === "foot" ? null : "foot")}
+          >
+            <VaultIcon name="gear" />
+            <span className="lbl">Vault settings</span>
+          </button>
+          {menu === "foot" && vaultMenu("above")}
+        </div>
+        {onGettingStarted && (
+          <button
+            type="button"
+            className="vs-row"
+            title="Getting started"
+            onClick={onGettingStarted}
+          >
+            <VaultIcon name="help" />
+            <span className="lbl">Getting started</span>
+          </button>
+        )}
+      </div>
+
+      <style aria-hidden="true">{`
         .sidebar-search-input::placeholder {
-          color: var(--bai-text-faint);
+          color: var(--bai-text-muted);
         }
         .sidebar-search-input:focus {
           border-color: var(--bai-accent);
         }
-        .sidebar-tab:hover {
-          color: var(--bai-text-tertiary);
-        }
         .sidebar-row:hover {
-          background-color: var(--bai-hover);
+          background-color: var(--v-rail-hover);
         }
         .sidebar-row:hover .sidebar-note-title {
           color: var(--bai-accent);
         }
-        .sidebar-resize-handle:hover {
-          background-color: color-mix(in srgb, var(--bai-accent) 30%, transparent);
-        }
-        .sidebar-resize-handle:active {
-          background-color: color-mix(in srgb, var(--bai-accent) 50%, transparent);
-        }
       `}</style>
-    </div>
+    </aside>
   );
 }
 
-function FolderTreeView({ nodes }: { nodes: Node[] }) {
-  type TreeNode = {
-    id: string;
-    name: string;
-    kind: string;
-    children: TreeNode[];
-    docType?: string;
-  };
+type FolderTreeNode = {
+  id: string;
+  name: string;
+  kind: string;
+  children: FolderTreeNode[];
+  docType?: string;
+};
 
+function FolderTreeView({
+  nodes,
+  query,
+  selectedId,
+}: {
+  nodes: Node[];
+  query: string;
+  selectedId?: string;
+}) {
   const tree = useMemo(() => {
-    function build(parentId: string | null): TreeNode[] {
+    function build(parentId: string | null): FolderTreeNode[] {
       return nodes
         .filter((n) =>
           parentId == null
@@ -784,7 +576,7 @@ function FolderTreeView({ nodes }: { nodes: Node[] }) {
             : n.parentFolder === parentId,
         )
         .map(
-          (node): TreeNode => ({
+          (node): FolderTreeNode => ({
             id: node.id,
             name: node.name,
             kind: node.kind,
@@ -802,13 +594,90 @@ function FolderTreeView({ nodes }: { nodes: Node[] }) {
           return a.name.localeCompare(b.name);
         });
     }
-    return build(null);
-  }, [nodes]);
+
+    function matches(node: FolderTreeNode): boolean {
+      if (!query) return true;
+      if (node.name.toLowerCase().includes(query)) return true;
+      return node.children.some(matches);
+    }
+
+    function prune(nodes: FolderTreeNode[]): FolderTreeNode[] {
+      if (!query) return nodes;
+      return nodes.filter(matches).map((n) => ({
+        ...n,
+        children: prune(n.children),
+      }));
+    }
+
+    return prune(build(null));
+  }, [nodes, query]);
+
+  // Open folders live here, not in each row, so the folders above the
+  // selection can be opened from one place. A selection is only useful if it
+  // is visible: after a reload, or when a document is opened from somewhere
+  // other than this tree (the Sources tab, search, a chat citation), every
+  // folder starts closed and the highlighted row would sit hidden inside
+  // them.
+  const selectedPath = useMemo(
+    () => ancestorFolderIds(nodes, selectedId),
+    [nodes, selectedId],
+  );
+  // Changes when the selection moves, or when the tree first learns where the
+  // selection lives (it can load after the selection is known).
+  const revealKey = `${selectedId ?? ""}|${selectedPath.join("/")}`;
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(
+    () => new Set(selectedPath),
+  );
+  const [revealedKey, setRevealedKey] = useState(revealKey);
+  // Adjusted during render rather than in an effect, so the first paint of a
+  // new selection already has its folders open. Once per selection: a folder
+  // the user closes afterwards stays closed until the selection moves again.
+  if (revealKey !== revealedKey) {
+    setRevealedKey(revealKey);
+    if (selectedPath.some((id) => !expanded.has(id))) {
+      setExpanded(new Set([...expanded, ...selectedPath]));
+    }
+  }
+  const toggleFolder = useCallback((id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!selectedId) return;
+    containerRef.current
+      ?.querySelector('[data-sidebar-active="true"]')
+      ?.scrollIntoView({ block: "nearest" });
+  }, [selectedId, revealKey]);
+
+  if (query && tree.length === 0) {
+    return (
+      <p
+        className="px-2 py-4 text-center text-xs"
+        style={{ color: "var(--bai-text-faint)" }}
+      >
+        No files match “{query}”
+      </p>
+    );
+  }
 
   return (
-    <div className="space-y-0.5">
+    <div ref={containerRef} className="space-y-0.5">
       {tree.map((node) => (
-        <TreeItem key={node.id} node={node} depth={0} />
+        <TreeItem
+          key={node.id}
+          node={node}
+          depth={0}
+          forceExpand={!!query}
+          selectedId={selectedId}
+          expanded={expanded}
+          onToggleFolder={toggleFolder}
+        />
       ))}
     </div>
   );
@@ -817,39 +686,41 @@ function FolderTreeView({ nodes }: { nodes: Node[] }) {
 function TreeItem({
   node,
   depth,
+  forceExpand = false,
+  selectedId,
+  expanded,
+  onToggleFolder,
 }: {
-  node: {
-    id: string;
-    name: string;
-    kind: string;
-    children: {
-      id: string;
-      name: string;
-      kind: string;
-      children: any[];
-      docType?: string;
-    }[];
-    docType?: string;
-  };
+  node: FolderTreeNode;
   depth: number;
+  forceExpand?: boolean;
+  selectedId?: string;
+  expanded: ReadonlySet<string>;
+  onToggleFolder: (id: string) => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const isFolder = node.kind === "folder";
   const hasChildren = node.children.length > 0;
+  const open = forceExpand || expanded.has(node.id);
+  const selected = selectedId === node.id;
 
   return (
     <div>
       <button
         type="button"
         onClick={() =>
-          isFolder ? setExpanded(!expanded) : setSelectedNode(node.id)
+          isFolder ? onToggleFolder(node.id) : setSelectedNode(node.id)
         }
         className="sidebar-row group flex w-full items-center gap-1 rounded px-1 py-1 text-left"
-        style={{ paddingLeft: `${depth * 12 + 4}px` }}
+        data-sidebar-active={selected ? "true" : undefined}
+        aria-current={selected ? "page" : undefined}
+        style={{
+          paddingLeft: `${depth * 12 + 4}px`,
+          ...(selected ? SELECTED_ROW_STYLE : {}),
+        }}
       >
         {isFolder ? (
           <svg
-            className={`h-3 w-3 shrink-0 transition-transform ${expanded ? "rotate-90" : ""}`}
+            className={`h-3 w-3 shrink-0 transition-transform ${open ? "rotate-90" : ""}`}
             style={{ color: "var(--bai-text-faint)" }}
             viewBox="0 0 24 24"
             fill="none"
@@ -885,9 +756,11 @@ function TreeItem({
         <span
           className={`sidebar-note-title truncate text-[11px] ${isFolder ? "font-medium" : ""}`}
           style={{
-            color: isFolder
-              ? "var(--bai-text-secondary)"
-              : "var(--bai-text-tertiary)",
+            color: selected
+              ? "var(--bai-accent)"
+              : isFolder
+                ? "var(--bai-text-secondary)"
+                : "var(--bai-text-tertiary)",
           }}
         >
           {node.name}
@@ -902,9 +775,17 @@ function TreeItem({
         )}
       </button>
       {isFolder &&
-        expanded &&
+        open &&
         node.children.map((child) => (
-          <TreeItem key={child.id} node={child} depth={depth + 1} />
+          <TreeItem
+            key={child.id}
+            node={child}
+            depth={depth + 1}
+            forceExpand={forceExpand}
+            selectedId={selectedId}
+            expanded={expanded}
+            onToggleFolder={onToggleFolder}
+          />
         ))}
     </div>
   );

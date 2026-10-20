@@ -9,6 +9,7 @@ import {
   useSelectedDrive,
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
+import { prefetchDocument } from "../lib/prefetch.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import { useMemo } from "react";
 
@@ -75,6 +76,9 @@ export function FolderTree() {
     if (node.id === "root") {
       setSelectedNode(undefined);
     } else {
+      // Warm the cache in the same tick — the tree gives no hover
+      // affordance per row we control, so prefetch at selection time.
+      prefetchDocument(node.id);
       setSelectedNode(node.id);
     }
   };

@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Phase-out speed is a feedback loop on surplus safety capital, gated on each Agent having a liquid token of its own",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bc1c20c2-2542-41bd-859e-3b442464b693",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7034f0bc-3e63-4e09-997c-5a28de3227c6",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "662c4654-e543-422f-9134-cddcd4caf98c",
+      "name": "genesis-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49f3cb93-f355-4c6a-bf23-ca50c4b61aab",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Phase-out eligibility is conjunctive (A.3.7.1.6.6.2.1): both a Sky-level and an Agent-level condition must hold.\n\nThe Sky-level condition (A.3.7.1.6.6.2.1.1) is that Aggregate Backstop Capital sits at or above 125 million USDS, and phase-out \"pauses for all Genesis Agents\" whenever it falls below \u2014 a two-way switch, not a one-time unlock.\n\nThe rate then makes the release self-regulating. A.3.7.1.6.6.2.2.1 sets a Base Phase-Out Amount of 1 million USDS per eligible Agent per month, and A.3.7.1.6.6.2.2.2 adds an Additional Phase-Out Amount equal to \"the amount by which Aggregate Backstop Capital exceeds 125 million USDS, divided by 10.\" The further above the floor the safety net sits, the faster Agents are released from backing it \u2014 and since release reduces Aggregate Backstop Capital, the loop is negative-feedback and converges toward the floor rather than overshooting.\n\nThe Agent-level condition (A.3.7.1.6.6.2.1.2) is the more interesting design choice: an Agent qualifies once \"it has launched a liquid token with at least ten (10) million USDS in average daily trading volume over a thirty (30) day period.\" Sky releases its claim on an Agent's bootstrap capital only when the Agent has a market-priced token of its own \u2014 a proxy for being able to raise or absorb capital independently, and a volume-and-duration test that is hard to fake with a thin listing.\n\nThe two conditions divide the judgement cleanly: the Sky-level test asks whether the *system* can afford to release capital, the Agent-level test asks whether *this Agent* has outgrown needing to be backstopped.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each eligible Agent sheds 1 million USDS per month plus a tenth of the amount by which Aggregate Backstop Capital exceeds 125 million, and only after a token trades 10 million daily for 30 days.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "374c82ae-72ad-4784-8b5e-18b918860384",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b45861c5-1c89-4349-9e22-94636b172018",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

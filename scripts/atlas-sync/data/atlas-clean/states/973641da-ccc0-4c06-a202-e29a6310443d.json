@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Spark Liquidity Layer deployment is registered as a uniform Instance Configuration Document rather than bespoke prose",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e0e640af-140c-4672-9242-7b9e624bcc7f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5d9c220-9228-47da-9f1a-80c36656ffa2",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "190282da-4410-4878-b72a-0440bcfc1cef",
+      "name": "governance-artifacts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across A.6.1.1.1.2.6.1.3.4 through A.6.1.1.1.2.6.1.4.3, every single deployment of the Spark Liquidity Layer \u2014 Aave on Avalanche, Spark Savings v2 on Robinhood Chain and X Layer, Blackrock, Centrifuge, Morpho \u2014 is expressed as an \"Instance Configuration Document\" with the *same* fixed subdocument slots:\n\n1. `RRC Framework Full Implementation` (a status flag)\n2. `Parameters` \u2192 `Instance Identifiers` (network, target protocol, asset supplied, token) and `Contract Addresses`\n3. `Rate Limit IDs` and `Rate Limits`\n4. `Off-chain Operational Parameters`\n5. `Instance-specific Operational Processes` / `Instance-specific Operational Parameters`\n\nThe slots are present even when empty or unresolved. The Avalanche Spark Savings v2 USDC instance still carries a `Rate Limits` section whose entire content is \"The specific `maxAmount` and `slope` for this conduit's inflow/outflow are not defined for this Instance\" (A.6.1.1.1.2.6.1.3.4.2.1.2.4).\n\nThis is the load-bearing design choice: by forcing every venue into an identical schema, the Artifact converts a portfolio of structurally dissimilar integrations (a lending market, a tokenized treasury fund, a savings vault) into rows of one table. Coverage gaps become *visible absences* in a known slot rather than silent omissions, and a reviewer can diff two instances without understanding either protocol. The cost is verbosity \u2014 the majority of the Artifact's text is empty or placeholder scaffolding.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A fixed slot template \u2014 RRC status, identifiers, contract addresses, rate limit IDs, rate limits, off-chain params, instance-specific processes \u2014 makes heterogeneous venues diffable and auditable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

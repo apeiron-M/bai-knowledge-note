@@ -37,7 +37,7 @@ def test_query_passes_variables():
         return _mock_urlopen({"data": {"ok": True}})
     client = GraphQLClient("https://example.test/graphql")
     with patch("lib.graphql.urlopen", side_effect=fake_urlopen):
-        client.query("query Q($id: String!) { document(identifier: $id) { id } }", {"id": "abc"})
+        client.query("query Q($id: String!) { document(idOrSlug: $id) { id } }", {"id": "abc"})
     assert captured["body"]["query"].startswith("query Q")
     assert captured["body"]["variables"] == {"id": "abc"}
 

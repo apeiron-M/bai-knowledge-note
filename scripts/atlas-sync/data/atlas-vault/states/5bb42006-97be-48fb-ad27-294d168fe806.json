@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-b165abcb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b165abcb-c7eb-4cb1-bf3d-0ea2dd45aeb7",
+      "targetTitle": "Grove's maxExchangeRate bound carries roughly 2x headroom be"
+    },
+    {
+      "id": "lnk-bb53dc0e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb53dc0e-4cc2-43fd-a5ad-ae5046fa1569",
+      "targetTitle": "Grove's controllers now refuse deposits unless a maxExchange"
+    },
+    {
+      "id": "lnk-7d125b63-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d125b63-0cfc-426f-a2e1-9d5a92102313",
+      "targetTitle": "The allowance consumed by a redemption request is priced by "
+    },
+    {
+      "id": "lnk-ad5e95d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad5e95d2-a2c6-4a02-9cb9-822c7caea535",
+      "targetTitle": "An admin-set maximum exchange rate blocks deposits into vaul"
+    },
+    {
+      "id": "lnk-e56505e5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e56505e5-7176-422a-9d82-f45320828ce6",
+      "targetTitle": "The maxExchangeRate protection was retrofitted and one activ"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove requires a maxExchangeRate on vault deposits, capping how much underlying one share may represent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cb9dbdf1-b261-412b-bcd9-b72da43d0dfd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d2bf5a2-6495-4382-afa8-7811d43c9214",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5fa2baba-5cc7-4185-b958-8c0818381754",
+      "name": "morpho",
+      "topicDocumentId": null
+    },
+    {
+      "id": "749285a2-2761-4932-a049-54d44e4d0c87",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.7.2.2.4.3 records a protection absent from the earlier integration documentation: \"Controllers now have protections that require a `maxExchangeRate` to be set for deposits. The following ensures 1 share can represent at most 2 USDC.\"\n\n```\nsetMaxExchangeRate(GROVE_X_STEAKHOUSE_USDC_V2, 1e18, 2e6)\n```\n\nThe threat it addresses is specific to share-based vaults. When Grove deposits, the number of shares it receives is `assets / exchangeRate`, and the rate is reported by the vault itself. If that rate can be inflated \u2014 by a donation to the vault's balance, by a manipulated price oracle in its strategy, or simply by a buggy accounting update \u2014 Grove hands over full value and receives too few shares. A conventional minimum-output check on shares does not help, because the relayer computing that minimum would be using the same corrupted rate.\n\nCapping the rate instead makes the check independent of the relayer's arithmetic: whatever the vault claims, Grove will not transact if a share purportedly represents more underlying than governance has sanctioned. This is the same move as bounding a Uniswap swap against a TWAP rather than spot (A...2.1.2.9.1.3) \u2014 anchor to a value the counterparty cannot move within the transaction.\n\nThe scope is worth noting: the parameter guards **deposits** only. Withdrawals are unaffected, consistent with Grove's general stance that exits are never impeded \u2014 and defensible, because an inflated rate on exit works in Grove's favour.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setMaxExchangeRate(vault, 1e18, 2e6) means a deposit reverts if the vault reports a share worth more than 2 USDC \u2014 a guard against depositing into an inflated share price.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "159434df-d44a-404f-a071-cb687a48ad07",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:14.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2e3560e5-2721-4ab2-85e6-0c3f5532c152",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:15.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

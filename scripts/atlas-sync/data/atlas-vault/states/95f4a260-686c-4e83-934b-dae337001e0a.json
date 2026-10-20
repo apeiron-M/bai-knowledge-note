@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b25976a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b25976a1-e82c-4b6b-acad-9080d0adecdf",
+      "targetTitle": "Funds borrowed on an Agent Credit Line are ring-fenced to th"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Prime Agent borrowing at a Subsidized Rate has its Agent Rate capped at that same rate, closing a borrow-cheap-earn-more loop",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1a816a59-a072-420e-9a73-dde1fe93ed29",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0451b568-48a5-4b33-9166-e709f8c25773",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63dc52bf-fbea-43dc-979d-a250574f846e",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.5.2 lets Prime Agents \"temporarily be able to borrow specified amounts from Sky Core at a Subsidized Rate below the Base Rate\" under an Ecosystem Accord. A.3.1.2.3.5 then immediately neutralizes the arbitrage that concession would otherwise create.\n\nIf a Prime Agent is borrowing at a Subsidized Rate, \"the Agent Rate earned by that Prime Agent shall be limited\": where the standard Agent Rate would exceed the Subsidized Rate, the Agent earns only the Subsidized Rate, and \"the difference ... is effectively retained by Sky.\" If the standard Agent Rate is already at or below the Subsidized Rate, nothing changes.\n\nWithout this, the subsidy would be directly extractable. Borrow below the Base Rate, hold the proceeds as a yielding balance, and collect the spread between the subsidy and the Agent Rate as riskless income \u2014 a transfer from Sky to the Agent that grows with the size of the subsidy and requires no productive activity whatsoever.\n\nThe rule is structured as a `min()` rather than a prohibition, which is the elegant part: the Agent is not barred from earning while subsidized, its earning rate is simply floored at its own cost of funds. That makes the arbitrage exactly zero-profit instead of forbidden, so no enforcement or monitoring is needed \u2014 the incentive to attempt it never exists.\n\nThe general pattern: whenever a system offers a below-market borrow rate and also pays yield on idle balances, the two must be linked or the concession leaks. Sky links them at the settlement layer (the adjustment is processed in the Monthly Settlement Cycle) rather than at the contract layer, so the correction is an accounting netting rather than a transaction block.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "If the standard Agent Rate would exceed the Agent's Subsidized Rate, it earns only the Subsidized Rate and Sky retains the difference \u2014 removing any profit from simply holding subsidized borrowings.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "db75771c-7d74-43a5-81f9-c706ef48193f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2e312db9-86a7-4bde-a893-3b552f3be58c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

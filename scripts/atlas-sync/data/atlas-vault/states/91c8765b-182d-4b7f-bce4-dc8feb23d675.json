@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-a92325f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a92325f9-6501-4b61-b785-0e5dd403a4f7",
+      "targetTitle": "Grove throttles each conduit's inflow and outflow through se"
+    },
+    {
+      "id": "lnk-c429ccf5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c429ccf5-b469-4d85-8b82-215dfe2188f1",
+      "targetTitle": "Grove caps inflows to every Centrifuge instance but leaves o"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Some Grove instances have an on-chain deposit path and no on-chain exit at all",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "af2d79ab-01b2-44d8-b3ce-832f4f02c80b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f8abfe1b-5f47-404b-a3cf-004478ddb781",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fce4c0d4-39b8-4160-96b3-39f8a61d9db9",
+      "name": "liquidity-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50e69b41-575f-48ed-91e5-8def474fc2b7",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Galaxy Arch CLOs instance (A.6.1.1.2.2.6.1.3.1.9.1) breaks the shape every other instance follows. Its contract addresses are a \"Token Address (**Avalanche**)\" of `0x2C0aDFF8e114f3cA106051144353aC703D24B901` and a separate \"Deposit Address (Mainnet)\" of `0x2E3A11807B94E689387f60CD4BF52A56857f2eDC` (A...9.1.2.2.1, A...9.1.2.2.2) \u2014 even though the instance's Network field reads Ethereum Mainnet.\n\nMore consequentially, its outflow RateLimitID is `N/A` and its withdrawal limits are `N/A` for both `maxAmount` and `slope` (A...9.1.2.3.2, A...9.1.2.4.2), while the deposit side is fully specified at 50,000,000 USDC with a matching slope and a published inflow key.\n\nEverywhere else in the register, `Unlimited` on the outflow is what guarantees Grove can always de-risk, and it is what makes the emergency protocol in A...2.2.3.2 executable. Here there is no outflow key because there is no on-chain withdrawal function to meter: Grove transfers USDC to an address on one chain and holds a token on another, and the Liquidity Layer's controller cannot see, verify or redeem it.\n\nThat inverts the risk profile relative to the DeFi instances. None of the protections established earlier in the Artifact reach this position \u2014 no balance-delta verification, no minimum-output check, no `maxExchangeRate`, no rate-limited exit. What bounds the exposure is the entry limit alone, and what recovers it is a counterparty process the Artifact does not describe.\n\nFor a position that is by nature illiquid \u2014 a CLO fund \u2014 an unenforceable exit may be unavoidable. The point is that the instance register presents it in the same template as an Aave deposit, where the fields that would signal the difference read simply `N/A`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:55:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Galaxy Arch CLOs records a mainnet deposit address, an Avalanche token address, and N/A for both its outflow RateLimitID and its withdrawal limits \u2014 the unlimited-outflow guarantee cannot apply.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "139aca92-3738-4b92-913b-1cfe9b19b819",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a9796d2e-704b-4469-8210-c9ee2878e988",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

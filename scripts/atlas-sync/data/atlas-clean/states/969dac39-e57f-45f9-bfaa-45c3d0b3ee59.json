@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-feb1971f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "feb1971f-05cd-4c9b-ad2f-cade495acceb",
+      "targetTitle": "Root administrative control of Grove's Liquidity Layer is he"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every counterparty is enabled by Sky Governance writing per-venue configuration into the controller",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b5a430be-c360-40fc-835e-0bc23faf962d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "08a9ae39-d495-413c-b350-d2aebbfd6bf3",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e77b446f-79e1-4ef0-9df2-17a8c4e583b6",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bea97f5b-7d9a-43cc-a450-6b4a33c44abc",
+      "name": "rule-hierarchy",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Reading the admin functions as a set (A.6.1.1.2.2.6.1.2.2.1.2.1.1) reveals a consistent shape. Every one writes into a **mapping keyed by counterparty**: `maxSlippages[pool]`, `uniswapV3PoolParams[pool]`, `maxExchangeRates[token]`, `mintRecipients[destinationDomain]`, `layerZeroRecipients[destinationEndpointId]`, `centrifugeRecipients[centrifugeId]`. Add the token-keyed rate limits that double as the whitelist (A.6.1.1.2.2.6.1.2.2.1.2.1.2.2.1.2), and the controller holds **no global configuration at all** \u2014 only per-venue entries.\n\nThe consequence is that a new venue is unusable until governance populates its keys, and every safety bound is specific to that venue rather than inherited from a default. There is no \"permissive by default\" state to be caught out by: an unconfigured pool has a zero allowance, no recipient, and no permitted tick range.\n\nBecause `DEFAULT_ADMIN_ROLE` is \"fully controlled by Sky Governance via the Grove Proxy\" (A.6.1.1.2.2.6.1.2.2.1.1.1.1), this means **Sky Governance \u2014 not Grove Governance \u2014 writes every one of these entries**. Grove decides how to trade inside the envelope; Sky decides what the envelope is, venue by venue.\n\nThat closes a loop with the governance layer. A.6.1.1.2.2.6.1.2.1.2.1 requires a new Allocation System Instance to go through Root Edit, and A.6.1.1.2.2.2.2.2.1.2.4 adds a Core Council Risk Advisor gate for risk-increasing changes. The onchain configuration model **enforces** that document-level requirement rather than merely restating it: without the corresponding admin writes, an Instance approved on paper cannot transact.\n\nThe cost is latency. Every parameter tune \u2014 a slippage cap that is too tight, a TWAP window that is too short \u2014 waits on a Sky Executive Vote, which is a poor fit for market conditions that change hourly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Slippage caps, tick bounds, TWAP windows, exchange-rate ceilings, bridge recipients and rate limits are all keyed by pool or token and writable only by the admin role Sky Governance holds.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

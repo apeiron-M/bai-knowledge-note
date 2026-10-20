@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-7fc67175-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7fc67175-f137-4983-8ede-1fcd1aea057f",
+      "targetTitle": "doc-9c20ef74"
+    },
+    {
+      "id": "lnk-7cd5095b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7cd5095b-d317-49b1-9b38-013a9258b82d",
+      "targetTitle": "In an Emergency Situation the Operational Facilitator may co"
+    },
+    {
+      "id": "lnk-60f80688-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "60f80688-f9f5-4c1b-8eb0-b1408808e785",
+      "targetTitle": "doc-f9d372b7"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Emergency chat retention is capped at four weeks while incident records are meant to be retained for review",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "91ee43d4-8a5a-4eac-aeb1-a9f0aeac2d2c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df4e875a-976c-4966-bb5d-b2b79aabfeb4",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6693e164-8108-4a67-bb99-6f21f174aec8",
+      "name": "contradictions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two provisions in the same Section pull against each other on the same data.\n\nA.1.9.1.3.1 configures the coordination channel for forgetting: a unique Signal \"Emergency Response\" Group is used \"for all incident response coordination,\" \"should not be used for any purpose except communications concerning a potential emergency situation,\" and \"must be configured to have a four-week message retention.\"\n\nA.1.9.1.5.6 configures for remembering. \"To achieve continuous improvement of emergency response processes, records should be retained post-incident to enable review of actions taken,\" and the enumerated records include \"chat transcripts from the approved communication channels specified in A.1.9.1.3 - Emergency Response Communication Channels\" \u2014 which is the Signal group whose messages auto-delete.\n\nThe two are reconcilable in practice: transcripts must be **exported within the four-week window** into whatever record store the retention provision contemplates. But nothing says so, nobody is assigned the export, and no deadline is stated \u2014 while the deletion is automatic and enforced by configuration. The default outcome of an unassigned manual step racing an automated one is that the automated one wins.\n\nBoth rationales are legitimate and neither should simply yield. Short retention limits the blast radius if a device or account is compromised, which matters intensely for a channel containing the unpublished identities of emergency responders (A.1.9.1.2.3) and live discussion of exploitable conditions. Postmortem transcripts are how A.1.9.1.6's mandate to \"regularly evaluate the emergency preparedness of the Emergency Response Group\" through \"extensive postmortems after an actual incident\" is actually satisfied.\n\nThe unresolved question is not whether to keep the transcripts but **who copies them where, and under what protection**. A.1.9.1.5.6 also leaves sharing to discretion \u2014 \"it is at the discretion of the Core Facilitator as to whether incident records can be shared with entities outside of the Emergency Response Group\" \u2014 so even a preserved transcript has no defined custodian or access rule.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.9.1.3.1 mandates four-week message retention on the Signal group; A.1.9.1.5.6 lists chat transcripts from approved channels among records to keep post-incident.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

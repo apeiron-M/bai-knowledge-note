@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-c59681b6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c59681b6-da54-4c74-a381-f7e8b9baad4c",
+      "targetTitle": "The Integration Boost calculation fires on each instance's o"
+    },
+    {
+      "id": "lnk-d0d585a7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0d585a7-4056-49f7-9ee5-010db9d82575",
+      "targetTitle": "doc-05b64df1"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Integration Boost cadence is restricted to exactly three permitted values",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3543b3d4-f6d5-431c-9d93-55a2dc14ec8f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ce85b2f-3aee-4d76-abfa-39b0dd05d05d",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23340dae-6fe2-4e64-b12d-343b0d8c3265",
+      "name": "standardization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.2.1.3.1 defines Cadence as the frequency at which the Integration Boost is calculated and distributed, and closes the option set: \"There are only three options available for the Reward Cadence: (1) weekly, (2) biweekly, or (3) monthly.\"\n\nThis is the same bounded-configurability pattern the Atlas applies to Agent governance \u2014 mandatory fields with constrained values \u2014 narrowed here to an enum. The Prime Agent gets to negotiate cadence with its partner (A.2.2.9.2.2.3.1.2 has them discuss \"the proposed Integration Boost cadence\"), but only within three choices.\n\nThe reason is operational rather than conceptual. Operational GovOps calculates and pays every Instance across every Agent; an open-ended schedule field would produce a distinct settlement calendar per partner and make batching impossible. Three aligned options mean payment runs can be grouped, and every Instance's next payment date is derivable without reading a bespoke schedule.\n\nThe lower bound is not arbitrary either \u2014 weekly is the fastest cadence the underlying weekly Monday-to-Sunday data cycle can support (A.2.2.9.2.2.1.2.3). Contrast this with the Distribution Reward, which has no cadence choice at all and is simply monthly (A.2.2.9.1.2.1.3.1); the Integration Boost's flexibility exists because partners differ in how frequently they want to pass yield to depositors.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Weekly, biweekly or monthly are the only options, so Agents choose payment frequency from a closed set rather than specifying an arbitrary schedule.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

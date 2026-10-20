@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-cb7d749f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cb7d749f-c60e-4a70-831f-77a7cfdac330",
+      "targetTitle": "Keel's Ecosystem Upkeep Fee is charged on market capitalizat"
+    },
+    {
+      "id": "lnk-f271e705-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f271e705-6fc8-42d8-97d6-2f5da3f96855",
+      "targetTitle": "Osero's Ecosystem Upkeep Fee is levied on market capitalizat"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Obex's Ecosystem Upkeep Fee is assessed on market capitalisation rather than on revenue or assets",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "54a7a0c0-926e-4256-b146-6493b791028a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "371c822e-a225-4866-bde1-115e5683fdf2",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a30c22df-97b9-484a-969f-7b49b3212006",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60762b22-2711-4482-812b-3a58f4526748",
+      "name": "economics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.5.2.3.1.2.1.1.1 states the entire term of Obex's Ecosystem Upkeep Fee Primitive Instance: \"Obex will pay 0.50% of its market capitalization per year in USDS.\"\n\nThe choice of base is the design decision. Revenue-based fees charge Agents in proportion to what they earn; asset-based fees charge in proportion to what they steward. A market-cap fee charges in proportion to **what the market thinks the Agent is worth**, which has distinctive consequences.\n\nIt makes the fee unavoidable for a pre-revenue Agent \u2014 Obex, an incubator whose output is other Agents, may generate little direct income while carrying a substantial valuation, and still owes the fee. It also makes the obligation reflexive: a speculative run-up raises the amount owed without raising the Agent's ability to pay, and the payment must be made in USDS, not in OBEX, so the Agent cannot settle in the asset whose appreciation created the liability.\n\nThe rationale is nevertheless coherent. Market cap is a rough proxy for how much ecosystem-provided legitimacy, security and distribution an Agent is capturing, and it is far harder to manipulate downward through accounting than revenue is. Denominating in USDS also aligns the fee with the stablecoin the ecosystem exists to support.\n\nNotably, the payment mechanics are not yet defined: A.6.1.1.5.2.3.1.2.1.2.1.1 says \"The process to pay 0.50% \u2026 will be specified in future iterations of the Obex Artifact,\" leaving an Active Primitive with a stated obligation and no stated method of discharging it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Agent owes 0.50% of its market cap per year in USDS, so the obligation scales with market valuation of the token and applies regardless of whether the Agent earns anything.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

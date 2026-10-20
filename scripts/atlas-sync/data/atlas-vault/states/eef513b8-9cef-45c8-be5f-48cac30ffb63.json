@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-efd8dd25-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "efd8dd25-46ec-4688-aec2-e84ac5a1836b",
+      "targetTitle": "For Spark's own savings products the flow rate limits are re"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark Savings v2 instances bound risk with a supply cap and yield ceiling instead of conduit rate limits",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0ab8defc-b997-43aa-8ae0-bb6ac88afa98",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56b2d75d-fcbe-45d4-ab98-35980b796a1d",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "966a3a48-f4e6-4fce-8263-b1ec9440f3bc",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two different risk vocabularies coexist in the same Artifact. Liquidity Layer conduits are governed by inflow/outflow `maxAmount` and `slope`. Spark Savings v2 instances are instead governed by a `Risk Parameters Current Configuration` block containing **supply cap**, **max yield**, and **current yield** \u2014 for example A.6.1.1.1.2.6.1.3.4.2.1.4.2.1 (500,000,000 USDC cap, max yield 10%) and A.6.1.1.1.2.6.1.3.6.1.1.4.2.1 (750,000,000 USDT cap, max yield 6%).\n\nCrucially, the rate limits that *do* exist on these instances \u2014 `take` and `transferAssets` \u2014 are set to `maxAmount`: **Unlimited** (A.6.1.1.1.2.6.1.3.4.2.1.4.2.3, .4.2.4 and the X Layer equivalents at .3.6.1.1.4.2.3, .4.2.4).\n\nThe divergence follows from the direction of trust. A conduit pushes Sky's capital *into* a third-party protocol, so the risk is external and velocity-shaped \u2014 throttle it. A savings vault accepts *user* deposits into Spark's own contracts, so the risk is the size of the liability Spark has underwritten and the rate it has promised \u2014 cap the stock and cap the price.\n\nThe trade-off is explicit: with take and transferAssets unlimited, nothing rate-limits movement of vault assets by the authorized taker role. All of the protection sits in the supply cap and in the role-holder's key security, with no time-based circuit breaker behind them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Where Liquidity Layer conduits use inflow/outflow maxAmount and slope, Savings v2 uses supply cap plus max yield, and leaves take and transferAssets rate limits Unlimited.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dbdae0cf-320e-4828-842d-b96e5481d128",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e901e045-7f4f-471c-ba18-c6680c92337a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:25.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

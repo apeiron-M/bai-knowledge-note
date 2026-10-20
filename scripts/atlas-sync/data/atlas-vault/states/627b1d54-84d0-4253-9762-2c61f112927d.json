@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-b5c79b81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5c79b81-0699-41fb-ba41-83b13e5f7bfa",
+      "targetTitle": "LayerZero bridge destinations are a governance-configured al"
+    },
+    {
+      "id": "lnk-77c24f3a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77c24f3a-3ab2-4d40-970d-ce77bfa2812e",
+      "targetTitle": "Rate limit configuration doubles as the whitelist of venues "
+    },
+    {
+      "id": "lnk-be22b5ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "be22b5ee-e5c9-411a-a8e4-1f703aea6c04",
+      "targetTitle": "Centrifuge cross-chain share transfers resolve the bridging "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Transfers are permissioned per asset-and-destination pair, not per asset",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "75b2d9a3-71c6-40b8-a1b0-f3f12d468585",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "93502900-9cc3-4e17-a291-d0ada2e10b83",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "154e395e-1d31-4096-a1ea-af98492a05bf",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "573fb757-98d1-4d22-9817-ab77fae42cfe",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.4.1.2 keys the generic ERC-20 transfer limit on two dimensions: \"The rate limit is keyed on the `asset` **and** `destination` pair through `makeAssetDestinationKey`.\" A.6.1.1.2.2.6.1.2.2.1.2.1.2.6.5.3 does the equivalent for cross-chain shares, keying on `LIMIT_CENTRIFUGE_TRANSFER` \"together with the `token` and `destinationCentrifugeId`.\"\n\nThis matters because `transferAsset` is otherwise the most dangerous function in the controller \u2014 an arbitrary ERC-20 transfer of an arbitrary amount to an arbitrary address, callable by a relayer. Pair-keying is what tames it. Since the rate limit is also the whitelist, a transfer is only possible along a **route** that governance has explicitly configured: this asset, to this destination, up to this amount per day.\n\nThe consequence is that approving an asset does not approve moving it anywhere, and approving a destination does not approve sending everything there. Every (asset, destination) combination is its own governance decision with its own budget. An attacker controlling a relayer cannot drain the proxy to a new address, because no key exists for it.\n\nThe cost is combinatorial. Each new payout route requires its own configured limit, so the number of governance writes grows with the product of assets and destinations rather than their sum \u2014 which is a real administrative burden for an allocator with the counterparty breadth listed in Grove's Instance directory.\n\nThis is the same principle as the admin-pinned bridge recipients (A.6.1.1.2.2.6.1.2.2.1.2.1.1.1), expressed through the limit system instead of a dedicated mapping: **the relayer chooses amount and timing; governance chooses where value may go.**",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "transferAsset keys its rate limit on the asset and destination together via makeAssetDestinationKey, and Centrifuge share transfers key on token plus destination chain id, so approval is",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a1bf74fc-faff-4984-9520-96765ab67ebe",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "27862a4b-4d11-4083-8b87-801bd17df2b0",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

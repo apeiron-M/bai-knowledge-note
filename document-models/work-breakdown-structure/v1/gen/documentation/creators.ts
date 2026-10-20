@@ -9,6 +9,7 @@ import {
   SetOwnerInputSchema,
   SetProjectRefInputSchema,
   SetReferencesInputSchema,
+  SetSowProjectRefInputSchema,
 } from "../schema/zod.js";
 import type {
   AddNoteInput,
@@ -16,6 +17,7 @@ import type {
   SetOwnerInput,
   SetProjectRefInput,
   SetReferencesInput,
+  SetSowProjectRefInput,
 } from "../types.js";
 import type {
   AddNoteAction,
@@ -23,6 +25,7 @@ import type {
   SetOwnerAction,
   SetProjectRefAction,
   SetReferencesAction,
+  SetSowProjectRefAction,
 } from "./actions.js";
 
 export const addNote = (input: AddNoteInput) =>
@@ -67,5 +70,14 @@ export const setProjectRef = (input: SetProjectRefInput) =>
     { ...input },
     undefined,
     SetProjectRefInputSchema,
+    "global",
+  );
+
+export const setSowProjectRef = (input: SetSowProjectRefInput) =>
+  createAction<SetSowProjectRefAction>(
+    "SET_SOW_PROJECT_REF",
+    { ...input },
+    undefined,
+    SetSowProjectRefInputSchema,
     "global",
   );

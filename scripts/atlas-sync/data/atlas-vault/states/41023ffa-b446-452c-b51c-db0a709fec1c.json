@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad6eb5d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad6eb5d2-4844-4936-be95-95b825cea73a",
+      "targetTitle": "A capped OSM wrapper takes the minimum of the SKY oracle pri"
+    },
+    {
+      "id": "lnk-8b388d6f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b388d6f-a8d2-4a02-9f7e-63ebdfb4640a",
+      "targetTitle": "doc-b8b0ed8c"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The SKY price feed applies a one-hour delay before prices become usable for borrowing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ecc99b55-4ff8-47ac-8ce1-373b504b698a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "917a10ea-fa37-453a-bc34-27b46fd107b9",
+      "name": "oracles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "875ac1f7-1072-409f-96a6-913117044a3d",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b6ce2768-7472-44b3-9345-12f52cfe2ae5",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.9.1 identifies `PIP_SKY` as \"the SKY price source for SKY-Backed Borrowing\" and notes that \"it applies a one (1) hour delay to price updates from the Chronicle Scribe Oracle.\" A.4.4.1.3.9.1.1 describes the underlying source as providing \"a SKY/USD price aggregated from multiple authorized feeds via multi-signature consensus, without the one (1) hour delay applied by `PIP_SKY`.\"\n\nThis is defence in depth across two independent layers. The Scribe layer defends against a *single bad feed* by requiring multi-signature consensus across authorized sources. The delay layer defends against the case where that consensus itself is wrong or manipulated \u2014 because the next price is public an hour before it takes effect, humans can see what is about to happen and intervene.\n\nThe delay is what makes the emergency machinery elsewhere in the Atlas usable. Freeze powers, the Usage Standards that authorize them when \"the preparation time required for an Executive Vote would leave the ecosystem vulnerable,\" and the cap parameter all need *time*, and an instantaneous oracle grants none. One hour is the budget deliberately purchased for detection and response, and it explains why oracle manipulation attacks that rely on a momentary price are structurally unavailable here.\n\nThe cost is precisely symmetric and must be accepted: during genuine rapid declines, liquidations act on an hour-old price, so undercollateralized positions persist longer and shortfalls are more likely \u2014 shortfalls that A.4.4.1.3.3 hands to stUSDS holders as a haircut. Sky trades a wider loss distribution in fast markets for immunity to the sharpest oracle attacks.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "`PIP_SKY` republishes the Chronicle Scribe aggregate \u2014 itself a multi-feed, multi-signature consensus \u2014 with a one hour lag, so a corrupted price is visible and freezable before it can be acted on.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "16f2c4f2-1bfe-45ab-be7d-60d4120b0554",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "703716c6-9d01-4a3f-8cf3-6c0f9c48293d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:12.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

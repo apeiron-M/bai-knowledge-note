@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each SkyLink bridge can be frozen independently from either end by separate multisigs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ecc7c66d-67b1-47b7-966b-773e8697afa7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "353a28df-c53f-4ff3-b98e-233b5b19f6fa",
+      "name": "skylink",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29276f81-9dd9-4141-ae5e-3936858119c1",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d64644f-735c-4fc0-b442-b39563513cd1",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.2.2.1 establishes that \"the Ethereum SkyLink Freezer Multisig has the ability to freeze SkyLink bridges deployed in the Sky Ecosystem from Ethereum Mainnet\" \u2014 one multisig covering *all* bridges. Every per-chain security section then adds a local counterpart: the Solana (A.4.2.2.2.3.1.1), Avalanche (A.4.2.2.3.3.1.1) and Plasma (A.4.2.2.4.3.1.1) freezer multisigs each \"has the ability to freeze the ... Bridge\" from its own chain.\n\nTwo properties follow. First, the kill switch is redundant across jurisdictions and clients: if Ethereum is congested, or if the threat is visible only from the remote side, the bridge can still be stopped locally, and vice versa. Neither end is a single point of failure for *stopping*.\n\nSecond, the topology is asymmetric by design. The Ethereum multisig is a fleet-wide switch \u2014 one action stops every SkyLink bridge \u2014 while local multisigs have single-bridge blast radius. That matches where systemic risk lives: a LayerZero-level or shared-infrastructure compromise would affect all bridges simultaneously, and mainnet is the common point from which all of them can be reached.\n\nThe consequence is that freeze authority is intentionally easy to invoke and widely distributed, while *un*freezing and reconfiguration are not mentioned as multisig powers at all \u2014 those return to the Executive Vote path. The kill switch is unilateral; restarting is governance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A single Ethereum SkyLink Freezer Multisig halts every bridge from mainnet, while each destination chain has its own local freezer multisig \u2014 either side alone can stop the bridge.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8a2906ea-a632-4ef1-b862-12df5c5f914d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "32ec22f8-e610-4ebf-a7aa-c8b49b723344",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-fc756b2b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fc756b2b-7d16-43c3-a892-e104e90590c4",
+      "targetTitle": "Pattern's Maple conduit throttles deposits but leaves withdr"
+    },
+    {
+      "id": "lnk-ab1fb567-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab1fb567-42b4-4299-9654-1604d8d24d3b",
+      "targetTitle": "A rate-limit parameter can be left unspecified while its pai"
+    },
+    {
+      "id": "lnk-90412b42-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "90412b42-baae-4008-b569-c0f94f9f6352",
+      "targetTitle": "Instance-specific operational processes exist because generi"
+    },
+    {
+      "id": "lnk-99406e74-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "99406e74-0dc3-4e7f-bd16-b0df4d671e71",
+      "targetTitle": "Superstate exposes two redemption routes distinguished only "
+    },
+    {
+      "id": "lnk-9fc3eb36-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9fc3eb36-cf8e-4d99-9aae-e7e02521bd6f",
+      "targetTitle": "Allocation Instances are modeled as bidirectional conduits w"
+    },
+    {
+      "id": "lnk-a33bbd50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a33bbd50-47ab-44db-b267-5f97d650e509",
+      "targetTitle": "An Unlimited outflow rate limit describes only Spark's own t"
+    },
+    {
+      "id": "lnk-ad655de5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad655de5-275d-4a1e-aa87-85df38cb1c16",
+      "targetTitle": "Maple's asynchronous redemption forced Obex to add Instance-"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Maple's three RateLimitIDs show the inflow/outflow abstraction breaks down for asynchronous redemption",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ee36a55a-4632-40e7-9231-275348f35225",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ef68d43-1c0b-4a8c-821f-5a799be48466",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d6a8334f-8794-4963-8508-4df4646de529",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad855b98-e91a-4b41-ab5b-d13c01c66024",
+      "name": "operational-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every other instance's `Rate Limit IDs` document speaks of \"this conduit's inflow and outflow\" \u2014 two legs. The Maple USDT instance (A.6.1.1.1.2.6.1.3.1.3.2.2.3) instead lists three keyed hashes: `deposit`, `withdraw` and `redeem`.\n\nThe reason surfaces in the same instance's `Instance-specific Operational Parameters` (.3.2.4), which exists to hold \"operational parameters or configuration details unique to this Instance that deviate from or otherwise supplement the general Spark Liquidity Layer parameters\", and whose only child is `Request Redemption Parameters` (.3.2.4.1): \"`maxAmount`: Unlimited, `slope`: 500,000,000 USDT per day\".\n\nMaple exits are asynchronous \u2014 a redemption is *requested*, queued, and settled later \u2014 so the single moment the inflow/outflow model assumes does not exist. `withdraw` and `redeem` are different actions with different failure modes, and the act of requesting redemption needs its own throttle distinct from both.\n\nThe consequence for the Artifact's structure is that the two-leg `Inflow Rate Limits` / `Outflow Rate Limits` schema is not a general model of a conduit; it is a model of synchronous pool deposits that happens to fit most venues. Where a protocol's lifecycle has more states, the limits spill out of the standard slots into instance-specific parameters \u2014 and a reader who only consults the standard slots will miss a 500,000,000 USDT per day throttle entirely.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Maple USDT instance publishes distinct deposit, withdraw and redeem limit IDs, so a two-legged template must describe a three-action protocol where exit is a request, not an immediate transfer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

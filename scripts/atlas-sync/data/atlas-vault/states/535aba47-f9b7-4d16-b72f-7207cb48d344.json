@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-be05d26c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "be05d26c-dab3-4c54-ab4b-49bba70390df",
+      "targetTitle": "The Resilience Technical Committee's eligibility bar demands"
+    },
+    {
+      "id": "lnk-ea79febe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ea79febe-fbba-4ba4-b6be-95662c4ab85c",
+      "targetTitle": "Spark's custody quorum requires signers from at least two in"
+    },
+    {
+      "id": "lnk-709d2006-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "709d2006-33f0-445e-8035-fd2eba9413a9",
+      "targetTitle": "doc-db03e4e4"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Claim payouts require a quorum of three experts while the Technical Committee has one active member",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "74ba1fad-8c4b-4505-b808-55c8b3ed4b7f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b18987c-f7a0-4e46-8af3-e0079503825c",
+      "name": "legal-resilience",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6cdbc77d-6e4d-43df-8427-ce00c30fe1c7",
+      "name": "contradiction",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.9.1.1.1.4.2.2.6 sets the decision rule: \"[d]ecisions related to claim payouts require a quorum of three (3) experts from the Resilience Technical Committee with a simple majority (>50%).\" The Active Data listing the Committee's membership (A.2.9.1.1.1.2.3.0.6.1) names one member.\n\nThe quorum rule is sound in itself \u2014 three experts with a majority prevents a single assessor's judgment from deciding discretionary payouts, which matters given that the recommendation is unappealable. But it is stated as a hard requirement, not a target, and the five-working-day recommendation window in A.2.9.1.1.1.4.2.2.5 runs regardless of whether three experts exist to convene.\n\nThe result is a process that is formally blocked at its central step. A beneficiary can be onboarded, obtain pre-approved counsel, and file a compliant Payout Claim, and there is still no quorate body to assess it.\n\nThe underlying cause is traceable to the eligibility bar at A.2.9.1.1.1.2.2.1\u2013.2.2.5, which requires dual legal/insurance and crypto credentials plus a bar on any outside business activity. The membership requirements and the quorum requirement were written to serve the same goal \u2014 independent expert judgment \u2014 and in combination they prevent it. This is the kind of coupling that only surfaces when the roster is read against the process rules.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.2.9.1.1.1.4.2.2.6 demands three experts and a simple majority; the Active Data roster lists a single member, so the quorum rule cannot currently be satisfied by the body that must satisfy it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3a8a9e43-564c-471f-8516-6e8b52a7bc1d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "70b17fba-e63d-4112-8852-2b6891554d0f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

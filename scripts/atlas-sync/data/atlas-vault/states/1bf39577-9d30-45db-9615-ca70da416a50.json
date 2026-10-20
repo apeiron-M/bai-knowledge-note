@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-b25976a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b25976a1-e82c-4b6b-acad-9080d0adecdf",
+      "targetTitle": "Funds borrowed on an Agent Credit Line are ring-fenced to th"
+    },
+    {
+      "id": "lnk-3735c6d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3735c6d2-3aed-4a76-b6a1-8f7603d39cc9",
+      "targetTitle": "doc-741f1730"
+    },
+    {
+      "id": "lnk-95f4a260-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95f4a260-686c-4e83-934b-dae337001e0a",
+      "targetTitle": "A Prime Agent borrowing at a Subsidized Rate has its Agent R"
+    },
+    {
+      "id": "lnk-4233c536-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4233c536-2f9b-486d-9277-35e0db0191c1",
+      "targetTitle": "An unpaid settlement owed to Grove counts toward its Total R"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Unpaid accrued interest on an Agent Credit Line automatically reduces the Agent's available Total Risk Capital",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "41bd862d-cc0b-4b1d-89da-0211c584dfe0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "421857d3-bf84-4e3e-b673-35b0f3b1e164",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "786c0de4-e9c4-45a3-8793-afdae55ba78b",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.5.4 describes an unusual debt-service mechanic. Interest \"accrues on borrowed funds and is reflected in the Allocation Vault balance,\" Prime Agents \"must regularly transfer interest payments to the Allocation Vault to pay down accrued interest, ensuring the Allocation Vault balance returns to the principal amount only,\" and \u2014 the operative sentence \u2014 \"any accrued but unpaid interest reduces the Prime Agent's available Total Risk Capital.\"\n\nSo non-payment has no due date, no penalty rate and no default event. It silently shrinks the Agent's capacity to take risk, because Total Risk Capital (A.3.2.1.2.1) is what sizes an Agent's permitted exposure.\n\nThe elegance is that the sanction is self-tightening and requires no adjudication. An Agent that stops servicing interest finds its risk budget contracting continuously, which constrains the very activity that would generate the returns needed to pay. Delinquency therefore de-levers the Agent automatically, in proportion to how delinquent it is, and reverses the instant it pays.\n\nIt also makes the two quantities commensurable in a useful way: unpaid interest is treated as an encumbrance on capital rather than as a receivable. Sky does not have to decide whether to chase a debt \u2014 the exposure it is worried about has already been reduced by exactly the amount at stake.\n\nThe accounting convention supporting this is that the Allocation Vault balance is expected to equal principal exactly. Any excess is by definition unpaid interest, so the deduction is computable from a single balance reading with no separate ledger.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Interest accrues into the Allocation Vault balance and must be paid down until only principal remains; unpaid, it shrinks the Agent's risk capacity instead of triggering a default process.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3b649f10-903a-4953-930c-73d93fb5a819",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6c0312b0-e2ad-4554-b377-ead2f7d170d2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

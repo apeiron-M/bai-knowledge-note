@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-632ff21b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "632ff21b-1735-432c-8cb7-ad7b4a20aec0",
+      "targetTitle": "All four Risk Curation instances share a single Curator mult"
+    },
+    {
+      "id": "lnk-b750b57e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b750b57e-dc27-468a-b806-df2c38fbf14e",
+      "targetTitle": "All three savings products share one vault implementation an"
+    },
+    {
+      "id": "lnk-c11f5384-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11f5384-38ff-4802-9296-0554b681f019",
+      "targetTitle": "Morpho instances record third-party governance roles as inst"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Blue Chip USDT vault appears in the Artifact twice, as a completed capital allocation and as a live curation mandate",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f1cb5383-edc1-48f0-837f-0a4438b0fdd4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7217a3cc-5771-49c5-a6f5-b5f51e158ac9",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1bab7f2b-cbc9-48ec-8123-d5ac7ce3e9e7",
+      "name": "governance-artifacts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Spark Blue Chip USDT Morpho Vault (A.6.1.1.1.3.9.7.2.3) has contract address `0xc7CDcFDEfC64631ED6799C95e3b110cd42F2bD22`. That is the same address recorded as the token address of the Ethereum Mainnet Morpho USDT Instance under **Completed Instances** of the Spark Liquidity Layer (A.6.1.1.1.2.6.1.4.3.1.1.2.2.1), whose Curator and Guardian role addresses (.4.2.1, .4.2.2) are also the identical Soter Labs and Spark Foundation safes.\n\nOne contract, two sections of the Artifact, two different statuses. It is not a contradiction \u2014 it is two different relationships to the same vault, and separating them is the useful insight:\n\n- Under the **Allocation System Primitive**, the question is whether *Spark's own capital* is deployed into that vault. `Completed` means that allocation has been wound up.\n- Under the **Risk Curation Framework**, the question is whether Spark holds and exercises admin authority over the vault on behalf of *third-party depositors*. That mandate is live.\n\nSpark can therefore have fully exited a vault as an investor while remaining responsible for curating it as an operator \u2014 and the second obligation is the more consequential one, because other people's money is still inside.\n\nThe structural lesson is that the Artifact's status fields are scoped to their framework, not to the asset. Reading only the Allocation System tree would show a completed, closed-out position; reading only the Risk Curation tree would show an active mandate with no indication that Spark's own capital has left. Neither view is wrong and neither is sufficient, and nothing in either section cross-references the other.\n\nFor anyone auditing Spark's real obligations, this means enumerating by contract address across frameworks rather than by section \u2014 the same discipline the two duplicated Encumbrance Ratio entries require for parameters.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:54:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Contract 0xc7CDcFDEfC64631ED6799C95e3b110cd42F2bD22 is filed under Completed Spark Liquidity Layer instances and simultaneously as an approved Risk Curation instance with the same curator and",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

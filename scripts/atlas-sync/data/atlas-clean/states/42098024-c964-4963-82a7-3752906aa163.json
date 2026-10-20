@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-a92325f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a92325f9-6501-4b61-b785-0e5dd403a4f7",
+      "targetTitle": "Grove throttles each conduit's inflow and outflow through se"
+    },
+    {
+      "id": "lnk-e581d1d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e581d1d2-464e-4a84-8448-fef43b69d3ec",
+      "targetTitle": "The Spark Artifact holds unresolved parameters as explicit f"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove records unspecified controls as explicit forward references rather than omitting the field",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "25108225-b263-491e-8753-ffa50ce4df36",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b77f601-844f-4213-9513-f3ff0aa6eeb9",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fcf0138d-3e6e-4ef2-8e90-09e52554ac53",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78218b6a-ee1d-4423-b886-b982a6da1728",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Five Instances in this chunk decline to state a control and say so in the slot where the value belongs. A.6.1.1.2.2.6.1.3.1.13.1.2.3.2: \"The outflow RateLimitID **will be specified in a future iteration of the Atlas**.\" The same formula appears at .14.1.2.3 and .14.2.2.3 for both Tokenized Treasury Instances, and at .2.1.1.2.3 and .2.1.2.2.3 for the Avalanche Centrifuge Instances \u2014 the latter two citing \"a future iteration of the **Grove Artifact**\" instead. A.6.1.1.2.2.6.1.3.2.1.1.2.4.2 applies it to a parameter rather than an identifier: outflow `maxAmount`: Unlimited, `slope`: \"This parameter will be specified in a future iteration.\"\n\nThe convention has real value. An omitted field is indistinguishable from an oversight; a named placeholder is a commitment that something is missing, which makes the incompleteness countable. A reader can enumerate exactly which controls of which Instances are undocumented without knowing what the complete schema should contain.\n\nBut the placeholder also marks a specific kind of gap: the on-chain rate limit exists and is being enforced by contracts today \u2014 Grove could not operate the conduit otherwise \u2014 while the Atlas, which is the governing document, does not record which slot it is or what it is set to. For those Instances the mapping from governance intent to enforcement lives only in deployment artifacts.\n\nThat the placeholders cluster on **outflow** is consistent with the wider pattern of outflows being left Unlimited: the Atlas is systematically less specific about exit controls than entry controls. The drift between \"Atlas\" and \"Grove Artifact\" as the promised venue for the missing values is a smaller signal in the same direction \u2014 which document is authoritative for Instance parameters is itself not settled here.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Outflow RateLimitIDs and slopes repeatedly read 'will be specified in a future iteration of the Atlas', keeping the gap between on-chain configuration and its governing document enumerable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

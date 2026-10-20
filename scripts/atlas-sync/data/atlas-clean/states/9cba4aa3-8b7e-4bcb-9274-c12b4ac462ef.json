@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "srUSDS makes losses visible as a falling conversion rate rather than as a default, and Sky charges 5% of net earnings for the service",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a4f76de8-704a-406d-aa76-db550118b7bd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "52ead90d-66f8-444e-a5e3-439e1b384107",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "485538eb-3a9a-48ff-a4f6-a4d04bb6b185",
+      "name": "revenue-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.4.2.1 defines srUSDS as \"the tokenized form of External Senior Risk Capital\" \u2014 users deposit USDS, and \"srUSDS holders can potentially earn higher yields in exchange for the risk that the External Senior Risk Capital will suffer losses.\" A.3.2.2.4.2.3 gives the accounting: a conversion rate, starting at 1:1, that \"increases or decreases over time, reflecting the net return earned by the ESRC pool,\" updated monthly as `New Rate = Previous Rate \u00d7 (1 + Monthly srUSDS Yield)`.\n\nThe yield formula (A.3.2.2.4.2.3.2) nets losses directly into the return:\n\n`[(Total Interest Paid by Stars on ESRC Portion \u2212 Losses Allocated to ESRC) / ESRC Principal at start of month \u2212 Sky Spread] \u00d7 (1 \u2212 ESRC Earnings Fee)`\n\nSo a loss month simply produces a lower conversion rate. There is no default, no haircut event, no write-down notice \u2014 the token's redemption value falls and every holder shares it pro rata, in the same mechanism that delivers gains. This is NAV accounting rather than credit accounting, and it is what allows loss-absorbing capital to be held by ordinary depositors: the instrument cannot fail, it can only be worth less.\n\nThe monthly cadence is doing real work too. Because the rate only updates at settlement, intra-month losses are invisible and no holder can exit ahead of a bad month \u2014 consistent with A.3.2.2.4.2.2's queue design, where deposits and redemptions can be withdrawn freely but only clear at the Monthly Settlement Cycle.\n\nSky's compensation is a 5% fee \"on the net interest earnings generated from the ESRC portion of originated SRC before these earnings are distributed to srUSDS holders\" (A.3.2.2.4.2.3.3.2), plus the Sky Spread on all ESRC balances. Since the Sky Spread is currently 0% (A.3.1.2.6), the 5% performance fee is Sky's entire revenue from intermediating external senior capital \u2014 a notably thin take for supplying the counterparty framework, the loss-allocation machinery and the monthly auction. It also means Sky earns nothing in a loss month, aligning its revenue with holders' outcomes rather than with volume.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The rate compounds monthly by (interest paid on the ESRC portion \u2212 losses allocated to ESRC)/principal \u2212 Sky Spread, times (1 \u2212 5% Earnings Fee); with Sky Spread at 0% the fee is Sky's whole take.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

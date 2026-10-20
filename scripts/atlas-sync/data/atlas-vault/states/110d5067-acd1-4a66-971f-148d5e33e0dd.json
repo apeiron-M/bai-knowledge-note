@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-cb86b4ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cb86b4ac-5230-4d95-9c54-1598c1276834",
+      "targetTitle": "The Atlas explicitly permits a Prime to accept a shortfall p"
+    },
+    {
+      "id": "lnk-5c042c3b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c042c3b-58ac-4bd2-8af8-04f871002fac",
+      "targetTitle": "Sky's recourse for bad debt is dilution and protocol seizure"
+    },
+    {
+      "id": "lnk-666b19f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "666b19f3-de35-41af-8aa6-a4096703ffc6",
+      "targetTitle": "doc-50223ca2"
+    },
+    {
+      "id": "lnk-44e7d9e3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44e7d9e3-3374-4f40-a365-2a86a1f810de",
+      "targetTitle": "The Distortion Penalty answers a structural incentive flaw w"
+    },
+    {
+      "id": "lnk-c5989336-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5989336-6969-457c-8915-cc8f4cf02d29",
+      "targetTitle": "doc-5f84d127"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "When collecting a penalty would deepen the capital shortfall, Sky may issue and sell the Prime Agent's own tokens instead",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5ce15421-9192-4a22-908c-1ce40fa23b13",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84ec570c-e48a-4542-8796-e4e04d6310cb",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3a355dbb-15bd-421c-8cff-a7ae64ae45c9",
+      "name": "enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.7.2.1.1.6.1 identifies a self-defeating property of cash penalties: if the Agent's Total Risk Capital is already below its Required Risk Capital, \"or the collection of the penalty would cause the Prime Agent's Total Risk Capital to fall below its Required Risk Capital,\" then taking the money makes the exact problem the penalty exists to punish worse.\n\nThe resolution is dilution. \"Sky, at its discretion, may issue additional tokens of the Prime Agent and sell them on the open market until it has collected proceeds equal to the calculated penalty. Any proceeds above the calculated penalty shall be refunded to the Prime Agent SubProxy account.\" A.3.2.2.7.2.1.2 makes the same instrument available for the shortfall itself, not just the fine: Core GovOps \"may require the Prime Agent to issue additional tokens and sell them to the extent it deems necessary.\"\n\nThis is the crucial structural move. It shifts the cost of undercapitalization from the Agent's *balance sheet* to the Agent's *owners*, so enforcement no longer competes with solvency. New capital enters the Agent while the penalty is paid, and the people who suffer are the equity holders who allowed the breach \u2014 precisely the parties who chose the Agent's risk appetite and appointed its governance.\n\nIt also implies something about what a Prime Agent is: an entity whose token Sky can mint against its owners' wishes. That is a far-reaching power, which is presumably why the Atlas offers a gentler alternative in the same document \u2014 Sky \"may convert the penalty into a debt owed by the Prime Agent to Sky Core at terms mutually agreed\" \u2014 and why the refund of excess proceeds is stated explicitly. The mechanism is calibrated to be exactly compensatory rather than expropriatory.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Dilution is the fallback enforcement route, with excess proceeds refunded to the Agent's SubProxy; alternatively Sky may convert the penalty into negotiated debt owed to Sky Core.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "69bba22e-7914-46d9-9c4f-71c1db62a28c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eb9a6220-6f25-4757-a68f-45e687f5191c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-a9a04fa1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9a04fa1-21e0-42f8-a8c2-160dcc78c057",
+      "targetTitle": "The Liquidity Layer is an Agent-scoped name for that Agent's"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Sky Allocation System Primitive was abstracted from the working Spark Liquidity Layer, not designed before it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c0294e97-52e3-4539-a5e7-bddb888e55ac",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5948d195-9ded-4525-b99a-a242dd3c5d1f",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf8b1297-f384-4b68-abb5-e7512e1ddfbb",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "72d98a87-743a-42dd-a507-e27c74a61972",
+      "name": "standards-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1 records an unusual provenance: \"Spark implements the Allocation System Primitive using the Spark Liquidity Layer. Developed prior to the introduction of the Sky Primitives, the Spark Liquidity Layer serves as the prototype for all Prime Agents' Allocation Systems.\"\n\nThe ordering is the finding. The Primitive is not a specification that Spark implemented; it is a generalization of something Spark had already built and run. Every other Prime Agent's Allocation System therefore inherits the shape of one Agent's concrete engineering choices.\n\nThat has an upside the Atlas is implicitly claiming: the abstraction is known to work, because it was extracted from a system already deploying capital across chains and venues. Standards written ahead of implementation routinely miss the operational cases that only appear under real capital.\n\nThe corresponding risk is path dependence. Decisions that were incidental to Spark's original design \u2014 how a venue is represented, what a configurable unit of exposure is, which counterparties the model assumes \u2014 become the vocabulary every future Agent must use. An Agent with a materially different allocation strategy will be describing it in Spark's terms.\n\nIt also gives Spark a structural advantage in the ecosystem's evolution that is worth naming: changes to the base Primitive are changes to a model derived from Spark's own practice, which Spark is best positioned to have already accommodated.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Spark's Liquidity Layer predates the Sky Primitives and is named the prototype for all Prime Agents' Allocation Systems \u2014 the standard was reverse-engineered from a running implementation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

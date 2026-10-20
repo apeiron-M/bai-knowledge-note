@@ -1,0 +1,638 @@
+import type {
+  Agent,
+  Deliverable,
+  DeliverablesSet,
+  Milestone,
+  Project,
+  Roadmap,
+  ScopeOfWorkState,
+} from "document-models/scope-of-work";
+
+/* ── navigation ─────────────────────────────────────────────────────────── */
+export type Filters = {
+  status: string;
+  project: string;
+  milestone: string;
+  owner: string;
+  q: string;
+};
+export const emptyFilters: Filters = {
+  status: "",
+  project: "",
+  milestone: "",
+  owner: "",
+  q: "",
+};
+export type View =
+  | { kind: "overview" }
+  /** Every roadmap, as a table; the sidebar section header opens it. */
+  | { kind: "roadmaps" }
+  | { kind: "roadmap"; id: string }
+  | { kind: "milestone"; id: string }
+  /** Every envelope, as a table; the sidebar section header opens it. */
+  | { kind: "projects" }
+  | { kind: "project"; id: string }
+  | { kind: "deliverables"; filters?: Partial<Filters> }
+  /** The work breakdown that delivers one envelope, edited without leaving the scope. */
+  | { kind: "wbs"; projectId: string }
+  | { kind: "team" };
+
+/* ── lookups ────────────────────────────────────────────────────────────── */
+export type MilestoneRef = { milestone: Milestone; roadmap: Roadmap };
+
+type ScopeIndexes = {
+  milestones: MilestoneRef[];
+  milestoneByDeliverable: Map<string, MilestoneRef>;
+  projectByDeliverable: Map<string, Project>;
+  deliverableById: Map<string, Deliverable>;
+  agentById: Map<string, Agent>;
+};
+
+/**
+ * Per-state lookup indexes, built once and reused.
+ *
+ * Every lookup below used to be a full scan. `milestoneOf` rebuilt a flatMap
+ * over every roadmap × milestone and then searched it — ON EVERY CALL — and
+ * it is called once per deliverable row: in `DeliverablesView`'s filter, in
+ * `DeliverableRow`, in `badgesFor`, in `OutlineRail`, and inside
+ * `ProjectsView`'s nested projects × deliverables map. A scope with 200
+ * deliverables therefore rebuilt that list 200+ times per render, and
+ * `milestoneState` → `rollup` → `deliverablesIn` compounded it.
+ *
+ * Keyed on the state OBJECT in a WeakMap. Document state is immutable and
+ * replaced wholesale on every revision, so a new state is a cache miss by
+ * construction, a stale index is impossible, and the entry is collected with
+ * the state it describes. There is nothing to invalidate.
+ */
+const indexCache = new WeakMap<ScopeOfWorkState, ScopeIndexes>();
+
+function indexesOf(s: ScopeOfWorkState): ScopeIndexes {
+  const cached = indexCache.get(s);
+  if (cached) return cached;
+
+  const milestones: MilestoneRef[] = [];
+  for (const roadmap of s.roadmaps) {
+    for (const milestone of roadmap.milestones) {
+      milestones.push({ milestone, roadmap });
+    }
+  }
+
+  // FIRST wins throughout, which is what the `.find()` / `.includes()` scans
+  // these replace returned. A deliverable listed under two milestones is
+  // malformed data and either answer is arbitrary — but `milestoneIndex`
+  // used to answer LAST while `milestoneOf` answered FIRST, so the two
+  // disagreed. They agree now.
+  const milestoneByDeliverable = new Map<string, MilestoneRef>();
+  for (const ref of milestones) {
+    for (const id of ref.milestone.scope?.deliverables ?? []) {
+      if (!milestoneByDeliverable.has(id)) milestoneByDeliverable.set(id, ref);
+    }
+  }
+
+  const projectByDeliverable = new Map<string, Project>();
+  for (const project of s.projects) {
+    for (const id of project.scope?.deliverables ?? []) {
+      if (!projectByDeliverable.has(id)) projectByDeliverable.set(id, project);
+    }
+  }
+
+  const deliverableById = new Map<string, Deliverable>();
+  for (const d of s.deliverables) {
+    if (!deliverableById.has(d.id)) deliverableById.set(d.id, d);
+  }
+
+  const agentById = new Map<string, Agent>();
+  for (const a of s.contributors) {
+    if (!agentById.has(a.id)) agentById.set(a.id, a);
+  }
+
+  const indexes: ScopeIndexes = {
+    milestones,
+    milestoneByDeliverable,
+    projectByDeliverable,
+    deliverableById,
+    agentById,
+  };
+  indexCache.set(s, indexes);
+  return indexes;
+}
+
+export const allMilestones = (s: ScopeOfWorkState): MilestoneRef[] =>
+  indexesOf(s).milestones;
+export const sortedMilestones = (s: ScopeOfWorkState): MilestoneRef[] =>
+  // Copy before sorting: `allMilestones` is now a shared cached array, and
+  // `.sort()` mutates in place.
+  [...allMilestones(s)].sort((a, b) =>
+    (a.milestone.deliveryTarget || "9999").localeCompare(
+      b.milestone.deliveryTarget || "9999",
+    ),
+  );
+export const milestoneOf = (
+  s: ScopeOfWorkState,
+  deliverableId: string,
+): MilestoneRef | undefined =>
+  indexesOf(s).milestoneByDeliverable.get(deliverableId);
+export const projectOf = (
+  s: ScopeOfWorkState,
+  deliverableId: string,
+): Project | undefined => indexesOf(s).projectByDeliverable.get(deliverableId);
+export const deliverableById = (
+  s: ScopeOfWorkState,
+  id: string,
+): Deliverable | undefined => indexesOf(s).deliverableById.get(id);
+export const agentById = (
+  s: ScopeOfWorkState,
+  id: string | null | undefined,
+): Agent | undefined => (id ? indexesOf(s).agentById.get(id) : undefined);
+export const deliverablesIn = (
+  s: ScopeOfWorkState,
+  ids: readonly string[],
+): Deliverable[] => {
+  const byId = indexesOf(s).deliverableById;
+  const out: Deliverable[] = [];
+  for (const id of ids) {
+    const d = byId.get(id);
+    if (d !== undefined) out.push(d);
+  }
+  return out;
+};
+
+/**
+ * Where an id from a deep link lives: the view that shows the item and, for
+ * a deliverable, the selection that opens its inspector. A deliverable is
+ * shown inside the envelope that funds it when there is one, else in the
+ * flat list. Null when the scope holds nothing by that id.
+ */
+export const locate = (
+  s: ScopeOfWorkState,
+  id: string,
+): { view: View; selected: string | null } | null => {
+  if (s.projects.some((p) => p.id === id))
+    return { view: { kind: "project", id }, selected: null };
+  if (s.roadmaps.some((r) => r.id === id))
+    return { view: { kind: "roadmap", id }, selected: null };
+  if (allMilestones(s).some((x) => x.milestone.id === id))
+    return { view: { kind: "milestone", id }, selected: null };
+  if (s.deliverables.some((d) => d.id === id)) {
+    const funder = projectOf(s, id);
+    return {
+      view: funder ? { kind: "project", id: funder.id } : { kind: "deliverables" },
+      selected: id,
+    };
+  }
+  if (s.contributors.some((c) => c.id === id))
+    return { view: { kind: "team" }, selected: null };
+  return null;
+};
+
+/* ── progress (mirrors the reducer rules) ───────────────────────────────── */
+export const isClosed = (d: Deliverable): boolean =>
+  d.status === "CANCELED" || d.status === "WONT_DO";
+export const isDelivered = (d: Deliverable): boolean =>
+  d.status === "DELIVERED" || d.workProgress?.done === true;
+export type ProgressKind = "pct" | "sp" | "bin";
+export const progressKind = (d: Deliverable): ProgressKind => {
+  const p = d.workProgress;
+  if (typeof p?.total === "number" && typeof p.completed === "number")
+    return "sp";
+  if (typeof p?.done === "boolean") return "bin";
+  return "pct";
+};
+export const pctOf = (d: Deliverable): number => {
+  const p = d.workProgress;
+  if (!p) return 0;
+  if (typeof p.value === "number") return p.value;
+  if (typeof p.total === "number" && typeof p.completed === "number")
+    return p.total > 0 ? (p.completed / p.total) * 100 : 0;
+  if (typeof p.done === "boolean")
+    return d.status === "IN_PROGRESS" ? 50 : p.done ? 100 : 0;
+  return 0;
+};
+export const progressText = (d: Deliverable): string => {
+  const p = d.workProgress;
+  if (typeof p?.total === "number" && typeof p.completed === "number")
+    return `${p.completed}/${p.total} SP`;
+  if (typeof p?.done === "boolean") return p.done ? "Done" : "Not done";
+  return `${Math.round(pctOf(d))}%`;
+};
+/** Roll-up over a list of deliverable ids, same aggregation the reducers use for a scope. */
+export type Rollup = {
+  pct: number;
+  total: number;
+  done: number;
+  storyPoints?: { total: number; completed: number };
+};
+export const rollup = (s: ScopeOfWorkState, ids: readonly string[]): Rollup => {
+  const ds = deliverablesIn(s, ids).filter((d) => !isClosed(d));
+  if (ds.length === 0) return { pct: 0, total: 0, done: 0 };
+  const done = ds.filter(isDelivered).length;
+  if (ds.every((d) => progressKind(d) === "sp")) {
+    const total = ds.reduce((a, d) => a + (d.workProgress?.total ?? 0), 0);
+    const completed = ds.reduce(
+      (a, d) => a + (d.workProgress?.completed ?? 0),
+      0,
+    );
+    return {
+      pct: total > 0 ? (completed / total) * 100 : 0,
+      total: ds.length,
+      done,
+      storyPoints: { total, completed },
+    };
+  }
+  return {
+    pct:
+      Math.round((ds.reduce((a, d) => a + pctOf(d), 0) / ds.length) * 100) /
+      100,
+    total: ds.length,
+    done,
+  };
+};
+export const scopePct = (scope: DeliverablesSet | null | undefined): number => {
+  const p = scope?.progress;
+  if (!p) return 0;
+  if (typeof p.value === "number") return p.value;
+  if (typeof p.total === "number" && typeof p.completed === "number")
+    return p.total > 0 ? (p.completed / p.total) * 100 : 0;
+  return p.done ? 100 : 0;
+};
+
+/* ── money (mirrors the reducer rules) ──────────────────────────────────── */
+export const costOf = (d: Deliverable): number =>
+  d.budgetAnchor ? d.budgetAnchor.unitCost * d.budgetAnchor.quantity : 0;
+export const budgetOf = (d: Deliverable): number =>
+  d.budgetAnchor
+    ? Math.round(costOf(d) * (1 + d.budgetAnchor.margin / 100) * 100) / 100
+    : 0;
+export const sumCost = (s: ScopeOfWorkState, ids: readonly string[]): number =>
+  deliverablesIn(s, ids).reduce((a, d) => a + costOf(d), 0);
+export const sumBudget = (
+  s: ScopeOfWorkState,
+  ids: readonly string[],
+): number => deliverablesIn(s, ids).reduce((a, d) => a + budgetOf(d), 0);
+export const budgetsByCurrency = (
+  s: ScopeOfWorkState,
+): Record<string, number> => {
+  const out: Record<string, number> = {};
+  for (const p of s.projects) {
+    const cur = p.currency ?? "USD";
+    out[cur] = (out[cur] ?? 0) + (p.budget ?? 0);
+  }
+  return out;
+};
+/** Budget of a set of deliverables, grouped by the currency of the project that funds each. */
+export const budgetsByCurrencyFor = (
+  s: ScopeOfWorkState,
+  ids: readonly string[],
+): Record<string, number> => {
+  const out: Record<string, number> = {};
+  for (const d of deliverablesIn(s, ids)) {
+    const cur = projectOf(s, d.id)?.currency ?? "USD";
+    out[cur] = (out[cur] ?? 0) + budgetOf(d);
+  }
+  return out;
+};
+/** Tokens are not ISO currencies: Intl prefixes a 3-letter one ("DAI 1.00") and
+ *  throws on a 4-letter one, so USDS fell into a no-grouping fallback. Format them
+ *  as a grouped number with the code after it, and keep fiat symbols as they were. */
+const TOKEN_CODES = new Set(["DAI", "USDS"]);
+const AMOUNT = new Intl.NumberFormat("en", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+/** "412,637.50" — the number alone, for layouts that set the code apart. */
+export const moneyAmount = (n: number): string => AMOUNT.format(n);
+export const money = (
+  n: number,
+  currency: string | null | undefined = "USD",
+): string => {
+  const code = currency ?? "USD";
+  if (TOKEN_CODES.has(code)) return `${moneyAmount(n)} ${code}`;
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: code,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(n);
+  } catch {
+    return `${moneyAmount(n)} ${code}`;
+  }
+};
+export const round2 = (n: number): number => {
+  if (!Number.isFinite(n)) return n;
+  const s = String(n);
+  if (s.includes("e")) return Math.round(n * 100) / 100;
+  return Number(`${Math.round(Number(`${s}e2`))}e-2`);
+};
+export const pct = (n: number): string => `${round2(n)}%`;
+export const num = (n: number): string => String(round2(n));
+
+/* ── fixed vs derived project budgets ───────────────────────────────────── */
+export const isFixedBudget = (p: Project): boolean =>
+  p.targetBudget !== null && p.targetBudget !== undefined;
+export const isPinned = (d: Deliverable): boolean =>
+  d.budgetAnchor?.marginPinned === true;
+/** Σ of the line budgets a project funds — equals `project.budget` in derived mode. */
+export const linesBudget = (s: ScopeOfWorkState, p: Project): number =>
+  round2(sumBudget(s, p.scope?.deliverables ?? []));
+/** Fixed mode only: envelope minus what the lines add up to (positive = unallocated, negative = over). */
+export const budgetVariance = (
+  s: ScopeOfWorkState,
+  p: Project,
+): number | null =>
+  isFixedBudget(p) ? round2((p.targetBudget ?? 0) - linesBudget(s, p)) : null;
+export const isOverBudget = (s: ScopeOfWorkState, p: Project): boolean =>
+  isFixedBudget(p) &&
+  sumCost(s, p.scope?.deliverables ?? []) > (p.targetBudget ?? 0);
+/** The margin currently derived for unpinned quotes (they all share it), or null when none are free. */
+export const derivedMargin = (
+  s: ScopeOfWorkState,
+  p: Project,
+): number | null => {
+  const free = deliverablesIn(s, p.scope?.deliverables ?? []).find(
+    (d) => d.budgetAnchor && !isPinned(d),
+  );
+  return free?.budgetAnchor ? free.budgetAnchor.margin : null;
+};
+
+export const moneyList = (byCur: Record<string, number>): string =>
+  Object.entries(byCur)
+    .map(([c, v]) => money(v, c))
+    .join(" · ") || "—";
+export const isQuoted = (d: Deliverable): boolean =>
+  !!d.budgetAnchor &&
+  d.budgetAnchor.quantity > 0 &&
+  d.budgetAnchor.unitCost > 0;
+
+/* ── dates ──────────────────────────────────────────────────────────────── */
+export const dateFmt = (
+  iso: string | null | undefined,
+  opts: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  },
+): string => {
+  if (!iso) return "no date";
+  const d = new Date(`${iso}T00:00:00`);
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString("en", opts);
+};
+/** Every live deliverable in it delivered — the timeline's filled dot. A
+ *  milestone with nothing scheduled is not done, it is empty. */
+export const isMilestoneDone = (s: ScopeOfWorkState, m: Milestone): boolean => {
+  const r = rollup(s, m.scope?.deliverables ?? []);
+  return r.total > 0 && r.done === r.total;
+};
+export const nextMilestone = (
+  s: ScopeOfWorkState,
+  today: Date,
+): MilestoneRef | undefined => {
+  const t = today.toISOString().slice(0, 10);
+  // the next date still to be reached whose work is not all delivered — a
+  // milestone finished early is done, not next
+  return sortedMilestones(s).find(
+    (x) => x.milestone.deliveryTarget >= t && !isMilestoneDone(s, x.milestone),
+  );
+};
+export type MilestoneState = "done" | "live" | "";
+export const milestoneState = (
+  s: ScopeOfWorkState,
+  m: Milestone,
+  today: Date,
+): MilestoneState => {
+  if (isMilestoneDone(s, m)) return "done";
+  return nextMilestone(s, today)?.milestone.id === m.id ? "live" : "";
+};
+
+/** Structural deletes are allowed only while the scope of work is still being authored. */
+export const isEditable = (s: ScopeOfWorkState): boolean =>
+  s.status === "DRAFT" || s.status === "REJECTED";
+export const LOCKED_HINT =
+  "Removing is only possible while the scope of work is a draft (or rejected).";
+
+/* ── labels ─────────────────────────────────────────────────────────────── */
+export const STATUS_LABEL: Record<string, string> = {
+  DRAFT: "Draft",
+  TODO: "To do",
+  BLOCKED: "Blocked",
+  IN_PROGRESS: "In progress",
+  DELIVERED: "Delivered",
+  CANCELED: "Canceled",
+  WONT_DO: "Won't do",
+  SUBMITTED: "Submitted",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  FINISHED: "Finished",
+};
+export const DELIVERABLE_STATUSES = [
+  "DRAFT",
+  "TODO",
+  "IN_PROGRESS",
+  "BLOCKED",
+  "DELIVERED",
+  "CANCELED",
+  "WONT_DO",
+] as const;
+export const SOW_STATUSES = [
+  "DRAFT",
+  "SUBMITTED",
+  "IN_PROGRESS",
+  "APPROVED",
+  "REJECTED",
+  "DELIVERED",
+  "CANCELED",
+] as const;
+export const CURRENCIES = ["USD", "EUR", "DAI", "USDS"] as const;
+export const BUDGET_TYPES = [
+  "OPEX",
+  "CAPEX",
+  "OVERHEAD",
+  "CONTINGENCY",
+] as const;
+export const isOneOf = <T extends readonly string[]>(
+  list: T,
+  v: string,
+): v is T[number] => (list as readonly string[]).includes(v);
+
+export const initials = (name: string): string =>
+  name
+    .split(/\s+/)
+    .map((w) => w.charAt(0))
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "?";
+export const slugify = (title: string, id: string): string =>
+  `${title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")}-${id.slice(-8)}`;
+export const nextSequenceCode = (r: Roadmap): string => {
+  const first = r.milestones.at(0);
+  const prefix = first ? first.sequenceCode.replace(/\d+$/, "") || "M" : "M";
+  return `${prefix}${r.milestones.length + 1}`;
+};
+
+/* ── badges + checklist ─────────────────────────────────────────────────── */
+export type Badge = {
+  kind: "unfunded" | "unscheduled" | "unquoted";
+  label: string;
+};
+export const badgesFor = (s: ScopeOfWorkState, d: Deliverable): Badge[] => {
+  const out: Badge[] = [];
+  const p = projectOf(s, d.id);
+  if (!p) out.push({ kind: "unfunded", label: "Unfunded" });
+  if (!milestoneOf(s, d.id))
+    out.push({ kind: "unscheduled", label: "Unscheduled" });
+  if (p && !isQuoted(d)) out.push({ kind: "unquoted", label: "Unquoted" });
+  return out;
+};
+export type Check = { label: string; ok: boolean; go: View };
+export const checklist = (s: ScopeOfWorkState): Check[] => {
+  const live = s.deliverables.filter((d) => !isClosed(d));
+  const ms = allMilestones(s);
+  return [
+    {
+      label: "Title and summary written",
+      ok: s.title.trim() !== "" && s.description.trim() !== "",
+      go: { kind: "overview" },
+    },
+    {
+      label: "At least one project with an owner",
+      ok: s.projects.some((p) => !!p.projectOwner),
+      go: s.projects[0]
+        ? { kind: "project", id: s.projects[0].id }
+        : { kind: "overview" },
+    },
+    {
+      label: "A roadmap with dated milestones",
+      ok: ms.length > 0 && ms.every((x) => x.milestone.deliveryTarget !== ""),
+      go: s.roadmaps[0]
+        ? { kind: "roadmap", id: s.roadmaps[0].id }
+        : { kind: "overview" },
+    },
+    {
+      label: "Every deliverable scheduled",
+      ok: live.length > 0 && live.every((d) => !!milestoneOf(s, d.id)),
+      go: { kind: "deliverables", filters: { milestone: "__none" } },
+    },
+    {
+      label: "Every deliverable funded and quoted",
+      ok:
+        live.length > 0 &&
+        live.every((d) => !!projectOf(s, d.id) && isQuoted(d)),
+      go: { kind: "deliverables", filters: { project: "__none" } },
+    },
+    {
+      label: "Every deliverable has an owner",
+      ok: live.length > 0 && live.every((d) => !!d.owner),
+      go: { kind: "deliverables", filters: { owner: "__none" } },
+    },
+  ];
+};
+
+/* ── overview: indexes, delivery horizon, triage, plan window ───────────── */
+/** deliverable id → the milestone it is scheduled in. Built once per render
+ *  where a view would otherwise scan every milestone per deliverable. */
+// `ReadonlyMap`, because these now hand back the SHARED cached index rather
+// than a fresh map per call — a caller that mutated it would corrupt every
+// later lookup for that state.
+export const milestoneIndex = (
+  s: ScopeOfWorkState,
+): ReadonlyMap<string, MilestoneRef> => indexesOf(s).milestoneByDeliverable;
+/** deliverable id → the envelope that funds it. */
+export const projectIndex = (
+  s: ScopeOfWorkState,
+): ReadonlyMap<string, Project> => indexesOf(s).projectByDeliverable;
+/** Dated before today and not delivered. */
+export const isOverdue = (
+  s: ScopeOfWorkState,
+  m: Milestone,
+  today: Date,
+): boolean =>
+  m.deliveryTarget !== "" &&
+  m.deliveryTarget < today.toISOString().slice(0, 10) &&
+  !isMilestoneDone(s, m);
+
+/** Every milestone sorted into what the overview needs to say about it. */
+export type Horizon = {
+  /** dated before today, not delivered — oldest first */
+  overdue: MilestoneRef[];
+  /** dated today or later, not delivered — soonest first; [0] is the live one */
+  upcoming: MilestoneRef[];
+  /** all live work delivered, whatever the date */
+  delivered: MilestoneRef[];
+  /** no delivery target yet */
+  undated: MilestoneRef[];
+};
+export const deliveryHorizon = (s: ScopeOfWorkState, today: Date): Horizon => {
+  const t = today.toISOString().slice(0, 10);
+  const h: Horizon = { overdue: [], upcoming: [], delivered: [], undated: [] };
+  for (const ref of sortedMilestones(s)) {
+    const m = ref.milestone;
+    if (isMilestoneDone(s, m)) h.delivered.push(ref);
+    else if (m.deliveryTarget === "") h.undated.push(ref);
+    else if (m.deliveryTarget < t) h.overdue.push(ref);
+    else h.upcoming.push(ref);
+  }
+  return h;
+};
+
+/** What still needs a decision or a fix. Closed deliverables are not counted:
+ *  canceled work needs no payer, date or unblocking. */
+export type Triage = {
+  blocked: number;
+  unfunded: number;
+  unscheduled: number;
+  overdue: number;
+};
+export const triage = (s: ScopeOfWorkState, today: Date): Triage => {
+  const live = s.deliverables.filter((d) => !isClosed(d));
+  const funded = projectIndex(s);
+  const scheduled = milestoneIndex(s);
+  return {
+    blocked: live.filter((d) => d.status === "BLOCKED").length,
+    unfunded: live.filter((d) => !funded.has(d.id)).length,
+    unscheduled: live.filter((d) => !scheduled.has(d.id)).length,
+    overdue: deliveryHorizon(s, today).overdue.length,
+  };
+};
+
+/** The plan grid's columns: the next `n` open milestones (overdue first, then
+ *  upcoming) get a column each; delivered ones fold into "done", the rest
+ *  and the undated into "later". */
+export type PlanWindow = {
+  done: MilestoneRef[];
+  shown: MilestoneRef[];
+  later: MilestoneRef[];
+};
+export const planWindow = (h: Horizon, n: number): PlanWindow => {
+  const open = [...h.overdue, ...h.upcoming];
+  return {
+    done: h.delivered,
+    shown: open.slice(0, n),
+    later: [...open.slice(n), ...h.undated],
+  };
+};
+
+/** The one status a cell of several deliverables is coloured by: anything
+ *  blocked outranks work in progress, which outranks all delivered. */
+export type CellTone = "BLOCKED" | "IN_PROGRESS" | "DELIVERED" | "";
+export const worstStatus = (ds: readonly Deliverable[]): CellTone => {
+  if (ds.some((d) => d.status === "BLOCKED")) return "BLOCKED";
+  if (ds.some((d) => d.status === "IN_PROGRESS")) return "IN_PROGRESS";
+  if (ds.length > 0 && ds.every(isDelivered)) return "DELIVERED";
+  return "";
+};
+
+/** The plan shows deliverable cards in every cell only while the grid is small:
+ *  at most this many columns across the canvas (a card needs ~140px to read),
+ *  and at most this many cells in all — "few projects × milestones". Past
+ *  either, cells count and zoom on demand. */
+export const PLAN_CARD_COLS = 5;
+export const PLAN_CARD_CELLS = 20;
+export type PlanMode = "cards" | "chips";
+export const planMode = (columns: number, rows: number): PlanMode =>
+  columns <= PLAN_CARD_COLS && columns * rows <= PLAN_CARD_CELLS
+    ? "cards"
+    : "chips";

@@ -1,0 +1,137 @@
+{
+  "links": [
+    {
+      "id": "lnk-2320b506-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2320b506-a87f-4241-9e24-499bbb219c18",
+      "targetTitle": "USDS converts to USDC only by routing through DAI and the le"
+    },
+    {
+      "id": "lnk-3a4403aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3a4403aa-b792-46d6-91da-eb838e8cbeaf",
+      "targetTitle": "Grove's USDS-to-USDC swaps route through the legacy DAI migr"
+    },
+    {
+      "id": "lnk-7d0921d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d0921d2-92fe-49e2-9af9-78994d22dd87",
+      "targetTitle": "Zero PSM fees with no authorized-party carve-outs make USDS'"
+    },
+    {
+      "id": "lnk-2cd3f389-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2cd3f389-4515-486b-9f72-ad1751ae4fb1",
+      "targetTitle": "Keel's most valuable operational powers are whitelists grant"
+    },
+    {
+      "id": "lnk-32227c27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "32227c27-7ae4-4dce-aee7-a747ec0b55c2",
+      "targetTitle": "doc-863959b8"
+    },
+    {
+      "id": "lnk-44bb4868-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44bb4868-e639-4b3e-b935-6149258474f8",
+      "targetTitle": "USDS replaced Dai as a 1:1 convertible successor rather than"
+    },
+    {
+      "id": "lnk-88dba96b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "88dba96b-9ada-4467-95be-c34f95234b91",
+      "targetTitle": "The DAI-USDS migrator is the one Liquidity Layer swap with n"
+    },
+    {
+      "id": "lnk-ad521530-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad521530-f2c5-468f-9400-a59cc5805f96",
+      "targetTitle": "USDC-to-DAI swaps are all-or-nothing and loop the PSM's own "
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's USDS to USDC convertibility runs through DAI, inheriting Maker's legacy PSM plumbing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dba956ff-f64d-42a2-929c-75b314c1dde8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fef37254-4fc5-46b5-a112-d158f505f4d6",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25cba517-64b8-4e28-b641-2fe14ac9d2b4",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b598291-2701-4bc8-8d53-a9864a6b7826",
+      "name": "stablecoins",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.2.1.2.5.1.1 spells the swap out as a chain of hops: approve the `daiUsds` contract, \"swap USDS to DAI at a 1:1 ratio via daiUsds, sending DAI to the proxy,\" approve the PSM, then \"swap DAI to USDC at a 1:1 ratio with no fee via `psm.buyGemNoFee`.\" The reverse direction (\u20265.2.1) runs the same route backwards through `MCD_LITE_PSM_USDC_A`.\n\nUSDS therefore has no direct peg mechanism against USDC. Its convertibility is derived from DAI's, via a 1:1 converter and a PSM inherited from the Maker system, and the fee-free access depends on the ALMProxy whitelist recorded earlier in the Artifact.\n\nTwo consequences follow. The extra hop is a real dependency: anything that impairs the DAI converter or the LitePSM impairs Keel's ability to rebalance between Sky's stablecoin and the USDC it needs for cross-chain work, regardless of USDS's own health. And it explains the decimal handling that clutters both specifications \u2014 `psmTo18ConversionFactor`, amounts \"denominated in 1e6 precision to match PSM USDC handling\" \u2014 friction imported from a contract Sky did not design for this purpose.\n\nThe upside of reusing the plumbing is that the deepest, most battle-tested dollar liquidity in the ecosystem is available at zero fee. Keel's allocation strategy is only viable because the conversion leg is free; a fee on this route would tax every rebalance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "swapUSDSToUSDC converts USDS to DAI 1:1 via the daiUsds contract, then DAI to USDC fee-free via psm.buyGemNoFee \u2014 the PSM prices DAI, not USDS.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "56061089-cd1e-43f9-95e6-3b6c460e1315",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:15.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "734ccc02-7196-47c2-a720-9664d0c89be5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:16.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

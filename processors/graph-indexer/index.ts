@@ -2,6 +2,7 @@ import { RelationalDbProcessor } from "@powerhousedao/shared/processors";
 import type { OperationWithContext } from "@powerhousedao/shared/document-model";
 import { up } from "./migrations.js";
 import type { DB } from "./schema.js";
+import type { Kysely } from "kysely";
 import {
   ACTIVE_MODEL,
   deleteEmbedding,
@@ -9,6 +10,22 @@ import {
   sha256Hex,
   upsertEmbedding,
 } from "./embedding-store.js";
+import {
+  DERIVED_LINK_TYPES,
+  isIndexedLinkType,
+} from "./link-types.js";
+import { isIndexedDocumentType, projectNode } from "./project.js";
+import { revisionOf, SOURCE_DOCUMENT_TYPE, SOURCE_ROW_VERSION, sourceRowOf } from "./source-timeline.js";
+import { summarizeLink, summarizeOperation } from "./summarize.js";
+import {
+  TensionAutomation,
+  type TensionAutomationDeps,
+} from "./automation.js";
+import { DriveMembership, type DriveMembershipDeps } from "./membership.js";
+import {
+  normalizeEdgeMetadata,
+  serializeEdgeMetadata,
+} from "./edge-metadata.js";
 
 /**
  * Embedding is SERVER-only. This processor also runs inside Connect's
@@ -18,7 +35,41 @@ import {
  * instance (local `ph vetra` or a deployed Switchboard) additionally embeds,
  * and browser searches reach those vectors through the subgraph.
  */
-const EMBEDDING_ENABLED = typeof window === "undefined";
+const EMBEDDING_ENABLED_DEFAULT = typeof window === "undefined";
+
+/**
+ * Optional wiring for one processor instance. Everything here has a safe
+ * default so the codegen'd factory call shape keeps working.
+ */
+export type GraphIndexerOptions = {
+  /**
+   * Whether this instance embeds. Defaults to "not in a browser"; tests pass
+   * `false` so `onOperations` can be driven without loading a model.
+   */
+  embed?: boolean;
+  /**
+   * Enable derived-document automation (see `automation.ts`). Needs the
+   * host's reactor client and the drive id; absent → this instance only
+   * reads. The factory enables it on the Switchboard host only.
+   */
+  automation?: TensionAutomationDeps;
+  /**
+   * Restrict indexing to documents that belong to one drive (see
+   * `membership.ts`). Absent → every operation the filter admits is indexed,
+   * whichever drive it came from — the pre-gate behaviour, kept for tests.
+   */
+  membership?: DriveMembershipDeps;
+  /** Injectable clock (ms since epoch) for tests. */
+  now?: () => number;
+};
+
+/**
+ * How far in the past an operation may be stamped and still count as LIVE
+ * for automation purposes. Generous, to absorb clock skew between the client
+ * that stamped the action and this host; still hours short of anything a
+ * history replay would present.
+ */
+export const AUTOMATION_LIVE_WINDOW_MS = 5 * 60_000;
 
 /** Text a note is embedded from. Content head is capped so growing note
  * bodies stay inside the model's 512-token window; the hash gate makes any
@@ -33,66 +84,73 @@ function embeddableText(row: {
     .join(" ");
 }
 
-function summarizeOperation(
-  type: string,
-  input: Record<string, unknown>,
-): string {
-  switch (type) {
-    case "SET_TITLE":
-      return `Title changed to "${truncate(input.title)}"`;
-    case "SET_DESCRIPTION":
-      return `Description updated`;
-    case "SET_CONTENT": {
-      const len = typeof input.content === "string" ? input.content.length : 0;
-      return `Content updated (${len} chars)`;
-    }
-    case "SET_NOTE_TYPE":
-      return `Type set to ${String(input.noteType)}`;
-    case "SET_STATUS":
-      return `Status changed to ${String(input.status)}`;
-    case "ADD_LINK":
-      return `Linked to "${truncate(input.targetTitle)}" (${s(input.linkType, "RELATES_TO")})`;
-    case "REMOVE_LINK":
-      return `Removed link ${s(input.id)}`;
-    case "UPDATE_LINK_TYPE":
-      return `Link type changed to ${s(input.linkType)}`;
-    case "ADD_TOPIC":
-      return `Added topic #${s(input.name)}`;
-    case "REMOVE_TOPIC":
-      return `Removed topic`;
-    case "SET_PROVENANCE":
-      return `Provenance set: ${s(input.author, "unknown")}, ${s(input.sourceOrigin)}`;
-    case "SUBMIT_FOR_REVIEW":
-      return `Submitted for review`;
-    case "APPROVE_NOTE":
-      return `Approved by ${s(input.actor, "unknown")}`;
-    case "REJECT_NOTE":
-      return `Rejected: ${truncate(input.comment)}`;
-    case "ARCHIVE_NOTE":
-      return `Archived`;
-    case "RESTORE_NOTE":
-      return `Restored from archive`;
-    case "SET_METADATA_FIELD":
-      return `Metadata: ${String(input.field)} = ${truncate(input.value)}`;
-    default:
-      return type;
-  }
-}
-
-/** Safely stringify an unknown value with optional fallback */
-function s(val: unknown, fallback = ""): string {
-  if (val == null) return fallback;
-  if (typeof val === "string") return val;
-  if (typeof val === "number" || typeof val === "boolean") return String(val);
-  return fallback;
-}
-
-function truncate(val: unknown, max = 60): string {
-  const str = s(val);
-  return str.length > max ? str.slice(0, max) + "..." : str;
-}
-
 export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
+  private readonly embeddingEnabled: boolean;
+  private readonly automation: TensionAutomation | null;
+  /** Drive-membership gate; `null` means "index everything" (tests). */
+  private readonly membership: DriveMembership | null;
+  /** Wall-clock ms when this instance was created — see `isLiveOperation`. */
+  private readonly startedAtMs: number;
+
+  constructor(
+    namespace: string,
+    filter: ConstructorParameters<typeof RelationalDbProcessor<DB>>[1],
+    relationalDb: ConstructorParameters<typeof RelationalDbProcessor<DB>>[2],
+    // The drive the factory made this processor for. The base class (≥
+    // 6.2.3-dev.34) uses it to tell its own drive's deletion from another's.
+    driveId?: string,
+    options: GraphIndexerOptions = {},
+  ) {
+    super(namespace, filter, relationalDb, driveId);
+    this.embeddingEnabled = options.embed ?? EMBEDDING_ENABLED_DEFAULT;
+    this.startedAtMs = options.now?.() ?? Date.now();
+    // `IRelationalDb` is a Kysely instance with namespace helpers; the
+    // automation only needs the Kysely query surface.
+    this.automation = options.automation
+      ? new TensionAutomation(
+          relationalDb as unknown as Kysely<DB>,
+          options.automation,
+        )
+      : null;
+    this.membership = options.membership
+      ? new DriveMembership({ now: options.now, ...options.membership })
+      : null;
+  }
+
+  /** Exposed for tests and for the factory's log line. */
+  get membershipGated(): boolean {
+    return this.membership !== null;
+  }
+
+  /**
+   * Does this operation concern one of our documents? Relationship actions
+   * are gated on their SOURCE (the note that carries the edge), deletions on
+   * the document being deleted, everything else on the document the
+   * operation was applied to. Open when no gate is configured.
+   */
+  private async isOurs(documentId: string): Promise<boolean> {
+    if (!this.membership) return true;
+    return this.membership.has(documentId);
+  }
+
+  /** Exposed for tests and for the factory's log line. */
+  get automationEnabled(): boolean {
+    return this.automation !== null;
+  }
+
+  /**
+   * True when an operation was stamped after this instance started (minus
+   * a skew allowance) — i.e. it is arriving as it happens, not as replay.
+   * An unparseable timestamp is treated as historical: never write on a
+   * guess.
+   */
+  isLiveOperation(timestampUtcMs: string | undefined): boolean {
+    if (!timestampUtcMs) return false;
+    const t = Date.parse(timestampUtcMs);
+    if (Number.isNaN(t)) return false;
+    return t >= this.startedAtMs - AUTOMATION_LIVE_WINDOW_MS;
+  }
+
   static override getNamespace(driveId: string): string {
     return super.getNamespace(driveId);
   }
@@ -107,7 +165,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     // semantic search just works" true for pre-existing documents: the
     // processor cursor has already consumed their history, so onOperations
     // alone would never see them again.
-    if (EMBEDDING_ENABLED) {
+    if (this.embeddingEnabled) {
       void this.backfillMissingEmbeddings().catch((err) =>
         console.warn(`[GraphIndexer] Embedding backfill failed:`, err),
       );
@@ -191,49 +249,153 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     // are applied individually as they arrive — edges aren't a reduction
     // of doc state.
     const lastByDocument = new Map<string, OperationWithContext>();
+    // Sources: the last state per source, kept as a small row for the
+    // source timeline (graph_sources) — never a node, never activity.
+    const lastBySource = new Map<string, OperationWithContext>();
+
+    // Membership first, for the whole batch: the containment edge that
+    // makes a new document "ours" travels in the same job as its initial
+    // state, so the gate must have seen it before judging that state.
+    if (this.membership) {
+      for (const { operation, context } of operations) {
+        this.membership.observe({
+          documentId: context.documentId,
+          actionType: operation.action.type,
+          input: operation.action.input,
+        });
+      }
+    }
 
     for (const entry of operations) {
       const { operation, context } = entry;
       const documentId = context.documentId;
+
+      // A source is kept only as its row — no edges, no activity. Its
+      // deletion still goes through the deletion branch below.
+      if (
+        context.documentType === SOURCE_DOCUMENT_TYPE &&
+        operation.action.type !== "DELETE_DOCUMENT" &&
+        operation.action.type !== "PURGE_DOCUMENT"
+      ) {
+        if (context.resultingState && (await this.isOurs(documentId))) lastBySource.set(documentId, entry);
+        continue;
+      }
 
       // Handle reactor-native relationship system actions first. These
       // fire in `document` scope on the SOURCE document of the edge and
       // are the sole source-of-truth for graph_edges now that note/moc
       // state no longer carries inline links.
       if (operation.action.type === "ADD_RELATIONSHIP") {
-        await this.applyAddRelationship(operation.action.input as {
+        const input = operation.action.input as {
           sourceId: string;
           targetId: string;
           relationshipType?: string;
-        });
+          metadata?: unknown;
+        };
+        if (!(await this.isOurs(input.sourceId))) continue;
+        await this.applyAddRelationship(input);
+        await this.recordLinkActivity(entry);
+        // A recorded contradiction implies an open tension. Fire and
+        // forget: the write must never hold the indexing cursor, and its
+        // failure is logged by the automation itself.
+        //
+        // LIVE operations only. A processor created with `startFrom:
+        // "beginning"` — every new instance — is fed the whole history
+        // first (a changed filter does not: the reactor keeps the cursor
+        // per processor slot, so widening it replays nothing), and history
+        // must never cause writes: it already happened, the tensions it
+        // implies are the agent's backlog, and writes during boot are
+        // rolled back by the reactor while consuming ordinals. Observed
+        // live: two day-old CONTRADICTS pairs replayed at boot produced 29
+        // rolled-back operations, a hole in the ordinal sequence, and a
+        // strict read model that refused to boot across it.
+        if (
+          input.relationshipType === "CONTRADICTS" &&
+          this.automation &&
+          this.isLiveOperation(operation.timestampUtcMs)
+        ) {
+          void this.automation.onContradiction(input.sourceId, input.targetId);
+        }
         continue;
       }
       if (operation.action.type === "REMOVE_RELATIONSHIP") {
-        await this.applyRemoveRelationship(operation.action.input as {
+        const input = operation.action.input as {
           sourceId: string;
           targetId: string;
           relationshipType?: string;
-        });
+        };
+        if (!(await this.isOurs(input.sourceId))) continue;
+        await this.applyRemoveRelationship(input);
+        await this.recordLinkActivity(entry);
+        continue;
+      }
+      // Articulation after the fact: the reactor's UPDATE_RELATIONSHIP
+      // replaces an edge's metadata without touching its ordering.
+      if (operation.action.type === "UPDATE_RELATIONSHIP") {
+        const input = operation.action.input as {
+          sourceId: string;
+          targetId: string;
+          relationshipType?: string;
+          metadata?: unknown;
+        };
+        if (!(await this.isOurs(input.sourceId))) continue;
+        await this.applyUpdateRelationship(input, operation.timestampUtcMs);
+        await this.recordLinkActivity(entry);
         continue;
       }
 
-      // Handle document/drive deletion
+      // Handle document/drive deletion. Three signals, any suffices:
+      //  - DELETE_NODE on a drive document (the file left the tree);
+      //  - DELETE_DOCUMENT, the reactor's own system action on the deleted
+      //    document itself (`deleteDocuments` emits it whether or not any
+      //    drive still listed the file). Without the second, a document
+      //    deleted through the reactor API left a ghost row here;
+      //  - PURGE_DOCUMENT (≥ 6.2.3-dev.34), the erasure marker. A purged
+      //    document's other operations are never delivered, so this is the
+      //    only chance to forget it — and it must be forgotten entirely.
       if (
         context.documentType === "powerhouse/document-drive" &&
         operation.action.type === "DELETE_NODE"
       ) {
+        // Another drive removing a file says nothing about our index.
+        if (this.membership && documentId !== this.membership.driveId) continue;
         const deleteInput = operation.action.input as { id: string };
         await this.deleteNode(deleteInput.id);
         lastByDocument.delete(deleteInput.id);
+        lastBySource.delete(deleteInput.id);
+        continue;
+      }
+      if (
+        operation.action.type === "DELETE_DOCUMENT" ||
+        operation.action.type === "PURGE_DOCUMENT"
+      ) {
+        const target =
+          (operation.action.input as { documentId?: string }).documentId ??
+          documentId;
+        // Our own vault drive deleted or purged: the whole projection is its
+        // data. The base class matches by the drive id the factory passed,
+        // so another drive's deletion never lands here. Nothing after the
+        // drive's own deletion is delivered, so stop.
+        if (this.isNamespaceDrive(target)) {
+          await this.dropNamespace();
+          console.log(
+            `[GraphIndexer] Drive ${target} ${operation.action.type === "PURGE_DOCUMENT" ? "purged" : "deleted"}: dropped namespace ${this.namespace}`,
+          );
+          return;
+        }
+        // Membership is gone by now (the reactor drops containment first),
+        // so use the index itself as the answer: deleting a row we never
+        // had is a no-op.
+        await this.deleteNode(target);
+        lastByDocument.delete(target);
+        lastBySource.delete(target);
         continue;
       }
 
-      // Only process knowledge-note and moc documents for state reconciliation
-      if (
-        context.documentType !== "bai/knowledge-note" &&
-        context.documentType !== "bai/moc"
-      )
-        continue;
+      // Only indexed document types take part in state reconciliation —
+      // see `project.ts` for the list and why tensions/observations are in.
+      if (!isIndexedDocumentType(context.documentType)) continue;
+      if (!(await this.isOurs(documentId))) continue;
 
       // Index operation for history tracking
       try {
@@ -241,9 +403,22 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         const signer = operation.action.context?.signer as
           | {
               user?: { address?: string };
-              app?: { name?: string };
+              app?: { name?: string; key?: string };
+              signatures?: Array<string | string[]>;
             }
           | undefined;
+        // Keep the LAST signature, which is the one the verifier checks
+        // (`createSignatureVerifier` reads `signatures[length - 1]`). The
+        // reactor stores tuples; the wire carries them joined by ", ".
+        // Persisting the serialized form means a reader can verify the op
+        // from this projection alone, without a second reactor round-trip.
+        const lastSignature = signer?.signatures?.at(-1);
+        const signature =
+          lastSignature === undefined
+            ? null
+            : Array.isArray(lastSignature)
+              ? lastSignature.join(", ")
+              : lastSignature;
         await this.relationalDb
           .insertInto("graph_operations")
           .values({
@@ -257,6 +432,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             input_json: JSON.stringify(input),
             signer_address: signer?.user?.address || null,
             signer_app: signer?.app?.name || null,
+            signer_key: signer?.app?.key || null,
+            signature,
           })
           .onConflict((oc) => oc.column("id").doNothing())
           .execute();
@@ -270,6 +447,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       }
     }
 
+    await this.reconcileSources(lastBySource);
+
     // Reconcile each changed document from its resulting state
     for (const [documentId, entry] of lastByDocument) {
       try {
@@ -278,28 +457,31 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
 
         const parsed = JSON.parse(stateJson) as {
           global?: Record<string, unknown>;
+          header?: { createdAtUtcIso?: unknown };
         };
         const global = (parsed.global ?? parsed) as Record<string, unknown>;
+        // When the document entered the vault. The reactor serialises the
+        // resulting state with its header; without one, null — never a guess
+        // from the written date, which is what `created_at` already holds.
+        const addedAt =
+          typeof parsed.header?.createdAtUtcIso === "string"
+            ? parsed.header.createdAtUtcIso
+            : null;
+        // `updated_at` must be the time the DOCUMENT changed, not the time
+        // the indexer happened to touch the row. Using wall-clock here made
+        // every reindex stamp all nodes with one identical instant, which
+        // silently destroyed `knowledgeGraphRecent` ordering and left
+        // STALE_NOTES with nothing but DRAFT counts to work from. The last
+        // operation for this document carries the real edit time, and
+        // because a reindex replays operations it reconstructs true history
+        // rather than flattening it.
         const now = new Date().toISOString();
-        const isMoc = entry.context.documentType === "bai/moc";
+        const documentUpdatedAt = entry.operation.timestampUtcMs ?? now;
+        const documentType = entry.context.documentType;
+        if (!isIndexedDocumentType(documentType)) continue;
 
-        // Extract provenance (knowledge notes only)
-        const provenance = global.provenance as
-          | {
-              author?: string;
-              sourceOrigin?: string;
-              createdAt?: string;
-            }
-          | undefined;
-
-        // Map fields based on document type
-        const noteType = isMoc
-          ? `MOC (${s(global.tier, "TOPIC")})`
-          : ((global.noteType as string) ?? null);
-        const content = isMoc
-          ? ((global.orientation as string) ?? null)
-          : ((global.content as string) ?? null);
-        const status = isMoc ? "MOC" : ((global.status as string) ?? "DRAFT");
+        const projected = projectNode(documentType, global);
+        const { topics, derivedEdges, ...row } = projected;
 
         // Upsert node
         await this.relationalDb
@@ -307,29 +489,18 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           .values({
             id: documentId,
             document_id: documentId,
-            title: (global.title as string) ?? null,
-            description: (global.description as string) ?? null,
-            note_type: noteType,
-            status,
-            content,
-            author: provenance?.author ?? null,
-            source_origin: provenance?.sourceOrigin ?? null,
-            created_at:
-              (global.createdAt as string) ?? provenance?.createdAt ?? null,
-            updated_at: now,
+            ...row,
+            added_at: addedAt,
+            updated_at: documentUpdatedAt,
           })
           .onConflict((oc) =>
             oc.column("document_id").doUpdateSet({
-              title: (global.title as string) ?? null,
-              description: (global.description as string) ?? null,
-              note_type: noteType,
-              status,
-              content,
-              author: provenance?.author ?? null,
-              source_origin: provenance?.sourceOrigin ?? null,
-              created_at:
-                (global.createdAt as string) ?? provenance?.createdAt ?? null,
-              updated_at: now,
+              ...row,
+              // A document enters the vault once: keep the earliest time any
+              // operation's header gives. LEAST skips NULL, so a row the
+              // migration could only estimate takes the header's own time.
+              added_at: (eb) => eb.fn<string | null>("least", [eb.ref("graph_nodes.added_at"), eb.ref("excluded.added_at")]),
+              updated_at: documentUpdatedAt,
             }),
           )
           .execute();
@@ -340,27 +511,31 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           .where("document_id", "=", documentId)
           .execute();
 
-        const topics =
-          (global.topics as Array<string | Record<string, unknown>>) ?? [];
         if (topics.length > 0) {
           await this.relationalDb
             .insertInto("graph_topics")
             .values(
-              topics.map((topic, idx) => {
-                const name =
-                  typeof topic === "string"
-                    ? topic
-                    : ((topic.name as string) ?? "");
-                return {
-                  id: `${documentId}-topic-${idx}`,
-                  document_id: documentId,
-                  name,
-                  updated_at: now,
-                };
-              }),
+              topics.map((name, idx) => ({
+                id: `${documentId}-topic-${idx}`,
+                document_id: documentId,
+                name,
+                updated_at: documentUpdatedAt,
+              })),
             )
             .execute();
         }
+
+        // Reconcile DERIVED edges (tension → involved notes, observation →
+        // promoted note) from this document's state: delete + reinsert,
+        // exactly like topics, so they track the document and never go
+        // stale. Knowledge edges are untouched here — see below.
+        await this.reconcileDerivedEdges(
+          documentId,
+          derivedEdges,
+          documentUpdatedAt,
+        );
+
+        const content = row.content;
 
         // Edges are NOT reconciled from doc state anymore — they live in
         // the reactor's DocumentRelationship table, populated via
@@ -372,11 +547,11 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         // churn that doesn't touch title/description/content). Detached so
         // ~12ms of inference never delays cursor advancement, and failures
         // never error the processor — a poisoned doc would freeze the cursor.
-        if (EMBEDDING_ENABLED) {
+        if (this.embeddingEnabled) {
           void this.embedNode({
             document_id: documentId,
-            title: (global.title as string) ?? null,
-            description: (global.description as string) ?? null,
+            title: row.title,
+            description: row.description,
             content,
           }).catch((err) =>
             console.warn(
@@ -399,16 +574,27 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
    * `target_title` from `graph_nodes` if the target is already indexed;
    * otherwise leaves it null (rendering falls back to the target's slug
    * until the target's own state reconciles).
+   *
+   * Only KNOWLEDGE relationship types are indexed. The reactor reuses
+   * ADD_RELATIONSHIP for its own containment bookkeeping — adding a file to
+   * a drive emits `(drive, document, "child")` — and indexing those gave the
+   * drive an outgoing edge to every document in the vault, which made orphan
+   * detection structurally impossible and inflated every edge-derived
+   * metric. See `link-types.ts` for the full rationale; drive membership
+   * still comes from the drive document's own node tree.
    */
   private async applyAddRelationship(input: {
     sourceId: string;
     targetId: string;
     relationshipType?: string;
+    metadata?: unknown;
   }): Promise<void> {
     if (!input.sourceId || !input.targetId) return;
-    const now = new Date().toISOString();
     const relType = input.relationshipType ?? null;
-    const edgeId = `${input.sourceId}-${input.targetId}-${relType ?? "_"}`;
+    if (!isIndexedLinkType(relType)) return;
+    const now = new Date().toISOString();
+    const edgeId = `${input.sourceId}-${input.targetId}-${relType}`;
+    const metadata = serializeEdgeMetadata(normalizeEdgeMetadata(input.metadata));
 
     let targetTitle: string | null = null;
     try {
@@ -431,10 +617,103 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         link_type: relType,
         target_title: targetTitle,
         updated_at: now,
+        metadata,
       })
       .onConflict((oc) =>
         oc.column("id").doUpdateSet({
           link_type: (eb) => eb.ref("excluded.link_type"),
+          target_title: (eb) => eb.ref("excluded.target_title"),
+          updated_at: (eb) => eb.ref("excluded.updated_at"),
+          // Mirror the reactor: a repeated ADD is a no-op for metadata,
+          // UPDATE_RELATIONSHIP is how it changes. A row that has none yet
+          // (pre-metadata projection) takes what the replay offers.
+          metadata: (eb) =>
+            eb.fn.coalesce("graph_edges.metadata", eb.ref("excluded.metadata")),
+        }),
+      )
+      .execute();
+  }
+
+  private async applyUpdateRelationship(
+    input: {
+      sourceId: string;
+      targetId: string;
+      relationshipType?: string;
+      metadata?: unknown;
+    },
+    timestampUtcMs: string | undefined,
+  ): Promise<void> {
+    if (!input.sourceId || !input.targetId) return;
+    const relType = input.relationshipType ?? null;
+    if (!isIndexedLinkType(relType)) return;
+    await this.relationalDb
+      .updateTable("graph_edges")
+      .set({
+        metadata: serializeEdgeMetadata(normalizeEdgeMetadata(input.metadata)),
+        updated_at: timestampUtcMs ?? new Date().toISOString(),
+      })
+      .where("id", "=", `${input.sourceId}-${input.targetId}-${relType}`)
+      .execute();
+  }
+
+  /**
+   * Replace this document's derived edges with the set implied by its
+   * current state. Only `DERIVED_LINK_TYPES` rows with this source are
+   * touched, so a manually added knowledge edge from a tension (if anyone
+   * ever does that) survives.
+   */
+  private async reconcileDerivedEdges(
+    documentId: string,
+    edges: Array<{ linkType: string; targetId: string }>,
+    updatedAt: string,
+  ): Promise<void> {
+    await this.relationalDb
+      .deleteFrom("graph_edges")
+      .where("source_document_id", "=", documentId)
+      .where("link_type", "in", [...DERIVED_LINK_TYPES])
+      .execute();
+    if (edges.length === 0) return;
+
+    const targetIds = [...new Set(edges.map((e) => e.targetId))];
+    const titles = new Map<string, string | null>();
+    try {
+      const rows = await this.relationalDb
+        .selectFrom("graph_nodes")
+        .where("document_id", "in", targetIds)
+        .select(["document_id", "title"])
+        .execute();
+      for (const r of rows) titles.set(r.document_id, r.title);
+    } catch {
+      // titles are a rendering convenience; the edge is the fact
+    }
+
+    const values = new Map<
+      string,
+      {
+        id: string;
+        source_document_id: string;
+        target_document_id: string;
+        link_type: string;
+        target_title: string | null;
+        updated_at: string;
+      }
+    >();
+    for (const e of edges) {
+      const id = `${documentId}-${e.targetId}-${e.linkType}`;
+      values.set(id, {
+        id,
+        source_document_id: documentId,
+        target_document_id: e.targetId,
+        link_type: e.linkType,
+        target_title: titles.get(e.targetId) ?? null,
+        updated_at: updatedAt,
+      });
+    }
+    await this.relationalDb
+      .insertInto("graph_edges")
+      .values([...values.values()])
+      .onConflict((oc) =>
+        oc.column("id").doUpdateSet({
           target_title: (eb) => eb.ref("excluded.target_title"),
           updated_at: (eb) => eb.ref("excluded.updated_at"),
         }),
@@ -442,6 +721,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       .execute();
   }
 
+  /**
+   * Deletes unconditionally — including for non-knowledge types, which
+   * `applyAddRelationship` no longer indexes. A projection that predates that
+   * change still holds `child` rows, and a REMOVE_RELATIONSHIP is a free
+   * chance to drop one; deleting a row that isn't there costs nothing.
+   */
   private async applyRemoveRelationship(input: {
     sourceId: string;
     targetId: string;
@@ -456,12 +741,125 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       .execute();
   }
 
+  /**
+   * A link change is activity on the note the link starts from. The
+   * reactor numbers `document`-scope operations separately from `global`
+   * ones, so the row id carries the scope: `<documentId>-document-<index>`
+   * cannot collide with the `<documentId>-<index>` of a global operation.
+   * The target's title comes from `graph_nodes`; with none, the id stands
+   * in. Non-critical like every other activity write: a failure here is
+   * swallowed so it can never stop the edge itself.
+   */
+  private async recordLinkActivity(
+    entry: OperationWithContext,
+  ): Promise<void> {
+    try {
+      const { operation, context } = entry;
+      const input = operation.action.input as Record<string, unknown>;
+      const sourceId = typeof input.sourceId === "string" ? input.sourceId : "";
+      const targetId = typeof input.targetId === "string" ? input.targetId : "";
+      if (!sourceId || !targetId) return;
+      const target = await this.relationalDb
+        .selectFrom("graph_nodes")
+        .select("title")
+        .where("document_id", "=", targetId)
+        .executeTakeFirst();
+      const summary = summarizeLink(
+        operation.action.type,
+        input,
+        target?.title ?? null,
+      );
+      const signer = operation.action.context?.signer as
+        | {
+            user?: { address?: string };
+            app?: { name?: string; key?: string };
+            signatures?: Array<string | string[]>;
+          }
+        | undefined;
+      const lastSignature = signer?.signatures?.at(-1);
+      const signature =
+        lastSignature === undefined
+          ? null
+          : Array.isArray(lastSignature)
+            ? lastSignature.join(", ")
+            : lastSignature;
+      await this.relationalDb
+        .insertInto("graph_operations")
+        .values({
+          id: `${sourceId}-document-${operation.index}`,
+          document_id: sourceId,
+          operation_type: operation.action.type,
+          timestamp: operation.timestampUtcMs ?? new Date().toISOString(),
+          index: operation.index,
+          scope: context.scope ?? "document",
+          summary,
+          input_json: JSON.stringify(input),
+          signer_address: signer?.user?.address || null,
+          signer_app: signer?.app?.name || null,
+          signer_key: signer?.app?.key || null,
+          signature,
+        })
+        .onConflict((oc) => oc.column("id").doNothing())
+        .execute();
+    } catch {
+      // non-critical — the edge write has already happened
+    }
+  }
+
   async onDisconnect(): Promise<void> {
     // Intentionally no-op: preserve indexed data across restarts.
   }
 
+  /**
+   * Each changed source's row, from its last resulting state. The row is
+   * what the timeline reads — title, status, file, who and when, its claims —
+   * never the source's text, so a 921-chapter book costs 921 small rows.
+   */
+  private async reconcileSources(lastBySource: Map<string, OperationWithContext>): Promise<void> {
+    for (const [documentId, entry] of lastBySource) {
+      try {
+        const stateJson = entry.context.resultingState;
+        if (!stateJson) continue;
+        const parsed = JSON.parse(stateJson) as { global?: Record<string, unknown>; header?: Record<string, unknown> };
+        const row = sourceRowOf({ header: { ...parsed.header, id: documentId }, state: { global: parsed.global ?? parsed } });
+        if (!row) continue;
+        // The resulting state's header may not carry the change time; the operation's is it.
+        if (!row.updatedAt) row.updatedAt = String(entry.operation.timestampUtcMs);
+        const values = {
+          row_json: JSON.stringify(row),
+          revision: revisionOf(parsed),
+          version: SOURCE_ROW_VERSION,
+          updated_at: entry.operation.timestampUtcMs,
+        };
+        await this.relationalDb
+          .insertInto("graph_sources")
+          .values({ document_id: documentId, ...values })
+          .onConflict((oc) =>
+            oc
+              .column("document_id")
+              .doUpdateSet(values)
+              // Never back to an older state: an operation delivered late, or a row a reindex read newer.
+              .where((eb) =>
+                eb.or([
+                  eb("graph_sources.revision", "<=", eb.ref("excluded.revision")),
+                  eb("excluded.revision", "<", 0),
+                  eb("graph_sources.version", "<", SOURCE_ROW_VERSION),
+                ]),
+              ),
+          )
+          .execute();
+      } catch (err) {
+        console.warn(`[GraphIndexer] Source row failed for ${documentId}:`, err instanceof Error ? err.message : err);
+      }
+    }
+  }
+
   private async deleteNode(documentId: string): Promise<void> {
     try {
+      await this.relationalDb
+        .deleteFrom("graph_sources")
+        .where("document_id", "=", documentId)
+        .execute();
       await this.relationalDb
         .deleteFrom("graph_topics")
         .where("document_id", "=", documentId)
@@ -475,7 +873,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           ]),
         )
         .execute();
-      await this.relationalDb
+      const [removed] = await this.relationalDb
         .deleteFrom("graph_nodes")
         .where("document_id", "=", documentId)
         .execute();
@@ -491,7 +889,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           err,
         ),
       );
-      console.log(`[GraphIndexer] Deleted node ${documentId}`);
+      // Only when a node was actually indexed. A replay from the beginning of
+      // the log re-applies every historical DELETE_NODE / DELETE_DOCUMENT, and
+      // logging each no-op buried the boot output in "Deleted node" lines.
+      if (Number(removed?.numDeletedRows ?? 0) > 0) {
+        console.log(`[GraphIndexer] Deleted node ${documentId}`);
+      }
     } catch (err: unknown) {
       console.error(`[GraphIndexer] Error deleting node ${documentId}:`, err);
     }

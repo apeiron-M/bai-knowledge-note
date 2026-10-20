@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-73a63e3a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "73a63e3a-2ff1-490a-a78e-66e5a8ccc876",
+      "targetTitle": "Pattern's Agent-level and ecosystem-level emergency response"
+    },
+    {
+      "id": "lnk-776bc1ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "776bc1ea-f510-4135-8909-52205da9834f",
+      "targetTitle": "Grove has no emergency response protocol at either ecosystem"
+    },
+    {
+      "id": "lnk-eef82f0a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eef82f0a-4f7d-4618-a5d9-816fd69ab448",
+      "targetTitle": "doc-9d215bf6"
+    },
+    {
+      "id": "lnk-fae11b63-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fae11b63-ad3d-4bdc-bee0-d5f21cad0f8b",
+      "targetTitle": "Osero's relationship with Sky rests on a bilateral Ecosystem"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Osero's emergency response protocols are entirely unwritten for both ecosystem-wide and Agent-only situations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "245c732c-080a-4047-b151-cfa9c6c86246",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "58c5dd9b-f7de-4443-8e2a-89db0984988c",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9cf27e4-1ec9-4596-be0a-d79efddfd0ad",
+      "name": "emergency-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two adjacent documents in the Omni section define Osero's emergency posture and then supply nothing. A.6.1.1.7.3.1.2, Sky Ecosystem Emergency Response, covers \"situations that impact the entire Sky Ecosystem\" and states: \"This protocol will be specified in a future iteration of the Osero Artifact.\" A.6.1.1.7.3.1.3, Agent-Specific Emergency Response, covers \"situations solely impacting Osero versus the broader Sky Ecosystem\" \u2014 same deferral.\n\nThe gap is narrower than it first appears but still substantial. Osero does have emergency procedures *within* Primitives: the accelerated Root Edit at A.6.1.1.7.2.2.2.2.1.2.3.1, and the Liquidity Layer's revoke-withdraw-burn sequence at A.6.1.1.7.2.6.1.2.2.3. What is missing is the Agent-level layer that would coordinate them, decide which applies, or handle an emergency that is not a governance action or a liquidity-layer compromise.\n\nThe distinction the empty sections draw is itself informative. Separating ecosystem-wide from Osero-only emergencies asserts that the two require different responses \u2014 plausibly because an ecosystem-wide event may demand Osero act against its own local interest, while an Osero-only event is its own to resolve. The taxonomy is set even though the content is not.\n\nRead against the same Artifact's very specific liquidity-layer emergency machinery, the contrast suggests the drafting priority: mechanisms that need onchain wiring and named multisigs were specified first, and the coordinating judgment layer was left for later.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.6.1.1.7.3.1.2 and .1.3 name the two cases and defer both to future iterations, so the Agent has emergency procedures only inside specific Primitives.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9dcad900-6831-4fd3-ba20-0537d341b16b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0897d6e5-623d-4eab-8b50-4e065011536a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

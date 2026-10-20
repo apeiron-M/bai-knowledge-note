@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-f1a6ad39-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1a6ad39-f60f-41c2-8c48-7b087679c412",
+      "targetTitle": "Sky retains the majority of each Prime's token supply and sp"
+    },
+    {
+      "id": "lnk-99798867-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "99798867-3c1d-46b1-8dba-b7d8ad139074",
+      "targetTitle": "Token flow from Sky to a Prime stops the moment the Prime be"
+    },
+    {
+      "id": "lnk-f715cc2b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f715cc2b-951b-44db-9eaa-c4607c6aa56c",
+      "targetTitle": "Prime Foundations license their intellectual property from M"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky receives a universal override over each Prime Agent Token at the token generation event",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "97989cbd-178c-4e84-a182-50439bbf65dd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0602f1aa-db3e-4a5f-bf8f-4e1b751ede28",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a0697b0-f763-4bcb-9e90-f70e3dde44ab",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.2.2.1.4 describes the token generation event: \"The respective Prime Foundations for Spark and Grove, or one of their subsidiaries or affiliate companies, will conduct the token generation event. In the token generation event, the Agent tokens will be split and sent to the Prime SubProxy and Sky Proxy. In this process, Sky will receive a universal override over the Prime Agent Token in question.\"\n\nThe override is separate from the holdings. Sky already retains most of the supply; this grants control over the token contract itself, permanently and from the moment of creation. A Prime's token is therefore never fully its own \u2014 the capability is embedded at genesis rather than granted later, so there is no moment at which the Prime holds an unencumbered asset and subsequently gives something up.\n\nThe motive becomes clear from A.2.8.2.2.2.2.6, where Sky's first listed recourse for bad debt is \"minting Prime Agent tokens.\" That recovery route only exists if Sky can mint a token it does not issue \u2014 which is exactly what a universal override provides. The override is what makes the recourse executable rather than aspirational.\n\nThe design consequence is that a Prime's token is best understood as ecosystem-controlled equity in a subsidiary rather than as an independent asset. Anyone valuing SPK or GROVE has to price the override, since dilution is available to Sky at its discretion under stated conditions.\n\nRouting the TGE through the Prime Foundation \"or one of their subsidiaries or affiliate companies\" while the resulting control lands with Sky also separates who performs the issuance from who ends up holding authority over it \u2014 a legal-entity arrangement whose details the Atlas does not elaborate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:24:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Prime Foundation conducts the TGE, tokens are split to the Prime SubProxy and the Sky Proxy, and in that process Sky acquires a universal override over the token in question.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3b90cd25-a346-428d-bb38-cafada11529f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:24:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ef60b325-446c-4099-8cfa-c64819b59fd3",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:24:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

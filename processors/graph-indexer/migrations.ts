@@ -1,4 +1,5 @@
 import type { IRelationalDb } from "@powerhousedao/shared/processors";
+import { sql } from "kysely";
 
 export async function up(db: IRelationalDb<any>): Promise<void> {
   await db.schema
@@ -123,7 +124,7 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .execute();
 
   // Add signer columns to graph_operations (idempotent)
-  for (const col of ["signer_address", "signer_app"]) {
+  for (const col of ["signer_address", "signer_app", "signer_key"]) {
     try {
       await db.schema
         .alterTable("graph_operations")
@@ -132,6 +133,103 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     } catch {
       // column likely already exists — ignore
     }
+  }
+  // The full signature tuple. `text`, not varchar: a tuple is ~300 chars
+  // today and the format is the reactor's to grow.
+  try {
+    await db.schema
+      .alterTable("graph_operations")
+      .addColumn("signature", "text")
+      .execute();
+  } catch {
+    // column likely already exists — ignore
+  }
+
+  // --- Edge metadata ---
+  //
+  // The reactor stores an opaque jsonb per relationship; the vault reads
+  // `reason` / `confidence` out of it (edge-metadata.ts). Kept as text here
+  // so the projection has no dialect-specific column type.
+  try {
+    await db.schema
+      .alterTable("graph_edges")
+      .addColumn("metadata", "text")
+      .execute();
+  } catch {
+    // column likely already exists — ignore
+  }
+
+  // --- Document kind ---
+  //
+  // `document_type` lets consumers separate knowledge (notes, MoCs, research
+  // claims) from the meta-documents indexed alongside them (tensions,
+  // observations). Rows that predate the column are backfilled from the only
+  // signal they carry: the MoC status sentinel. Everything else in a
+  // pre-existing projection was a knowledge note, because nothing else was
+  // indexed before this column existed.
+  try {
+    await db.schema
+      .alterTable("graph_nodes")
+      .addColumn("document_type", "varchar(100)")
+      .execute();
+  } catch {
+    // column likely already exists — ignore
+  }
+  await db
+    .updateTable("graph_nodes")
+    .set({
+      document_type: sql`case when status = 'MOC' then 'bai/moc' else 'bai/knowledge-note' end`,
+    })
+    .where("document_type", "is", null)
+    .execute();
+  await db.schema
+    .createIndex("idx_graph_nodes_document_type")
+    .on("graph_nodes")
+    .column("document_type")
+    .ifNotExists()
+    .execute();
+
+  // When the document entered the vault: its header's createdAtUtcIso.
+  // `created_at` is when it was written (provenance) — weeks earlier for an
+  // imported note — so the source timeline needs both. Rows that predate the
+  // column stay null until their next operation or a reindex: nothing in the
+  // index knows the header's time.
+  await db.schema
+    .alterTable("graph_nodes")
+    .addColumn("added_at", "varchar(50)", (col) => col.ifNotExists())
+    .execute();
+  // Rows that predate the column: the document's first recorded operation is
+  // the best the index knows of when it arrived. Its next operation replaces
+  // the estimate with the header's own time (the live write keeps the
+  // earliest), as does a reindex. Only nulls are touched, and only ISO times
+  // are trusted — anything else would not sort with them.
+  await db
+    .updateTable("graph_nodes")
+    .set((eb) => ({
+      added_at: eb
+        .selectFrom("graph_operations")
+        .select((o) => o.fn.min<string>("graph_operations.timestamp").as("first"))
+        .whereRef("graph_operations.document_id", "=", "graph_nodes.document_id")
+        .where("graph_operations.timestamp", "like", "____-__-__T%"),
+    }))
+    .where("added_at", "is", null)
+    .execute();
+
+  // A small row per source document — see `GraphSource` in schema.ts.
+  await db.schema
+    .createTable("graph_sources")
+    .ifNotExists()
+    .addColumn("document_id", "varchar(255)", (col) => col.primaryKey())
+    .addColumn("row_json", "text", (col) => col.notNull())
+    .addColumn("revision", "integer", (col) => col.notNull().defaultTo(-1))
+    .addColumn("version", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("updated_at", "varchar(50)", (col) => col.notNull())
+    .execute();
+  for (const [name, fallback] of [["revision", -1], ["version", 1]] as const) {
+    await db.schema
+      .alterTable("graph_sources")
+      .addColumn(name, "integer", (col) => col.notNull().defaultTo(fallback).ifNotExists())
+      .execute();
   }
 
   // Durable embedding store — replaces the separate memory:// PGlite that
@@ -153,6 +251,7 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
 }
 
 export async function down(db: IRelationalDb<any>): Promise<void> {
+  await db.schema.dropTable("graph_sources").ifExists().execute();
   await db.schema.dropTable("note_embeddings").ifExists().execute();
   await db.schema.dropTable("graph_operations").ifExists().execute();
   await db.schema.dropTable("graph_topics").ifExists().execute();

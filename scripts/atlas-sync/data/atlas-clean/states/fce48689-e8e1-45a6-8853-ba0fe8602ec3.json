@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's Freezer can cancel the issuer's queued Timelock changes while Grove's SubProxy executes them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e23359c0-f019-4b40-9827-0aeab91efcb9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c302c8ff-49eb-41b0-9ca4-0e428fda706a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cfa290c8-e47d-429f-b05e-5d833acd694d",
+      "name": "counterparties",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ab0cf8d-4be5-424f-a9f1-853ec6a3c0b8",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Timelock that holds `OWNER_ROLE` over a Tokenized Treasury Instance is operated by the credit token issuer, but its three internal roles are split across parties. The issuer holds `PROPOSER_ROLE` (specified per Instance, per A.6.1.1.2.2.6.1.2.2.1.1.2.1). The `EXECUTOR_ROLE`, which runs a queued operation once the delay elapses, \"is held by the Grove SubProxy Account\" (A.6.1.1.2.2.6.1.2.2.1.1.2.7). The `CANCELLER_ROLE`, which kills a queued operation before execution, \"is held by the Freezer Multisig across all Tokenized Treasury Instances, and additionally by the credit token issuer's address that holds the Timelock's `PROPOSER_ROLE`\" (A.6.1.1.2.2.6.1.2.2.1.1.2.8).\n\nThis converts a standard timelock into a **mutual-consent mechanism**. The issuer can queue a change to a contract Grove has money in, but cannot enact it \u2014 enactment requires Grove's SubProxy \u2014 and Grove's emergency responders can cancel it outright during the delay window.\n\nThe timelock delay stops being merely a notice period and becomes a **veto window**. Its purpose is not just to let observers see a change coming; it is to give a specific named party time to stop it.\n\nGiving Cancel to the Freezer Multisig rather than to the SubProxy is consistent with the subtractive-emergency-power pattern: cancellation is purely negative, so it belongs with the fast 2-of-5 responder, while execution \u2014 an affirmative act \u2014 sits with the slower governance-controlled SubProxy.\n\nFor an allocator, this is the mechanism that makes a third-party-owned vault tolerable at size. Grove's protection against adverse changes to an instrument it does not own is procedural rather than contractual: it holds one half of the enactment path and a share of the abort switch.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Across all Tokenized Treasury Instances the Freezer Multisig holds Canceller and the SubProxy holds Executor on the issuer-operated Timelock, so the issuer proposes but cannot unilaterally enact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-6bc0f59e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6bc0f59e-3898-4377-8fa9-afb37ff6dd4a",
+      "targetTitle": "Deployment verification is explicitly outside audit scope an"
+    },
+    {
+      "id": "lnk-f1feee13-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1feee13-357e-4e83-8f8f-c8fc6ae247e9",
+      "targetTitle": "The Technical Scope Forum Post is the only link binding an o"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Code must already have passed internal non-author review before it can be submitted for external audit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9e84c146-3695-479b-a178-dbb00197dd5d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7377f5d1-dc3c-4c92-9c3e-a67a5e9d6c7d",
+      "name": "audit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d2533c1-c1da-41ba-9dbf-adc6d7cbe658",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.7.2.1 gates audit intake: \"The commit hash submitted for audit must correspond to a Pull Request that has been **reviewed and approved by at least one (1) member of the team responsible for the code who is not an author of the Pull Request**. Evidence of the review and approval must be available to Core GovOps as part of the audit request and intake process.\"\n\nThe rule prevents auditors from becoming the first reviewers. Sending unreviewed code to an audit spends expensive external attention on defects a teammate would have caught in an hour, and it produces a report full of findings that says little about the design \u2014 the audit is consumed by cleanup rather than by adversarial analysis.\n\nIt also protects the meaning of an audit report. A report against a commit that no one internally had endorsed documents a snapshot of work in progress; a report against a reviewed commit documents the team's considered position.\n\nRequiring *evidence* rather than an assertion is what makes it enforceable. Core GovOps compiles the intake forms (A.1.10.2.7.2) and can therefore refuse a request that lacks the approval trail \u2014 a checkable gate rather than an honour system.\n\nThe non-author requirement is the same separation the Atlas applies to Spell forum posts, Prime Agent drafts, Executive Documents and Technical Scope verification. What varies is only what the reviewer must not be: here, the author of the pull request being sent out.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.7.2.1 requires the audited commit hash to correspond to a pull request approved by a non-author teammate, with evidence available to Core GovOps.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "72c43fd5-d9bc-43f5-a95a-1876bf4896bb",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d4a67a9a-ecdf-4871-84ee-b9fe9188aa8a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

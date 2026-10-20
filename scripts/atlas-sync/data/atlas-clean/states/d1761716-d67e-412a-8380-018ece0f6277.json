@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Minting has no precondition beyond the caller's role and the rate limit, so there is no pause switch to flip",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2c099ddd-7fa8-4789-b8d5-f1605b7e3e8f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9d9c19cc-1def-4c20-8905-3d255d4e482a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d357ca04-d6e2-4599-82ba-26ddae6cfe07",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fe7d1fe1-dc25-4dc8-9965-95c0c7af8e99",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.1.1.1 makes an unusually candid statement about what is *not* checked: \"Only the `RELAYER` role is allowed to call `mintUSDS`, enforced by the `onlyRole(RELAYER)` gate on the function; **there is no other precondition or active-state check**.\" A.6.1.1.2.2.6.1.2.1.2.1.2.1.2.1 says the same for `burnUSDS`.\n\nSo the entire guard on Grove drawing on Sky's balance sheet is two things: **who is calling**, and **how much allowance remains**. There is no global paused flag, no circuit-breaker state, no emergency mode the contract consults.\n\nThat explains the shape of the Freezer Role. A.6.1.1.2.2.6.1.2.2.1.1.1.4 defines it as \"the emergency role that can remove a compromised Relayer\" \u2014 not an entity that can pause the system, because there is nothing to pause. **Freezing the Grove Liquidity Layer is implemented as de-authorizing every actor who can act on it**, which is why the Diamond PAU needed the AdministeredAgent indirection (A.6.1.1.2.2.6.1.2.1.1.1.4.1.5) to make actor removal surgical.\n\nThe design is defensible: fewer state variables on the hot path means fewer ways for the guard itself to fail, and a role-based halt cannot be bypassed by a forgotten function that omits the pause modifier. But it has a specific consequence worth naming \u2014 **a freeze is not atomic across a role held by three multisigs** (A.6.1.1.2.2.6.1.2.1.2.2). Halting activity means removing each relayer, and until the last removal lands, some path remains live.\n\nThe Tokenized Treasury Instances are different: there the `PAUSER_ROLE` genuinely pauses contract operations (A.6.1.1.2.2.6.1.2.2.1.1.2.4). The Liquidity Layer's own controller has no equivalent.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Artifact states explicitly that mintUSDS and burnUSDS have 'no other precondition or active-state check' \u2014 which is why the Freezer's power is to remove relayers rather than to halt the contract.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

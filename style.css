@@ -20,19 +20,29 @@
  * Toggled via data-bai-theme attribute on .bai-theme wrapper
  */
 
-/* Default: dark theme */
+/* Default: dark theme. Also declared on <html data-bai-toast-theme> so the
+   toast rules at the end of this section can use the same tokens outside
+   the .bai-theme subtree (see editors/shared/toast-theme.ts). */
 .bai-theme,
-[data-bai-theme="dark"] {
+[data-bai-theme="dark"],
+html[data-bai-toast-theme="dark"] {
   --bai-bg: #1e1e2e;
   --bai-surface: #181825;
   --bai-deep: #11111b;
   --bai-hover: #313244;
+  /* Floating layers (toasts). Lighter than the page, the way Mocha's
+     mantle/base/surface ladder expresses elevation in the dark — but a half
+     step: surface0 (#313244) read as a grey card in side-by-side renders,
+     while this lifts off both the page (#1e1e2e) and the sidebar (#181825)
+     and lets the hairline and shadow do the rest. */
+  --bai-overlay: #262638;
+  --bai-overlay-hover: rgba(255, 255, 255, 0.08);
   --bai-border: rgba(255, 255, 255, 0.1);
   --bai-ring: rgba(255, 255, 255, 0.1);
   --bai-text: #e4e4e7;
   --bai-text-secondary: #d4d4d8;
   --bai-text-tertiary: #9ca3af;
-  --bai-text-muted: #6b7280;
+  --bai-text-muted: #979da8;
   --bai-text-faint: #4b5563;
   --bai-accent: #cba6f7;
   --bai-accent-text: #1e1e2e;
@@ -42,28 +52,360 @@
   --bai-status-review: #3b82f6;
   --bai-status-canonical: #10b981;
   --bai-status-archived: #6b7280;
+
+  /* Semantic feedback. The status-* tokens describe a note's lifecycle, not a
+     consequence — status-archived is grey, so reusing it for destructive
+     actions rendered every Revoke as disabled-looking text. */
+  --bai-danger: #f38ba8;
+  --bai-danger-soft: rgba(243, 139, 168, 0.12);
+  --bai-warn: #fab387;
+  --bai-warn-soft: rgba(250, 179, 135, 0.12);
+  --bai-ok: #a6e3a1;
+  --bai-ok-soft: rgba(166, 227, 161, 0.12);
 }
 
-[data-bai-theme="light"] {
-  --bai-bg: #f8f9fc;
+/* Layering roles. Dark resolves every role to today's value, so nothing moves. */
+.bai-theme,
+[data-bai-theme="dark"],
+html[data-bai-toast-theme="dark"] {
+  --v-rail: var(--bai-deep);
+  --v-rail-hover: color-mix(in srgb, var(--bai-hover) 65%, transparent);
+  --v-rail-current: var(--bai-hover);
+  --v-rail-current-soft: color-mix(in srgb, var(--bai-hover) 55%, transparent);
+  --v-rail-current-shadow: none;
+  --v-raise: none;
+  --v-input: var(--bai-bg);
+  --v-panel: color-mix(in srgb, var(--bai-surface) 50%, var(--bai-bg));
+  --v-read: var(--bai-deep);
+  --v-note: #89b4fa;
+  --v-map: #cba6f7;
+  --v-line: rgba(205, 214, 244, 0.14);
+  --v-review: #89b4fa;
+  --v-field: #7a7d99;
+  --v-sky: 0.5;
+  /* A floating panel (the Ctrl K palette) and the scrim behind it. */
+  --v-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  --v-scrim: rgba(6, 6, 12, 0.55);
+}
+
+[data-bai-theme="light"],
+html[data-bai-toast-theme="light"] {
+  --bai-bg: #edf0f5;
   --bai-surface: #ffffff;
-  --bai-deep: #f1f3f8;
-  --bai-hover: #e8eaf0;
-  --bai-border: #e2e4e9;
+  --bai-deep: #ffffff;
+  --bai-hover: #e4e8ef;
+  --bai-overlay: #ffffff;
+  --bai-overlay-hover: #e8eaf0;
+  --bai-border: #d7dbe3;
   --bai-ring: #e2e4e9;
   --bai-text: #1f2937;
   --bai-text-secondary: #374151;
-  --bai-text-tertiary: #6b7280;
-  --bai-text-muted: #9ca3af;
+  --bai-text-tertiary: #565c69;
+  --bai-text-muted: #5b6270;
   --bai-text-faint: #d1d5db;
-  --bai-accent: #7c3aed;
+  --bai-accent: #732dec;
   --bai-accent-text: #ffffff;
-  --bai-accent-soft: rgba(124, 58, 237, 0.08);
+  --bai-accent-soft: rgba(124, 58, 237, 0.105);
   --bai-accent-hover: rgba(124, 58, 237, 0.85);
   --bai-status-draft: #d97706;
   --bai-status-review: #2563eb;
   --bai-status-canonical: #059669;
   --bai-status-archived: #6b7280;
+
+  --bai-danger: #c01d1d;
+  --bai-danger-soft: rgba(220, 38, 38, 0.08);
+  --bai-warn: #945104;
+  --bai-warn-soft: rgba(217, 119, 6, 0.15);
+  --bai-ok: #04704e;
+  --bai-ok-soft: rgba(5, 150, 105, 0.13);
+}
+
+/* Layering roles. Light separates the three surfaces the eye navigates by —
+   canvas, raised card, rail — each ≥5 L* from what it sits on. */
+[data-bai-theme="light"],
+html[data-bai-toast-theme="light"] {
+  --v-rail: #dbe0ea;
+  --v-rail-hover: rgba(255, 255, 255, 0.6);
+  --v-rail-current: #ffffff;
+  --v-rail-current-soft: #ffffff;
+  --v-rail-current-shadow: var(--v-raise);
+  --v-raise: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.07);
+  --v-input: #ffffff;
+  --v-panel: #ffffff;
+  --v-read: #e4e8ef;
+  --v-note: #275cc5;
+  --v-map: #7c3aed;
+  --v-line: rgba(31, 41, 55, 0.16);
+  --v-review: #1555e2;
+  --v-field: #747d95;
+  --v-sky: 0.32;
+  --v-shadow: 0 18px 44px rgba(31, 41, 55, 0.16);
+  --v-scrim: rgba(31, 41, 55, 0.3);
+}
+
+/*
+ * --- Notices (Connect's react-toastify, and the vault's fallback card) ---
+ *
+ * Connect renders toasts in a portal at <body> level, outside .bai-theme, and
+ * mounts its container with no theme — so every toast was the library's
+ * default light card, white on a dark vault. The outermost ThemeProvider
+ * mirrors the theme to <html data-bai-toast-theme> while one of this
+ * package's editors is mounted (editors/shared/toast-theme.ts); the card rules
+ * key on that, so Connect's toasts look like Connect again as soon as the user
+ * leaves the vault.
+ *
+ * The design: a quiet elevated card — luminance and shadow say "floating",
+ * never a coloured frame — with severity carried by one glyph disc on a soft
+ * tint. Title and detail are two lines (ToastContent.tsx). No progress bar:
+ * stack + pause-on-hover is the convention people know from Linear, GitHub
+ * and Sonner, and a draining bar was one more coloured stripe. Motion answers
+ * where the toast lives: it rises from the bottom edge and settles, rather
+ * than bouncing in from the right.
+ *
+ * react-toastify paints from its own --toastify-* custom properties, declared
+ * on :root. Redeclaring them on html[data-bai-toast-theme] outranks :root on
+ * the same element. The per-type colours still feed Connect's own toasts (our
+ * bodies hide the library icon and draw their own).
+ */
+html[data-bai-toast-theme] {
+  --toastify-font-family: inherit;
+  --toastify-toast-width: 360px;
+  --toastify-toast-bd-radius: 10px;
+  --toastify-toast-min-height: 0px;
+  --toastify-color-error: var(--bai-danger);
+  --toastify-color-warning: var(--bai-warn);
+  --toastify-color-success: var(--bai-ok);
+  --toastify-color-info: var(--bai-accent);
+  --toastify-color-light: var(--bai-overlay);
+  --toastify-text-color-light: var(--bai-text);
+  --toastify-color-dark: var(--bai-overlay);
+  --toastify-text-color-dark: var(--bai-text);
+}
+
+html[data-bai-toast-theme] .Toastify__toast {
+  align-items: flex-start;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--bai-border);
+  /* An edge-lit top hairline plus a soft, tight-then-diffuse shadow: how a
+     dark surface reads as lifted without getting lighter overall. */
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.28),
+    0 14px 36px -10px rgba(0, 0, 0, 0.6);
+}
+html[data-bai-toast-theme="light"] .Toastify__toast {
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.07),
+    0 14px 36px -12px rgba(15, 23, 42, 0.2);
+}
+
+html[data-bai-toast-theme] .Toastify__toast-body {
+  padding: 0;
+  margin: 0;
+  align-items: flex-start;
+  color: var(--bai-text);
+  /* Connect's own toasts inherit the page's 16px otherwise, and sit next to
+     ours at a different scale. */
+  font-size: 13px;
+  line-height: 1.45;
+}
+/* Connect's own toasts keep the library icon; give it the same breathing room. */
+html[data-bai-toast-theme] .Toastify__toast-icon {
+  margin-top: 1px;
+}
+html[data-bai-toast-theme] .Toastify__progress-bar--wrp {
+  display: none;
+}
+
+/* The design-system close button (a bare <button> with Connect's token). */
+html[data-bai-toast-theme] .Toastify__toast > button {
+  align-self: flex-start;
+  margin: -3px -4px 0 8px;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--bai-text-muted);
+  transition: color 120ms ease, background-color 120ms ease;
+}
+html[data-bai-toast-theme] .Toastify__toast > button:hover {
+  color: var(--bai-text);
+  background: var(--bai-overlay-hover);
+}
+html[data-bai-toast-theme] .Toastify__toast > button:focus-visible {
+  outline: 2px solid var(--bai-accent);
+  outline-offset: 1px;
+}
+
+/* Arrive from the edge the toast lives on; leave the way it came. */
+@keyframes bai-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bai-toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-right,
+html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-left,
+html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-center {
+  animation-name: bai-toast-in;
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-right,
+html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-left,
+html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
+  animation-name: bai-toast-out;
+  animation-duration: 160ms;
+  animation-timing-function: ease-in;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Not `none`: react-toastify removes the node on animationend. */
+  html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-right,
+  html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-left,
+  html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-center,
+  html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-right,
+  html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-left,
+  html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
+    animation-duration: 1ms;
+  }
+}
+
+/* The vault's own notice body — inside a Connect toast or the fallback card. */
+.bai-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+.bai-toast-glyph {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: var(--bai-toast-tone);
+  background: var(--bai-toast-tone-soft);
+}
+.bai-toast[data-level="error"] {
+  --bai-toast-tone: var(--bai-danger);
+  --bai-toast-tone-soft: var(--bai-danger-soft);
+}
+.bai-toast[data-level="warning"] {
+  --bai-toast-tone: var(--bai-warn);
+  --bai-toast-tone-soft: var(--bai-warn-soft);
+}
+.bai-toast[data-level="success"] {
+  --bai-toast-tone: var(--bai-ok);
+  --bai-toast-tone-soft: var(--bai-ok-soft);
+}
+.bai-toast[data-level="info"] {
+  --bai-toast-tone: var(--bai-accent);
+  --bai-toast-tone-soft: var(--bai-accent-soft);
+}
+.bai-toast-text {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding-top: 4px;
+}
+.bai-toast-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: var(--bai-text);
+}
+.bai-toast-detail {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--bai-text-tertiary);
+  overflow-wrap: anywhere;
+}
+
+/* The fallback host: the same card, drawn by us when Connect has no toast. */
+.bai-toast-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 12px 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--bai-border);
+  background: var(--bai-overlay);
+  color: var(--bai-text);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.28),
+    0 14px 36px -10px rgba(0, 0, 0, 0.6);
+}
+[data-bai-theme="light"] .bai-toast-card {
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.07),
+    0 14px 36px -12px rgba(15, 23, 42, 0.2);
+}
+.bai-toast-card > .bai-toast {
+  flex: 1 1 auto;
+}
+.bai-toast-close {
+  flex: none;
+  align-self: flex-start;
+  margin: -3px -4px 0 8px;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--bai-text-muted);
+  transition: color 120ms ease, background-color 120ms ease;
+}
+.bai-toast-close:hover {
+  color: var(--bai-text);
+  background: var(--bai-overlay-hover);
+}
+.bai-toast-close:focus-visible {
+  outline: 2px solid var(--bai-accent);
+  outline-offset: 1px;
+}
+
+/*
+ * Scrollbars follow the theme.
+ *
+ * Browser-default scrollbars stay light in dark mode and read as a white bar
+ * down the sidebar. The thumb takes `--bai-hover` — the same tone as an
+ * active chip — so it belongs to the surface it scrolls, and the track is
+ * transparent so nothing is drawn where there is nothing to scroll.
+ *
+ * Both APIs are set on purpose. Chrome 121+ and Firefox honour the standard
+ * `scrollbar-*` properties and ignore the `::-webkit-scrollbar` rules; Safari
+ * is the reverse. Setting both gives every engine the same result.
+ */
+.bai-theme,
+.bai-theme * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bai-hover) transparent;
+}
+.bai-theme ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.bai-theme ::-webkit-scrollbar-track,
+.bai-theme ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.bai-theme ::-webkit-scrollbar-thumb {
+  background-color: var(--bai-hover);
+  border-radius: 999px;
+  /* A transparent border inset from the track reads as a thinner, rounded thumb. */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.bai-theme ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bai-text-faint);
 }
 
 /*
@@ -88,7 +430,8 @@
 #document-editor-context[data-document-type="bai/vault-config"],
 #document-editor-context[data-document-type="bai/derivation"],
 #document-editor-context[data-document-type="bai/health-report"],
-#document-editor-context[data-document-type="bai/research-claim"] {
+#document-editor-context[data-document-type="bai/research-claim"],
+#document-editor-context[data-document-type="powerhouse/scopeofwork"] {
   background-color: var(--bai-bg, #1e1e2e);
   color: var(--bai-text, #cdd6f4);
 }
@@ -99,125 +442,125 @@
  * falls through to Connect's default (light) styles.
  */
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   > div
   > .p-6 {
   background-color: var(--bai-bg) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   button[name="close-revision-history"],
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .bg-slate-50,
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   [class*="bg-slate-50"],
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   [class*="bg-gray-50"] {
   background-color: var(--bai-hover) !important;
   color: var(--bai-text-secondary) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .text-gray-900 {
   color: var(--bai-text) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .text-stone-300 {
   color: var(--bai-text-secondary) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .rounded-md.bg-slate-50 {
   background-color: var(--bai-surface) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   article {
   background-color: var(--bai-bg) !important;
   border-color: var(--bai-border) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .text-gray-600 {
   color: var(--bai-text-muted) !important;
 }
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .text-gray-500 {
   color: var(--bai-text-muted) !important;
 }
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .text-gray-300 {
   color: var(--bai-text-secondary) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .border-slate-100 {
   border-color: var(--bai-border) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   h2.bg-slate-50 {
   background-color: var(--bai-surface) !important;
 }
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .text-slate-100 {
   color: var(--bai-text-muted) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   svg {
   color: inherit;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   [id="scope select"] {
   background-color: var(--bai-hover) !important;
   color: var(--bai-text-secondary) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .border-gray-200 {
   border-color: var(--bai-border) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   h1 {
   color: var(--bai-text);
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   h3 {
   color: var(--bai-text-muted) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   .bg-white {
   background-color: var(--bai-bg) !important;
 }
 
 [data-bai-theme="dark"]
-  #document-editor-context[data-document-type^="bai/"]
+  #document-editor-context:is([data-document-type^="bai/"], [data-document-type="powerhouse/scopeofwork"])
   hr {
   border-color: var(--bai-border) !important;
 }
@@ -251,3 +594,30 @@
 [data-bai-theme="light"] input[type="checkbox"] {
   accent-color: var(--bai-accent);
 }
+
+/*
+ * Native selects inside the vault: the chevron is drawn here, so every engine shows the same
+ * control. Without it each browser draws its own — WebKitGTK (the desktop app's window) renders
+ * a tall GTK combobox with a solid triangle where Chrome shows a slim chevron.
+ */
+.bai-theme select:not([multiple]):not([size]) {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23a1a1aa' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 0.8rem;
+  padding-right: 2rem;
+}
+[data-bai-theme="light"] select:not([multiple]):not([size]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2352525b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+}
+
+/* The shell frame (VaultShell): no bar over the content; the sidebar column takes its width from
+   --vault-sidebar-w — published by the sidebar once dragged or folded to its rail, CSS until then.
+   The breakpoint follows the frame, not the window: Connect's own sidebar takes room too. */
+.vault-frame { container: vault-frame / inline-size; }
+.vault-sidebar-col { width: var(--vault-sidebar-w, 256px); }
+@container vault-frame (max-width: 1179px) { .vault-sidebar-col { --vault-sidebar-w: 220px; } }
+/* The rail is part of the canvas (design: 5.5 L* below it), never raised; cards are. */
+.vault-frame .vault-card { box-shadow: var(--v-raise); }

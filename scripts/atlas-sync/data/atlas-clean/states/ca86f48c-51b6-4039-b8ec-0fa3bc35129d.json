@@ -1,0 +1,17 @@
+{
+  "title": "A cap of 30 on the Smart Contract Risk Rating makes the High and Extreme bands unreachable",
+  "status": "OPEN",
+  "content": "**The mechanism.** The Smart Contract Risk Rating is computed as `SCRR = min[CAP, (SR + CCR) x LAF x AF]`, with a stated temporary `CAP = 30`.\n\n**The consequence.** The rating bands place High above 50 and Extreme above 75. With the cap at 30, no input combination can reach either band. Every rule keyed to those bands is therefore unreachable in practice: the automatic 100% capital charge for extreme-risk protocols, the F2-only high-risk path, and most of the blended medium range.\n\nThe cap also conceals a discontinuity of roughly 7x at the medium/high boundary, because the medium blend multiplies f2 by b = 0.15 while the High band uses f2 directly. If the cap were lifted without revisiting that blend, charges would jump sharply rather than scale smoothly.\n\n**To resolve:** establish whether the cap is a deliberate interim conservatism or an artifact awaiting removal, and whether the boundary discontinuity is understood.",
+  "observedAt": "2026-08-17T23:04:34.000Z",
+  "observedBy": "atlas-extract",
+  "resolution": null,
+  "resolvedAt": null,
+  "description": "SCRR = min[CAP, (SR+CCR) x LAF x AF] with CAP=30, while High requires >50 and Extreme >75 \u2014 so the automatic 100% charge for extreme-risk protocols is currently dead code.",
+  "involvedRefs": [
+    "0da1f288-105b-46a6-ad8c-f434bdad563f",
+    "1c482a37-2209-4797-89a7-c64ffb819655",
+    "198b80be-28f3-44a4-b3d6-b3b19f3ac9d4",
+    "c3d9ac28-8e3e-442f-ad16-10bdb0a594db",
+    "5d59e3c5-c385-4dd5-8dae-ce3b94956f86"
+  ]
+}

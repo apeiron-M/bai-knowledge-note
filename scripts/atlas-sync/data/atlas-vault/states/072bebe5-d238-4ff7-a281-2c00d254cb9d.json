@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a7a8daf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a7a8daf-38b3-4c1d-97f2-ab4baebd2e91",
+      "targetTitle": "Voting power is frozen at each proposal's snapshot block so "
+    },
+    {
+      "id": "lnk-ffbab9eb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffbab9eb-3184-4b61-97e9-6cc71f89b261",
+      "targetTitle": "When a Delegate is removed or compromised their delegators' "
+    },
+    {
+      "id": "lnk-5dc21916-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5dc21916-b838-4ae6-84fe-0f6aeb135726",
+      "targetTitle": "Offboarding a Delegate strands their delegators' voting powe"
+    },
+    {
+      "id": "lnk-b37007bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b37007bd-763e-4180-b1ff-9f0e8457d587",
+      "targetTitle": "doc-69da20c8"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Delegation can only be changed between proposals, so a continuous stream of live proposals leaves delegators locked in",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c91d2d70-f5d9-4f6f-94b0-4934d396fb15",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ebd5624-3005-4da5-8d8f-d77d2509abfe",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "03e8e599-c165-412d-bba3-cdb1f57511b2",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4929cad6-1c93-4e09-a960-f9761330d2c1",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two provisions combine into one constraint. A.6.1.1.2.3.1.4.2.2: \"A snapshot records voting power at each proposal snapshot-block height. Voting power (including delegations) **cannot be altered for the duration of a specific active proposal**.\" A.6.1.1.2.3.1.4.2.3: \"Delegators may revoke or move their delegation **whenever no proposal is live**. All changes take effect at the next snapshot-block.\"\n\nThe snapshot lock has a clear purpose. Without it, voting power could be acquired after a proposal's terms are known \u2014 borrowed, bought, or shuffled between wallets to vote twice. Fixing the electorate before the contest begins is what makes the vote meaningful.\n\nThe cost lands on delegators. A delegator who disagrees with how their delegate is voting on a live proposal has no remedy for that proposal: the power is already committed at the snapshot block, and revocation takes effect only at the next one. Accountability is entirely retrospective \u2014 you can fire your delegate, but only after they have cast the vote you objected to.\n\nThe non-obvious consequence is in the phrasing of the revocation window. Delegation may be changed \"whenever no proposal is live,\" which makes the delegator's exit contingent on a *gap* in governance activity. Under a dense proposal schedule with overlapping voting windows, those gaps shrink, and in the limiting case of continuously live proposals they vanish \u2014 delegation becomes practically irrevocable without any rule saying so.\n\nSo governance throughput and delegator exit rights are coupled in a way neither provision mentions. A framework that responds to a busy period by running more proposals in parallel tightens the lock on every delegator at exactly the moment when the stakes of being locked in are highest.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Voting power is fixed at each proposal's snapshot block and delegators may revoke only when no proposal is live, making the delegator's remedy against a delegate's vote purely prospective.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "97470a8a-4e4a-46ea-8c6c-cbe9f820f454",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "056c4161-c815-4ab0-9de0-9d554d16fb79",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

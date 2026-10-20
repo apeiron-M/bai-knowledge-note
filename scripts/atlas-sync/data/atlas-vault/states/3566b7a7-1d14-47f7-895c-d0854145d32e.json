@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-b7a2e680-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7a2e680-9616-4191-9b49-9a459bbb5dba",
+      "targetTitle": "The Diamond PAU implements allocation as a thin per-Agent Co"
+    },
+    {
+      "id": "lnk-96265a4a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96265a4a-2421-42b8-a1ac-bad70ba0b631",
+      "targetTitle": "Instance administration and Facet approval are deliberately "
+    },
+    {
+      "id": "lnk-8ffaac44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ffaac44-7a55-4d0f-b235-4cb1a2c5420d",
+      "targetTitle": "The Diamond PAU replaces the monolithic controller with a fa"
+    },
+    {
+      "id": "lnk-f9097006-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9097006-787e-40fc-96f9-3f05e087f8a8",
+      "targetTitle": "Grove runs a monolithic controller alongside a shared Diamon"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Diamond PAU Instance may only delegate calls to Facets whitelisted on the ecosystem-level Beacon",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c734b2a4-369a-40c7-bbae-2f9cd793901a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29a0cb15-ef38-48a3-9c5c-f9bb79f1a369",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0a3183a-0f0c-4261-a245-19a7dc3af6a9",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.3.1 defines the Beacon as \"the registry that whitelists the Facets approved for use by Diamond PAU Instances; an Instance may only delegate calls to Facets registered on the Beacon.\" It is controlled by Sky Governance through the Pause Proxy.\n\nA.2.2.10.1.1.1.2.3 adds the deployment property: shared contracts are \"deployed once at the Sky ecosystem level and controlled by Sky Governance, shared across Prime Agent Instances rather than redeployed per Agent,\" and A.2.2.10.1.1.1.2.3.2 confirms each Facet is a singleton whose approved set is maintained by governance.\n\nThe consequence is a clean separation between *capability* and *use*. What an allocation Instance is technically able to do \u2014 supply to Aave, bridge via CCTP, mint USDS, swap on Curve \u2014 is fixed by a governance-controlled registry outside the Instance. A Prime Agent chooses among approved integrations; it cannot introduce a new one by deploying its own code.\n\nThis makes integration risk reviewable once for the whole ecosystem instead of per Agent, and it makes a bad integration removable in one place. The cost is a shared blast radius: every Instance delegating into the same singleton Facet inherits any defect in it, and the Beacon plus Pause Proxy becomes a concentrated control point.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Facets are singletons deployed once for the whole ecosystem and approved by Sky Governance through the Pause Proxy, so the set of possible allocation actions is governance-bounded, not per-Agent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "82d5db56-0902-4c0e-a68e-eab17ef56801",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:34.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "108d2f8b-cd8a-4bf8-aa9b-0a4412682302",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:34.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

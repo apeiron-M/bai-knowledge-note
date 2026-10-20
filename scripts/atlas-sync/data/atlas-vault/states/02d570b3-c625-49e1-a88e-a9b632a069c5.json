@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-6f2b999d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f2b999d-a463-407a-bffe-0eda86e25d4a",
+      "targetTitle": "doc-867cb3fa"
+    },
+    {
+      "id": "lnk-23dced24-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "23dced24-0d64-4585-b867-23f496641672",
+      "targetTitle": "doc-a0ef9950"
+    },
+    {
+      "id": "lnk-bdf52e59-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bdf52e59-3d95-474b-a584-ecac3987f492",
+      "targetTitle": "Every Primitive Instance is tracked through a Hub Document w"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Instance directories index by network and protocol while the Instance documents live in a separate branch, duplicating status in two places",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d03454ae-c5e1-4af7-835f-a6a1a36204e5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "293eb61e-36b0-4f70-b809-33b467815fc0",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d7cbeea-44c2-488a-8ff0-0454dda9949c",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f64bbd3-c3e7-4d4e-bbf6-54908a04765d",
+      "name": "document-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Obex's Allocation System Primitive Hub contains an Active Instances Directory nested three levels deep: **Ethereum Mainnet** (A.6.1.1.5.2.6.1.1.2.1), then **Maple** (A.6.1.1.5.2.6.1.1.2.1.1), then an entry whose entire content is a pointer \u2014 \"This Instance's associated Instance Configuration Document is located at A.6.1.1.5.2.6.1.3.1.1.1\" (A.6.1.1.5.2.6.1.1.2.1.1.1).\n\nThe index and the content are therefore separate trees. The Hub's Directory answers \"what is live, on which chain, in which protocol?\" without carrying any parameters; the Active Instances branch holds the substance. This keeps the Hub navigable as Instances multiply, and lets the index be organised by a dimension (network, then protocol) that the configuration documents themselves are not sorted by.\n\nThe network level exists even with a single Instance in it, which encodes an expectation: Obex's allocation activity is designed to span chains, and a second network becomes a sibling rather than a restructuring.\n\nThe cost is a synchronisation obligation. Because status is expressed as tree position in *both* structures, promoting an Invocation to Active or retiring an Instance to Completed requires two coordinated moves \u2014 the directory entry and the document subtree. Nothing in the text enforces that they agree, so directory-versus-document divergence is a specific failure mode this design admits in exchange for its navigability.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Hub's Active Instances Directory nests Ethereum Mainnet, then Maple, then a pointer to a configuration document held elsewhere \u2014 so a status change must move both the entry and the document.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "65bf3599-dc14-4df5-93cf-1d92ade865a3",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3fe4ecda-dd95-4b80-a6ee-5ec6cb5d4bc1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

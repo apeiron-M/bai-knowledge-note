@@ -1,0 +1,126 @@
+{
+  "links": [
+    {
+      "id": "lnk-78eb2189-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "78eb2189-27a4-49f2-aaaa-7514c3eaf6e6",
+      "targetTitle": "The SP-BEAM bounds delegated rate changes on four axes at on"
+    },
+    {
+      "id": "lnk-66535fc5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "66535fc5-1d00-418b-832e-50f78b8685db",
+      "targetTitle": "The stUSDS BEAM delegates live parameter control inside a go"
+    },
+    {
+      "id": "lnk-6405ee90-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6405ee90-0a15-47e7-8482-72da1cbfcabe",
+      "targetTitle": "Base Rate adjustment is deliberately left discretionary: the"
+    },
+    {
+      "id": "lnk-7990f78f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7990f78f-7c8f-4af4-aa66-2221cabedea3",
+      "targetTitle": "doc-5404d29f"
+    },
+    {
+      "id": "lnk-a204234d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a204234d-9c5f-4598-9a78-0e458f9637e4",
+      "targetTitle": "BEAM updates fire only on a 2.4% utilization deviation after"
+    },
+    {
+      "id": "lnk-b23d8523-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b23d8523-d1d7-4015-beff-c89384d5f946",
+      "targetTitle": "Bridge rate limits carry a standing exemption from the Gover"
+    },
+    {
+      "id": "lnk-f7fa5aef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7fa5aef-e165-4d21-a3d8-e67209dba92b",
+      "targetTitle": "Auction parameters need a Governance Poll while ordinary ris"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate changes flow through a bounded external access module instead of governance votes, capping speed and range instead of authority",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "81ccb495-eac8-4f41-8529-db7f05089836",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3bf42eb7-9e5c-4822-a92b-509d283bfa82",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e002395-5d1d-4a0c-ab3d-8196b9bd11b5",
+      "name": "bounded-authority",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.1.3 requires that \"the smart contracts that implement all of the Core Stability Parameters must be configured to allow the Core Executor Agents to modify the Core Stability Parameters using the Stability Parameter Bounded External Access Module.\" A.3.1.2.2.2 confirms the dual path: rates can change \"through either Executive Votes or the Stability Parameter Bounded External Access Module.\"\n\nThe module's per-parameter configuration is what makes delegation safe. For the Sky Savings Rate (A.3.1.2.2.2.1) it is a `max`, a `min`, a `step` limiting the size of a single move, and a globally-defined `tau` governing timing between moves. Governance is not deciding the rate; it is deciding the *box* within which an operational agent may decide the rate.\n\nThis resolves a structural conflict in the same Article. Daily rate adjustment (A.3.1.1.1.1) is incompatible with executive-vote cadence, but unbounded operator control over the system's key interest rate is an unacceptable concentration of power. Encoding the bounds in the contract rather than in policy means an agent who is compromised, mistaken or captured still cannot move the rate outside the range or faster than tau permits.\n\nThe cost is that the bounds themselves become the governance surface: a parameter change that would exceed max, min or step must escalate to an Executive Vote, so the box's size determines how often governance is actually consulted.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Smart contracts must expose Core Stability Parameters to Core Executor Agents via a module with max, min, step and tau limits \u2014 delegating routine rate-setting while making runaway moves impossible.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "866fc980-a3a9-444a-99d8-487b36b5b303",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:26.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8e87b0ba-3537-4ba7-bfc3-5d97a8494602",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

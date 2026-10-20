@@ -49,10 +49,11 @@ type VocabularyMap {
 }
 
 type PipelineConfig {
-    depth: String!
+    depth: PipelineDepth!
     autoChain: Boolean!
     extractionSelectivity: Float!
 }
+enum PipelineDepth { QUICK STANDARD DEEP }
 
 type MaintenanceConfig {
     orphanThreshold: Int!
@@ -120,7 +121,7 @@ input UpdateVocabularyInput {
 }
 
 input UpdatePipelineConfigInput {
-    depth: String
+    depth: PipelineDepth
     autoChain: Boolean
     extractionSelectivity: Float
     updatedAt: DateTime!

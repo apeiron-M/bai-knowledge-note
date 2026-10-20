@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every ongoing primitive process is split into Routine, Non-Routine and Emergency protocols, but only Routine is written",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6d637bd5-5e41-45e1-8f3c-5aa86e8e76a0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "803c9cbd-4f28-449b-837c-ec1586c5ffda",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf8963c1-64d5-414a-8a28-9b6de9d73b84",
+      "name": "specification-gaps",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Wherever a primitive has ongoing management, its Operational Process Definition subdivides into exactly three protocols: Routine, Non-Routine, and Emergency. The Ecosystem Upkeep Fee Instance uses it (A.6.1.1.8.2.3.1.2.1.2.1 through .2.3), the Upkeep Rebate Instance uses it (A.6.1.1.8.2.3.2.2.1.2.1 through .2.3), and the Root Edit Instance uses the same triple.\n\nThe template is a useful piece of alignment engineering. By reserving a named slot for abnormal and emergency handling in every process, the Artifact makes an omission visible: a missing emergency protocol is an empty section with a heading, not a question nobody asked.\n\nAcross this chunk the pattern also delivers a consistent finding \u2014 the slots are empty. Both Ecosystem Upkeep primitives declare Non-Routine and Emergency protocols and define neither, and the Fee primitive's Routine protocol contains only a deferral to \"future iterations.\" The one process in the Artifact with real emergency content is Root Edit.\n\nThe practical consequence is concrete: there is currently no defined behaviour for an Agent that cannot pay its Ecosystem Upkeep Fee, or for a rebate dispute arising under crisis conditions. The structure anticipates those cases; the content does not yet exist.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The three-tier template recurs across Root Edit and both Ecosystem Upkeep primitives; in each, the Non-Routine and Emergency tiers are declared and left empty.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c2afeaae-1cfe-4d76-9a29-a2aa779d71a2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:44.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f2a917c0-fbb9-4ccd-8199-17e80834d653",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

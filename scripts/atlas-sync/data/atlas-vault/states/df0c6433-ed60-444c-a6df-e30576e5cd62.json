@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "withdrawPSM takes a maximum rather than an exact amount and charges the rate limit against what was actually withdrawn",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8a2c7a26-9ec9-4192-90be-3d4ce3c750ef",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f085e58f-a4b8-4b3e-8078-1a155ceec73f",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "085328bc-e7c8-4da7-a6b8-fc3e9d3f7999",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a86d546-ae66-42fc-bddd-c7f97c9ccf89",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The two PSM functions on the `ForeignController` differ in a way that is easy to miss. A...3.3.1.1 declares `depositPSM(address asset, uint256 amount)` with the limit applied declaratively as a modifier, `rateLimitedAsset(LIMIT_PSM_DEPOSIT, asset, amount)` \u2014 an exact amount, metered before the body runs.\n\nA...3.3.1.2 declares `withdrawPSM(address asset, uint256 maxAmount)` and describes it as withdrawing \"**up to** `maxAmount` of `asset` from the PSM to the ALM Proxy, returning the amount actually withdrawn as `assetsWithdrawn`. The withdrawn amount is then applied against the `LIMIT_PSM_WITHDRAW` rate limit for the asset.\"\n\nThe asymmetry follows from which side controls feasibility. A deposit's size is entirely Grove's choice, so an exact amount is meaningful and pre-charging is correct. A withdrawal is bounded by whatever liquidity the PSM currently holds, so demanding an exact amount would convert normal liquidity variation into reverts \u2014 and reverts are worst precisely when exiting matters most.\n\nThe accompanying accounting consequence is that a best-effort withdrawal must be metered post-hoc, which is why the limit cannot be expressed as a modifier here. The signature shape and the charge point are two views of the same fact: the caller does not know the outcome in advance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Best-effort withdrawal means thin PSM liquidity yields a partial fill instead of a revert, in contrast to depositPSM which charges LIMIT_PSM_DEPOSIT up front via a modifier.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8919fc3f-2774-4957-8288-1383467f59e2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bcb73bd9-057f-4a60-8db3-134a7ed0550e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

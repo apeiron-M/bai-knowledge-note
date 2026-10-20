@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-dba6d2ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dba6d2ac-9590-4575-9401-e1967ba221b7",
+      "targetTitle": "doc-1bc2a9ac"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Retired incentive programs stay in the Artifact as Completed Instances, leaving a readable history of abandoned venues",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b56d0861-c2db-4496-a2e0-dc452e9f4244",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b82a3c4c-1693-4e65-8b0c-2d908f067980",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e728287e-c7a9-48a8-8930-3b757e84dd8e",
+      "name": "auditability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69b90aef-d474-43cf-b5c3-96eade84d665",
+      "name": "distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The directories in this chunk encode program history through status. A.6.1.1.3.2.5.2.1.3.1 places MarginFi in the Integration Boost **Completed** Instances Directory, while Kamino, Drift, Save and Lifinity sit in the Active directory (A.6.1.1.3.2.5.2.1.2). The Distribution Reward Primitive shows the same shape from the other side: its Solana Bridge and 1inch Instances are indexed under Completed Instances (A.6.1.1.3.2.5.1.1.3.1\u20132) even though the Primitive's Global Activation Status is `Active`.\n\nTwo things follow for anyone reading an Agent Artifact. First, `Completed` is a normal end-of-life for an incentive relationship, distinct from `Suspended` (held) and from archived failure \u2014 a program that simply ran its course is retained in place with its Instance Configuration Document and its Active Data payment list intact. Nothing is pruned, so past spend remains reconstructable.\n\nSecond, an `Active` Primitive says nothing about whether anything is currently being paid through it. Both Distribution Reward Instances in Keel's Artifact are Completed, so the live programs are Integration Boosts; a reader who stopped at the Primitive's status would conclude the opposite.\n\nThe unstated content is *why* MarginFi ended. The structure records that a venue was dropped and preserves what it was paid, but the reasoning lives in the Instance's Data Repository rather than in the directory that reveals the change.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "MarginFi appears only in the Integration Boost Completed Instances Directory while four peers remain Active, and both Distribution Reward Instances are Completed yet retain their payment records.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e92b45a2-8f29-4a05-b2cb-ff4d19a119c9",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ed9b8de6-967f-40c8-a70f-077e84f7c30f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

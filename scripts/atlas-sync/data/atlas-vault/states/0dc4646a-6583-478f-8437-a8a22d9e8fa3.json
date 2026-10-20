@@ -1,0 +1,155 @@
+{
+  "links": [
+    {
+      "id": "lnk-17b8f5f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "17b8f5f1-7dad-436d-abf9-1496297362d8",
+      "targetTitle": "The stUSDS Rate is the Sky Savings Rate plus a utilization-s"
+    },
+    {
+      "id": "lnk-a93203cf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a93203cf-371f-434b-b7a3-694f56879270",
+      "targetTitle": "stUSDS redemption is not guaranteed: exit depends on unutili"
+    },
+    {
+      "id": "lnk-c378b13b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c378b13b-b805-4451-a32b-a3306f27cd0b",
+      "targetTitle": "Only borrow interest above the SKY Borrow Minimum Rate is pa"
+    },
+    {
+      "id": "lnk-18b862db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "18b862db-b325-4b6a-bd4c-c2b0ba1a838c",
+      "targetTitle": "Slope 2 is derived from Slope 1 and alpha so the rate curve "
+    },
+    {
+      "id": "lnk-286759ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "286759ac-a603-4281-be34-e70f5136250f",
+      "targetTitle": "Every input to the Target SubDAO Proxy Value is a high-water"
+    },
+    {
+      "id": "lnk-8a65d31f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a65d31f-ca1e-4f5f-a89b-4dc271ca6144",
+      "targetTitle": "Utilization is time-weighted over a one-day interval so the "
+    },
+    {
+      "id": "lnk-99f64149-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "99f64149-2cdb-4872-b27c-6544855199df",
+      "targetTitle": "Backstop capital retention tapers continuously to zero near "
+    },
+    {
+      "id": "lnk-9ca71c26-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9ca71c26-fbf3-47a9-8832-2779f3d61ed7",
+      "targetTitle": "SparkLend's kinked interest rate curve is a self-correcting "
+    },
+    {
+      "id": "lnk-e45800bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e45800bb-0a7f-4207-9f93-5b1595c0c610",
+      "targetTitle": "The launch supply rate is set at an explicitly unsustainable"
+    },
+    {
+      "id": "lnk-f3df012e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f3df012e-3bbb-4546-a67d-08d79b0e64d7",
+      "targetTitle": "doc-67087e1d"
+    },
+    {
+      "id": "lnk-ff875711-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff875711-18e8-4458-97a4-7ff6d4cb1b1b",
+      "targetTitle": "A 99% reserve factor taxes away supplier yield as a soft way"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The borrow rate targets 90% utilization, leaving only a 10% liquidity buffer for stUSDS exits",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c9f12f4e-c092-4062-8b21-e4bc469d5d00",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0cf3bf91-0cda-49f5-b571-cec7bf3d9003",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ddb2dc2-bc89-43b7-97e5-f79171a494e6",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "615b04da-121a-4af5-8224-daa825557562",
+      "name": "liquidity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.5.1 sets the control objective: \"The SKY Borrow Rate adjusts to target a 90% utilization rate of the USDS in the stUSDS contract. When stUSDS utilization is below 90%, the rate gradually decreases; when above 90%, it gradually increases.\" A.4.4.1.3.5.1.2 implements it as a kinked two-branch curve \u2014 `MinRate + Utilization/Target * Slope1` at or below target, and `MinRate + Slope1 + (Utilization \u2212 Target)/(1 \u2212 Target) * Slope2` above it.\n\nA 90% target is aggressive. It means the system is designed to hold 90% of lender capital lent out at equilibrium, which maximizes yield per deposited dollar and minimizes idle drag. That is the right objective if the goal is a competitive supply rate.\n\nIt sits in direct tension with the redemption rule in A.4.4.1.3.1, where stUSDS converts back to USDS only \"subject to available unutilized liquidity.\" At target, the exit window is 10% of the pool. Any redemption demand beyond that must wait for borrowers to repay or for new deposits to arrive \u2014 and the rate mechanism responds to withdrawal pressure by raising the borrow rate, which acts on borrowers slowly rather than freeing liquidity now.\n\nThe kink is what makes this survivable: above 90% the curve switches to Slope 2 and climbs steeply toward the Borrow Maximum Rate, so the last slice of liquidity becomes very expensive to consume. The design accepts thin normal-state liquidity in exchange for a strong price signal at the boundary, which is a coherent choice but means stUSDS holders should not assume same-day exit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rates fall below 90% and rise above it, maximizing capital efficiency \u2014 but since redemption requires unutilized liquidity, the target deliberately keeps the withdrawal buffer thin.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3ff41944-b7a5-4483-a061-706d476b92c4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f149ff57-08c2-4896-90bb-8dcbfa15e139",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

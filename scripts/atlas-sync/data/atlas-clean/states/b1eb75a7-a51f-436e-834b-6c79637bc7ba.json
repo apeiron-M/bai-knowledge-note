@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-f1a28a98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1a28a98-19b0-48d8-9d40-1efc739e2ed6",
+      "targetTitle": "Root administrative authority over the liquidity layer sits "
+    },
+    {
+      "id": "lnk-b265e2f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b265e2f3-693f-40e0-9075-69837145b8b2",
+      "targetTitle": "Emergency response runs a fixed three-step sequence: revoke "
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Osero's liquidity layer can be operated by either Osero or Operational GovOps Soter Labs through two equally privileged Relayer Multisigs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b27724d2-dfaf-48a2-bfaa-0025c7845786",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a14e0179-fbdb-4914-885c-0ab6dd557459",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd96df4e-82ec-4c9c-9cbc-fa83260657fc",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two multisigs are registered as Actors on the AdministeredAgent with identical descriptions of their powers. The Osero Relayer Multisig (A.6.1.1.7.2.6.1.2.1.2.1.1) \"is controlled by Osero.\" The Core Operator Relayer Multisig (A.6.1.1.7.2.6.1.2.1.2.1.2) \"is controlled by Operational GovOps Soter Labs.\" Both carry a 2/3 signing requirement and both are bound by the same Usage Standards: submit allocator operations \"in accordance with the instructions specified in the Osero Artifact.\"\n\nThe redundancy is the point. Because either Actor can perform any allocator operation, the loss, compromise or inaction of one operator does not freeze the Instance \u2014 the emergency unwind at A.6.1.1.7.2.6.1.2.2.3.2 is performed by \"a Relayer Multisig,\" indefinite article, so it works with whichever remains.\n\nIt also means the ecosystem retains hands-on operational capability over an Agent's positions. Soter Labs does not merely review Osero's actions (as in the rebate check) but can execute in Osero's place, which is a materially stronger form of oversight than veto.\n\nThe cost is a doubled key-compromise surface for the same privilege set, mitigated only by the Freezer's ability to revoke an Actor. And the constraint on both operators is textual rather than technical: what limits them is the Artifact's instructions plus the rate limits, not any difference in what the contracts will let them do.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both are registered as Actors with the same rights and the same 2/3 threshold, so ecosystem operators can act on Osero's positions without Osero's participation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

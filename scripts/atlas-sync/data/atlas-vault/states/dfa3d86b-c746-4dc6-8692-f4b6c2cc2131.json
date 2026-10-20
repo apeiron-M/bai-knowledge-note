@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-eff423ca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eff423ca-5040-45ed-a760-ba11d055b31e",
+      "targetTitle": "A primitive marked Globally Active with no Instances is auth"
+    },
+    {
+      "id": "lnk-f8c24a5e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f8c24a5e-005b-40fb-bfb7-0b9cb3817eff",
+      "targetTitle": "An incomplete or noncompliant input invalidates a Primitive "
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Inactive Primitives keep their full document skeleton, so activation is a status change rather than a structural build-out",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "366a6eb1-3413-4e53-9ac8-dc065d9c4f19",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "91a3d31c-9a73-4598-b80d-8bd3c490b3c7",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "476e4cec-3975-4f92-aecc-56e7f7a4102e",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `Inactive` Primitives in this section are not stubs. Token SkyLink (A.6.1.1.6.2.4.1) and Pioneer Chain (A.6.1.1.6.2.5.3) each carry a Primitive Hub Document, an Active Instances Directory, a Completed Instances Directory, an In Progress Invocations Directory with the full move-on-success / archive-on-failure rule, a Hub Data Repository, and dedicated slots for Failed Invocations and Suspended Instances \u2014 all empty.\n\nThe consequence is that turning a capability on is a **governance act, not a construction project**. Everything an Invocation needs already exists; the change is a status value and the arrival of an instance. That removes a common failure mode where enabling a new capability also requires inventing the bookkeeping for it, and where the bookkeeping then diverges between Agents.\n\nIt also makes Agents structurally comparable. Because every Agent instantiates the whole Sky Primitive catalogue regardless of use, the same section number means the same thing across Artifacts, and the difference between two Agents reduces to which statuses are `Active` and which directories hold instances.\n\nThe price is volume. A large majority of an Agent Artifact's text is empty scaffolding for capabilities it may never use, which is precisely why reading these documents requires distinguishing provisioned structure from actual commitments.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Token SkyLink and Pioneer Chain each carry a complete Hub Document, all four instance directories, and failed/suspended archive slots while holding no instances at all.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "861b3e22-2a89-4be6-a7c4-508e24a996a5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7def2907-964f-4ad3-afd6-5689fc924f37",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

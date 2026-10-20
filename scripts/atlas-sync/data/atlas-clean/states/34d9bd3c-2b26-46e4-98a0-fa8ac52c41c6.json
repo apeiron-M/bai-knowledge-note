@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-c429ccf5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c429ccf5-b469-4d85-8b82-215dfe2188f1",
+      "targetTitle": "Grove caps inflows to every Centrifuge instance but leaves o"
+    },
+    {
+      "id": "lnk-65fb866c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65fb866c-3a28-4c3b-9c53-2699ca74cbfa",
+      "targetTitle": "doc-34cd9030"
+    },
+    {
+      "id": "lnk-f6b6ddb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f6b6ddb2-a191-4a90-bc43-80266197723c",
+      "targetTitle": "Grove states some exposure ceilings at asset level across In"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Centrifuge exposure is spread across three networks and four tokens with no field where issuer-level concentration is summed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "efcc809c-fd45-4087-bfcd-9500da46e620",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e806ea3d-5005-4146-b801-7b6037dfa3e4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e0cefdd3-de40-47d1-b6d3-b4af41f8ef4e",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c8724d3-73ae-49d1-95d0-842f9fcef82a",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Centrifuge appears as the Target Protocol of four distinct Instances across the Grove Liquidity Layer: Tokenized Treasury JTRSY on Ethereum Mainnet, Centrifuge JTRSY and Centrifuge JAAA on Avalanche (A.6.1.1.2.2.6.1.3.2.1.1 and .2.1.2), and Centrifuge ACRDX on Plume (A.6.1.1.2.2.6.1.3.5.1.1). Each carries its own inflow limit \u2014 5,000,000 USDS, 50,000,000 USDC, 50,000,000 USDC and 20,000,000 USDC respectively \u2014 and each sits under a different network heading.\n\nThe Atlas organises Instances by *network*, then by *target protocol*. Both are properties of where a position lives. Neither is the axis along which this risk actually concentrates: JTRSY, JAAA and ACRDX are different products, but a failure of Centrifuge as an issuer \u2014 a smart-contract defect in shared vault code, a governance compromise, an operational collapse \u2014 would impair all of them at once regardless of which chain they sit on.\n\nSo the schema has no slot for the quantity a credit officer would ask for first. Summing the four caps requires a reader to notice that four documents filed under three different headings share an issuer, and then to normalize across USDS and USDC. Nothing in the structure surfaces it, and no aggregate limit constrains it.\n\nThis is the same failure that the Grove Diamond PAU Instance solved *within* an Instance by introducing an Aggregate Deposit RateLimitID, and that the Tokenized Treasury Interim Deployment left unsolved *across* two Instances with its combined $5 million cap. Here it recurs at a third scale, across networks. The pattern is consistent: Grove's controls bind tightly at the level the schema names \u2014 the Instance \u2014 and weaken at every level of aggregation above it, because the schema names no level above it.\n\nAn issuer or counterparty field, aggregated independently of network, is the structural fix the documents currently lack.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "JTRSY on Ethereum and Avalanche, JAAA on Avalanche and ACRDX on Plume are separate Instances under separate network headings, so a single issuer's aggregate limit appears nowhere.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

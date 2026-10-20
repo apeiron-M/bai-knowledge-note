@@ -1,9 +1,22 @@
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
-import { memo, useState, type CSSProperties } from "react";
+import { prefetchOnHover } from "../lib/prefetch.js";
+import { memo, useMemo, useState, type CSSProperties } from "react";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
+import { countOf } from "../lib/timeline/additions.js";
+import { LoadingPanel } from "./LoadingStates.js";
+
+/** The list narrowed to some notes — one addition's, opened from Sources › Timeline. */
+export interface NoteScope {
+  label: string;
+  ids: ReadonlySet<string>;
+}
 
 type NoteListProps = {
   notes: KnowledgeNoteInfo[];
+  /** True until the first vault metadata fetch settles. */
+  isLoading?: boolean;
+  scope?: NoteScope | null;
+  onClearScope?: () => void;
 };
 
 const PAGE_SIZE = 30;
@@ -31,8 +44,100 @@ const STATUS_BADGE_STYLES: Record<string, CSSProperties> = {
   },
 };
 
-export function NoteList({ notes }: NoteListProps) {
+const NOTE_TYPE_COLORS: Record<string, CSSProperties> = {
+  CONCEPT: {
+    background: "rgba(139, 92, 246, 0.15)",
+    color: "rgba(167, 139, 250, 1)",
+    borderColor: "rgba(139, 92, 246, 0.25)",
+  },
+  DECISION: {
+    background: "rgba(239, 68, 68, 0.12)",
+    color: "rgba(248, 113, 113, 1)",
+    borderColor: "rgba(239, 68, 68, 0.2)",
+  },
+  PATTERN: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "rgba(52, 211, 153, 1)",
+    borderColor: "rgba(16, 185, 129, 0.25)",
+  },
+  PROCEDURE: {
+    background: "rgba(59, 130, 246, 0.15)",
+    color: "rgba(96, 165, 250, 1)",
+    borderColor: "rgba(59, 130, 246, 0.25)",
+  },
+  REFERENCE: {
+    background: "rgba(245, 158, 11, 0.15)",
+    color: "rgba(252, 211, 77, 1)",
+    borderColor: "rgba(245, 158, 11, 0.25)",
+  },
+  BUG_PATTERN: {
+    background: "rgba(239, 68, 68, 0.15)",
+    color: "rgba(248, 113, 113, 1)",
+    borderColor: "rgba(239, 68, 68, 0.25)",
+  },
+  OBSERVATION: {
+    background: "rgba(244, 114, 182, 0.15)",
+    color: "rgba(243, 156, 185, 1)",
+    borderColor: "rgba(244, 114, 182, 0.25)",
+  },
+  INTEGRATION: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "rgba(52, 211, 153, 1)",
+    borderColor: "rgba(16, 185, 129, 0.25)",
+  },
+  WORKFLOW: {
+    background: "rgba(59, 130, 246, 0.15)",
+    color: "rgba(96, 165, 250, 1)",
+    borderColor: "rgba(59, 130, 246, 0.25)",
+  },
+};
+
+const noteTypeStyle = (type: string | undefined): CSSProperties => {
+  return NOTE_TYPE_COLORS[type ?? ""] ?? {
+    background: "var(--bai-hover)",
+    color: "var(--bai-text-muted)",
+    borderColor: "var(--bai-border)",
+  };
+};
+
+export function NoteList({ notes: all, isLoading = false, scope = null, onClearScope }: NoteListProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const notes = useMemo(() => (scope ? all.filter((n) => scope.ids.has(n.id)) : all), [all, scope]);
+  const banner = scope && (
+    <div
+      role="status"
+      className="mb-3 flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm"
+      style={{ borderColor: "var(--bai-border)", background: "var(--bai-surface)", color: "var(--bai-text-secondary)" }}
+    >
+      <span>
+        {notes.length > 0 ? (
+          <>
+            {countOf(notes.length, "note")} from <b>{scope.label}</b>.
+          </>
+        ) : (
+          <>
+            No notes from <b>{scope.label}</b> are in the list yet.
+          </>
+        )}
+      </span>
+      <button type="button" className="vault-btn" onClick={onClearScope}>
+        Show all notes
+      </button>
+    </div>
+  );
+
+  // Distinct from the empty state below: nothing has arrived *yet*. The
+  // vault metadata query takes seconds on a large vault, and claiming
+  // "no knowledge notes yet" during that window is simply wrong.
+  if (isLoading && all.length === 0) {
+    return (
+      <div className="p-4">
+        <LoadingPanel label="Loading notes…" />
+      </div>
+    );
+  }
+
+  if (scope && notes.length === 0) return <div className="p-4">{banner}</div>;
 
   if (notes.length === 0) {
     return (
@@ -56,6 +161,7 @@ export function NoteList({ notes }: NoteListProps) {
 
   return (
     <div className="p-4">
+      {banner}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {notes.slice(0, visibleCount).map((note) => (
           <NoteCard key={note.id} note={note} />
@@ -90,6 +196,7 @@ const NoteCard = memo(function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
     <button
       type="button"
       onClick={() => setSelectedNode(note.id)}
+      {...prefetchOnHover(note.id)}
       className="group flex flex-col rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] p-4 text-left transition-all hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       {/* Header */}
@@ -120,10 +227,7 @@ const NoteCard = memo(function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
         {note.noteType && (
           <span
             className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-            style={{
-              background: "var(--bai-hover)",
-              color: "var(--bai-text-muted)",
-            }}
+            style={noteTypeStyle(note.noteType)}
           >
             {note.noteType}
           </span>

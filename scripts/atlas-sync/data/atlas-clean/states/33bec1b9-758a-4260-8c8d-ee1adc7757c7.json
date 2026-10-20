@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-91c8765b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "91c8765b-182d-4b7f-bce4-dc8feb23d675",
+      "targetTitle": "Some Grove instances have an on-chain deposit path and no on"
+    },
+    {
+      "id": "lnk-730c7681-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "730c7681-3d2e-4c85-9220-4f350e5054c2",
+      "targetTitle": "Every Grove Liquidity Layer allocation is specified by an In"
+    },
+    {
+      "id": "lnk-9bd5fd8c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9bd5fd8c-a06e-4e1e-967e-c82e45f8eaec",
+      "targetTitle": "A Grove Instance can be an execution venue rather than a pos"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Instance abstraction stretches to positions with no on-chain token: Galaxy Warehouse is a deposit address and nothing more",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e5c8799b-7861-423a-9d31-754e223c7c83",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ed36ce1-3fd3-459f-af10-2782847679ca",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "226e1e34-6d08-4789-8e63-92f5741f42ef",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7369807a-3e6f-4c65-bb86-0f0225f84244",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Galaxy Warehouse instance (A.6.1.1.2.2.6.1.3.1.9.2) is the limiting case of Grove's instance model. Its Token identifier is literally `N/A` (A...9.2.2.1.4), and its Contract Addresses section contains just two entries: a \"Deposit Address (Mainnet)\" of `0x3E23311f9FF660E3c3d87E4b7c207b3c3D7e04f0` and the USDC underlying (A...9.2.2.2.1, A...9.2.2.2.2).\n\nSo the operation is: send USDC to an address. There is no share, no receipt token, no vault, no aToken \u2014 nothing on chain that represents what Grove owns afterwards. Every verification technique the Liquidity Layer relies on presupposes a token whose balance can be differenced (A...2.1.2.7.1.4, A...2.1.2.11.1.6); none of them can be applied here.\n\nThat tells you what an \"Instance\" actually is in Grove's architecture. It is not a smart-contract integration \u2014 it is **an authorised destination for capital plus a budget for sending it there**. The rate limit is the entirety of the on-chain control surface, and for instances like this one it is also the entirety of the on-chain information: the register records where money may go and how fast, and everything about what happens next lives off chain.\n\nThe same shape appears elsewhere in the register \u2014 Centrifuge ACRDX also lists a \"Deposit Address (Mainnet)\" (A...3.1.1.3.2.2.2), and Galaxy Arch CLOs holds its token on another chain \u2014 so off-chain-settled positions are a recurring category rather than an exception.\n\nThe consequence for reading Grove's risk: the strength of the controls documented in the Artifact varies enormously by instance, and the template does not signal which regime applies. Two entries can look alike and differ in whether any code at all is protecting the capital.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:55:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:55:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its Token field reads N/A and it lists only a mainnet deposit address and the USDC underlying, so Grove's claim exists nowhere on chain and no controller check can observe it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}
