@@ -131,3 +131,31 @@ describe("resolveMcpEndpoint", () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe("resolveSwitchboardOrigin under Connect's remote client", () => {
+  const router = { describeRouting: () => ({ backends: ["switchboard-remote"] }) };
+
+  it("uses the Switchboard Connect was configured with, whatever the hostname", () => {
+    vi.stubGlobal("window", { location: { hostname: "localhost" }, ph: { reactorClient: router, defaultDrivesUrl: "http://localhost:4101/d/liberuum" } });
+    expect(resolveSwitchboardOrigin()).toBe("http://localhost:4101");
+    expect(resolveReactorEndpoint()).toBe("http://localhost:4101/graphql");
+    vi.stubGlobal("window", { location: { hostname: "knowledge-vault.vetra.io" }, ph: { reactorClient: router, defaultDrivesUrl: "https://other-switchboard.example/d/vault" } });
+    expect(resolveSwitchboardOrigin()).toBe("https://other-switchboard.example");
+  });
+
+  it("keeps the hostname rules when a reactor runs in the tab", () => {
+    vi.stubGlobal("window", { location: { hostname: "localhost" }, ph: { reactorClient: router, reactorClientModule: {}, defaultDrivesUrl: "http://localhost:4101/d/liberuum" } });
+    expect(resolveSwitchboardOrigin()).toBe("http://localhost:4001");
+  });
+
+  it("still lets a declared desktop host win", () => {
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201" });
+    try {
+      vi.stubGlobal("window", { location: { hostname: "localhost" }, ph: { reactorClient: router, defaultDrivesUrl: "http://localhost:4101/d/liberuum" } });
+      expect(resolveSwitchboardOrigin()).toBe("http://127.0.0.1:4201");
+    } finally {
+      setHostConfig(undefined);
+    }
+  });
+});
+

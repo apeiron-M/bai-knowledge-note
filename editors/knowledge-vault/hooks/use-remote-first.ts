@@ -49,6 +49,7 @@
 import { PollBehavior } from "@powerhousedao/reactor";
 import { getBearerToken } from "../../shared/authed-fetch.js";
 import { useEffect, useRef } from "react";
+import { connectRunsRemoteClient } from "../../shared/connect-client-mode.js";
 import {
   DriveCollectionId,
   setDrives,
@@ -167,9 +168,13 @@ export function useRemoteFirst(): void {
   /** The same hydrator, coalesced — for the high-frequency event paths. */
   const hydrateSoonRef = useRef<(() => void) | null>(null);
 
+  // Connect's own remote client already reads, writes and lists drives against
+  // the Switchboard: steps 1-4 have nothing to do, only the feed (step 5) stays.
+  const connectOwnsRemote = connectRunsRemoteClient();
+
   // ── 1. Client + cache swap (render-time, idempotent per drive) ────
   const handleRef = useRef<ReturnType<typeof enableRemoteFirst> | null>(null);
-  if (driveId) {
+  if (driveId && !connectOwnsRemote) {
     handleRef.current = enableRemoteFirst({
       endpoint: resolveReactorEndpoint(),
       driveId,
@@ -194,7 +199,7 @@ export function useRemoteFirst(): void {
 
   // ── 2. Neutralise the sync channel ────────────────────────────────
   useEffect(() => {
-    if (!driveId || !sync || scopedDrives.has(driveId)) return;
+    if (!driveId || !sync || connectOwnsRemote || scopedDrives.has(driveId)) return;
     scopedDrives.add(driveId);
 
     void (async () => {
@@ -283,11 +288,11 @@ export function useRemoteFirst(): void {
         scopedDrives.delete(driveId);
       }
     })();
-  }, [driveId, sync]);
+  }, [driveId, sync, connectOwnsRemote]);
 
   // ── 3. Server-side drive-tree hydration ───────────────────────────
   useEffect(() => {
-    if (!driveId) return;
+    if (!driveId || connectOwnsRemote) return;
     let cancelled = false;
     let inFlight = false;
 
@@ -365,12 +370,12 @@ export function useRemoteFirst(): void {
       clearInterval(interval);
       window.removeEventListener("MutateDocument", onMutation);
     };
-  }, [driveId, address]);
+  }, [driveId, address, connectOwnsRemote]);
 
   // ── 4. Selected-document freshness ────────────────────────────────
   const selectedId = selectedNode?.id;
   useEffect(() => {
-    if (!selectedId || !driveId || selectedId === driveId) return;
+    if (!selectedId || !driveId || selectedId === driveId || connectOwnsRemote) return;
     let lastPollAt = Date.now();
     const interval = setInterval(() => {
       if (document.visibilityState !== "visible") return;
@@ -413,7 +418,7 @@ export function useRemoteFirst(): void {
       }
     }, SELECTED_DOC_REFRESH_MS);
     return () => clearInterval(interval);
-  }, [selectedId, driveId]);
+  }, [selectedId, driveId, connectOwnsRemote]);
 
   // ── 5. Live change feed ───────────────────────────────────────────
   useEffect(() => {
