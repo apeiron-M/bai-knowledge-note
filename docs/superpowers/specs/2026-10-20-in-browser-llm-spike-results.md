@@ -703,3 +703,131 @@ Latency is the sum of wall time over the requests each method needs, for one utt
 - The held-out set is 68 items written by one person, deliberately without op-name words. Real users will sometimes say "add a topic", which is the dev set's regime, where BM25 alone gets about 73%.
 - The truth for real traffic is probably between the two sets.
 - Every number above was observed once, on one machine (Chrome WebGPU, Apple `metal-3` adapter; see Environment).
+
+## Round 6: non-LoRA fixes (held-out-2) (2026-10-20)
+
+**Question:** after fixing the causes Round 5 attributed to code rather than to the model (retrieval, ref ids, reducer vocabularies, the optional-field gate, no-action), how close does the base LFM2.5-350M get, and what exact prompt format should a LoRA be trained on?
+
+**Scope change from the coordinator:** multi-action is deferred to v2. The v1 format is zero or one action per message, there is no `Step: i of n` line, and held-out-2's `multiAction` items are reported only as "out of scope", with how often the system emits a plausible first action vs. no action.
+
+### What changed (code)
+
+- **Step 1, `op-scorer.ts`.**
+  - `format: "ops"`: the system prompt says `{"ops": [...]}` lists the operations and `{"ops": []}` means no document change. Each candidate is scored by forcing `{"ops": ["<key>"]}`; no action is scored by forcing `{"ops": []}` (it is not a listed option).
+  - A `ScoreCache` for the content-free (`N/A`) pass. That pass does not depend on the utterance, so in scoped mode it is paid once per document type and ordering and then costs 0.
+  - A third label style, `op` (bare op name).
+- **Scoped mode scores every global op of the model** (4–19 ops), not a BM25 top 5.
+- **Embedding retrieval, `op-embeddings.ts` + `gte-embedder.ts`.** The committed `models/Supabase/gte-small` q8 ONNX model through `@huggingface/transformers` (already a dependency), on the wasm backend so it does not compete with wllama for the GPU. Each op is embedded once as `<op in words> (<model in words>): <OP_DESCRIPTIONS text>`; the utterance is embedded per query. The loader is a dynamic import, so nothing loads until it is first called. Also: RRF fusion with BM25, model routing by best op hit, and min–max fusion with the LLM score.
+  - *Why transformers.js and not wllama `createEmbedding`:* the model is already committed and already used by the graph indexer, it needs no download, and a second wllama instance would need a second GGUF and its own memory.
+- **Ref ids, `args-step.ts`.** `labelRefCandidates` makes labels unique (` (2)` suffix; a missing label becomes the id). The step-2 prompt gets a `Choices for <path>: "a", "b"` line and the signature shows `"<path>": choice`. The first required scalar ref field is emitted first, and its label is **chosen by calibrated likelihood**: each label is forced as the prefix `{"<field>": "<label>"`, scored by mean token logprob, minus the same prefix under `Request: N/A` (cached per document state). The args are then generated with that label fixed, and the app maps labels to ids.
+- **Vocabularies, `vocabularies.ts`.** Thirteen String fields are narrowed to enums in the model schema at catalog build time (so the signature, the gate and the grammar all see them). See the table below.
+- **Optional-field gate (`gate: "safe"`).** As Round 5's `all`, except:
+  - when an op has no required semantic field and the utterance mentions none of its optional ones, all of them are kept and the grammar requires **exactly one** (at least one when some are mentioned);
+  - `comment` on the knowledge-note lifecycle ops is an annotation and is never restored or required.
+- **Enum choice (optional, `scoreEnums`).** With no ref field to score, the first required string enum with ≥ 3 values is chosen by the same calibrated prefix scoring.
+- **Step-2 key order is fixed by the schema:** root ref fields, required enum fields, other required fields, the one-of fields, then the remaining optional fields.
+- **No-action gates, `no-action-gate.ts`.** (G1) a yes/no "does the request change the document?" gate scored by calibrated log-odds; (G2) an embedding gate: best similarity to 16 generic no-action exemplars minus best similarity to an op of the scoped model; (G3) G2 with threshold 0.04, OR'd with a question rule (ends with `?` and does not start with "please" / "can|could|would|will you").
+- **`PROMPT_FORMAT_VERSION = "r6.1"`** (`prompt-format.ts`), pinned with the exact bytes by `tests/unit/chat-prompt-format.test.ts`.
+- **Harness:** `spike/llm-harness/r6.ts` (`r6Retrieval`, `r6OpsScoped`, `r6OpsUnscoped`, `r6Gate`, `r6GateEmb`, `r6Args`, `r6Pipeline`). Vite serves `models/` and transformers' own `onnxruntime-web/dist` locally, so the embedder makes no network request. Tests: `tests/unit/chat-round6.test.ts` (grammar builders, vocabularies, gate, labels and label→id mapping, ref/enum scoring with a fake model, no-action gates, embedding ranking and RRF fusion).
+
+#### Vocabularies constrained
+
+| Field | Values | Source |
+|---|---|---|
+| knowledge-note SET_METADATA_FIELD `field` | 18 names (`scope` … `rootCause`, `correctPattern`) | reducer throws `InvalidMetadataFieldError` (`knowledge-note/v1/src/reducers/content.ts:52`) |
+| knowledge-note SET_METADATA_LIST_FIELD `field` | 9 names (`models` … `alternatives`, `consequences`) | reducer throws (`content.ts:85`) |
+| moc SET_METADATA_FIELD `field` | `version` | reducer throws (`moc-management.ts:108`) |
+| vault-config UPDATE_DIMENSION `dimension` | 8 dimension keys | reducer ignores others (`config-management.ts:22`) |
+| vault-config UPDATE_VOCABULARY `key` | 9 keys incl. `topicMap` | reducer ignores others (`config-management.ts:55`) |
+| vault-config UPDATE_MAINTENANCE_THRESHOLD `condition` | 7 keys incl. `staleNoteDays` | reducer ignores others (`config-management.ts:104`) |
+| vault-config UPDATE_PIPELINE_CONFIG `depth` | quick, standard, deep | convention: reducer default `standard`, design doc |
+| knowledge-note SET_NOTE_TYPE `noteType` | 10 lower-case types | editor select only (`knowledge-note-editor/editor.tsx:26`) |
+| research-claim CREATE_CLAIM `kind` | research, foundation, methodology, principle, example | editor select only (`research-claim-editor/editor.tsx:487`) |
+| health-report GENERATE_REPORT `mode` | quick, full, three-space | convention: design doc |
+| pipeline-queue ADD_TASK `taskType` | claim, enrichment | seeded `phaseOrder` keys |
+| pipeline-queue ADD_TASK `currentPhase`, ADVANCE_PHASE `handoff.phase` | create, enrich, reflect, reweave, verify | seeded `phaseOrder` values, editor phase colours |
+
+Not constrained: `TOGGLE_FEATURE.feature` (no list anywhere) and the derivation dimension fields (the list would only be inferred from vault-config).
+
+### Development on dev
+
+Dev = the 30-item seed set plus `spike/llm-harness/eval/dev-extra.json`: 19 action items (13 with labeled `refCandidates`, 5 vocabulary items, 1 all-optional op) and 10 no-action items. **I wrote dev-extra myself, alongside the code, so every dev number below is optimistic.** WebGPU, temperature 0. Per-item data: `spike/llm-harness/eval/results-r6-dev-*.json`.
+
+**Retrieval (49 action items, no LLM).**
+
+| | @1 | @3 | @5 | @10 |
+|---|---|---|---|---|
+| BM25, unscoped | 26 | 33 | 37 | 39 |
+| gte-small, unscoped | 33 | 39 | 41 | 42 |
+| RRF(gte, BM25), unscoped | 32 | 35 | 36 | 43 |
+| BM25, scoped | 29 | – | 42 | – |
+| gte-small, scoped | 40 | – | 45 | – |
+
+Model routing (model of the best op hit): 36/49 @1, 41/49 @2. Embedder load 621 ms; embedding all 99 ops 11 975 ms once (single-threaded wasm; deterministic, so it could be precomputed and shipped); per-query embed median 28 ms, p90 38 ms.
+
+**Scoped op selection over all ops of the model (49 action items).** `+emb` / `+bm25` = calibrated mean score + 5 × min–max-normalized similarity (λ = 5 as in Round 5, not re-tuned). Latency is per utterance with the content-free pass cached.
+
+| Prompt | S1 | S2 | S2, 2 orders | S3 (3 orders) | S2+bm25 | S2+emb | S3+emb | S2 / S3 latency median |
+|---|---|---|---|---|---|---|---|---|
+| `op` format, key labels, own descriptions | 5 | 17 | 19 | 25 | 32 | 39 | 40 | 2.6 s / 8.0 s |
+| `ops` format, key labels, own descriptions | 11 | 17 | 22 | 20 | 30 | **40** | 40 | 2.0 s / 5.7 s |
+| `ops` format, bare op-name labels | 12 | 13 | 18 | 20 | 29 | 35 | 39 | 1.6 s / 4.9 s |
+| `ops` format, key labels, `OP_DESCRIPTIONS` (2 orders) | 13 | 14 | 17 | – | 33 | 37 | – | 2.3 s / – |
+| No LLM: gte-small scoped top-1 | | | | | | **40** | | 28 ms |
+
+- **The `ops` format is neutral under fusion** (S2+emb 40 vs 39, S3+emb 40 vs 40) but cost S3 alone 5 items (25 → 20). It is kept, because it is the LoRA plan's format and fusion is what runs.
+- **Key labels beat bare op names** (S2+emb 40 vs 35) and **the models' own descriptions beat `OP_DESCRIPTIONS`** in the step-1 prompt (40 vs 37). The embeddings use `OP_DESCRIPTIONS` (no A/B was run for them).
+- **The LLM adds nothing on dev.** S2+emb differs from gte-small top-1 on 5 items: the LLM is right on 1 and the embedding on 1. With λ = 5 over min–max similarity the embedding's top op gets +5 while calibrated mean scores span about ±1 nat, so the LLM only matters when the embedding's top two are nearly tied.
+- **Content-free cost, paid once per document type and ordering:** 0.5 s (source, 4 ops) to 2.7 s (knowledge-note, 19 ops).
+
+**Unscoped (49 action items).** gte-small top 5, 2 orderings, content-free not cacheable (the list differs per utterance): recall 41/49; gte top-1 33; S2 10; **S2+emb 34** (1.2 s median, 1.3 s p90); S2 (2 orders)+emb 33. Routing to the best model and scoring all its ops: recall 36/49, S2+emb 33. Routing is dropped.
+
+**No-action (10 no-action + 49 action items).**
+
+| Gate | Flags no-action | False positives on action items | Precision / recall |
+|---|---|---|---|
+| G1 LLM yes/no, calibrated, threshold 0 | 10/10 | 49/49 | 16.9% / 100% |
+| G2 embedding, threshold 0 | 8/10 | 8/49 | 50% / 80% |
+| G3 = question rule OR G2 > 0.04 | 10/10 | 1/49 | 90.9% / 100% |
+| G4 `{"ops": []}` scored as a candidate (S2 or S3, mean) | 0/10 | 0/49 | – / 0% |
+
+- **G1 does not separate at all:** calibrated log-odds are −11.4 … −13.8 on no-action items and −4.9 … −15.7 on action items, so no threshold works. Uncalibrated it is no better.
+- **G4 behaves like Round 5's "none":** never chosen with mean aggregation; with sum it took 3/10 but sent 19 action items to no-action.
+- **G3 is fitted to dev:** the threshold 0.04 sits 0.005 above the highest dev action score, and the question rule and the exemplars were written while looking at dev. Held-out-2 is its real test.
+
+**Args, oracle op (49 items; 34 with exact-scored args, 13 with refs).**
+
+| | Exact | Ref-id exact | Items with extras | Gen latency median | Ref scoring median / p90 |
+|---|---|---|---|---|---|
+| A0 = Round 5 A1 (gate `all`, labels only in the signature) | 20/34 | 3/13 | 4 | 113 ms | – |
+| r6 prompt + `safe` gate, model picks the ref | 21/34 | 3/13 | 9 | 111 ms | – |
+| **A2** = r6 + calibrated ref-label scoring | 23/34 | **11/13** | 5 | 109 ms | 305 / 368 ms |
+| A3 = A2 + enum scoring | 24/34 | 11/13 | 5 | 103 ms | 256 / 969 ms |
+
+- "Extras" on seed items count every filled field, because those items carry no expected args (e.g. ADD_TASK's `taskType`/`target`); they are not all hallucinations.
+- The 9 → 5 drop came from the annotation rule (SUBMIT_FOR_REVIEW was being forced to fill `comment`).
+- A3 fixed dx-16 (`staleNoteDays`) and broke dx-14 (`rootCause` → `relationType`): a net +1 within noise.
+
+### Pre-registration (written and committed before held-out-2 is copied in)
+
+Each configuration runs **once** on held-out-2 (`items` 91, `noAction` 8, `multiAction` 7), WebGPU, temperature 0, prompt format r6.1, catalog with vocabularies, models' own descriptions in prompts and `OP_DESCRIPTIONS` for embeddings.
+
+| # | Config | Definition |
+|---|---|---|
+| R | Retrieval | BM25, gte-small and RRF recall@1/3/5/10 unscoped; scoped @1/@5; model@1/@2. No LLM. |
+| O1–O8 | Scoped op selection, one run | All global ops of the item's model in catalog order, `ops` format, key labels, 3 orderings (offsets `rotationOffsets(n, 3)`), content-free cached, `includeNone`. From the same requests: O1 BM25 top-1, O2 gte-small top-1, O3 S2-mean, O4 S3-mean, **O5 S2-mean + 5 × emb (primary)**, O6 S3-mean + emb, O7 S2-mean + bm25, O8 S3-mean + bm25. |
+| U1–U4 | Unscoped, one run | gte-small top 5, `ops`, key labels, 2 orderings, no cache. U1 gte top-1, U2 S2-mean, **U3 S2-mean + emb (primary)**, U4 S2 (2 orders) + emb. |
+| G1–G4 | No-action | G1 LLM yes/no (threshold 0), G2 embedding (threshold 0), G3 question rule OR G2 > 0.04, G4 = O3/O5 with `{"ops": []}` as a candidate (from the O run). Scored on all 91 + 8 + 7 items. |
+| A0, A2, A3 | Args, oracle op | As in the dev table. **A2 is primary.** |
+| P | End to end, scoped | O5 then A2 on every item, no gate. Args are scored only when the op is right. End-to-end numbers *with* a gate are computed afterwards by intersecting P with the G2/G3 predictions from their own runs (no extra model calls). Determinism check: P's O5 picks must equal the O run's O5 picks; any mismatch is reported. |
+
+- **Decision rule, stated now:** if O2 (gte-small top-1, no LLM) scores at least as well as O5 on held-out-2 scoped, the recommended v1 runtime skips the step-1 LLM call in scoped mode. The step-1 prompt format stays defined, because it is what a LoRA would be trained on. The same rule applies to U1 vs U3.
+- **G3** is recommended only if its held-out precision holds up; otherwise G2 or "no gate" is reported as the honest best.
+- **Latency:** per utterance, warm. That is the sum of wall time of the requests made for the utterance, excluding content-free requests (which the cache serves in a session). The one-time content-free cost per document type and ordering is reported separately. Steps are reported separately: embed, op, args (ref scoring + generation), gate.
+- **Splits:** every accuracy is reported overall, by `style` (natural / paraphrase), and by style × difficulty.
+- **Disclosure:**
+  - Before writing these configs I printed held-out-2's *key structure only* (field names and value types, counts by `style` and `difficulty`; no utterances, labels or expected values), to write a loader.
+  - The coordinator told me: 91 items over 79 ops, 46 natural / 45 paraphrase, 13 hard, and that the gold ref is the first candidate in only 10 of 43 cases.
+  - I read held-out-1's README (its hard-case table, no-action gists and vocabulary hints) during orientation; held-out-1 was not run.
+  - I will not read held-out-2's README until all runs are saved.
+- **If a run breaks,** the bug is fixed, both numbers are reported, and nothing else changes.
