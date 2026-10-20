@@ -43,6 +43,32 @@ this project twice — a new subgraph "wouldn't register", and an authorization
 wrapper "stopped working" — and both were the same cause. If a subgraph change
 seems to have no effect, check `dist/` before debugging the code.
 
+## ⚠️ The browser vault (`browser/`) is for knowledge-vault-landing only
+
+`browser/` runs the whole vault inside a web page (engine, graph index, REST
+routes, and file conversion on docling.rs's WebAssembly build) for the landing
+site's **Try on web** (`../knowledge-vault-landing`). Nothing else runs it:
+
+- **The Switchboard, Connect and the desktop app convert files through the
+  Docling service behind `subgraphs/convert`** (the HTTP API), as before. Never
+  route them to `docling.rs-wasm` or to the in-page engine.
+- **Reach the browser vault only through `loadBrowserVault()`**, which imports
+  `#browser-vault` (package.json `"imports"`). A browser build resolves that to
+  `browser/index.ts`; the server build resolves it to `browser/unavailable.ts`,
+  which refuses to load. Never import `browser/*` or `docling.rs-wasm` from
+  `index.ts`, `editors/`, `subgraphs/`, `processors/` or `document-models/`.
+- **Why:** the server build lists every package that needs a WebAssembly module
+  or a native addon in `dist/powerhouse.manifest.json`'s `externalDependencies`,
+  and the Switchboard's registry loader refuses the subgraphs and processors of a
+  package whose externals it has not installed. 1.0.54-dev.41 carried the
+  browser vault into the server build: the cloud vault loaded its document models
+  only (no `knowledgeGraph*`, no REST routes, no graph indexer) and Connect could
+  not open the drive.
+- **Enforced:** `scripts/check-server-build.mjs` runs after `ph-cli build` and
+  in `prepack`. It fails on any `externalDependencies`, a `docling.rs-wasm`
+  import in `dist/node`, an unresolved `#browser-vault`, or a browser build that
+  lost the vault.
+
 ## Ordinal holes in the operation index — resolved upstream
 
 `operation_index_operations.ordinal` is a Postgres `serial`; a rolled-back write

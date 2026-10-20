@@ -17,10 +17,14 @@ export { aiTools } from "./editors/knowledge-vault/lib/chat/ai-tools.js";
 // Hand-added too: a host's own intake (the desktop app's setup guide converts and files sources itself).
 export { hostIntake } from "./editors/knowledge-vault/lib/host-intake.js";
 // Hand-added too: the vault running entirely in the browser (engine, graph index
-// and vault app in the page) — the landing site's "Try on web". A loader, so the
-// browser vault builds into its own chunk and the module Connect loads stays the
-// same size. `ph-cli build` has no entry for a folder of its own.
-export const loadBrowserVault = () => import("./browser/index.js");
+// and vault app in the page), for knowledge-vault-landing's "Try on web" ONLY. A
+// loader, so the browser vault builds into its own chunk and the module Connect
+// loads stays the same size (`ph-cli build` has no entry for a folder of its own).
+// `#browser-vault` is the browser vault in a browser build and a stub that refuses
+// to load in the server build (package.json "imports"; browser/unavailable.ts):
+// its WebAssembly dependencies must never reach the Switchboard, which would then
+// refuse this package's subgraphs and processors. See CLAUDE.md.
+export const loadBrowserVault = () => import("#browser-vault");
 export const manifest = manifestJson as Manifest;
 
 // Engage remote-first as soon as the package is loaded, before Connect tries to
