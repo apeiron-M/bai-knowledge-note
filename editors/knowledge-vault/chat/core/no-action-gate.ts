@@ -120,3 +120,51 @@ export async function scoreChangeGate(
     requests: reqs,
   };
 }
+
+/**
+ * Generic requests that change nothing (questions, thanks, comments), for
+ * the embedding gate. Written once, not tuned per item.
+ */
+export const NO_ACTION_EXEMPLARS = [
+  "what does this mean?",
+  "can you explain this to me?",
+  "why is it like that?",
+  "how many are there?",
+  "who is responsible for this?",
+  "is this correct?",
+  "what changed recently?",
+  "tell me more about it",
+  "summarize this for me",
+  "thanks",
+  "thank you, that looks great",
+  "ok, got it",
+  "hello",
+  "never mind",
+  "I'm not sure yet, let me think about it",
+  "interesting, I didn't know that",
+];
+
+/**
+ * Embedding gate score: best similarity to a no-action exemplar minus best
+ * similarity to an op. Positive means "answer instead of acting".
+ */
+export function embeddingGateScore(
+  exemplarSims: number[],
+  opSims: number[],
+): number {
+  return Math.max(-1, ...exemplarSims) - Math.max(-1, ...opSims);
+}
+
+/** Ends with "?" and is not a polite command ("can you tag it …?"). */
+export function looksLikeQuestion(utterance: string): boolean {
+  const u = utterance.trim().toLowerCase();
+  if (!u.endsWith("?")) return false;
+  return !/^(please\b|(can|could|would|will) you\b)/.test(u);
+}
+
+/** Round-6 combined gate: a question, or the embedding score above 0.04. */
+export const EMBEDDING_GATE_THRESHOLD = 0.04;
+
+export function combinedNoAction(utterance: string, embScore: number): boolean {
+  return looksLikeQuestion(utterance) || embScore > EMBEDDING_GATE_THRESHOLD;
+}

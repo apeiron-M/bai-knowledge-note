@@ -204,6 +204,12 @@ export function gateOptional(
   };
 }
 
+/**
+ * Optional annotations that an op is complete without (the knowledge-note
+ * lifecycle `comment`): the safe gate never restores or requires them.
+ */
+export const ANNOTATION_FIELDS = ["comment"];
+
 /** Optional, non-object properties that are not kept (ref) paths. */
 function semanticOptional(
   props: Record<string, unknown>,
@@ -218,6 +224,7 @@ function semanticOptional(
       return (
         !required.includes(k) &&
         !keep.has(path) &&
+        !ANNOTATION_FIELDS.includes(k) &&
         !(isRecord(inner) && inner.type === "object")
       );
     })
@@ -266,6 +273,8 @@ export interface ArgsGrammarOptions {
    * `requireOneOf`). They follow the required fields.
    */
   requireOneOf?: string[];
+  /** With `requireOneOf`: exactly one of them, not at least one. */
+  exactlyOne?: boolean;
 }
 
 /**
@@ -336,8 +345,9 @@ export function argsGrammar(
       if (memo.has(key)) return memo.get(key) ?? null;
       const m = members[i];
       const next = from(i + 1, true, sat || m.inSet);
+      const blocked = Boolean(opts.exactlyOne) && sat && m.inSet;
       const emit =
-        next === null
+        next === null || blocked
           ? null
           : [emitted ? `", " ${m.lit}` : m.lit, next].filter(Boolean).join(" ");
       let out: string | null = emit;

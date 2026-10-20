@@ -11,6 +11,7 @@ import {
   gateOptional,
   labelRefCandidates,
   mapRefLabels,
+  mentionsField,
   refEnumValues,
   requireOneOf,
   type GateMode,
@@ -101,6 +102,23 @@ export function scoredRefField(
   return null;
 }
 
+/** The first required root string enum with at least 3 values. */
+export function scoredEnumField(
+  schema: JsonSchema,
+): { field: string; values: string[] } | null {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  const required = Array.isArray(schema.required) ? schema.required : [];
+  for (const k of Object.keys(props)) {
+    const v = props[k];
+    if (!required.includes(k) || !isRecord(v) || !Array.isArray(v.enum))
+      continue;
+    const values = v.enum.filter((x): x is string => typeof x === "string");
+    if (values.length >= 3 && values.length === v.enum.length)
+      return { field: k, values };
+  }
+  return null;
+}
+
 /** The JSON prefix that fixes a ref label: `{"id": "label"`. */
 export function refPrefix(field: string, label: string): string {
   return `{${JSON.stringify(field)}: ${JSON.stringify(label)}`;
@@ -130,6 +148,8 @@ export interface ArgsStepOptions {
   gate: GateMode;
   /** Score the first required ref field's labels (else the model picks). */
   scoreRefs: boolean;
+  /** Without a scored ref: score the first required string enum (≥3 values). */
+  scoreEnums?: boolean;
   refAggregate?: Aggregate;
   cache?: ScoreCache;
 }
@@ -189,12 +209,20 @@ export async function fillArgsStep(
   if (Object.keys(props).length === 0) return { ...base, args: {} };
   const rootRefs = refPaths.filter((p) => !p.includes(".") && p in props);
   const oneOf = requireOneOf(schema, refPaths);
+  // No field named: the request most plausibly sets exactly one of them.
+  const exactlyOne =
+    oneOf.length > 1 &&
+    !oneOf.some((k) => mentionsField(k, props[k], utterance));
   const messages = argsMessages(utterance, entry, schema, choices);
   let fixed: JsonSchema = schema;
-  const field = opts.scoreRefs ? scoredRefField(schema, rootRefs) : null;
+  const refField = opts.scoreRefs ? scoredRefField(schema, rootRefs) : null;
+  const enumField =
+    !refField && opts.scoreEnums ? scoredEnumField(schema) : null;
+  const field = refField ?? enumField?.field ?? null;
+  const labels = refField ? choices[refField] : (enumField?.values ?? []);
+  const first = enumField ? [enumField.field, ...rootRefs] : rootRefs;
   const out = { ...base, messages };
-  if (field && choices[field].length > 1) {
-    const labels = choices[field];
+  if (field && labels.length > 1) {
     const agg = opts.refAggregate ?? "mean";
     const cfMessages = argsMessages(CONTENT_FREE, entry, schema, choices);
     const scores: number[] = [];
@@ -246,8 +274,9 @@ export async function fillArgsStep(
   }
   const grammar = argsGrammar(fixed, utterance, {
     spans: true,
-    first: rootRefs,
+    first,
     requireOneOf: oneOf,
+    exactlyOne,
   });
   const r = await opts.completeJson(
     messages,

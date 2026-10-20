@@ -12,6 +12,7 @@ import {
   fillArgsStep,
   prefixLogprobs,
   refPrefix,
+  scoredEnumField,
   scoredRefField,
 } from "../../editors/knowledge-vault/chat/core/args-step.js";
 import { buildVaultCatalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
@@ -232,6 +233,29 @@ describe("safe gate and at-least-one", () => {
     expect(accepts(gr, '{"id": "Beta"}')).toBe(false);
   });
 
+  it("never forces an annotation such as a lifecycle comment", () => {
+    const s = entry("knowledge-note:SUBMIT_FOR_REVIEW").modelSchema;
+    expect(
+      Object.keys(
+        gateOptional(s, "send it to review", "safe").properties as object,
+      ),
+    ).toEqual([]);
+    expect(requireOneOf(s, [])).toEqual([]);
+  });
+
+  it("can require exactly one of the fields", () => {
+    const info = entry("project:UPDATE_PROJECT_INFO").modelSchema;
+    const g = argsGrammar(info, "call it Atlas", {
+      spans: true,
+      requireOneOf: ["name", "description"],
+      exactlyOne: true,
+    });
+    expect(accepts(g, '{"name": "Atlas"}')).toBe(true);
+    expect(accepts(g, '{"description": "Atlas"}')).toBe(true);
+    expect(accepts(g, '{"name": "Atlas", "description": "it"}')).toBe(false);
+    expect(accepts(g, "{}")).toBe(false);
+  });
+
   it("asks for nothing extra when a semantic field is required", () => {
     const s = entry("wbs:SET_GOAL_STATUS").modelSchema;
     expect(requireOneOf(s, [])).toEqual([]);
@@ -306,6 +330,18 @@ describe("labeled refs", () => {
     );
     expect(scoredRefField(schema, ["id"])).toBe("id");
     expect(scoredRefField(schema, [])).toBeNull();
+  });
+
+  it("finds the first required enum with three or more values", () => {
+    expect(
+      scoredEnumField(
+        entry("vault-config:UPDATE_MAINTENANCE_THRESHOLD").modelSchema,
+      )?.field,
+    ).toBe("condition");
+    expect(
+      scoredEnumField(entry("wbs:SET_GOAL_STATUS").modelSchema)?.values,
+    ).toContain("WONT_DO");
+    expect(scoredEnumField(entry("project:ADD_MEMBER").modelSchema)).toBeNull();
   });
 
   it("sums only the tokens covering the prefix", () => {
