@@ -18,6 +18,7 @@ import seed from "./eval/seed-utterances.json" with { type: "json" };
 import { buildAction } from "../../editors/knowledge-vault/chat/core/envelope.js";
 import { createOpRetriever } from "../../editors/knowledge-vault/chat/core/op-retriever.js";
 import type { CatalogEntry } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
+import { evalArgs, evalOps, probeLogprobs } from "./r5.js";
 
 type Json = Record<string, unknown>;
 
@@ -586,6 +587,13 @@ const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
   chat,
   evalSeed,
   save,
+  probeLogprobs: (b) => probeLogprobs(client(backendArg(b))),
+  // r5Ops("webgpu", {set, scoped, style, withB1, includeNone, orders?})
+  r5Ops: (b, o) =>
+    evalOps(client(backendArg(b)), o as Parameters<typeof evalOps>[1]),
+  // r5Args("webgpu", {set, mode: "A0" | "A1", gate})
+  r5Args: (b, o) =>
+    evalArgs(client(backendArg(b)), o as Parameters<typeof evalArgs>[1]),
 };
 
 /* ------------------------------------------------------------------ */
