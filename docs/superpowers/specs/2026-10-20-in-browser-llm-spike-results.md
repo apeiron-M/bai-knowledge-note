@@ -516,7 +516,7 @@ All choices below were made on the 30-item seed set only (now used about 25 time
 | H1 = S3-mean + 5 × BM25 | 23 | 22 | 22 | 20 |
 
 - **Aggregate:** sum and mean are within 2 items everywhere; mean is better on S3 and on the fusion grid, so **mean** is primary. Sum is reported too, from the same requests.
-- **Labels:** readable labels (`add topic`) were worse than catalog keys in every LLM-only row, so S4 is run on held-out only because it is pre-registered.
+- **Labels:** readable labels (`add topic`) were worse than catalog keys in every S2 and S3 cell (by 4–10 items). They were better only for raw S1 scoped (10 vs 7). S4 is run on held-out because it is pre-registered.
 - **λ grid** {0, 0.5, 1, 2, 3, 5, 8, 13, 20, ∞} for S2/S3 × sum/mean × key/readable, scored on scoped + unscoped (60 items). The best was S3-mean-key at λ = 5 (23 + 22 = 45/60), against 42/60 for BM25 alone (λ = ∞). That is a 3-item margin picked from 40 grid points.
 - **None candidate (dev, scoped, H1):** 0/30 action items were sent to "none"; op accuracy 22/30.
 - **Args (dev, oracle op, 21 items with expected args):** A0 5/21 exact; A1 with no gating 11/21, gating enum/boolean fields only 12/21, gating every optional field 15/21. Gating every optional field is pre-registered.
