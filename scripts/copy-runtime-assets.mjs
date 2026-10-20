@@ -27,10 +27,11 @@ import {
   existsSync,
   globSync,
   mkdirSync,
+  readFileSync,
   rmSync,
   statSync,
 } from "node:fs";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 const distRoot = "dist";
 
@@ -45,9 +46,11 @@ function fail(msg) {
 }
 
 // 1. Embedding model → dist/node/models/ (node runtime + CDN-served node
-//    chunks resolve `<moduleDir>/models/`). The browser build deliberately
-//    gets NO model: the browser is model-free by design — embedding happens
-//    only in the server-side processor and subgraph.
+//    chunks resolve `<moduleDir>/models/`). This copy is for the server-side
+//    processor and subgraph only. The browser build gets its own copies from
+//    the bundler: the knowledge-vault Chat tab's query embedder references
+//    each gte-small file with `new URL(..., import.meta.url)`
+//    (chat/core/gte-embedder.ts), so they land in dist/browser/assets/.
 const modelSrc = "models";
 const modelProbe = join(
   modelSrc,
@@ -104,16 +107,27 @@ for (const f of ortFiles) {
 }
 console.log(`[runtime-assets] ort wasm helpers → ${wasmDest}`);
 
-// 3. Strip the browser build's ort WASM asset (~22.8MB). The browser bundle
-//    still carries the embedder chunk because the processor barrel imports
-//    it dynamically, but every call site is behind the server-only
-//    EMBEDDING_ENABLED gate, so the chunk — and therefore this asset — can
-//    never load in a browser. Pure tarball/CDN dead weight.
-for (const deadWasm of globSync(
+// 3. Strip unreferenced ort WASM assets from the browser build. The chat
+//    embedder (chat/core/gte-embedder.ts) runs onnxruntime-web in the
+//    browser from the vendored `ort-wasm-simd-threaded.asyncify.{mjs,wasm}`
+//    (vendor/onnxruntime-web/), which the bundler emits as
+//    `assets/ort-wasm-*`, so those must ship. It is byte-identical to the
+//    wasm onnxruntime-web's own bundle references, so both resolve to one
+//    hashed file. Only an `ort-wasm-*` asset that no browser chunk names is
+//    dead weight; the server path (step 2) is unaffected.
+const browserJs = globSync(join(distRoot, "browser", "**", "*.js")).map((f) =>
+  readFileSync(f, "utf8"),
+);
+for (const asset of globSync(
   join(distRoot, "browser", "assets", "ort-wasm-*"),
 )) {
-  rmSync(deadWasm);
-  console.log(`[runtime-assets] removed dead browser asset ${deadWasm}`);
+  const name = basename(asset);
+  if (browserJs.some((src) => src.includes(name))) {
+    console.log(`[runtime-assets] kept chat browser asset ${asset}`);
+    continue;
+  }
+  rmSync(asset);
+  console.log(`[runtime-assets] removed unreferenced browser asset ${asset}`);
 }
 
 // 4. Self-contained transformers WEB build → dist/node/transformers.web.bundle.mjs
