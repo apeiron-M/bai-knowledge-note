@@ -1024,3 +1024,28 @@ Assistant target: compact JSON in that key order, with ref fields as labels, e.g
 - Held-out-2's README was not read before or during the runs.
 - `npm run tsc` stays at 204 errors outside `training/`. The `training/` checkout added by another agent brings its own tsc errors from vendored llama.cpp UI files; I did not touch it.
 - **Connect gap:** onnxruntime-web's wasm comes from jsdelivr unless `wasmPaths` is set, and Connect's CSP blocks that. The harness serves it locally.
+
+## Round 7: cleanup (2026-10-20)
+
+Goal: make the Chat tab, the harness and the training renderer run the same Round 6 v1 pipeline (prompt format r6.1), and get the training renderer ready for the teacher pilot. No held-out set was run in this round.
+
+### Canonical vocabularies
+
+The user decided that the app's own lists are canonical: reducer lists, editor lists and seed data. `editors/knowledge-vault/chat/core/vocabularies.ts` is now the one exported source. It exports each list by name (`NOTE_TYPES`, `CLAIM_KINDS`, `PIPELINE_TASK_TYPES`, `PIPELINE_PHASES`, …), with its source, and builds `VOCABULARY_TABLE` / `VOCABULARIES` from them. `buildRuntimeCatalog()` (`catalog-models.ts`) is the catalog with those vocabularies as enums; the Chat tab, the harness's v1 entry and the training renderer all build their catalog through it.
+
+- No value or order changed, so the r6.1 prompt bytes are unchanged (`chat-prompt-format.test.ts` passes as before).
+- `tests/unit/chat-vocabularies.test.ts` pins every list to its source: the reducer arrays (read from the reducer source), `NOTE_TYPES` in the knowledge-note editor, the research-claim editor's kind `<option>`s and `KIND_COLORS` keys, the pipeline-queue editor's `PHASE_COLORS` keys, the pipeline-queue initial `phaseOrder` (from `utils.createDocument()`), `taskType: "claim"` in the source editor, and the design-doc lines for `depth` and `mode`, which have no app list.
+
+### Label corrections
+
+Three expected values in the held-out sets used values outside the canonical lists. Only those values were changed. Utterances, `context` and every other field are unchanged, and neither set was run after the change.
+
+| File | Item | Field | Old → new | Source |
+|---|---|---|---|---|
+| `heldout2-eval.json` | pq2-01 | `expected.args.taskType` | `"extract"` → `"claim"` | Seed `phaseOrder` keys are `claim` and `enrichment`. The source editor queues extraction as `taskType: "claim"` (`editors/source-editor/editor.tsx:94`). The item's own `context.state.phaseOrder` gives `"extract"` the phases `create, reflect, reweave, verify`, which are the seeded `claim` phases. |
+| `heldout2-eval.json` | rc2-01 | `expected.args.kind` | `"empirical"` → `"research"` | The research-claim editor's kind list (`editors/research-claim-editor/editor.tsx:487`): research, foundation, methodology, principle, example. |
+| `heldout-eval.json` | rc-01 | `expected.ambiguousArgs.kind` | `"empirical"` → `"research"` | Same list. `ambiguousArgs` is not exact-scored, but `kind` is in the item's `requiredPresent`. |
+
+- **`"empirical"` → `"research"` is a judgment.** No canonical kind means "empirical". The claims are empirical findings from evaluations ("offline eval on 500 queries", "A/B over 40 prompts"), and `research` is the closest kind. rc2-01's utterance still says "kind: empirical" literally, so the enum now forces a mapping that the text does not spell out.
+- **pq2-01's `context.state` still says `"extract"`** (its `phaseOrder` and tasks tk-1/tk-2), and tk-3 says `"dedupe"`. The other held-out-2 items that copy that state snapshot also say `"extract"`. These are context, not expected values, and nothing scores them, so they were left as they are.
+- New sha256: `heldout2-eval.json` `71080a7b…25472e` (was `0c9cc44d…307c0b`), `heldout-eval.json` `45efda5b…562dae` (was `e71ce178…75aa0`).

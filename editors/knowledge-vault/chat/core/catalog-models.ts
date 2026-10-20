@@ -16,6 +16,7 @@ import {
   type CatalogEntry,
   type CatalogModelInput,
 } from "./op-catalog.js";
+import { VOCABULARIES } from "./vocabularies.js";
 
 export const CATALOG_MODELS: CatalogModelInput[] = [
   { module: Derivation.Derivation, schemas: Derivation },
@@ -44,4 +45,12 @@ export function buildVaultCatalog(
   options?: BuildCatalogOptions,
 ): CatalogEntry[] {
   return buildCatalog(CATALOG_MODELS, options);
+}
+
+/**
+ * The catalog the chat runtime, the harness's v1 entry and the training
+ * renderer share: canonical vocabularies as enums, models' own descriptions.
+ */
+export function buildRuntimeCatalog(): CatalogEntry[] {
+  return buildVaultCatalog({ vocabularies: VOCABULARIES });
 }
