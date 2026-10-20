@@ -4,6 +4,8 @@
  */
 import type { Manifest } from "document-model";
 import manifestJson from "./powerhouse.manifest.json" with { type: "json" };
+// Types only (erased): the browser vault's code stays behind `#browser-vault` below.
+import type * as BrowserVaultModule from "./browser/index.js";
 export { documentModels } from "./document-models/document-models.js";
 export { upgradeManifests } from "./document-models/upgrade-manifests.js";
 export { editors } from "./editors/editors.js";
@@ -24,7 +26,10 @@ export { hostIntake } from "./editors/knowledge-vault/lib/host-intake.js";
 // to load in the server build (package.json "imports"; browser/unavailable.ts):
 // its WebAssembly dependencies must never reach the Switchboard, which would then
 // refuse this package's subgraphs and processors. See CLAUDE.md.
-export const loadBrowserVault = () => import("#browser-vault");
+// The return type is spelled out: inferred, the declarations name "#browser-vault",
+// which a consumer resolves through "imports" to browser/index.ts — not shipped,
+// so the landing saw `any`. This names the shipped dist/types/browser instead.
+export const loadBrowserVault = (): Promise<typeof BrowserVaultModule> => import("#browser-vault");
 export const manifest = manifestJson as Manifest;
 
 // Engage remote-first as soon as the package is loaded, before Connect tries to
