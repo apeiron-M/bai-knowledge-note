@@ -439,12 +439,13 @@ Goal: serve wllama from the package's own origin instead of jsdelivr, and drop t
 ### Checks
 
 - `npm run tsc`: 204 errors, the same count as before.
-- oxlint (`--type-aware --type-check`) on `llm-client.ts`: exit 0.
+- oxlint (`--type-aware --type-check`, project config) on `llm-client.ts`: exit 0, no diagnostics. With `-D all` the same command reports diagnostics on the file, which shows it is linted.
 - `tests/unit/chat-*.test.ts`: 3 files, 19 tests passed.
 
 ### Build
 
-- `npx ph-cli build --ignore-type-errors`: exit 0. Without the flag, `ph-cli build` refuses to continue in a non-interactive shell when tsc reports errors (`confirmBuildDespiteTypeErrors` in `clis/ph-cli/src/services/build.ts`).
+- `npm run build` (stdin `/dev/null`): exit 1. It stopped after tsc with `✘ tsc reported the type errors above. … --ignore-type-errors skips this check`, before the bundler ran. Both blockers predate this round: this gate and the `copy-runtime-assets.mjs` failure below.
+- `npx ph-cli build --ignore-type-errors`: exit 0. The listings below come from this build.
 - `dist/browser/wllama-D2PxRQAA.js`: 368 997 bytes, plus a 444 148-byte `.map`.
 - `dist/browser/assets/wllama-DrYkKwf9.wasm`: 8 763 949 bytes, the same size as the vendored file.
 - `dist/browser/editor-D3wdL8OZ.js` holds the wasm reference as `new URL("assets/wllama-DrYkKwf9.wasm", import.meta.url)` and imports `wllama-D2PxRQAA.js`.
