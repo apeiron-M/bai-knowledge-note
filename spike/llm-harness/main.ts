@@ -237,14 +237,19 @@ async function unload(backendRaw: unknown): Promise<Json> {
 type DescriptionVariant = "original" | "override" | "prompt-only";
 
 function variantArg(v: unknown): DescriptionVariant {
-  return v === "original" || v === "prompt-only" ? v : "override";
+  return v === "override" || v === "prompt-only" ? v : "original";
 }
 
-async function catalogTools(variant: DescriptionVariant = "override") {
+async function catalogTools(variant: DescriptionVariant = "original") {
   const { buildVaultCatalog } =
     await import("../../editors/knowledge-vault/chat/core/catalog-models.js");
-  const original = buildVaultCatalog({ descriptionOverrides: {} });
-  const catalog = variant === "original" ? original : buildVaultCatalog();
+  const { OP_DESCRIPTIONS } =
+    await import("../../editors/knowledge-vault/chat/core/op-descriptions.js");
+  const original = buildVaultCatalog();
+  const catalog =
+    variant === "original"
+      ? original
+      : buildVaultCatalog({ descriptionOverrides: OP_DESCRIPTIONS });
   const retriever = createOpRetriever(
     variant === "override" ? catalog : original,
   );
@@ -416,10 +421,13 @@ async function evalSeed(
   backendRaw: unknown,
   scopedRaw: unknown,
   variantRaw?: unknown,
+  orderRaw?: unknown,
 ): Promise<Json> {
   const backend = backendArg(backendRaw);
   const scoped = scopedRaw === true;
   const variant = variantArg(variantRaw);
+  // "reversed" lists the step-1 candidates lowest BM25 rank first.
+  const order = orderRaw === "reversed" ? "reversed" : "rank";
   const c = client(backend);
   const { retriever, get } = await catalogTools(variant);
   const items: SeedItem[] = seed;
@@ -432,6 +440,7 @@ async function evalSeed(
         docType: scoped ? item.docType : undefined,
       })
       .map((h) => get(h.entry.key));
+    if (order === "reversed") candidates.reverse();
     const inCandidates = candidates.some((e) => e.key === item.expectedKey);
     const gen = await generateAction(item.utterance, candidates, {
       completeJson: c.completeJson,
@@ -494,6 +503,7 @@ async function evalSeed(
     backend,
     scoped,
     variant,
+    order,
     n,
     recallAt5: pct(inCand.length, n),
     opAccuracy: pct(rows.filter((r) => r.opCorrect).length, n),

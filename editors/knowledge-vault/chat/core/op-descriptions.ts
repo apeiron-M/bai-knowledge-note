@@ -1,7 +1,7 @@
 /**
- * Spike-local op descriptions keyed by catalog key (`<model>:<OP>`), merged
- * into the catalog by `buildVaultCatalog`. They feed BM25 retrieval and the
- * step-1 prompt. Written from each op's name, input schema and reducer only.
+ * Spike-local op descriptions keyed by catalog key (`<model>:<OP>`), applied
+ * via `buildVaultCatalog({ descriptionOverrides })`. They feed BM25 retrieval
+ * and both prompts. Written from each op's name, input schema and reducer.
  * The durable fix is `SET_OPERATION_DESCRIPTION` via reactor-mcp; `<m>.json`,
  * `schema.graphql` and `gen/` are derived and must not be hand-edited.
  */

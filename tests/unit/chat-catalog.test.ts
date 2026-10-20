@@ -219,19 +219,21 @@ describe("op catalog", () => {
   });
 
   it("has a description override for every op and no stray keys", () => {
-    const keys = new Set(catalog.map((e) => e.key));
+    const overridden = buildVaultCatalog({
+      descriptionOverrides: OP_DESCRIPTIONS,
+    });
+    const keys = new Set(overridden.map((e) => e.key));
     expect(Object.keys(OP_DESCRIPTIONS).filter((k) => !keys.has(k))).toEqual(
       [],
     );
-    for (const e of catalog) {
+    for (const e of overridden) {
       expect(e.description, e.key).toBe(OP_DESCRIPTIONS[e.key]);
     }
   });
 
-  it("keeps the models' own descriptions when overrides are empty", () => {
-    const original = buildVaultCatalog({ descriptionOverrides: {} });
-    expect(
-      original.find((e) => e.key === "knowledge-note:ADD_TOPIC")?.description,
-    ).toBe("Tag the note with a topic");
+  it("keeps the models' own descriptions by default", () => {
+    expect(get("knowledge-note:ADD_TOPIC").description).toBe(
+      "Tag the note with a topic",
+    );
   });
 });

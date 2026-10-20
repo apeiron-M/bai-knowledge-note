@@ -16,7 +16,6 @@ import {
   type CatalogEntry,
   type CatalogModelInput,
 } from "./op-catalog.js";
-import { OP_DESCRIPTIONS } from "./op-descriptions.js";
 
 export const CATALOG_MODELS: CatalogModelInput[] = [
   { module: Derivation.Derivation, schemas: Derivation },
@@ -37,14 +36,12 @@ export const CATALOG_MODELS: CatalogModelInput[] = [
 ];
 
 /**
- * Uses the spike-local `OP_DESCRIPTIONS` unless `descriptionOverrides` is
- * given; pass `{}` to get the models' own descriptions.
+ * Pass `{ descriptionOverrides: OP_DESCRIPTIONS }` for the spike-local op
+ * descriptions. Off by default: in round 2 they lowered retrieval recall@5
+ * and did not improve op selection on the same candidates.
  */
 export function buildVaultCatalog(
-  options: BuildCatalogOptions = {},
+  options?: BuildCatalogOptions,
 ): CatalogEntry[] {
-  return buildCatalog(CATALOG_MODELS, {
-    ...options,
-    descriptionOverrides: options.descriptionOverrides ?? OP_DESCRIPTIONS,
-  });
+  return buildCatalog(CATALOG_MODELS, options);
 }
