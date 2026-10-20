@@ -120,7 +120,7 @@ The utterance "tag this note with distributed systems" goes through `fillArgs` â
 | Step 2 latency, median / p95 | 145 / 271 ms (n=26) | 152 / 451 ms (n=25) | 2528 / 3511 ms (n=26) | 2148 / 3903 ms (n=26) |
 
 - **Ops with no semantic fields skip step 2,** which is why step 2 has fewer than 30 samples.
-- **CPU and WebGPU made the same op choices in aggregate.** Individual args differed on 10 items per mode, because temperature-0 numerics differ between the backends.
+- **CPU and WebGPU reached the same op-accuracy totals, but not the same per-item results.** The op pick, the args, or both differed on 10 items per mode, because temperature-0 numerics differ between the backends. For example, "label this as epistemology" (scoped) picked SET_TITLE on CPU and SET_NOTE_TYPE on WebGPU.
 - **"Args zod-valid 100%" is a weak signal.** The constraints guarantee the shape, zod only checks types, and ref-ids were app-filled.
 
 ### Per-utterance outcomes (WebGPU)
