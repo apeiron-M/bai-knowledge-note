@@ -229,11 +229,25 @@ async function unload(backendRaw: unknown): Promise<Json> {
 /* Goal 2: constraint enforcement                                       */
 /* ------------------------------------------------------------------ */
 
-async function catalogTools() {
+/**
+ * Which op descriptions each stage sees: `original` (the models' own text
+ * for retrieval and prompts), `override` (`OP_DESCRIPTIONS` for both), or
+ * `prompt-only` (original text for retrieval, overrides in the prompts).
+ */
+type DescriptionVariant = "original" | "override" | "prompt-only";
+
+function variantArg(v: unknown): DescriptionVariant {
+  return v === "original" || v === "prompt-only" ? v : "override";
+}
+
+async function catalogTools(variant: DescriptionVariant = "override") {
   const { buildVaultCatalog } =
     await import("../../editors/knowledge-vault/chat/core/catalog-models.js");
-  const catalog = buildVaultCatalog();
-  const retriever = createOpRetriever(catalog);
+  const original = buildVaultCatalog({ descriptionOverrides: {} });
+  const catalog = variant === "original" ? original : buildVaultCatalog();
+  const retriever = createOpRetriever(
+    variant === "override" ? catalog : original,
+  );
   const get = (key: string): CatalogEntry => {
     const e = catalog.find((c) => c.key === key);
     if (!e) throw new Error(`missing ${key}`);
@@ -401,11 +415,13 @@ function norm(v: unknown): string {
 async function evalSeed(
   backendRaw: unknown,
   scopedRaw: unknown,
+  variantRaw?: unknown,
 ): Promise<Json> {
   const backend = backendArg(backendRaw);
   const scoped = scopedRaw === true;
+  const variant = variantArg(variantRaw);
   const c = client(backend);
-  const { retriever } = await catalogTools();
+  const { retriever, get } = await catalogTools(variant);
   const items: SeedItem[] = seed;
   const rows: Json[] = [];
   for (const [i, item] of items.entries()) {
@@ -415,7 +431,7 @@ async function evalSeed(
         k: 5,
         docType: scoped ? item.docType : undefined,
       })
-      .map((h) => h.entry);
+      .map((h) => get(h.entry.key));
     const inCandidates = candidates.some((e) => e.key === item.expectedKey);
     const gen = await generateAction(item.utterance, candidates, {
       completeJson: c.completeJson,
@@ -477,6 +493,7 @@ async function evalSeed(
   const summary = {
     backend,
     scoped,
+    variant,
     n,
     recallAt5: pct(inCand.length, n),
     opAccuracy: pct(rows.filter((r) => r.opCorrect).length, n),
@@ -531,6 +548,21 @@ async function chat(
   return { text: r.text, finish: r.finishReason };
 }
 
+/** Writes the given result labels to `eval/<name>.json` via the dev server. */
+async function save(nameRaw: unknown, labelsRaw: unknown): Promise<Json> {
+  const name = typeof nameRaw === "string" ? nameRaw : "";
+  const labels = Array.isArray(labelsRaw)
+    ? labelsRaw.filter((l): l is string => typeof l === "string")
+    : [];
+  const body = Object.fromEntries(labels.map((l) => [l, results[l]]));
+  const res = await fetch(`/__save?name=${encodeURIComponent(name)}`, {
+    method: "POST",
+    body: JSON.stringify(body, null, 2),
+  });
+  if (!res.ok) throw new Error(`save failed: ${res.status}`);
+  return { saved: name, labels };
+}
+
 const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
   env,
   clearCache,
@@ -543,6 +575,7 @@ const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
   happyPath,
   chat,
   evalSeed,
+  save,
 };
 
 /* ------------------------------------------------------------------ */
