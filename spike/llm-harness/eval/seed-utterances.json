@@ -1,40 +1,183 @@
 [
-  { "utterance": "tag this note with distributed systems", "expectedKey": "knowledge-note:ADD_TOPIC", "docType": "bai/knowledge-note", "expectedArgs": { "name": "distributed systems" } },
-  { "utterance": "add the topic machine learning", "expectedKey": "knowledge-note:ADD_TOPIC", "docType": "bai/knowledge-note", "expectedArgs": { "name": "machine learning" } },
-  { "utterance": "label this as epistemology", "expectedKey": "knowledge-note:ADD_TOPIC", "docType": "bai/knowledge-note", "expectedArgs": { "name": "epistemology" } },
-  { "utterance": "file this note under productivity", "expectedKey": "knowledge-note:ADD_TOPIC", "docType": "bai/knowledge-note", "expectedArgs": { "name": "productivity" } },
+  {
+    "utterance": "tag this note with distributed systems",
+    "expectedKey": "knowledge-note:ADD_TOPIC",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "name": "distributed systems" }
+  },
+  {
+    "utterance": "add the topic machine learning",
+    "expectedKey": "knowledge-note:ADD_TOPIC",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "name": "machine learning" }
+  },
+  {
+    "utterance": "label this as epistemology",
+    "expectedKey": "knowledge-note:ADD_TOPIC",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "name": "epistemology" }
+  },
+  {
+    "utterance": "file this note under productivity",
+    "expectedKey": "knowledge-note:ADD_TOPIC",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "name": "productivity" }
+  },
 
-  { "utterance": "rename this note to Spaced repetition beats cramming", "expectedKey": "knowledge-note:SET_TITLE", "docType": "bai/knowledge-note", "expectedArgs": { "title": "Spaced repetition beats cramming" } },
-  { "utterance": "set the title to CAP theorem tradeoffs", "expectedKey": "knowledge-note:SET_TITLE", "docType": "bai/knowledge-note", "expectedArgs": { "title": "CAP theorem tradeoffs" } },
-  { "utterance": "change the heading of the note to Why caches lie", "expectedKey": "knowledge-note:SET_TITLE", "docType": "bai/knowledge-note", "expectedArgs": { "title": "Why caches lie" } },
+  {
+    "utterance": "rename this note to Spaced repetition beats cramming",
+    "expectedKey": "knowledge-note:SET_TITLE",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "title": "Spaced repetition beats cramming" }
+  },
+  {
+    "utterance": "set the title to CAP theorem tradeoffs",
+    "expectedKey": "knowledge-note:SET_TITLE",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "title": "CAP theorem tradeoffs" }
+  },
+  {
+    "utterance": "change the heading of the note to Why caches lie",
+    "expectedKey": "knowledge-note:SET_TITLE",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "title": "Why caches lie" }
+  },
 
-  { "utterance": "set the description to A short argument for writing every day", "expectedKey": "knowledge-note:SET_DESCRIPTION", "docType": "bai/knowledge-note", "expectedArgs": { "description": "A short argument for writing every day" } },
-  { "utterance": "update the summary: explains how consensus protocols tolerate faults", "expectedKey": "knowledge-note:SET_DESCRIPTION", "docType": "bai/knowledge-note", "expectedArgs": { "description": "explains how consensus protocols tolerate faults" } },
-  { "utterance": "describe this note as notes from the Raft paper", "expectedKey": "knowledge-note:SET_DESCRIPTION", "docType": "bai/knowledge-note", "expectedArgs": { "description": "notes from the Raft paper" } },
+  {
+    "utterance": "set the description to A short argument for writing every day",
+    "expectedKey": "knowledge-note:SET_DESCRIPTION",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "description": "A short argument for writing every day" }
+  },
+  {
+    "utterance": "update the summary: explains how consensus protocols tolerate faults",
+    "expectedKey": "knowledge-note:SET_DESCRIPTION",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": {
+      "description": "explains how consensus protocols tolerate faults"
+    }
+  },
+  {
+    "utterance": "describe this note as notes from the Raft paper",
+    "expectedKey": "knowledge-note:SET_DESCRIPTION",
+    "docType": "bai/knowledge-note",
+    "expectedArgs": { "description": "notes from the Raft paper" }
+  },
 
-  { "utterance": "submit this note for review", "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW", "docType": "bai/knowledge-note" },
-  { "utterance": "send it to review, it's ready", "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW", "docType": "bai/knowledge-note" },
-  { "utterance": "I'm done drafting, request a review", "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW", "docType": "bai/knowledge-note" },
+  {
+    "utterance": "submit this note for review",
+    "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+    "docType": "bai/knowledge-note"
+  },
+  {
+    "utterance": "send it to review, it's ready",
+    "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+    "docType": "bai/knowledge-note"
+  },
+  {
+    "utterance": "I'm done drafting, request a review",
+    "expectedKey": "knowledge-note:SUBMIT_FOR_REVIEW",
+    "docType": "bai/knowledge-note"
+  },
 
-  { "utterance": "remove the topic tag", "expectedKey": "knowledge-note:REMOVE_TOPIC", "docType": "bai/knowledge-note" },
-  { "utterance": "untag this note", "expectedKey": "knowledge-note:REMOVE_TOPIC", "docType": "bai/knowledge-note" },
+  {
+    "utterance": "remove the topic tag",
+    "expectedKey": "knowledge-note:REMOVE_TOPIC",
+    "docType": "bai/knowledge-note"
+  },
+  {
+    "utterance": "untag this note",
+    "expectedKey": "knowledge-note:REMOVE_TOPIC",
+    "docType": "bai/knowledge-note"
+  },
 
-  { "utterance": "add an open question: does spacing help procedural memory?", "expectedKey": "moc:ADD_OPEN_QUESTION", "docType": "bai/moc", "expectedArgs": { "question": "does spacing help procedural memory?" } },
-  { "utterance": "note an unexplored direction: how do CRDTs handle deletes", "expectedKey": "moc:ADD_OPEN_QUESTION", "docType": "bai/moc", "expectedArgs": { "question": "how do CRDTs handle deletes" } },
-  { "utterance": "rewrite the synthesis paragraph to say memory is reconstructive", "expectedKey": "moc:UPDATE_ORIENTATION", "docType": "bai/moc", "expectedArgs": { "orientation": "memory is reconstructive" } },
-  { "utterance": "update the orientation of this map", "expectedKey": "moc:UPDATE_ORIENTATION", "docType": "bai/moc" },
+  {
+    "utterance": "add an open question: does spacing help procedural memory?",
+    "expectedKey": "moc:ADD_OPEN_QUESTION",
+    "docType": "bai/moc",
+    "expectedArgs": { "question": "does spacing help procedural memory?" }
+  },
+  {
+    "utterance": "note an unexplored direction: how do CRDTs handle deletes",
+    "expectedKey": "moc:ADD_OPEN_QUESTION",
+    "docType": "bai/moc",
+    "expectedArgs": { "question": "how do CRDTs handle deletes" }
+  },
+  {
+    "utterance": "rewrite the synthesis paragraph to say memory is reconstructive",
+    "expectedKey": "moc:UPDATE_ORIENTATION",
+    "docType": "bai/moc",
+    "expectedArgs": { "orientation": "memory is reconstructive" }
+  },
+  {
+    "utterance": "update the orientation of this map",
+    "expectedKey": "moc:UPDATE_ORIENTATION",
+    "docType": "bai/moc"
+  },
 
-  { "utterance": "queue a new extraction task for the Raft paper", "expectedKey": "pipeline-queue:ADD_TASK", "docType": "bai/pipeline-queue" },
-  { "utterance": "add a task to reflect on the CRDT notes", "expectedKey": "pipeline-queue:ADD_TASK", "docType": "bai/pipeline-queue" },
-  { "utterance": "mark the task as blocked because the source is missing", "expectedKey": "pipeline-queue:BLOCK_TASK", "docType": "bai/pipeline-queue", "expectedArgs": { "reason": "the source is missing" } },
-  { "utterance": "the task is stuck waiting on review, block it", "expectedKey": "pipeline-queue:BLOCK_TASK", "docType": "bai/pipeline-queue" },
+  {
+    "utterance": "queue a new extraction task for the Raft paper",
+    "expectedKey": "pipeline-queue:ADD_TASK",
+    "docType": "bai/pipeline-queue"
+  },
+  {
+    "utterance": "add a task to reflect on the CRDT notes",
+    "expectedKey": "pipeline-queue:ADD_TASK",
+    "docType": "bai/pipeline-queue"
+  },
+  {
+    "utterance": "mark the task as blocked because the source is missing",
+    "expectedKey": "pipeline-queue:BLOCK_TASK",
+    "docType": "bai/pipeline-queue",
+    "expectedArgs": { "reason": "the source is missing" }
+  },
+  {
+    "utterance": "the task is stuck waiting on review, block it",
+    "expectedKey": "pipeline-queue:BLOCK_TASK",
+    "docType": "bai/pipeline-queue"
+  },
 
-  { "utterance": "add Alice to the team as designer", "expectedKey": "project:ADD_MEMBER", "docType": "bai/project", "expectedArgs": { "name": "Alice", "role": "designer" } },
-  { "utterance": "add a team member named Bob", "expectedKey": "project:ADD_MEMBER", "docType": "bai/project", "expectedArgs": { "name": "Bob" } },
-  { "utterance": "put the project on hold", "expectedKey": "project:SET_PROJECT_STATUS", "docType": "bai/project", "expectedArgs": { "status": "ON_HOLD" } },
-  { "utterance": "mark the project as completed", "expectedKey": "project:SET_PROJECT_STATUS", "docType": "bai/project", "expectedArgs": { "status": "COMPLETED" } },
+  {
+    "utterance": "add Alice to the team as designer",
+    "expectedKey": "project:ADD_MEMBER",
+    "docType": "bai/project",
+    "expectedArgs": { "name": "Alice", "role": "designer" }
+  },
+  {
+    "utterance": "add a team member named Bob",
+    "expectedKey": "project:ADD_MEMBER",
+    "docType": "bai/project",
+    "expectedArgs": { "name": "Bob" }
+  },
+  {
+    "utterance": "put the project on hold",
+    "expectedKey": "project:SET_PROJECT_STATUS",
+    "docType": "bai/project",
+    "expectedArgs": { "status": "ON_HOLD" }
+  },
+  {
+    "utterance": "mark the project as completed",
+    "expectedKey": "project:SET_PROJECT_STATUS",
+    "docType": "bai/project",
+    "expectedArgs": { "status": "COMPLETED" }
+  },
 
-  { "utterance": "create a goal to write the onboarding guide", "expectedKey": "wbs:CREATE_GOAL", "docType": "bai/wbs", "expectedArgs": { "description": "write the onboarding guide" } },
-  { "utterance": "new goal: ship the beta", "expectedKey": "wbs:CREATE_GOAL", "docType": "bai/wbs", "expectedArgs": { "description": "ship the beta" } },
-  { "utterance": "set the goal status to in progress", "expectedKey": "wbs:SET_GOAL_STATUS", "docType": "bai/wbs", "expectedArgs": { "status": "IN_PROGRESS" } }
+  {
+    "utterance": "create a goal to write the onboarding guide",
+    "expectedKey": "wbs:CREATE_GOAL",
+    "docType": "bai/wbs",
+    "expectedArgs": { "description": "write the onboarding guide" }
+  },
+  {
+    "utterance": "new goal: ship the beta",
+    "expectedKey": "wbs:CREATE_GOAL",
+    "docType": "bai/wbs",
+    "expectedArgs": { "description": "ship the beta" }
+  },
+  {
+    "utterance": "set the goal status to in progress",
+    "expectedKey": "wbs:SET_GOAL_STATUS",
+    "docType": "bai/wbs",
+    "expectedArgs": { "status": "IN_PROGRESS" }
+  }
 ]
