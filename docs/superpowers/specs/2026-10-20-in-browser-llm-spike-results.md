@@ -12,6 +12,7 @@ Every number below was observed in one run on the machine described under Enviro
 - **The constraints hold.** There were 0 violations out of 20 in each of the three modes (json_schema, GBNF and op-enum), even with an adversarial prompt at temperature 1.2.
 - **ADD_TOPIC works end to end in the harness.** utterance → args → `buildAction` → reducer, with no operation error.
 - **Picking the operation is the weak point.** With scoped retrieval (k=5), the model picked the right op 43.3% of the time overall, and 48.1% of the time when the right op was among the candidates. That is far below the 90–95% bar, so **the fine-tune trigger is met** (see Verdict).
+- **Round 5 (held-out, 68 items): decoding-time techniques are not enough.** Calibrated likelihood scoring fused with BM25 picks the right op 32.4% of the time scoped (51.2% when the op is in the top 5), against 13.2% for today's enum generation. Retrieval reaches only 63.2% recall@5. Args are 46–48% exact even with the oracle op. A fine-tune is justified, but retrieval, ref-id context and schema enums need fixing too (see Round 5).
 - **The Chat tab is verified in Connect (round 3).** Two blockers were found and cleared: the monorepo's stale Connect `dist`, and Connect's CSP blocking the wllama CDN import. ADD_TOPIC then dispatched through the in-browser reactor with no errors (see Round 3).
 
 ## Environment
