@@ -1,0 +1,2117 @@
+{
+  "r5Args:\"webgpu\":{\"set\":\"heldout\",\"mode\":\"A1\",\"gate\":\"all\"}": {
+    "summary": {
+      "set": "heldout",
+      "mode": "A1",
+      "gate": "all",
+      "n": 68,
+      "exact": 46,
+      "exactN": "23/50",
+      "fieldsMatch": 46,
+      "fieldsMatchN": "23/50",
+      "withExtras": 0,
+      "requiredPresentN": "22/23",
+      "refExactN": "9/22",
+      "zodOkN": "68/68",
+      "errors": 0,
+      "calls": 61,
+      "medianMs": 137,
+      "p90Ms": 262
+    },
+    "rows": [
+      {
+        "id": "kn-01",
+        "utterance": "rename this to \"Retrieval beats fine-tuning for small vaults\"",
+        "op": "knowledge-note:SET_TITLE",
+        "expected": {
+          "args": {
+            "title": "Retrieval beats fine-tuning for small vaults"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "title": "Retrieval beats fine-tuning for small vaults"
+        },
+        "raw": "{\"title\": \"Retrieval beats fine-tuning for small vaults\"}",
+        "error": null,
+        "wallMs": 138,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1239,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "kn-02",
+        "utterance": "The one-line summary for this should read: Small local models need retrieval to stay grounded.",
+        "op": "knowledge-note:SET_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "Small local models need retrieval to stay grounded."
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "description": "Small local models need retrieval to stay grounded"
+        },
+        "raw": "{\"description\": \"Small local models need retrieval to stay grounded\"}",
+        "error": null,
+        "wallMs": 118,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1800,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ]
+      },
+      {
+        "id": "kn-03",
+        "utterance": "wipe out the body text and just put: Quantized 1B models hallucinate op names unless you hand them a shortlist.",
+        "op": "knowledge-note:SET_CONTENT",
+        "expected": {
+          "args": {
+            "content": "Quantized 1B models hallucinate op names unless you hand them a shortlist."
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "content": "Quantized 1B models hallucinate op names unless you hand them a shortlist"
+        },
+        "raw": "{\"content\": \"Quantized 1B models hallucinate op names unless you hand them a shortlist\"}",
+        "error": null,
+        "wallMs": 118,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 2235,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "content"
+        ]
+      },
+      {
+        "id": "kn-04",
+        "utterance": "this is really a decision record, not an insight — reclassify it",
+        "op": "knowledge-note:SET_NOTE_TYPE",
+        "expected": {
+          "args": {
+            "noteType": "decision"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "noteType": "decision"
+        },
+        "raw": "{\"noteType\": \"decision\"}",
+        "error": null,
+        "wallMs": 102,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1438,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "kn-05",
+        "utterance": "What actually caused it: the reducer was calling Date.now() during replay.",
+        "op": "knowledge-note:SET_METADATA_FIELD",
+        "expected": {
+          "args": {
+            "field": "rootCause"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "value": "The reducer was calling Date.now() during replay."
+          }
+        },
+        "args": {
+          "field": "Date.now()"
+        },
+        "raw": "{\"field\": \"Date.now()\"}",
+        "error": null,
+        "wallMs": 118,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1440,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "field"
+        ]
+      },
+      {
+        "id": "kn-06",
+        "utterance": "Options we looked at and rejected: fine-tuning, a bigger cloud model, regex routing",
+        "op": "knowledge-note:SET_METADATA_LIST_FIELD",
+        "expected": {
+          "args": {
+            "field": "alternatives"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "values": [
+              "fine-tuning",
+              "a bigger cloud model",
+              "regex routing"
+            ]
+          }
+        },
+        "args": {
+          "field": "fine-tuning",
+          "values": [
+            "fine-tuning",
+            "rejected"
+          ]
+        },
+        "raw": "{\"field\": \"fine-tuning\", \"values\": [\"fine-tuning\", \"rejected\"]}",
+        "error": null,
+        "wallMs": 134,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1693,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "field"
+        ]
+      },
+      {
+        "id": "kn-07",
+        "utterance": "file this under local-first",
+        "op": "knowledge-note:ADD_TOPIC",
+        "expected": {
+          "args": {
+            "name": "local-first"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "name": "local-first"
+        },
+        "raw": "{\"name\": \"local-first\"}",
+        "error": null,
+        "wallMs": 92,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 672,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "kn-08",
+        "utterance": "this builds on the grammar-constrained decoding writeup",
+        "op": "knowledge-note:ADD_LINK",
+        "expected": {
+          "args": {
+            "linkType": "BUILDS_ON"
+          },
+          "refArgs": {
+            "targetDocumentId": "doc-gcd"
+          },
+          "ambiguous": {
+            "targetTitle": "Grammar-constrained decoding"
+          }
+        },
+        "args": {
+          "targetDocumentId": "doc-gcd",
+          "linkType": "BUILDS_ON"
+        },
+        "raw": "{\"targetDocumentId\": \"Grammar-constrained decoding\", \"linkType\": \"BUILDS_ON\"}",
+        "error": null,
+        "wallMs": 180,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 585,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "kn-09",
+        "utterance": "actually the cloud-inference-is-cheaper piece flat out contradicts this, it's not just related",
+        "op": "knowledge-note:UPDATE_LINK_TYPE",
+        "expected": {
+          "args": {
+            "linkType": "CONTRADICTS"
+          },
+          "refArgs": {
+            "id": "lnk-1"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "lnk-1",
+          "linkType": "BUILDS_ON"
+        },
+        "raw": "{\"id\": \"-> Cloud inference is cheaper (RELATES_TO)\", \"linkType\": \"BUILDS_ON\"}",
+        "error": null,
+        "wallMs": 216,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 570,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "linkType"
+        ]
+      },
+      {
+        "id": "kn-10",
+        "utterance": "it's not really about webgpu, drop that tag",
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "top-1"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "top-1"
+        },
+        "raw": "{\"id\": \"webgpu\"}",
+        "error": null,
+        "wallMs": 112,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 378,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "kn-11",
+        "utterance": "I think this one's ready, can someone look it over? double-check the latency numbers though",
+        "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": {
+            "comment": "Double-check the latency numbers."
+          }
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "wallMs": 0,
+        "called": false,
+        "zodOk": true,
+        "grammarChars": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "kn-13",
+        "utterance": "Sending this back — the benchmark section cites the wrong model size.",
+        "op": "knowledge-note:REJECT_NOTE",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": {
+            "comment": "The benchmark section cites the wrong model size."
+          }
+        },
+        "args": {
+          "comment": "the benchmark section cites the wrong model size"
+        },
+        "raw": "{\"comment\": \"the benchmark section cites the wrong model size\"}",
+        "error": null,
+        "wallMs": 80,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1441,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "kn-14",
+        "utterance": "this is obsolete since we dropped WebLLM. retire it",
+        "op": "knowledge-note:ARCHIVE_NOTE",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": {
+            "comment": "Obsolete since we dropped WebLLM."
+          }
+        },
+        "args": {
+          "comment": "obsolete"
+        },
+        "raw": "{\"comment\": \"obsolete\"}",
+        "error": null,
+        "wallMs": 54,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1165,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "moc-01",
+        "utterance": "Start a map called \"On-device inference\" — domain level. It should help me find my way around quantization, runtimes and memory limits.",
+        "op": "moc:CREATE_MOC",
+        "expected": {
+          "args": {
+            "title": "On-device inference",
+            "tier": "DOMAIN"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "description": "Map of on-device inference: quantization, runtimes and memory limits.",
+            "orientation": "Start here to navigate quantization, runtimes and memory limits."
+          }
+        },
+        "args": {
+          "title": "On-device inference",
+          "description": "Start a map called \"On-device inference\" — domain level",
+          "orientation": "help",
+          "tier": "DOMAIN"
+        },
+        "raw": "{\"title\": \"On-device inference\", \"description\": \"Start a map called \\\"On-device inference\\\" — domain level\", \"orientation\": \"help\", \"tier\": \"DOMAIN\"}",
+        "error": null,
+        "wallMs": 292,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 2726,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "moc-02",
+        "utterance": "Reframe the intro so a reader starts with runtimes, then quantization, and memory budgets last.",
+        "op": "moc:UPDATE_ORIENTATION",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": {
+            "orientation": "Start with runtimes, then quantization, and finish with memory budgets."
+          }
+        },
+        "args": {
+          "orientation": "runtimes"
+        },
+        "raw": "{\"orientation\": \"runtimes\"}",
+        "error": null,
+        "wallMs": 100,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1842,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "moc-03",
+        "utterance": "tweak the blurb to: Hub for running LLMs in the browser and on laptops.",
+        "op": "moc:UPDATE_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "Hub for running LLMs in the browser and on laptops."
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "description": "Hub for running LLMs in the browser and on laptops"
+        },
+        "raw": "{\"description\": \"Hub for running LLMs in the browser and on laptops\"}",
+        "error": null,
+        "wallMs": 134,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1625,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ]
+      },
+      {
+        "id": "moc-04",
+        "utterance": "pull the wllama-cold-start note into the key ideas here, it's why first load takes 20 seconds",
+        "op": "moc:ADD_CORE_IDEA",
+        "expected": {
+          "args": {
+            "noteRef": "wllama-cold-start"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "contextPhrase": "why first load takes 20 seconds",
+            "sortOrder": 1
+          }
+        },
+        "args": {
+          "noteRef": "wllama-cold-start",
+          "contextPhrase": "why first load takes 20 seconds",
+          "sortOrder": 1
+        },
+        "raw": "{\"noteRef\": \"wllama-cold-start\", \"contextPhrase\": \"why first load takes 20 seconds\", \"sortOrder\": 1}",
+        "error": null,
+        "wallMs": 207,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1899,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "moc-05",
+        "utterance": "the little explainer beside kv-cache-limits should say \"caps context at 4k on 8GB machines\"",
+        "op": "moc:UPDATE_CORE_IDEA",
+        "expected": {
+          "args": {
+            "contextPhrase": "caps context at 4k on 8GB machines"
+          },
+          "refArgs": {
+            "id": "ci-2"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "ci-1",
+          "contextPhrase": "kv-cache-limits"
+        },
+        "raw": "{\"id\": \"wllama-cold-start — why first load is slow\", \"contextPhrase\": \"kv-cache-limits\"}",
+        "error": null,
+        "wallMs": 214,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1850,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "contextPhrase"
+        ]
+      },
+      {
+        "id": "moc-07",
+        "utterance": "something we still don't know: does WebGPU actually help on integrated Intel graphics?",
+        "op": "moc:ADD_OPEN_QUESTION",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": {
+            "question": "Does WebGPU actually help on integrated Intel graphics?"
+          }
+        },
+        "args": {
+          "question": "does WebGPU actually help on integrated Intel graphics?"
+        },
+        "raw": "{\"question\": \"does WebGPU actually help on integrated Intel graphics?\"}",
+        "error": null,
+        "wallMs": 130,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1603,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "moc-08",
+        "utterance": "we figured out the 4-bit tool calling one, cross it off",
+        "op": "moc:REMOVE_OPEN_QUESTION",
+        "expected": {
+          "args": {
+            "question": "Is 4-bit quantization good enough for tool calling?"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "question": "cross it off"
+        },
+        "raw": "{\"question\": \"cross it off\"}",
+        "error": null,
+        "wallMs": 107,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1323,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "question"
+        ]
+      },
+      {
+        "id": "moc-10",
+        "utterance": "fast-cold-start and big-context-window pull against each other — on 8GB you can't have both",
+        "op": "moc:ADD_TENSION",
+        "expected": {
+          "args": {
+            "involvedRefs": [
+              "fast-cold-start",
+              "big-context-window"
+            ]
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "description": "On 8GB you can't have both a fast cold start and a big context window."
+          }
+        },
+        "args": {
+          "description": "fast-cold-start and big-context-window pull against each other",
+          "involvedRefs": [
+            "fast-cold-start",
+            "big-context-window"
+          ]
+        },
+        "raw": "{\"description\": \"fast-cold-start and big-context-window pull against each other\", \"involvedRefs\": [\"fast-cold-start\", \"big-context-window\"]}",
+        "error": null,
+        "wallMs": 202,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1712,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "src-01",
+        "utterance": "Save this article: \"Running Llama in the browser\" by Jane Park, https://example.com/llama-browser. Text: WebGPU lets us run 1B models at 20 tokens per second.",
+        "op": "source:INGEST_SOURCE",
+        "expected": {
+          "args": {
+            "title": "Running Llama in the browser",
+            "sourceType": "ARTICLE",
+            "author": "Jane Park",
+            "url": "https://example.com/llama-browser",
+            "content": "WebGPU lets us run 1B models at 20 tokens per second."
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "title": "Running Llama in the browser",
+          "content": "WebGPU lets us run 1B models at 20 tokens per second",
+          "sourceType": "DOCUMENTATION"
+        },
+        "raw": "{\"title\": \"Running Llama in the browser\", \"content\": \"WebGPU lets us run 1B models at 20 tokens per second\", \"sourceType\": \"DOCUMENTATION\"}",
+        "error": null,
+        "wallMs": 278,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 3134,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "sourceType",
+          "author",
+          "url",
+          "content"
+        ]
+      },
+      {
+        "id": "src-02",
+        "utterance": "ok I'm starting to mine this one for claims now",
+        "op": "source:SET_SOURCE_STATUS",
+        "expected": {
+          "args": {
+            "status": "EXTRACTING"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "status": "ARCHIVED"
+        },
+        "raw": "{\"status\": \"ARCHIVED\"}",
+        "error": null,
+        "wallMs": 117,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 422,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "status"
+        ]
+      },
+      {
+        "id": "src-03",
+        "utterance": "we're never going to use this paper, shelve it",
+        "op": "source:SET_SOURCE_STATUS",
+        "expected": {
+          "args": {
+            "status": "ARCHIVED"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "status": "ARCHIVED"
+        },
+        "raw": "{\"status\": \"ARCHIVED\"}",
+        "error": null,
+        "wallMs": 112,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 422,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "src-05",
+        "utterance": "Pulled 12 claims out of it and skipped 3",
+        "op": "source:RECORD_EXTRACTION_STATS",
+        "expected": {
+          "args": {
+            "claimCount": 12,
+            "skippedCount": 3
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "skipRate": 0.2
+          }
+        },
+        "args": {
+          "claimCount": 12,
+          "skippedCount": 3,
+          "skipRate": 25
+        },
+        "raw": "{\"claimCount\": 12, \"skippedCount\": 3, \"skipRate\": 25}",
+        "error": null,
+        "wallMs": 126,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 421,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "prj-01",
+        "utterance": "kick off a new initiative, \"Browser LLM spike\", Ben's running it",
+        "op": "project:CREATE_PROJECT",
+        "expected": {
+          "args": {
+            "name": "Browser LLM spike",
+            "owner": "Ben"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "name": "Ben's running it"
+        },
+        "raw": "{\"name\": \"Ben's running it\"}",
+        "error": null,
+        "wallMs": 113,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1443,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "name",
+          "owner"
+        ]
+      },
+      {
+        "id": "prj-02",
+        "utterance": "park this for now, we're waiting on the model license",
+        "op": "project:SET_PROJECT_STATUS",
+        "expected": {
+          "args": {
+            "status": "ON_HOLD"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "status": "ACTIVE"
+        },
+        "raw": "{\"status\": \"ACTIVE\"}",
+        "error": null,
+        "wallMs": 69,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 437,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "status"
+        ]
+      },
+      {
+        "id": "prj-03",
+        "utterance": "let's call it \"Offline assistant\" from now on",
+        "op": "project:UPDATE_PROJECT_INFO",
+        "expected": {
+          "args": {
+            "name": "Offline assistant"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "wallMs": 0,
+        "called": false,
+        "zodOk": true,
+        "grammarChars": null,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "name"
+        ]
+      },
+      {
+        "id": "prj-04",
+        "utterance": "Priya is accountable for this one now, not me",
+        "op": "project:SET_OWNER",
+        "expected": {
+          "args": {
+            "owner": "Priya"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "wallMs": 0,
+        "called": false,
+        "zodOk": true,
+        "grammarChars": null,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "owner"
+        ]
+      },
+      {
+        "id": "prj-05",
+        "utterance": "we need this wrapped up by December 15th",
+        "op": "project:SET_TARGET_DATE",
+        "expected": {
+          "args": {
+            "targetDate": "2026-12-15T00:00:00Z"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "wallMs": 0,
+        "called": false,
+        "zodOk": true,
+        "grammarChars": null,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "targetDate"
+        ]
+      },
+      {
+        "id": "prj-06",
+        "utterance": "bring Marco on board as our QA lead",
+        "op": "project:ADD_MEMBER",
+        "expected": {
+          "args": {
+            "name": "Marco",
+            "role": "QA lead"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "kind": "HUMAN"
+          }
+        },
+        "args": {
+          "name": "Marco"
+        },
+        "raw": "{\"name\": \"Marco\"}",
+        "error": null,
+        "wallMs": 98,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 996,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ]
+      },
+      {
+        "id": "prj-08",
+        "utterance": "Priya's switching from design to research",
+        "op": "project:UPDATE_MEMBER",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "m-2"
+          },
+          "ambiguous": {
+            "role": "Researcher"
+          }
+        },
+        "args": {
+          "id": "m-1"
+        },
+        "raw": "{\"id\": \"Marco (QA lead)\"}",
+        "error": null,
+        "wallMs": 130,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 399,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "prj-09",
+        "utterance": "Marco left the company, take him off",
+        "op": "project:REMOVE_MEMBER",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "m-1"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "m-1"
+        },
+        "raw": "{\"id\": \"Marco (QA lead)\"}",
+        "error": null,
+        "wallMs": 137,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 401,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "prj-10",
+        "utterance": "one more thing we owe out of this: a \"Benchmark report\"",
+        "op": "project:ADD_DELIVERABLE",
+        "expected": {
+          "args": {
+            "title": "Benchmark report"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "title": "Benchmark report"
+        },
+        "raw": "{\"title\": \"Benchmark report\"}",
+        "error": null,
+        "wallMs": 100,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1388,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "prj-11",
+        "utterance": "we're scrapping the demo video, it's not happening",
+        "op": "project:SET_DELIVERABLE_STATUS",
+        "expected": {
+          "args": {
+            "status": "CANCELLED"
+          },
+          "refArgs": {
+            "id": "d-2"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "d-1",
+          "status": "CANCELLED"
+        },
+        "raw": "{\"id\": \"Benchmark report (IN_PROGRESS)\", \"status\": \"CANCELLED\"}",
+        "error": null,
+        "wallMs": 173,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 510,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "prj-13",
+        "utterance": "useful links for this: https://github.com/ngxson/wllama and https://webgpureport.org",
+        "op": "project:SET_REFERENCES",
+        "expected": {
+          "args": {
+            "references": [
+              "https://github.com/ngxson/wllama",
+              "https://webgpureport.org"
+            ]
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "references": [
+            "https://github.com/ngxson/wllama",
+            "https://webgpureport.org"
+          ]
+        },
+        "raw": "{\"references\": [\"https://github.com/ngxson/wllama\", \"https://webgpureport.org\"]}",
+        "error": null,
+        "wallMs": 134,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1142,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "wbs-01",
+        "utterance": "under the benchmarking piece we also need: \"Compare Qwen 0.5B against Llama 1B\"",
+        "op": "wbs:CREATE_GOAL",
+        "expected": {
+          "args": {
+            "description": "Compare Qwen 0.5B against Llama 1B"
+          },
+          "refArgs": {
+            "parentId": "g-2"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "description": "Compare Qwen 0.5B against Llama 1B",
+          "parentId": "g-1"
+        },
+        "raw": "{\"description\": \"Compare Qwen 0.5B against Llama 1B\", \"parentId\": \"Ship in-browser chat\"}",
+        "error": null,
+        "wallMs": 203,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1734,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "wbs-02",
+        "utterance": "reword \"Benchmark models\" to \"Benchmark models on low-end hardware\"",
+        "op": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "expected": {
+          "args": {
+            "description": "Benchmark models on low-end hardware"
+          },
+          "refArgs": {
+            "id": "g-2"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "g-1",
+          "description": "Benchmark models"
+        },
+        "raw": "{\"id\": \"Ship in-browser chat\", \"description\": \"Benchmark models\"}",
+        "error": null,
+        "wallMs": 262,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1421,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "description"
+        ]
+      },
+      {
+        "id": "wbs-03",
+        "utterance": "get rid of the Safari support item, I made it by mistake",
+        "op": "wbs:DELETE_GOAL",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-3"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "g-1"
+        },
+        "raw": "{\"id\": \"Ship in-browser chat\"}",
+        "error": null,
+        "wallMs": 124,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 427,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "wbs-04",
+        "utterance": "we're not doing Safari after all — leave it on the list but mark it as not happening",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "WONT_DO"
+          },
+          "refArgs": {
+            "id": "g-3"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "g-1",
+          "status": "BLOCKED"
+        },
+        "raw": "{\"id\": \"Ship in-browser chat\", \"status\": \"BLOCKED\"}",
+        "error": null,
+        "wallMs": 162,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 523,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "status"
+        ]
+      },
+      {
+        "id": "wbs-05",
+        "utterance": "benchmarking is stuck until IT gives us the test laptops",
+        "op": "wbs:SET_GOAL_STATUS",
+        "expected": {
+          "args": {
+            "status": "BLOCKED"
+          },
+          "refArgs": {
+            "id": "g-2"
+          },
+          "ambiguous": {
+            "blockReason": "Waiting on IT for the test laptops."
+          }
+        },
+        "args": {
+          "id": "g-1",
+          "status": "BLOCKED"
+        },
+        "raw": "{\"id\": \"Ship in-browser chat\", \"status\": \"BLOCKED\"}",
+        "error": null,
+        "wallMs": 160,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 525,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": false,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "wbs-07",
+        "utterance": "let Priya take the benchmarking work",
+        "op": "wbs:ASSIGN_GOAL",
+        "expected": {
+          "args": {
+            "assignee": "Priya"
+          },
+          "refArgs": {
+            "id": "g-2"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "g-1"
+        },
+        "raw": "{\"id\": \"Ship in-browser chat\"}",
+        "error": null,
+        "wallMs": 120,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 404,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "assignee"
+        ]
+      },
+      {
+        "id": "wbs-08",
+        "utterance": "Ben is accountable for this whole plan",
+        "op": "wbs:SET_OWNER",
+        "expected": {
+          "args": {
+            "owner": "Ben"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "wallMs": 0,
+        "called": false,
+        "zodOk": true,
+        "grammarChars": null,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "owner"
+        ]
+      },
+      {
+        "id": "wbs-09",
+        "utterance": "for the record, the chat work ended up at 85% top-1 accuracy on the eval",
+        "op": "wbs:SET_OUTCOME",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-1"
+          },
+          "ambiguous": {
+            "outcome": "85% top-1 accuracy on the eval"
+          }
+        },
+        "args": {
+          "id": "g-1"
+        },
+        "raw": "{\"id\": \"Ship in-browser chat (COMPLETED)\"}",
+        "error": null,
+        "wallMs": 139,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 430,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "wbs-10",
+        "utterance": "shipping chat can't start until benchmarking is finished",
+        "op": "wbs:ADD_DEPENDENCIES",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "g-1",
+            "dependencies": [
+              "g-2"
+            ]
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "g-1",
+          "dependencies": [
+            "g-2",
+            "g-1"
+          ]
+        },
+        "raw": "{\"id\": \"Ship in-browser chat\", \"dependencies\": [\"Benchmark models\", \"Ship in-browser chat\"]}",
+        "error": null,
+        "wallMs": 214,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 567,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "wbs-11",
+        "utterance": "jot down on the benchmarking item: the Qwen tokenizer is ~30% slower in wasm",
+        "op": "wbs:ADD_NOTE",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "goalId": "g-2"
+          },
+          "ambiguous": {
+            "note": "The Qwen tokenizer is ~30% slower in wasm."
+          }
+        },
+        "args": {
+          "goalId": "g-1",
+          "note": "the Qwen tokenizer is ~30% slower in wasm"
+        },
+        "raw": "{\"goalId\": \"Ship in-browser chat\", \"note\": \"the Qwen tokenizer is ~30% slower in wasm\"}",
+        "error": null,
+        "wallMs": 214,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1700,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "rc-01",
+        "utterance": "New finding: \"Constrained decoding cuts invalid JSON to zero\". It's empirical, from our spike runs — A/B over 40 prompts, source is the round 2 spike notes. Tag it llm and decoding.",
+        "op": "research-claim:CREATE_CLAIM",
+        "expected": {
+          "args": {
+            "title": "Constrained decoding cuts invalid JSON to zero",
+            "topics": [
+              "llm",
+              "decoding"
+            ]
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "description": "Grammar-constrained decoding eliminated invalid JSON in spike runs.",
+            "content": "A/B over 40 prompts showed zero invalid JSON with constrained decoding.",
+            "kind": "empirical",
+            "methodology": [
+              "A/B test over 40 prompts"
+            ],
+            "sources": [
+              "round 2 spike notes"
+            ]
+          }
+        },
+        "args": {
+          "title": "Constrained decoding cuts invalid JSON to zero",
+          "description": "A/B over 40 prompts, source is the round 2 spike notes",
+          "content": "empirical",
+          "kind": "finding",
+          "methodology": [
+            "spike runs",
+            "A/B over 40 prompts",
+            "round 2 spike notes"
+          ],
+          "sources": [
+            "round 2 spike notes"
+          ],
+          "topics": [
+            "decoding",
+            "invalid JSON",
+            "zero"
+          ]
+        },
+        "raw": "{\"title\": \"Constrained decoding cuts invalid JSON to zero\", \"description\": \"A/B over 40 prompts, source is the round 2 spike notes\", \"content\": \"empirical\", \"kind\": \"finding\", \"methodology\": [\"spike runs\", \"A/B over 40 prompts\", \"round 2 spike notes\"], \"sources\": [\"round 2 spike notes\"], \"topics\": [\"decoding\", \"invalid JSON\", \"zero\"]}",
+        "error": null,
+        "wallMs": 557,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 3851,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "topics"
+        ]
+      },
+      {
+        "id": "rc-02",
+        "utterance": "this ties into small-models-need-retrieval — it's the reason the shortlist matters",
+        "op": "research-claim:ADD_RESEARCH_CONNECTION",
+        "expected": {
+          "args": {
+            "targetRef": "small-models-need-retrieval"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "contextPhrase": "the reason the shortlist matters"
+          }
+        },
+        "args": {
+          "targetRef": "small-models-need-retrieval",
+          "contextPhrase": "the reason the shortlist matters"
+        },
+        "raw": "{\"targetRef\": \"small-models-need-retrieval\", \"contextPhrase\": \"the reason the shortlist matters\"}",
+        "error": null,
+        "wallMs": 153,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1432,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "rc-03",
+        "utterance": "the cloud-cost-curve tie-in is bogus, unhook it",
+        "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "id": "c-2"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "c-2"
+        },
+        "raw": "{\"id\": \"cloud-cost-curve\"}",
+        "error": null,
+        "wallMs": 116,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 399,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "rc-04",
+        "utterance": "rewrite the body: Grammar-constrained decoding eliminated malformed JSON in 40 of 40 runs.",
+        "op": "research-claim:UPDATE_CLAIM_CONTENT",
+        "expected": {
+          "args": {
+            "content": "Grammar-constrained decoding eliminated malformed JSON in 40 of 40 runs."
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "content": "Grammar-constrained decoding eliminated malformed JSON in 40 of 40 runs."
+        },
+        "raw": "{\"content\": \"Grammar-constrained decoding eliminated malformed JSON in 40 of 40 runs.\"}",
+        "error": null,
+        "wallMs": 164,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1622,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "obs-01",
+        "utterance": "Friction worth logging: every reload re-downloads the 600MB model. Call it \"Model re-downloads on reload\".",
+        "op": "observation:CREATE_OBSERVATION",
+        "expected": {
+          "args": {
+            "title": "Model re-downloads on reload",
+            "category": "FRICTION"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "description": "Every reload re-downloads the 600MB model.",
+            "content": "Every reload re-downloads the 600MB model."
+          }
+        },
+        "args": {
+          "title": "Model re-downloads on reload",
+          "description": "Friction worth logging",
+          "category": "FRICTION"
+        },
+        "raw": "{\"title\": \"Model re-downloads on reload\", \"description\": \"Friction worth logging\", \"category\": \"FRICTION\"}",
+        "error": null,
+        "wallMs": 200,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 2040,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "obs-02",
+        "utterance": "this deserves to graduate into a proper note — note-model-caching",
+        "op": "observation:PROMOTE_OBSERVATION",
+        "expected": {
+          "args": {
+            "promotedTo": "note-model-caching"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "promotedTo": "note-model-caching"
+        },
+        "raw": "{\"promotedTo\": \"note-model-caching\"}",
+        "error": null,
+        "wallMs": 74,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1236,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "obs-03",
+        "utterance": "we fixed this with the OPFS cache, so it's been acted on",
+        "op": "observation:IMPLEMENT_OBSERVATION",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "wallMs": 0,
+        "called": false,
+        "zodOk": true,
+        "grammarChars": null,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "ten-01",
+        "utterance": "Log a conflict: \"Privacy vs capability\" — local models keep data on the device but they're far weaker than the cloud ones.",
+        "op": "tension:CREATE_TENSION",
+        "expected": {
+          "args": {
+            "title": "Privacy vs capability"
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "description": "Local models keep data on the device but are far weaker than cloud models.",
+            "involvedRefs": []
+          }
+        },
+        "args": {
+          "title": "Privacy vs capability",
+          "description": "Privacy vs capability",
+          "involvedRefs": [
+            "local models",
+            "cloud ones",
+            "data on the device",
+            "capability"
+          ]
+        },
+        "raw": "{\"title\": \"Privacy vs capability\", \"description\": \"Privacy vs capability\", \"involvedRefs\": [\"local models\", \"cloud ones\", \"data on the device\", \"capability\"]}",
+        "error": null,
+        "wallMs": 279,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 2620,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "ten-02",
+        "utterance": "we settled this one: local by default, cloud only if the user opts in",
+        "op": "tension:RESOLVE_TENSION",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": {
+            "resolution": "Local by default; cloud only if the user opts in."
+          }
+        },
+        "args": {
+          "resolution": "local by default, cloud only if the user opts in"
+        },
+        "raw": "{\"resolution\": \"local by default, cloud only if the user opts in\"}",
+        "error": null,
+        "wallMs": 100,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1636,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "ten-03",
+        "utterance": "turns out this was never a real conflict — the two benchmarks were measuring different things",
+        "op": "tension:DISSOLVE_TENSION",
+        "expected": {
+          "args": {},
+          "refArgs": null,
+          "ambiguous": {
+            "resolution": "Never a real conflict; the two benchmarks measured different things."
+          }
+        },
+        "args": {
+          "resolution": "never"
+        },
+        "raw": "{\"resolution\": \"never\"}",
+        "error": null,
+        "wallMs": 57,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1820,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "pq-01",
+        "utterance": "queue up claim processing for sources/llama-browser",
+        "op": "pipeline-queue:ADD_TASK",
+        "expected": {
+          "args": {
+            "taskType": "claim",
+            "target": "sources/llama-browser"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "taskType": "claim",
+          "target": "sources/llama-browser"
+        },
+        "raw": "{\"taskType\": \"claim\", \"target\": \"sources/llama-browser\"}",
+        "error": null,
+        "wallMs": 156,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 915,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "pq-02",
+        "utterance": "hand the kv-cache job to agent-7",
+        "op": "pipeline-queue:ASSIGN_TASK",
+        "expected": {
+          "args": {
+            "assignedTo": "agent-7"
+          },
+          "refArgs": {
+            "taskId": "t-2"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "taskId": "t-1",
+          "assignedTo": "agent-7"
+        },
+        "raw": "{\"taskId\": \"claim: sources/llama-browser\", \"assignedTo\": \"agent-7\"}",
+        "error": null,
+        "wallMs": 193,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 938,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "pq-03",
+        "utterance": "the llama-browser one can't go any further until someone re-uploads the PDF, it's corrupted",
+        "op": "pipeline-queue:BLOCK_TASK",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "taskId": "t-1"
+          },
+          "ambiguous": {
+            "reason": "Source PDF is corrupted; needs re-upload."
+          }
+        },
+        "args": {
+          "taskId": "t-1",
+          "reason": "PDF"
+        },
+        "raw": "{\"taskId\": \"claim: sources/llama-browser\", \"reason\": \"PDF\"}",
+        "error": null,
+        "wallMs": 169,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1768,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "pq-04",
+        "utterance": "the kv-cache job died with an out-of-memory error, give up on it",
+        "op": "pipeline-queue:FAIL_TASK",
+        "expected": {
+          "args": {},
+          "refArgs": {
+            "taskId": "t-2"
+          },
+          "ambiguous": {
+            "reason": "Out-of-memory error."
+          }
+        },
+        "args": {
+          "taskId": "t-1",
+          "reason": "out-of-memory"
+        },
+        "raw": "{\"taskId\": \"claim: sources/llama-browser\", \"reason\": \"out-of-memory\"}",
+        "error": null,
+        "wallMs": 178,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1528,
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": false,
+        "mismatched": []
+      },
+      {
+        "id": "pq-06",
+        "utterance": "finished the reflect step on llama-browser: connected 4 claims to existing notes, touched notes/kv-cache.md and notes/wllama.md",
+        "op": "pipeline-queue:ADVANCE_PHASE",
+        "expected": {
+          "args": {
+            "handoff": {
+              "phase": "reflect",
+              "filesModified": [
+                "notes/kv-cache.md",
+                "notes/wllama.md"
+              ]
+            }
+          },
+          "refArgs": {
+            "taskId": "t-1"
+          },
+          "ambiguous": {
+            "handoff": {
+              "workDone": "Connected 4 claims to existing notes."
+            }
+          }
+        },
+        "args": {
+          "taskId": "t-1",
+          "handoff": {
+            "phase": "reflect",
+            "workDone": "connected",
+            "filesModified": [
+              "notes/kv-cache.md",
+              "notes/wllama.md"
+            ]
+          }
+        },
+        "raw": "{\"taskId\": \"claim: sources/llama-browser (phase: reflect)\", \"handoff\": {\"phase\": \"reflect\", \"workDone\": \"connected\", \"filesModified\": [\"notes/kv-cache.md\", \"notes/wllama.md\"]}}",
+        "error": null,
+        "wallMs": 326,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 2190,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": []
+      },
+      {
+        "id": "vc-01",
+        "utterance": "treat notes as stale after 60 days instead of 30",
+        "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "expected": {
+          "args": {
+            "condition": "staleNoteDays",
+            "threshold": 60
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "condition": "stale",
+          "threshold": 60
+        },
+        "raw": "{\"condition\": \"stale\", \"threshold\": 60}",
+        "error": null,
+        "wallMs": 130,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1225,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "condition"
+        ]
+      },
+      {
+        "id": "vc-02",
+        "utterance": "in my vault I'd rather call topic maps \"atlases\"",
+        "op": "vault-config:UPDATE_VOCABULARY",
+        "expected": {
+          "args": {
+            "key": "topicMap",
+            "value": "atlases"
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {
+          "key": "atlases",
+          "value": "vault"
+        },
+        "raw": "{\"key\": \"atlases\", \"value\": \"vault\"}",
+        "error": null,
+        "wallMs": 128,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1213,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "key",
+          "value"
+        ]
+      },
+      {
+        "id": "vc-03",
+        "utterance": "let processing roll from one step into the next on its own",
+        "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "expected": {
+          "args": {
+            "autoChain": true
+          },
+          "refArgs": null,
+          "ambiguous": null
+        },
+        "args": {},
+        "raw": null,
+        "error": null,
+        "wallMs": 0,
+        "called": false,
+        "zodOk": true,
+        "grammarChars": null,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "autoChain"
+        ]
+      },
+      {
+        "id": "vc-04",
+        "utterance": "I want much more atomic notes — crank granularity up to 5",
+        "op": "vault-config:UPDATE_DIMENSION",
+        "expected": {
+          "args": {
+            "dimension": "granularity",
+            "value": 5
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "confidence": 0.8,
+            "rationale": "User wants much more atomic notes."
+          }
+        },
+        "args": {
+          "dimension": "granularity",
+          "value": 5,
+          "confidence": 0.95
+        },
+        "raw": "{\"dimension\": \"granularity\", \"value\": 5, \"confidence\": 0.95}",
+        "error": null,
+        "wallMs": 168,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1446,
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": []
+      },
+      {
+        "id": "vc-05",
+        "utterance": "stop pulling anecdotes out of sources",
+        "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "expected": {
+          "args": {
+            "active": false
+          },
+          "refArgs": {
+            "id": "ec-1"
+          },
+          "ambiguous": null
+        },
+        "args": {
+          "id": "ec-1",
+          "active": true
+        },
+        "raw": "{\"id\": \"Anecdotes (active)\", \"active\": true}",
+        "error": null,
+        "wallMs": 140,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 432,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [
+          "active"
+        ]
+      },
+      {
+        "id": "der-01",
+        "utterance": "log this: when I said \"I hate deep folder trees\" that's a vote for flatter organization",
+        "op": "derivation:ADD_SIGNAL",
+        "expected": {
+          "args": {
+            "utterance": "I hate deep folder trees",
+            "influencedDimensions": [
+              "organization"
+            ]
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "interpretation": "Prefers flatter organization."
+          }
+        },
+        "args": {
+          "utterance": "I hate deep folder trees",
+          "influencedDimensions": [
+            "organization",
+            "deep"
+          ],
+          "interpretation": "I hate deep folder trees"
+        },
+        "raw": "{\"utterance\": \"I hate deep folder trees\", \"influencedDimensions\": [\"organization\", \"deep\"], \"interpretation\": \"I hate deep folder trees\"}",
+        "error": null,
+        "wallMs": 228,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1979,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "influencedDimensions"
+        ]
+      },
+      {
+        "id": "hr-01",
+        "utterance": "flag it as failing: 3 links point nowhere, in kv-cache and wllama-cold-start",
+        "op": "health-report:ADD_CHECK",
+        "expected": {
+          "args": {
+            "category": "LINK_HEALTH",
+            "status": "FAIL",
+            "affectedItems": [
+              "kv-cache",
+              "wllama-cold-start"
+            ]
+          },
+          "refArgs": null,
+          "ambiguous": {
+            "message": "3 dangling links."
+          }
+        },
+        "args": {
+          "category": "ORPHAN_DETECTION",
+          "status": "FAIL",
+          "message": "3 links point nowhere",
+          "affectedItems": [
+            "kv-cache",
+            "wllama-cold-start"
+          ]
+        },
+        "raw": "{\"category\": \"ORPHAN_DETECTION\", \"status\": \"FAIL\", \"message\": \"3 links point nowhere\", \"affectedItems\": [\"kv-cache\", \"wllama-cold-start\"]}",
+        "error": null,
+        "wallMs": 291,
+        "called": true,
+        "zodOk": true,
+        "grammarChars": 1834,
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "category"
+        ]
+      }
+    ]
+  }
+}
