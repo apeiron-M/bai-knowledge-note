@@ -1,5 +1,6 @@
 // Standalone spike harness: npx vite --config spike/llm-harness/vite.config.mjs --port 5199
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -28,12 +29,47 @@ const saveResults = {
   },
 };
 
+// transformers' own onnxruntime-web (a pnpm sibling, not hoisted).
+const ORT_DIST = join(
+  realpathSync(`${repo}node_modules/@huggingface/transformers`),
+  "../../onnxruntime-web/dist",
+);
+const TYPES = {
+  ".json": "application/json",
+  ".onnx": "application/octet-stream",
+  ".wasm": "application/wasm",
+  ".mjs": "text/javascript",
+};
+
+/** Dev-only static mounts: `/models/` (gte-small) and `/ort/` (ort wasm). */
+const staticMounts = {
+  name: "spike-static-mounts",
+  configureServer(server) {
+    for (const [prefix, dir] of [
+      ["/models/", `${repo}models/`],
+      ["/ort/", `${ORT_DIST}/`],
+    ]) {
+      server.middlewares.use(prefix, (req, res, next) => {
+        const rel = normalize(
+          decodeURIComponent((req.url ?? "").split("?")[0]),
+        );
+        const file = join(dir, rel);
+        if (!file.startsWith(dir) || !existsSync(file)) return next();
+        const ext = file.slice(file.lastIndexOf("."));
+        res.setHeader("Content-Type", TYPES[ext] ?? "application/octet-stream");
+        res.end(readFileSync(file));
+      });
+    }
+  },
+};
+
 export default defineConfig({
   root,
   // The harness root has no tsconfig, so point the plugin at the repo's.
   plugins: [
     tsconfigPaths({ root: repo, projects: [`${repo}tsconfig.json`] }),
     saveResults,
+    staticMounts,
   ],
   // No HMR: a reload would drop a loaded model and in-page results.
   server: { port: 5199, strictPort: true, hmr: false, fs: { allow: [repo] } },

@@ -1,0 +1,343 @@
+{
+  "name": "round-6 dev extension",
+  "note": "Written by the round-6 implementer (same hands as the code) for developing ref labels, vocabularies, the optional-field gate and no-action. Dev only: every number on it is optimistic.",
+  "items": [
+    {
+      "id": "dx-01",
+      "utterance": "drop the machine learning tag",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "refCandidates": {
+          "id": [
+            { "id": "t-1", "label": "distributed systems" },
+            { "id": "t-2", "label": "machine learning" },
+            { "id": "t-3", "label": "epistemology" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "refArgs": { "id": "t-2" }
+      }
+    },
+    {
+      "id": "dx-02",
+      "utterance": "this note is not about epistemology anymore, untag it",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "refCandidates": {
+          "id": [
+            { "id": "t-1", "label": "memory" },
+            { "id": "t-2", "label": "learning science" },
+            { "id": "t-3", "label": "epistemology" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:REMOVE_TOPIC",
+        "refArgs": { "id": "t-3" }
+      }
+    },
+    {
+      "id": "dx-03",
+      "utterance": "the link to the Raft paper should say it contradicts this note",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "refCandidates": {
+          "id": [
+            { "id": "l-1", "label": "Paxos made simple" },
+            { "id": "l-2", "label": "Raft paper" },
+            { "id": "l-3", "label": "CAP theorem" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:UPDATE_LINK_TYPE",
+        "args": { "linkType": "CONTRADICTS" },
+        "refArgs": { "id": "l-2" }
+      }
+    },
+    {
+      "id": "dx-04",
+      "utterance": "get rid of the link to CAP theorem",
+      "context": {
+        "docType": "bai/knowledge-note",
+        "refCandidates": {
+          "id": [
+            { "id": "l-1", "label": "Paxos made simple" },
+            { "id": "l-2", "label": "Raft paper" },
+            { "id": "l-3", "label": "CAP theorem" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "knowledge-note:REMOVE_LINK",
+        "refArgs": { "id": "l-3" }
+      }
+    },
+    {
+      "id": "dx-05",
+      "utterance": "the onboarding guide goal is finished",
+      "context": {
+        "docType": "bai/wbs",
+        "refCandidates": {
+          "id": [
+            { "id": "g-1", "label": "Ship the beta" },
+            { "id": "g-2", "label": "Write the onboarding guide" },
+            { "id": "g-3", "label": "Set up CI" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:SET_GOAL_STATUS",
+        "args": { "status": "COMPLETED" },
+        "refArgs": { "id": "g-2" }
+      }
+    },
+    {
+      "id": "dx-06",
+      "utterance": "delete the CI goal",
+      "context": {
+        "docType": "bai/wbs",
+        "refCandidates": {
+          "id": [
+            { "id": "g-1", "label": "Ship the beta" },
+            { "id": "g-2", "label": "Write the onboarding guide" },
+            { "id": "g-3", "label": "Set up CI" }
+          ]
+        }
+      },
+      "expected": { "op": "wbs:DELETE_GOAL", "refArgs": { "id": "g-3" } }
+    },
+    {
+      "id": "dx-07",
+      "utterance": "give the beta goal to Priya",
+      "context": {
+        "docType": "bai/wbs",
+        "refCandidates": {
+          "id": [
+            { "id": "g-1", "label": "Set up CI" },
+            { "id": "g-2", "label": "Ship the beta" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "wbs:ASSIGN_GOAL",
+        "args": { "assignee": "Priya" },
+        "refArgs": { "id": "g-2" }
+      }
+    },
+    {
+      "id": "dx-08",
+      "utterance": "Bob left, take him off the team",
+      "context": {
+        "docType": "bai/project",
+        "refCandidates": {
+          "id": [
+            { "id": "m-1", "label": "Alice" },
+            { "id": "m-2", "label": "Bob" },
+            { "id": "m-3", "label": "Carol" }
+          ]
+        }
+      },
+      "expected": { "op": "project:REMOVE_MEMBER", "refArgs": { "id": "m-2" } }
+    },
+    {
+      "id": "dx-09",
+      "utterance": "the API docs deliverable shipped today",
+      "context": {
+        "docType": "bai/project",
+        "refCandidates": {
+          "id": [
+            { "id": "d-1", "label": "Design mockups" },
+            { "id": "d-2", "label": "API docs" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:SET_DELIVERABLE_STATUS",
+        "args": { "status": "DELIVERED" },
+        "refArgs": { "id": "d-2" }
+      }
+    },
+    {
+      "id": "dx-10",
+      "utterance": "Carol is now our tech lead",
+      "context": {
+        "docType": "bai/project",
+        "refCandidates": {
+          "id": [
+            { "id": "m-1", "label": "Alice" },
+            { "id": "m-2", "label": "Bob" },
+            { "id": "m-3", "label": "Carol" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "project:UPDATE_MEMBER",
+        "args": { "role": "tech lead" },
+        "refArgs": { "id": "m-3" }
+      }
+    },
+    {
+      "id": "dx-11",
+      "utterance": "block the CRDT reflection task because the notes are not written yet",
+      "context": {
+        "docType": "bai/pipeline-queue",
+        "refCandidates": {
+          "taskId": [
+            { "id": "q-1", "label": "extract Raft paper" },
+            { "id": "q-2", "label": "reflect on CRDT notes" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "pipeline-queue:BLOCK_TASK",
+        "args": { "reason": "the notes are not written yet" },
+        "refArgs": { "taskId": "q-2" }
+      }
+    },
+    {
+      "id": "dx-12",
+      "utterance": "take the spacing effect idea out of this map",
+      "context": {
+        "docType": "bai/moc",
+        "refCandidates": {
+          "id": [
+            { "id": "c-1", "label": "Retrieval practice" },
+            { "id": "c-2", "label": "Spacing effect" },
+            { "id": "c-3", "label": "Interleaving" }
+          ]
+        }
+      },
+      "expected": { "op": "moc:REMOVE_CORE_IDEA", "refArgs": { "id": "c-2" } }
+    },
+    {
+      "id": "dx-13",
+      "utterance": "stop extracting the quotes category",
+      "context": {
+        "docType": "bai/vault-config",
+        "refCandidates": {
+          "id": [
+            { "id": "x-1", "label": "claims" },
+            { "id": "x-2", "label": "quotes" }
+          ]
+        }
+      },
+      "expected": {
+        "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "args": { "active": false },
+        "refArgs": { "id": "x-2" }
+      }
+    },
+    {
+      "id": "dx-14",
+      "utterance": "record the root cause: the cache key ignored the locale",
+      "context": { "docType": "bai/knowledge-note" },
+      "expected": {
+        "op": "knowledge-note:SET_METADATA_FIELD",
+        "args": {
+          "field": "rootCause",
+          "value": "the cache key ignored the locale"
+        }
+      }
+    },
+    {
+      "id": "dx-15",
+      "utterance": "this is a decision record",
+      "context": { "docType": "bai/knowledge-note" },
+      "expected": {
+        "op": "knowledge-note:SET_NOTE_TYPE",
+        "args": { "noteType": "decision" }
+      }
+    },
+    {
+      "id": "dx-16",
+      "utterance": "flag notes as stale after 60 days",
+      "context": { "docType": "bai/vault-config" },
+      "expected": {
+        "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "args": { "condition": "staleNoteDays", "threshold": 60 }
+      }
+    },
+    {
+      "id": "dx-17",
+      "utterance": "call the inbox \"capture\" from now on",
+      "context": { "docType": "bai/vault-config" },
+      "expected": {
+        "op": "vault-config:UPDATE_VOCABULARY",
+        "args": { "key": "inbox", "value": "capture" }
+      }
+    },
+    {
+      "id": "dx-18",
+      "utterance": "use the deep processing pipeline",
+      "context": { "docType": "bai/vault-config" },
+      "expected": {
+        "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "args": { "depth": "deep" }
+      }
+    },
+    {
+      "id": "dx-19",
+      "utterance": "rename the project to Atlas",
+      "context": { "docType": "bai/project" },
+      "expected": {
+        "op": "project:UPDATE_PROJECT_INFO",
+        "args": { "name": "Atlas" }
+      }
+    }
+  ],
+  "noAction": [
+    {
+      "id": "dn-01",
+      "utterance": "what is this note about?",
+      "context": { "docType": "bai/knowledge-note" }
+    },
+    {
+      "id": "dn-02",
+      "utterance": "thanks!",
+      "context": { "docType": "bai/knowledge-note" }
+    },
+    {
+      "id": "dn-03",
+      "utterance": "how many topics does it have?",
+      "context": { "docType": "bai/knowledge-note" }
+    },
+    {
+      "id": "dn-04",
+      "utterance": "which goals are blocked right now?",
+      "context": { "docType": "bai/wbs" }
+    },
+    {
+      "id": "dn-05",
+      "utterance": "is the project on track?",
+      "context": { "docType": "bai/project" }
+    },
+    {
+      "id": "dn-06",
+      "utterance": "summarize this map for me",
+      "context": { "docType": "bai/moc" }
+    },
+    {
+      "id": "dn-07",
+      "utterance": "hmm, let me think about that",
+      "context": { "docType": "bai/pipeline-queue" }
+    },
+    {
+      "id": "dn-08",
+      "utterance": "what does reweave mean?",
+      "context": { "docType": "bai/vault-config" }
+    },
+    {
+      "id": "dn-09",
+      "utterance": "great, that looks right",
+      "context": { "docType": "bai/project" }
+    },
+    {
+      "id": "dn-10",
+      "utterance": "who wrote the Raft paper?",
+      "context": { "docType": "bai/source" }
+    }
+  ]
+}

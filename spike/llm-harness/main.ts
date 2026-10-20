@@ -19,6 +19,15 @@ import { buildAction } from "../../editors/knowledge-vault/chat/core/envelope.js
 import { createOpRetriever } from "../../editors/knowledge-vault/chat/core/op-retriever.js";
 import type { CatalogEntry } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
 import { evalArgs, evalOps, probeLogprobs } from "./r5.js";
+import {
+  r6Args,
+  r6Gate,
+  r6GateEmb,
+  r6OpsScoped,
+  r6OpsUnscoped,
+  r6Pipeline,
+  r6Retrieval,
+} from "./r6.js";
 
 type Json = Record<string, unknown>;
 
@@ -594,6 +603,22 @@ const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
   // r5Args("webgpu", {set, mode: "A0" | "A1", gate})
   r5Args: (b, o) =>
     evalArgs(client(backendArg(b)), o as Parameters<typeof evalArgs>[1]),
+  // Round 6; option shapes are the second parameter of each function.
+  r6Retrieval: (o) => r6Retrieval(o as Parameters<typeof r6Retrieval>[0]),
+  r6OpsScoped: (b, o) =>
+    r6OpsScoped(client(backendArg(b)), o as Parameters<typeof r6OpsScoped>[1]),
+  r6OpsUnscoped: (b, o) =>
+    r6OpsUnscoped(
+      client(backendArg(b)),
+      o as Parameters<typeof r6OpsUnscoped>[1],
+    ),
+  r6Gate: (b, o) =>
+    r6Gate(client(backendArg(b)), o as Parameters<typeof r6Gate>[1]),
+  r6GateEmb: (o) => r6GateEmb(o as Parameters<typeof r6GateEmb>[0]),
+  r6Args: (b, o) =>
+    r6Args(client(backendArg(b)), o as Parameters<typeof r6Args>[1]),
+  r6Pipeline: (b, o) =>
+    r6Pipeline(client(backendArg(b)), o as Parameters<typeof r6Pipeline>[1]),
 };
 
 /* ------------------------------------------------------------------ */
