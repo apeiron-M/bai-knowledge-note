@@ -37,7 +37,10 @@ def main() -> int:
     tok = AutoTokenizer.from_pretrained(args.hf)
     eos_id = tok.convert_tokens_to_ids(tok.eos_token)
     steps = [json.loads(l) for l in Path(args.rendered).read_text().splitlines() if l.strip()]
-    trainable = [s for s in steps if s.get("target") is not None]
+    # A target the runtime grammar cannot produce is kept in rendered.jsonl
+    # for the record but never trained on.
+    rejected = [f'{s["id"]}#{s["step"]}' for s in steps if s.get("targetAccepted") is False]
+    trainable = [s for s in steps if s.get("target") is not None and s.get("targetAccepted") is not False]
 
     template_mismatch, token_mismatch, boundary_merge = [], [], []
     out_rows = []
@@ -72,6 +75,7 @@ def main() -> int:
     report = {
         "steps": len(steps),
         "trainable": len(trainable),
+        "targetRejectedByGrammar": rejected,
         "templateMismatch": template_mismatch,
         "tokenMismatch": token_mismatch,
         "promptTargetBoundaryMerges": boundary_merge,

@@ -2,10 +2,10 @@
 
 This directory builds training data for the chat's two steps (op choice, then arguments) and fine-tunes `LiquidAI/LFM2.5-350M` with LoRA. It then ships the result as a merged Q4_K_M GGUF that wllama 3.8.1 loads like today's file.
 
-**Status (2026-10-20):**
+**Status (2026-10-20, round 7):**
 - The pipeline is built and smoke-tested end to end on this Mac.
-- The teacher pilot exists only as a dry run, because no `ANTHROPIC_API_KEY` was set.
-- Full data generation and the real training run are on hold until round 6 fixes the runtime prompt format.
+- Rows render in the runtime prompt format **r6.1**, through the chat core's own builders, so training and runtime prompts are byte-identical (`tests/unit/training-prompt-format.test.ts`). The render and token-parity step was re-run on the smoke rows in r6.1 (see "Re-render in r6.1" below). The model was not retrained.
+- The teacher pilot exists only as a dry run, because no `ANTHROPIC_API_KEY` was set. It is ready to run.
 
 The plan is the scratchpad `lora-plan.md` from the spike session. Spike results are in `docs/superpowers/specs/2026-10-20-in-browser-llm-spike-results.md`.
 
@@ -13,7 +13,7 @@ The plan is the scratchpad `lora-plan.md` from the spike session. Spike results 
 
 | Stage | Tool | Why |
 |---|---|---|
-| Prompt bytes | `gen/*.ts` via `npx --no-install tsx` | Calls the chat core's own `buildVaultCatalog`, `createOpRetriever`, `selectOpMessages`, `fillArgsMessages` and `buildModelSchema`. Nothing is reimplemented. |
+| Prompt bytes | `gen/*.ts` via `npx --no-install tsx` | Calls the chat core's own `buildRuntimeCatalog` (canonical vocabularies as enums), `scoringMessages` + `forcedOpsText` (step 1) and `prepareArgsStep` + `preparedGrammar` (step 2, the same function `fillArgsStep` uses at run time). Nothing is reimplemented. |
 | Prompt string and token ids | native `llama-server` at **b11364** (`46ca246`, the libllama inside wllama 3.8.1), `--no-jinja`, `/apply-template` + `/tokenize` | This is the same template and tokenizer path the runtime uses. Each run is also checked against the HF tokenizer. |
 | Training | **TRL 1.16 `SFTTrainer` + PEFT 0.21 on MPS**, bf16 | Rows are pre-tokenized `input_ids` + `completion_mask`, so prompts are never re-templated and loss covers only the target. PEFT `merge_and_unload` writes an HF checkpoint the converter accepts. |
 | Export | llama.cpp b11364 `convert_hf_to_gguf.py` (bf16), then `gguf_new_metadata.py`, then `llama-quantize Q4_K_M` | LFM2 is registered in `conversion/lfm2.py` at that tag. |
@@ -33,12 +33,13 @@ The plan is the scratchpad `lora-plan.md` from the spike session. Spike results 
 | Path | What it does |
 |---|---|
 | `scripts/setup.sh` | Creates the venv and clones and builds llama.cpp b11364 plus `schema2gbnf` into `$BAI_TRAINING_TOOLS` (default `~/.cache/bai-training`, **outside the repo**: the root tsconfig includes `**/*`, and llama.cpp ships about 750 `.ts` files). Downloads the weights into `models/`. |
-| `gen/prompt-format.ts` | **The only file round 6 should need to change.** It holds the catalog options, k, the step-1/step-2 builders, the target shapes and `PROMPT_FORMAT_VERSION`. |
-| `gen/render-prompts.ts` | Turns source rows into step-1/step-2 messages, runtime JSON schemas, llama.cpp grammars and canonical targets. Every target is checked against the grammar llama.cpp derives from the runtime schema. It also writes a manifest (format version, catalog sha256, git HEAD, dirty chat-core files). |
-| `gen/validate-rows.ts` | zod check (`buildAction`, the generated `<Op>InputSchema()` creator), then reducer replay on a fresh document after optional `fixture` steps. |
+| `gen/prompt-format.ts` | The one file that decides a row's shape: candidates, step-1/step-2 prompts from the core builders, target shapes. `PROMPT_FORMAT_VERSION` is re-exported from the core (`chat/core/prompt-format.ts`). |
+| `gen/render-prompts.ts` | Turns source rows into step-1/step-2 messages, runtime grammars and canonical targets. Every target is checked against the grammar the runtime uses for that step. It also writes a manifest (format version, catalog and op-embedding sha256, git HEAD, dirty chat-core files). |
+| `gen/validate-rows.ts` | Canonical-vocabulary check (`chat/core/vocabularies.ts`; zod does not see these `String` fields), zod check (`buildAction`, the generated `<Op>InputSchema()` creator), then reducer replay on a fresh document after optional `fixture` steps. |
 | `gen/export-teacher-context.ts` | Per-op teacher context: description, SDL, semantic schema, reducer source, siblings, empty state. |
-| `gen/gbnf-check.ts` | A copy of the round-5 test recognizer, plus support for `{m,n}` repetition. |
-| `tools/schema2gbnf.cpp` | Prints the GBNF that llama.cpp's `json_schema_to_grammar` builds, using the b11364 `common/` code. |
+| `gen/gbnf-check.ts` | A copy of the round-5 test recognizer, plus support for `{m,n}` repetition. It checks every target against its step's grammar. |
+| `../scripts/gte-wasm-node.ts` | gte-small under node on the browser's onnxruntime-web wasm, for unscoped (`scoped: false`) rows' gte-small top-5 candidates. Loaded only when such a row exists. |
+| `tools/schema2gbnf.cpp` | Prints the GBNF that llama.cpp's `json_schema_to_grammar` builds. The r6.1 renderer no longer uses it: step 2 decodes under the chat core's copy-span grammar, not a JSON-schema grammar. |
 | `py/dedup.py` | Leak and duplicate filter (details below). |
 | `py/render_template.py` | Renders prompts through llama-server, with template and token parity checks against HF. |
 | `py/train_lora.py`, `py/merge.py`, `py/smoke_infer.py` | Train, merge, and run grammar-constrained inference. |
@@ -67,7 +68,12 @@ training/.venv/bin/python training/py/smoke_infer.py <rendered.jsonl> --gguf <a.
 training/scripts/smoke.sh 20                                 # everything above on the smoke rows
 ```
 
-Source row: `{"id", "utterance", "docType", "op": "<model>:<OP>" | null, "args"?, "refCandidates"?, "fixture"?: [{op, args}], "scoped"?}`.
+Source row: `{"id", "utterance", "docType", "op": "<model>:<OP>" | null, "args"?, "refCandidates"?, "fixture"?: [{op, args}], "scoped"?}`. `refCandidates` maps a dotted path to ids or `{id, label}` objects, and `args` hold the ids; the renderer turns ids into labels in step-2 targets.
+
+**What a row renders to (r6.1):**
+- **Step 1.** The candidates are every global op of `docType`, in catalog order. With `scoped: false`, they are gte-small's top 5 over all ops, computed on the browser's wasm numerics. The prompt is `scoringMessages(utterance, toOptions(candidates, "key"), "ops")`. The target is `{"ops": ["<key>"]}`, or `{"ops": []}` for a no-action row, which now gets a target. The grammar is the alternation of those answers. The v1 runtime skips this call with the base model and takes gte-small's top-1 instead; a LoRA is trained on it.
+- **Step 2.** The prompt is `prepareArgsStep(utterance, entry, refCandidates, "safe")`: labeled refs with a `Choices for` line, the safe optional-field gate, and the fixed key order. The target is compact JSON in that order, with refs as labels. The grammar is the copy-span grammar `fillArgsStep` decodes under (before a ref label is fixed).
+- A target its grammar rejects stays in `rendered.jsonl` with `targetAccepted: false`. `render_template.py` lists it under `targetRejectedByGrammar` and does not train on it.
 
 ## Smoke test (observed, 2026-10-20, M4 Max 36 GB, macOS 26.6.2)
 
@@ -108,6 +114,19 @@ A second `smoke.sh` run, after the render/validate reorder, reproduced the same 
 - Step 1 still decodes about 13–16 tokens, because llama.cpp emits each grammar-forced token.
 
 **Extrapolation, not measured:** 160 sequences took 14.7 s, about 11 sequences/s. At that rate, about 16k rows × 3 epochs would take about 75 min on this machine.
+
+### Re-render in r6.1 (observed, round 7)
+
+`training/scripts/render.sh training/data/smoke-rows.jsonl training/artifacts/smoke-r61` (render and parity only, no training): 16.1 s wall.
+- 50 rows went in. `dedup.py` rejected the same 1 row as before.
+- Validation dropped smoke-17 at the new vocabulary stage: `noteType "question"` is not in the canonical note types. 48 rows passed.
+- That gave 91 steps: 48 step-1 (4 of them no-action, now with `{"ops": []}` targets) and 43 step-2. None was skipped; scoped candidates always include the gold op.
+- **3 step-2 targets are rejected by the runtime grammar:** smoke-24 and smoke-25 (`ADD_MEMBER` `role`) and smoke-38 (`CREATE_GOAL` `assignee`). The safe gate drops an optional field that the utterance means but does not name, beside a required one. Round 6 reports the same error on held-out-2 (prj2-07 `role`, prj2-01 `owner`). These rows are not trained on.
+- **Parity:** the other 88 steps render identically through llama-server and HF (`templateMismatch` 0, `tokenMismatch` 0), with 0 prompt/target merges and exactly one BOS per row. Prompts are 65–531 tokens.
+- Probe rows (`smoke-probe-rows.jsonl`, output `artifacts/smoke-probe-r61`): 8 steps, 7 trainable. probe-03's `ADD_MEMBER` `role` is rejected for the same reason. Parity also holds there.
+- Unscoped rows were checked on 2 scratch rows: transformers.js and onnxruntime-web load gte-small under tsx. The gold ADD_TOPIC was rank 1 of 5, and the no-action row got `{"ops": []}`.
+
+The 20-step smoke LoRA and its GGUFs above were trained on the r5 format. They were not retrained.
 
 ### Things found on the way
 
@@ -167,22 +186,13 @@ The ~16k-row target comes from the plan: about 12k generated utterances, filtere
 
 The first real pilot replaces this table with `collect`'s `.usage.json`.
 
-## Waiting on round 6, then on the user
+## Next, waiting on the user
 
-1. **Round 6: the final runtime prompt format.** Change only `gen/prompt-format.ts`:
-   - How no-action is written (today such rows are skipped with `skip: "no-action"`, and so are gold-not-retrieved rows).
-   - Ref-id labels (`refCandidates` become labels).
-   - Enum vocabularies (`buildVaultCatalog` options).
-   - Whether step 1 switches to the scorer layout.
-
-   Then bump `PROMPT_FORMAT_VERSION` and re-run `render.sh` on the smoke rows to re-check parity.
-
-   Commit `eed52510` already adds `args-step.ts` (ref choices by label), the yes/no change gate, and gte-small embedding retrieval with RRF fusion. `use-chat-llm.ts` does not use them yet.
-   - If the shipped path adopts them, `prompt-format.ts` must call them too.
-   - The embedding retriever then has to run under node in `render-prompts.ts`, so that training candidates are the ones the app really retrieves. Whether transformers.js loads gte-small under tsx is **[U]**.
-2. **The second blind held-out set** goes into `spike/llm-harness/eval/`. `dedup.py` picks it up automatically.
-3. **The user** supplies an API key and approves spend. Then run the pilot as above, read the measured cost and the agreement rate, and only then the full batch (`submit` refuses more than 200 requests unless `--max-requests` is raised).
-4. **The real training run** comes after that: 3 epochs, effective batch 32, then a dev-checkpoint pick, export, and the in-browser eval arms.
+1. **Round 6 is done.** The format is r6.1, and the renderer uses it. Every change to the core's step-1/step-2 builders, the op descriptions or the vocabularies bumps `PROMPT_FORMAT_VERSION` (`chat/core/prompt-format.ts`). After a bump, re-run `render.sh`.
+2. **Both blind held-out sets** are in `spike/llm-harness/eval/` (`heldout-eval.json`, `heldout2-eval.json`), so `dedup.py` filters against both.
+3. **The user** supplies an API key and approves spend. Then run the pilot as above, read the measured cost and the agreement rate, and only then the full batch (`submit` refuses more than 200 requests unless `--max-requests` is raised). The teacher's output schemas come from `export-teacher-context.ts`, which now carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). `plan` was re-run as a dry run: 20 requests, 0 over the schema limits.
+4. **The real training run** comes after that: 3 epochs, effective batch 32, then a dev-checkpoint pick, export, and the in-browser eval arms. Judge it against gte-small top-1 (round 6: O2 47.3% scoped, U1 26.4% unscoped).
+5. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
 
 **Not done here:**
 - The in-browser wllama parity check (`createCompletion(prompt, grammar)` against `createChatCompletion`), because Chrome was off-limits.

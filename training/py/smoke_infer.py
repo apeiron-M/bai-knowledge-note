@@ -1,6 +1,7 @@
-"""Load GGUFs in llama-server (b11364) and run step-1 prompts under a GBNF
-enum grammar of the candidate keys, plus step-2 prompts under the runtime's
-json-schema grammar; temperature 0. Compares each model against the targets.
+"""Load GGUFs in llama-server (b11364) and run each rendered step under its
+own runtime grammar (step 1: the `{"ops": [...]}` answers over the
+candidates; step 2: the chat core's copy-span args grammar); temperature 0.
+Compares each model against the targets.
 
   python training/py/smoke_infer.py rendered.jsonl --gguf a.gguf --gguf b.gguf --out result.json
 """
@@ -16,15 +17,6 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from llama_server import LlamaServer  # noqa: E402
-
-
-def gbnf_lit(s: str) -> str:
-    return json.dumps(s)  # GBNF literal escaping matches JSON for these strings
-
-
-def op_enum_grammar(keys: list[str]) -> str:
-    alts = " | ".join(gbnf_lit(json.dumps(k)) for k in keys)
-    return f'root ::= "{{" {gbnf_lit(chr(34) + "op" + chr(34) + ": ")} ({alts}) "}}"'
 
 
 def main() -> int:
@@ -44,7 +36,7 @@ def main() -> int:
             rows = []
             for s in steps:
                 prompt = srv.post("/apply-template", {"messages": s["messages"]})["prompt"]
-                grammar = op_enum_grammar(s["candidates"]) if s["step"] == 1 else s["grammar"]
+                grammar = s["grammar"]
                 t0 = time.time()
                 r = srv.post("/completion", {"prompt": prompt, "grammar": grammar, "temperature": 0,
                                              "n_predict": 64 if s["step"] == 1 else 192, "cache_prompt": False})

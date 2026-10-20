@@ -1,7 +1,9 @@
 /**
- * Validates source rows as the runtime would act on them: zod via
- * `buildAction` (the generated creator), then reducer replay on a fresh
- * document after any `fixture` steps; a row fails on `operation.error`.
+ * Validates source rows as the runtime would act on them: the canonical
+ * vocabularies (`chat/core/vocabularies.ts`, which zod does not see: the
+ * fields are `String`), zod via `buildAction` (the generated creator), then
+ * reducer replay on a fresh document after any `fixture` steps; a row
+ * fails on `operation.error`.
  *
  *   npx --no-install tsx training/gen/validate-rows.ts <rows.jsonl> <out.json> [valid.jsonl]
  *
@@ -53,6 +55,26 @@ function replayers(): Map<string, Replayer> {
     });
   }
   return map;
+}
+
+/** The first vocabulary-constrained value outside its canonical list. */
+function vocabularyError(
+  entry: CatalogEntry,
+  args: Record<string, unknown>,
+): string | null {
+  for (const [path, values] of Object.entries(entry.vocabulary)) {
+    let v: unknown = args;
+    for (const k of path.split("."))
+      v =
+        typeof v === "object" && v !== null
+          ? new Map<string, unknown>(Object.entries(v)).get(k)
+          : undefined;
+    if (v === undefined || v === null) continue;
+    for (const x of Array.isArray(v) ? v : [v])
+      if (typeof x !== "string" || !values.includes(x))
+        return `${path} ${JSON.stringify(x)} is not one of ${values.join(", ")}`;
+  }
+  return null;
 }
 
 let counter = 0;
@@ -118,6 +140,9 @@ function main(): void {
         return { id: row.id, ok: false, stage: "fixture", error: res.error };
       doc = res.doc;
     }
+    const vocab = vocabularyError(entry, row.args ?? {});
+    if (vocab)
+      return { id: row.id, ok: false, stage: "vocabulary", error: vocab };
     const res = apply(doc, r, entry, row.args ?? {}, row.refIds);
     return res.error
       ? { id: row.id, ok: false, stage: res.stage, error: res.error }
