@@ -417,3 +417,63 @@ Goal: load the model in the Chat tab inside a real Connect and dispatch ADD_TOPI
 - **Unrelated to chat:**
   - `net::ERR_CONNECTION_REFUSED` with `[useGraphSearch]` / `[useGraphMetadata] Fetch failed`. These are the vault's subgraph requests to `http://localhost:4001`, where no Switchboard was running.
   - One Chrome issue: "A form field element should have an id or name attribute" (count 4).
+
+## Round 4: vendored wllama (2026-10-20)
+
+Goal: serve wllama from the package's own origin instead of jsdelivr, and drop the round 3 inline-module workaround.
+
+### What changed
+
+- `vendor/wllama/3.8.1/` (commit `bdf5e60c`) holds unmodified files from the npm tarball. Its shasum `e0353359…` matches `npm view @wllama/wllama@3.8.1 dist.shasum`.
+  - `wllama.js`, 382 633 bytes, from `package/esm/index.js`. It was renamed so the chunk is named `wllama-<hash>.js`.
+  - `wllama.wasm`, 8 763 949 bytes.
+  - `LICENCE` (MIT).
+  - A README with the sha256 of each file, plus a hand-written `wllama.d.ts` (`export declare const Wllama: unknown`).
+  - `vendor/**` is excluded from oxlint and oxfmt.
+- `llm-client.ts` (commit `e9e29ada`):
+  - `importWllama()` is a relative `import("../../../../vendor/wllama/3.8.1/wllama.js")`.
+  - The wasm path passed to `new Wllama({ default })` is `new URL("../../../../vendor/wllama/3.8.1/wllama.wasm", import.meta.url).href`.
+  - `WLLAMA_ESM_URL`, `WLLAMA_WASM_URL` and the inline-script fallback are removed. No jsdelivr opt-in was kept, because the harness loads the vendored files too (see below).
+- Not vendored: `@wllama/wllama-compat`, which is 16 180 363 bytes unpacked. The `Wllama` constructor still calls `setCompat('default')`. In a browser where `needCompat()` is true (no JSPI or no wasm memory64), wllama fetches the compat worker JS and wasm from `cdn.jsdelivr.net/npm/@wllama/wllama-compat@3.8.1/`. This was not exercised; Chrome did not log wllama's compat-mode warning.
+
+### Checks
+
+- `npm run tsc`: 204 errors, the same count as before.
+- oxlint (`--type-aware --type-check`) on `llm-client.ts`: exit 0.
+- `tests/unit/chat-*.test.ts`: 3 files, 19 tests passed.
+
+### Build
+
+- `npx ph-cli build --ignore-type-errors`: exit 0. Without the flag, `ph-cli build` refuses to continue in a non-interactive shell when tsc reports errors (`confirmBuildDespiteTypeErrors` in `clis/ph-cli/src/services/build.ts`).
+- `dist/browser/wllama-D2PxRQAA.js`: 368 997 bytes, plus a 444 148-byte `.map`.
+- `dist/browser/assets/wllama-DrYkKwf9.wasm`: 8 763 949 bytes, the same size as the vendored file.
+- `dist/browser/editor-D3wdL8OZ.js` holds the wasm reference as `new URL("assets/wllama-DrYkKwf9.wasm", import.meta.url)` and imports `wllama-D2PxRQAA.js`.
+- The only `cdn.jsdelivr` strings in `dist/browser/**/*.js` are the two compat URLs inside the wllama chunk.
+- `dist/node/wllama-D2PxRQAA.mjs` is also emitted. The node build does not set `resolveNewUrlToAsset`, so its wasm `new URL` keeps the source-relative path. That URL is only computed when a model loads, which is browser-only.
+- `node scripts/copy-runtime-assets.mjs` failed at step 2 with `cannot locate onnxruntime-web/dist`. `onnxruntime-web` is at neither candidate path in this pnpm-linked `node_modules`. This is unrelated to wllama.
+  - Because of that failure, step 3 (the `ort-wasm-*` strip) did not run. Its glob does not match `wllama-*`.
+  - This build emitted no `ort-wasm-*` asset into `dist/browser/assets`.
+
+### Connect (`ph-cli connect studio --port 3100`)
+
+- Studio serves the package from source through Vite. Requests went to `.ts` URLs such as `/editors/knowledge-vault/chat/core/op-catalog.ts`. This run tested the Vite path. It did not test `dist/browser`.
+- The page's CSP meta was the same as in round 3: `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://registry.vetra.io; worker-src 'self' blob:; …`.
+- wllama requests:
+  - `GET http://localhost:3100/vendor/wllama/3.8.1/wllama.js` [200]
+  - `GET blob:http://localhost:3100/…` [200] (the wllama worker)
+  - `GET http://localhost:3100/vendor/wllama/3.8.1/wllama.wasm` [200]
+- No request went to `cdn.jsdelivr.net`.
+- The console had no CSP violation and no wllama warnings. Its only errors and warnings were the round 3 ones: `localhost:4001` connection refusals with the `[useGraphSearch]` / `[useGraphMetadata]` warnings, and the form-field id/name issue (count 4).
+- Load: the status read "Model ready (webgpu, 844 ms)". The GGUF was already in OPFS from round 3.
+- **Utterance:** "add the topic replication", with the target note "CRDT merge semantics".
+- **Proposed action:** ADD_TOPIC `{"name": "add_topic_replication", "id": "33d7751f-97c0-45f6-a149-98a64f55a10c"}`. The name included the words of the instruction.
+- **Dispatch:** after Confirm, the tab reported `Dispatched ADD_TOPIC to "CRDT merge semantics".`
+
+### Harness (`spike/llm-harness`, port 5199)
+
+- "load webgpu" completed: `loadMs` 703.9, `libllamaVersion` b11364-46ca246, `webgpu` true.
+- wllama requests:
+  - `/@fs/…/bai-knowledge-note/vendor/wllama/3.8.1/wllama.js` [200]
+  - a `blob:http://localhost:5199/…` worker [200]
+  - `/@fs/…/vendor/wllama/3.8.1/wllama.wasm` [200]
+- No request went to `cdn.jsdelivr.net`.
