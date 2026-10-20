@@ -8,8 +8,17 @@ import type {
 } from "./wllama-types.js";
 
 export const WLLAMA_VERSION = "3.8.1";
-export const WLLAMA_ESM_URL = `https://cdn.jsdelivr.net/npm/@wllama/wllama@${WLLAMA_VERSION}/esm/index.js`;
-export const WLLAMA_WASM_URL = `https://cdn.jsdelivr.net/npm/@wllama/wllama@${WLLAMA_VERSION}/esm/wasm/wllama.wasm`;
+
+/**
+ * The vendored wllama wasm (`vendor/wllama/3.8.1/`). The browser build emits
+ * it as a hashed asset next to the package chunks and Vite dev serves it from
+ * the repo, so it comes from the same origin as this code either way.
+ */
+function wllamaWasmUrl(): string {
+  return new URL("../../../../vendor/wllama/3.8.1/wllama.wasm", import.meta.url)
+    .href;
+}
+
 export const DEFAULT_MODEL = {
   repo: "LiquidAI/LFM2.5-350M-GGUF",
   file: "LFM2.5-350M-Q4_K_M.gguf",
@@ -100,80 +109,22 @@ function isWllamaModule(m: unknown): m is WllamaModule {
 
 let modulePromise: Promise<WllamaModule> | null = null;
 
-const INLINE_EXPORTS_KEY = "__wllamaInlineExports";
-
 /**
- * Connect's CSP (`script-src 'self' 'unsafe-inline' 'unsafe-eval' <registry>`,
- * no `connect-src`) lets us fetch the CDN bundle but not import it. The wllama
- * ESM is one self-contained file whose only export statement is the trailing
- * `export { ... }`; rewrite that into a callback and run it inline.
- *
- * TODO(spike): bundle `@wllama/wllama` as a dependency so it is served from
- * `'self'` instead.
- */
-async function importWllamaInline(): Promise<unknown> {
-  const res = await fetch(WLLAMA_ESM_URL);
-  if (!res.ok) throw new Error(`wllama ESM fetch failed: HTTP ${res.status}`);
-  const src = await res.text();
-  const match = /\nexport\s*\{([^}]*)\};?\s*$/.exec(src);
-  if (!match) throw new Error("wllama ESM: trailing export block not found");
-  const fields = match[1]
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((entry) => {
-      const [local, exported] = entry.split(/\s+as\s+/);
-      return exported ? `${JSON.stringify(exported)}: ${local}` : local;
-    })
-    .join(", ");
-  const script = document.createElement("script");
-  script.type = "module";
-  script.textContent = `${src.slice(0, match.index)}\nglobalThis[${JSON.stringify(INLINE_EXPORTS_KEY)}]({ ${fields} });\n`;
-
-  return new Promise<unknown>((resolve, reject) => {
-    const cleanup = () => {
-      clearTimeout(timer);
-      window.removeEventListener("error", onError);
-      Reflect.deleteProperty(globalThis, INLINE_EXPORTS_KEY);
-      script.remove();
-    };
-    const onError = (e: ErrorEvent) => {
-      cleanup();
-      reject(e.error instanceof Error ? e.error : new Error(e.message));
-    };
-    const timer = setTimeout(() => {
-      cleanup();
-      reject(new Error("wllama inline module did not run (CSP?)"));
-    }, 30_000);
-    Reflect.set(globalThis, INLINE_EXPORTS_KEY, (exports: unknown) => {
-      cleanup();
-      resolve(exports);
-    });
-    window.addEventListener("error", onError);
-    document.head.appendChild(script);
-  });
-}
-
-/**
- * Dynamically import the wllama ESM from the CDN (cached per page). Falls back
- * to an inline module script when the page's CSP blocks the import.
+ * Import the vendored wllama ESM (cached per page). The bundler turns this
+ * relative import into a lazy chunk of the package, which Connect's CSP
+ * (`script-src 'self' …`) allows — a CDN import is blocked there.
  */
 export function importWllama(): Promise<WllamaModule> {
-  modulePromise ??= (async () => {
-    let mod: unknown;
-    try {
-      mod = await import(/* @vite-ignore */ WLLAMA_ESM_URL);
-    } catch (err) {
-      if (typeof document === "undefined") throw err;
-      mod = await importWllamaInline();
-    }
-    if (!isWllamaModule(mod))
-      throw new Error("wllama ESM has no Wllama export");
-    return mod;
-  })().catch((err: unknown) => {
-    modulePromise = null;
-    throw err;
-  });
+  modulePromise ??= import("../../../../vendor/wllama/3.8.1/wllama.js")
+    .then((mod: unknown) => {
+      if (!isWllamaModule(mod))
+        throw new Error("wllama ESM has no Wllama export");
+      return mod;
+    })
+    .catch((err: unknown) => {
+      modulePromise = null;
+      throw err;
+    });
   return modulePromise;
 }
 
@@ -183,7 +134,7 @@ export async function probeWllama(): Promise<{
   isSupportWebGPU: boolean;
 }> {
   const { Wllama } = await importWllama();
-  const probe = new Wllama({ default: WLLAMA_WASM_URL });
+  const probe = new Wllama({ default: wllamaWasmUrl() });
   return {
     libllamaVersion: Wllama.getLibllamaVersion(),
     isSupportWebGPU: probe.isSupportWebGPU(),
@@ -240,7 +191,7 @@ export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
   const nCtx = opts.nCtx ?? 4096;
   const log = opts.onLog;
   const wllama = new Wllama(
-    { default: WLLAMA_WASM_URL },
+    { default: wllamaWasmUrl() },
     log
       ? {
           logger: {
