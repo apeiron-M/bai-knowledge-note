@@ -9,10 +9,12 @@
 import type { EmbedTexts } from "./op-embeddings.js";
 
 export interface GteEmbedderOptions {
-  /** URL prefix under which `Supabase/gte-small/` is served. */
+  /** URL prefix (or, under node, directory) holding `Supabase/gte-small/`. */
   localModelPath: string;
   /** onnxruntime-web wasm directory URL (default: transformers' CDN). */
   wasmPaths?: string;
+  /** `wasm` in the browser (default); `cpu` under node (onnxruntime-node). */
+  device?: "wasm" | "cpu";
 }
 
 export interface GteEmbedder {
@@ -22,6 +24,14 @@ export interface GteEmbedder {
 }
 
 export const GTE_MODEL = "Supabase/gte-small";
+
+/** Everything that decides the vectors besides the input text. */
+export const GTE_SPEC = {
+  model: GTE_MODEL,
+  dtype: "q8",
+  pooling: "mean",
+  normalize: true,
+} as const;
 
 let loading: Promise<GteEmbedder> | null = null;
 
@@ -38,11 +48,14 @@ export function loadGteEmbedder(
     const wasm = tf.env.backends.onnx.wasm;
     if (opts.wasmPaths && wasm) wasm.wasmPaths = opts.wasmPaths;
     const extractor = await tf.pipeline("feature-extraction", GTE_MODEL, {
-      dtype: "q8",
-      device: "wasm",
+      dtype: GTE_SPEC.dtype,
+      device: opts.device ?? "wasm",
     });
     const embed: EmbedTexts = async (texts) => {
-      const out = await extractor(texts, { pooling: "mean", normalize: true });
+      const out = await extractor(texts, {
+        pooling: GTE_SPEC.pooling,
+        normalize: GTE_SPEC.normalize,
+      });
       const [n, d] = out.dims;
       const data = out.data;
       if (!(data instanceof Float32Array))
