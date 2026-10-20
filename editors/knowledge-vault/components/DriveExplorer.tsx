@@ -69,7 +69,7 @@ import { ActivityView } from "./ActivityView.js";
 import { GettingStartedModal } from "./GettingStarted.js";
 import type { VaultMenuItem } from "./VaultMenu.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
-import { getHostConfig } from "../../shared/host-config.js";
+import { getHostConfig, isBrowserHost } from "../../shared/host-config.js";
 import { useConvertHealth } from "../hooks/use-convert-health.js";
 import { useIntakeBatch } from "../hooks/use-intake-batch.js";
 import { FileDropOverlay, useVaultFileDrop } from "./intake/FileDropOverlay.js";
@@ -307,7 +307,9 @@ export function DriveExplorer({ children }: EditorProps) {
   );
   // The intake batch lives here, above the view switch, so a tab switch never
   // unmounts a conversion in flight and the Sources tab badge can read it.
-  const attachments = useAttachmentPort();
+  // A browser vault has no attachment store: sources keep their text, not the original file.
+  const attachmentPort = useAttachmentPort();
+  const attachments = isBrowserHost() ? undefined : attachmentPort;
   const convert = useConvertHealth();
   const intake = useIntakeBatch({
     attachments,

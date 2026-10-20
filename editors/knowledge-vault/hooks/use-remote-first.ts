@@ -50,6 +50,7 @@ import { PollBehavior } from "@powerhousedao/reactor";
 import { getBearerToken } from "../../shared/authed-fetch.js";
 import { useEffect, useRef } from "react";
 import { connectRunsRemoteClient, keepConnectRealtimeAlive } from "../../shared/connect-client-mode.js";
+import { isBrowserHost } from "../../shared/host-config.js";
 import {
   DriveCollectionId,
   setDrives,
@@ -174,10 +175,14 @@ export function useRemoteFirst(): void {
   // Connect's own remote client already reads, writes and lists drives against
   // the Switchboard: steps 1-4 have nothing to do, only the feed (step 5) stays.
   const connectOwnsRemote = connectRunsRemoteClient();
+  // A browser host runs the engine in the page: it owns the client, the cache,
+  // the drive list and the change feed, so none of the five steps applies.
+  const browserHost = isBrowserHost();
+  const ownsClient = connectOwnsRemote || browserHost;
 
   // ── 1. Client + cache swap (render-time, idempotent per drive) ────
   const handleRef = useRef<ReturnType<typeof enableRemoteFirst> | null>(null);
-  if (driveId && !connectOwnsRemote) {
+  if (driveId && !ownsClient) {
     handleRef.current = enableRemoteFirst({
       endpoint: resolveReactorEndpoint(),
       driveId,
@@ -202,7 +207,7 @@ export function useRemoteFirst(): void {
 
   // ── 2. Neutralise the sync channel ────────────────────────────────
   useEffect(() => {
-    if (!driveId || !sync || connectOwnsRemote || scopedDrives.has(driveId)) return;
+    if (!driveId || !sync || ownsClient || scopedDrives.has(driveId)) return;
     scopedDrives.add(driveId);
 
     void (async () => {
@@ -291,11 +296,11 @@ export function useRemoteFirst(): void {
         scopedDrives.delete(driveId);
       }
     })();
-  }, [driveId, sync, connectOwnsRemote]);
+  }, [driveId, sync, ownsClient]);
 
   // ── 3. Server-side drive-tree hydration ───────────────────────────
   useEffect(() => {
-    if (!driveId || connectOwnsRemote) return;
+    if (!driveId || ownsClient) return;
     let cancelled = false;
     let inFlight = false;
 
@@ -373,12 +378,12 @@ export function useRemoteFirst(): void {
       clearInterval(interval);
       window.removeEventListener("MutateDocument", onMutation);
     };
-  }, [driveId, address, connectOwnsRemote]);
+  }, [driveId, address, ownsClient]);
 
   // ── 4. Selected-document freshness ────────────────────────────────
   const selectedId = selectedNode?.id;
   useEffect(() => {
-    if (!selectedId || !driveId || selectedId === driveId || connectOwnsRemote) return;
+    if (!selectedId || !driveId || selectedId === driveId || ownsClient) return;
     let lastPollAt = Date.now();
     const interval = setInterval(() => {
       if (document.visibilityState !== "visible") return;
@@ -421,11 +426,12 @@ export function useRemoteFirst(): void {
       }
     }, SELECTED_DOC_REFRESH_MS);
     return () => clearInterval(interval);
-  }, [selectedId, driveId, connectOwnsRemote]);
+  }, [selectedId, driveId, ownsClient]);
 
   // ── 5. Live change feed ───────────────────────────────────────────
   useEffect(() => {
-    if (!driveId) return;
+    // A browser host feeds the same bus from its own engine's events.
+    if (!driveId || browserHost) return;
     // Do not knock again on a door this page already found locked. Without
     // this, every mount while signed out (StrictMode doubles them in dev)
     // wrote another "Internal error" line into the Switchboard log.
@@ -629,5 +635,5 @@ export function useRemoteFirst(): void {
         void client.dispose();
       }
     };
-  }, [driveId, address, connectOwnsRemote]);
+  }, [driveId, address, connectOwnsRemote, browserHost]);
 }

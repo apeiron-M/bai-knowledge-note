@@ -63,7 +63,7 @@ import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
  */
 const SYNC_NOTHING = "remote-first-sync-nothing";
 
-import { isDesktopHost } from "../../shared/host-config.js";
+import { isBrowserHost, isDesktopHost } from "../../shared/host-config.js";
 import { connectRunsRemoteClient } from "../../shared/connect-client-mode.js";
 
 const POLL_MS = 400;
@@ -653,7 +653,7 @@ function scheduleSessionRecovery(): void {
 function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
   // A declared desktop host has no sync manager and owns the client itself;
   // so does Connect's remote client mode, which has no replica to keep empty.
-  if (isDesktopHost() || connectRunsRemoteClient()) {
+  if (isDesktopHost() || isBrowserHost() || connectRunsRemoteClient()) {
     clearInterval(timer);
     return;
   }
@@ -712,7 +712,7 @@ function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
 export function startRemoteFirstBoot(): void {
   if (started) return;
   if (typeof window === "undefined") return;
-  if (isDesktopHost()) return;
+  if (isDesktopHost() || isBrowserHost()) return;
   started = true;
   // A logout/login does not reload the page, and the sweep below is bounded to
   // MAX_WAIT_MS; this re-reads the drives when the session changes, however

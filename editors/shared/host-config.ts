@@ -7,7 +7,32 @@
  * (`startRemoteFirstBoot`) stays out of Connect-only work. Read at call time,
  * never cached: a host may declare itself after a module was evaluated.
  */
-export type KnowledgeVaultHostKind = "connect" | "desktop";
+export type KnowledgeVaultHostKind = "connect" | "desktop" | "browser";
+
+/**
+ * Document writes a host that runs its own engine performs itself — the browser
+ * playground, whose engine is in the page. When declared, the vault's create,
+ * folder, mutate and delete helpers (remote-reactor.ts) call these instead of
+ * sending GraphQL to a Switchboard.
+ */
+export type KnowledgeVaultHostDocuments = {
+  /** Creates an empty document of `documentType` named `name` in the drive; resolves with its id. */
+  create(options: {
+    documentType: string;
+    name: string;
+    driveId: string;
+    parentFolderId?: string;
+  }): Promise<string>;
+  /** Adds a folder to the drive; resolves with its id. */
+  addFolder(options: { driveId: string; name: string; parentFolderId?: string }): Promise<string>;
+  /** Applies actions to a document, in order. */
+  mutate(
+    documentId: string,
+    actions: ReadonlyArray<{ type: string; input: Record<string, unknown>; scope?: string }>,
+  ): Promise<void>;
+  /** Deletes a document and its node in the drive. */
+  remove(documentId: string, driveId?: string): Promise<void>;
+};
 
 /** Who the host is signed in as (its own Renown session, held outside the webview). */
 export type KnowledgeVaultHostIdentity = {
@@ -81,6 +106,8 @@ export type KnowledgeVaultHostConfig = {
    * Without a host the vault asks the browser instead (`beforeunload`).
    */
   setBusy?: (reason: string | null) => void;
+  /** Document writes performed by the host's own engine (see KnowledgeVaultHostDocuments). */
+  documents?: KnowledgeVaultHostDocuments;
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -126,6 +153,7 @@ export function setHostConfig(
     ...(config.takeOpenView ? { takeOpenView: config.takeOpenView } : {}),
     ...(config.readDroppedFiles ? { readDroppedFiles: config.readDroppedFiles } : {}),
     ...(config.setBusy ? { setBusy: config.setBusy } : {}),
+    ...(config.documents ? { documents: config.documents } : {}),
   };
   notifyHostChanged();
 }
@@ -157,4 +185,9 @@ export function subscribeHostConfig(onChange: () => void): () => void {
 
 export function isDesktopHost(): boolean {
   return getHostConfig()?.kind === "desktop";
+}
+
+/** The browser playground: the engine, the vault and everything it reads run in the page. */
+export function isBrowserHost(): boolean {
+  return getHostConfig()?.kind === "browser";
 }

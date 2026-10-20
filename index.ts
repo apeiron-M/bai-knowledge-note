@@ -16,6 +16,11 @@ export { startRemoteFirstBoot } from "./editors/knowledge-vault/lib/boot.js";
 export { aiTools } from "./editors/knowledge-vault/lib/chat/ai-tools.js";
 // Hand-added too: a host's own intake (the desktop app's setup guide converts and files sources itself).
 export { hostIntake } from "./editors/knowledge-vault/lib/host-intake.js";
+// Hand-added too: the vault running entirely in the browser (engine, graph index
+// and vault app in the page) — the landing site's "Try on web". A loader, so the
+// browser vault builds into its own chunk and the module Connect loads stays the
+// same size. `ph-cli build` has no entry for a folder of its own.
+export const loadBrowserVault = () => import("./browser/index.js");
 export const manifest = manifestJson as Manifest;
 
 // Engage remote-first as soon as the package is loaded, before Connect tries to

@@ -23,6 +23,7 @@
  * the document refetches.
  */
 import { authedGraphQLFetch } from "./authed-fetch.js";
+import { getHostConfig } from "./host-config.js";
 import { notify, notifyGraphQLError } from "./notify.js";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 
@@ -145,6 +146,12 @@ export async function mutateDocumentRemote(
   actions: VaultAction[],
 ): Promise<void> {
   if (actions.length === 0) return;
+  const hosted = getHostConfig()?.documents;
+  if (hosted) {
+    await hosted.mutate(documentId, actions);
+    announceDocumentMutation(documentId);
+    return;
+  }
   await gqlRequest(
     resolveReactorReadEndpoint(),
     `mutation VaultMutate($id: String!, $actions: [JSONObject!]!) {
@@ -210,6 +217,21 @@ export async function createDocumentRemote(options: {
   /** Fallback: resolve this path against the server tree. */
   targetFolderPath?: string;
 }): Promise<string> {
+  const hosted = getHostConfig()?.documents;
+  if (hosted) {
+    let folderId = options.parentFolderId ?? undefined;
+    if (!folderId && options.targetFolderPath) {
+      folderId = await resolveFolderIdByPath(options.driveId, options.targetFolderPath).catch(() => undefined);
+    }
+    const id = await hosted.create({
+      documentType: options.documentType,
+      name: options.name,
+      driveId: options.driveId,
+      ...(folderId ? { parentFolderId: folderId } : {}),
+    });
+    announceDocumentMutation(options.driveId);
+    return id;
+  }
   const ns = NAMESPACE_BY_TYPE[options.documentType];
   if (!ns) {
     throw new Error(
@@ -278,6 +300,16 @@ export async function createFolderRemote(options: {
   name: string;
   parentFolderId?: string | null;
 }): Promise<string> {
+  const hosted = getHostConfig()?.documents;
+  if (hosted) {
+    const folderId = await hosted.addFolder({
+      driveId: options.driveId,
+      name: options.name,
+      ...(options.parentFolderId ? { parentFolderId: options.parentFolderId } : {}),
+    });
+    announceDocumentMutation(options.driveId);
+    return folderId;
+  }
   const id = crypto.randomUUID();
   await gqlRequest(
     resolveReactorEndpoint(),
@@ -305,6 +337,13 @@ export async function deleteDocumentRemote(
   documentId: string,
   driveId?: string,
 ): Promise<void> {
+  const hosted = getHostConfig()?.documents;
+  if (hosted) {
+    await hosted.remove(documentId, driveId);
+    announceDocumentDeleted(documentId);
+    if (driveId) announceDocumentMutation(driveId);
+    return;
+  }
   await gqlRequest(
     resolveReactorReadEndpoint(),
     `mutation VaultDelete($id: String!) { deleteDocument(idOrSlug: $id) }`,
