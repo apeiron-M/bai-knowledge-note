@@ -28,6 +28,7 @@ import {
   r6Pipeline,
   r6Retrieval,
 } from "./r6.js";
+import { v1EmbedParity, v1Pipeline } from "./v1.js";
 
 type Json = Record<string, unknown>;
 
@@ -619,6 +620,10 @@ const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
     r6Args(client(backendArg(b)), o as Parameters<typeof r6Args>[1]),
   r6Pipeline: (b, o) =>
     r6Pipeline(client(backendArg(b)), o as Parameters<typeof r6Pipeline>[1]),
+  // Round 7: the Chat tab's v1 pipeline (chat core `runV1`), dev sets only.
+  v1Pipeline: (b, o) =>
+    v1Pipeline(client(backendArg(b)), o as Parameters<typeof v1Pipeline>[1]),
+  v1EmbedParity: () => v1EmbedParity(),
 };
 
 /* ------------------------------------------------------------------ */

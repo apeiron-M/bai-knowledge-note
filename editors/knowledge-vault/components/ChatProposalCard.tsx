@@ -15,7 +15,18 @@ export function ChatProposalCard({
   onConfirm,
   onDiscard,
 }: ChatProposalCardProps) {
-  const { entry, generation, action, error } = proposal;
+  const { result, action, error } = proposal;
+  const { entry, step2 } = result;
+  const runnersUp = result.hits
+    .slice(0, 3)
+    .map((h) => `${h.entry.opName} ${h.score.toFixed(3)}`)
+    .join(" · ");
+  const refChoice =
+    step2.refField && step2.refScores
+      ? Object.entries(step2.refScores)
+          .map(([label, s]) => `${label} ${s.toFixed(2)}`)
+          .join(" · ")
+      : null;
   return (
     <div
       className="rounded-md p-3 text-xs"
@@ -33,6 +44,14 @@ export function ChatProposalCard({
       <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
         {entry.description} &middot; target: {targetTitle}
       </div>
+      <div className="mb-1" style={{ color: "var(--bai-text-muted)" }}>
+        Op by embedding ({result.promptFormat}): {runnersUp}
+      </div>
+      {refChoice && (
+        <div className="mb-1" style={{ color: "var(--bai-text-muted)" }}>
+          {step2.refField} by label score: {refChoice}
+        </div>
+      )}
       <pre
         className="mb-2 overflow-auto rounded p-2"
         style={{
@@ -40,7 +59,7 @@ export function ChatProposalCard({
           color: "var(--bai-text-secondary)",
         }}
       >
-        {JSON.stringify(action?.input ?? generation.args, null, 2)}
+        {JSON.stringify(action?.input ?? step2.args, null, 2)}
       </pre>
       {error && (
         <div className="mb-2" style={{ color: "#ef4444" }}>

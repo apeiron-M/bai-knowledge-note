@@ -10,7 +10,7 @@ import type { EmbedTexts } from "./op-embeddings.js";
 
 export interface GteEmbedderOptions {
   /** URL prefix (or, under node, directory) holding `Supabase/gte-small/`. */
-  localModelPath: string;
+  localModelPath?: string;
   /** onnxruntime-web wasm directory URL (default: transformers' CDN). */
   wasmPaths?: string;
   /** `wasm` in the browser (default); `cpu` under node (onnxruntime-node). */
@@ -42,7 +42,7 @@ export function loadGteEmbedder(
     const t0 = performance.now();
     const tf = await import("@huggingface/transformers");
     tf.env.allowLocalModels = true;
-    tf.env.localModelPath = opts.localModelPath;
+    tf.env.localModelPath = opts.localModelPath ?? "/models/";
     tf.env.allowRemoteModels = false;
     tf.env.useBrowserCache = false;
     const wasm = tf.env.backends.onnx.wasm;
