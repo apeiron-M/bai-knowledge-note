@@ -1156,3 +1156,31 @@ Commit `dd5b7802` ("round-6 held-out-2 per-item results") says `results-r6-h2-ar
 - **The `dist/browser` path was built and inspected, not loaded in Connect.** `copy-runtime-assets.mjs` still cannot find onnxruntime-web in this pnpm layout (step 2, server path, unchanged).
 - **The asyncify wasm is used on Safari too,** where transformers would pick the plain build. Not tested.
 - The wllama compat path (`needCompat()`) would still fetch from jsdelivr. Chrome did not need it.
+
+## Teacher pilot (2026-10-21)
+
+The teacher moved from the Anthropic API to headless Claude Code: `training/py/teacher.py run --teacher cli` (the default; `api` is kept), one isolated `claude -p --model claude-sonnet-5` call per request. No API key is needed. The full command line, the isolation flags and the gaps are in `training/README.md` ("Teacher"). The full ~16k-row run was **not** started.
+
+- **Pilot:** 100 items: 9 ops across knowledge-note, project, wbs and tension, plus 10 no-action items.
+- **Funnel:**
+
+  | Stage | Dropped |
+  |---|---|
+  | Grounding | 1 |
+  | Eval leak (both exact copies of held-out-2 `kn2-12`, "submit this for review") | 2 |
+  | zod and replay | 0 |
+  | r6.1 safe-gate grammar rejections (`role`, `assignee`, `owner`) | 11 |
+  | Blind-label disagreements (4 on the op, 9 on args only, mostly case or final punctuation) | 13 |
+
+  **73 rows were kept.** They gave 132 trainable steps with full template and token parity. `training-prompt-format.test.ts` passes.
+- **Observed time and usage** at concurrency 3: about 206 s end to end, 117 CLI calls and 0 retries.
+  - Generation took 64 s (median 9.2 s per call).
+  - The label pass took 85 s (median 2.4 s per call).
+  - Tokens: 314k input, including cache writes, and 27k output.
+  - Cost: $1.53 CLI-reported `total_cost_usd`. That is an API-list-price equivalent, not subscription usage.
+- **Extrapolation, not measured:** about 3.9 h for the full run at concurrency 3 (generation about 1 h, label pass about 2.8 h), and about 34M input and 2.3M output tokens.
+- **Found on the way:**
+  - The CLI injects the account email into every call. The first run put it into 2 utterances. The prompts now forbid it, and `rows` filters it out.
+  - 40 of the 99 ops are ref ops, which the teacher pipeline cannot replay yet. That blocks the full run.
+  - Op words appear in 27 of the 63 kept action rows.
+- **Data:** the summary is `training/results/teacher-pilot-2026-10-21.json`, and the kept rows are `training/data/teacher-pilot-2026-10-21/pilot-agreed.jsonl`.
