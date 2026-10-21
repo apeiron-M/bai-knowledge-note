@@ -626,7 +626,9 @@ CLI_BASE = [
 # The parent Claude Code session's variables; the child must not attach to it.
 CHILD_ENV_DROP = re.compile(r"^(CLAUDECODE|CLAUDE_CODE_.*|CLAUDE_PID|CLAUDE_EFFORT|ANTHROPIC_API_KEY|ANTHROPIC_AUTH_TOKEN)$")
 # Subscription usage window exhausted: retrying minutes later cannot help.
-LIMIT_RE = re.compile(r"usage limit|hit your limit|limit reached|limit will reset|resets? at", re.I)
+LIMIT_RE = re.compile(r"usage limit|hit your (\S+ )*limit|limit reached|limit will reset|resets? at|"
+                      r"(spend|session|rate) limit|limit resets", re.I)
+LIMIT_STATUS = 429
 AUTH_RE = re.compile(r"not logged in|log ?in|authenticat|invalid api key|oauth|unauthori[sz]ed|credential", re.I)
 DEFAULT_CLI_CWD = Path(os.environ.get("TMPDIR", "/tmp")) / "bai-teacher-cwd"
 
@@ -758,7 +760,7 @@ def cli_attempt(req: dict, cfg: argparse.Namespace) -> tuple[dict, dict | None]:
         return e
     if res.get("is_error") or res.get("subtype") != "success":
         msg = f"{res.get('subtype')} api_error_status={res.get('api_error_status')}: {str(res.get('result'))[:300]}"
-        if LIMIT_RE.search(str(res.get("result", ""))):
+        if res.get("api_error_status") == LIMIT_STATUS or LIMIT_RE.search(str(res.get("result", ""))):
             raise UsageLimit(msg)
         if res.get("api_error_status") in (401, 403) or AUTH_RE.search(str(res.get("result", ""))):
             raise AuthError(msg)

@@ -172,6 +172,14 @@ class Rows(unittest.TestCase):
         self.assertEqual(summary["shortCalls"], {cid: {"requested": 3, "returned": 1}})
 
 
+class UsageLimitDetection(unittest.TestCase):
+    def test_spend_and_session_limit_messages_stop_the_run(self) -> None:
+        for msg in ["You've hit your org's monthly spend limit · your session limit resets 3pm",
+                    "usage limit reached", "Claude AI usage limit reached|1700000000", "limit resets at 5pm"]:
+            self.assertTrue(t.LIMIT_RE.search(msg), msg)
+        self.assertFalse(t.LIMIT_RE.search("schema: $.items[0].spec: required"))
+
+
 class DedupContainment(unittest.TestCase):
     def test_eval_utterance_inside_a_longer_row_is_a_leak(self) -> None:
         import dedup
