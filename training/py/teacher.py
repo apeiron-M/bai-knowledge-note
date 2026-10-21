@@ -79,14 +79,130 @@ PERSONAS = [
 SYSTEM = """You write training data for a small on-device model that turns chat messages into document operations in a personal knowledge vault app.
 
 Write messages a real user would type into the app's chat box while looking at one document. Each message asks for exactly one change, carried out by the target operation. Rules:
-- Vary wording, length and register as instructed; never quote the operation name or copy its description.
+- Write one message per spec, in spec order, and follow each spec's register, length, words to avoid and name exactly; set `spec` to the spec's number.
+- Never quote the operation name or copy its description.
 - Free-text argument values must be copied verbatim (same casing) from the message; put each one in `evidence` with the exact span.
 - Include an optional argument only if the message clearly states it.
 - Enum arguments must be one of the listed values, and the message must imply that value unambiguously.
 - The message must not be better served by any sibling operation.
+- When the document's current state is listed and a spec names an existing item, the message must pick out that one item among the listed ones (by its name, a close paraphrase or a description, never by its position in the list), and `refs` must give that item's exact label.
 - Invent every name, email, date and detail. Never use anything from account, machine or date context you may have been given."""
 
-NO_ACTION_SYSTEM = """You write training data for a small on-device model in a personal knowledge vault app. Write chat messages that must NOT change the open document: questions about it, comments, thanks, or requests no listed operation can do. Make them realistic and close to real edit requests in wording, so the model learns the boundary. Invent every name, email, date and detail; never use anything from account, machine or date context you may have been given."""
+NO_ACTION_SYSTEM = """You write training data for a small on-device model in a personal knowledge vault app. Write chat messages that must NOT change the open document: questions about it, comments, thanks, or requests no listed operation can do. Make them realistic and close to real edit requests in wording, so the model learns the boundary. Follow each spec's register and length. Invent every name, email, date and detail; never use anything from account, machine or date context you may have been given."""
+
+# Per-item wording spec (pilot 2). `plan` assigns each item a register, a
+# length, a name from the seeded pool and, for at least half of an op's
+# items, a list of op words to avoid; `rows` drops items that break it and
+# `agree` holds every op's kept rows at >= MIN_AVOID op-word-free.
+REGISTERS = [
+    "casual", "polite and formal", "terse, like a note to self", "all lowercase with one small typo",
+    "rushed and a bit stressed", "plain and neutral", "chatty, as if to a colleague", "a question",
+]
+LENGTHS = {"very short": (2, 5), "short": (6, 12), "medium": (13, 25), "long": (26, 50)}
+LENGTH_WEIGHTS = [0.2, 0.35, 0.3, 0.15]
+MULTI_CLAUSE = "two or more clauses or sentences, one of them context that does not affect the change (why, what you are in the middle of, an aside)"
+MIN_AVOID = 0.5
+TRIVIAL_OP_WORDS = {"set", "add", "update", "to", "for", "of", "the", "a", "an", "and", "on", "in", "by",
+                    "from", "with", "into", "as"}
+# Person-valued semantic fields; the spec's name goes there when one is named.
+PERSON_FIELDS = {"assignee", "owner", "author", "assignedTo", "name"}
+PERSON_OPS = {"project:ADD_MEMBER", "project:UPDATE_MEMBER"}  # where `name` is a person
+
+
+def op_words(op_name: str) -> list[str]:
+    """The non-trivial words of the op name (held-out-2's paraphrase rule)."""
+    return [w for w in op_name.lower().split("_") if w and w not in TRIVIAL_OP_WORDS]
+
+
+def uses_op_words(utterance: str, words: list[str]) -> list[str]:
+    """Op words (or forms of them) in the utterance: a shared prefix of at
+    least max(4, shorter length - 3) characters; words under 4 letters must
+    match exactly (plus a plural s)."""
+    toks = re.findall(r"[a-z]+", utterance.lower())
+    hits = []
+    for w in words:
+        for t in toks:
+            if len(w) < 4 or len(t) < 4:
+                ok = t in (w, w + "s")
+            else:
+                n = len(os.path.commonprefix([w, t]))
+                ok = n >= max(4, min(len(w), len(t)) - 3)
+            if ok:
+                hits.append(w)
+                break
+    return hits
+
+
+def item_specs(rng: random.Random, k: int, op_name: str | None, people: list[str]) -> list[dict]:
+    """k specs: ceil(k/2) (+1 from 4 items) avoid the op words; registers
+    differ inside a request; one in four is multi-clause (at least medium)."""
+    n_avoid = 0 if op_name is None else -(-k // 2) + (1 if k >= 4 else 0)
+    avoid = rng.sample(range(k), n_avoid)
+    regs = rng.sample(REGISTERS, min(k, len(REGISTERS)))
+    lens = rng.choices(list(LENGTHS), weights=LENGTH_WEIGHTS, k=k)
+    n_multi = k // 4 + (rng.random() < (k % 4) / 4)  # one in four, in expectation
+    multi = set(rng.sample(range(k), n_multi))
+    specs = []
+    for i in range(k):
+        reg = regs[i % len(regs)]
+        length = lens[i]
+        if i in multi and length in ("very short", "short"):
+            length = "medium"
+        elif reg.startswith("terse") and i not in multi:
+            length = "very short"
+        sp = {"n": i + 1, "register": reg, "length": length, "multiClause": i in multi,
+              "name": people.pop(0) if people else None}
+        if i in avoid:
+            sp["avoid"] = op_words(op_name or "")
+        specs.append(sp)
+    return specs
+
+
+def spec_text(sp: dict, ref: dict | None = None) -> str:
+    lo, hi = LENGTHS[sp["length"]]
+    bits = [f"Spec {sp['n']}:"]
+    if ref is not None:
+        for path, lab in ref["labels"].items():
+            if lab is None:
+                bits.append(f"`{path}`: none (refs.{path} = \"none\").")
+            elif isinstance(lab, list):
+                bits.append(f"`{path}` = {json.dumps(lab, ensure_ascii=False)}.")
+            else:
+                bits.append(f"`{path}` = {json.dumps(lab, ensure_ascii=False)}.")
+        if ref.get("hint"):
+            bits.append(f"Intent: {ref['hint']}.")
+    bits.append(f"Register: {sp['register']}. Length: {lo}-{hi} words.")
+    if sp["multiClause"]:
+        bits.append(f"Shape: {MULTI_CLAUSE}.")
+    if sp.get("avoid"):
+        bits.append("Do not use these words or any form of them: " + ", ".join(f'"{w}"' for w in sp["avoid"]) + ".")
+    if sp.get("name"):
+        bits.append(f"If the message names a person, it is {sp['name']} (full or first name).")
+    return " ".join(bits)
+
+
+def wording_error(utterance: str, sp: dict) -> str | None:
+    """The spec rules `rows` enforces: op words, length (loose), clauses."""
+    if sp.get("avoid"):
+        hit = uses_op_words(utterance, sp["avoid"])
+        if hit:
+            return f"op word {hit[0]!r} in an avoid item"
+    n = len(utterance.split())
+    lo, hi = LENGTHS[sp["length"]]
+    if not (max(1, int(lo * 0.6)) <= n <= int(hi * 1.5) + 1):
+        return f"length {n} words, spec {lo}-{hi}"
+    if sp["multiClause"] and (n < 10 or not re.search(r"[.;!?—–:]\s|,\s*(and|but|so|because)\b|\s(and|but|so|because)\s", utterance)):
+        return "multi-clause spec, single clause"
+    return None
+
+
+def prompt_leaks(texts: list[str], min_words: int = 3) -> list[dict]:
+    """Eval utterances (>= min_words words, normalized) inside any prompt."""
+    sys.path.insert(0, str(REPO / "training/py"))
+    from dedup import DEFAULT_EVAL_DIRS, load_eval, normalize
+    evals = [e for e in load_eval(DEFAULT_EVAL_DIRS, []) if len(e["norm"].split()) >= min_words]
+    blob = " " + normalize("\n".join(texts)) + " "
+    return [{"source": e["source"], "id": e["id"]} for e in evals if f" {e['norm']} " in blob]
 
 
 def strip_unsupported(schema: object) -> object:
@@ -99,9 +215,11 @@ def strip_unsupported(schema: object) -> object:
     return schema
 
 
-def gen_schema(model_schema: dict) -> dict:
+def gen_schema(model_schema: dict, refs: dict[str, tuple[list[str], bool]] | None = None) -> dict:
+    """Item schema: spec number, utterance, semantic args, evidence, and for
+    a ref op the label of each ref path's item (`refs`, "none" if unused)."""
     args = strip_unsupported(model_schema)
-    item_props = {"utterance": {"type": "string"}, "style": {"type": "string"}}
+    item_props: dict = {"spec": {"type": "integer"}, "utterance": {"type": "string"}}
     if args.get("properties"):  # ops with no semantic fields get no args object
         item_props["args"] = args
     item_props["evidence"] = {
@@ -112,6 +230,13 @@ def gen_schema(model_schema: dict) -> dict:
             "required": ["field", "span"], "additionalProperties": False,
         },
     }
+    if refs:
+        props = {}
+        for path, (labels, is_list) in refs.items():
+            e = {"type": "string", "enum": [*labels, "none"]}
+            props[path] = {"type": "array", "items": e} if is_list else e
+        item_props["refs"] = {"type": "object", "properties": props, "required": list(props),
+                              "additionalProperties": False}
     return {
         "type": "object",
         "properties": {
@@ -132,9 +257,9 @@ NO_ACTION_SCHEMA = {
     "type": "object",
     "properties": {"items": {"type": "array", "items": {
         "type": "object",
-        "properties": {"utterance": {"type": "string"},
+        "properties": {"spec": {"type": "integer"}, "utterance": {"type": "string"},
                        "kind": {"type": "string", "enum": ["question", "comment", "out-of-catalog"]}},
-        "required": ["utterance", "kind"], "additionalProperties": False}}},
+        "required": ["spec", "utterance", "kind"], "additionalProperties": False}}},
     "required": ["items"], "additionalProperties": False,
 }
 
@@ -158,14 +283,16 @@ def schema_load(schema: object) -> tuple[int, int]:
     return opt, uni
 
 
-def op_brief(op: dict) -> str:
+def op_brief(op: dict, state: str | None = None) -> str:
     sib = "\n".join(f"- {s['key']}: {s['description'] or '(no description)'}" for s in op["siblings"])
+    doc = (f"Current document state (what the user is looking at):\n{state}\n" if state is not None
+           else f"Empty document state: {json.dumps(op['emptyState'])}\n")
     return (
         f"Target operation: {op['key']}\nDescription: {op['description'] or '(none)'}\n"
         f"Input SDL:\n{op['inputSdl']}\n"
         f"Arguments you fill (JSON schema): {json.dumps(op['modelSchema'])}\n"
         f"Filled by the app, never by you: {', '.join(op['appFilledFields']) or 'none'}\n"
-        f"Empty document state: {json.dumps(op['emptyState'])}\n"
+        f"{doc}"
         f"Reducer source (what the operation does):\n```ts\n{op['reducerSource'] or ''}\n```\n"
         f"Sibling operations on the same document (do not mean these):\n{sib}"
     )
@@ -184,45 +311,109 @@ def est_tokens(text: str) -> int:
     return max(1, len(text) // 4)  # chars/4 heuristic; replace with count_tokens when a key exists
 
 
+PILOT2_OPS = [  # non-ref ops, one per model that has one
+    "derivation:ADD_RESEED_ENTRY", "health-report:ADD_CHECK", "knowledge-note:SET_DESCRIPTION",
+    "moc:ADD_OPEN_QUESTION", "moc:UPDATE_ORIENTATION", "observation:CREATE_OBSERVATION",
+    "project:SET_OWNER", "research-claim:UPDATE_CLAIM_CONTENT", "source:SET_SOURCE_STATUS",
+    "tension:ADD_INVOLVED_REF", "vault-config:TOGGLE_FEATURE", "wbs:SET_REFERENCES",
+]
+PILOT2_REF_ITEMS3 = {  # ref ops a chat user hits most get 3 items, the rest 2
+    "wbs:SET_GOAL_STATUS", "wbs:ASSIGN_GOAL", "wbs:CREATE_GOAL", "wbs:DELETE_GOAL",
+    "wbs:UPDATE_GOAL_DESCRIPTION", "knowledge-note:REMOVE_TOPIC", "knowledge-note:REMOVE_LINK",
+    "project:REMOVE_MEMBER", "project:SET_DELIVERABLE_STATUS", "pipeline-queue:ASSIGN_TASK",
+}
+PILOT2_NO_ACTION_MODELS = ["project", "moc", "pipeline-queue"]
+
+
+def tsx(*args: str) -> str:
+    out = subprocess.run(["npx", "--no-install", "tsx", *args], cwd=REPO, capture_output=True, text=True)
+    if out.returncode:
+        raise SystemExit(f"tsx {' '.join(args)} failed:\n{out.stderr[-2000:]}")
+    return out.stdout
+
+
 def cmd_plan(a) -> int:
     ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
-    ops = PILOT_OPS if a.ops == "pilot" else [k for k in ctx]
+    listing = json.loads(tsx("training/gen/ref-scenarios.ts", "--list").strip().splitlines()[-1])
+    ref_ops, people_pool = listing["refOps"], listing["people"]
     rng = random.Random(a.seed)
-    reqs = []
-    for key in ops:
-        op = ctx[key]
-        for i in range(a.requests_per_op):
-            axes = rng.sample(STYLE_AXES, 2)
-            user = (f"{op_brief(op)}\n\nWrite {a.items} distinct messages. Persona: {rng.choice(PERSONAS)}. "
-                    f"Styles to cover: {', '.join(axes)}. Seed: {rng.randrange(10**6)}.")
-            cid = f"gen-{key.replace(':', '--')}-{i}"
-            reqs.append(request(cid, SYSTEM, user, gen_schema(op["modelSchema"]), "medium", 16000))
-    models = PILOT_NO_ACTION_MODELS if a.ops == "pilot" else sorted({o["model"] for o in ctx.values()})
-    for m in models:
-        ops_m = [o for o in ctx.values() if o["model"] == m]
-        listing = "\n".join(f"- {o['key']}: {o['description'] or o['opName']}" for o in ops_m)
-        user = (f"Document type: {ops_m[0]['docType']}\nIts operations:\n{listing}\n\n"
-                f"Write {a.items} messages that need no operation. Persona: {rng.choice(PERSONAS)}.")
-        reqs.append(request(f"noaction-{m}-0", NO_ACTION_SYSTEM, user, NO_ACTION_SCHEMA, "medium", 8000))
+    people: list[str] = []
 
+    def names(k: int) -> list[str]:
+        while len(people) < k:
+            people.extend(rng.sample(people_pool, len(people_pool)))
+        return [people.pop(0) for _ in range(k)]
+
+    # (op key, request index, items)
+    if a.ops == "pilot2":
+        jobs = [(k, 0, 3 if k in PILOT2_REF_ITEMS3 else 2) for k in ref_ops] + [(k, 0, 4) for k in PILOT2_OPS]
+        na_models, na_items = PILOT2_NO_ACTION_MODELS, 4
+    else:
+        keys = PILOT_OPS if a.ops == "pilot" else list(ctx)
+        jobs = [(k, i, a.items) for k in keys for i in range(a.requests_per_op)]
+        na_models = PILOT_NO_ACTION_MODELS if a.ops == "pilot" else sorted({o["model"] for o in ctx.values()})
+        na_items = a.items
+    cid = lambda key, i: f"gen-{key.replace(':', '--')}-{i}"  # noqa: E731
+    spec = [{"cid": cid(k, i), "op": k, "items": n, "seed": rng.randrange(2**31)} for k, i, n in jobs if k in ref_ops]
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text("".join(json.dumps(r) + "\n" for r in reqs))
+    scen: dict[str, dict] = {}
+    if spec:
+        sp_file, sc_file = Path(str(out) + ".scenario-spec.json"), Path(str(out) + ".scenarios.json")
+        sp_file.write_text(json.dumps(spec) + "\n")
+        tsx("training/gen/ref-scenarios.ts", str(sp_file), str(sc_file))
+        scen = {x["cid"]: x for x in json.loads(sc_file.read_text())}
+
+    reqs, meta = [], {}
+    for key, i, k in jobs:
+        op = ctx[key]
+        c = cid(key, i)
+        specs = item_specs(rng, k, op["opName"], names(k))
+        sc = scen.get(c)
+        refs = None
+        if sc:
+            refs = {p: ([x["label"] for x in cs], isinstance(sc["items"][0]["refs"].get(p), list))
+                    for p, cs in sc["refCandidates"].items()}
+        lines = [spec_text(sp, sc["items"][j] if sc else None) for j, sp in enumerate(specs)]
+        user = (f"{op_brief(op, sc['state'] if sc else None)}\n\n"
+                f"Write exactly {k} messages, one per spec. Persona: "
+                f"{('someone working on a ' + sc['theme']) if sc else rng.choice(PERSONAS)}.\n"
+                + "\n".join(lines) + f"\nSeed: {rng.randrange(10**6)}.")
+        reqs.append(request(c, SYSTEM, user, gen_schema(op["modelSchema"], refs), "medium", 16000))
+        meta[c] = {"specs": specs, **({"scenario": sc} if sc else {})}
+    for m in na_models:
+        ops_m = [o for o in ctx.values() if o["model"] == m]
+        listing_m = "\n".join(f"- {o['key']}: {o['description'] or o['opName']}" for o in ops_m)
+        specs = item_specs(rng, na_items, None, names(na_items))
+        c = f"noaction-{m}-0"
+        user = (f"Document type: {ops_m[0]['docType']}\nIts operations:\n{listing_m}\n\n"
+                f"Write exactly {na_items} messages that need no operation, one per spec. Persona: {rng.choice(PERSONAS)}.\n"
+                + "\n".join(spec_text(sp) for sp in specs))
+        reqs.append(request(c, NO_ACTION_SYSTEM, user, NO_ACTION_SCHEMA, "medium", 8000))
+        meta[c] = {"specs": specs}
+
+    out.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in reqs))
+    Path(str(out) + ".meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n")
+    leaks = prompt_leaks([r["params"]["system"] + "\n" + r["params"]["messages"][0]["content"] for r in reqs])
     in_tok = sum(est_tokens(r["params"]["system"] + r["params"]["messages"][0]["content"]
                             + json.dumps(r["params"]["output_config"])) for r in reqs)
-    items = a.items * len(reqs)
+    items = sum(len(m["specs"]) for m in meta.values())
     # Output: ~70 visible tokens per item plus adaptive thinking at medium effort,
     # bounded by a low/high guess per request. Unmeasured until a real run.
     out_lo, out_hi = items * 70 + len(reqs) * 300, items * 70 + len(reqs) * 3000
     cost = lambda i, o: round((i * PRICE_IN + o * PRICE_OUT) / 1e6 * BATCH_DISCOUNT, 4)  # noqa: E731
     est = {"label": "ESTIMATE (chars/4 input, guessed output incl. thinking); not measured",
-           "requests": len(reqs), "itemsRequested": items, "inputTokens": in_tok,
+           "requests": len(reqs), "itemsRequested": items, "refOpRequests": len(scen), "inputTokens": in_tok,
            "outputTokensRange": [out_lo, out_hi], "batchCostUsdRange": [cost(in_tok, out_lo), cost(in_tok, out_hi)],
            "sha256": hashlib.sha256(out.read_bytes()).hexdigest(),
+           "evalUtterancesInPrompts": leaks,
            "overSchemaLimits": sorted({r["custom_id"].rsplit("-", 1)[0] for r in reqs
                                        if (lambda o, u: o > 24 or u > 16)(*schema_load(r["params"]["output_config"]["format"]["schema"]))})}
     Path(str(out) + ".estimate.json").write_text(json.dumps(est, indent=2) + "\n")
     print(json.dumps(est))
+    if leaks:
+        print(f"refusing: {len(leaks)} eval utterance(s) appear in the prompts", file=sys.stderr)
+        return 5
     return 0
 
 
@@ -606,8 +797,33 @@ def grounded(args: dict, utterance: str, schema: dict, evidence: list[dict]) -> 
     return None
 
 
+def ref_mismatch(given: dict, want: dict) -> str | None:
+    """The teacher's `refs` labels against the assigned ones (`none` = unused;
+    dependency lists compare as sets, every other list in order)."""
+    for path, lab in want.items():
+        got = given.get(path)
+        if lab is None:
+            if got not in (None, "none", []):
+                return f"{path}: {got!r} given, none assigned"
+        elif isinstance(lab, list):
+            ok = isinstance(got, list) and (sorted(got) == sorted(lab) if path == "dependencies" else got == lab)
+            if not ok:
+                return f"{path}: {got!r} given, {lab!r} assigned"
+        elif got != lab:
+            return f"{path}: {got!r} given, {lab!r} assigned"
+    return None
+
+
+def person_value(key: str, args: dict) -> str | None:
+    for k, v in args.items():
+        if k in PERSON_FIELDS and isinstance(v, str) and (k != "name" or key in PERSON_OPS):
+            return v
+    return None
+
+
 def cmd_rows(a) -> int:
     ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
+    meta = json.loads(Path(a.meta).read_text()) if a.meta else {}
     rows, dropped = [], []
     leak = context_leak_terms() if a.leak_check else []
 
@@ -620,27 +836,61 @@ def cmd_rows(a) -> int:
             dropped.append({"custom_id": r["custom_id"], "reason": r.get("stop_reason") or r["type"]})
             continue
         items = json.loads(r["text"])["items"]
+        m = meta.get(r["custom_id"], {})
+        specs, scen, seen = m.get("specs"), m.get("scenario"), set()
         for j, it in enumerate(items):
             rid = f"{r['custom_id']}-{j}"
+
+            def drop(reason: str) -> None:
+                dropped.append({"id": rid, "reason": reason, "utterance": it.get("utterance")})
             if leaked(it):
                 dropped.append({"id": rid, "reason": "context-leak (account/machine context)"})
                 continue
+            sp = None
+            if specs is not None:
+                n = it.get("spec")
+                if not isinstance(n, int) or not 1 <= n <= len(specs) or n in seen:
+                    drop(f"spec {n!r} missing or repeated")
+                    continue
+                seen.add(n)
+                sp = specs[n - 1]
+                why = wording_error(it["utterance"], sp)
+                if why:
+                    drop(f"wording: {why}")
+                    continue
             if r["custom_id"].startswith("noaction-"):
                 model = r["custom_id"].split("-", 1)[1].rsplit("-", 1)[0]
                 doc_type = next(o["docType"] for o in ctx.values() if o["model"] == model)
                 rows.append({"id": rid, "utterance": it["utterance"], "docType": doc_type, "op": None,
-                             "meta": {"batch": r["custom_id"], "kind": it["kind"]}})
+                             "meta": {"batch": r["custom_id"], "kind": it["kind"], **({"spec": sp} if sp else {})}})
                 continue
             key = r["custom_id"][4:].rsplit("-", 1)[0].replace("--", ":")
             op = ctx[key]
             args = {k: v for k, v in it.get("args", {}).items() if v is not None}
             why = grounded(args, it["utterance"], op["modelSchema"], it["evidence"])
             if why:
-                dropped.append({"id": rid, "reason": why, "utterance": it["utterance"]})
+                drop(why)
                 continue
+            if sp and sp.get("name"):
+                who = person_value(key, args)
+                if who and not set(who.lower().split()) & set(sp["name"].lower().split()):
+                    drop(f"person {who!r} is not the spec's name")
+                    continue
             row = {"id": rid, "utterance": it["utterance"], "docType": op["docType"], "op": key,
-                   "args": args, "meta": {"batch": r["custom_id"], "style": it["style"]}}
-            if key in FIXTURES:
+                   "args": args, "meta": {"batch": r["custom_id"], "style": it.get("style"),
+                                          **({"spec": sp} if sp else {})}}
+            if scen:
+                assigned = scen["items"][sp["n"] - 1]
+                why = ref_mismatch(it.get("refs", {}), assigned["labels"])
+                if why:
+                    drop(f"ref-mismatch: {why}")
+                    continue
+                row["args"] = {**{p: v for p, v in assigned["refs"].items() if v is not None}, **args}
+                row["fixture"] = scen["fixture"]
+                row["refCandidates"] = scen["refCandidates"]
+                row["refContext"] = scen["refContext"]
+                row["meta"].update(refPosition=assigned["position"], theme=scen["theme"], state=scen["state"])
+            elif key in FIXTURES:
                 row["fixture"] = FIXTURES[key]
             rows.append(row)
     Path(a.out).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
@@ -653,47 +903,188 @@ def cmd_rows(a) -> int:
 LABEL_SYSTEM = ("You label chat messages for a document app. Given one message and the candidate operations, "
                 "pick the single operation the user wants, or \"none\" if it needs no document change, "
                 "and give its arguments copied verbatim from the message.")
+LABEL_BATCH_SYSTEM = ("You label chat messages for a document app. Label each message on its own: pick the single "
+                      "operation the user wants, or \"none\" if it needs no document change, and give its arguments "
+                      "copied verbatim from the message. For a field with listed choices, give the exact choice label.")
+
+
+def label_listing(ctx: dict, cands: list[str], with_choices: bool) -> str:
+    lines = []
+    for k in cands:
+        o = ctx[k]
+        line = f"- {k}: {o['description'] or o['opName']} args={json.dumps(o['modelSchema'].get('properties', {}))}"
+        refs = [f.split(" ")[0] for f in o["appFilledFields"] if f.endswith("(ref-id)")]
+        if with_choices and refs:
+            line += f" choice fields: {', '.join(refs)}"
+        lines.append(line)
+    return "\n".join(lines)
+
+
+def choice_lines(refs: dict | None) -> str:
+    return "".join(f"\n  Choices for {p}: " + ", ".join(json.dumps(c["label"], ensure_ascii=False) for c in cs)
+                   for p, cs in (refs or {}).items())
 
 
 def cmd_label(a) -> int:
+    """Blind second pass. --batch 1: one message per call (pilot 1's format).
+    --batch N: N messages of one docType per call, shuffled, keyed m1..mN
+    (row ids name the generation op, so they never reach the labeler)."""
     ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
-    reqs = []
+    refs = {}
+    if a.rows:
+        for line in Path(a.rows).read_text().splitlines():
+            row = json.loads(line)
+            refs[row["id"]] = row.get("refCandidates")
+    steps = []
     for line in Path(a.rendered).read_text().splitlines():
-        s = json.loads(line)
-        if s["step"] != 1:
+        st = json.loads(line)
+        if st["step"] != 1:
             continue
-        cands = s["candidates"]
-        if s.get("skip") == "gold-not-retrieved":
-            # Gold is outside BM25's top k: label over every op of the document type
+        cands = st["candidates"]
+        if st.get("skip") == "gold-not-retrieved":
+            # Gold is outside the top k: label over every op of the document type
             # so the blind pass can still confirm the op and args (for step 2).
-            doc_type = ctx[s["op"]]["docType"]
+            doc_type = ctx[st["op"]]["docType"]
             cands = [k for k, o in ctx.items() if o["docType"] == doc_type]
-        utt = s["messages"][-1]["content"].rsplit("Request: ", 1)[-1]
-        listing = "\n".join(f"- {k}: {ctx[k]['description'] or ctx[k]['opName']} args={json.dumps(ctx[k]['modelSchema'].get('properties', {}))}" for k in cands)
-        schema = {"type": "object", "properties": {
-            "op": {"type": "string", "enum": [*cands, "none"]},
-            "args_json": {"type": "string"}}, "required": ["op", "args_json"], "additionalProperties": False}
-        reqs.append(request(f"label-{s['id']}", LABEL_SYSTEM,
-                            f"Candidates:\n{listing}\n\nMessage: {utt}\n\nargs_json is a JSON object of the chosen operation's arguments ({{}} for none).",
-                            schema, "low", 4000))
-    Path(a.out).write_text("".join(json.dumps(r) + "\n" for r in reqs))
+        utt = st["messages"][-1]["content"].rsplit("Request: ", 1)[-1]
+        steps.append((st["id"], tuple(cands), utt))
+    reqs, keys = [], {}
+    if a.batch <= 1:
+        for rid, cands, utt in steps:
+            schema = {"type": "object", "properties": {
+                "op": {"type": "string", "enum": [*cands, "none"]},
+                "args_json": {"type": "string"}}, "required": ["op", "args_json"], "additionalProperties": False}
+            reqs.append(request(f"label-{rid}", LABEL_SYSTEM,
+                                f"Candidates:\n{label_listing(ctx, list(cands), bool(refs.get(rid)))}\n\n"
+                                f"Message: {utt}{choice_lines(refs.get(rid))}\n\n"
+                                "args_json is a JSON object of the chosen operation's arguments ({} for none).",
+                                schema, "low", 4000))
+    else:
+        rng = random.Random(a.seed)
+        groups: dict[tuple, list] = {}
+        for st in steps:
+            groups.setdefault(st[1], []).append(st)
+        for gi, (cands, members) in enumerate(groups.items()):
+            members = rng.sample(members, len(members))
+            n_batches = -(-len(members) // a.batch)
+            for bi in range(n_batches):
+                chunk = members[bi::n_batches]  # even sizes
+                cid = f"labelb-{gi}-{bi}"
+                keys[cid] = {f"m{j + 1}": rid for j, (rid, _, _) in enumerate(chunk)}
+                with_choices = any(refs.get(rid) for rid, _, _ in chunk)
+                msgs = "\n".join(f"[m{j + 1}] {utt}{choice_lines(refs.get(rid))}" for j, (rid, _, utt) in enumerate(chunk))
+                one = {"type": "object", "properties": {
+                    "op": {"type": "string", "enum": [*cands, "none"]}, "args_json": {"type": "string"}},
+                    "required": ["op", "args_json"], "additionalProperties": False}
+                schema = {"type": "object", "properties": {k: one for k in keys[cid]},
+                          "required": list(keys[cid]), "additionalProperties": False}
+                reqs.append(request(cid, LABEL_BATCH_SYSTEM,
+                                    f"Candidates:\n{label_listing(ctx, list(cands), with_choices)}\n\n"
+                                    f"Messages (each is independent):\n{msgs}\n\n"
+                                    "For each message key, args_json is a JSON object of the chosen operation's "
+                                    "arguments ({} for none).", schema, "low", 8000))
+        Path(a.out + ".keys.json").write_text(json.dumps(keys, indent=1) + "\n")
+    Path(a.out).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in reqs))
+    leaks = prompt_leaks([r["params"]["messages"][0]["content"] for r in reqs])
     in_tok = sum(est_tokens(r["params"]["system"] + r["params"]["messages"][0]["content"]) for r in reqs)
-    print(json.dumps({"requests": len(reqs), "inputTokensEstimate": in_tok}))
-    return 0
+    print(json.dumps({"requests": len(reqs), "rows": len(steps), "inputTokensEstimate": in_tok,
+                      "evalUtterancesInPrompts": leaks}))
+    return 5 if leaks else 0
+
+
+def read_labels(results: str, keys_file: str | None) -> dict[str, dict]:
+    keys = json.loads(Path(keys_file).read_text()) if keys_file else {}
+    labels = {}
+    for line in Path(results).read_text().splitlines():
+        r = json.loads(line)
+        if r["type"] != "succeeded":
+            continue
+        t = json.loads(r["text"])
+        if r["custom_id"].startswith("label-"):
+            labels[r["custom_id"].removeprefix("label-")] = t
+        else:
+            for k, v in t.items():
+                labels[keys[r["custom_id"]][k]] = v
+    return labels
+
+
+def label_args(lab: dict | None, row: dict) -> dict | None:
+    """The labeler's args with choice labels mapped back to ids."""
+    try:
+        args = json.loads(lab["args_json"]) if lab else None
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(args, dict):
+        return None
+    args = {k: v for k, v in args.items() if v is not None}
+    for path, cands in (row.get("refCandidates") or {}).items():
+        ids = {c["label"]: c["id"] for c in cands}
+        if path in args:
+            v = args[path]
+            args[path] = [ids.get(x, x) for x in v] if isinstance(v, list) else ids.get(v, v)
+    return args
+
+
+def norm_val(v: object) -> object:
+    if isinstance(v, str):
+        return v.strip().rstrip(".!?").lower()
+    if isinstance(v, list):
+        return [norm_val(x) for x in v]
+    if isinstance(v, dict):
+        return {k: norm_val(x) for k, x in v.items()}
+    return v
+
+
+def args_equal(got: dict | None, gold: dict, tolerant: bool = False) -> bool:
+    if got is None:
+        return False
+    g, w = dict(got), dict(gold)
+    for d in (g, w):  # a dependency set has no order
+        if isinstance(d.get("dependencies"), list):
+            d["dependencies"] = sorted(d["dependencies"])
+    return norm_val(g) == norm_val(w) if tolerant else g == w
+
+
+def wording_quota(rows: list[dict], ctx: dict) -> tuple[list[dict], list[str], list[str]]:
+    """Per op, at most as many op-word rows as op-word-free ones (MIN_AVOID
+    0.5); each pool name in at most 2 kept utterances. Rows with no spec
+    (pilot 1) pass through."""
+    by_op: dict[str, list[dict]] = {}
+    for r in rows:
+        if r["op"] and (r.get("meta") or {}).get("spec"):
+            by_op.setdefault(r["op"], []).append(r)
+    drop: set[str] = set()
+    for key, rs in by_op.items():
+        words = op_words(ctx[key]["opName"])
+        withw = [r for r in rs if uses_op_words(r["utterance"], words)]
+        free = len(rs) - len(withw)
+        excess = len(withw) - int(free * (1 - MIN_AVOID) / MIN_AVOID)
+        drop |= {r["id"] for r in withw[len(withw) - excess:]} if excess > 0 else set()
+    quota = sorted(drop)
+    seen: dict[str, int] = {}
+    cap = []
+    for r in rows:
+        if r["id"] in drop:
+            continue
+        name = ((r.get("meta") or {}).get("spec") or {}).get("name")
+        if name and any(t.lower() in r["utterance"].lower() for t in name.split()):
+            seen[name] = seen.get(name, 0) + 1
+            if seen[name] > 2:
+                cap.append(r["id"])
+                drop.add(r["id"])
+    return [r for r in rows if r["id"] not in drop], quota, cap
 
 
 def cmd_agree(a) -> int:
-    labels = {}
-    for line in Path(a.results).read_text().splitlines():
-        r = json.loads(line)
-        if r["type"] == "succeeded":
-            labels[r["custom_id"].removeprefix("label-")] = json.loads(r["text"])
+    ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())} if a.context else {}
+    labels = read_labels(a.results, a.keys)
     # A row whose step-2 target the runtime grammar rejects (r6.1's safe gate
     # drops a meant-but-unnamed optional field) is not trainable as a pair.
     gated = set()
     if a.manifest:
         gated = {k.rsplit("#", 1)[0] for k in json.loads(Path(a.manifest).read_text())["targetRejected"]}
     kept, disagree, gate = [], [], []
+    tolerant = 0
     for line in Path(a.rows).read_text().splitlines():
         row = json.loads(line)
         if row["id"] in gated:
@@ -701,19 +1092,49 @@ def cmd_agree(a) -> int:
             continue
         lab = labels.get(row["id"])
         gold_op = row["op"] or "none"
-        try:
-            lab_args = json.loads(lab["args_json"]) if lab else None
-        except json.JSONDecodeError:
-            lab_args = None
-        if isinstance(lab_args, dict):
-            lab_args = {k: v for k, v in lab_args.items() if v is not None}
-        ok = lab is not None and lab["op"] == gold_op and (row["op"] is None or lab_args == row.get("args", {}))
-        (kept if ok else disagree).append(row if ok else {"id": row["id"], "gold": gold_op, "label": lab})
+        got = label_args(lab, row)
+        op_ok = lab is not None and lab["op"] == gold_op
+        ok = op_ok and (row["op"] is None or args_equal(got, row.get("args", {})))
+        tolerant += op_ok and (row["op"] is None or args_equal(got, row.get("args", {}), True))
+        (kept if ok else disagree).append(row if ok else {"id": row["id"], "gold": gold_op, "label": lab,
+                                                          "on": "args" if op_ok else "op"})
+    quota, cap = [], []
+    if ctx:
+        kept, quota, cap = wording_quota(kept, ctx)
     Path(a.out).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in kept))
     summary = {"kept": len(kept), "gateRejected": len(gate), "disagree": len(disagree),
-               "gateRejectedIds": gate, "detail": disagree}
+               "disagreeOnOp": sum(d["on"] == "op" for d in disagree),
+               "agreeTolerant(case/final punctuation)": tolerant,
+               "quotaDropped": len(quota), "nameCapDropped": len(cap),
+               "gateRejectedIds": gate, "quotaDroppedIds": quota, "nameCapDroppedIds": cap, "detail": disagree}
     Path(a.out + ".summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n")
     print(json.dumps({**summary, "detail": disagree[:20]}, ensure_ascii=False))
+    return 0
+
+
+def cmd_labelcmp(a) -> int:
+    """Agreement of two label runs on the same rows: each with the generation
+    labels (gold) and with each other, exact (agree's rule) and op only."""
+    rows = [json.loads(l) for l in Path(a.rows).read_text().splitlines() if l.strip()]
+    la, lb = read_labels(a.a, a.a_keys), read_labels(a.b, a.b_keys)
+
+    def same(x: dict | None, y_op: str | None, y_args: dict | None, row: dict) -> tuple[bool, bool]:
+        if x is None or y_op is None:
+            return False, False
+        op = x["op"] == y_op
+        return op, op and (y_op == "none" or args_equal(label_args(x, row), y_args))
+    res = {k: [0, 0] for k in ("a~gold", "b~gold", "a~b")}
+    for row in rows:
+        gold = row["op"] or "none"
+        A, B = la.get(row["id"]), lb.get(row["id"])
+        for k, (x, y_op, y_args) in {"a~gold": (A, gold, row.get("args", {})), "b~gold": (B, gold, row.get("args", {})),
+                                     "a~b": (A, B and B["op"], B and label_args(B, row))}.items():
+            o, e = same(x, y_op, y_args, row)
+            res[k][0] += o
+            res[k][1] += e
+    n = len(rows)
+    out = {"rows": n, **{k: {"op": f"{o}/{n} ({o / n:.1%})", "exact": f"{e}/{n} ({e / n:.1%})"} for k, (o, e) in res.items()}}
+    print(json.dumps(out, indent=2))
     return 0
 
 
@@ -736,14 +1157,21 @@ def main() -> int:
     p.add_argument("--max-requests", type=int, default=200); p.add_argument("--limit", type=int, default=0)
     p.add_argument("--yes-spend", action="store_true", help="api backend only")
     p = sub.add_parser("rows"); p.add_argument("results"); p.add_argument("--context", required=True); p.add_argument("--out", required=True)
+    p.add_argument("--meta", help="<requests>.meta.json from plan: item specs and ref scenarios")
     p.add_argument("--no-leak-check", dest="leak_check", action="store_false",
                    help="skip dropping rows that contain the account email / user name / home dir")
     p = sub.add_parser("label"); p.add_argument("rendered"); p.add_argument("--context", required=True); p.add_argument("--out", required=True)
+    p.add_argument("--rows", help="rows-valid.jsonl: ref choices per row"); p.add_argument("--batch", type=int, default=8)
+    p.add_argument("--seed", type=int, default=7)
     p = sub.add_parser("agree"); p.add_argument("results"); p.add_argument("--rows", required=True); p.add_argument("--out", required=True)
+    p.add_argument("--keys", help="<label requests>.keys.json for batched labels")
+    p.add_argument("--context", help="context.json: enables the per-op wording quota and name cap")
     p.add_argument("--manifest", help="rendered.manifest.json: also drop rows with a grammar-rejected target")
+    p = sub.add_parser("labelcmp"); p.add_argument("--rows", required=True)
+    p.add_argument("--a", required=True); p.add_argument("--a-keys"); p.add_argument("--b", required=True); p.add_argument("--b-keys")
     a = ap.parse_args()
     return {"plan": cmd_plan, "submit": cmd_submit, "collect": cmd_collect, "run": cmd_run, "rows": cmd_rows,
-            "label": cmd_label, "agree": cmd_agree}[a.cmd](a)
+            "label": cmd_label, "agree": cmd_agree, "labelcmp": cmd_labelcmp}[a.cmd](a)
 
 
 if __name__ == "__main__":

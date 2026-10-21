@@ -857,7 +857,8 @@ function main(): void {
   const catalog = new Map(buildTrainingCatalog().map((e) => [e.key, e]));
   if (specFile === "--list") {
     const ops = [...catalog.values()].filter((e) => e.scope === "global" && refPaths(e).length);
-    console.log(JSON.stringify(Object.fromEntries(ops.map((e) => [e.key, refPaths(e)]))));
+    const refOps = Object.fromEntries(ops.map((e) => [e.key, refPaths(e)]));
+    console.log(JSON.stringify({ refOps, people: PEOPLE }));
     return;
   }
   const spec = JSON.parse(readFileSync(specFile, "utf8")) as { cid: string; op: string; items: number; seed: number }[];
@@ -908,5 +909,4 @@ function main(): void {
 
 if (process.argv[1]?.endsWith("ref-scenarios.ts")) main();
 
-// Re-exported for the row checks in validate-rows.ts.
-export { stateOf, PEOPLE };
+export { stateOf };
