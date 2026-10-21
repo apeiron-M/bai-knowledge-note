@@ -373,6 +373,8 @@ export function BrowserVault({
 
   useEffect(() => {
     let cancelled = false;
+    /** Another tab took the vault: this one must never run or write again. */
+    let lost = false;
     let releaseLock: (() => void) | undefined;
     const lockRequest = new AbortController();
     const start = async (steal: boolean) => {
@@ -383,7 +385,10 @@ export function BrowserVault({
           steal,
           signal: lockRequest.signal,
           onLost: () => {
+            lost = true;
             if (!cancelled) setPhase({ kind: "moved" });
+            // Its pipeline and its writes stop here: the other tab's engine owns the store now.
+            void booted.current?.halt();
           },
         });
         if (lock.kind === "cancelled") return;
@@ -407,9 +412,10 @@ export function BrowserVault({
           if (!cancelled) setPhase({ kind: "starting", stage, done, total });
         },
       });
-      if (cancelled) {
-        // Gone while it started: stop it, then let the next mount have the store.
-        await vault.stop();
+      if (cancelled || lost) {
+        // Gone while it started: stop it, then let the next mount have the store. Taken by
+        // another tab while it started: halt it, writing nothing more.
+        await (lost ? vault.halt() : vault.stop());
         releaseLock?.();
         return;
       }

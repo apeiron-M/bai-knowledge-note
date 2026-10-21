@@ -43,11 +43,21 @@ export const FAILURE_REASONS = {
   refused: "Your AI refused the key",
   busy: "Your AI is busy — try again in a minute",
   noText: "This source has no text",
+  gone: "This source was deleted",
   other: "Something went wrong — try again",
 } as const;
 
+/** The task's source is no longer in the vault: deleted while it waited. */
+class SourceGoneError extends Error {
+  constructor() {
+    super("The source was deleted while it waited");
+    this.name = "SourceGoneError";
+  }
+}
+
 /** The plain reason a source shows when its task failed; the error itself goes to the console. */
 export function failureReason(error: unknown): string {
+  if (error instanceof SourceGoneError) return FAILURE_REASONS.gone;
   if (error instanceof AiRefusedError) return FAILURE_REASONS.refused;
   if (error instanceof CallBudgetError) return FAILURE_REASONS.unusable;
   if (isTimeout(error)) return FAILURE_REASONS.timeout;
@@ -141,6 +151,8 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
   const listeners = new Set<() => void>();
   const stopping = new AbortController();
   let state: HostPipelineState = { kind: "ready" };
+  /** The AI connection that turned its key away: sources wait until the visitor changes it. */
+  let refused: string | null = null;
   /** Tasks already in the queue at a look: only those after the first look were added now. */
   const known = new Set<string>();
   let looked = false;
@@ -178,13 +190,15 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     return { id: queueId, tasks: doc.state.global.tasks };
   }
 
-  async function titleForMap(sourceId: string): Promise<string> {
-    const [tree, source] = await Promise.all([
-      client.request<{ state: { global: { nodes: TreeNode[] } } }>({ path: `notes/${encodeURIComponent(drive)}`, query: { drive } }),
-      client.request<{ name: string; state: { global: { title?: string | null } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } }),
-    ]);
+  async function readTree(): Promise<TreeNode[]> {
+    const tree = await client.request<{ state: { global: { nodes: TreeNode[] } } }>({ path: `notes/${encodeURIComponent(drive)}`, query: { drive } });
+    return tree.state.global.nodes;
+  }
+
+  async function titleForMap(sourceId: string, tree: readonly TreeNode[]): Promise<string> {
+    const source = await client.request<{ name: string; state: { global: { title?: string | null } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
     // A source that was never given its text has no title yet: its name is what the visitor typed.
-    return mapTitleFor(tree.state.global.nodes, sourceId, source.state.global.title || source.name);
+    return mapTitleFor(tree, sourceId, source.state.global.title || source.name);
   }
 
   function tell(event: PipelineEvent) {
@@ -208,8 +222,13 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     return stats?.noteCount ?? 0;
   }
 
-  async function fail(queue: string, task: RunnerTask, error: unknown): Promise<void> {
+  async function fail(queue: string, task: RunnerTask, error: unknown, ai?: PipelineAi): Promise<void> {
     const reason = failureReason(error);
+    // One source says why; the rest wait for another key instead of failing one by one.
+    if (reason === FAILURE_REASONS.refused && ai) {
+      refused = ai.connection;
+      setState({ kind: "refused" });
+    }
     tell({ type: "source-failed", reason });
     console.warn(`[BrowserVault] pipeline: task ${task.id} failed (${reason}).`, error);
     remember(task.id, reason);
@@ -267,10 +286,19 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     queue: string,
     task: RunnerTask & { documentRef: string; currentPhase: PipelinePhase },
     ai: PipelineAi,
+    tree: readonly TreeNode[],
   ): Promise<{ ended: "done"; partial: boolean } | { ended: "failed" } | null> {
     let partial = false;
     const sourceId = task.documentRef;
-    const mapTitle = await titleForMap(sourceId);
+    let mapTitle: string;
+    try {
+      mapTitle = await titleForMap(sourceId, tree);
+    } catch (error) {
+      // Its own failure, not the queue's: the next task must not wait behind it.
+      if (stopped()) return null;
+      await fail(queue, task, error);
+      return { ended: "failed" };
+    }
     setState({ kind: "working", taskId: task.id });
     let phase: PipelinePhase | null = task.currentPhase;
     while (phase) {
@@ -299,7 +327,7 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
           unreachable(error);
           return null;
         }
-        await fail(queue, task, error);
+        await fail(queue, task, error, ai);
         return { ended: "failed" };
       } finally {
         await writes.release();
@@ -320,12 +348,24 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
       setState({ kind: "ready" });
       return false;
     }
+    // A source deleted while it waited: its task fails at once, and the queue goes on.
+    const tree = await readTree();
+    if (stopped()) return false;
+    if (!tree.some((n) => n.id === task.documentRef)) {
+      await fail(queue.id, task, new SourceGoneError());
+      return true;
+    }
     const ai = await askAi(stopping.signal);
     if (stopped()) return false;
     if (!ai) {
       setState({ kind: "no-ai" });
       return false;
     }
+    if (refused !== null && ai.connection === refused) {
+      setState({ kind: "refused" });
+      return false;
+    }
+    refused = null;
     try {
       await ai.reach();
     } catch (error) {
@@ -334,15 +374,15 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
         unreachable(error);
         return false;
       }
-      await fail(queue.id, task, error);
+      await fail(queue.id, task, error, ai);
       await afterTask();
       return true;
     }
-    const ended = await work(queue.id, task as RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai);
+    const ended = await work(queue.id, task as RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai, tree);
     if (!ended) return false;
     await afterTask();
     if (ended.ended === "done" && !stopped()) tell({ type: "source-processed", notes: await noteCount(), partial: ended.partial });
-    setState({ kind: "ready" });
+    setState(refused === null ? { kind: "ready" } : { kind: "refused" });
     return true;
   }
 

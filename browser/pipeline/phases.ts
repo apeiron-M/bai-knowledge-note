@@ -44,7 +44,17 @@ async function create(ctx: PhaseContext): Promise<PhaseOutcome> {
   // Already extracted — the phase stopped after its writes, or "Process again" after a later phase
   // failed: the notes stand, and extracting again would duplicate them.
   const existing = Math.max(read.extracted_claims, read.derived_notes);
-  if (existing > 0) return { workDone: `Already extracted: ${plural(existing, "note")}.`, filesModified: [] };
+  if (existing > 0) {
+    // "Process again" puts the source back to EXTRACTING; its notes are in, so it is extracted.
+    if (read.status === "INBOX" || read.status === "EXTRACTING") {
+      ctx.beforeWrites?.();
+      const steps = read.status === "INBOX" ? ["EXTRACTING", "EXTRACTED"] : ["EXTRACTED"];
+      await client
+        .request({ method: "POST", path: "actions", json: { documentId: read.source_id, actions: steps.map((status) => ({ type: "SET_SOURCE_STATUS", input: { status } })) } })
+        .catch(() => undefined);
+    }
+    return { workDone: `Already extracted: ${plural(existing, "note")}.`, filesModified: [] };
+  }
   if (read.stats_recorded && (read.status === "EXTRACTED" || read.status === "ARCHIVED")) return { workDone: "Already read: nothing in it to extract.", filesModified: [] };
 
   // One window of text: a long source costs one read, not ten. The rest stays in the source.

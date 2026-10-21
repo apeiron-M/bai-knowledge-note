@@ -42,6 +42,8 @@ export type HostPipelineState =
   | { kind: "no-ai" }
   /** The connected AI does not answer (stopped, offline, CORS): retried every 30 s. */
   | { kind: "unreachable" }
+  /** The connected AI turned the key away (wrong, out of credit): sources wait until it changes. */
+  | { kind: "refused" }
   | { kind: "working"; taskId: string };
 
 /** The browser vault's pipeline (browser/pipeline/runner.ts), declared by its host. */

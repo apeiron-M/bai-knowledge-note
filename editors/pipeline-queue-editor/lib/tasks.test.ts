@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { claimPhases, countGroups, DEFAULT_PHASES, filterTasks, GROUP_LABEL, groupOf, inView, isOpen, openByPhase, phaseStates, relativeTime, sortTasks, type View, VIEW_LABEL } from "./tasks.js";
+import { claimPhases, countGroups, DEFAULT_PHASES, filterTasks, GROUP_LABEL, groupOf, inView, isOpen, openByPhase, phaseStates, relativeTime, sortTasks, type View, VIEW_LABEL, statusLabel } from "./tasks.js";
 
 type T = { id: string; status: "PENDING" | "IN_PROGRESS" | "BLOCKED" | "DONE" | "FAILED"; currentPhase: string | null; completedPhases: string[]; target: string; assignedTo: string | null; createdAt: string; updatedAt: string | null };
 const task = (id: string, status: T["status"], currentPhase: string | null, extra: Partial<T> = {}): T => ({ id, status, currentPhase, completedPhases: [], target: `Source ${id}`, assignedTo: null, createdAt: "2026-09-28T10:00:00Z", updatedAt: null, ...extra });
@@ -76,5 +76,17 @@ describe("helpers", () => {
     expect(relativeTime(null, now)).toBe("—");
     expect(relativeTime("nope", now)).toBe("—");
     expect(relativeTime(ago(-60), now)).toBe("just now");
+  });
+});
+
+describe("a task's status in the browser vault", () => {
+  it("says why an open task waits when the AI does not answer, and nothing else changes", () => {
+    expect(statusLabel("queued", "no-ai")).toBe("Waiting for AI");
+    expect(statusLabel("working", "unreachable")).toBe("Can't reach AI");
+    expect(statusLabel("queued", "refused")).toBe("Key refused");
+    expect(statusLabel("working", "working")).toBe("Working");
+    expect(statusLabel("done", "no-ai")).toBe("Done");
+    expect(statusLabel("failed", "unreachable")).toBe("Failed");
+    expect(statusLabel("queued", undefined)).toBe("Queued");
   });
 });

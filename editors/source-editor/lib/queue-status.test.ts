@@ -74,6 +74,16 @@ describe("the status line in the browser vault", () => {
   it("names the phase while the AI works", () => {
     expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: "reflect" }), { host: "browser", ai: "working", ...at(0) })).toBe("Processing — connecting notes");
   });
+  it("says why an open task waits at any phase — the AI lost mid-run — and when the key was refused", () => {
+    const working = task({ status: "IN_PROGRESS", currentPhase: "reflect" });
+    const between = task({ status: "PENDING", currentPhase: "reweave" });
+    expect(queueStatusLine(working, { host: "browser", ai: "unreachable", ...at(0) })).toBe("Can't reach your AI — check it is running and allows this page");
+    expect(queueStatusLine(between, { host: "browser", ai: "no-ai", ...at(0) })).toBe("Waiting for your AI — connect one in Ask");
+    expect(queueStatusLine(task(), { host: "browser", ai: "refused", ...at(0) })).toBe("Your AI refused the key — check it in Ask");
+    expect(queueStatusLine(between, { host: "browser", ai: "working", ...at(0) })).toBe("Processing — placing notes in topics");
+    expect(queueStatusLine(task({ status: "BLOCKED" }), { host: "browser", ai: "no-ai", ...at(0) })).toBe("Processing is blocked — see Processing queue");
+    expect(queueStatusLine(working, { host: "desktop", ai: "unreachable", ...at(0) })).toBe("Processing — connecting notes");
+  });
 });
 
 describe("a source whose processing failed", () => {

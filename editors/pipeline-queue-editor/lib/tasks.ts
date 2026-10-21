@@ -16,6 +16,16 @@ export const GROUP_LABEL: Record<TaskGroup, string> = {
   failed: "Failed",
 };
 
+/** In the browser vault, an open task says why it waits when the AI cannot work; otherwise its group. */
+export function statusLabel(group: TaskGroup, ai: string | undefined): string {
+  if (group === "queued" || group === "working") {
+    if (ai === "no-ai") return "Waiting for AI";
+    if (ai === "unreachable") return "Can't reach AI";
+    if (ai === "refused") return "Key refused";
+  }
+  return GROUP_LABEL[group];
+}
+
 /** Attention order: what is stuck, then routine work, then history. */
 const GROUP_RANK: Record<TaskGroup, number> = { blocked: 0, working: 1, queued: 2, failed: 3, done: 4 };
 

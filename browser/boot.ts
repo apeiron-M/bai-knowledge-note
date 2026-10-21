@@ -68,7 +68,13 @@ export type BootedVault = {
    * starts over.
    */
   seeding: Promise<void> | null;
+  /** Stops everything and closes the engine; its writes are on disk first. Safe to call twice. */
   stop(): Promise<void>;
+  /**
+   * Another tab took the vault: stop, and never write to the store again — the
+   * held writes are dropped, since the store on disk is that tab's now.
+   */
+  halt(): Promise<void>;
 };
 
 type SeedStamp = { version: string; driveId: string; ids?: Record<string, string> };
@@ -316,26 +322,34 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
   mark("ready");
   console.info(`[BrowserVault] ready: ${JSON.stringify(timings)} (ms since start)`);
 
+  let stopped: Promise<void> | null = null;
+  const stop = () => (stopped ??= stopAll());
+  async function stopAll(): Promise<void> {
+    // First: it may be writing, and it must not write into a closing store.
+    await runner.stop();
+    abort.abort();
+    await seeding?.catch(() => undefined);
+    if (pending) clearTimeout(pending);
+    stopFeed();
+    uninstallOrigin();
+    // Still a browser host, without the engine's writes: the page never becomes Connect.
+    // Cleared, the declaration let the vault app — mounted until a reset's reload —
+    // wire its drive to a remote client for a Switchboard guessed from the page's
+    // address: a WebSocket to localhost:4001 here, to switchboard.oskv.vetra.io on the site.
+    setHostConfig({ kind: "browser", switchboardOrigin: LOCAL_ORIGIN });
+    await engine.close();
+  }
+
   return {
     engine,
     driveId: vaultDriveId,
     outdated,
     guideIds,
     seeding,
-    stop: async () => {
-      // First: it may be writing, and it must not write into a closing store.
-      await runner.stop();
-      abort.abort();
-      await seeding?.catch(() => undefined);
-      if (pending) clearTimeout(pending);
-      stopFeed();
-      uninstallOrigin();
-      // Still a browser host, without the engine's writes: the page never becomes Connect.
-      // Cleared, the declaration let the vault app — mounted until a reset's reload —
-      // wire its drive to a remote client for a Switchboard guessed from the page's
-      // address: a WebSocket to localhost:4001 here, to switchboard.oskv.vetra.io on the site.
-      setHostConfig({ kind: "browser", switchboardOrigin: LOCAL_ORIGIN });
-      await engine.close();
+    stop,
+    halt: () => {
+      engine.flushes.freeze();
+      return stop();
     },
   };
 }

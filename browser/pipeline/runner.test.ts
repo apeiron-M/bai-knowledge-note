@@ -27,6 +27,10 @@ type VaultHooks = {
   onAdvance?: (phase: string) => void;
   /** Sources with no title yet. */
   untitled?: string[];
+  /** Sources no longer in the drive (their tasks remain). */
+  deleted?: string[];
+  /** Sources whose document read fails. */
+  unreadable?: string[];
 };
 
 /** The vault's queue, as the runner reads and writes it through the REST routes. */
@@ -39,7 +43,9 @@ function queueVault(tasks: Task[], log: string[] = [], hooks: VaultHooks = {}) {
     { id: "ops", kind: "folder", name: "ops", parentFolder: null },
     { id: "sources", kind: "folder", name: "sources", parentFolder: null },
     { id: "pdf", kind: "folder", name: "report.pdf", parentFolder: "sources" },
-    ...tasks.map((t) => ({ id: t.documentRef, kind: "file", name: t.documentRef, documentType: "bai/source", parentFolder: t.id.startsWith("pdf") ? "pdf" : "sources" })),
+    ...tasks
+      .filter((t) => !hooks.deleted?.includes(String(t.documentRef)))
+      .map((t) => ({ id: t.documentRef, kind: "file", name: t.documentRef, documentType: "bai/source", parentFolder: t.id.startsWith("pdf") ? "pdf" : "sources" })),
   ];
   const respond = (o: RequestOptions): unknown => {
     if (state.down) throw new KnowledgeVaultApiError("The vault is not answering", { category: "server", status: 503 });
@@ -51,6 +57,8 @@ function queueVault(tasks: Task[], log: string[] = [], hooks: VaultHooks = {}) {
     if (method === "GET" && o.path === "notes/q1") return { state: { global: { tasks: structuredClone(tasks) } } };
     if (method === "GET" && o.path.startsWith("notes/")) {
       const id = decodeURIComponent(o.path.slice("notes/".length));
+      if (hooks.deleted?.includes(id)) throw new KnowledgeVaultApiError(`No document ${id}`, { category: "not_found", status: 404 });
+      if (hooks.unreadable?.includes(id)) throw new KnowledgeVaultApiError("The store failed", { category: "server", status: 500 });
       return { name: id, state: { global: hooks.untitled?.includes(id) ? {} : { title: `Title of ${id}` } } };
     }
     const claim = /^tasks\/(.+)\/claim$/.exec(o.path);
@@ -96,9 +104,9 @@ function queueVault(tasks: Task[], log: string[] = [], hooks: VaultHooks = {}) {
   return { client, tasks, failures, state, requests, writes: () => requests.filter((r) => (r.method ?? "GET") !== "GET"), claims: () => requests.filter((r) => r.path.endsWith("/claim")) };
 }
 
-function aiNamed(model = "model-a", reach: () => Promise<void> = () => Promise.resolve()): PipelineAi {
+function aiNamed(model = "model-a", reach: () => Promise<void> = () => Promise.resolve(), connection = model): PipelineAi {
   const fetchImpl = (() => Promise.reject(new Error("the runner makes no model calls itself"))) as unknown as typeof fetch;
-  return { llm: {} as PipelineAi["llm"], model, local: false, label: model, fetchImpl, calls: () => 0, reach };
+  return { llm: {} as PipelineAi["llm"], model, local: false, label: model, fetchImpl, calls: () => 0, reach, connection };
 }
 
 type Script = (phase: PipelinePhase, ctx: PhaseContext) => Promise<PhaseOutcome> | PhaseOutcome;
@@ -130,6 +138,9 @@ function start(v: ReturnType<typeof queueVault>, opts: { script?: Script; ai?: R
       held = false;
       log.push("release");
       return Promise.resolve();
+    },
+    freeze: () => {
+      log.push("freeze");
     },
   };
   const ran: { phase: PipelinePhase; sourceId: string; model: string; mapTitle: string }[] = [];
@@ -223,6 +234,32 @@ describe("the browser pipeline runner", () => {
     r.change();
     await settle();
     expect(v.tasks[0].status).toBe("DONE");
+  });
+
+  it("fails a task whose source was deleted, without asking the AI, and goes on with the next", async () => {
+    const v = queueVault([task("gone"), task("t1")], [], { deleted: ["src-gone"] });
+    let asked = 0;
+    const r = start(v, {
+      ai: () => {
+        asked++;
+        return Promise.resolve(aiNamed());
+      },
+    });
+    await settle();
+    expect(v.failures).toEqual([{ taskId: "gone", reason: "This source was deleted" }]);
+    expect(v.tasks[1].status).toBe("DONE");
+    expect(asked).toBe(1);
+    expect(r.ran.every((x) => x.sourceId === "src-t1")).toBe(true);
+  });
+
+  it("fails the task, not the queue, when its source cannot be read", async () => {
+    const v = queueVault([task("t1"), task("t2")], [], { unreadable: ["src-t1"] });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    start(v);
+    await settle();
+    expect(v.failures).toEqual([{ taskId: "t1", reason: "Something went wrong — try again" }]);
+    expect(v.tasks[1].status).toBe("DONE");
+    warn.mockRestore();
   });
 
   it("says which task it is working on, and tells its listeners", async () => {
@@ -372,6 +409,26 @@ describe("the browser pipeline runner", () => {
     expect(v.claims()).toEqual([]);
     expect(v.tasks[1].status).toBe("PENDING");
     expect(r.ran).toEqual([]);
+  });
+
+  it("fails one task on a refused key, then holds the rest until the AI connection changes", async () => {
+    const v = queueVault([task("t1"), task("t2"), task("t3")]);
+    let current = aiNamed("model-a", () => Promise.reject(new AiRefusedError()), "key-1");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const r = start(v, { ai: () => Promise.resolve(current) });
+    await settle();
+    expect(v.failures).toEqual([{ taskId: "t1", reason: "Your AI refused the key" }]);
+    expect(r.runner.state()).toEqual({ kind: "refused" });
+    await vi.advanceTimersByTimeAsync(UNREACHABLE_RETRY_MS + 3 * PICKUP_MS);
+    await settle();
+    expect(v.failures).toHaveLength(1);
+    expect([v.tasks[1].status, v.tasks[2].status]).toEqual(["PENDING", "PENDING"]);
+    expect(r.runner.state()).toEqual({ kind: "refused" });
+    current = aiNamed("model-a", () => Promise.resolve(), "key-2");
+    await vi.advanceTimersByTimeAsync(PICKUP_MS);
+    await settle();
+    expect([v.tasks[1].status, v.tasks[2].status]).toEqual(["DONE", "DONE"]);
+    warn.mockRestore();
   });
 
   it("fails the task, not the runner, when the advance is refused, so the phase is never redone in a loop", async () => {

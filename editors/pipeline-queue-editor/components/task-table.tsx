@@ -1,7 +1,8 @@
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { PipelineTask } from "document-models/pipeline-queue";
 import { Fragment, useState } from "react";
-import { GROUP_LABEL, groupOf, phaseStates, relativeTime, type PhaseState } from "../lib/tasks.js";
+import { useHostPipeline } from "../../shared/use-host-pipeline.js";
+import { groupOf, phaseStates, relativeTime, statusLabel, type PhaseState } from "../lib/tasks.js";
 
 const PAGE = 200;
 
@@ -40,6 +41,8 @@ function Handoffs(props: { task: PipelineTask; now: number }) {
 export function TaskTable(props: { tasks: PipelineTask[]; phases: string[]; now: number; emptyText: string }) {
   const [shown, setShown] = useState(PAGE);
   const [open, setOpen] = useState<string | null>(null);
+  // The browser vault's AI: an open task says why it waits when the AI cannot work (undefined elsewhere).
+  const { ai } = useHostPipeline();
   const rows = props.tasks.slice(0, shown);
 
   if (props.tasks.length === 0) return <p className="pq-empty">{props.emptyText}</p>;
@@ -84,7 +87,7 @@ export function TaskTable(props: { tasks: PipelineTask[]; phases: string[]; now:
                       <PhaseTrack task={task} phases={props.phases} />
                     </td>
                     <td>
-                      <span className={`pq-status is-${group}`}>{GROUP_LABEL[group]}</span>
+                      <span className={`pq-status is-${group}`}>{statusLabel(group, ai)}</span>
                     </td>
                     <td className="pq-muted pq-truncate" title={task.assignedTo ?? undefined}>
                       {task.assignedTo ?? "—"}

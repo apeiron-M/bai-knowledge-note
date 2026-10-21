@@ -212,6 +212,7 @@ function fakeAi(script: Script = {}, opts: { local?: boolean } = {}) {
     fetchImpl,
     calls: () => calls,
     reach: () => Promise.resolve(),
+    connection: "test",
   };
   return { ai, asked, calls: () => calls };
 }
@@ -389,6 +390,20 @@ describe("the browser pipeline's phases", () => {
     expect(await runPhase("create", ctxFor(v, ai))).toEqual({ workDone: "Already extracted: 3 notes.", filesModified: [] });
     expect(calls()).toBe(asked);
     expect(v.writes().length).toBe(writes);
+  });
+
+  it("mark a source that already has its notes extracted again, after \"Process again\" set it back", async () => {
+    const v = setUp();
+    const { ai, calls } = fakeAi();
+    await runPhase("create", ctxFor(v, ai));
+    const source = v.docs.get("s1");
+    if (source) source.global.status = "EXTRACTING";
+    const asked = calls();
+    let held = 0;
+    const again = await runPhase("create", ctxFor(v, ai, { beforeWrites: () => void held++ }));
+    expect(again).toEqual({ workDone: "Already extracted: 3 notes.", filesModified: [] });
+    expect(v.docs.get("s1")?.global.status).toBe("EXTRACTED");
+    expect([held, calls()]).toEqual([1, asked]);
   });
 
   it("say what did not land, beside what did", async () => {

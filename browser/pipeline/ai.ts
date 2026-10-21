@@ -32,6 +32,13 @@ export class CallBudgetError extends Error {
   }
 }
 
+/** A short one-way mark of a text (FNV-1a): tells two connections apart without keeping a key in view. */
+function mark(text: string): string {
+  let hash = 2166136261;
+  for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 16777619);
+  return (hash >>> 0).toString(36);
+}
+
 export type PipelineAi = {
   llm: LlmClient;
   model: string;
@@ -42,6 +49,8 @@ export type PipelineAi = {
   fetchImpl: typeof fetch;
   /** Model calls this source has made. */
   calls(): number;
+  /** Which connection this is — endpoint, key and model — as a one-way mark: a refused one is not asked again. */
+  connection: string;
   /**
    * Whether the AI answers at all, asked before a task is touched, so a source waiting for an AI that
    * is off says so instead of "Processing". A GET of its model list: no model call, nothing spent.
@@ -103,6 +112,7 @@ export async function pipelineAi(stop?: AbortSignal): Promise<PipelineAi | null>
     label: endpoint.label,
     fetchImpl,
     calls: () => calls,
+    connection: mark(`${baseUrl}\n${apiKey}\n${model}`),
     reach: async () => {
       const response = await fetchImpl(`${baseUrl}/models`, { headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : {} });
       // Only that it answered matters: OpenRouter's list is a megabyte.

@@ -14,7 +14,14 @@ export type QueueTask = Pick<PipelineTask, "taskType" | "status" | "currentPhase
 /** Where the vault runs: the desktop app, the browser vault (Try on web), or a server (Connect). */
 export type QueueHost = "desktop" | "browser" | "server";
 /** The browser vault's AI, as its pipeline reports it. */
-export type QueueAi = "ready" | "no-ai" | "unreachable" | "working";
+export type QueueAi = "ready" | "no-ai" | "unreachable" | "refused" | "working";
+
+/** In the browser vault, why an open task waits — whatever its phase — when the AI cannot work. */
+const AI_WAITING: Partial<Record<QueueAi, string>> = {
+  "no-ai": "Waiting for your AI — connect one in Ask",
+  unreachable: "Can't reach your AI — check it is running and allows this page",
+  refused: "Your AI refused the key — check it in Ask",
+};
 
 const OPEN = new Set<string>(["PENDING", "IN_PROGRESS", "BLOCKED"]);
 
@@ -41,14 +48,13 @@ export function openTaskFor<T extends QueueTask>(tasks: readonly T[], sourceId: 
 export function queueStatusLine(task: QueueTask | undefined, opts: { host: QueueHost; ai?: QueueAi; now: number }): string | null {
   if (!task) return null;
   if (task.status === "BLOCKED") return "Processing is blocked — see Processing queue";
+  // A task the AI stopped working on mid-run waits too: the line says why, not "Processing".
+  const waiting = opts.host === "browser" && opts.ai ? AI_WAITING[opts.ai] : undefined;
+  if (waiting) return waiting;
   const atCreate = !task.currentPhase || task.currentPhase === "create";
   if (task.status === "PENDING" && atCreate) {
     if (opts.host === "desktop") return "Queued — the app processes it in the background";
-    if (opts.host === "browser") {
-      if (opts.ai === "no-ai") return "Waiting for your AI — connect one in Ask";
-      if (opts.ai === "unreachable") return "Can't reach your AI — check it is running and allows this page";
-      return "Queued — your AI starts in a moment";
-    }
+    if (opts.host === "browser") return "Queued — your AI starts in a moment";
     const stuck = task.handoffs.length === 0 && opts.now - queuedAt(task) >= STUCK_AFTER_MS;
     return stuck
       ? "Queued for processing — nothing has started it yet. If this vault's server does not process sources, run /powerhouse-knowledge:pipeline in Claude Code."
