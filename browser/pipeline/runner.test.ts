@@ -46,6 +46,7 @@ function queueVault(tasks: Task[], log: string[] = [], hooks: VaultHooks = {}) {
     const method = o.method ?? "GET";
     const body = (o.json ?? {}) as Record<string, unknown>;
     if (o.path === "ping") return { ok: true, user: "browser-visitor" };
+    if (o.path === "stats") return { noteCount: 42 };
     if (method === "GET" && o.path === "notes/d1") return { state: { global: { nodes: nodes() } } };
     if (method === "GET" && o.path === "notes/q1") return { state: { global: { tasks: structuredClone(tasks) } } };
     if (method === "GET" && o.path.startsWith("notes/")) {
@@ -114,7 +115,7 @@ const startRunner = (deps: RunnerDeps) => {
   return runner;
 };
 
-function start(v: ReturnType<typeof queueVault>, opts: { script?: Script; ai?: RunnerDeps["ai"]; log?: string[]; storage?: Map<string, string> } = {}) {
+function start(v: ReturnType<typeof queueVault>, opts: { script?: Script; ai?: RunnerDeps["ai"]; log?: string[]; storage?: Map<string, string>; onEvent?: RunnerDeps["onEvent"] } = {}) {
   const log = opts.log ?? [];
   let held = false;
   const flushes: FlushGate = {
@@ -158,6 +159,7 @@ function start(v: ReturnType<typeof queueVault>, opts: { script?: Script; ai?: R
       return (opts.script ?? ok)(phase, ctx);
     },
     storage: { getItem: (k) => storage.get(k) ?? null, setItem: (k, value) => void storage.set(k, value) },
+    ...(opts.onEvent ? { onEvent: opts.onEvent } : {}),
   };
   const runner = startRunner(deps);
   return { runner, deps, log, ran, afterTask, storage, change: () => listener?.(), signal: () => signal };
@@ -183,6 +185,44 @@ describe("the browser pipeline runner", () => {
     );
     expect(r.afterTask).toHaveBeenCalledTimes(1);
     expect(r.runner.state()).toEqual({ kind: "ready" });
+  });
+
+  it("tells the page about sources added after its first look, and how each one ended", async () => {
+    const v = queueVault([task("old", { status: "DONE", currentPhase: null }), task("waiting", { currentPhase: "verify" })]);
+    const events: unknown[] = [];
+    const r = start(v, {
+      onEvent: (e) => events.push(e),
+      script: (phase, ctx) => {
+        if (ctx.sourceId === "src-t2" && phase === "reflect") throw new CallBudgetError();
+        if (ctx.sourceId === "src-t1" && phase === "create") return { workDone: "Extracted 3 notes (read the first 24,000 of 60,000 characters).", filesModified: [], partial: true };
+        return ok(phase, ctx);
+      },
+    });
+    await settle();
+    // What was in the queue at the first look was not added now: only its end is told.
+    expect(events).toEqual([{ type: "source-processed", notes: 42, partial: false }]);
+    v.tasks.push(task("t1"), task("t2"));
+    r.change();
+    await settle();
+    expect(events.slice(1)).toEqual([
+      { type: "source-added", count: 2 },
+      { type: "source-processed", notes: 42, partial: true },
+      { type: "source-failed", reason: "Your AI's answer could not be used" },
+    ]);
+  });
+
+  it("keeps working when the page's event handler throws", async () => {
+    const v = queueVault([]);
+    const r = start(v, {
+      onEvent: () => {
+        throw new Error("the page's handler broke");
+      },
+    });
+    await settle();
+    v.tasks.push(task("t1"));
+    r.change();
+    await settle();
+    expect(v.tasks[0].status).toBe("DONE");
   });
 
   it("says which task it is working on, and tells its listeners", async () => {

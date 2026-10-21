@@ -34,7 +34,7 @@ import { createKnowledgeGraphService } from "./knowledge-graph.js";
 import { startLiveFeed } from "./live-feed.js";
 import { installLocalOrigin, LOCAL_ORIGIN } from "./local-origin.js";
 import { createPageSubgraph } from "./page-subgraph.js";
-import { startPipelineRunner } from "./pipeline/runner.js";
+import { startPipelineRunner, type PipelineEvent } from "./pipeline/runner.js";
 import { createRestService } from "./rest.js";
 import { redateSeed } from "./seed-dates.js";
 import { seedContent, seedSkeleton, VAULT_APP_ID, type VaultSeed } from "./seed.js";
@@ -45,6 +45,8 @@ export type BootOptions = {
   basePath?: string;
   loadSeed: () => Promise<VaultSeed>;
   onProgress?: (stage: string, done?: number, total?: number) => void;
+  /** What the pipeline did, for the page hosting the vault (see PipelineEvent). */
+  onEvent?: (event: PipelineEvent) => void;
 };
 
 export type BootedVault = {
@@ -302,6 +304,7 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
       await knowledgeGraph.reindex(vaultDriveId);
       await writeHealthReport({ client, knowledgeGraph, driveId: vaultDriveId });
     },
+    ...(options.onEvent ? { onEvent: options.onEvent } : {}),
   });
   setHostConfig({ kind: "browser", switchboardOrigin: LOCAL_ORIGIN, documents, pipeline: runner });
 

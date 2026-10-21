@@ -163,8 +163,8 @@ export function NoteList({ notes: all, isLoading = false, scope = null, onClearS
     <div className="p-4">
       {banner}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {notes.slice(0, visibleCount).map((note) => (
-          <NoteCard key={note.id} note={note} />
+        {notes.slice(0, visibleCount).map((note, index) => (
+          <NoteCard key={note.id} note={note} tour={index === 0 ? "note-card" : undefined} />
         ))}
       </div>
       {hasMore && (
@@ -187,7 +187,8 @@ export function NoteList({ notes: all, isLoading = false, scope = null, onClearS
   );
 }
 
-const NoteCard = memo(function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
+/** `tour`: the `data-tour` anchor of the list's first card, for the Try on web tour. */
+const NoteCard = memo(function NoteCard({ note, tour }: { note: KnowledgeNoteInfo; tour?: string }) {
   const title = note.title ?? note.name;
   const status = note.status ?? "DRAFT";
   const badgeStyle = STATUS_BADGE_STYLES[status] ?? STATUS_BADGE_STYLES.DRAFT;
@@ -197,6 +198,7 @@ const NoteCard = memo(function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
       type="button"
       onClick={() => setSelectedNode(note.id)}
       {...prefetchOnHover(note.id)}
+      data-tour={tour}
       className="group flex flex-col rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] p-4 text-left transition-all hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       {/* Header */}

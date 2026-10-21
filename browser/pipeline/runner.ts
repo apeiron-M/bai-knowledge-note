@@ -83,6 +83,14 @@ const AI_FAILURES: ReadonlySet<string> = new Set([FAILURE_REASONS.timeout, FAILU
 
 const NEXT_PHASE: Record<PipelinePhase, PipelinePhase | null> = { create: "reflect", reflect: "reweave", reweave: "verify", verify: null };
 
+/** What the page hosting the vault is told: facts only, no words to show. */
+export type PipelineEvent =
+  /** Sources queued since the runner's first look (a file's sections arrive together). */
+  | { type: "source-added"; count: number }
+  /** A source became notes; `notes` is the vault's count after it. */
+  | { type: "source-processed"; notes: number; partial: boolean }
+  | { type: "source-failed"; reason: string };
+
 export type RunnerDeps = {
   client: KnowledgeVaultClient;
   driveId: string;
@@ -99,6 +107,8 @@ export type RunnerDeps = {
   runPhase?: (phase: PipelinePhase, ctx: PhaseContext) => Promise<PhaseOutcome>;
   /** Where failure reasons outlive a reload; localStorage by default. */
   storage?: Pick<Storage, "getItem" | "setItem"> | null;
+  /** The page's own hearing of what happened: see {@link PipelineEvent}. */
+  onEvent?: (event: PipelineEvent) => void;
 };
 
 export type PipelineRunner = HostPipeline & {
@@ -131,6 +141,9 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
   const listeners = new Set<() => void>();
   const stopping = new AbortController();
   let state: HostPipelineState = { kind: "ready" };
+  /** Tasks already in the queue at a look: only those after the first look were added now. */
+  const known = new Set<string>();
+  let looked = false;
   /** The queue is a singleton: found once. */
   let queueId: string | null = null;
   let running: Promise<void> | null = null;
@@ -174,8 +187,30 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     return mapTitleFor(tree.state.global.nodes, sourceId, source.state.global.title || source.name);
   }
 
+  function tell(event: PipelineEvent) {
+    try {
+      deps.onEvent?.(event);
+    } catch (error) {
+      console.warn("[BrowserVault] pipeline: the page's event handler failed.", error);
+    }
+  }
+
+  /** Sources the visitor queued since the last look. */
+  function noticeAdded(tasks: readonly RunnerTask[]) {
+    const fresh = tasks.filter((t) => t.taskType === "claim" && !known.has(t.id));
+    for (const t of fresh) known.add(t.id);
+    if (looked && fresh.length > 0) tell({ type: "source-added", count: fresh.length });
+    looked = true;
+  }
+
+  async function noteCount(): Promise<number> {
+    const stats = await client.request<{ noteCount?: number }>({ path: "stats", query: { drive } }).catch(() => null);
+    return stats?.noteCount ?? 0;
+  }
+
   async function fail(queue: string, task: RunnerTask, error: unknown): Promise<void> {
     const reason = failureReason(error);
+    tell({ type: "source-failed", reason });
     console.warn(`[BrowserVault] pipeline: task ${task.id} failed (${reason}).`, error);
     remember(task.id, reason);
     if (AI_FAILURES.has(reason)) pause();
@@ -224,19 +259,28 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     };
   }
 
-  /** One task, from its current phase to its end (or a stop, or an AI that went away). Returns whether it ended. */
-  async function work(queue: string, task: RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai: PipelineAi): Promise<boolean> {
+  /**
+   * One task, from its current phase to its end (or a stop, or an AI that went away). Returns how it
+   * ended: done (and whether only the first part was read), failed, or not at all.
+   */
+  async function work(
+    queue: string,
+    task: RunnerTask & { documentRef: string; currentPhase: PipelinePhase },
+    ai: PipelineAi,
+  ): Promise<{ ended: "done"; partial: boolean } | { ended: "failed" } | null> {
+    let partial = false;
     const sourceId = task.documentRef;
     const mapTitle = await titleForMap(sourceId);
     setState({ kind: "working", taskId: task.id });
     let phase: PipelinePhase | null = task.currentPhase;
     while (phase) {
-      if (stopped()) return false;
+      if (stopped()) return null;
       // Held from the phase's first write to its handoff: one IndexedDB write per phase.
       const writes = phaseWrites();
       try {
         await claimPhase(client, { drive, sourceId, phase });
         const outcome = await phaseRunner(phase, { client, drive, sourceId, ai, mapTitle, beforeWrites: () => writes.hold() });
+        if (outcome.partial) partial = true;
         writes.hold();
         // What did not land is said in the handoff; the task still moves on. Kept at its phase, the
         // 10 s pickup would run the phase again and again.
@@ -246,27 +290,28 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
         if (result.to !== (next ?? "done")) {
           // Refused by the queue: failed rather than run again on the next look.
           await fail(queue, task, new Error(result.summary));
-          return true;
+          return { ended: "failed" };
         }
         phase = next;
       } catch (error) {
-        if (stopped() || error instanceof RunnerStoppedError) return false;
+        if (stopped() || error instanceof RunnerStoppedError) return null;
         if (error instanceof AiUnreachableError) {
           unreachable(error);
-          return false;
+          return null;
         }
         await fail(queue, task, error);
-        return true;
+        return { ended: "failed" };
       } finally {
         await writes.release();
       }
     }
-    return true;
+    return { ended: "done", partial };
   }
 
   /** Looks for work and does one task. Returns whether a task ran, so the next waiting one starts at once. */
   async function pass(): Promise<boolean> {
     const queue = await readQueue();
+    if (queue) noticeAdded(queue.tasks);
     // A task failed here is never taken again, even when the vault could not record the failure:
     // held by this browser, it would otherwise fail again on every look. "Process again" adds a new one.
     const task = queue && nextTask(queue.tasks.filter((t) => !failures.has(t.id)));
@@ -296,6 +341,7 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     const ended = await work(queue.id, task as RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai);
     if (!ended) return false;
     await afterTask();
+    if (ended.ended === "done" && !stopped()) tell({ type: "source-processed", notes: await noteCount(), partial: ended.partial });
     setState({ kind: "ready" });
     return true;
   }

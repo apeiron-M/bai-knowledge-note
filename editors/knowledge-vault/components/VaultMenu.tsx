@@ -7,6 +7,8 @@ export type VaultMenuItem = {
   /** Right-aligned, quieter: what the entry holds. */
   hint?: string;
   icon: VaultIconName;
+  /** The `data-tour` anchor the Try on web tour finds this entry by. */
+  tour?: string;
 };
 
 /**
@@ -74,6 +76,7 @@ export function VaultMenu({
             type="button"
             role="menuitem"
             data-menu-key={item.key}
+            data-tour={item.tour}
             className="vs-mi"
             onClick={() => {
               onSelect(item.key);

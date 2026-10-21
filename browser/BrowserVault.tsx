@@ -6,6 +6,7 @@
 import { RevisionHistory } from "@powerhousedao/design-system/connect";
 import {
   setRevisionHistoryVisible,
+  setSelectedNode,
   useAppModuleById,
   useDocumentById,
   useDocumentOperations,
@@ -17,9 +18,26 @@ import {
   useSelectedDriveSafe,
 } from "@powerhousedao/reactor-browser";
 import type { PHDocument } from "document-model";
-import { Suspense, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { activeProvider, isLocalEndpoint, readSavedProviders } from "../editors/knowledge-vault/lib/chat/provider.js";
 import { bootBrowserVault, deleteBrowserVault, type BootedVault } from "./boot.js";
+import type { PipelineEvent } from "./pipeline/runner.js";
 import type { VaultSeed } from "./seed.js";
+
+/** Which AI the visitor connected in the chat: OpenRouter, one on their computer, another server, Connect's, or a host app's. */
+export type AiKind = "openrouter" | "local" | "custom" | "connect" | "host";
+
+/** What the page hosting the vault is told, to count and to guide by: facts only, never words to show. */
+export type TryEvent = PipelineEvent | { type: "ai-connected"; kind: AiKind };
+
+export type VaultReady = {
+  /** The guide's ids, from the seed's to this vault's (see BootedVault.guideIds). */
+  guideIds: Readonly<Record<string, string>>;
+  /** A guide note with links and a history, for a tour to open; null when this vault has none. */
+  tourNote: string | null;
+  /** Opens a document in the vault app, as a click on it would. */
+  open(documentId: string): void;
+};
 
 export type BrowserVaultProps = {
   /** Loads the starting vault. Called on a first visit, and on return visits to tell whether it changed. */
@@ -30,7 +48,39 @@ export type BrowserVaultProps = {
   downloadUrl?: string;
   /** The page path the vault lives under; its own URLs go below it. */
   basePath?: string;
+  /** The host's own actions, in the corner banner before Reset. */
+  bannerActions?: ReactNode;
+  /** Called once the vault is complete: the guide written (at once on a return visit). */
+  onReady?: (ready: VaultReady) => void;
+  /** What happened in the vault that the host may count or answer: see {@link TryEvent}. */
+  onEvent?: (event: TryEvent) => void;
 };
+
+/** The guide note a tour opens: well linked, and about citations — what Ask shows first. */
+const TOUR_NOTE_SEED_ID = "_7l7w_PAR44BwdULg3xFIbDoIPSDkxZpwCtKHxaqCAc";
+/** How often the chat's saved AI connection is looked at: the chat announces nothing. */
+const AI_LOOK_MS = 2000;
+
+function aiKind(): AiKind | null {
+  const provider = activeProvider(readSavedProviders());
+  if (!provider) return null;
+  if (provider.kind === "custom") return isLocalEndpoint(provider.baseUrl) ? "local" : "custom";
+  return provider.kind;
+}
+
+/** Tells the host when the visitor connects an AI in the chat (not one already connected on arrival). */
+function useAiConnected(enabled: boolean, tell: (event: TryEvent) => void) {
+  useEffect(() => {
+    if (!enabled) return undefined;
+    let last = aiKind();
+    const timer = setInterval(() => {
+      const now = aiKind();
+      if (now && now !== last) tell({ type: "ai-connected", kind: now });
+      last = now;
+    }, AI_LOOK_MS);
+    return () => clearInterval(timer);
+  }, [enabled, tell]);
+}
 
 const DEFAULT_NAMESPACE = "knowledge-vault-web";
 
@@ -240,7 +290,7 @@ const GUIDE_MESSAGE: Record<GuideState, string | null> = {
   written: null,
 };
 
-function Banner({ vault, namespace, downloadUrl }: { vault: BootedVault; namespace: string; downloadUrl?: string }) {
+function Banner({ vault, namespace, downloadUrl, actions }: { vault: BootedVault; namespace: string; downloadUrl?: string; actions?: ReactNode }) {
   const [busy, setBusy] = useState(false);
   const guide = useGuideState(vault.seeding);
   const reset = async () => {
@@ -265,11 +315,12 @@ function Banner({ vault, namespace, downloadUrl }: { vault: BootedVault; namespa
   };
   const link: CSSProperties = { color: "#c4b5fd", background: "none", border: 0, padding: 0, font: "inherit", cursor: "pointer" };
   return (
-    <div style={bar} role="status" data-guide={guide}>
+    <div style={bar} role="status" data-guide={guide} data-tour="corner">
       <span>
         {GUIDE_MESSAGE[guide] ??
           (vault.outdated ? "A newer guide is available." : "This vault lives only in this browser.")}
       </span>
+      {actions}
       <button type="button" style={link} onClick={() => void reset()} disabled={busy}>
         {busy ? "Resetting…" : "Reset"}
       </button>
@@ -287,10 +338,38 @@ export function BrowserVault({
   namespace = DEFAULT_NAMESPACE,
   downloadUrl,
   basePath = "/",
+  bannerActions,
+  onReady,
+  onEvent,
 }: BrowserVaultProps) {
   const [phase, setPhase] = useState<Phase>({ kind: "starting", stage: "engine" });
   const [attempt, setAttempt] = useState(0);
   const booted = useRef<BootedVault | null>(null);
+  // The host's callbacks change with its renders; the vault keeps one hold of each.
+  const host = useRef({ onReady, onEvent });
+  host.current = { onReady, onEvent };
+  const tell = useCallback((event: TryEvent) => host.current.onEvent?.(event), []);
+  useAiConnected(phase.kind === "ready", tell);
+
+  useEffect(() => {
+    if (phase.kind !== "ready") return undefined;
+    const vault = phase.vault;
+    let live = true;
+    void (vault.seeding ?? Promise.resolve()).then(
+      async () => {
+        const id = vault.guideIds[TOUR_NOTE_SEED_ID] ?? TOUR_NOTE_SEED_ID;
+        const tourNote = await vault.engine.client.get(id).then(
+          () => id,
+          () => null,
+        );
+        if (live) host.current.onReady?.({ guideIds: vault.guideIds, tourNote, open: (documentId) => setSelectedNode(documentId) });
+      },
+      () => undefined,
+    );
+    return () => {
+      live = false;
+    };
+  }, [phase]);
 
   useEffect(() => {
     let cancelled = false;
@@ -323,6 +402,7 @@ export function BrowserVault({
         namespace,
         basePath,
         loadSeed,
+        onEvent: tell,
         onProgress: (stage, done, total) => {
           if (!cancelled) setPhase({ kind: "starting", stage, done, total });
         },
@@ -349,14 +429,14 @@ export function BrowserVault({
       // under a running one. A boot still under way stops itself when it returns (above).
       if (vault) void vault.stop().finally(() => releaseLock?.());
     };
-  }, [namespace, loadSeed, basePath, attempt]);
+  }, [namespace, loadSeed, basePath, attempt, tell]);
 
   switch (phase.kind) {
     case "starting":
       return (
         <Screen title={STAGE_LABEL[phase.stage] ?? "Starting…"}>
           <p style={{ margin: 0, color: "#6b7280", fontSize: 14 }}>
-            {phase.total ? `${phase.done ?? 0} of ${phase.total}` : "Nothing you add here leaves your browser."}
+            {phase.total ? `${phase.done ?? 0} of ${phase.total}` : "Nothing is saved on our servers."}
           </p>
         </Screen>
       );
@@ -380,7 +460,7 @@ export function BrowserVault({
       return (
         <>
           <VaultApp />
-          <Banner vault={phase.vault} namespace={namespace} downloadUrl={downloadUrl} />
+          <Banner vault={phase.vault} namespace={namespace} downloadUrl={downloadUrl} actions={bannerActions} />
         </>
       );
   }

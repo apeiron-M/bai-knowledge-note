@@ -365,6 +365,7 @@ export function VaultSidebar({
         <button
           type="button"
           className="vs-search"
+          data-tour="search"
           onClick={onSearch}
           aria-current={searchActive ? "page" : undefined}
           title={`Search the vault (${searchShortcut()})`}
@@ -380,6 +381,7 @@ export function VaultSidebar({
           <button
             type="button"
             className="vs-add-main"
+            data-tour="add-sources"
             data-split={createItems.length > 0 ? "" : undefined}
             onClick={onAddSources}
             title="Add sources"
@@ -509,6 +511,7 @@ export function VaultSidebar({
             type="button"
             className="vs-row"
             title="Vault settings"
+            data-tour="settings"
             aria-current={settingsActive ? "page" : undefined}
             aria-haspopup="menu"
             aria-expanded={menu === "foot"}

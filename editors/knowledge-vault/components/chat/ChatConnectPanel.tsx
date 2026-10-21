@@ -346,7 +346,7 @@ export function ChatConnectPanel({
 
   return (
     <LandingStage anchorRef={anchorRef} tail={tail}>
-      <div className="flex w-full max-w-md flex-col items-center text-center">
+      <div className="flex w-full max-w-md flex-col items-center text-center" data-tour="ai-connect">
         <svg
           className="mb-5 h-10 w-10"
           style={{ color: "var(--bai-accent)" }}

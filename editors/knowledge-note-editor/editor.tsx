@@ -434,6 +434,7 @@ export default function Editor() {
                     key={key}
                     type="button"
                     className={view === key ? "tab on" : "tab"}
+                    data-tour={`note-${key}`}
                     aria-label={
                       count !== null && count > 0
                         ? `${label}, ${count}`

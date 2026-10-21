@@ -373,6 +373,7 @@ describe("the browser pipeline's phases", () => {
       expect(asked.candidates).toBe(1);
       const match = /^Extracted 3 notes \(read the first ([\d,]+) of 60,000 characters\)\.$/.exec(created.workDone);
       expect(match).not.toBeNull();
+      expect(created.partial).toBe(true);
       const read = Number(match?.[1].replace(/,/g, ""));
       expect(read).toBeLessThanOrEqual(local ? 8_000 : 24_000);
       expect(read).toBeGreaterThan(local ? 6_000 : 20_000);

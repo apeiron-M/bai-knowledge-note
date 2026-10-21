@@ -73,6 +73,7 @@ export function VaultPlaces({
             key={place.id}
             type="button"
             data-place-icon={place.id}
+            data-tour={`place-${place.id}`}
             data-tone={place.tone}
             title={place.label}
             aria-label={place.label}
@@ -95,6 +96,7 @@ export function VaultPlaces({
             key={place.id}
             type="button"
             data-place={place.id}
+            data-tour={`place-${place.id}`}
             title={place.label}
             aria-current={current ? "page" : undefined}
             onClick={() => onSelect(place.id)}

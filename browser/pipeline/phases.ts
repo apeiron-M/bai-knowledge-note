@@ -29,8 +29,11 @@ export type PhaseContext = {
   beforeWrites?: () => void;
 };
 
-/** What the handoff says. `incomplete`: what did not land, said beside `workDone`. */
-export type PhaseOutcome = { workDone: string; filesModified: string[]; incomplete?: string };
+/**
+ * What the handoff says. `incomplete`: what did not land, said beside `workDone`. `partial`: the
+ * source was longer than one read, and only its first part became notes.
+ */
+export type PhaseOutcome = { workDone: string; filesModified: string[]; incomplete?: string; partial?: boolean };
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 const count = (n: number) => n.toLocaleString("en");
@@ -73,6 +76,7 @@ async function create(ctx: PhaseContext): Promise<PhaseOutcome> {
     workDone: written.archived ? `Found no knowledge in it, so it is archived${part}.` : `Extracted ${plural(written.written.length, "note")}${also}${part}.`,
     filesModified: [...written.note_ids, ...written.linked_existing],
     ...(written.incomplete ? { incomplete: written.incomplete } : {}),
+    ...(partial ? { partial: true } : {}),
   };
 }
 

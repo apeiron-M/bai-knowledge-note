@@ -1113,9 +1113,9 @@ export function DriveExplorer({ children }: EditorProps) {
 export const VAULT_MENU: VaultMenuItem[] = [
   { key: "config", label: "Vault settings", hint: "name, processing", icon: "gear" },
   { key: "access", label: "Who has access", icon: "users" },
-  { key: "pipeline", label: "Processing queue", icon: "queue" },
+  { key: "pipeline", label: "Processing queue", icon: "queue", tour: "settings-queue" },
   { key: "activity", label: "Activity", hint: "recent changes", icon: "clock" },
-  { key: "health", label: "Health check", icon: "pulse" },
+  { key: "health", label: "Health check", icon: "pulse", tour: "settings-health" },
   { key: "files", label: "Files and folders", icon: "folder" },
 ];
 
@@ -1214,6 +1214,7 @@ function SourcesTabs({
             key={tab.key}
             type="button"
             aria-current={tab.key === active ? "page" : undefined}
+            data-tour={`sources-${tab.key}`}
             onClick={() => onSelect(tab.key)}
           >
             {tab.label}
