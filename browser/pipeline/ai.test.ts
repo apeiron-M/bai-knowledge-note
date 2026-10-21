@@ -8,7 +8,7 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 function page(answer: (url: string) => Response | Promise<Response> = () => json({ choices: [{ message: { content: "{}" } }] })) {
   const seen: { url: string; headers: Record<string, string> }[] = [];
   const fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = String(input);
+    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
     seen.push({ url, headers: Object.fromEntries(new Headers(init?.headers).entries()) });
     if (url.includes("/models")) return json({ data: [{ id: "x/model", context_length: 64000, pricing: { prompt: "0", completion: "0" }, supported_parameters: ["tools"], created: 1 }] });
     return answer(url);
@@ -88,5 +88,45 @@ describe("pipelineAi", () => {
     openRouter();
     const ai = (await pipelineAi())!;
     await expect(ai.fetchImpl("https://openrouter.ai/api/v1/chat/completions", { method: "POST" })).rejects.toBeInstanceOf(AiRefusedError);
+  });
+
+  it("calls a key out of credit refused too", async () => {
+    page(() => json({ error: { message: "Insufficient credits" } }, 402));
+    openRouter();
+    const ai = (await pipelineAi())!;
+    await expect(ai.fetchImpl("https://openrouter.ai/api/v1/chat/completions", { method: "POST" })).rejects.toBeInstanceOf(AiRefusedError);
+  });
+
+  it("checks the AI is there without spending a model call", async () => {
+    const seen = page();
+    openRouter();
+    const ai = (await pipelineAi())!;
+    await ai.reach();
+    expect(seen.at(-1)).toMatchObject({ url: "https://openrouter.ai/api/v1/models", headers: { authorization: "Bearer or-key" } });
+    expect(ai.calls()).toBe(0);
+
+    local();
+    const there = (await pipelineAi())!;
+    vi.stubGlobal("fetch", vi.fn(() => Promise.reject(new TypeError("Failed to fetch"))));
+    await expect(there.reach()).rejects.toBeInstanceOf(AiUnreachableError);
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(json({ error: "no" }, 403))));
+    await expect(there.reach()).rejects.toBeInstanceOf(AiRefusedError);
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(json({ error: "no models route" }, 404))));
+    await expect(there.reach()).resolves.toBeUndefined();
+  });
+
+  it("drops its calls the moment the runner stops", async () => {
+    local();
+    const stop = new AbortController();
+    const ai = (await pipelineAi(stop.signal))!;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((_input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((_resolve, reject) => init?.signal?.addEventListener("abort", () => reject(init.signal?.reason as Error)))),
+    );
+    const own = ai.fetchImpl("http://localhost:11434/v1/chat/completions", { method: "POST", signal: AbortSignal.timeout(60_000) });
+    const bare = ai.fetchImpl("http://localhost:11434/v1/chat/completions", { method: "POST" });
+    stop.abort();
+    await expect(own).rejects.toMatchObject({ name: "AbortError" });
+    await expect(bare).rejects.toMatchObject({ name: "AbortError" });
   });
 });

@@ -17,7 +17,7 @@ export class AiUnreachableError extends Error {
     this.name = "AiUnreachableError";
   }
 }
-/** The AI answered 401/403: the key is wrong, out of credit, or revoked. */
+/** The AI answered 401/402/403: the key is wrong, out of credit, or revoked. */
 export class AiRefusedError extends Error {
   constructor() {
     super("Your AI refused the key");
@@ -42,10 +42,19 @@ export type PipelineAi = {
   fetchImpl: typeof fetch;
   /** Model calls this source has made. */
   calls(): number;
+  /**
+   * Whether the AI answers at all, asked before a task is touched, so a source waiting for an AI that
+   * is off says so instead of "Processing". A GET of its model list: no model call, nothing spent.
+   * Throws AiUnreachableError, or AiRefusedError for a key it turns away.
+   */
+  reach(): Promise<void>;
 };
 
-/** The visitor's AI, or null when none is connected (or it names no model). */
-export async function pipelineAi(): Promise<PipelineAi | null> {
+/**
+ * The visitor's AI, or null when none is connected (or it names no model). `stop` ends its calls at
+ * once: the runner aborts it on stop, so a Reset never waits for a slow model.
+ */
+export async function pipelineAi(stop?: AbortSignal): Promise<PipelineAi | null> {
   const provider = activeProvider(readSavedProviders());
   if (!provider) return null;
   const endpoint = endpointFor(provider);
@@ -57,7 +66,8 @@ export async function pipelineAi(): Promise<PipelineAi | null> {
   if (!model) return null;
 
   const baseUrl = endpoint.completionsUrl.replace(/\/chat\/completions$/, "");
-  const apiKey = (endpoint.headers.Authorization ?? "").replace(/^Bearer\s*/, "");
+  // A local server set up without a key sends no Authorization at all.
+  const apiKey = ((endpoint.headers.Authorization as string | undefined) ?? "").replace(/^Bearer\s*/, "");
   let calls = 0;
   const fetchImpl = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = input instanceof Request ? input.url : String(input);
@@ -72,15 +82,17 @@ export async function pipelineAi(): Promise<PipelineAi | null> {
       if (calls >= CALL_BUDGET) throw new CallBudgetError();
       calls++;
     }
+    const signal = stop && init?.signal ? AbortSignal.any([init.signal, stop]) : (init?.signal ?? stop);
     let response: Response;
     try {
-      response = await fetch(input, { ...init, headers });
+      response = await fetch(input, { ...init, headers, ...(signal ? { signal } : {}) });
     } catch (error) {
       // What a browser says when nothing answered (refused, offline, blocked by CORS).
       if (error instanceof TypeError) throw new AiUnreachableError(error);
       throw error;
     }
-    if (response.status === 401 || response.status === 403) throw new AiRefusedError();
+    // 402: OpenRouter's "out of credit". The key is turned away either way.
+    if (response.status === 401 || response.status === 402 || response.status === 403) throw new AiRefusedError();
     return response;
   }) as typeof fetch;
 
@@ -91,5 +103,10 @@ export async function pipelineAi(): Promise<PipelineAi | null> {
     label: endpoint.label,
     fetchImpl,
     calls: () => calls,
+    reach: async () => {
+      const response = await fetchImpl(`${baseUrl}/models`, { headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : {} });
+      // Only that it answered matters: OpenRouter's list is a megabyte.
+      await response.body?.cancel().catch(() => undefined);
+    },
   };
 }
