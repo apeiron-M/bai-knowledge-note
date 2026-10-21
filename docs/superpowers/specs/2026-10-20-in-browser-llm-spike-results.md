@@ -1184,3 +1184,26 @@ The teacher moved from the Anthropic API to headless Claude Code: `training/py/t
   - 40 of the 99 ops are ref ops, which the teacher pipeline cannot replay yet. That blocks the full run.
   - Op words appear in 27 of the 63 kept action rows.
 - **Data:** the summary is `training/results/teacher-pilot-2026-10-21.json`, and the kept rows are `training/data/teacher-pilot-2026-10-21/pilot-agreed.jsonl`.
+
+## Teacher pilot 2 (2026-10-21)
+
+The gaps from pilot 1 were closed in `training/`, then a second pilot ran with the same `claude -p` isolation at concurrency 3. Details are in `training/README.md` ("Teacher pilot 2"). The full run was **not** started.
+
+- **Ref ops:** all 40 are supported.
+  - Each request gets a document state built by replaying real creation actions through the reducers (`training/gen/ref-scenarios.ts`), with 2–6 labeled items.
+  - Each item names its target. The gold item is first in 25% of kept refs.
+  - Validation re-derives the candidates from the replayed state and checks a per-op post-condition.
+- **Wording:** each item has a spec: register, length, a seeded pool name and, for at least half of an op's items, op words to avoid.
+  - Kept rows are 90% op-word-free (pilot 1: 57%), and no name appears more than twice.
+  - Op words are now rarer than in held-out-2's "natural" half, so the full run should set a two-sided quota.
+- **Labels:** 8 messages per call, blind, under opaque keys.
+  - On pilot 1's 97 rows, batched labels agree with single-call labels 79/97 exact, which equals the single-call agreement with generation (79/97).
+  - Input tokens drop from 253k to 71k and cost from $1.12 to $0.32.
+- **Leak check:** no eval utterance appears in any teacher prompt. The `kn2-12` copies were a coincidence on the shortest phrasing, and `plan`/`label` now refuse on a hit.
+- **Pilot 2:** 150 items (90 ref, 48 non-ref, 12 no-action; all 12 models) → **105 kept**.
+  - Drops: 2 context leak (account email as SET_PROVENANCE `author`; caught and redacted), 2 ref-echo mismatches, 6 grounding, 6 grammar gate, and 29 blind-label disagreements (14 on the op).
+  - 33/40 ref ops and 10/12 models kept at least one row.
+  - 198 trainable steps with full template and token parity.
+- **Observed:** about 284 s over the stages, 79 calls, 304k input and 71k output tokens, $1.77 CLI-reported API-equivalent cost.
+- **Extrapolation, not measured:** 12,000 items would take about 5.4 h at concurrency 3 (24M input, 5.7M output, about $140) and keep about 8.4k rows. About 16k kept rows would take about 10 h.
+- **Data:** `training/results/teacher-pilot2-2026-10-21.json` and `training/data/teacher-pilot2-2026-10-21/agreed.jsonl`.

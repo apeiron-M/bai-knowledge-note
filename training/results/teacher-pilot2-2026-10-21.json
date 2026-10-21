@@ -1,0 +1,256 @@
+{
+ "date": "2026-10-21",
+ "teacher": "cli (claude -p, claude-sonnet-5)",
+ "plan": "teacher.py plan --ops pilot2 --seed 20261021",
+ "gitHeadAtFinalRender": "72801b2255edf1466520fd0e46a71578f58caa16",
+ "promptFormatVersion": "r6.1",
+ "requested": {
+  "requests": 55,
+  "items": 150,
+  "refOpItems": 90,
+  "nonRefItems": 48,
+  "noActionItems": 12,
+  "refOps": 40,
+  "models": 12
+ },
+ "funnel": {
+  "generated": 150,
+  "rowsStageDropped": 10,
+  "rowsStageDetail": [
+   {
+    "id": "gen-knowledge-note--SET_PROVENANCE-0-0",
+    "reason": "context-leak (account/machine context)"
+   },
+   {
+    "id": "gen-knowledge-note--SET_PROVENANCE-0-1",
+    "reason": "context-leak (account/machine context)"
+   },
+   {
+    "id": "gen-moc--REORDER_CORE_IDEAS-0-0",
+    "reason": "ref-mismatch: ids: ['Rules for using the church hall'] given, ['Crew sign-up sheet history', 'Relaxed performance guidelines', 'Lighting rig hours on show nights', 'Rules for using the church hall'] assigned"
+   },
+   {
+    "id": "gen-moc--REORDER_CORE_IDEAS-0-1",
+    "reason": "ref-mismatch: ids: ['Relaxed performance guidelines'] given, ['Crew sign-up sheet history', 'Rules for using the church hall', 'Lighting rig hours on show nights', 'Relaxed performance guidelines'] assigned"
+   },
+   {
+    "id": "gen-pipeline-queue--ADVANCE_PHASE-0-1",
+    "reason": "handoff.filesModified: value not in utterance"
+   },
+   {
+    "id": "gen-pipeline-queue--BLOCK_TASK-0-0",
+    "reason": "reason: value not in utterance"
+   },
+   {
+    "id": "gen-observation--CREATE_OBSERVATION-0-0",
+    "reason": "title: value not in utterance"
+   },
+   {
+    "id": "gen-observation--CREATE_OBSERVATION-0-2",
+    "reason": "title: value not in utterance"
+   },
+   {
+    "id": "gen-observation--CREATE_OBSERVATION-0-3",
+    "reason": "title: value not in utterance"
+   },
+   {
+    "id": "gen-vault-config--TOGGLE_FEATURE-0-0",
+    "reason": "feature: value not in utterance"
+   }
+  ],
+  "dedupEvalLeak": 0,
+  "vocabZodReplayRefChecksFailed": 0,
+  "grammarGateRejected": 6,
+  "grammarGateIds": [
+   "gen-knowledge-note--ADD_LINK-0-0",
+   "gen-knowledge-note--ADD_LINK-0-1",
+   "gen-project--UPDATE_DELIVERABLE-0-1",
+   "gen-wbs--CREATE_GOAL-0-0",
+   "gen-wbs--CREATE_GOAL-0-1",
+   "gen-observation--CREATE_OBSERVATION-0-1"
+  ],
+  "blindLabelDisagree": 29,
+  "blindLabelDisagreeOnOp": 14,
+  "agreeTolerantCasePunct": 110,
+  "quotaDropped": 0,
+  "nameCapDropped": 0,
+  "kept": 105,
+  "keptByGroup": {
+   "ref": "65/90",
+   "nonRef": "28/48",
+   "noAction": "12/12"
+  }
+ },
+ "finalRender": {
+  "steps": 198,
+  "step1": 105,
+  "step2": 93,
+  "trainable": 198,
+  "templateMismatch": 0,
+  "tokenMismatch": 0,
+  "boundaryMerges": 0,
+  "promptTokens": {
+   "max": 560,
+   "min": 69
+  }
+ },
+ "wordingMix": {
+  "opWordFree": "84/93",
+  "opsBelowMinAvoid": [],
+  "registerAssigned": {
+   "polite and formal": 17,
+   "chatty, as if to a colleague": 16,
+   "rushed and a bit stressed": 16,
+   "plain and neutral": 15,
+   "a question": 14,
+   "casual": 11,
+   "terse, like a note to self": 9,
+   "all lowercase with one small typo": 7
+  },
+  "lengthObserved": {
+   "very short": 18,
+   "short": 25,
+   "medium": 44,
+   "long": 18,
+   "over 50": 0
+  },
+  "wordsMedianMinMax": [
+   19,
+   3,
+   46
+  ],
+  "multiClauseAssigned": 27,
+  "questions": 36,
+  "allLowercase": 14,
+  "poolNamesUsed": 68,
+  "distinctPoolNames": 56,
+  "maxUsesOfOneName": 2
+ },
+ "refPositions": {
+  "refRows": 65,
+  "refOpsKept": 33,
+  "refPositionByIndex": {
+   "1": 17,
+   "2": 14,
+   "3": 16,
+   "4": 13,
+   "5": 8
+  },
+  "refPositionOfN": {
+   "1/2": 1,
+   "1/3": 4,
+   "1/4": 7,
+   "1/5": 5,
+   "2/2": 1,
+   "2/3": 4,
+   "2/4": 5,
+   "2/5": 4,
+   "3/3": 3,
+   "3/4": 6,
+   "3/5": 7,
+   "4/4": 9,
+   "4/5": 4,
+   "5/5": 8
+  },
+  "refFirstShare": "17/68",
+  "refOpsWithNoKeptRow": [
+   "knowledge-note:ADD_LINK",
+   "knowledge-note:SET_PROVENANCE",
+   "moc:REORDER_CORE_IDEAS",
+   "pipeline-queue:ADVANCE_PHASE",
+   "pipeline-queue:BLOCK_TASK",
+   "wbs:SET_OUTCOME",
+   "wbs:UPDATE_GOAL_DESCRIPTION"
+  ]
+ },
+ "usage": {
+  "label": "observed; costUsd is the CLI's total_cost_usd at API list prices, not subscription usage",
+  "generation": {
+   "calls": 55,
+   "wallS": 192.0,
+   "perCallWallS": {
+    "median": 8.77,
+    "p90": 16.8,
+    "max": 26.08
+   },
+   "inputTokensInclCache": 196804,
+   "cacheRead": 3785,
+   "output": 56334,
+   "thinking": 33921,
+   "costUsd": 1.3359,
+   "retries": 0
+  },
+  "batchedLabel": {
+   "calls": 24,
+   "wallS": 49.3,
+   "perCallWallS": {
+    "median": 5.55,
+    "p90": 8.46,
+    "max": 9.21
+   },
+   "inputTokensInclCache": 107381,
+   "cacheRead": 38534,
+   "output": 14854,
+   "thinking": 3157,
+   "costUsd": 0.4315,
+   "retries": 0
+  },
+  "localStagesWallS": {
+   "rows": 1,
+   "render": 21,
+   "labelBuild": 0,
+   "agree": 1,
+   "finalRender": 20
+  }
+ },
+ "task3BatchedLabelOnPilot1": {
+  "rows": 97,
+  "batchSize": 8,
+  "agreement": {
+   "rows": 97,
+   "a~gold": {
+    "op": "92/97 (94.8%)",
+    "exact": "79/97 (81.4%)"
+   },
+   "b~gold": {
+    "op": "94/97 (96.9%)",
+    "exact": "88/97 (90.7%)"
+   },
+   "a~b": {
+    "op": "93/97 (95.9%)",
+    "exact": "79/97 (81.4%)"
+   }
+  },
+  "single": {
+   "calls": 97,
+   "wallS": 85.0,
+   "perCallWallS": {
+    "median": 2.43,
+    "p90": 3.21,
+    "max": 4.01
+   },
+   "inputTokensInclCache": 253016,
+   "cacheRead": 0,
+   "output": 10593,
+   "thinking": 345,
+   "costUsd": 1.1176,
+   "retries": 0
+  },
+  "batched": {
+   "calls": 15,
+   "wallS": 30.3,
+   "perCallWallS": {
+    "median": 5.65,
+    "p90": 6.44,
+    "max": 6.8
+   },
+   "inputTokensInclCache": 71148,
+   "cacheRead": 14217,
+   "output": 8515,
+   "thinking": 1146,
+   "costUsd": 0.3157,
+   "retries": 0
+  }
+ },
+ "contextLeak": "2 SET_PROVENANCE items put the account email in `author`; rows dropped both; the raw results were redacted in place (teacher.py redact)"
+}

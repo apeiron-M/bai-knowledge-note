@@ -5,7 +5,8 @@ This directory builds training data for the chat's two steps (op choice, then ar
 **Status (2026-10-20, round 7):**
 - The pipeline is built and smoke-tested end to end on this Mac.
 - Rows render in the runtime prompt format **r6.1**, through the chat core's own builders, so training and runtime prompts are byte-identical (`tests/unit/training-prompt-format.test.ts`). The render and token-parity step was re-run on the smoke rows in r6.1 (see "Re-render in r6.1" below). The model was not retrained.
-- The teacher runs through headless Claude Code (`claude -p`), with no API key needed. The ~100-row pilot ran on 2026-10-21 and kept 73 rows (see "Teacher pilot" below). The full run waits on the user's review.
+- The teacher runs through headless Claude Code (`claude -p`), with no API key needed. The ~100-row pilot ran on 2026-10-21 and kept 73 rows (see "Teacher pilot" below).
+- Pilot 2 (2026-10-21, 150 items) covers all 40 ref ops on seeded document states, per-item wording specs and batched blind labels. It kept 105 rows (see "Teacher pilot 2"). The full run waits on the user's review.
 
 The plan is the scratchpad `lora-plan.md` from the spike session. Spike results are in `docs/superpowers/specs/2026-10-20-in-browser-llm-spike-results.md`.
 
@@ -35,7 +36,9 @@ The plan is the scratchpad `lora-plan.md` from the spike session. Spike results 
 | `scripts/setup.sh` | Creates the venv and clones and builds llama.cpp b11364 plus `schema2gbnf` into `$BAI_TRAINING_TOOLS` (default `~/.cache/bai-training`, **outside the repo**: the root tsconfig includes `**/*`, and llama.cpp ships about 750 `.ts` files). Downloads the weights into `models/`. |
 | `gen/prompt-format.ts` | The one file that decides a row's shape: candidates, step-1/step-2 prompts from the core builders, target shapes. `PROMPT_FORMAT_VERSION` is re-exported from the core (`chat/core/prompt-format.ts`). |
 | `gen/render-prompts.ts` | Turns source rows into step-1/step-2 messages, runtime grammars and canonical targets. Every target is checked against the grammar the runtime uses for that step. It also writes a manifest (format version, catalog and op-embedding sha256, git HEAD, dirty chat-core files). |
-| `gen/validate-rows.ts` | Canonical-vocabulary check (`chat/core/vocabularies.ts`; zod does not see these `String` fields), zod check (`buildAction`, the generated `<Op>InputSchema()` creator), then reducer replay on a fresh document after optional `fixture` steps. |
+| `gen/validate-rows.ts` | Canonical-vocabulary check (`chat/core/vocabularies.ts`; zod does not see these `String` fields), zod check (`buildAction`, the generated `<Op>InputSchema()` creator), then reducer replay on a fresh document after optional `fixture` steps. A row from a ref scenario (it carries `refContext`) must also have `refCandidates` equal to the replayed state's, ref args among the candidate ids, and its recipe's post-condition after replay. |
+| `gen/replay.ts` | The shared replay: fixture steps may name the ids of their `new-id` fields (`newIds`); other ids come from a per-row counter. |
+| `gen/ref-scenarios.ts`, `gen/ref-pools.ts` | One recipe per ref op (40): builds a state by replaying real creation actions, lists `{id, label}` candidates per ref path, assigns each teacher item a target at a random position, and checks the effect. `--list` prints the ref ops and the people pool. The pools are invented, away from the eval sets' domains. |
 | `gen/export-teacher-context.ts` | Per-op teacher context: description, SDL, semantic schema, reducer source, siblings, empty state. |
 | `gen/gbnf-check.ts` | A copy of the round-5 test recognizer, plus support for `{m,n}` repetition. It checks every target against its step's grammar. |
 | `../scripts/gte-wasm-node.ts` | gte-small under node on the browser's onnxruntime-web wasm, for unscoped (`scoped: false`) rows' gte-small top-5 candidates. Loaded only when such a row exists. |
@@ -43,7 +46,7 @@ The plan is the scratchpad `lora-plan.md` from the spike session. Spike results 
 | `py/dedup.py` | Leak and duplicate filter (details below). |
 | `py/render_template.py` | Renders prompts through llama-server, with template and token parity checks against HF. |
 | `py/train_lora.py`, `py/merge.py`, `py/smoke_infer.py` | Train, merge, and run grammar-constrained inference. |
-| `py/teacher.py` | The teacher pipeline (`plan`, `run --teacher cli\|api`, `submit`, `collect`, `rows`, `label`, `agree`). |
+| `py/teacher.py` | The teacher pipeline (`plan`, `run --teacher cli\|api`, `submit`, `collect`, `rows`, `label`, `agree`, `labelcmp`, `mix`, `redact`). |
 | `scripts/render.sh` | **One command to re-render with the current format:** dedup, then validate (rows that fail zod or replay are dropped and listed in `validate.json`), render, and parity. |
 | `scripts/export-gguf.sh`, `scripts/smoke.sh` | GGUF export, and the full smoke run. |
 | `data/smoke-rows.jsonl`, `data/smoke-probe-rows.jsonl` | 50 + 4 hand-written rows. None come from an eval set. |
@@ -171,7 +174,8 @@ claude -p --output-format json --tools "" \
 - `agree --manifest rendered.manifest.json` also drops rows whose step-2 target the runtime grammar rejects.
 - `agree` now reads `rows-valid.jsonl` (after zod and replay), not `rows-kept.jsonl`.
 - The pilot uses `wbs:SET_OWNER` in place of `wbs:SET_GOAL_STATUS`.
-- **Ref ops are not supported yet.** 40 of the 99 ops have an app-filled `(ref-id)` field naming an existing entity, such as SET_GOAL_STATUS's goal. They need a fixture with labeled entities plus `refCandidates`, and `validate-rows.ts` mints fixture ids from one counter for the whole file. Today such a row fails replay.
+- **Ref ops** (40 of the 99: an app-filled `(ref-id)` field naming an existing item, such as SET_GOAL_STATUS's goal) are supported since pilot 2. `plan` builds a seeded state per request (`gen/ref-scenarios.ts`) and shows it to the teacher with each item's target. `rows` checks the teacher's `refs` echo, puts the target ids in `args` and attaches `fixture`, `refCandidates` and `refContext`.
+- **Label conventions are the training side's.** Only knowledge-note topics and links have a runtime extractor (`noteRefCandidates`). Goals, members, deliverables, tasks, core ideas and the rest are labeled by `ref-scenarios.ts` (goal description, member name, deliverable title, task target, the linked note's title). The runtime must adopt the same labels before a LoRA trained on them ships. `sessionId`, `batchId` and `topicDocumentId` are `String` fields classed as refs by the `/Id$/` rule. The runtime offers no candidates for them, so their rows are light coverage, not real ref ops.
 
 ### Commands
 
@@ -190,6 +194,25 @@ training/scripts/render.sh $A/pilot-agreed.jsonl $A/pilot-final                 
 ```
 
 `run` refuses more than 200 requests unless `--max-requests` is raised.
+
+Pilot 2 (ref ops, specs, batched labels):
+
+```bash
+P=training/.venv/bin/python; A=training/artifacts/teacher-pilot2
+npx --no-install tsx training/gen/export-teacher-context.ts $A/context.json
+$P training/py/teacher.py plan --context $A/context.json --ops pilot2 --seed 20261021 --out $A/gen-requests.jsonl
+$P training/py/teacher.py run $A/gen-requests.jsonl --out $A/gen-results.jsonl
+$P training/py/teacher.py rows $A/gen-results.jsonl --context $A/context.json --meta $A/gen-requests.jsonl.meta.json --out $A/rows.jsonl
+training/scripts/render.sh $A/rows.jsonl $A/r1
+$P training/py/teacher.py label $A/r1/rendered.jsonl --context $A/context.json --rows $A/r1/rows-valid.jsonl --batch 8 --out $A/label-requests.jsonl
+$P training/py/teacher.py run $A/label-requests.jsonl --out $A/label-results.jsonl
+$P training/py/teacher.py agree $A/label-results.jsonl --keys $A/label-requests.jsonl.keys.json --rows $A/r1/rows-valid.jsonl \
+    --manifest $A/r1/rendered.manifest.json --context $A/context.json --out $A/agreed.jsonl
+training/scripts/render.sh $A/agreed.jsonl $A/final
+$P training/py/teacher.py mix $A/agreed.jsonl --context $A/context.json --ref-ops $A/ref-ops.json
+```
+
+`plan` writes `<out>.meta.json` (item specs and scenarios) and refuses (exit 5) if an eval utterance of 3+ words appears in any prompt; `label` runs the same check. `--ops pilot` now also uses the per-item specs, so a re-plan of pilot 1 differs from the requests it ran.
 
 ### Teacher pilot (observed, 2026-10-21, `claude -p`, concurrency 3)
 
@@ -248,11 +271,76 @@ The pilot had 20 generation requests of 5 items each: 9 ops across 4 models (kno
 - At the pilot's 73% yield, 12,000 items would give about 8.8k kept rows. That assumes ref ops are supported; today they would fail replay.
 - **Risk: about 34M tokens in about 4 h will very likely hit the subscription's usage window.** `run` stops and resumes (above), so the run can span several windows. Two other ways to cut the label pass's volume, which is 88% of the input: move it to the Batches API, or label 5–10 utterances of one docType per call. That stays blind, since no first-pass label is shown.
 
+### Teacher pilot 2 (observed, 2026-10-21, `claude -p`, concurrency 3)
+
+`plan --ops pilot2 --seed 20261021`: 55 requests, 150 items. They split into 90 ref-op items (all 40 ref ops, 2 or 3 each, on seeded states), 48 non-ref items (12 ops, 4 each) and 12 no-action items (project, moc, pipeline-queue). Every one of the 12 models has items. "About 150 rows" was read as 150 generated items. The summary is `results/teacher-pilot2-2026-10-21.json` and the kept rows are `data/teacher-pilot2-2026-10-21/agreed.jsonl`.
+
+**What changed for it:**
+- **Ref ops.** Each ref-op request gets a state built by replaying real creation actions (`gen/ref-scenarios.ts`), with 2–6 labeled items per ref path. The state is shown to the teacher, and each item is told which existing item to mean. The teacher echoes its label in `refs`, and `rows` checks the echo. `validate-rows.ts` re-derives the candidates from the replayed fixture and checks that each ref arg is a candidate id and that the recipe's post-condition holds (for example REORDER_CORE_IDEAS keeps every idea, and TOGGLE_EXTRACTION_CATEGORY flips the flag).
+- **Wording specs.** Each item has a register, a length band, a pool name and, for at least half of an op's items, the op's non-trivial words to avoid (held-out-2's paraphrase rule: the op name minus set/add/update and small words). About one item in four is multi-clause with irrelevant context. `rows` drops an item that breaks its spec. `agree --context` then holds every op at 50% or more op-word-free rows and each pool name to 2 kept utterances.
+- **Batched blind labels.** `label --batch 8` sends 8 shuffled messages of one docType per call, keyed `m1..m8`, since row ids name the generation op. Each message shows its document state, not the gold op's choice list, so the op stays blind. Choice labels are mapped back to ids before the comparison.
+
+| Stage | Dropped | Left | Notes |
+|---|---|---|---|
+| Generated | | 150 | |
+| `rows`: context leak | 2 | 148 | Both SET_PROVENANCE items used the account email as `author`. The raw results were redacted in place (`teacher.py redact`). The spec line now names the pool person for every person field. |
+| `rows`: ref echo | 2 | 146 | REORDER_CORE_IDEAS ×2: `refs.ids` named only the moved item, not the full order. The spec line now asks for the whole list. |
+| `rows`: grounding | 6 | 140 | CREATE_OBSERVATION `title` ×3, TOGGLE_FEATURE, BLOCK_TASK, ADVANCE_PHASE `handoff.filesModified` (grounding now recurses into nested args) |
+| `rows`: wording spec | 0 | 140 | The first pass wrongly flagged 11 multi-clause items ("While I'm …, could you …"). The checker was fixed and `rows` re-run on the same output. |
+| Dedup / eval leak | 0 | 140 | |
+| Vocabulary, zod, replay, ref checks | 0 | 140 | 84 ref rows: candidates match the replayed state, and every post-condition holds |
+| r6.1 grammar gate | 6 | 134 | ADD_LINK ×2 (teacher filled optional `targetTitle` with the ref label), CREATE_GOAL `assignee` ×2 (known), UPDATE_DELIVERABLE with only `goalRef` ×1 (`requireOneOf` demands a semantic field even when an optional ref is set: a format gap), CREATE_OBSERVATION casing ×1 |
+| Blind label (batched) | 29 | **105** | 14 on the op: ADD_OPEN_QUESTION ×4 → none (the open question reads as a question), UPDATE_GOAL_DESCRIPTION ×3 ("mention X" → none or ADD_NOTE), and 7 singles (UPDATE_LINK_TYPE → ADD_LINK, SET_OUTCOME → ASSIGN_GOAL, others → none). 15 on args: casing, a final period, a corrected typo, a trimmed span, and 2 truly ambiguous refs ("set its order to 1", "sits under") |
+| Wording quota / name cap | 0 | 105 | |
+
+- **Kept by group:** ref 65/90, non-ref 28/48, no-action 12/12. 33 of the 40 ref ops kept at least one row.
+  - Ref ops with none: ADD_LINK, SET_PROVENANCE, REORDER_CORE_IDEAS, ADVANCE_PHASE, BLOCK_TASK, SET_OUTCOME, UPDATE_GOAL_DESCRIPTION.
+  - Non-ref ops with none: health-report ADD_CHECK, moc ADD_OPEN_QUESTION, observation CREATE_OBSERVATION. So health-report and observation have no kept row.
+- **Final render** of the 105 rows: 198 steps, all trainable. 0 template or token mismatches, 0 boundary merges, one BOS, prompts of 69–560 tokens. `tests/unit/training-prompt-format.test.ts` passes.
+- **Wording mix (kept, `teacher.py mix`):**
+  - 84/93 action rows are op-word-free (pilot 1: 36/63). No op is below 50%.
+  - Lengths: 18 very short, 25 short, 44 medium, 18 long. The median is 19 words (3–46).
+  - 36 questions, 14 all-lowercase, 27 multi-clause specs. Assigned registers run from 7 to 17 rows each.
+  - 68 rows use a pool name, 56 distinct; no name appears more than twice.
+  - The new tic is openers: "Hey" starts 12 rows, "Could" 8.
+  - **Op words are now rare (10%)**, while held-out-2 is about half "natural". The full run should set a two-sided quota.
+- **Ref-position spread (kept):** the gold item is first in 17 of 68 refs (25%). Positions 1–5 got 17, 14, 16, 13 and 8, over lists of 2–5 items.
+
+**Time and usage (observed):**
+
+| | Calls | Wall | Per call median / p90 | Input tokens (incl. cache) | Output (of which thinking) | CLI `total_cost_usd` |
+|---|---|---|---|---|---|---|
+| Generation (effort medium) | 55 | 192.0 s | 8.8 / 16.8 s | 196,804 (cache read 3,785) | 56,334 (33,921) | $1.34 |
+| Batched blind label (effort low, 8 per call) | 24 | 49.3 s | 5.6 / 8.5 s | 107,381 (cache read 38,534) | 14,854 (3,157) | $0.43 |
+| Local stages (rows, render ×2, label build, agree) | | about 43 s | | | | |
+
+Pilot 2 total, summed over stages: about 284 s, 79 CLI calls, 0 retries, $1.77.
+
+**Batched vs single labels on pilot 1's 97 rows (observed):**
+- Batched labels (15 calls) agree with pilot 1's single-call labels 79/97 exact (81.4%) and 93/97 on the op. Single calls agreed with generation 79/97 exact and 92/97 on the op, so the bar is met exactly.
+- Batched labels agree with generation more often: 88/97 exact, 94/97 on the op.
+- Tokens: single 253,016 in, 10,593 out, 85.0 s, $1.12. Batched 71,148 in, 8,515 out, 30.3 s, $0.32. That is about 730 input tokens per labeled row instead of about 2,600.
+
+**Extrapolation to the full run (not measured; pilot-2 request shape, concurrency 3):**
+- Per item: 1.28 s, 1.3k input, 376 output tokens and $0.0089 for generation. Per labeled row: 0.35 s, 770 input, 106 output tokens and $0.0031.
+- 12,000 items: generation about 4.3 h, label pass about 1.1 h (93% reach it), so about **5.4 h**, 24M input, 5.7M output and about $140 API-equivalent. At 70% yield that is about 8.4k kept rows.
+- About 16k kept rows would need about 23k items: about 10 h, 46M input, 11M output and about $270.
+- The label pass is now about a fifth of the time. Generation dominates because pilot 2 sent 2–4 items per call with about 3.6k tokens of prompt each, and thinking is 60% of its output. Fewer, larger requests (one seeded state, 6–10 items) and effort low are the obvious savings. Both are unmeasured.
+
+**Leak check:** no eval utterance of 3+ words appears in any pilot-1 or pilot-2 teacher prompt (normalized substring check over every rendered prompt; `plan` and `label` now run it and refuse on a hit). Pilot 1's two `kn2-12` copies were the shortest natural phrasing of SUBMIT_FOR_REVIEW ("Submit this for review."), produced from the op name plus the imperative and "refers to it/this" style axes. That is coincidence, not a leak. `dedup.py` stays.
+
+**Fixed after pilot 2, for the next plan** (the stored pilot-2 states are as the teacher saw them): notes linked to themselves in 3 knowledge-note states, the "Other notes in the drive" list repeated linked notes, the person-field spec, and the list-ref spec.
+
 ## Next, waiting on the user
 
 1. **Round 6 is done.** The format is r6.1, and the renderer uses it. Every change to the core's step-1/step-2 builders, the op descriptions or the vocabularies bumps `PROMPT_FORMAT_VERSION` (`chat/core/prompt-format.ts`). After a bump, re-run `render.sh`.
 2. **Both blind held-out sets** are in `spike/llm-harness/eval/` (`heldout-eval.json`, `heldout2-eval.json`), so `dedup.py` filters against both.
-3. **The user** reviews the pilot (above) and approves the full run. `run` refuses more than 200 requests unless `--max-requests` is raised. Before the full run, support ref ops (40 of 99) in `rows` and `validate-rows.ts`. The teacher's output schemas come from `export-teacher-context.ts`, which now carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). `plan` was re-run as a dry run: 20 requests, 0 over the schema limits.
+3. **The user** reviews pilot 2 (above) and approves the full run. `run` refuses more than 200 requests unless `--max-requests` is raised. Ref ops are supported. The teacher's output schemas come from `export-teacher-context.ts`, which carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). Before the full run:
+   - Set a two-sided op-word quota.
+   - Reword the "a question" register for action ops.
+   - Use larger requests per seeded state.
+   - Decide the runtime's ref labels for non-note models.
+   - Decide `requireOneOf` with an optional ref (UPDATE_DELIVERABLE).
 4. **The real training run** comes after that: 3 epochs, effective batch 32, then a dev-checkpoint pick, export, and the in-browser eval arms. Judge it against gte-small top-1 (round 6: O2 47.3% scoped, U1 26.4% unscoped).
 5. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
 

@@ -10,9 +10,12 @@ Two backends run the same request JSONL and write the same result JSONL
   run      run a requests file with --teacher cli|api, write results + usage
   submit   (api) send a requests file as one batch (needs credentials and --yes-spend)
   collect  (api) poll a batch, write raw results and token usage
-  rows     teacher results -> source rows (+ grounding check)
-  label    build blind second-pass requests from rendered step-1 prompts
+  rows     teacher results -> source rows (+ grounding, spec and ref checks)
+  label    build blind second-pass requests (--batch N messages per call)
   agree    keep rows whose blind label matches (op and canonical args)
+  labelcmp agreement of two label runs on the same rows
+  mix      observed wording mix and ref-position spread of a rows file
+  redact   overwrite leaked account context in raw teacher output
 
 Eval utterances are never sent to the teacher; dedup.py drops leaks after.
 Pricing (claude-api skill, cached 2026-06-24): Sonnet 5 $2 / $10 per MTok
@@ -50,10 +53,9 @@ PILOT_OPS = [
 # Steps applied to the fresh document before the row's action
 # (validate-rows.ts `fixture`). APPROVE/REJECT need IN_REVIEW; the tension
 # ops replay on an empty doc too, the fixture only makes the state realistic.
-# Ops not listed replay on an empty doc.
-# Ref ops (an app-filled `(ref-id)` field naming an existing entity, 40 of 99)
-# are not supported yet: they need labeled entities in a fixture plus
-# `refCandidates`, and validate-rows' id counter is global across rows.
+# Ops not listed replay on an empty doc. Ref ops (an app-filled `ref-id`
+# field naming an existing item, 40 of 99) get a seeded state instead, from
+# training/gen/ref-scenarios.ts via `plan`.
 FIXTURES: dict[str, list[dict]] = {
     "knowledge-note:REJECT_NOTE": [{"op": "knowledge-note:SUBMIT_FOR_REVIEW", "args": {}}],
     "knowledge-note:APPROVE_NOTE": [{"op": "knowledge-note:SUBMIT_FOR_REVIEW", "args": {}}],
