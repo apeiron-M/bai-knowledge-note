@@ -34,6 +34,12 @@ export interface LoadLlmOptions {
   jinja?: boolean;
   nCtx?: number;
   model?: { repo: string; file: string };
+  /**
+   * Load this GGUF URL instead of `model` (dev/eval only, e.g. a locally
+   * served fine-tune). Bypasses the OPFS cache, so a re-exported file under
+   * the same URL is never served stale.
+   */
+  modelUrl?: string;
   /** Collect native llama.cpp log lines (for debugging load failures). */
   onLog?: (level: string, line: string) => void;
 }
@@ -233,16 +239,19 @@ export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
   );
   let downloadBytes = 0;
   const t0 = performance.now();
-  await wllama.loadModelFromHF(model, {
+  const params = {
     n_ctx: nCtx,
     n_parallel: 1,
     n_gpu_layers: opts.backend === "webgpu" ? 99999 : 0,
     jinja: opts.jinja,
-    progressCallback: ({ loaded, total }) => {
+    progressCallback: ({ loaded, total }: { loaded: number; total: number }) => {
       downloadBytes = total;
       opts.onProgress?.(loaded, total);
     },
-  });
+  };
+  if (opts.modelUrl)
+    await wllama.loadModelFromUrl(opts.modelUrl, { ...params, useCache: false });
+  else await wllama.loadModelFromHF(model, params);
   const loadMs = performance.now() - t0;
   const info: LlmInfo = {
     libllamaVersion: Wllama.getLibllamaVersion(),
@@ -255,7 +264,7 @@ export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
     downloadBytes,
     nCtx,
     jinja: opts.jinja ?? false,
-    model,
+    model: opts.modelUrl ? { repo: "url", file: opts.modelUrl } : model,
     hasChatTemplate: wllama.getChatTemplate() !== null,
   };
 

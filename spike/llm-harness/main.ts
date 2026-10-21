@@ -28,6 +28,7 @@ import {
   r6Pipeline,
   r6Retrieval,
 } from "./r6.js";
+import { r8Qa, r8Run } from "./r8.js";
 import { v1EmbedParity, v1Pipeline } from "./v1.js";
 
 type Json = Record<string, unknown>;
@@ -149,7 +150,11 @@ function dirEntries(
   ).entries();
 }
 
-async function load(backendRaw: unknown, jinjaRaw: unknown): Promise<Json> {
+async function load(
+  backendRaw: unknown,
+  jinjaRaw: unknown,
+  modelUrlRaw?: unknown,
+): Promise<Json> {
   const backend = backendArg(backendRaw);
   await clients[backend]?.exit();
   delete clients[backend];
@@ -158,6 +163,8 @@ async function load(backendRaw: unknown, jinjaRaw: unknown): Promise<Json> {
     const c = await loadLlm({
       backend,
       jinja: jinjaRaw === true,
+      // Round 8: a locally served GGUF, e.g. "/lora/<file>.gguf".
+      modelUrl: typeof modelUrlRaw === "string" ? modelUrlRaw : undefined,
       onProgress: setProgress,
       onLog: (level, line) => {
         if (level !== "debug") nativeLog.push(`[${level}] ${line}`);
@@ -624,6 +631,10 @@ const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
   v1Pipeline: (b, o) =>
     v1Pipeline(client(backendArg(b)), o as Parameters<typeof v1Pipeline>[1]),
   v1EmbedParity: () => v1EmbedParity(),
+  // Round 8: first LoRA, configs C0–C3 + oracle-op args, and the Q&A check.
+  r8Run: (b, o) =>
+    r8Run(client(backendArg(b)), o as Parameters<typeof r8Run>[1]),
+  r8Qa: (b) => r8Qa(client(backendArg(b))),
 };
 
 /* ------------------------------------------------------------------ */

@@ -41,13 +41,17 @@ const TYPES = {
   ".mjs": "text/javascript",
 };
 
-/** Dev-only static mounts: `/models/` (gte-small) and `/ort/` (ort wasm). */
+/**
+ * Dev-only static mounts: `/models/` (gte-small), `/ort/` (ort wasm) and
+ * `/lora/` (round 8: locally exported fine-tune GGUFs, gitignored).
+ */
 const staticMounts = {
   name: "spike-static-mounts",
   configureServer(server) {
     for (const [prefix, dir] of [
       ["/models/", `${repo}models/`],
       ["/ort/", `${ORT_DIST}/`],
+      ["/lora/", `${repo}training/artifacts/round8/gguf/`],
     ]) {
       server.middlewares.use(prefix, (req, res, next) => {
         const rel = normalize(
@@ -56,8 +60,10 @@ const staticMounts = {
         const file = join(dir, rel);
         if (!file.startsWith(dir) || !existsSync(file)) return next();
         const ext = file.slice(file.lastIndexOf("."));
+        const body = readFileSync(file);
         res.setHeader("Content-Type", TYPES[ext] ?? "application/octet-stream");
-        res.end(readFileSync(file));
+        res.setHeader("Content-Length", String(body.length));
+        res.end(body);
       });
     }
   },

@@ -106,6 +106,10 @@ export interface WllamaInstance {
     hf: { repo: string; file?: string },
     params?: WllamaLoadParams,
   ): Promise<void>;
+  loadModelFromUrl(
+    url: string,
+    params?: WllamaLoadParams & { useCache?: boolean },
+  ): Promise<void>;
   createChatCompletion(
     params: WllamaChatParams,
   ): Promise<AsyncIterable<WllamaChunk>>;

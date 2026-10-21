@@ -149,7 +149,16 @@ async function embRetriever(): Promise<EmbeddingRetriever> {
 /* Items                                                                */
 /* ------------------------------------------------------------------ */
 
-export type R6Set = "dev" | "devx" | "devna" | "h2" | "h2na" | "h2multi";
+export type R6Set =
+  | "dev"
+  | "devx"
+  | "devna"
+  | "h2"
+  | "h2na"
+  | "h2multi"
+  /** Round 8: held-out-1 (round 5's set), labeled refs like held-out-2. */
+  | "h1"
+  | "h1na";
 
 export interface R6Item extends EvalItem {
   set: R6Set;
@@ -213,15 +222,23 @@ function fromRaw(set: R6Set, it: RawItem): R6Item {
   };
 }
 
-let h2File: RawFile | null = null;
+const heldoutFiles = new Map<string, Promise<RawFile>>();
 
-async function h2(): Promise<RawFile> {
-  if (!h2File) {
-    const res = await fetch("./eval/heldout2-eval.json");
-    if (!res.ok) throw new Error(`heldout2: ${res.status}`);
-    h2File = (await res.json()) as RawFile;
+/** A held-out file, fetched at run time (never bundled). */
+function heldoutFile(name: string): Promise<RawFile> {
+  let f = heldoutFiles.get(name);
+  if (!f) {
+    f = fetch(`./eval/${name}`).then(async (res) => {
+      if (!res.ok) throw new Error(`${name}: ${res.status}`);
+      return (await res.json()) as RawFile;
+    });
+    heldoutFiles.set(name, f);
   }
-  return h2File;
+  return f;
+}
+
+function h2(): Promise<RawFile> {
+  return heldoutFile("heldout2-eval.json");
 }
 
 export async function loadR6(set: R6Set): Promise<R6Item[]> {
@@ -232,6 +249,10 @@ export async function loadR6(set: R6Set): Promise<R6Item[]> {
     const f = devExtra as unknown as RawFile;
     const arr = set === "devx" ? f.items : f.noAction;
     return arr.map((i) => fromRaw(set, { style: "dev", ...i }));
+  }
+  if (set === "h1" || set === "h1na") {
+    const f1 = await heldoutFile("heldout-eval.json");
+    return (set === "h1" ? f1.items : f1.noAction).map((i) => fromRaw(set, i));
   }
   const f = await h2();
   const arr =
@@ -250,7 +271,7 @@ async function loadSets(sets: R6Set[]): Promise<R6Item[]> {
 }
 
 /** Counts and accuracy split by style and by style × difficulty. */
-function splits(
+export function splits(
   rows: Json[],
   ok: (r: Json) => boolean | null,
 ): Record<string, string> {
@@ -871,13 +892,13 @@ async function argsFor(
   };
 }
 
-function scoreArgRow(it: R6Item, entry: CatalogEntry, got: Json): Json {
+export function scoreArgRow(it: R6Item, entry: CatalogEntry, got: Json): Json {
   const args = isRecord(got.args) ? got.args : null;
   const score = scoreArgs(it, args, Object.keys(it.refCandidates ?? {}));
   return { ...score, zodOk: args ? zodOk(entry, args) : null };
 }
 
-function summarizeArgs(rows: Json[]): Json {
+export function summarizeArgs(rows: Json[]): Json {
   const cnt = (k: string) => rows.filter((r) => r[k] === true).length;
   const scored = (k: string) =>
     rows.filter((r) => r[k] !== null && r[k] !== undefined).length;
