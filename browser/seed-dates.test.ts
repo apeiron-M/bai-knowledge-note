@@ -16,7 +16,13 @@ function timestamps(value: unknown, out: string[] = []): string[] {
   return out;
 }
 const at = (iso: string) => new Date(iso).getTime();
-type G = Record<string, any>;
+/** The dated fields this test reads from the seed's states. */
+type G = {
+  extractionStats: { extractedAt: string };
+  tasks: { handoffs: { completedAt: string }[] }[];
+  provenance: { createdAt: string };
+  content?: string;
+};
 
 describe("redateSeed", () => {
   const before = guide();
@@ -34,9 +40,10 @@ describe("redateSeed", () => {
     const source = (s: VaultSeed) => s.documents.find((d) => d.documentType === "bai/source")!;
     const queue = (s: VaultSeed) => s.documents.find((d) => d.documentType === "bai/pipeline-queue")!;
     const note = (s: VaultSeed) => s.documents.find((d) => d.documentType === "bai/knowledge-note")!;
-    pairs.push([(source(before).state.global as G).extractionStats.extractedAt, (source(after).state.global as G).extractionStats.extractedAt]);
-    pairs.push([(queue(before).state.global as G).tasks[0].handoffs[3].completedAt, (queue(after).state.global as G).tasks[0].handoffs[3].completedAt]);
-    pairs.push([(note(before).state.global as G).provenance.createdAt, (note(after).state.global as G).provenance.createdAt]);
+    const g = (d: { state: { global: unknown } }) => d.state.global as G;
+    pairs.push([g(source(before)).extractionStats.extractedAt, g(source(after)).extractionStats.extractedAt]);
+    pairs.push([g(queue(before)).tasks[0].handoffs[3].completedAt, g(queue(after)).tasks[0].handoffs[3].completedAt]);
+    pairs.push([g(note(before)).provenance.createdAt, g(note(after)).provenance.createdAt]);
     pairs.push([note(before).created.createdAtUtcIso, note(after).created.createdAtUtcIso]);
     for (const [was, is] of pairs) expect(at(is as string) - at(was as string)).toBe(shift);
   });

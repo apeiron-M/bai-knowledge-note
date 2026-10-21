@@ -29,6 +29,22 @@ describe("pipelineAi", () => {
     expect(await pipelineAi()).toBeNull();
   });
 
+  it("is null when the chosen AI cannot be used: Connect's with no settings, or a local one with no model", async () => {
+    page();
+    writeSavedProviders({ active: "connect", openrouter: null, custom: null, connect: true });
+    expect(await pipelineAi()).toBeNull();
+    local(null);
+    expect(await pipelineAi()).toBeNull();
+  });
+
+  it("counts a call made with a Request as a model call too", async () => {
+    page();
+    local();
+    const ai = (await pipelineAi())!;
+    await ai.fetchImpl(new Request("http://localhost:11434/v1/chat/completions", { method: "POST" }));
+    expect(ai.calls()).toBe(1);
+  });
+
   it("uses the OpenRouter key and the model the chat uses", async () => {
     page();
     openRouter();

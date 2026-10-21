@@ -131,6 +131,7 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
   const listeners = new Set<() => void>();
   const stopping = new AbortController();
   let state: HostPipelineState = { kind: "ready" };
+  /** The queue is a singleton: found once. */
   let queueId: string | null = null;
   let running: Promise<void> | null = null;
   /** Counts the calls to look for work, so one that came during a pass gets a pass of its own. */
@@ -142,8 +143,7 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
 
   const stopped = () => stopping.signal.aborted;
   const setState = (next: HostPipelineState) => {
-    const same = next.kind === state.kind && (next.kind !== "working" || (state.kind === "working" && state.taskId === next.taskId));
-    if (same) return;
+    if (JSON.stringify(next) === JSON.stringify(state)) return;
     state = next;
     for (const listener of listeners) listener();
   };
@@ -157,32 +157,33 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     }
   }
 
-  async function readTasks(): Promise<RunnerTask[]> {
+  /** The queue and its tasks; null in a vault without one. */
+  async function readQueue(): Promise<{ id: string; tasks: RunnerTask[] } | null> {
     queueId ??= await findQueue(client, drive);
-    if (!queueId) return [];
-    const doc = await client.request<{ state?: { global?: { tasks?: RunnerTask[] } } }>({ path: `notes/${encodeURIComponent(queueId)}`, query: { drive } });
-    return doc.state?.global?.tasks ?? [];
+    if (!queueId) return null;
+    const doc = await client.request<{ state: { global: { tasks: RunnerTask[] } } }>({ path: `notes/${encodeURIComponent(queueId)}`, query: { drive } });
+    return { id: queueId, tasks: doc.state.global.tasks };
   }
 
   async function titleForMap(sourceId: string): Promise<string> {
     const [tree, source] = await Promise.all([
-      client.request<{ state?: { global?: { nodes?: TreeNode[] } } }>({ path: `notes/${encodeURIComponent(drive)}`, query: { drive } }),
-      client.request<{ name?: string; state?: { global?: { title?: string | null } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } }),
+      client.request<{ state: { global: { nodes: TreeNode[] } } }>({ path: `notes/${encodeURIComponent(drive)}`, query: { drive } }),
+      client.request<{ name: string; state: { global: { title?: string | null } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } }),
     ]);
-    return mapTitleFor(tree.state?.global?.nodes ?? [], sourceId, source.state?.global?.title || source.name || "Your sources");
+    // A source that was never given its text has no title yet: its name is what the visitor typed.
+    return mapTitleFor(tree.state.global.nodes, sourceId, source.state.global.title || source.name);
   }
 
-  async function fail(task: RunnerTask, error: unknown): Promise<void> {
+  async function fail(queue: string, task: RunnerTask, error: unknown): Promise<void> {
     const reason = failureReason(error);
     console.warn(`[BrowserVault] pipeline: task ${task.id} failed (${reason}).`, error);
     remember(task.id, reason);
     if (AI_FAILURES.has(reason)) pause();
-    if (!queueId) return;
     try {
       await client.request({
         method: "POST",
         path: "actions",
-        json: { documentId: queueId, actions: [{ type: "FAIL_TASK", input: { taskId: task.id, reason, updatedAt: new Date().toISOString() } }] },
+        json: { documentId: queue, actions: [{ type: "FAIL_TASK", input: { taskId: task.id, reason, updatedAt: new Date().toISOString() } }] },
       });
     } catch (failed) {
       console.warn(`[BrowserVault] pipeline: task ${task.id} could not be marked failed.`, failed);
@@ -224,7 +225,7 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
   }
 
   /** One task, from its current phase to its end (or a stop, or an AI that went away). Returns whether it ended. */
-  async function work(task: RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai: PipelineAi): Promise<boolean> {
+  async function work(queue: string, task: RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai: PipelineAi): Promise<boolean> {
     const sourceId = task.documentRef;
     const mapTitle = await titleForMap(sourceId);
     setState({ kind: "working", taskId: task.id });
@@ -244,7 +245,7 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
         const next: PipelinePhase | null = NEXT_PHASE[phase];
         if (result.to !== (next ?? "done")) {
           // Refused by the queue: failed rather than run again on the next look.
-          await fail(task, new Error(result.summary));
+          await fail(queue, task, new Error(result.summary));
           return true;
         }
         phase = next;
@@ -254,7 +255,7 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
           unreachable(error);
           return false;
         }
-        await fail(task, error);
+        await fail(queue, task, error);
         return true;
       } finally {
         await writes.release();
@@ -265,9 +266,13 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
 
   /** Looks for work and does one task. Returns whether a task ran, so the next waiting one starts at once. */
   async function pass(): Promise<boolean> {
-    const task = nextTask(await readTasks());
-    if (!task || stopped()) {
-      if (!task) setState({ kind: "ready" });
+    const queue = await readQueue();
+    // A task failed here is never taken again, even when the vault could not record the failure:
+    // held by this browser, it would otherwise fail again on every look. "Process again" adds a new one.
+    const task = queue && nextTask(queue.tasks.filter((t) => !failures.has(t.id)));
+    if (stopped()) return false;
+    if (!task) {
+      setState({ kind: "ready" });
       return false;
     }
     const ai = await askAi(stopping.signal);
@@ -284,11 +289,11 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
         unreachable(error);
         return false;
       }
-      await fail(task, error);
+      await fail(queue.id, task, error);
       await afterTask();
       return true;
     }
-    const ended = await work(task as RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai);
+    const ended = await work(queue.id, task as RunnerTask & { documentRef: string; currentPhase: PipelinePhase }, ai);
     if (!ended) return false;
     await afterTask();
     setState({ kind: "ready" });

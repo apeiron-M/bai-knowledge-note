@@ -1,5 +1,6 @@
 import "../../editors/shared/test/browser-globals.js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { writeSavedProviders } from "../../editors/knowledge-vault/lib/chat/provider.js";
 import type { PipelinePhase } from "../../pieces/knowledge-vault/lib/agent/pipeline.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../../pieces/knowledge-vault/lib/common/client.js";
 import { KnowledgeVaultApiError } from "../../pieces/knowledge-vault/lib/common/errors.js";
@@ -17,13 +18,24 @@ type Task = RunnerTask & { handoffs: { phase: string; workDone: string; complete
 const task = (id: string, extra: Partial<Task> = {}): Task => ({ id, taskType: "claim", status: "PENDING", documentRef: `src-${id}`, currentPhase: "create", assignedTo: null, handoffs: [], ...extra });
 const NEXT: Record<string, string | null> = { create: "reflect", reflect: "reweave", reweave: "verify", verify: null };
 
+type VaultHooks = {
+  /** No pipeline queue in the drive. */
+  noQueue?: boolean;
+  /** Awaited before the queue is read: a stop can land there. */
+  beforeQueueRead?: () => Promise<void>;
+  /** Called as each handoff is written. */
+  onAdvance?: (phase: string) => void;
+  /** Sources with no title yet. */
+  untitled?: string[];
+};
+
 /** The vault's queue, as the runner reads and writes it through the REST routes. */
-function queueVault(tasks: Task[], log: string[] = []) {
+function queueVault(tasks: Task[], log: string[] = [], hooks: VaultHooks = {}) {
   const requests: RequestOptions[] = [];
   const failures: { taskId: string; reason: string }[] = [];
   const state = { down: false, refuseAdvance: false };
   const nodes = () => [
-    { id: "q1", kind: "file", name: "queue", documentType: "bai/pipeline-queue", parentFolder: "ops" },
+    ...(hooks.noQueue ? [] : [{ id: "q1", kind: "file", name: "queue", documentType: "bai/pipeline-queue", parentFolder: "ops" }]),
     { id: "ops", kind: "folder", name: "ops", parentFolder: null },
     { id: "sources", kind: "folder", name: "sources", parentFolder: null },
     { id: "pdf", kind: "folder", name: "report.pdf", parentFolder: "sources" },
@@ -38,7 +50,7 @@ function queueVault(tasks: Task[], log: string[] = []) {
     if (method === "GET" && o.path === "notes/q1") return { state: { global: { tasks: structuredClone(tasks) } } };
     if (method === "GET" && o.path.startsWith("notes/")) {
       const id = decodeURIComponent(o.path.slice("notes/".length));
-      return { name: id, state: { global: { title: `Title of ${id}` } } };
+      return { name: id, state: { global: hooks.untitled?.includes(id) ? {} : { title: `Title of ${id}` } } };
     }
     const claim = /^tasks\/(.+)\/claim$/.exec(o.path);
     if (method === "POST" && claim) {
@@ -58,6 +70,7 @@ function queueVault(tasks: Task[], log: string[] = []) {
             const h = a.input.handoff as { phase: string; workDone: string; completedBy?: string };
             if (state.refuseAdvance || h.phase !== t.currentPhase) return { type: a.type, error: "Phase mismatch" };
             log.push("advance");
+            hooks.onAdvance?.(h.phase);
             t.handoffs.push({ phase: h.phase, workDone: h.workDone, completedBy: h.completedBy ?? null });
             const next = NEXT[h.phase];
             Object.assign(t, next ? { currentPhase: next, status: "PENDING" } : { currentPhase: null, status: "DONE" }, { assignedTo: null });
@@ -73,16 +86,13 @@ function queueVault(tasks: Task[], log: string[] = []) {
     throw new Error(`no route ${method} ${o.path}`);
   };
   const client = {
-    request: (o: RequestOptions) => {
+    request: async (o: RequestOptions) => {
       requests.push(o);
-      try {
-        return Promise.resolve(respond(o));
-      } catch (error) {
-        return Promise.reject(error instanceof Error ? error : new Error(String(error)));
-      }
+      if (o.path === "notes/q1" && hooks.beforeQueueRead) await hooks.beforeQueueRead();
+      return respond(o);
     },
   } as unknown as KnowledgeVaultClient;
-  return { client, tasks, failures, state, writes: () => requests.filter((r) => (r.method ?? "GET") !== "GET"), claims: () => requests.filter((r) => r.path.endsWith("/claim")) };
+  return { client, tasks, failures, state, requests, writes: () => requests.filter((r) => (r.method ?? "GET") !== "GET"), claims: () => requests.filter((r) => r.path.endsWith("/claim")) };
 }
 
 function aiNamed(model = "model-a", reach: () => Promise<void> = () => Promise.resolve()): PipelineAi {
@@ -94,6 +104,14 @@ type Script = (phase: PipelinePhase, ctx: PhaseContext) => Promise<PhaseOutcome>
 const ok = (phase: PipelinePhase, ctx: PhaseContext): PhaseOutcome => {
   ctx.beforeWrites?.();
   return { workDone: `${phase} done.`, filesModified: [] };
+};
+
+/** Every runner a test starts, stopped after it: one test's runner never acts in the next. */
+const started: { stop(): Promise<void> }[] = [];
+const startRunner = (deps: RunnerDeps) => {
+  const runner = startPipelineRunner(deps);
+  started.push(runner);
+  return runner;
 };
 
 function start(v: ReturnType<typeof queueVault>, opts: { script?: Script; ai?: RunnerDeps["ai"]; log?: string[]; storage?: Map<string, string> } = {}) {
@@ -141,14 +159,15 @@ function start(v: ReturnType<typeof queueVault>, opts: { script?: Script; ai?: R
     },
     storage: { getItem: (k) => storage.get(k) ?? null, setItem: (k, value) => void storage.set(k, value) },
   };
-  const runner = startPipelineRunner(deps);
+  const runner = startRunner(deps);
   return { runner, deps, log, ran, afterTask, storage, change: () => listener?.(), signal: () => signal };
 }
 
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "setInterval", "clearInterval"] });
 });
-afterEach(() => {
+afterEach(async () => {
+  await Promise.all(started.splice(0).map((r) => r.stop()));
   vi.useRealTimers();
 });
 
@@ -396,10 +415,169 @@ describe("the browser pipeline runner", () => {
   });
 
   it("names the map after the file a source's sections came from, else after the source", async () => {
-    const v = queueVault([task("pdf-1"), task("t1")]);
+    const v = queueVault([task("pdf-1"), task("t1"), task("bare")], [], { untitled: ["src-bare"] });
     const r = start(v);
     await settle();
-    expect([...new Set(r.ran.map((x) => `${x.sourceId} → ${x.mapTitle}`))]).toEqual(["src-pdf-1 → report.pdf", "src-t1 → Title of src-t1"]);
+    expect([...new Set(r.ran.map((x) => `${x.sourceId} → ${x.mapTitle}`))]).toEqual(["src-pdf-1 → report.pdf", "src-t1 → Title of src-t1", "src-bare → src-bare"]);
+  });
+
+  it("waits quietly in a vault with no queue", async () => {
+    const v = queueVault([task("t1")], [], { noQueue: true });
+    const r = start(v);
+    await settle();
+    await vi.advanceTimersByTimeAsync(PICKUP_MS);
+    await settle();
+    expect(r.runner.state()).toEqual({ kind: "ready" });
+    expect(v.writes()).toEqual([]);
+  });
+
+  it("uses the chat's AI and keeps failure reasons in localStorage when given neither", async () => {
+    localStorage.clear();
+    const v = queueVault([task("t1"), task("t2")]);
+    const deps = start(queueVault([])).deps;
+    const runner = startRunner({ client: v.client, driveId: "d1", flushes: deps.flushes, ready: Promise.resolve(), onChange: () => () => undefined, afterTask: () => Promise.resolve() });
+    await settle();
+    expect(runner.state()).toEqual({ kind: "no-ai" });
+    writeSavedProviders({ active: "custom", openrouter: null, custom: { baseUrl: "http://localhost:11434/v1", apiKey: "k", model: "llama3", extraBody: null }, connect: false });
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response("{}", { status: 401 }))));
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    await vi.advanceTimersByTimeAsync(PICKUP_MS);
+    await settle();
+    expect(v.failures).toEqual([{ taskId: "t1", reason: "Your AI refused the key" }]);
+    expect(localStorage.getItem("knowledge-vault-web:pipeline-failures")).toBe(JSON.stringify([["t1", "Your AI refused the key"]]));
+    await runner.stop();
+    vi.unstubAllGlobals();
+    warn.mockRestore();
+    localStorage.clear();
+  });
+
+  it("keeps failure reasons in memory when the page has no storage, and reads past a stored list it cannot use", async () => {
+    const saved = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+    Reflect.deleteProperty(globalThis, "localStorage");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    try {
+      const v = queueVault([task("t1")]);
+      const deps = start(queueVault([])).deps;
+      const runner = startRunner({ ...deps, client: v.client, storage: undefined, ai: () => Promise.resolve(aiNamed("m", () => Promise.reject(new AiRefusedError()))) });
+      await settle();
+      expect(runner.failureReason("t1")).toBe("Your AI refused the key");
+      await runner.stop();
+    } finally {
+      if (saved) Object.defineProperty(globalThis, "localStorage", saved);
+      warn.mockRestore();
+    }
+    for (const stored of ["{}", "not json", JSON.stringify([["t1", 2], "x", ["t2", "Kept"]])]) {
+      const storage = new Map([["knowledge-vault-web:pipeline-failures", stored]]);
+      const r = start(queueVault([]), { storage });
+      expect([r.runner.failureReason("t1"), r.runner.failureReason("t2")]).toEqual([null, stored.includes("Kept") ? "Kept" : null]);
+      await r.runner.stop();
+    }
+  });
+
+  it("carries on when the vault cannot record a failure, the health report fails, or storage refuses access", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const v = queueVault([task("t1"), task("t2")]);
+    const r = start(v, {
+      script: (phase, ctx) => {
+        if (ctx.sourceId === "src-t1") {
+          v.state.down = true;
+          throw new KnowledgeVaultApiError('The source "x" has no text to extract from', { category: "validation" });
+        }
+        return ok(phase, ctx);
+      },
+    });
+    r.afterTask.mockImplementationOnce(() => {
+      v.state.down = false;
+      return Promise.reject(new Error("the report could not be written"));
+    });
+    await settle();
+    expect(r.runner.failureReason("t1")).toBe("This source has no text");
+    expect(v.tasks[1].status).toBe("DONE");
+    expect(warn.mock.calls.map((c) => String(c[0]))).toEqual(
+      expect.arrayContaining([expect.stringMatching(/could not be marked failed/), expect.stringMatching(/health report was not written/)]),
+    );
+
+    const saved = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+    Object.defineProperty(globalThis, "localStorage", { configurable: true, get: () => { throw new DOMException("denied", "SecurityError"); } });
+    try {
+      const sealed = startRunner({ ...start(queueVault([])).deps, storage: undefined });
+      expect(sealed.failureReason("t1")).toBeNull();
+      await sealed.stop();
+    } finally {
+      if (saved) Object.defineProperty(globalThis, "localStorage", saved);
+      warn.mockRestore();
+    }
+  });
+
+  it("never starts in a vault that did not become ready", async () => {
+    const v = queueVault([task("t1")]);
+    startRunner({ ...start(queueVault([])).deps, client: v.client, ready: Promise.reject(new Error("the guide could not be written")) });
+    await settle();
+    await vi.advanceTimersByTimeAsync(PICKUP_MS);
+    expect(v.requests).toEqual([]);
+  });
+
+  it("writes nothing after a stop, wherever it lands: reading the queue, asking for the AI or checking it, between phases, after the last", async () => {
+    const deferred = () => {
+      let resolve!: () => void;
+      let reject!: (error: Error) => void;
+      const promise = new Promise<void>((res, rej) => {
+        resolve = res;
+        reject = rej;
+      });
+      return { promise, resolve, reject };
+    };
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    // Reading the queue, which then answers, or fails.
+    for (const outcome of ["answers", "fails"] as const) {
+      const read = deferred();
+      const v = queueVault([task("t1")], [], { beforeQueueRead: () => read.promise });
+      const r = start(v);
+      await settle();
+      const stopping = r.runner.stop();
+      if (outcome === "answers") read.resolve();
+      else read.reject(new Error("the store closed"));
+      await stopping;
+      expect(v.writes()).toEqual([]);
+    }
+    expect(warn).not.toHaveBeenCalled();
+
+    // Asking for the AI, and checking it is there.
+    for (const where of ["ai", "reach"] as const) {
+      const asked = deferred();
+      const v = queueVault([task("t1")]);
+      const r = start(v, {
+        ai: async () => {
+          if (where === "ai") await asked.promise;
+          return aiNamed("m", where === "reach" ? () => asked.promise.then(() => Promise.reject(new AiUnreachableError())) : undefined);
+        },
+      });
+      await settle();
+      const stopping = r.runner.stop();
+      asked.resolve();
+      await stopping;
+      expect(v.writes()).toEqual([]);
+      expect(r.runner.state()).toEqual({ kind: "ready" });
+    }
+
+    // Between two phases, and after the last one.
+    for (const [at, ran] of [["create", ["create"]], ["verify", ["create", "reflect", "reweave", "verify"]]] as const) {
+      const stopped: { promise?: Promise<void> } = {};
+      const hooks: VaultHooks = {
+        onAdvance: (phase) => {
+          if (phase === at) stopped.promise = r.runner.stop();
+        },
+      };
+      const v = queueVault([task("t1")], [], hooks);
+      const r = start(v);
+      await settle();
+      await stopped.promise;
+      expect(r.ran.map((x) => x.phase)).toEqual(ran);
+      expect(v.claims()).toHaveLength(ran.length);
+      expect(r.afterTask).not.toHaveBeenCalled();
+    }
+    warn.mockRestore();
   });
 
   it("starts work at once when the vault changes, without waiting for the next look", async () => {
@@ -429,7 +607,7 @@ describe("the browser pipeline runner", () => {
     const v = queueVault([task("t1")]);
     let open!: () => void;
     const ready = new Promise<void>((resolve) => (open = resolve));
-    const early = startPipelineRunner({ ...start(queueVault([])).deps, client: v.client, ready });
+    const early = startRunner({ ...start(queueVault([])).deps, client: v.client, ready });
     await settle();
     expect(v.writes()).toEqual([]);
     await early.stop();

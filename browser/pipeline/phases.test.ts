@@ -19,6 +19,10 @@ function fakeVault() {
   const rels: Rel[] = [];
   const requests: RequestOptions[] = [];
   const refuse = new Set<string>();
+  /** Action types the vault refuses (an operation error), e.g. a source update. */
+  const refuseActions = new Set<string>();
+  /** What a search finds: the vault's other notes a claim may already be. */
+  const hits: { node: Record<string, unknown>; similarity: number }[] = [];
   let made = 0;
   const edgesOf = (id: string) => [
     ...rels.filter((r) => r.source === id).map((r) => ({ direction: "out", documentId: r.target, linkType: r.type, reason: r.reason })),
@@ -56,7 +60,7 @@ function fakeVault() {
     const method = o.method ?? "GET";
     const body = (o.json ?? {}) as Record<string, unknown>;
     if (method === "GET" && (o.path === "topics" || o.path.startsWith("topics/"))) return [];
-    if (method === "GET" && o.path === "search") return { hits: [] };
+    if (method === "GET" && o.path === "search") return { hits };
     if (method === "GET" && o.path === "graph.json") return graph();
     if (method === "GET" && /^notes\/[^/]+\/similar$/.test(o.path)) return [];
     if (method === "GET" && o.path.startsWith("notes/")) return view(decodeURIComponent(o.path.slice("notes/".length)));
@@ -80,8 +84,9 @@ function fakeVault() {
     if (method === "POST" && o.path === "actions") {
       const doc = docs.get(String(body.documentId));
       const actions = body.actions as Action[];
-      for (const a of actions) if (doc) apply(doc, a);
-      return { operations: actions.map((a) => ({ type: a.type, error: doc ? null : "no such document" })) };
+      const error = (a: Action) => (!doc ? "no such document" : refuseActions.has(a.type) ? `${a.type} refused` : null);
+      for (const a of actions) if (doc && !error(a)) apply(doc, a);
+      return { operations: actions.map((a) => ({ type: a.type, error: error(a) })) };
     }
     if (method === "POST" && o.path === "hub") {
       const hub = [...docs].find(([, d]) => d.documentType === "bai/moc" && d.global.tier === "HUB");
@@ -106,6 +111,8 @@ function fakeVault() {
     requests,
     rels,
     refuse,
+    refuseActions,
+    hits,
     docs,
     writes: () => requests.filter((r) => (r.method ?? "GET") !== "GET"),
     source(id: string, global: Record<string, unknown>) {
@@ -140,7 +147,13 @@ const TEXT = [
 ].join("\n\n");
 const LINK_REASON = "The stale-data problem is exactly what dropping entries on write is there to prevent.";
 
-type Script = { candidates?: (user: string) => unknown };
+type Script = {
+  candidates?: (user: string) => unknown;
+  draft?: (ids: string[]) => unknown;
+  /** The links for the source's notes, by their ids in the prompt. */
+  connect?: (ids: string[]) => unknown;
+  place?: (notes: string[]) => unknown;
+};
 
 function fakeAi(script: Script = {}, opts: { local?: boolean } = {}) {
   const asked: Record<string, number> = {};
@@ -151,6 +164,7 @@ function fakeAi(script: Script = {}, opts: { local?: boolean } = {}) {
     }
     if (opens(system, DRAFT_SYSTEM)) {
       const ids = [...user.matchAll(/^- (c\d+): /gm)].map((m) => m[1]);
+      if (script.draft) return script.draft(ids);
       return {
         notes: ids.map((id, i) => ({
           candidate_id: id,
@@ -168,10 +182,12 @@ function fakeAi(script: Script = {}, opts: { local?: boolean } = {}) {
     if (opens(system, OVERLAP_SYSTEM)) return { same: [] };
     if (opens(system, CONNECT_SYSTEM)) {
       const ids = [...user.matchAll(/NEW (\S+): /g)].map((m) => m[1]);
+      if (script.connect) return script.connect(ids);
       return { links: ids.length > 1 ? [{ from: ids[1], to: ids[0], type: "BUILDS_ON", reason: LINK_REASON, confidence: "grounded" }] : [] };
     }
     if (opens(system, PLACE_SYSTEM)) {
       const notes = [...user.slice(user.indexOf("Notes to place:")).matchAll(/^- (\S+): /gm)].map((m) => m[1]);
+      if (script.place) return script.place(notes);
       const hub = /^- (\S+) \[HUB\]/m.exec(user)?.[1] ?? "new:hub";
       return {
         placements: notes.map((note) => ({ note, moc: "new:1" })),
@@ -277,7 +293,74 @@ describe("the browser pipeline's phases", () => {
     expect(await runPhase("reflect", ctx)).toEqual({ workDone: "No notes to connect.", filesModified: [] });
     expect(await runPhase("reweave", ctx)).toEqual({ workDone: "No notes to place.", filesModified: [] });
     expect(await runPhase("verify", ctx)).toEqual({ workDone: "No notes to check.", filesModified: [] });
+    // Run again ("Process again"): it was read, and nothing in it is read twice.
+    expect(await runPhase("create", ctx)).toEqual({ workDone: "Already read: nothing in it to extract.", filesModified: [] });
     expect(calls()).toBe(asked);
+  });
+
+  it("link a claim the vault already holds to the source, instead of writing it twice", async () => {
+    const v = setUp();
+    v.hits.push({ node: { documentId: "g1", title: "Notes cite the sources they came from", status: "IN_REVIEW" }, similarity: 0.92 });
+    const draft = (ids: string[]) => ({
+      notes: ids.slice(0, 2).map((id, i) => ({ candidate_id: id, title: CLAIMS[i], description: `Why ${id} holds`, note_type: "concept", content: "x".repeat(90), topics: ["caching"], confidence: "grounded", locus: "p" })),
+      existing: [{ candidate_id: ids[2], note_id: "g1", title: "Notes cite the sources they came from", reason: "The same claim, in other words." }],
+    });
+    const { ai } = fakeAi({ draft });
+    const created = await runPhase("create", ctxFor(v, ai));
+    expect(created.workDone).toBe("Extracted 2 notes, and linked 1 note already in the vault.");
+    expect(created.filesModified).toContain("g1");
+    expect(v.rels.some((r) => r.source === "g1" && r.target === "s1" && r.type === "DERIVED_FROM")).toBe(true);
+  });
+
+  it("say when the source itself was not updated", async () => {
+    const v = setUp();
+    v.refuseActions.add("SET_SOURCE_STATUS");
+    const { ai } = fakeAi();
+    const created = await runPhase("create", ctxFor(v, ai));
+    expect(created).toMatchObject({ workDone: "Extracted 3 notes.", incomplete: "the source was not updated" });
+  });
+
+  it("say so when the AI finds nothing to link", async () => {
+    const v = setUp();
+    const { ai } = fakeAi({ connect: () => ({ links: [] }) });
+    await runPhase("create", ctxFor(v, ai));
+    expect(await runPhase("reflect", ctxFor(v, ai))).toEqual({ workDone: "Found no links to make for 3 notes.", filesModified: v.notesFrom("s1") });
+  });
+
+  it("place notes in a map that fits without opening one, and say which placements did not land", async () => {
+    const v = setUp();
+    const { ai } = fakeAi({ place: (notes) => ({ placements: notes.map((note) => ({ note, moc: "m-guide" })), new_mocs: [] }) });
+    await runPhase("create", ctxFor(v, ai));
+    const placed = await runPhase("reweave", ctxFor(v, ai));
+    expect(placed).toEqual({ workDone: "Placed 3 of 3 notes in maps.", filesModified: v.notesFrom("s1") });
+    expect(v.docs.size).toBe(7);
+
+    const refused = setUp();
+    refused.refuse.add("CORE_IDEA");
+    await runPhase("create", ctxFor(refused, ai));
+    expect((await runPhase("reweave", ctxFor(refused, ai))).incomplete).toBe("3 placements did not land");
+  });
+
+  it("check each note, saying which need a look, or that all pass", async () => {
+    // A cycle gives each note two links, one of them incoming: everything the check asks.
+    const cycle = (ids: string[]) => ({ links: ids.map((id, i) => ({ from: id, to: ids[(i + 1) % ids.length], type: "RELATES_TO", reason: LINK_REASON, confidence: "grounded" })) });
+    const v = setUp();
+    const { ai } = fakeAi({ connect: cycle });
+    for (const phase of ["create", "reflect", "reweave"] as const) await runPhase(phase, ctxFor(v, ai));
+    expect((await runPhase("verify", ctxFor(v, ai))).workDone).toBe("Checked 3 notes: all pass.");
+
+    // The first note links out twice, and nothing links to it: an orphan.
+    const oneOff = (ids: string[]) => ({
+      links: [
+        { from: ids[0], to: ids[1], type: "RELATES_TO", reason: LINK_REASON, confidence: "grounded" },
+        { from: ids[0], to: ids[2], type: "BUILDS_ON", reason: LINK_REASON, confidence: "grounded" },
+        { from: ids[2], to: ids[1], type: "RELATES_TO", reason: LINK_REASON, confidence: "grounded" },
+      ],
+    });
+    const w = setUp();
+    const second = fakeAi({ connect: oneOff });
+    for (const phase of ["create", "reflect", "reweave"] as const) await runPhase(phase, ctxFor(w, second.ai));
+    expect((await runPhase("verify", ctxFor(w, second.ai))).workDone).toBe("Checked 3 notes: 1 needs a look — no other note links to it (orphan).");
   });
 
   it("read only the first window of a long source, and say so", async () => {

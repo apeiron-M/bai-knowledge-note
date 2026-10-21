@@ -119,7 +119,7 @@ async function verify(ctx: PhaseContext): Promise<PhaseOutcome> {
   const { notes } = await readVerifyNotes(ctx.client, ctx.drive, ctx.sourceId);
   if (notes.length === 0) return { workDone: "No notes to check.", filesModified: [] };
   const flagged = notes.map((n) => checkNote(n, ctx.sourceId)).filter((issues) => issues.length > 0);
-  const verdict = flagged.length ? `: ${flagged.length} need${flagged.length === 1 ? "s" : ""} a look (${flagged[0][0]})` : ": all pass";
+  const verdict = flagged.length ? `: ${flagged.length} need${flagged.length === 1 ? "s" : ""} a look — ${flagged[0][0]}` : ": all pass";
   return { workDone: `Checked ${plural(notes.length, "note")}${verdict}.`, filesModified: notes.map((n) => n.id) };
 }
 

@@ -50,7 +50,7 @@ describe("writeHealthReport", () => {
   it("writes one report, then one check per check, to the drive's health report", async () => {
     const executed: { id: string; actions: { type: string; input: Record<string, unknown> }[] }[] = [];
     const client = {
-      get: async () => ({
+      get: () => Promise.resolve({
         header: { id: "drive" },
         state: { global: { nodes: [
           { id: "n1", kind: "file", documentType: "bai/knowledge-note" },
@@ -60,12 +60,12 @@ describe("writeHealthReport", () => {
           { id: "f", kind: "folder" },
         ] } },
       }),
-      execute: async (id: string, _branch: string, actions: { type: string; input: Record<string, unknown> }[]) => {
+      execute: (id: string, _branch: string, actions: { type: string; input: Record<string, unknown> }[]) => {
         executed.push({ id, actions });
-        return {};
+        return Promise.resolve({});
       },
     };
-    const knowledgeGraph = { execute: async () => ({ data: { knowledgeGraphNodes: nodes.slice(0, 2), knowledgeGraphEdges: edges.slice(0, 3) } }) };
+    const knowledgeGraph = { execute: () => Promise.resolve({ data: { knowledgeGraphNodes: nodes.slice(0, 2), knowledgeGraphEdges: edges.slice(0, 3) } }) };
     const result = await writeHealthReport({ client: client as never, knowledgeGraph, driveId: "drive", now: () => new Date("2030-01-02T03:04:05.000Z") });
     if (!result) throw new Error("no report was written");
 
@@ -82,8 +82,8 @@ describe("writeHealthReport", () => {
 
   it("writes nothing when the drive has no health report", async () => {
     const executed: unknown[] = [];
-    const client = { get: async () => ({ state: { global: { nodes: [] } } }), execute: async (...a: unknown[]) => executed.push(a) };
-    const knowledgeGraph = { execute: async () => ({ data: { knowledgeGraphNodes: [], knowledgeGraphEdges: [] } }) };
+    const client = { get: () => Promise.resolve({ state: { global: { nodes: [] } } }), execute: (...a: unknown[]) => Promise.resolve(executed.push(a)) };
+    const knowledgeGraph = { execute: () => Promise.resolve({ data: { knowledgeGraphNodes: [], knowledgeGraphEdges: [] } }) };
     expect(await writeHealthReport({ client: client as never, knowledgeGraph, driveId: "drive" })).toBeNull();
     expect(executed).toEqual([]);
   });

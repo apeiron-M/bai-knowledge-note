@@ -24,6 +24,8 @@ import { documentModels } from "../document-models/document-models.js";
 import { upgradeManifests } from "../document-models/upgrade-manifests.js";
 import { editors } from "../editors/editors.js";
 import { setHostConfig, type KnowledgeVaultHostDocuments } from "../editors/shared/host-config.js";
+import { debounced, onVaultRemoteChange } from "../editors/shared/vault-live.js";
+import { KnowledgeVaultClient } from "../pieces/knowledge-vault/lib/common/client.js";
 import manifest from "../powerhouse.manifest.json" with { type: "json" };
 import { createCoreGraphQLService } from "./core-graphql.js";
 import { createBrowserEngine, engineDatabases, legacyIndexDatabase, type BrowserEngine } from "./engine.js";
@@ -32,6 +34,7 @@ import { createKnowledgeGraphService } from "./knowledge-graph.js";
 import { startLiveFeed } from "./live-feed.js";
 import { installLocalOrigin, LOCAL_ORIGIN } from "./local-origin.js";
 import { createPageSubgraph } from "./page-subgraph.js";
+import { startPipelineRunner } from "./pipeline/runner.js";
 import { createRestService } from "./rest.js";
 import { redateSeed } from "./seed-dates.js";
 import { seedContent, seedSkeleton, VAULT_APP_ID, type VaultSeed } from "./seed.js";
@@ -216,11 +219,8 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     core: (body) => core.execute(body),
     rest,
   });
-  setHostConfig({
-    kind: "browser",
-    switchboardOrigin: LOCAL_ORIGIN,
-    documents: hostDocuments(client, models),
-  });
+  const documents = hostDocuments(client, models);
+  setHostConfig({ kind: "browser", switchboardOrigin: LOCAL_ORIGIN, documents });
 
   ensurePHEventHandlers();
   setVetraPackageManager(new StaticPackageManager([vaultLibrary]));
@@ -289,6 +289,22 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     if (!abort.signal.aborted) console.error("[BrowserVault] The guide could not be written.", error);
   });
 
+  // Sources the visitor adds become notes through the AI they connect in the chat: the desktop's
+  // pipeline stages, over the vault's REST routes at the page's own origin. It starts once the guide
+  // is in (at once on a return visit), and rewrites the health report after each source.
+  const runner = startPipelineRunner({
+    client: new KnowledgeVaultClient({ baseUrl: LOCAL_ORIGIN, token: "" }, (input, init) => globalThis.fetch(input, init)),
+    driveId: vaultDriveId,
+    flushes: engine.flushes,
+    ready: seeding ?? Promise.resolve(),
+    onChange: (listener) => onVaultRemoteChange(debounced(listener, 500)),
+    afterTask: async () => {
+      await knowledgeGraph.reindex(vaultDriveId);
+      await writeHealthReport({ client, knowledgeGraph, driveId: vaultDriveId });
+    },
+  });
+  setHostConfig({ kind: "browser", switchboardOrigin: LOCAL_ORIGIN, documents, pipeline: runner });
+
   // Ask the browser not to evict the vault; older browsers have no storage manager.
   if ("storage" in navigator && typeof navigator.storage.persist === "function") {
     void navigator.storage.persist().catch(() => undefined);
@@ -304,6 +320,8 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     guideIds,
     seeding,
     stop: async () => {
+      // First: it may be writing, and it must not write into a closing store.
+      await runner.stop();
       abort.abort();
       await seeding?.catch(() => undefined);
       if (pending) clearTimeout(pending);

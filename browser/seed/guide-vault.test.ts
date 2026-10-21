@@ -47,7 +47,8 @@ describe("the guide vault", () => {
   it("gives every link between notes a type, a reason and a confidence", () => {
     for (const link of noteLinks) {
       expect(NOTE_LINK_TYPES.has(link.relationshipType), `${link.sourceId} → ${link.targetId}`).toBe(true);
-      expect(String(link.metadata?.reason ?? "").length, `reason of ${link.sourceId} → ${link.targetId}`).toBeGreaterThanOrEqual(20);
+      const reason = link.metadata?.reason;
+      expect(typeof reason === "string" ? reason.length : 0, `reason of ${link.sourceId} → ${link.targetId}`).toBeGreaterThanOrEqual(20);
       expect(["grounded", "established", "speculative"]).toContain(link.metadata?.confidence);
     }
   });
