@@ -1233,3 +1233,32 @@ How many items should one `claude -p` generation call ask for? Before this, pilo
   - `dedup.py` now also rejects a row that contains a whole eval utterance.
   - A 429 spend/session limit now stops `run` instead of burning retries. The label passes were resumed after the reset, and the interrupted attempts are counted apart from failures.
 - **Data:** `training/results/teacher-batchsize-2026-10-21.json`.
+
+## Round 8: first LoRA (2026-10-21)
+
+**Question:** does a LoRA on about 3k teacher rows move LFM2.5-350M toward the bars (op ≥ 90%, args exact ≥ 80%) on both held-out sets, and is fine-tuning worth scaling up?
+
+### Pre-registration (written and committed before any held-out run)
+
+**Models.** *Base*: the published `LiquidAI/LFM2.5-350M-GGUF` Q4_K_M, as today's runtime loads it. *LoRA*: `LiquidAI/LFM2.5-350M` + this round's LoRA (r 16, α 32, dropout 0.05, all linear layers, LR 2e-4 cosine, 3 epochs, effective batch 32, completion-only loss), merged, converted with llama.cpp b11364, given the published GGUF's chat template and quantized to Q4_K_M. It is served to the harness from `training/artifacts/round8/gguf/` (gitignored) and loaded with `loadModelFromUrl`, OPFS cache off.
+
+**Training data (fixed before training).** Teacher rows from `plan --ops all --batch-size 10` (per-call seeded states), label batch 8, through the existing grounding, leak, email, dedup, zod/replay, grammar-gate, blind-label and quota filters. Each kept row renders to: the r6.1 step-1 row over all ops of its model (catalog order), a second step-1 row over gte-small's scoped top 5 (similarity order; dropped when the gold op is not in the top 5, since a `{"ops": []}` target there would teach a false no-action), and its step-2 row. A 5% val split (by source row, stratified by op) is used for loss monitoring only. No held-out item is used for training, early stopping or tuning; the final adapter after 3 epochs is the one evaluated, unless the val curve clearly forces a change, which will be reported.
+
+**Sets.** Held-out-1 (`heldout-eval.json`: 68 action + 6 no-action; reserved since Round 5), held-out-2 (`heldout2-eval.json`: 91 action + 8 no-action; its 7 multi-action items are out of scope for v1 and not run) and, for reference only, dev (30 seed + 19 dev-extra + 10 dev-extra no-action). Refs are each item's labeled `refCandidates`.
+
+**Configs.** Each runs **once** per set, WebGPU, temperature 0, prompt format r6.1, v1 step-2 settings (safe gate, calibrated ref-label scoring), fresh score caches per run.
+
+| # | Op choice | Step 2 (args, refs) on | No-action |
+|---|---|---|---|
+| **C0** | gte-small scoped top-1 (`runV1`, unchanged) | base | G3 gate |
+| **C1** | gte-small scoped top-1 (`runV1`, unchanged) | LoRA | G3 gate |
+| **C2** (k = 5 primary; k = 3 secondary) | LoRA, r6.1 step-1 prompt over gte-small's scoped top k, calibrated likelihood: S2-mean, one order, content-free `N/A` pass, `{"ops": []}` scored as an answer | LoRA | G3 gate, or the LoRA picks `{"ops": []}` |
+| **C3** (k = 5 primary; k = 3 secondary) | LoRA, same prompt, greedy generation under the alternation grammar of the k answers plus `{"ops": []}` | LoRA | as C2 |
+| A-base, A-LoRA (supplementary) | oracle op | base / LoRA | – |
+
+- C2/C3 also run step 1 on items the gate sends to no-action, so a "LoRA decides no-action alone" variant is reported from the same run (C2 also gives S1-mean and S2-mean-without-none picks from the same requests). Their latency counts only what the gated pipeline runs.
+- **Metrics,** per set (and per style on held-out-2): op accuracy over action items; op accuracy given the gold op is in the top k (C2/C3); args exact, `requiredPresent` and ref-id exact over action items whose op was right (as Round 6's P); end-to-end fully right (right op, exact args and refs where scored) over action items; no-action precision and recall (action items sent to no-action count as false positives); median and p90 wall time per utterance (embed + step 1 + step 2).
+- **Bars.** Met when one of the primary configs (C1, C2 k=5, C3 k=5) reaches op ≥ 90% and args exact ≥ 80% (given the right op) on **both** held-out sets. Choosing the best of three configs on the same sets flatters the winner; that is stated with the result. The A configs show args quality without op errors.
+- **Q&A regression check.** 15 vault questions with a short pasted context, written for this round (`eval/r8-qa-prompts.json`, not from any eval set), under the Chat tab's answer system prompt, temperature 0, 256 tokens, on base and LoRA. Each pair is judged base-better / same / LoRA-better on faithfulness to the context and fluency, with a one-line reason, and any JSON or format leakage is noted.
+- **Disclosure.** For the loader I printed only field names and counts of both held-out files (items, refs, labeled candidates); no utterance or expected value of held-out-1 was read. The harness was smoke-tested on the dev set only, with the base model (C0 24/30, C2 13/30, C3 16/30 op; not results).
+- **If a run breaks,** the bug is fixed, both numbers are reported, and nothing else changes.
