@@ -39,14 +39,17 @@ def main() -> int:
     steps = [json.loads(l) for l in Path(args.rendered).read_text().splitlines() if l.strip()]
     # A target the runtime grammar cannot produce is kept in rendered.jsonl
     # for the record but never trained on.
-    rejected = [f'{s["id"]}#{s["step"]}' for s in steps if s.get("targetAccepted") is False]
+    def step_tag(s: dict) -> str:
+        v = s.get("variant")
+        return f'{s["id"]}#{s["step"]}' + (f"/{v}" if v and v != "full" else "")
+    rejected = [step_tag(s) for s in steps if s.get("targetAccepted") is False]
     trainable = [s for s in steps if s.get("target") is not None and s.get("targetAccepted") is not False]
 
     template_mismatch, token_mismatch, boundary_merge = [], [], []
     out_rows = []
     with LlamaServer(args.gguf) as srv:
         for s in trainable:
-            tag = f'{s["id"]}#{s["step"]}'
+            tag = step_tag(s)
             prompt = srv.post("/apply-template", {"messages": s["messages"]})["prompt"]
             hf_prompt = tok.apply_chat_template(s["messages"], tokenize=False, add_generation_prompt=True)
             # The server's built-in template leaves BOS out of the string and its
@@ -67,7 +70,7 @@ def main() -> int:
                     "completion": s["target"] + tok.eos_token,
                     "input_ids": runtime_ids + completion_ids,
                     "completion_mask": [0] * len(runtime_ids) + [1] * len(completion_ids),
-                    "meta": {"id": s["id"], "step": s["step"], "op": s["op"], "goldRank": s.get("goldRank"), "nPrompt": len(runtime_ids), "nCompletion": len(completion_ids)},
+                    "meta": {"id": s["id"], "step": s["step"], "op": s["op"], "goldRank": s.get("goldRank"), "variant": s.get("variant"), "nPrompt": len(runtime_ids), "nCompletion": len(completion_ids)},
                 }
             )
 

@@ -3,7 +3,12 @@
  * and canonical targets (JSONL), plus a manifest. Every target is checked
  * against the grammar the runtime decodes (or scores) that step with.
  *
- *   npx --no-install tsx training/gen/render-prompts.ts <rows.jsonl> <out.jsonl>
+ *   npx --no-install tsx training/gen/render-prompts.ts <rows.jsonl> <out.jsonl> [--topk K]
+ *
+ * With `--topk K` a scoped row also gets a second step-1 row (`variant:
+ * "top<K>"`) over gte-small's top K ops of its model, in similarity order;
+ * when the gold op is not among them that row has no target (it would
+ * teach a false no-action), and the row's step 2 is unaffected.
  *
  * Source row: {id, utterance, docType, op: key | null, args?, refCandidates?, scoped?}
  * (`refCandidates`: path -> ids or {id, label}; `args` hold ref ids).
@@ -26,6 +31,7 @@ import {
   step1Target,
   step2Prompt,
   step2Target,
+  scopedTopK,
   UNSCOPED_K,
   unscopedCandidates,
   type RowRefs,
@@ -61,6 +67,8 @@ export interface RenderedStep {
   targetAccepted: boolean | null;
   candidates?: string[];
   goldRank?: number | null;
+  /** Step 1: "full" (all ops of the model), "unscoped", or "top<K>". */
+  variant?: string;
   meta?: Record<string, unknown>;
 }
 
@@ -76,9 +84,12 @@ function git(args: string[]): string {
 }
 
 async function main(): Promise<void> {
-  const [inFile, outFile] = process.argv.slice(2);
-  if (!inFile || !outFile) {
-    console.error("usage: render-prompts.ts <rows.jsonl> <out.jsonl>");
+  const argv = process.argv.slice(2);
+  const ti = argv.indexOf("--topk");
+  const topK = ti >= 0 ? Number(argv.splice(ti, 2)[1]) : 0;
+  const [inFile, outFile] = argv;
+  if (!inFile || !outFile || !Number.isInteger(topK) || topK < 0) {
+    console.error("usage: render-prompts.ts <rows.jsonl> <out.jsonl> [--topk K]");
     process.exit(2);
   }
   const catalog = buildTrainingCatalog();
@@ -105,8 +116,27 @@ async function main(): Promise<void> {
       targetAccepted: null,
       candidates: candidates.map((c) => c.key),
       goldRank: rank >= 0 ? rank + 1 : null,
+      variant: row.scoped === false ? "unscoped" : "full",
       meta: row.meta,
     });
+    if (topK > 0 && row.scoped !== false) {
+      const top = await scopedTopK(catalog, row.utterance, row.docType, topK);
+      const r = gold ? top.findIndex((c) => c.key === gold.key) : -1;
+      const t = step1Target(row.op, top);
+      out.push({
+        id: row.id,
+        step: 1,
+        op: row.op,
+        ...step1Prompt(row.utterance, top),
+        target: t,
+        skip: t === null ? "gold-not-in-topk" : undefined,
+        targetAccepted: null,
+        candidates: top.map((c) => c.key),
+        goldRank: r >= 0 ? r + 1 : null,
+        variant: `top${topK}`,
+        meta: row.meta,
+      });
+    }
     // Step 2 is trained for the gold op even when retrieval missed it: the
     // app can reach it through a retry or a manual pick.
     const s2 = gold
@@ -146,7 +176,8 @@ async function main(): Promise<void> {
   ]);
   const manifest = {
     promptFormatVersion: PROMPT_FORMAT_VERSION,
-    step1Candidates: `scoped: all global ops of the docType; unscoped: gte-small top ${UNSCOPED_K}`,
+    step1Candidates: `scoped: all global ops of the docType; unscoped: gte-small top ${UNSCOPED_K}${topK ? `; plus scoped gte-small top ${topK} (variant top${topK})` : ""}`,
+    topK,
     catalogHash,
     opEmbeddingsHash: await opEmbeddingHash(opEmbeddingInputs(catalog)),
     catalogOps: catalog.length,
@@ -159,6 +190,12 @@ async function main(): Promise<void> {
     step2: out.filter((r) => r.step === 2).length,
     noActionTargets: out.filter((r) => r.step === 1 && r.op === null).length,
     skipped: out.filter((r) => r.skip).length,
+    skippedByReason: Object.fromEntries(
+      [...new Set(out.filter((r) => r.skip).map((r) => r.skip))].map((k) => [
+        k,
+        out.filter((r) => r.skip === k).length,
+      ]),
+    ),
     targetRejected: out
       .filter((r) => r.targetAccepted === false)
       .map((r) => `${r.id}#${r.step}`),

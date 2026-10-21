@@ -56,18 +56,19 @@ export function scopedCandidates(
 }
 
 let index: Promise<{
-  rank: (q: Float32Array) => CatalogEntry[];
+  rank: (q: Float32Array, docType?: string) => CatalogEntry[];
   embed: (t: string) => Promise<Float32Array>;
 }> | null = null;
 
 /**
- * gte-small's top `UNSCOPED_K` over all global ops, on the browser's wasm
- * numerics (`scripts/gte-wasm-node.ts`) and the committed op vectors, so
- * the candidates are the ones the app would retrieve. Loaded on first use.
+ * gte-small ranking on the browser's wasm numerics
+ * (`scripts/gte-wasm-node.ts`) and the committed op vectors, so the
+ * candidates are the ones the app would retrieve. Loaded on first use.
  */
-export async function unscopedCandidates(
+async function embeddingRank(
   catalog: CatalogEntry[],
   utterance: string,
+  docType?: string,
 ): Promise<CatalogEntry[]> {
   index ??= (async () => {
     const { loadNodeWasmEmbedder } =
@@ -76,12 +77,34 @@ export async function unscopedCandidates(
     const asset = await loadOpEmbeddingAsset();
     const idx = createOpEmbeddingIndex(catalog, asset);
     return {
-      rank: (q) => idx.rankOps(q).map((h) => h.entry),
+      rank: (q, d) => idx.rankOps(q, d).map((h) => h.entry),
       embed: async (t) => (await emb.embed([t]))[0],
     };
   })();
   const { rank, embed } = await index;
-  return rank(await embed(utterance)).slice(0, UNSCOPED_K);
+  return rank(await embed(utterance), docType);
+}
+
+/** gte-small's top `UNSCOPED_K` over all global ops. */
+export async function unscopedCandidates(
+  catalog: CatalogEntry[],
+  utterance: string,
+): Promise<CatalogEntry[]> {
+  return (await embeddingRank(catalog, utterance)).slice(0, UNSCOPED_K);
+}
+
+/**
+ * gte-small's top `k` among the scoped model's global ops, best first: the
+ * step-1 list a LoRA picks from at run time (round 8 C2/C3), the same
+ * ranking `runV1` takes its top-1 from.
+ */
+export async function scopedTopK(
+  catalog: CatalogEntry[],
+  utterance: string,
+  docType: string,
+  k: number,
+): Promise<CatalogEntry[]> {
+  return (await embeddingRank(catalog, utterance, docType)).slice(0, k);
 }
 
 export function step1Prompt(

@@ -3,6 +3,7 @@
 # format: dedup/leak filter -> zod + reducer replay -> chat-core render ->
 # llama-server template/token parity.
 #   training/scripts/render.sh <rows.jsonl> <out-dir>
+#   TOPK=5 training/scripts/render.sh ...   # also a scoped gte top-5 step-1 row per row
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 ROWS="$1"; OUT="$2"
@@ -13,5 +14,5 @@ cd "$ROOT"
 # zod + reducer replay; failing rows are dropped (listed in validate.json).
 npx --no-install tsx training/gen/validate-rows.ts "$OUT/rows-kept.jsonl" "$OUT/validate.json" "$OUT/rows-valid.jsonl" > /dev/null \
   || { echo "no row passed validation, see $OUT/validate.json" >&2; exit 1; }
-npx --no-install tsx training/gen/render-prompts.ts "$OUT/rows-valid.jsonl" "$OUT/rendered.jsonl"
+npx --no-install tsx training/gen/render-prompts.ts "$OUT/rows-valid.jsonl" "$OUT/rendered.jsonl" ${TOPK:+--topk "$TOPK"}
 "$PY" training/py/render_template.py "$OUT/rendered.jsonl" --out "$OUT/train.jsonl" --report "$OUT/template-report.json"
