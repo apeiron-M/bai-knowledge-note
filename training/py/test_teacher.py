@@ -172,5 +172,20 @@ class Rows(unittest.TestCase):
         self.assertEqual(summary["shortCalls"], {cid: {"requested": 3, "returned": 1}})
 
 
+class DedupContainment(unittest.TestCase):
+    def test_eval_utterance_inside_a_longer_row_is_a_leak(self) -> None:
+        import dedup
+        ev = [{"utterance": "Mark this source as extracted", "source": "x.json", "id": "e1",
+               "norm": dedup.normalize("Mark this source as extracted")}]
+        for e in ev:
+            e["c3"], e["w3"] = dedup.char_trigrams(e["norm"]), dedup.word_trigrams(e["norm"])
+        row = dedup.normalize("can you mark this source as extracted? Camille just finished pulling claims "
+                              "out of it while I was debugging the ingestion pipeline")
+        self.assertEqual(dedup.leak_hit(row, ev)["contained"], True)
+        self.assertIsNone(dedup.leak_hit(dedup.normalize("please remark this source as extractedness soon, "
+                                                         "after lunch with the whole team"), ev))
+        self.assertFalse(dedup.contains("set it to done", "done"))  # under 3 words
+
+
 if __name__ == "__main__":
     unittest.main()

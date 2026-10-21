@@ -1,8 +1,8 @@
 """Leakage and duplicate filter for training rows.
 
 Rejects a training row when its utterance is near-identical to any eval
-utterance (held-out, dev, seed, no-action), or to an earlier kept row of the
-same op. Every JSON file under the eval dirs is walked for `utterance` keys,
+utterance (held-out, dev, seed, no-action), contains one of 3+ words, or is
+near-identical to an earlier kept row of the same op. Every JSON file under the eval dirs is walked for `utterance` keys,
 so a new held-out set dropped into spike/llm-harness/eval/ is covered with no
 code change.
 
@@ -21,6 +21,7 @@ REPO = Path(__file__).resolve().parents[2]
 DEFAULT_EVAL_DIRS = [REPO / "spike/llm-harness/eval"]
 LEAK_THRESHOLD = 0.5  # trigram Jaccard vs any eval utterance (char or word)
 DUP_THRESHOLD = 0.5  # word-trigram Jaccard vs kept rows of the same op
+CONTAIN_MIN_WORDS = 3  # an eval utterance this long inside a row is a leak too
 
 
 def normalize(text: str) -> str:
@@ -68,13 +69,21 @@ def load_eval(dirs: list[Path], files: list[Path]) -> list[dict]:
     return list(seen.values())
 
 
+def contains(norm: str, eval_norm: str) -> bool:
+    """A whole eval utterance of CONTAIN_MIN_WORDS+ words inside a longer row
+    (word-bounded): the Jaccard scores miss it when the row adds context."""
+    return len(eval_norm.split()) >= CONTAIN_MIN_WORDS and f" {eval_norm} " in f" {norm} "
+
+
 def leak_hit(norm: str, evals: list[dict]) -> dict | None:
     c3, w3 = char_trigrams(norm), word_trigrams(norm)
     best = None
     for e in evals:
-        score = 1.0 if norm == e["norm"] else max(jaccard(c3, e["c3"]), jaccard(w3, e["w3"]))
+        contained = contains(norm, e["norm"])
+        score = 1.0 if norm == e["norm"] or contained else max(jaccard(c3, e["c3"]), jaccard(w3, e["w3"]))
         if score >= LEAK_THRESHOLD and (best is None or score > best["score"]):
-            best = {"score": round(score, 3), "evalSource": e["source"], "evalId": e["id"], "evalUtterance": e["utterance"]}
+            best = {"score": round(score, 3), "evalSource": e["source"], "evalId": e["id"], "evalUtterance": e["utterance"],
+                    **({"contained": True} if contained and norm != e["norm"] else {})}
     return best
 
 
