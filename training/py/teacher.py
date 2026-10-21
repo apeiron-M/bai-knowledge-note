@@ -59,6 +59,12 @@ PILOT_OPS = [
 FIXTURES: dict[str, list[dict]] = {
     "knowledge-note:REJECT_NOTE": [{"op": "knowledge-note:SUBMIT_FOR_REVIEW", "args": {}}],
     "knowledge-note:APPROVE_NOTE": [{"op": "knowledge-note:SUBMIT_FOR_REVIEW", "args": {}}],
+    # ARCHIVE needs CANONICAL; RESTORE needs ARCHIVED.
+    "knowledge-note:ARCHIVE_NOTE": [{"op": "knowledge-note:SUBMIT_FOR_REVIEW", "args": {}},
+                                    {"op": "knowledge-note:APPROVE_NOTE", "args": {}}],
+    "knowledge-note:RESTORE_NOTE": [{"op": "knowledge-note:SUBMIT_FOR_REVIEW", "args": {}},
+                                    {"op": "knowledge-note:APPROVE_NOTE", "args": {}},
+                                    {"op": "knowledge-note:ARCHIVE_NOTE", "args": {"comment": "superseded"}}],
     "tension:RESOLVE_TENSION": [{"op": "tension:CREATE_TENSION", "args": {
         "title": "Ship fast vs stable", "description": "Release cadence vs bugs", "involvedRefs": []}}],
     "tension:DISSOLVE_TENSION": [{"op": "tension:CREATE_TENSION", "args": {
