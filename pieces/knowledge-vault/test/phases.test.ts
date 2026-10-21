@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { connectNotesAction } from "../lib/actions/connect-notes.js";
 import { placeInMocsAction } from "../lib/actions/place-in-mocs.js";
@@ -5,7 +6,7 @@ import { checkLink, CONNECT_SYSTEM, gatherCandidates, normaliseName, proposeLink
 import { LlmClient } from "../lib/agent/llm.js";
 import { advancePipeline, catchUp, claimPhase, findQueue, gateStep, passThrough, taskPosition } from "../lib/agent/pipeline.js";
 import { llmFor, stageRunner } from "../lib/agent/runner.js";
-import { checkPlan, planStage, readMocs, writePlacementsStage, type MocInfo } from "../lib/agent/synthesize.js";
+import { checkPlan, PLACE_SYSTEM, placeSystem, planStage, readMocs, writePlacementsStage, type MocInfo } from "../lib/agent/synthesize.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
 import { KnowledgeVaultApiError } from "../lib/common/errors.js";
 
@@ -558,3 +559,59 @@ describe("naming a note in a link", () => {
     expect(resolveNoteRef("", allowed)).toEqual({ matches: 0 });
   });
 });
+
+describe("placement options (the browser vault opens a map for a lone source)", () => {
+  /** A model that answers `answer` and records each system prompt it was given. */
+  function placer(answer: unknown) {
+    const systems: string[] = [];
+    const fetchImpl = (async (_u: string, init?: RequestInit) => {
+      systems.push((JSON.parse(init?.body as string) as { messages: { content: string }[] }).messages[0].content);
+      return json({ choices: [{ message: { content: JSON.stringify(answer) } }], usage: { cost: 0 } });
+    }) as typeof fetch;
+    return { llm: new LlmClient(LLM, fetchImpl), fetchImpl, systems };
+  }
+  const lone = { placements: [{ note: "n1", moc: "new:1" }], new_mocs: [{ key: "new:1", title: "Reading group", description: "d", orientation: "o", parent: "hub" }] };
+
+  it("leaves the vault's own prompt as it is, word for word", () => {
+    expect(placeSystem()).toBe(PLACE_SYSTEM);
+    expect(PLACE_SYSTEM).toContain("three or more");
+    // The desktop's prompt before the options existed; a change here changes the desktop.
+    expect(createHash("sha256").update(PLACE_SYSTEM).digest("hex").slice(0, 16)).toBe("b9d133f9b5f04abf");
+  });
+  it("can ask for one new map, at any size, under the caller's title", () => {
+    const prompt = placeSystem({ minNewTopic: 1, newTopicTitle: "Reading group" });
+    expect(prompt).toContain('titled "Reading group"');
+    expect(prompt).not.toContain("three or more");
+  });
+  it("checks a one-note map against the caller's minimum", () => {
+    expect(checkPlan(lone, [NOTES[0]], MOCS).problems).toEqual([
+      'new MoC "Reading group" would hold 1 note; a new TOPIC needs 3 or more, so place it in an existing MoC',
+    ]);
+    expect(checkPlan(lone, [NOTES[0]], MOCS, { minNewTopic: 1 }).problems).toEqual([]);
+  });
+  it("keeps a one-note map when allowed, asking with the caller's prompt", async () => {
+    const m = placer(lone);
+    const out = await planStage(m.llm, "m", [NOTES[0]], MOCS, m.fetchImpl, { minNewTopic: 1, newTopicTitle: "Reading group" });
+    expect(out.new_mocs).toHaveLength(1);
+    expect(out.placements).toEqual([{ note: "n1", moc: "new:1" }]);
+    expect(m.systems[0]).toContain('titled "Reading group"');
+  });
+  it("makes the caller's title the one new map, however many the model proposed", () => {
+    const two = {
+      placements: [{ note: "n1", moc: "new:1" }, { note: "n2", moc: "new:2" }],
+      new_mocs: [{ key: "new:1", title: "Groups", parent: "hub" }, { key: "new:2", title: "Reading", parent: "hub" }],
+    };
+    const plan = checkPlan(two, NOTES, MOCS, { minNewTopic: 1, newTopicTitle: "Reading group" });
+    expect(plan.newMocs.map((m) => [m.key, m.title])).toEqual([["new:1", "Reading group"]]);
+    expect(plan.placements).toEqual([{ note: "n1", moc: "new:1" }, { note: "n2", moc: "new:1" }]);
+    expect(plan.problems).toEqual([]);
+  });
+  it("adds to the map a file's first section opened, rather than opening a second", () => {
+    const opened: MocInfo[] = [...MOCS, { id: "rg", title: "Reading group", description: "", tier: "TOPIC", parent: "hub", members: 2, samples: [] }];
+    const plan = checkPlan(lone, [NOTES[0]], opened, { minNewTopic: 1, newTopicTitle: "Reading group" });
+    expect(plan.newMocs).toEqual([]);
+    expect(plan.placements).toEqual([{ note: "n1", moc: "rg" }]);
+    expect(plan.problems).toEqual([]);
+  });
+});
+

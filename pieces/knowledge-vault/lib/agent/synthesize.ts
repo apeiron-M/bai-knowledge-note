@@ -46,19 +46,44 @@ export async function readMocs(client: KnowledgeVaultClient, drive: string): Pro
   return { mocs, coreIdeas };
 }
 
-export const PLACE_SYSTEM = `You place atomic notes into a knowledge vault's Maps of Content (MoCs). Answer with JSON only.
+export type PlaceOptions = {
+  /** The fewest notes a new TOPIC MoC may open with. The vault's rule, and the default, is 3. */
+  minNewTopic?: number;
+  /**
+   * Notes that fit no existing MoC go to ONE new TOPIC MoC with this title, at any count. A MoC
+   * already holding the title takes them instead. The browser vault names it after the source (or the
+   * file its sections came from), so a short paste gets a map of its own.
+   */
+  newTopicTitle?: string;
+};
 
-MoCs form a tree: one HUB, DOMAIN MoCs under it, TOPIC MoCs (3-9 notes each) under a DOMAIN or the HUB.
+const NUMBER_WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+
+/** The placement prompt. Without options it is the vault's own rule, word for word. */
+export function placeSystem(opts: PlaceOptions = {}): string {
+  const min = opts.minNewTopic ?? 3;
+  const sizes = min >= 3 ? "3-9 notes each" : "a few notes each";
+  const title = opts.newTopicTitle?.replace(/"/g, "'");
+  const newRule = title
+    ? `When a note fits no existing MoC's theme, place it in ONE new TOPIC MoC titled "${title}", however few notes it holds, with a parent that is an existing DOMAIN, or the HUB when no domain fits.`
+    : `Only when ${NUMBER_WORDS[min] ?? String(min)} or more of these notes share a theme that no existing MoC covers, propose ONE new TOPIC MoC for them, with a parent that is an existing DOMAIN, or the HUB when no domain fits.`;
+  return `You place atomic notes into a knowledge vault's Maps of Content (MoCs). Answer with JSON only.
+
+MoCs form a tree: one HUB, DOMAIN MoCs under it, TOPIC MoCs (${sizes}) under a DOMAIN or the HUB.
 For each note choose the TOPIC or DOMAIN MoC whose theme it belongs to. Judge by what the MoC's description and sample notes are about, not by shared words.
-Only when three or more of these notes share a theme that no existing MoC covers, propose ONE new TOPIC MoC for them, with a parent that is an existing DOMAIN, or the HUB when no domain fits. When the list offers "new:hub" (the vault has no HUB yet), use "new:hub" as that parent: the HUB is created with the first MoC. Never place a note in the HUB itself.
+${newRule} When the list offers "new:hub" (the vault has no HUB yet), use "new:hub" as that parent: the HUB is created with the first MoC. Never place a note in the HUB itself.
 A new MoC needs: title (the theme, plainly), description (what it covers, one or two sentences), orientation (how to read it: what the notes argue together and where to start).
 
 Answer: {"placements":[{"note":"<note id>","moc":"<moc id or new:1>"}],"new_mocs":[{"key":"new:1","title":"...","description":"...","orientation":"...","parent":"<DOMAIN or HUB id>"}]}`;
+}
+
+export const PLACE_SYSTEM = placeSystem();
 
 export type Placement = { note: string; moc: string };
 export type NewMoc = { key: string; title: string; description: string; orientation: string; parent: string };
 
-export function checkPlan(value: unknown, notes: NoteSummary[], mocs: MocInfo[]) {
+export function checkPlan(value: unknown, notes: NoteSummary[], mocs: MocInfo[], opts: PlaceOptions = {}) {
+  const min = opts.minNewTopic ?? 3;
   const noteIds = new Set(notes.map((n) => n.id));
   const byId = new Map(mocs.map((m) => [m.id, m]));
   const hubToCreate = !mocs.some((m) => m.tier === "HUB");
@@ -71,24 +96,33 @@ export function checkPlan(value: unknown, notes: NoteSummary[], mocs: MocInfo[])
     else if (!underNewHub && (!parent || parent.tier === "TOPIC")) problems.push(`new MoC "${str(m.title)}" needs an existing DOMAIN or the HUB as parent, not "${str(m.parent)}"`);
     else newMocs.push({ key: str(m.key), title: str(m.title).trim(), description: str(m.description).trim(), orientation: str(m.orientation).trim(), parent: str(m.parent) });
   }
+  // The caller's title: every new MoC is that one map, or the MoC already holding the title.
+  const named = opts.newTopicTitle?.trim();
+  const merged = new Map<string, string>();
+  if (named && newMocs.length > 0) {
+    const existing = mocs.find((m) => m.tier !== "HUB" && m.title.trim().toLowerCase() === named.toLowerCase());
+    const into = existing ? existing.id : newMocs[0].key;
+    for (const m of newMocs) merged.set(m.key, into);
+    newMocs.splice(0, newMocs.length, ...(existing ? [] : [{ ...newMocs[0], title: named }]));
+  }
   const newKeys = new Set(newMocs.map((m) => m.key));
   const placements: Placement[] = [];
   for (const p of arr(rec(value).placements).map(rec)) {
     const note = str(p.note);
-    const moc = str(p.moc);
+    const moc = merged.get(str(p.moc)) ?? str(p.moc);
     if (!noteIds.has(note)) continue;
     if (newKeys.has(moc) || (byId.has(moc) && byId.get(moc)?.tier !== "HUB")) placements.push({ note, moc });
     else problems.push(`note ${note}: "${moc}" is not a TOPIC or DOMAIN MoC`);
   }
   for (const m of newMocs) {
     const count = placements.filter((p) => p.moc === m.key).length;
-    if (count < 3) problems.push(`new MoC "${m.title}" would hold ${count} note${count === 1 ? "" : "s"}; a new TOPIC needs 3 or more, so place ${count === 1 ? "it" : "them"} in an existing MoC`);
+    if (count < min) problems.push(`new MoC "${m.title}" would hold ${count} note${count === 1 ? "" : "s"}; a new TOPIC needs ${min} or more, so place ${count === 1 ? "it" : "them"} in an existing MoC`);
   }
   const unplaced = notes.filter((n) => !placements.some((p) => p.note === n.id)).map((n) => n.id);
   return { placements, newMocs, problems, unplaced };
 }
 
-export async function planStage(llm: LlmClient, model: string, notes: NoteSummary[], mocs: MocInfo[], fetchImpl?: typeof fetch) {
+export async function planStage(llm: LlmClient, model: string, notes: NoteSummary[], mocs: MocInfo[], fetchImpl?: typeof fetch, opts: PlaceOptions = {}) {
   const listing = [
     "MoCs:",
     ...mocs.map((m) => `- ${m.id} [${m.tier}${m.parent ? `, under ${m.parent}` : ""}] ${m.title} (${m.members} notes): ${m.description}${m.samples.length ? ` e.g. ${m.samples.map((t) => `"${t}"`).join("; ")}` : ""}`),
@@ -99,16 +133,17 @@ export async function planStage(llm: LlmClient, model: string, notes: NoteSummar
   ].join("\n");
   let cost = 0;
   let feedback = "";
-  let plan = checkPlan({}, notes, mocs);
+  let plan = checkPlan({}, notes, mocs, opts);
+  const system = placeSystem(opts);
   for (let round = 0; round < 2; round++) {
-    const reply = await completeJson(llm, { model, system: PLACE_SYSTEM, user: listing + feedback, maxTokens: 16_000, reasoningEffort: "medium" }, fetchImpl);
+    const reply = await completeJson(llm, { model, system, user: listing + feedback, maxTokens: 16_000, reasoningEffort: "medium" }, fetchImpl);
     cost += reply.usage.cost;
-    plan = checkPlan(reply.value, notes, mocs);
+    plan = checkPlan(reply.value, notes, mocs, opts);
     if (plan.problems.length === 0 && plan.unplaced.length === 0) break;
     feedback = `\n\nYour previous answer had problems. Fix exactly these and answer again in full:\n${[...plan.problems, ...plan.unplaced.map((id) => `note ${id} was not placed`)].map((p) => `- ${p}`).join("\n")}`;
   }
   // What still breaks the rules after the repair round is dropped, never written.
-  const keep = new Set(plan.newMocs.filter((m) => plan.placements.filter((p) => p.moc === m.key).length >= 3).map((m) => m.key));
+  const keep = new Set(plan.newMocs.filter((m) => plan.placements.filter((p) => p.moc === m.key).length >= (opts.minNewTopic ?? 3)).map((m) => m.key));
   const placements = plan.placements.filter((p) => !p.moc.startsWith("new:") || keep.has(p.moc));
   const newMocs = plan.newMocs.filter((m) => keep.has(m.key));
   const unplaced = notes.filter((n) => !placements.some((p) => p.note === n.id)).map((n) => n.id);
