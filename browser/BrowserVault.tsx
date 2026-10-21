@@ -58,6 +58,59 @@ const frame: CSSProperties = {
   textAlign: "center",
 };
 
+/** How long a tab waits for the vault before saying it is open elsewhere. A reloaded page's
+ * previous self, or a mount React has just undone, lets go within this. */
+const LOCK_WAIT_MS = 3000;
+
+type VaultLock = { kind: "held"; release: () => void } | { kind: "busy" } | { kind: "cancelled" };
+
+/**
+ * Holds the vault's Web Lock until `release`. Waits up to {@link LOCK_WAIT_MS} for it (`busy`
+ * after that), or takes it from another tab with `steal`. `signal` withdraws a request still
+ * waiting (`cancelled`); `onLost` runs if another tab steals a lock this one holds.
+ *
+ * Not `ifAvailable`: it refuses at once, so a page reloaded before its previous self had let go
+ * — or React's second development mount, racing its first — was told the vault was open in
+ * another tab, and the first mount booted anyway and kept the lock for good.
+ */
+function holdVaultLock(
+  locks: LockManager,
+  name: string,
+  options: { steal: boolean; signal: AbortSignal; onLost: () => void },
+): Promise<VaultLock> {
+  return new Promise<VaultLock>((resolve) => {
+    let granted = false;
+    let timedOut = false;
+    const waiting = new AbortController();
+    const timer = options.steal
+      ? undefined
+      : setTimeout(() => {
+          timedOut = true;
+          waiting.abort();
+        }, LOCK_WAIT_MS);
+    const withdraw = () => waiting.abort();
+    options.signal.addEventListener("abort", withdraw, { once: true });
+    const settle = () => {
+      clearTimeout(timer);
+      options.signal.removeEventListener("abort", withdraw);
+    };
+    // `steal` cannot be combined with a signal; a steal is granted at once anyway.
+    const request = options.steal
+      ? locks.request(name, { steal: true }, held)
+      : locks.request(name, { signal: waiting.signal }, held);
+    function held(): Promise<void> {
+      granted = true;
+      settle();
+      return new Promise<void>((release) => resolve({ kind: "held", release: () => release() }));
+    }
+    request.catch(() => {
+      settle();
+      if (granted) options.onLost();
+      else resolve(timedOut ? { kind: "busy" } : { kind: "cancelled" });
+    });
+  });
+}
+
 function Screen({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div style={frame} role="status">
@@ -115,7 +168,8 @@ function useGuideState(seeding: Promise<void> | null): GuideState {
     let live = true;
     seeding.then(
       () => live && setState("written"),
-      () => live && setState("failed"),
+      // A stop (a reset) is not a failure: the banner keeps its message until the page reloads.
+      (error: unknown) => live && !(error instanceof DOMException && error.name === "AbortError") && setState("failed"),
     );
     return () => {
       live = false;
@@ -185,30 +239,27 @@ export function BrowserVault({
   useEffect(() => {
     let cancelled = false;
     let releaseLock: (() => void) | undefined;
+    const lockRequest = new AbortController();
     const start = async (steal: boolean) => {
       // One tab at a time: two engines on one IndexedDB store overwrite each other.
       // Web Locks are missing in some older browsers: then the vault opens without the guard.
-      const locks = "locks" in navigator ? navigator.locks : undefined;
-      if (locks) {
-        const held = await new Promise<boolean>((resolve) => {
-          void locks
-            .request(`${namespace}:open`, steal ? { steal: true } : { ifAvailable: true }, (lock) => {
-              if (!lock) {
-                resolve(false);
-                return undefined;
-              }
-              resolve(true);
-              return new Promise<void>((release) => {
-                releaseLock = release;
-              });
-            })
-            .catch(() => {
-              // Another tab took the vault over.
-              if (!cancelled) setPhase({ kind: "moved" });
-            });
+      if ("locks" in navigator) {
+        const lock = await holdVaultLock(navigator.locks, `${namespace}:open`, {
+          steal,
+          signal: lockRequest.signal,
+          onLost: () => {
+            if (!cancelled) setPhase({ kind: "moved" });
+          },
         });
-        if (!held) {
+        if (lock.kind === "cancelled") return;
+        if (lock.kind === "busy") {
           if (!cancelled) setPhase({ kind: "elsewhere" });
+          return;
+        }
+        releaseLock = lock.release;
+        // Granted just as this mount went away (React mounts twice in development).
+        if (cancelled) {
+          lock.release();
           return;
         }
       }
@@ -220,18 +271,27 @@ export function BrowserVault({
           if (!cancelled) setPhase({ kind: "starting", stage, done, total });
         },
       });
+      if (cancelled) {
+        // Gone while it started: stop it, then let the next mount have the store.
+        await vault.stop();
+        releaseLock?.();
+        return;
+      }
       booted.current = vault;
-      if (cancelled) await vault.stop();
-      else setPhase({ kind: "ready", vault });
+      setPhase({ kind: "ready", vault });
     };
     start(attempt > 0).catch((error: unknown) => {
+      releaseLock?.();
       if (!cancelled) setPhase({ kind: "failed", message: error instanceof Error ? error.message : String(error) });
     });
     return () => {
       cancelled = true;
-      releaseLock?.();
-      void booted.current?.stop();
+      lockRequest.abort();
+      const vault = booted.current;
       booted.current = null;
+      // The lock goes once the engine has stopped, so the next mount never opens the store
+      // under a running one. A boot still under way stops itself when it returns (above).
+      if (vault) void vault.stop().finally(() => releaseLock?.());
     };
   }, [namespace, loadSeed, basePath, attempt]);
 

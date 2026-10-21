@@ -43,6 +43,11 @@ import { graphIndexerFactoryBuilder } from "../processors/graph-indexer/factory.
 /** The app name the visitor's anonymous key signs as. */
 const SIGNER_APP = "knowledge-vault-web";
 
+/** How long a close waits for the reactor's active jobs before closing the stores anyway. */
+const CLOSE_WAIT_MS = 5000;
+/** How long the store must stay out of a transaction before a close goes ahead. */
+const CLOSE_QUIET_MS = 150;
+
 export type BrowserEngine = {
   client: IReactorClient;
   relationalDb: IRelationalDb;
@@ -226,7 +231,29 @@ export async function createBrowserEngine(
     did: crypto.did,
     flushes,
     close: async () => {
-      await Promise.allSettled([reactorPg.close(), relationalPg.close()]);
+      // The reactor first: its jobs, read models and the graph indexer still write, and a store
+      // closed under them fails every statement — the "PGlite is closed" storm a stop during
+      // the guide's writing raised. kill() lets active jobs finish; bounded, so a wedged job
+      // cannot hold a reset.
+      const begun = performance.now();
+      const stopped = module.reactor.kill().completed.catch(() => undefined);
+      await Promise.race([stopped, new Promise((resolve) => setTimeout(resolve, CLOSE_WAIT_MS))]);
+      const killed = performance.now();
+      // Work already under way still writes after kill() — the last job, a read-model batch that
+      // starts a few milliseconds later. Closed between two statements of its transaction, the
+      // store fails the rollback and the session recovery retries dozens of times. Close once the
+      // store has been out of a transaction for a quiet spell, not at the first idle instant.
+      let quietSince = performance.now();
+      while (performance.now() - quietSince < CLOSE_QUIET_MS && performance.now() - killed < CLOSE_WAIT_MS) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        if (reactorPg.isInTransaction()) quietSince = performance.now();
+      }
+      console.debug(
+        `[BrowserVault] stopping: reactor ${Math.round(killed - begun)} ms, until quiet ${Math.round(performance.now() - killed)} ms`,
+      );
+      // The group-commit store flushes (through the gate: held flushes stay unwritten) and closes.
+      const store = reactorModule.groupCommitStorage;
+      await Promise.allSettled([store ? store.close() : reactorPg.close(), relationalPg.close()]);
     },
   };
 }

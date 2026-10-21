@@ -245,7 +245,13 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
   const guide = seed;
   const seeding = guide
     ? (async () => {
-        await seedContent(client, models, guide, vaultDriveId, abort.signal);
+        try {
+          await seedContent(client, models, guide, vaultDriveId, abort.signal);
+        } catch (error) {
+          // Stopped (a reset, the page going away): not a failure to report.
+          if (abort.signal.aborted) throw new DOMException("The vault stopped.", "AbortError");
+          throw error;
+        }
         mark("seeded");
         await engine.flushes.release();
         mark("stored");
