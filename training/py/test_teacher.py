@@ -195,5 +195,75 @@ class DedupContainment(unittest.TestCase):
         self.assertFalse(dedup.contains("set it to done", "done"))  # under 3 words
 
 
+class PerCallStates(unittest.TestCase):
+    """`plan --batch-size`: one freshly seeded state per call for ref ops."""
+
+    REF = {**OP, "key": "wbs:SET_GOAL_STATUS", "opName": "SET_GOAL_STATUS",
+           "modelSchema": {"type": "object", "properties": {"status": {"type": "string"}}, "required": ["status"]},
+           "siblings": [], "description": "", "inputSdl": "", "appFilledFields": [], "reducerSource": "", "emptyState": {}}
+    NONREF = {**REF, "key": "wbs:SET_OWNER", "opName": "SET_OWNER",
+              "modelSchema": {"type": "object", "properties": {"owner": {"type": "string"}}, "required": ["owner"]}}
+
+    def plan(self, shared: bool, ref_items: int = 25) -> tuple[list[dict], list[dict], dict]:
+        sent: list[list[dict]] = []
+
+        def fake_tsx(script: str, spec_file: str, out_file: str) -> str:
+            spec = json.loads(Path(spec_file).read_text())
+            sent.append(spec)
+            Path(out_file).write_text(json.dumps([{
+                "cid": s["cid"], "op": s["op"], "docType": "powerhouse/wbs", "theme": f"theme-{s['seed']}",
+                "fixture": [], "refContext": [], "state": f"state seeded {s['seed']}",
+                "refCandidates": {"id": [{"id": "g1", "label": "A"}, {"id": "g2", "label": "B"}]},
+                "items": [{"refs": {"id": "g1"}, "labels": {"id": "A"}, "position": {"id": [1, 2]}}
+                          for _ in range(s["items"])]} for s in spec]))
+            return ""
+        old, t.tsx = t.tsx, fake_tsx
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                ctx = {"wbs:SET_GOAL_STATUS": self.REF, "wbs:SET_OWNER": self.NONREF}
+                a = argparse.Namespace(ops="wbs:SET_GOAL_STATUS,wbs:SET_OWNER", batch_size=10, items_per_op=12,
+                                       ref_items_per_op=ref_items, noaction_items=0, seed=5, avoid_share=0.6,
+                                       shared_state=shared, out=str(Path(d) / "req.jsonl"))
+                with open(Path(d) / "stdout.txt", "w") as so:
+                    o, sys.stdout = sys.stdout, so
+                    try:
+                        t.plan_batched(a, ctx, {"wbs:SET_GOAL_STATUS": ["id"]}, [f"P{i}" for i in range(40)])
+                    finally:
+                        sys.stdout = o
+                reqs = [json.loads(l) for l in Path(a.out).read_text().splitlines()]
+                meta = json.loads(Path(a.out + ".meta.json").read_text())
+        finally:
+            t.tsx = old
+        return sent[0], reqs, meta
+
+    def test_each_call_gets_its_own_state(self) -> None:
+        spec, reqs, meta = self.plan(shared=False)
+        ref_calls = [c for c in meta if c.startswith("gen-wbs--SET_GOAL_STATUS")]
+        self.assertEqual(len(ref_calls), 3)  # 25 items at batch 10: 10, 10, 5
+        self.assertEqual([s["cid"] for s in spec], ref_calls)
+        self.assertEqual([s["items"] for s in spec], [10, 10, 5])
+        self.assertEqual(len({s["seed"] for s in spec}), 3)
+        for c in ref_calls:
+            sc = meta[c]["scenario"]
+            self.assertEqual(sc["cid"], c)
+            self.assertEqual(len(sc["items"]), len(meta[c]["specs"]))
+        users = [r["params"]["messages"][0]["content"] for r in reqs if r["custom_id"] in ref_calls]
+        self.assertEqual(len({u.split("Current document state")[1].splitlines()[1] for u in users}), 3)
+        self.assertEqual(sum(len(meta[c]["specs"]) for c in meta if c.startswith("gen-wbs--SET_OWNER")), 12)
+
+    def test_seeds_depend_on_seed_job_and_call_only(self) -> None:
+        a, _, _ = self.plan(shared=False)
+        b, _, _ = self.plan(shared=False)
+        self.assertEqual(a, b)
+        c, _, _ = self.plan(shared=False, ref_items=30)  # more calls: the first three keep their seeds
+        self.assertEqual([s["seed"] for s in c[:3]], [s["seed"] for s in a])
+
+    def test_shared_state_keeps_one_state_per_job(self) -> None:
+        spec, _, meta = self.plan(shared=True)
+        self.assertEqual([(s["cid"], s["items"]) for s in spec], [("gen-wbs--SET_GOAL_STATUS", 25)])
+        states = {meta[c]["scenario"]["state"] for c in meta if c.startswith("gen-wbs--SET_GOAL_STATUS")}
+        self.assertEqual(len(states), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

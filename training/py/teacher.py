@@ -456,10 +456,14 @@ def cmd_plan(a) -> int:
 
 def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
     """`plan --batch-size B`: every job (op, or no-action model) gets
-    `--items-per-op` specs and, for a ref op, one seeded state with a target
-    per spec, all drawn from `--seed` and the job key only. The job is then
-    split into calls of B items (`call_specs`), so any two batch sizes send
-    the same specs, states and targets; only the grouping per call differs."""
+    `--items-per-op` specs (`--ref-items-per-op` / `--noaction-items` per
+    class), drawn from `--seed` and the job key only, then split into calls
+    of B items (`call_specs`), so any two batch sizes send the same specs.
+
+    A ref op gets one freshly seeded document state per call, with a target
+    per spec of that call (`scenario_specs`). `--shared-state` gives the job
+    one state shared by all its calls instead, as in the batch-size
+    comparison (same states and targets for every batch size)."""
     if a.ops == "batchcmp":
         keys, na_models = BATCHCMP_OPS, BATCHCMP_NO_ACTION_MODELS
     elif a.ops == "all":
@@ -469,7 +473,10 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
     unknown = [k for k in keys if k not in ctx]
     if unknown:
         raise SystemExit(f"unknown ops: {', '.join(unknown)}")
-    n, size = a.items_per_op, a.batch_size
+    size = a.batch_size
+    per_call = not getattr(a, "shared_state", False)
+    ref_n = getattr(a, "ref_items_per_op", 0) or a.items_per_op
+    na_n = getattr(a, "noaction_items", 0) or a.items_per_op
     name_rng = random.Random(f"{a.seed}:names")
     people: list[str] = []
 
@@ -480,14 +487,16 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
     jobs = []  # (job id, op key or None, model, specs, persona, rng)
     for key in keys:
         rj = random.Random(f"{a.seed}:{key}")
+        n = ref_n if key in ref_ops else a.items_per_op
         jobs.append((f"gen-{key.replace(':', '--')}", key, ctx[key]["model"],
                      item_specs(rj, n, ctx[key]["opName"], names(n), a.avoid_share), rj.choice(PERSONAS), rj))
     for m in na_models:
         rj = random.Random(f"{a.seed}:noaction:{m}")
-        jobs.append((f"noaction-{m}", None, m, item_specs(rj, n, None, names(n), a.avoid_share), rj.choice(PERSONAS), rj))
+        jobs.append((f"noaction-{m}", None, m, item_specs(rj, na_n, None, names(na_n), a.avoid_share),
+                     rj.choice(PERSONAS), rj))
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    spec = [{"cid": j, "op": key, "items": n, "seed": rj.randrange(2**31)} for j, key, _, _, _, rj in jobs if key in ref_ops]
+    spec = scenario_specs(jobs, ref_ops, size, a.seed, per_call)
     scen: dict[str, dict] = {}
     if spec:
         sp_file, sc_file = Path(str(out) + ".scenario-spec.json"), Path(str(out) + ".scenarios.json")
@@ -496,9 +505,9 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
         scen = {x["cid"]: x for x in json.loads(sc_file.read_text())}
     reqs, meta = [], {}
     for job, key, model, specs, persona, _ in jobs:
-        sc = scen.get(job)
         for ci, chunk in enumerate(call_specs(specs, size)):
             c = f"{job}-{ci}"
+            sc = scen.get(c) if per_call else scen.get(job)
             k = len(chunk)
             seed_line = f"Seed: {random.Random(f'{a.seed}:{job}:{ci}').randrange(10**6)}."
             distinct = f"\n{DISTINCT_LINE}" if k > 1 else ""
@@ -513,7 +522,11 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
                 meta[c] = {"job": job, "specs": chunk}
                 continue
             op = ctx[key]
-            items = [sc["items"][sp["i"] - 1] for sp in chunk] if sc else None
+            # Per-call state: the scenario was seeded for this call, one target
+            # per spec in call order. Shared state: the job's targets by spec `i`.
+            items = (sc["items"] if per_call else [sc["items"][sp["i"] - 1] for sp in chunk]) if sc else None
+            if items is not None and len(items) != len(chunk):
+                raise SystemExit(f"{c}: scenario has {len(items)} targets for {len(chunk)} specs")
             refs = None
             if sc:
                 refs = {p: ([x["label"] for x in cs], isinstance(sc["items"][0]["refs"].get(p), list))
@@ -526,6 +539,25 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
             reqs.append(request(c, SYSTEM, user, gen_schema(op["modelSchema"], refs), "medium", 16000 + 1000 * k))
             meta[c] = {"job": job, "specs": chunk, **({"scenario": {**sc, "cid": c, "items": items}} if sc else {})}
     return finish_plan(out, reqs, meta, len(scen))
+
+
+def scenario_specs(jobs: list[tuple], ref_ops: dict, size: int, seed: int, per_call: bool) -> list[dict]:
+    """Ref-scenario requests for `ref-scenarios.ts`. Per call (the default):
+    one freshly seeded state per generation call, `cid` = the call's
+    custom_id, seed from (`--seed`, job, call index) only, one target per
+    spec of that call. Shared (`--shared-state`, the batch-size comparison):
+    one state per job with a target per job spec."""
+    out = []
+    for job, key, _, specs, _, rj in jobs:
+        if key not in ref_ops:
+            continue
+        if not per_call:
+            out.append({"cid": job, "op": key, "items": len(specs), "seed": rj.randrange(2**31)})
+            continue
+        for ci, chunk in enumerate(call_specs(specs, size)):
+            s = random.Random(f"{seed}:{job}:{ci}:state").randrange(2**31)
+            out.append({"cid": f"{job}-{ci}", "op": key, "items": len(chunk), "seed": s})
+    return out
 
 
 def finish_plan(out: Path, reqs: list[dict], meta: dict, n_scen: int) -> int:
@@ -1404,6 +1436,11 @@ def main() -> int:
     p.add_argument("--batch-size", type=int, default=0,
                    help="items per generation call; enables the batched planner (--ops batchcmp|all|<op,op,...>)")
     p.add_argument("--items-per-op", type=int, default=25, help="batched planner: specs per op / no-action model")
+    p.add_argument("--ref-items-per-op", type=int, default=0, help="batched planner: specs per ref op (0: --items-per-op)")
+    p.add_argument("--noaction-items", type=int, default=0, help="batched planner: specs per no-action model (0: --items-per-op)")
+    p.add_argument("--shared-state", action="store_true",
+                   help="batched planner: one seeded state per ref-op job (the batch-size comparison) "
+                        "instead of one per call")
     p.add_argument("--avoid-share", type=float, default=0.6,
                    help="batched planner: share of an op's specs that avoid its op words (the rest use them)")
     p = sub.add_parser("submit"); p.add_argument("requests"); p.add_argument("--yes-spend", action="store_true")
