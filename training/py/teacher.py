@@ -297,6 +297,8 @@ CLI_BASE = [
 ]
 # The parent Claude Code session's variables; the child must not attach to it.
 CHILD_ENV_DROP = re.compile(r"^(CLAUDECODE|CLAUDE_CODE_.*|CLAUDE_PID|CLAUDE_EFFORT|ANTHROPIC_API_KEY|ANTHROPIC_AUTH_TOKEN)$")
+# Subscription usage window exhausted: retrying minutes later cannot help.
+LIMIT_RE = re.compile(r"usage limit|hit your limit|limit reached|limit will reset|resets? at", re.I)
 AUTH_RE = re.compile(r"not logged in|log ?in|authenticat|invalid api key|oauth|unauthori[sz]ed|credential", re.I)
 DEFAULT_CLI_CWD = Path(os.environ.get("TMPDIR", "/tmp")) / "bai-teacher-cwd"
 
@@ -306,6 +308,10 @@ class AuthError(RuntimeError):
 
 
 class Retryable(RuntimeError):
+    pass
+
+
+class UsageLimit(RuntimeError):
     pass
 
 
@@ -406,6 +412,8 @@ def cli_attempt(req: dict, cfg: argparse.Namespace) -> tuple[dict, dict | None]:
         res = json.loads(out)
     except json.JSONDecodeError:
         tail = (err or out).strip()[-300:]
+        if LIMIT_RE.search(tail):
+            raise UsageLimit(tail)
         if AUTH_RE.search(tail):
             raise AuthError(tail)
         raise Retryable(f"exit {proc.returncode}, no JSON result: {tail}")
@@ -417,6 +425,8 @@ def cli_attempt(req: dict, cfg: argparse.Namespace) -> tuple[dict, dict | None]:
         return e
     if res.get("is_error") or res.get("subtype") != "success":
         msg = f"{res.get('subtype')} api_error_status={res.get('api_error_status')}: {str(res.get('result'))[:300]}"
+        if LIMIT_RE.search(str(res.get("result", ""))):
+            raise UsageLimit(msg)
         if res.get("api_error_status") in (401, 403) or AUTH_RE.search(str(res.get("result", ""))):
             raise AuthError(msg)
         raise retry(msg)
@@ -489,30 +499,57 @@ def run_cli(reqs: list[dict], cfg: argparse.Namespace, out_path: str) -> int:
         print("claude is not logged in (run `claude` once and log in, or `claude auth login`); nothing sent.",
               file=sys.stderr)
         return 3
-    stop = threading.Event()
+    # Journal: each succeeded row is appended as it lands, and a re-run with
+    # the same --out skips the custom_ids already in it (errored rows rerun).
+    journal = Path(out_path + ".partial.jsonl")
     rows: dict[str, dict] = {}
+    if journal.exists():
+        for line in journal.read_text().splitlines():
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue  # a line cut off by a crash
+            if r.get("type") == "succeeded":
+                rows[r["custom_id"]] = r
+    resumed = len(rows)
+    todo = [r for r in reqs if r["custom_id"] not in rows]
+    if resumed:
+        print(f"resuming: {resumed} done in {journal}, {len(todo)} to run", file=sys.stderr)
+    stop = threading.Event()
     t0 = time.monotonic()
-    auth: str | None = None
-    with ThreadPoolExecutor(max_workers=cfg.concurrency) as pool:
-        futs = {pool.submit(cli_one, r, cfg, stop): r["custom_id"] for r in reqs}
+    halt: tuple[int, str] | None = None
+    with ThreadPoolExecutor(max_workers=cfg.concurrency) as pool, journal.open("a") as jf:
+        futs = {pool.submit(cli_one, r, cfg, stop): r["custom_id"] for r in todo}
         for f in as_completed(futs):
             try:
                 row = f.result()
             except AuthError as e:
-                auth = str(e)
+                halt = halt or (3, "claude -p is not authenticated (run `claude` once and log in, "
+                                   f"or `claude auth login`).\n{e}")
+                stop.set()
+                continue
+            except UsageLimit as e:
+                halt = halt or (4, f"usage limit reached; re-run the same command after it resets.\n{e}")
                 stop.set()
                 continue
             rows[row["custom_id"]] = row
+            if row["type"] == "succeeded":
+                jf.write(json.dumps(row, ensure_ascii=False) + "\n")
+                jf.flush()
             print(f"[{len(rows)}/{len(reqs)}] {row['custom_id']}: {row['type']}"
                   f" ({len(row['attempts'])} attempt(s), {row['attempts'][-1]['wallS'] if row['attempts'] else '-'}s)",
                   file=sys.stderr)
-    if auth:
-        print("claude -p is not authenticated (run `claude` once and log in, or `claude auth`); "
-              f"stopped without writing results.\n{auth}", file=sys.stderr)
-        return 3
+    if halt:
+        done = sum(1 for r in rows.values() if r["type"] == "succeeded")
+        print(f"stopped: {halt[1]}\n{done}/{len(reqs)} succeeded rows kept in {journal}; "
+              f"{out_path} not written.", file=sys.stderr)
+        return halt[0]
     ordered = [rows[r["custom_id"]] for r in reqs]
     Path(out_path).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in ordered))
     summary = summarize_cli(ordered, time.monotonic() - t0, cfg.concurrency)
+    summary["resumedFromJournal"] = resumed  # wallS covers this invocation only
+    if summary["errored"] == 0:
+        journal.unlink()
     summary["command"] = ["claude", *CLI_BASE, "--model", MODEL, "--effort", "<request effort>",
                           "--max-budget-usd", str(cfg.max_budget_usd), "--system-prompt", "<request system>",
                           "--json-schema", "<request schema>"]
