@@ -1226,6 +1226,8 @@ How many items should one `claude -p` generation call ask for? Before this, pilo
   - List position has no effect.
   - B1 is the most repetitive arm, and its independent calls reproduced a held-out phrase 4 times.
   - Label batch 20 saves 24% of input tokens at the same cost, and its agreement is not shown to be better.
+  - B1 vs B10 yield (84.3% vs 77.8%) is within label-run noise: two label runs on the same rows agree 86.4% exact. B25's loss is structural.
+  - Before the full run, `plan` needs per-call state seeding. Today it seeds one state per op.
 - **Extrapolation, not measured** (12,000 items at B10): about 5.2 h, 14.5M input and 5.8M output tokens, about $100 API-equivalent, and about 9.3k kept rows. Pilot 2's shape gave about 5.4 h, 24M input and $140.
 - **Fixed on the way:**
   - `dedup.py` now also rejects a row that contains a whole eval utterance.

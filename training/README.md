@@ -392,6 +392,8 @@ Pilot 2 total, summed over stages: about 284 s, 79 CLI calls, 0 retries, $1.77.
 
 Diversity is measured on all 325 returned items per arm, per op (25 items each), then averaged over the 13 jobs. Similarity is gte-small cosine on the browser's wasm numerics (`gen/pairwise-similarity.ts`). Each arm ran once.
 
+**How much of the yield gap is noise:** two label runs on the same rows agree only 86.4% exact (see "Label batch 8 vs 20" below), and B10's exact agreement was 80.1% under batch-8 labels but 86.1% under batch-20 labels. So **B1 vs B10 (84.3% vs 77.8% yield) cannot be told apart in one run.** B25's loss is different in kind: it is structural, coming from whole degenerate calls (below). Labeler noise alone puts roughly ±5% on any kept-row extrapolation.
+
 **B25's losses come in whole calls.** Each op gets one call, and that call makes one interpretive choice for all 25 items:
 - SET_DESCRIPTION: all 25 args were "Sets the note description to '…'" (grounding drop).
 - UPDATE_ORIENTATION: 24 of 25 put a pointer in `orientation` ("bongani's notes", "gabriel"), and the labeler rightly said none.
@@ -403,7 +405,7 @@ So 3 of 13 calls cost 64 items. B10 showed the same effect, bounded: one UPDATE_
 - B10 (full 10-item calls): positions 1–5 vs 6–10 had 2/130 vs 2/130 drops before labeling, and 25/128 vs 23/128 label disagreements.
 - B25: positions 1–5 vs 21–25 had 6/65 vs 6/65 drops and 11/59 vs 11/59 disagreements.
 
-**Templating (my read, plus the 5 random kept rows per arm in the results JSON):** B25 does not read as templated on the surface. It has the fewest stock openers ("can you" 14 vs B1's 26), and its n-gram diversity sits between B1 and B10. B1 is the most repetitive arm: independent calls converge on the same opener and phrasing, which is how the same held-out phrase showed up 4 times. B25's templating is semantic instead: one reading per call, repeated.
+**Templating (my read, plus the 5 random kept rows per arm in the results JSON):** B25 does not read as templated on the surface. It has the fewest stock openers ("can you" 14 vs B1's 26), and its n-gram diversity sits between B1 and B10. B1 is the most repetitive arm: independent calls converge on the same opener and phrasing, which is how the same held-out phrase showed up 4 times. That is partly the fixed-state design: B1's 25 calls per op got near-identical prompts that differed only in the spec and the seed line. The recommendation does not rest on it. B25's templating is semantic instead: one reading per call, repeated.
 - B1: "Archive this, Greta's done." → SET_SOURCE_STATUS ARCHIVED; "Can you mark the pen-test findings done, Oskar finished them?" → SET_GOAL_STATUS COMPLETED.
 - B10: "Please remove the core idea concerning symbiont clades and heat tolerance, as Zainab Musa has superseded that method in her latest draft." → REMOVE_CORE_IDEA; "check Saoirse's deadline again" → none.
 - B25: "siddharth says just take off the margin note alredy" → REMOVE_RESEARCH_CONNECTION (a vague ref that was kept); "I'm running late for the archive, just put Keiko Tanabe in charge of this one before I lose the thread." → project SET_OWNER.
@@ -413,7 +415,7 @@ So 3 of 13 calls cost 64 items. B10 showed the same effect, bounded: one UPDATE_
 - Batch 20 used 21 calls (vs 47), 171k input tokens (vs 226k, −24%) and 32k output (vs 29k, more thinking). It cost $0.93 vs $0.87 and took 89 s vs 97 s of wall, with a median of 12.1 s vs 5.7 s per call.
 - So batch 20 saves input tokens but not cost. Its higher agreement is inside the gap between two label runs (86% exact), so one run does not show that it is better.
 
-**Recommendation: generation batch size 10, label batch 8.**
+**Recommendation: generation batch size 10, label batch 8.** Cost and B25's block failures carry it; B10's diversity edge and its yield gap to B1 are both within one run's noise.
 - B10 halves the cost per kept row compared with B1 ($0.0108 vs $0.0188), cuts generation input tokens by 84%, and had the highest lexical diversity.
 - B25 is only 11% cheaper again per kept row. It loses 6 points of yield, and its failures arrive in blocks of 25 that wipe out an op's slice of the data.
 - Label batch 20 is an option if input tokens (the subscription's usage window) matter more than API-equivalent cost. It is not shown to be better.
@@ -447,6 +449,7 @@ $P training/py/batchcmp.py $T/b1 $T/b10 $T/b25 --context $T/context.json --out $
 1. **Round 6 is done.** The format is r6.1, and the renderer uses it. Every change to the core's step-1/step-2 builders, the op descriptions or the vocabularies bumps `PROMPT_FORMAT_VERSION` (`chat/core/prompt-format.ts`). After a bump, re-run `render.sh`.
 2. **Both blind held-out sets** are in `spike/llm-harness/eval/` (`heldout-eval.json`, `heldout2-eval.json`), so `dedup.py` filters against both.
 3. **The user** reviews pilot 2 (above) and approves the full run. `run` refuses more than 200 requests unless `--max-requests` is raised. Ref ops are supported. The teacher's output schemas come from `export-teacher-context.ts`, which carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). Before the full run:
+   - **Per-call state seeding is needed before the full run.** `plan --batch-size` seeds one state per job, so `--ops all --items-per-op 110` would put all 110 of an op's items on one state. Add per-call seeding (or a `--states-per-op` option) first.
    - Two-sided op-word quota, the question form axis and `--batch-size`: done and measured ("Teacher batch-size comparison"). The recommendation is generation batch 10 and label batch 8.
    - Decide the runtime's ref labels for non-note models.
    - Decide `requireOneOf` with an optional ref (UPDATE_DELIVERABLE).
