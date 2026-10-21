@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage, KnowledgeVaultApiError } from "../common/errors.js";
 
@@ -199,7 +198,7 @@ export async function advancePipeline(
       path: "actions",
       json: {
         documentId: queueId,
-        actions: [{ type: "ADVANCE_PHASE", input: { taskId: task.id, handoff: { id: randomUUID(), phase: args.phase, workDone: args.workDone, filesModified: args.filesModified, completedAt: at, completedBy: args.completedBy }, updatedAt: at } }],
+        actions: [{ type: "ADVANCE_PHASE", input: { taskId: task.id, handoff: { id: globalThis.crypto.randomUUID(), phase: args.phase, workDone: args.workDone, filesModified: args.filesModified, completedAt: at, completedBy: args.completedBy }, updatedAt: at } }],
       },
     });
     const failed = result.operations.find((o) => o.error);

@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage } from "../common/errors.js";
 import { madeBySource } from "./connect.js";
@@ -179,7 +178,7 @@ export async function retireStage(client: KnowledgeVaultClient, args: { retireme
       const result = await client.request<{ operations: { type: string; error?: string | null }[] }>({
         method: "POST",
         path: "actions",
-        json: { documentId: r.duplicate, actions: [{ type: "REJECT_NOTE", input: { id: randomUUID(), actor: args.actor, timestamp: at, comment: `Duplicate of "${r.survivor_title}" (${r.survivor}): ${r.reason}` } }] },
+        json: { documentId: r.duplicate, actions: [{ type: "REJECT_NOTE", input: { id: globalThis.crypto.randomUUID(), actor: args.actor, timestamp: at, comment: `Duplicate of "${r.survivor_title}" (${r.survivor}): ${r.reason}` } }] },
       });
       const failed = result.operations.find((o) => o.error);
       if (failed) problems.push(`"${args.titles.get(r.duplicate) ?? r.duplicate}": ${failed.error}`);

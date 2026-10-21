@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage, KnowledgeVaultApiError } from "../common/errors.js";
 
@@ -86,11 +85,11 @@ export async function writeStage(
             { type: "SET_DESCRIPTION", input: { description: n.description, updatedAt: at } },
             { type: "SET_NOTE_TYPE", input: { noteType: n.note_type, updatedAt: at } },
             { type: "SET_CONTENT", input: { content: n.content, updatedAt: at } },
-            ...n.topics.map((name) => ({ type: "ADD_TOPIC", input: { id: randomUUID(), name } })),
+            ...n.topics.map((name) => ({ type: "ADD_TOPIC", input: { id: globalThis.crypto.randomUUID(), name } })),
             { type: "SET_METADATA_FIELD", input: { field: "confidence", value: n.confidence, updatedAt: at } },
             { type: "SET_PROVENANCE", input: { author, sourceOrigin: "DERIVED", createdAt: at } },
             // Straight into the review queue, last: a rejected field above does not block it.
-            { type: "SUBMIT_FOR_REVIEW", input: { id: randomUUID(), actor: author, timestamp: at, comment: `Extracted from "${args.sourceTitle}" (${n.locus || "the source"}) by ${args.model}. Check the claim, its type and topics, then approve.` } },
+            { type: "SUBMIT_FOR_REVIEW", input: { id: globalThis.crypto.randomUUID(), actor: author, timestamp: at, comment: `Extracted from "${args.sourceTitle}" (${n.locus || "the source"}) by ${args.model}. Check the claim, its type and topics, then approve.` } },
           ],
         })),
       },
