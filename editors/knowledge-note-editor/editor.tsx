@@ -33,6 +33,7 @@ import { useGraphMetadata } from "../knowledge-vault/hooks/use-graph-metadata.js
 import { neighbourhood } from "./lib/neighbourhood.js";
 import { IncomingLinks, WhereThisSits } from "./components/graph-position.js";
 import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import { VaultLoader } from "../shared/vault-loader.js";
 import { useKnowledgeNotes } from "../knowledge-vault/hooks/use-knowledge-notes.js";
 import { addLinkActions, retargetLinkActions, retypeLinkActions } from "./lib/link-actions.js";
@@ -291,7 +292,7 @@ export default function Editor() {
     <ThemeProvider>
       <div className="note-ed" data-view={view}>
       <style aria-hidden="true">{STYLES}</style>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div className="ne-body">
         <main className="ne-reader">
           <div className="pagewrap">

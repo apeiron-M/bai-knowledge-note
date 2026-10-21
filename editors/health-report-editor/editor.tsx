@@ -3,6 +3,7 @@ import { useSelectedHealthReportDocument } from "document-models/health-report";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 
 const STATUS_BADGE: Record<string, string> = {
   PASS: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
@@ -26,7 +27,7 @@ export default function Editor() {
         style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
       >
         <div className="mx-auto max-w-3xl">
-          <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+          <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
           <div
             className="flex h-64 items-center justify-center rounded-xl m-6"
             style={{
@@ -61,7 +62,7 @@ export default function Editor() {
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-4xl">
-        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
         <div className="p-6 space-y-6">
           {/* Header */}
           <div

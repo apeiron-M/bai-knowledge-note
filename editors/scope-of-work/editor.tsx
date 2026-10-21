@@ -6,6 +6,7 @@ import {
 } from "@powerhousedao/design-system/connect";
 import { useSelectedScopeOfWorkDocument } from "document-models/scope-of-work";
 import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import {
   CollapsibleToolbar,
   readToolbarOpen,
@@ -60,6 +61,7 @@ export default function Editor() {
           <CollapsibleToolbar open={toolbarOpen} onToggle={toggleToolbar}>
             <DocumentToolbar
               toolbarClassName={TOOLBAR_CLASS}
+              disabledControls={hostDisabledToolbarControls()}
               componentOverrides={{ history: HistoryControl }}
             />
           </CollapsibleToolbar>

@@ -16,6 +16,7 @@
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedVaultConfigDocument } from "document-models/vault-config";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import {
   DEFAULT_DIMENSIONS,
   DEFAULT_MAINTENANCE,
@@ -43,7 +44,7 @@ export default function Editor() {
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-5xl">
-        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
         <div className="space-y-6 p-6">
           <HeaderSection
             name={state.name}

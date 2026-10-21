@@ -10,6 +10,7 @@ import {
 } from "document-models/work-breakdown-structure";
 import type { WorkBreakdownStructureAction } from "document-models/work-breakdown-structure";
 import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import { GOAL_STATUS_META, goalRollup } from "../shared/project-status.js";
 import { GoalTree } from "./components/GoalTree.js";
 import { GoalSidebar } from "./components/GoalSidebar.js";
@@ -51,7 +52,7 @@ export default function Editor() {
 
   return (
     <ThemeProvider>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div
         className="flex min-h-screen"
         style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}

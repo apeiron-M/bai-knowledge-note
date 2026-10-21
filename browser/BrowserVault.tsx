@@ -3,16 +3,21 @@
  * page of its own: it owns the page's `window.ph` slots and its `fetch` for the
  * vault's origin.
  */
+import { RevisionHistory } from "@powerhousedao/design-system/connect";
 import {
+  setRevisionHistoryVisible,
   useAppModuleById,
   useDocumentById,
+  useDocumentOperations,
   useEditorModuleById,
   useEditorModulesForDocumentType,
+  useRevisionHistoryVisible,
   useSelectedDocument,
   useSelectedDocumentId,
   useSelectedDriveSafe,
 } from "@powerhousedao/reactor-browser";
-import { Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import type { PHDocument } from "document-model";
+import { Suspense, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { bootBrowserVault, deleteBrowserVault, type BootedVault } from "./boot.js";
 import type { VaultSeed } from "./seed.js";
 
@@ -122,16 +127,67 @@ function Screen({ title, children }: { title: string; children?: ReactNode }) {
   );
 }
 
+/**
+ * The scope history opens on: global, as in Connect, when it has operations. The guide's documents
+ * were written with their content in place, so until the visitor edits one, all its operations
+ * are in the document scope, and opening on an empty global list would show nothing.
+ */
+function defaultScope(scopes: readonly string[], revision: Readonly<Record<string, number>>): string {
+  if ((revision.global ?? 0) > 0) return "global";
+  return scopes.find((scope) => (revision[scope] ?? 0) > 0) ?? (scopes.includes("global") ? "global" : (scopes[0] ?? "global"));
+}
+
+/**
+ * A document's operations, shown when its toolbar's History button is pressed — what Connect's
+ * document container does. Without a container to watch for it, the button opened nothing.
+ */
+function DocumentHistory({ document }: { document: PHDocument }) {
+  const scopes = useMemo(() => {
+    const keys = Object.keys(document.header.revision);
+    return keys.length > 0 ? keys : ["global"];
+  }, [document.header.revision]);
+  const [scope, setScope] = useState(() => defaultScope(scopes, document.header.revision));
+  const selectedScope = scopes.includes(scope) ? scope : defaultScope(scopes, document.header.revision);
+  const { operations, isLoading, hasNextPage, fetchNextPage, error } = useDocumentOperations(
+    document.header.id,
+    selectedScope,
+    { limit: 500 },
+  );
+  return (
+    <div className="relative h-full">
+      <RevisionHistory
+        documentTitle={document.header.name}
+        documentId={document.header.id}
+        operations={operations}
+        isLoading={isLoading}
+        hasNextPage={hasNextPage}
+        onLoadNextPage={fetchNextPage}
+        error={error}
+        scopes={scopes}
+        scope={selectedScope}
+        onScopeChange={setScope}
+        onClose={() => setRevisionHistoryVisible(false)}
+        documentState={document.state}
+      />
+    </div>
+  );
+}
+
 /** The selected document's editor, as Connect's document container renders it. */
 function DocumentEditor() {
   const [selected] = useSelectedDocument();
   const [live] = useDocumentById(selected.header.id);
   const document = live ?? selected;
+  const historyOpen = useRevisionHistoryVisible();
+  // History is a view of one document: leaving it (another document, or none) closes it.
+  const documentId = document.header.id;
+  useEffect(() => () => setRevisionHistoryVisible(false), [documentId]);
   const preferred = useEditorModuleById(
     (document.header.meta as { preferredEditor?: string } | undefined)?.preferredEditor,
   );
   const byType = useEditorModulesForDocumentType(document.header.documentType);
   const editor = preferred ?? byType?.[0];
+  if (historyOpen) return <DocumentHistory key={documentId} document={document} />;
   if (!editor) return <p role="alert">No editor is installed for {document.header.documentType}.</p>;
   const Editor = editor.Component;
   return (

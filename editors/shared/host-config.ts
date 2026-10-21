@@ -191,3 +191,12 @@ export function isDesktopHost(): boolean {
 export function isBrowserHost(): boolean {
   return getHostConfig()?.kind === "browser";
 }
+
+/**
+ * Document toolbar controls the host has nothing behind. The browser vault runs without a
+ * Switchboard, so the toolbar's "Open link in Switchboard" button would open nothing there.
+ * Read at render time, like the rest of this module.
+ */
+export function hostDisabledToolbarControls(): Array<"switchboard"> | undefined {
+  return isBrowserHost() ? ["switchboard"] : undefined;
+}

@@ -8,6 +8,7 @@ import {
 import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { useSelectedMocDocument, actions } from "document-models/moc";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import { useKnowledgeMocs } from "../knowledge-vault/hooks/use-knowledge-mocs.js";
 import {
   RevisionOperationList,
@@ -258,7 +259,7 @@ export default function Editor() {
   return (
     <div className="moc-ed" data-view={view}>
       <style aria-hidden="true">{STYLES}</style>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div className="moc-body">
         <span className="moc-progress" style={{ width: `${progress}%` }} />
         <main className="moc-reader" ref={reader} onScroll={onScroll}>
@@ -775,7 +776,7 @@ function InitForm({
   return (
     <div className="moc-ed">
       <style aria-hidden="true">{STYLES}</style>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div className="moc-body">
         <main className="moc-reader">
           <div className="iform">

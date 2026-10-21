@@ -27,7 +27,7 @@ import {
 } from "../shared/revision-history.js";
 import { useRevisionHistory } from "../shared/use-revision-history.js";
 import { SOURCE_REVISION_MODEL } from "./lib/revision-model.js";
-import { isDesktopHost } from "../shared/host-config.js";
+import { isDesktopHost, hostDisabledToolbarControls } from "../shared/host-config.js";
 import { QueueStatusLine } from "./components/queue-status-line.js";
 import { ingestAndQueue, openTaskFor, pasteLede } from "./lib/queue-status.js";
 
@@ -360,7 +360,7 @@ export default function Editor() {
   return (
     <div className="src-ed" data-view={view}>
       <style aria-hidden="true">{STYLES}</style>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div className="src-body">
         <span className="src-progress" style={{ width: `${progress}%` }} />
         <main className="src-reader" ref={reader} onScroll={onScroll}>
@@ -963,7 +963,7 @@ function IngestForm({
   return (
     <div className="src-ed">
       <style aria-hidden="true">{STYLES}</style>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div className="src-body">
         <main className="src-reader">
           <div className="iform">

@@ -2,6 +2,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedPipelineQueueDocument } from "document-models/pipeline-queue";
 import { useMemo, useState } from "react";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import { PhaseFlow } from "./components/phase-flow.js";
 import { TaskTable } from "./components/task-table.js";
 import { claimPhases, countGroups, filterTasks, inView, openByPhase, sortTasks, VIEW_LABEL, type View } from "./lib/tasks.js";
@@ -48,7 +49,7 @@ export default function Editor() {
     <div className="pq-editor min-h-screen" style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}>
       <style>{PIPELINE_QUEUE_STYLES}</style>
       <div className="mx-auto max-w-6xl">
-        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
         <div className="pq-body">
           <header className="pq-head">
             <h1>Processing pipeline</h1>

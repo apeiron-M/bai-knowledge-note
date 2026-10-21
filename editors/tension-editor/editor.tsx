@@ -5,6 +5,7 @@ import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import { clearTensionClose, pendingTensionClose } from "../shared/tension-intent.js";
 import { useDocWrite } from "../shared/use-doc-write.js";
 import { NoteFinder } from "../shared/note-finder.js";
@@ -213,7 +214,7 @@ export default function Editor() {
   return (
     <div className="ten-ed" data-view={view}>
       <style aria-hidden="true">{STYLES}</style>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div className="ten-body">
         <span className="ten-progress" style={{ width: `${progress}%` }} />
         <main className="ten-reader" ref={reader} onScroll={onScroll}>
@@ -490,7 +491,7 @@ function CreateForm({
   return (
     <div className="ten-ed">
       <style aria-hidden="true">{STYLES}</style>
-      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
       <div className="ten-body">
         <main className="ten-reader">
           <div className="iform">

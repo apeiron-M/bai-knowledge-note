@@ -7,6 +7,7 @@ import {
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { PromoteForm } from "./promote-form.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../shared/host-config.js";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { useDocWrite } from "../shared/use-doc-write.js";
@@ -56,7 +57,7 @@ export default function Editor() {
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-3xl">
-        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
         <div className="p-6 space-y-6">
           <div
             className="rounded-xl p-6 space-y-4"
@@ -235,7 +236,7 @@ function CreateForm({
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-2xl">
-        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
         <div className="p-6">
           <div
             className="rounded-xl p-8 space-y-4"

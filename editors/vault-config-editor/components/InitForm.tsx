@@ -11,6 +11,7 @@ import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import { actions } from "document-models/vault-config";
 import type { VaultConfigAction } from "document-models/vault-config";
 import { TOOLBAR_CLASS } from "../../shared/theme-context.js";
+import { hostDisabledToolbarControls } from "../../shared/host-config.js";
 import { ts } from "./ui.js";
 
 type Dispatch = DocumentDispatch<VaultConfigAction>;
@@ -32,7 +33,7 @@ export function InitForm({ dispatch }: { dispatch: Dispatch }) {
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-2xl">
-        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} disabledControls={hostDisabledToolbarControls()} />
         <div className="p-6">
           <div
             className="space-y-4 rounded-xl p-8"
