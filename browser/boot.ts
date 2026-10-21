@@ -32,6 +32,7 @@ import { startLiveFeed } from "./live-feed.js";
 import { installLocalOrigin, LOCAL_ORIGIN } from "./local-origin.js";
 import { createPageSubgraph } from "./page-subgraph.js";
 import { createRestService } from "./rest.js";
+import { redateSeed } from "./seed-dates.js";
 import { seedContent, seedSkeleton, VAULT_APP_ID, type VaultSeed } from "./seed.js";
 
 export type BootOptions = {
@@ -48,6 +49,12 @@ export type BootedVault = {
   /** The vault was seeded from another version of the starting content. */
   outdated: boolean;
   /**
+   * The guide's documents get new ids on a first visit (they follow the guide's new dates, see
+   * seed-dates.ts): this maps the seed's id of a guide note, map or source to this vault's. Empty for a
+   * vault seeded before the guide was dated to the visit.
+   */
+  guideIds: Readonly<Record<string, string>>;
+  /**
    * On a first visit the vault app opens on the drive's skeleton while the
    * guide is written behind it: this settles once the guide is complete and on
    * disk, and is null when nothing is being written. Rejects if the guide could
@@ -58,7 +65,7 @@ export type BootedVault = {
   stop(): Promise<void>;
 };
 
-type SeedStamp = { version: string; driveId: string };
+type SeedStamp = { version: string; driveId: string; ids?: Record<string, string> };
 
 const stampKey = (namespace: string) => `${namespace}:seed`;
 
@@ -175,6 +182,7 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
 
   let driveId = await findVaultDrive(client, stamp?.driveId);
   let outdated = false;
+  let guideIds: Readonly<Record<string, string>> = stamp?.ids ?? {};
   let seed: VaultSeed | null = null;
   if (driveId) {
     // A return visit. Flushes held on a guess are let go: nothing of the vault was skipped.
@@ -190,7 +198,10 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     // Held until the guide is complete: nothing of the vault reaches the disk
     // before it is whole, so a tab closed halfway leaves nothing behind to repair.
     engine.flushes.hold();
-    seed = await (seedLoad ?? options.loadSeed());
+    // Dated to the visit: the guide reads as processed in the minutes before the vault opened.
+    const dated = redateSeed(await (seedLoad ?? options.loadSeed()), new Date());
+    seed = dated.seed;
+    guideIds = dated.ids;
     onProgress?.("seed");
     driveId = await seedSkeleton(client, models, seed);
     mark("skeleton");
@@ -260,7 +271,7 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
         mark("seeded");
         await engine.flushes.release();
         mark("stored");
-        writeStamp(namespace, { version: guide.version, driveId: vaultDriveId });
+        writeStamp(namespace, { version: guide.version, driveId: vaultDriveId, ids: { ...guideIds } });
         console.info(`[BrowserVault] guide written: ${JSON.stringify(timings)} (ms since start)`);
       })()
     : null;
@@ -280,6 +291,7 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
     engine,
     driveId: vaultDriveId,
     outdated,
+    guideIds,
     seeding,
     stop: async () => {
       abort.abort();
