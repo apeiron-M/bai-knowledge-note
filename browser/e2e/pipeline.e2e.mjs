@@ -92,6 +92,14 @@ const check = (name, ok, detail = "") => {
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 await context.route("https://openrouter.ai/**", openRouterStub);
+// The landing's own welcome, tour and nudges (knowledge-vault-landing, kv-try:onboarding:v1) are
+// not what this checks: marked as seen, so none of them stands in front of the vault.
+await context.addInitScript(() => {
+  localStorage.setItem(
+    "kv-try:onboarding:v1",
+    JSON.stringify({ welcomed: true, offered: true, tour: { status: "done", step: 0 }, nudges: ["first-notes", "big-source", "large-vault"] }),
+  );
+});
 const page = await context.newPage();
 const problems = [];
 page.on("pageerror", (error) => problems.push(error.message));
