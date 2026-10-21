@@ -1,0 +1,681 @@
+{
+ "label": "observed (one run per arm); costUsd is the CLI's total_cost_usd, API-list-price equivalent",
+ "arms": [
+  {
+   "arm": "b1",
+   "callSizes": [
+    1
+   ],
+   "generationCalls": 325,
+   "distinctRefStates": 7,
+   "funnel": {
+    "requested": 325,
+    "returned": 325,
+    "callsLostOrUnparseable": 0,
+    "itemsLostWithCalls": 0,
+    "shortCalls": 0,
+    "rowsStageDrops": {
+     "grounding": 5,
+     "spec/wording": 2
+    },
+    "afterRows": 318,
+    "dedupEvalLeak": 4,
+    "dedupNearDuplicate": 0,
+    "zodReplayRefChecks": 0,
+    "r61Gate": 3,
+    "labelDisagreeOp": 19,
+    "labelDisagreeArgsOnly": 18,
+    "quotaDropped": 0,
+    "nameCapDropped": 0,
+    "kept": 274,
+    "yield": 0.843
+   },
+   "agreement": {
+    "labeled": 311,
+    "op": "292/311 (93.9%)",
+    "exact": "274/311 (88.1%)",
+    "tolerant": "284/311"
+   },
+   "diversityReturned": {
+    "items": 325,
+    "distinctUtteranceRatio": 1.0,
+    "distinct2gramsPer100PerOp": 1105.2,
+    "distinct3gramsPer100PerOp": 1204.6,
+    "distinct2gramsPer100All": 939.4,
+    "opWordFree": "182/300 (61%)",
+    "opWordFreeOfAvoidSpecs": "178/180",
+    "opWordUsedOfUseSpecs": "116/120",
+    "maxNameReuse": 5,
+    "lengthBuckets": {
+     "very short": 68,
+     "short": 90,
+     "medium": 118,
+     "long": 49,
+     "over 50": 0
+    },
+    "wordsMedianMinMax": [
+     14,
+     3,
+     41
+    ],
+    "questionsShare": 0.3,
+    "topOpeners": [
+     [
+      "can you",
+      26
+     ],
+     [
+      "hey can",
+      14
+     ],
+     [
+      "could you",
+      9
+     ],
+     [
+      "drop the",
+      7
+     ],
+     [
+      "hey quick",
+      7
+     ]
+    ],
+    "meanPairwiseCosinePerOp(gte-small)": 0.8269
+   },
+   "diversityKept": {
+    "items": 274,
+    "distinctUtteranceRatio": 1.0,
+    "distinct2gramsPer100PerOp": 1174.7,
+    "distinct3gramsPer100PerOp": 1267.9,
+    "distinct2gramsPer100All": 975.5,
+    "opWordFree": "154/249 (62%)",
+    "opWordFreeOfAvoidSpecs": "150/150",
+    "opWordUsedOfUseSpecs": "95/99",
+    "maxNameReuse": 5,
+    "lengthBuckets": {
+     "very short": 52,
+     "short": 75,
+     "medium": 104,
+     "long": 43,
+     "over 50": 0
+    },
+    "wordsMedianMinMax": [
+     16.0,
+     3,
+     41
+    ],
+    "questionsShare": 0.3,
+    "topOpeners": [
+     [
+      "can you",
+      21
+     ],
+     [
+      "hey can",
+      13
+     ],
+     [
+      "drop the",
+      7
+     ],
+     [
+      "could you",
+      7
+     ],
+     [
+      "hey quick",
+      5
+     ]
+    ]
+   },
+   "position": null,
+   "generation": {
+    "calls": 325,
+    "succeeded": 325,
+    "attempts": 325,
+    "retriesExcludingLimit": 0,
+    "limitInterruptedAttempts": 0,
+    "wallS": 482.2,
+    "resumedFromJournal": 0,
+    "sumLatencyOver3S": 481.3,
+    "latencyMedianS": 3.86,
+    "latencyP90S": 6.91,
+    "inputTokens": 1076564,
+    "cacheRead": 232415,
+    "outputTokens": 98153,
+    "thinkingTokens": 48355,
+    "costUsd": 4.4033
+   },
+   "label": {
+    "calls": 45,
+    "succeeded": 45,
+    "attempts": 45,
+    "retriesExcludingLimit": 0,
+    "limitInterruptedAttempts": 180,
+    "wallS": 92.9,
+    "resumedFromJournal": 0,
+    "sumLatencyOver3S": 91.9,
+    "latencyMedianS": 5.7,
+    "latencyP90S": 8.42,
+    "inputTokens": 226957,
+    "cacheRead": 118303,
+    "outputTokens": 28884,
+    "thinkingTokens": 4405,
+    "costUsd": 0.7469
+   },
+   "localStagesS": 19,
+   "costUsd": 5.1502,
+   "costPerKeptRowUsd": 0.0188,
+   "genCostPerKeptRowUsd": 0.0161,
+   "sampleKept(seed)": [
+    {
+     "utterance": "Can you go ahead and mark this as archived now that Ravi's finished reviewing it for the week?",
+     "op": "source:SET_SOURCE_STATUS",
+     "args": {
+      "status": "ARCHIVED"
+     }
+    },
+    {
+     "utterance": "Can you mark the pen-test findings done, Oskar finished them?",
+     "op": "wbs:SET_GOAL_STATUS",
+     "args": {
+      "id": "goal-1",
+      "status": "COMPLETED"
+     }
+    },
+    {
+     "utterance": "Emeka just finished pulling claims out of this for the design review, so go ahead and mark it as extracted now.",
+     "op": "source:SET_SOURCE_STATUS",
+     "args": {
+      "status": "EXTRACTED"
+     }
+    },
+    {
+     "utterance": "Archive this, Greta's done.",
+     "op": "source:SET_SOURCE_STATUS",
+     "args": {
+      "status": "ARCHIVED"
+     }
+    },
+    {
+     "utterance": "Still sorting through three folders of lab logs right now. Summarize this as: Hamid Rahimi's pilot dataset on perovskite degradation rates, used only as a cross-validation baseline, not the final analysis.",
+     "op": "knowledge-note:SET_DESCRIPTION",
+     "args": {
+      "description": "Hamid Rahimi's pilot dataset on perovskite degradation rates, used only as a cross-validation baseline, not the final analysis."
+     }
+    }
+   ]
+  },
+  {
+   "arm": "b10",
+   "callSizes": [
+    5,
+    10
+   ],
+   "generationCalls": 39,
+   "distinctRefStates": 7,
+   "funnel": {
+    "requested": 325,
+    "returned": 325,
+    "callsLostOrUnparseable": 0,
+    "itemsLostWithCalls": 0,
+    "shortCalls": 0,
+    "rowsStageDrops": {
+     "spec/wording": 1
+    },
+    "afterRows": 324,
+    "dedupEvalLeak": 0,
+    "dedupNearDuplicate": 0,
+    "zodReplayRefChecks": 1,
+    "r61Gate": 2,
+    "labelDisagreeOp": 29,
+    "labelDisagreeArgsOnly": 35,
+    "quotaDropped": 4,
+    "nameCapDropped": 0,
+    "kept": 253,
+    "yield": 0.778
+   },
+   "agreement": {
+    "labeled": 321,
+    "op": "292/321 (91.0%)",
+    "exact": "257/321 (80.1%)",
+    "tolerant": "275/321"
+   },
+   "diversityReturned": {
+    "items": 325,
+    "distinctUtteranceRatio": 1.0,
+    "distinct2gramsPer100PerOp": 1243.4,
+    "distinct3gramsPer100PerOp": 1313.5,
+    "distinct2gramsPer100All": 1039.4,
+    "opWordFree": "182/300 (61%)",
+    "opWordFreeOfAvoidSpecs": "179/180",
+    "opWordUsedOfUseSpecs": "117/120",
+    "maxNameReuse": 5,
+    "lengthBuckets": {
+     "very short": 76,
+     "short": 83,
+     "medium": 116,
+     "long": 50,
+     "over 50": 0
+    },
+    "wordsMedianMinMax": [
+     16,
+     3,
+     43
+    ],
+    "questionsShare": 0.32,
+    "topOpeners": [
+     [
+      "can you",
+      17
+     ],
+     [
+      "hey can",
+      9
+     ],
+     [
+      "could you",
+      8
+     ],
+     [
+      "hey quick",
+      7
+     ],
+     [
+      "hey so",
+      5
+     ]
+    ],
+    "meanPairwiseCosinePerOp(gte-small)": 0.8199
+   },
+   "diversityKept": {
+    "items": 253,
+    "distinctUtteranceRatio": 1.0,
+    "distinct2gramsPer100PerOp": 1378.0,
+    "distinct3gramsPer100PerOp": 1444.7,
+    "distinct2gramsPer100All": 1129.6,
+    "opWordFree": "137/228 (60%)",
+    "opWordFreeOfAvoidSpecs": "136/136",
+    "opWordUsedOfUseSpecs": "91/92",
+    "maxNameReuse": 5,
+    "lengthBuckets": {
+     "very short": 52,
+     "short": 62,
+     "medium": 96,
+     "long": 43,
+     "over 50": 0
+    },
+    "wordsMedianMinMax": [
+     18,
+     3,
+     43
+    ],
+    "questionsShare": 0.34,
+    "topOpeners": [
+     [
+      "can you",
+      13
+     ],
+     [
+      "hey quick",
+      7
+     ],
+     [
+      "could you",
+      7
+     ],
+     [
+      "hey can",
+      6
+     ],
+     [
+      "hey just",
+      4
+     ]
+    ]
+   },
+   "position": {
+    "callSize": 10,
+    "first5": {
+     "items": 130,
+     "droppedBeforeLabel": "2/130",
+     "labelDisagree": "25/128"
+    },
+    "last5": {
+     "items": 130,
+     "droppedBeforeLabel": "2/130",
+     "labelDisagree": "23/128"
+    }
+   },
+   "generation": {
+    "calls": 39,
+    "succeeded": 39,
+    "attempts": 39,
+    "retriesExcludingLimit": 0,
+    "limitInterruptedAttempts": 0,
+    "wallS": 387.4,
+    "resumedFromJournal": 0,
+    "sumLatencyOver3S": 377.9,
+    "latencyMedianS": 23.72,
+    "latencyP90S": 54.36,
+    "inputTokens": 167422,
+    "cacheRead": 26304,
+    "outputTokens": 128668,
+    "thinkingTokens": 92924,
+    "costUsd": 1.8563
+   },
+   "label": {
+    "calls": 47,
+    "succeeded": 47,
+    "attempts": 47,
+    "retriesExcludingLimit": 0,
+    "limitInterruptedAttempts": 188,
+    "wallS": 97.4,
+    "resumedFromJournal": 0,
+    "sumLatencyOver3S": 93.6,
+    "latencyMedianS": 5.7,
+    "latencyP90S": 7.82,
+    "inputTokens": 225836,
+    "cacheRead": 83311,
+    "outputTokens": 28589,
+    "thinkingTokens": 4511,
+    "costUsd": 0.8725
+   },
+   "localStagesS": 19,
+   "costUsd": 2.7288,
+   "costPerKeptRowUsd": 0.0108,
+   "genCostPerKeptRowUsd": 0.0073,
+   "sampleKept(seed)": [
+    {
+     "utterance": "Abebe sent over an update this morning, and while I was reviewing it I noticed the research connection about overnight proofing improving crumb is outdated now, so can you remove it?",
+     "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+     "args": {
+      "id": "conn-2"
+     }
+    },
+    {
+     "utterance": "check Saoirse's deadline again",
+     "op": null,
+     "args": null
+    },
+    {
+     "utterance": "Please remove the core idea concerning symbiont clades and heat tolerance, as Zainab Musa has superseded that method in her latest draft.",
+     "op": "moc:REMOVE_CORE_IDEA",
+     "args": {
+      "id": "idea-1"
+     }
+    },
+    {
+     "utterance": "Change the summary blurb at the top to say Ifeoma Chukwu's replication study on gut microbiota variance, not the old placeholder text.",
+     "op": "knowledge-note:SET_DESCRIPTION",
+     "args": {
+      "description": "Ifeoma Chukwu's replication study on gut microbiota variance"
+     }
+    },
+    {
+     "utterance": "Please add Amara Nwosu as an involved reference to this tension, since her team's ongoing work directly affects the outcome we are currently tracking, and her input will be essential when we review this matter next week.",
+     "op": "tension:ADD_INVOLVED_REF",
+     "args": {
+      "ref": "Amara Nwosu"
+     }
+    }
+   ]
+  },
+  {
+   "arm": "b25",
+   "callSizes": [
+    25
+   ],
+   "generationCalls": 13,
+   "distinctRefStates": 7,
+   "funnel": {
+    "requested": 325,
+    "returned": 325,
+    "callsLostOrUnparseable": 0,
+    "itemsLostWithCalls": 0,
+    "shortCalls": 0,
+    "rowsStageDrops": {
+     "spec/wording": 2,
+     "grounding": 25
+    },
+    "afterRows": 298,
+    "dedupEvalLeak": 1,
+    "dedupNearDuplicate": 0,
+    "zodReplayRefChecks": 0,
+    "r61Gate": 2,
+    "labelDisagreeOp": 47,
+    "labelDisagreeArgsOnly": 9,
+    "quotaDropped": 5,
+    "nameCapDropped": 0,
+    "kept": 234,
+    "yield": 0.72
+   },
+   "agreement": {
+    "labeled": 295,
+    "op": "248/295 (84.1%)",
+    "exact": "239/295 (81.0%)",
+    "tolerant": "242/295"
+   },
+   "diversityReturned": {
+    "items": 325,
+    "distinctUtteranceRatio": 1.0,
+    "distinct2gramsPer100PerOp": 1185.8,
+    "distinct3gramsPer100PerOp": 1250.2,
+    "distinct2gramsPer100All": 982.5,
+    "opWordFree": "182/300 (61%)",
+    "opWordFreeOfAvoidSpecs": "179/180",
+    "opWordUsedOfUseSpecs": "117/120",
+    "maxNameReuse": 5,
+    "lengthBuckets": {
+     "very short": 79,
+     "short": 80,
+     "medium": 117,
+     "long": 49,
+     "over 50": 0
+    },
+    "wordsMedianMinMax": [
+     16,
+     3,
+     44
+    ],
+    "questionsShare": 0.33,
+    "topOpeners": [
+     [
+      "can you",
+      14
+     ],
+     [
+      "could you",
+      7
+     ],
+     [
+      "hey can",
+      5
+     ],
+     [
+      "hey quick",
+      4
+     ],
+     [
+      "hey so",
+      4
+     ]
+    ],
+    "meanPairwiseCosinePerOp(gte-small)": 0.8199
+   },
+   "diversityKept": {
+    "items": 234,
+    "distinctUtteranceRatio": 1.0,
+    "distinct2gramsPer100PerOp": 1205.1,
+    "distinct3gramsPer100PerOp": 1273.3,
+    "distinct2gramsPer100All": 1011.1,
+    "opWordFree": "127/209 (61%)",
+    "opWordFreeOfAvoidSpecs": "126/126",
+    "opWordUsedOfUseSpecs": "82/83",
+    "maxNameReuse": 5,
+    "lengthBuckets": {
+     "very short": 53,
+     "short": 55,
+     "medium": 89,
+     "long": 37,
+     "over 50": 0
+    },
+    "wordsMedianMinMax": [
+     16.5,
+     3,
+     41
+    ],
+    "questionsShare": 0.33,
+    "topOpeners": [
+     [
+      "can you",
+      9
+     ],
+     [
+      "could you",
+      4
+     ],
+     [
+      "hey can",
+      4
+     ],
+     [
+      "please take",
+      4
+     ],
+     [
+      "hey quick",
+      3
+     ]
+    ]
+   },
+   "position": {
+    "callSize": 25,
+    "first5": {
+     "items": 65,
+     "droppedBeforeLabel": "6/65",
+     "labelDisagree": "11/59"
+    },
+    "last5": {
+     "items": 65,
+     "droppedBeforeLabel": "6/65",
+     "labelDisagree": "11/59"
+    }
+   },
+   "generation": {
+    "calls": 13,
+    "succeeded": 13,
+    "attempts": 13,
+    "retriesExcludingLimit": 0,
+    "limitInterruptedAttempts": 0,
+    "wallS": 313.5,
+    "resumedFromJournal": 0,
+    "sumLatencyOver3S": 283.9,
+    "latencyMedianS": 61.17,
+    "latencyP90S": 93.29,
+    "inputTokens": 84731,
+    "cacheRead": 1039,
+    "outputTokens": 105619,
+    "thinkingTokens": 75559,
+    "costUsd": 1.3911
+   },
+   "label": {
+    "calls": 43,
+    "succeeded": 43,
+    "attempts": 43,
+    "retriesExcludingLimit": 0,
+    "limitInterruptedAttempts": 44,
+    "wallS": 20.0,
+    "resumedFromJournal": 32,
+    "sumLatencyOver3S": 84.0,
+    "latencyMedianS": 5.34,
+    "latencyP90S": 7.33,
+    "inputTokens": 203852,
+    "cacheRead": 56122,
+    "outputTokens": 25981,
+    "thinkingTokens": 4418,
+    "costUsd": 0.8618
+   },
+   "localStagesS": 18,
+   "costUsd": 2.2529,
+   "costPerKeptRowUsd": 0.0096,
+   "genCostPerKeptRowUsd": 0.0059,
+   "sampleKept(seed)": [
+    {
+     "utterance": "siddharth says just take off the margin note alredy",
+     "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+     "args": {
+      "id": "conn-1"
+     }
+    },
+    {
+     "utterance": "Please remove the core idea on symbiont clades and heat tolerance, as Zainab Musa has confirmed it no longer anchors our methodology.",
+     "op": "moc:REMOVE_CORE_IDEA",
+     "args": {
+      "id": "idea-1"
+     }
+    },
+    {
+     "utterance": "I'm running late for the archive, just put Keiko Tanabe in charge of this one before I lose the thread.",
+     "op": "project:SET_OWNER",
+     "args": {
+      "owner": "Keiko Tanabe"
+     }
+    },
+    {
+     "utterance": "So I was skimming the notes section and noticed Santiago Herrera's goal has no references attached—was that intentional or just an oversight?",
+     "op": null,
+     "args": null
+    },
+    {
+     "utterance": "hey, I was just reviewing the sprint board over coffee and realized nadia kuznetsova actually finished all the pen-test findings last week, so go ahead and set that goal's status to completed.",
+     "op": "wbs:SET_GOAL_STATUS",
+     "args": {
+      "id": "goal-1",
+      "status": "COMPLETED"
+     }
+    }
+   ]
+  }
+ ],
+ "date": "2026-10-21",
+ "teacher": "cli (claude -p, claude-sonnet-5, effort medium gen / low label), concurrency 3",
+ "plan": "teacher.py plan --ops batchcmp --batch-size {1,10,25} --items-per-op 25 --avoid-share 0.6 --seed 20261021",
+ "agree": "--max-free 0.7 --name-cap 0, label --batch 8",
+ "labelBatch8vs20(b10 rows, labelcmp)": {
+  "rows": 323,
+  "batch8~gold": {
+   "op": "294/323",
+   "exact": "259/323"
+  },
+  "batch20~gold": {
+   "op": "299/323",
+   "exact": "278/323"
+  },
+  "batch8~batch20": {
+   "op": "307/323",
+   "exact": "279/323"
+  },
+  "batch8": {
+   "calls": 47,
+   "inputTokens": 225836,
+   "outputTokens": 28589,
+   "costUsd": 0.8725,
+   "wallS": 97.4,
+   "latencyMedianS": 5.7
+  },
+  "batch20": {
+   "calls": 21,
+   "inputTokens": 171409,
+   "outputTokens": 32056,
+   "costUsd": 0.9308,
+   "wallS": 88.6,
+   "latencyMedianS": 12.09
+  }
+ },
+ "notes": [
+  "Label attempts lost to the account's 429 spend/session limit are limitInterruptedAttempts (0 tokens, 0 cost), not failures; the label passes were resumed from the journal.",
+  "b25 label wallS covers the resumed invocation only (32/43 calls were journaled before the limit); sumLatencyOver3S is the comparable figure."
+ ]
+}
