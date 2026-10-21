@@ -29,24 +29,31 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--base", default=str(BASE))
     ap.add_argument("--check")
+    ap.add_argument("--check-rows", type=int, default=1, help="rows of --check compared (evenly spaced)")
     args = ap.parse_args()
     t0 = time.time()
 
     base = AutoModelForCausalLM.from_pretrained(args.base, dtype=torch.float32)
     peft = PeftModel.from_pretrained(base, args.adapter)
-    ids = None
+    checks: list[torch.Tensor] = []
+    wants: list[torch.Tensor] = []
     if args.check:
-        row = json.loads(Path(args.check).read_text().splitlines()[0])
-        ids = torch.tensor([row["input_ids"]])
+        lines = [l for l in Path(args.check).read_text().splitlines() if l.strip()]
+        n = max(1, min(args.check_rows, len(lines)))
+        for i in range(n):
+            row = json.loads(lines[i * len(lines) // n])
+            checks.append(torch.tensor([row["input_ids"]]))
         with torch.no_grad():
-            want = peft(ids).logits
+            wants = [peft(ids).logits for ids in checks]
     merged = peft.merge_and_unload()
     stats: dict = {}
-    if ids is not None:
+    if checks:
         with torch.no_grad():
-            got = merged(ids).logits
-        stats["maxAbsLogitDiffFp32"] = float((got - want).abs().max())
-        stats["argmaxAgree"] = bool((got.argmax(-1) == want.argmax(-1)).all())
+            gots = [merged(ids).logits for ids in checks]
+        stats["checkRows"] = len(checks)
+        stats["checkTokens"] = sum(int(ids.shape[1]) for ids in checks)
+        stats["maxAbsLogitDiffFp32"] = max(float((g - w).abs().max()) for g, w in zip(gots, wants))
+        stats["argmaxAgree"] = all(bool((g.argmax(-1) == w.argmax(-1)).all()) for g, w in zip(gots, wants))
 
     merged = merged.to(torch.bfloat16)
     out = Path(args.out)
