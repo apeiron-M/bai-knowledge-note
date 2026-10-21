@@ -5,7 +5,7 @@ This directory builds training data for the chat's two steps (op choice, then ar
 **Status (2026-10-20, round 7):**
 - The pipeline is built and smoke-tested end to end on this Mac.
 - Rows render in the runtime prompt format **r6.1**, through the chat core's own builders, so training and runtime prompts are byte-identical (`tests/unit/training-prompt-format.test.ts`). The render and token-parity step was re-run on the smoke rows in r6.1 (see "Re-render in r6.1" below). The model was not retrained.
-- The teacher pilot exists only as a dry run, because no `ANTHROPIC_API_KEY` was set. It is ready to run.
+- The teacher runs through headless Claude Code (`claude -p`), with no API key needed. The ~100-row pilot ran on 2026-10-21 and kept 73 rows (see "Teacher pilot" below). The full run waits on the user's review.
 
 The plan is the scratchpad `lora-plan.md` from the spike session. Spike results are in `docs/superpowers/specs/2026-10-20-in-browser-llm-spike-results.md`.
 
@@ -43,7 +43,7 @@ The plan is the scratchpad `lora-plan.md` from the spike session. Spike results 
 | `py/dedup.py` | Leak and duplicate filter (details below). |
 | `py/render_template.py` | Renders prompts through llama-server, with template and token parity checks against HF. |
 | `py/train_lora.py`, `py/merge.py`, `py/smoke_infer.py` | Train, merge, and run grammar-constrained inference. |
-| `py/teacher.py` | The teacher pipeline (`plan`, `submit`, `collect`, `rows`, `label`, `agree`). |
+| `py/teacher.py` | The teacher pipeline (`plan`, `run --teacher cli\|api`, `submit`, `collect`, `rows`, `label`, `agree`). |
 | `scripts/render.sh` | **One command to re-render with the current format:** dedup, then validate (rows that fail zod or replay are dropped and listed in `validate.json`), render, and parity. |
 | `scripts/export-gguf.sh`, `scripts/smoke.sh` | GGUF export, and the full smoke run. |
 | `data/smoke-rows.jsonl`, `data/smoke-probe-rows.jsonl` | 50 + 4 hand-written rows. None come from an eval set. |
@@ -135,62 +135,110 @@ The 20-step smoke LoRA and its GGUFs above were trained on the r5 format. They w
 - **The HF repo's `chat_template.jinja` (5,487 chars) is newer than the template in the published GGUF (2,553 chars).** The rendering matched for our message shapes. `export-gguf.sh` still writes the published GGUF's template into ours, so the shipped file renders exactly like today's, with jinja on or off.
 - **The working tree moves under us** (round 6 is being edited in parallel). The render manifest records the git HEAD and any dirty chat-core files, so every dataset is traceable.
 
-## Teacher pilot: dry run only
+## Teacher: headless Claude Code (`claude -p`)
 
-No `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` was set, and the `ant` CLI is not installed. So nothing was sent, and **no tokens or cost were measured.**
+The teacher is `claude-sonnet-5`, called through **headless Claude Code** by default, so no API key is needed: it uses the logged-in Claude Code account. `py/teacher.py run --teacher cli|api` runs a request JSONL (from `plan` or `label`) and writes the result JSONL that `rows` and `agree` read. `--teacher api` still submits the same requests as one Message Batch and collects it (needs `ANTHROPIC_API_KEY` and `--yes-spend`).
 
-The generator is `py/teacher.py`:
-- It uses `claude-sonnet-5` through the Message Batches API.
-- Requests use adaptive thinking and `output_config.format` JSON schemas. The args schema is the op's semantic schema, with the constraints structured outputs rejects stripped out.
-- The **pilot** (`plan --ops pilot`) is 20 requests for 100 items, across 4 models:
-  - knowledge-note: ADD_TOPIC, SET_TITLE, SUBMIT_FOR_REVIEW, REJECT_NOTE
-  - project: SET_PROJECT_STATUS, ADD_MEMBER
-  - wbs: CREATE_GOAL, SET_GOAL_STATUS
-  - tension: RESOLVE_TENSION
-  - plus 10 no-action items (knowledge-note, wbs).
-
-**Validation chain.** It was exercised on the smoke rows and on hand-made fake teacher output, not on real teacher output:
-1. `teacher.py rows` checks grounding. Free-text values must be utterance substrings, and an optional field needs an evidence span. Truncated (`max_tokens`) responses are dropped.
-2. `render.sh` runs dedup and the leak filter, renders with the chat core, checks targets against the grammar, runs zod plus reducer replay, and checks template and token parity.
-3. `teacher.py label` builds a blind second pass. It sees only the utterance and the real BM25 candidates plus `none`, at low effort.
-4. `teacher.py agree` keeps a row only when the blind op and args match. When BM25 missed gold, the label pass lists every op of the document type instead of the top 5. That keeps gold-at-rank->5 rows, whose step-2 rows are still trained, from being dropped automatically.
-
-`plan` also checks each output schema against the structured-outputs limits (24 optional and 16 union-typed parameters per request): 0 of 1,200 full-run requests exceed them. Ops with no semantic fields get no `args` object, because the docs do not say whether an empty `properties: {}` is accepted.
-
-To run the pilot:
+**The exact command per request** (Claude Code 2.1.280), run from an empty directory (`--cli-cwd`, default `$TMPDIR/bai-teacher-cwd`; `run` refuses a non-empty one), with the user prompt on stdin:
 
 ```bash
-export ANTHROPIC_API_KEY=...
-P=training/.venv/bin/python; A=training/artifacts/teacher
+claude -p --output-format json --tools "" \
+  --strict-mcp-config --mcp-config '{"mcpServers":{}}' \
+  --setting-sources "" --safe-mode --disable-slash-commands --no-session-persistence \
+  --model claude-sonnet-5 --effort <request effort: medium | low> --max-budget-usd 1.0 \
+  --system-prompt "<the request's system prompt>" --json-schema '<the request's output schema>' \
+  < <the request's user message>
+```
+
+- The child's environment drops the parent session's variables (`CLAUDECODE`, `CLAUDE_CODE_*`, `CLAUDE_PID`, `CLAUDE_EFFORT`) and `ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`.
+- `--tools ""` gives no tools. `--strict-mcp-config` with an empty config gives no MCP servers. `--setting-sources ""` reads no user, project or local settings. `--safe-mode` disables CLAUDE.md, installed plugins and their hooks, skills, the claude.ai connectors and auto-memory. `--no-session-persistence` keeps the runs out of `~/.claude/projects`.
+- `--system-prompt` replaces Claude Code's system prompt with the teacher's (`SYSTEM`, `NO_ACTION_SYSTEM`, `LABEL_SYSTEM`, the same text the API path sends).
+- Structured output comes from `--json-schema`. The CLI implements it as a tool call (`stop_reason: "tool_use"`, 2 turns), not constrained decoding, so `run` re-checks every `structured_output` against the schema. A response that fails the check, a timeout (`--timeout`, 300 s) or a CLI error is retried (`--retries 3`, backoff 5/15/45 s) and is never written as data.
+- `run` first calls `claude auth status`. If the account is not logged in, or a call returns 401/403 or an auth message, it stops without writing results. Concurrency is `--concurrency` (default 3).
+- **No `max_tokens` flag exists.** The request's `max_tokens` is ignored by the CLI backend. `--max-budget-usd` (per call, CLI-reported cost) is the closest runaway guard.
+- `<out>.usage.json` records each call's wall time, tokens and `total_cost_usd`.
+
+**Isolation gaps (observed in a debug log and a probe):**
+- Claude Code still adds about 500 tokens of context that no flag removes with `--system-prompt`: the **account email**, the cwd, platform and OS, model identity, a token budget and the date. `--exclude-dynamic-system-prompt-sections` is ignored with `--system-prompt`. `--bare` would drop them but accepts only `ANTHROPIC_API_KEY` auth.
+- **The email leaked into data.** The first pilot run (before the fix) put the account email in 2 of 100 utterances, as a CREATE_GOAL assignee. The fix has two parts. The teacher prompts now say to invent every name, email and date and to ignore account/machine context, and the second run had 0 leaks. `rows` also drops any item that contains the account email (from `claude auth status`), its local part, `$USER` or the home path (`--no-leak-check` turns this off).
+- The built-in `agents-md` and `telemetry` plugins still load (agents-md reports "project memory is off"). Managed and remote policy settings still apply. `~/.claude.json` is rewritten on every call.
+- There is a fixed per-call overhead of about 1.7–2.0k input tokens: the StructuredOutput tool and its schema, plus the injected context. Every call writes its whole prompt to the 1 h prompt cache, and no call read from it (`cacheRead` 0 over 117 calls).
+
+**Other teacher-side changes:**
+- `rows` adds replay fixtures from `FIXTURES`: SUBMIT_FOR_REVIEW before APPROVE_NOTE or REJECT_NOTE, and CREATE_TENSION before the tension ops.
+- `agree --manifest rendered.manifest.json` also drops rows whose step-2 target the runtime grammar rejects.
+- `agree` now reads `rows-valid.jsonl` (after zod and replay), not `rows-kept.jsonl`.
+- The pilot uses `wbs:SET_OWNER` in place of `wbs:SET_GOAL_STATUS`.
+- **Ref ops are not supported yet.** 40 of the 99 ops have an app-filled `(ref-id)` field naming an existing entity, such as SET_GOAL_STATUS's goal. They need a fixture with labeled entities plus `refCandidates`, and `validate-rows.ts` mints fixture ids from one counter for the whole file. Today such a row fails replay.
+
+### Commands
+
+```bash
+P=training/.venv/bin/python; A=training/artifacts/teacher-pilot
 npx --no-install tsx training/gen/export-teacher-context.ts $A/context.json
 $P training/py/teacher.py plan --context $A/context.json --out $A/pilot-gen-requests.jsonl
-$P training/py/teacher.py submit $A/pilot-gen-requests.jsonl --yes-spend      # prints batchId
-$P training/py/teacher.py collect <batchId> --out $A/pilot-gen-results.jsonl   # + .usage.json (actual cost)
+$P training/py/teacher.py run $A/pilot-gen-requests.jsonl --out $A/pilot-gen-results.jsonl     # --teacher cli (default) | api
 $P training/py/teacher.py rows $A/pilot-gen-results.jsonl --context $A/context.json --out $A/pilot-rows.jsonl
 training/scripts/render.sh $A/pilot-rows.jsonl $A/pilot
 $P training/py/teacher.py label $A/pilot/rendered.jsonl --context $A/context.json --out $A/pilot-label-requests.jsonl
-# submit + collect the label batch, then:
-$P training/py/teacher.py agree <label-results.jsonl> --rows $A/pilot/rows-kept.jsonl --out $A/pilot-agreed.jsonl
+$P training/py/teacher.py run $A/pilot-label-requests.jsonl --out $A/pilot-label-results.jsonl
+$P training/py/teacher.py agree $A/pilot-label-results.jsonl --rows $A/pilot/rows-valid.jsonl \
+    --manifest $A/pilot/rendered.manifest.json --out $A/pilot-agreed.jsonl
+training/scripts/render.sh $A/pilot-agreed.jsonl $A/pilot-final                                 # -> train.jsonl
 ```
 
-**Cost: estimates only, not measured.** Input is counted as chars/4. Output is a guess of about 70 visible tokens per item plus 300–3,000 thinking tokens per request. Prices are Sonnet 5's $2 / $10 per MTok, with batches at 50%.
+`run` refuses more than 200 requests unless `--max-requests` is raised.
 
-| Run | Requests | Input tokens (est.) | Output tokens (guess) | Batch cost |
-|---|---|---|---|---|
-| Pilot generation (100 items) | 20 | 26.9k | 13k–67k | $0.09–$0.36 |
-| Full generation (`--ops all --requests-per-op 12 --items 10`: 12,000 items, 99 ops + 12 no-action) | 1,200 | 1.72M | 1.2M–4.4M | $7.7–$23.9 |
-| Full blind label pass (about 275 input tokens per row, from the 49-row smoke label plan) | ~12,000 | ~3.3M | 0.4M–6M | ~$5–$33 |
-| **Full total (extrapolation)** | | | | **~$13–$57** |
+### Teacher pilot (observed, 2026-10-21, `claude -p`, concurrency 3)
 
-The ~16k-row target comes from the plan: about 12k generated utterances, filtered down to about 6k single-action rows, which give step-1 and step-2 rows, plus about 1.5k regularization rows. The regularization rows are self-distilled from the base model, so they cost nothing in API.
+The pilot had 20 generation requests of 5 items each: 9 ops across 4 models (knowledge-note ADD_TOPIC, SET_TITLE, SUBMIT_FOR_REVIEW, REJECT_NOTE; project SET_PROJECT_STATUS, ADD_MEMBER; wbs CREATE_GOAL, SET_OWNER; tension RESOLVE_TENSION), plus 10 no-action items (knowledge-note, wbs). The numbers below are from the second run, after the leak fix. Kept rows are in `data/teacher-pilot-2026-10-21/pilot-agreed.jsonl`, and the summary is in `results/teacher-pilot-2026-10-21.json`. The raw artifacts are under `artifacts/teacher-pilot/` (gitignored).
 
-The first real pilot replaces this table with `collect`'s `.usage.json`.
+| Stage | Dropped | Left | Notes |
+|---|---|---|---|
+| Generated | | 100 | 90 action items, 10 no-action |
+| Grounding (`rows`) | 1 | 99 | ADD_MEMBER `kind` set with no evidence span. Context-leak filter: 0 (2 in the first run) |
+| Dedup / eval leak | 2 | 97 | Both "Submit this for review." match held-out-2 `kn2-12` exactly |
+| Vocabulary, zod, reducer replay | 0 | 97 | |
+| r6.1 grammar gate (step-2 target rejected) | 11 | 86 | ADD_MEMBER `role` ×5, CREATE_GOAL `assignee` ×4, SET_OWNER ×2 (owner meant but unnamed, or a clear to `{}`). Their step-1 rows are still trainable |
+| Blind label disagreement | 13 | **73** | 4 on the op: two SET_PROJECT_STATUS → none ("Kick it off now.", a question), SET_OWNER → ASSIGN_GOAL, RESOLVE → DISSOLVE. 9 on the args only: the labeler changed case, added a final period or reworded the span |
+
+- **Final render** of the 73 kept rows gave 132 steps, all trainable. There were 0 template or token mismatches, 0 boundary merges and one BOS per row, through the chat core's builders. `tests/unit/training-prompt-format.test.ts` passes.
+- **Agreement** is 73/86 (85%) exact. On the op alone it is 82/86 (95%).
+- The arg check is exact string equality. A case- and final-punctuation-tolerant comparison would keep 5 of the 9 arg-only rows. The labeler, not the teacher, broke the verbatim rule in 8 of the 9.
+
+**Quality (my read of all 100 items):**
+- The utterances are varied in register and length: 3–74 words, median 14. Personas and the requested styles show through, and the no-action items are close to edits ("which goals have no owner?").
+- They are realistic, with a tendency toward long, chatty, persona-flavoured messages (gardening and thesis asides).
+- **Op words are common.** 27 of the 63 kept action rows contain the op's own noun or verb: CREATE_GOAL 5/5 "goal", SET_TITLE 7/10 "title", RESOLVE 4/7. The style axis "uses a synonym…" covers only part of each request. For the full run, `plan` should state the no-op-words rule per item, or set a quota.
+- The teacher sometimes reports a style label of its own ("formal", "casual") instead of the requested axis.
+- **Names repeat.** "Priya" appears 7 times in 99 rows, and Elena Vasquez, Okafor and "Bayesian Priors…" titles twice each. Some messages are formulaic ("Please mark this tension as resolved. The resolution is: …").
+- **Grounding lets a degenerate span through:** "new goal, assign to mkim@university.edu" had `description: "new goal"`. That row was gated out anyway.
+
+**Time and usage (observed):**
+
+| | Calls | Wall | Per call median / p90 | Input tokens (incl. cache write) | Output (of which thinking) | CLI `total_cost_usd` |
+|---|---|---|---|---|---|---|
+| Generation (effort medium) | 20 | 64.0 s | 9.2 / 13.2 s | 61,223 | 16,461 (4,439) | $0.41 |
+| Blind label (effort low) | 97 | 85.0 s | 2.4 / 3.2 s | 253,016 | 10,593 (345) | $1.12 |
+| Local stages (rows, render ×2, label build, agree) | | 56.8 s | | | | |
+| **Pilot total** | 117 | **~206 s** | | 314k | 27k | **$1.53** |
+
+- 0 retries, 0 timeouts and 0 schema failures.
+- `total_cost_usd` is the CLI's figure at API list prices (`costBasis: "list"`), including 1 h cache writes. **It is an API-equivalent number, not subscription usage**, which the CLI does not report.
+- The first run, the one with the leak, used another 20 generation calls (63.4 s, $0.40).
+
+**Extrapolation to the full run (not measured):**
+- Generation would be 1,200 calls at 3.2 s each at concurrency 3: about **64 min**, 3.7M input and 1.0M output tokens.
+- The label pass would be about 11.6k calls (97% of 12,000 items reach it) at 0.88 s each: about **2.8 h**, 30M input and 1.3M output tokens.
+- That totals about **3.9 h** at concurrency 3, about 34M input and 2.3M output tokens, and about $160 in CLI-reported API-equivalent cost.
+- Label input is the largest share: about 2.6k tokens per call. Only about 0.66k of that is the label prompt itself (chars/4); the rest is CLI overhead.
+- At the pilot's 73% yield, 12,000 items would give about 8.8k kept rows. That assumes ref ops are supported; today they would fail replay.
 
 ## Next, waiting on the user
 
 1. **Round 6 is done.** The format is r6.1, and the renderer uses it. Every change to the core's step-1/step-2 builders, the op descriptions or the vocabularies bumps `PROMPT_FORMAT_VERSION` (`chat/core/prompt-format.ts`). After a bump, re-run `render.sh`.
 2. **Both blind held-out sets** are in `spike/llm-harness/eval/` (`heldout-eval.json`, `heldout2-eval.json`), so `dedup.py` filters against both.
-3. **The user** supplies an API key and approves spend. Then run the pilot as above, read the measured cost and the agreement rate, and only then the full batch (`submit` refuses more than 200 requests unless `--max-requests` is raised). The teacher's output schemas come from `export-teacher-context.ts`, which now carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). `plan` was re-run as a dry run: 20 requests, 0 over the schema limits.
+3. **The user** reviews the pilot (above) and approves the full run. `run` refuses more than 200 requests unless `--max-requests` is raised. Before the full run, support ref ops (40 of 99) in `rows` and `validate-rows.ts`. The teacher's output schemas come from `export-teacher-context.ts`, which now carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). `plan` was re-run as a dry run: 20 requests, 0 over the schema limits.
 4. **The real training run** comes after that: 3 epochs, effective batch 32, then a dev-checkpoint pick, export, and the in-browser eval arms. Judge it against gte-small top-1 (round 6: O2 47.3% scoped, U1 26.4% unscoped).
 5. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
 

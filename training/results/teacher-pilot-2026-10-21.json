@@ -1,0 +1,286 @@
+{
+  "date": "2026-10-21",
+  "teacher": "cli (claude -p, claude-sonnet-5, Claude Code 2.1.280)",
+  "gitHead": "05000a3b18ff013518f8b51a2c73733b48161e86",
+  "promptFormatVersion": "r6.1",
+  "funnel": {
+    "itemsGenerated": 100,
+    "groundingDropped": 1,
+    "groundingDetail": [
+      {
+        "id": "gen-project--ADD_MEMBER-0-2",
+        "reason": "kind: optional field without evidence",
+        "utterance": "Add Jordan Mills to it, he's taking on QA duties."
+      }
+    ],
+    "dedupEvalLeak": 2,
+    "dedupDetail": [
+      {
+        "id": "gen-knowledge-note--SUBMIT_FOR_REVIEW-0-1",
+        "utterance": "Submit this for review.",
+        "reason": "eval-leak",
+        "score": 1.0,
+        "evalSource": "heldout2-eval.json",
+        "evalId": "kn2-12",
+        "evalUtterance": "submit this for review"
+      },
+      {
+        "id": "gen-knowledge-note--SUBMIT_FOR_REVIEW-1-1",
+        "utterance": "Submit this for review.",
+        "reason": "eval-leak",
+        "score": 1.0,
+        "evalSource": "heldout2-eval.json",
+        "evalId": "kn2-12",
+        "evalUtterance": "submit this for review"
+      }
+    ],
+    "vocabZodReplayFailed": 0,
+    "grammarGateRejected": 11,
+    "grammarGateIds": [
+      "gen-project--ADD_MEMBER-0-0",
+      "gen-project--ADD_MEMBER-0-1",
+      "gen-project--ADD_MEMBER-0-3",
+      "gen-project--ADD_MEMBER-1-1",
+      "gen-project--ADD_MEMBER-1-3",
+      "gen-wbs--CREATE_GOAL-0-2",
+      "gen-wbs--CREATE_GOAL-0-3",
+      "gen-wbs--CREATE_GOAL-1-2",
+      "gen-wbs--CREATE_GOAL-1-4",
+      "gen-wbs--SET_OWNER-0-3",
+      "gen-wbs--SET_OWNER-1-3"
+    ],
+    "blindLabelDisagree": 13,
+    "blindLabelDetail": [
+      {
+        "id": "gen-knowledge-note--SUBMIT_FOR_REVIEW-0-3",
+        "gold": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "label": {
+          "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+          "args_json": "{\"comment\": \"Marketing still needs to double-check the pricing section.\"}"
+        }
+      },
+      {
+        "id": "gen-knowledge-note--SUBMIT_FOR_REVIEW-0-4",
+        "gold": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "label": {
+          "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+          "args_json": "{\"comment\": \"Risk section still needs numbers\"}"
+        }
+      },
+      {
+        "id": "gen-knowledge-note--SUBMIT_FOR_REVIEW-1-2",
+        "gold": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "label": {
+          "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+          "args_json": "{\"comment\": \"Still needs a diagram before final approval\"}"
+        }
+      },
+      {
+        "id": "gen-knowledge-note--SUBMIT_FOR_REVIEW-1-3",
+        "gold": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "label": {
+          "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+          "args_json": "{\"comment\": \"The data section needs double-checking.\"}"
+        }
+      },
+      {
+        "id": "gen-knowledge-note--REJECT_NOTE-1-3",
+        "gold": "knowledge-note:REJECT_NOTE",
+        "label": {
+          "op": "knowledge-note:REJECT_NOTE",
+          "args_json": "{\"comment\": \"it needs more examples before we can approve it.\"}"
+        }
+      },
+      {
+        "id": "gen-knowledge-note--REJECT_NOTE-1-4",
+        "gold": "knowledge-note:REJECT_NOTE",
+        "label": {
+          "op": "knowledge-note:REJECT_NOTE",
+          "args_json": "{\"comment\": \"Too vague on the rollout timeline, needs specifics.\"}"
+        }
+      },
+      {
+        "id": "gen-project--SET_PROJECT_STATUS-0-3",
+        "gold": "project:SET_PROJECT_STATUS",
+        "label": {
+          "op": "none",
+          "args_json": "{}"
+        }
+      },
+      {
+        "id": "gen-project--SET_PROJECT_STATUS-1-3",
+        "gold": "project:SET_PROJECT_STATUS",
+        "label": {
+          "op": "none",
+          "args_json": "{}"
+        }
+      },
+      {
+        "id": "gen-wbs--CREATE_GOAL-1-0",
+        "gold": "wbs:CREATE_GOAL",
+        "label": {
+          "op": "wbs:CREATE_GOAL",
+          "args_json": "{\"description\": \"Run the pilot survey with the undergrad cohort by December\", \"assignee\": null}"
+        }
+      },
+      {
+        "id": "gen-wbs--SET_OWNER-1-2",
+        "gold": "wbs:SET_OWNER",
+        "label": {
+          "op": "wbs:ASSIGN_GOAL",
+          "args_json": "{\"assignee\": \"dana kowalski\"}"
+        }
+      },
+      {
+        "id": "gen-tension--RESOLVE_TENSION-0-1",
+        "gold": "tension:RESOLVE_TENSION",
+        "label": {
+          "op": "tension:RESOLVE_TENSION",
+          "args_json": "{\"resolution\": \"switched to Redis.\"}"
+        }
+      },
+      {
+        "id": "gen-tension--RESOLVE_TENSION-0-4",
+        "gold": "tension:RESOLVE_TENSION",
+        "label": {
+          "args_json": "{\"resolution\": \"Fixed — moved logging to sidecar.\"}",
+          "op": "tension:RESOLVE_TENSION"
+        }
+      },
+      {
+        "id": "gen-tension--RESOLVE_TENSION-1-3",
+        "gold": "tension:RESOLVE_TENSION",
+        "label": {
+          "args_json": "{\"resolution\": \"turns out the pricing conflict was just a stale doc, finance confirmed the new tiers are final\"}",
+          "op": "tension:DISSOLVE_TENSION"
+        }
+      }
+    ],
+    "kept": 73
+  },
+  "finalRender": {
+    "steps": 132,
+    "trainable": 132,
+    "targetRejectedByGrammar": [],
+    "templateMismatch": [],
+    "tokenMismatch": [],
+    "promptTargetBoundaryMerges": [],
+    "bosCount": [
+      1
+    ],
+    "promptTokens": {
+      "max": 604,
+      "min": 67
+    }
+  },
+  "usage": {
+    "generation": {
+      "teacher": "cli",
+      "label": "observed; costUsd is the CLI's total_cost_usd (costBasis ['list']): an API-list-price equivalent, not subscription usage",
+      "requests": 20,
+      "succeeded": 20,
+      "errored": 0,
+      "attempts": 20,
+      "retries": 0,
+      "attemptErrors": [],
+      "concurrency": 3,
+      "wallS": 64.0,
+      "perCallWallS": {
+        "median": 9.22,
+        "p90": 13.19,
+        "max": 14.63
+      },
+      "tokens": {
+        "input": 40,
+        "cacheWrite": 61183,
+        "cacheRead": 0,
+        "output": 16461,
+        "thinking": 4439
+      },
+      "costUsd": 0.4094,
+      "command": [
+        "claude",
+        "-p",
+        "--output-format",
+        "json",
+        "--tools",
+        "",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--setting-sources",
+        "",
+        "--safe-mode",
+        "--disable-slash-commands",
+        "--no-session-persistence",
+        "--model",
+        "claude-sonnet-5",
+        "--effort",
+        "<request effort>",
+        "--max-budget-usd",
+        "1.0",
+        "--system-prompt",
+        "<request system>",
+        "--json-schema",
+        "<request schema>"
+      ],
+      "cwd": "/private/tmp/claude-501/-Users-benjaminjordan-projects-powerhouse-bai-knowledge-note/244dfd73-afea-4295-86de-08a64fc34f82/scratchpad/teacher-cwd"
+    },
+    "blindLabel": {
+      "teacher": "cli",
+      "label": "observed; costUsd is the CLI's total_cost_usd (costBasis ['list']): an API-list-price equivalent, not subscription usage",
+      "requests": 97,
+      "succeeded": 97,
+      "errored": 0,
+      "attempts": 97,
+      "retries": 0,
+      "attemptErrors": [],
+      "concurrency": 3,
+      "wallS": 85.0,
+      "perCallWallS": {
+        "median": 2.43,
+        "p90": 3.21,
+        "max": 4.01
+      },
+      "tokens": {
+        "input": 194,
+        "cacheWrite": 252822,
+        "cacheRead": 0,
+        "output": 10593,
+        "thinking": 345
+      },
+      "costUsd": 1.1176,
+      "command": [
+        "claude",
+        "-p",
+        "--output-format",
+        "json",
+        "--tools",
+        "",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--setting-sources",
+        "",
+        "--safe-mode",
+        "--disable-slash-commands",
+        "--no-session-persistence",
+        "--model",
+        "claude-sonnet-5",
+        "--effort",
+        "<request effort>",
+        "--max-budget-usd",
+        "1.0",
+        "--system-prompt",
+        "<request system>",
+        "--json-schema",
+        "<request schema>"
+      ],
+      "cwd": "/private/tmp/claude-501/-Users-benjaminjordan-projects-powerhouse-bai-knowledge-note/244dfd73-afea-4295-86de-08a64fc34f82/scratchpad/teacher-cwd"
+    }
+  },
+  "localStagesWallS": {
+    "render (dedup, validate, render, parity)": 37.7,
+    "rows+label+agree+final render": 19.1
+  }
+}
