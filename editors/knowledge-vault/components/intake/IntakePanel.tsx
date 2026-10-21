@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { isBrowserHost } from "../../../shared/host-config.js";
+import { aiWorkLine } from "../../../shared/pipeline-words.js";
 import type { IntakeBatch } from "../../hooks/use-intake-batch.js";
 import {
   batchSummary,
@@ -147,7 +149,8 @@ export function IntakePanel({
   const complete = batch.isComplete;
   const doneTitle =
     files.length === 1 ? "1 file added" : `All ${files.length} files added`;
-  const doneLine = `${plural(sources, "new source")}, queued to become notes.`;
+  // In the browser vault the visitor's AI does it, one source after another.
+  const doneLine = isBrowserHost() ? aiWorkLine(sources) : `${plural(sources, "new source")}, queued to become notes.`;
 
   // Adds from an earlier visit, carried on: above the files, in either state of the panel.
   const carryRows = batch.carrying.map((c) => (

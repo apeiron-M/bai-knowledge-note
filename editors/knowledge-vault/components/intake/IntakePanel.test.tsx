@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { setHostConfig } from "../../../shared/host-config.js";
 import type { IntakeBatch } from "../../hooks/use-intake-batch.js";
 import type { IntakeFile } from "../../lib/intake-model.js";
 import { IntakePanel } from "./IntakePanel.js";
@@ -176,5 +177,19 @@ describe("IntakePanel — a file the vault already holds", () => {
       batchOf([fileOf({ id: "q", name: "New.pdf" })], { checking: true }),
     );
     expect(html).toContain("Checking whether it&#x27;s already in the vault…");
+  });
+});
+
+describe("the intake panel in the browser vault", () => {
+  afterEach(() => setHostConfig(undefined));
+  it("says the visitor's AI turns the added sources into notes", () => {
+    setHostConfig({ kind: "browser", switchboardOrigin: "https://knowledge-vault.invalid" });
+    const done = [
+      readyFile([300, 300], { id: "a", publishedIds: ["s1", "s2"] }),
+      readyFile([300], { id: "b", name: "Other.pdf", publishedIds: ["s3"] }),
+    ];
+    const html = panel(batchOf(done));
+    expect(html).toContain("Your AI turns these 3 sources into notes, one after another.");
+    expect(html).not.toContain("queued to become notes");
   });
 });

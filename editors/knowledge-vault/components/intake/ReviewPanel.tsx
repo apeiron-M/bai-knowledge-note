@@ -9,6 +9,8 @@ import {
 import { createPortal } from "react-dom";
 import { MarkdownPreview } from "../../../shared/markdown-preview.js";
 import { sectionPieces } from "../../lib/intake-attachments.js";
+import { isBrowserHost } from "../../../shared/host-config.js";
+import { aiWorkLine } from "../../../shared/pipeline-words.js";
 import {
   SECTION_TYPES,
   aboutEstimate,
@@ -222,6 +224,7 @@ export function ReviewSheet({
             ? `Split at its headings into ${sections.length} sections. Each section you keep becomes one source.`
             : "It has no headings to split at, so it stays whole: one section, one source."}
         </p>
+        {isBrowserHost() && kept > 0 && <p className="ik-lead">{aiWorkLine(kept)}</p>}
         <p className="ik-meta">{fileFacts(file, formatFileSize(file.size))}</p>
         {notes.map((note) => (
           <div

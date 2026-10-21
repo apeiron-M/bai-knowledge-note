@@ -27,9 +27,12 @@ import {
 } from "../shared/revision-history.js";
 import { useRevisionHistory } from "../shared/use-revision-history.js";
 import { SOURCE_REVISION_MODEL } from "./lib/revision-model.js";
-import { isDesktopHost, hostDisabledToolbarControls } from "../shared/host-config.js";
+import { isBrowserHost, isDesktopHost, hostDisabledToolbarControls } from "../shared/host-config.js";
+import { useHostPipeline } from "../shared/use-host-pipeline.js";
 import { QueueStatusLine } from "./components/queue-status-line.js";
-import { ingestAndQueue, openTaskFor, pasteLede } from "./lib/queue-status.js";
+import { failedLine, ingestAndQueue, latestTaskFor, openTaskFor, pasteLede, processAgainOffered, type QueueHost } from "./lib/queue-status.js";
+
+const queueHost = (): QueueHost => (isDesktopHost() ? "desktop" : isBrowserHost() ? "browser" : "server");
 
 const SOURCE_TYPES = [
   "ARTICLE",
@@ -217,6 +220,8 @@ export default function Editor() {
     usePipelineQueueDocumentById(pipelineNodeId);
   // Re-read once a minute so the web "nothing has started it yet" line appears without a reload.
   const [now, setNow] = useState(() => Date.now());
+  // The browser vault's AI, for the queue line and "Process again" (undefined elsewhere).
+  const { ai, failureReason } = useHostPipeline();
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(timer);
@@ -320,6 +325,12 @@ export default function Editor() {
   const pipelineState = pipelineDoc?.state?.global;
   const openTask = openTaskFor(pipelineState?.tasks ?? [], document.header.id);
   const hasActiveTask = !!openTask;
+  const host = queueHost();
+  // In the browser vault a failed run can be started again; the desktop's watchdog retries on its own.
+  const failedTask =
+    host === "browser" && !!pipelineDispatch && processAgainOffered(pipelineState?.tasks ?? [], document.header.id)
+      ? latestTaskFor(pipelineState?.tasks ?? [], document.header.id)
+      : undefined;
 
   function handleQueueForProcessing() {
     if (!pipelineDispatch || !document.header.id) return;
@@ -406,7 +417,15 @@ export default function Editor() {
                     Queue for processing
                   </button>
                 )}
-                <QueueStatusLine task={openTask} desktop={isDesktopHost()} now={now} />
+                {failedTask && (
+                  <>
+                    <button type="button" className="hbtn primary" onClick={handleQueueForProcessing}>
+                      Process again
+                    </button>
+                    <span className="queued">{failedLine(failureReason(failedTask.id))}</span>
+                  </>
+                )}
+                <QueueStatusLine task={openTask} host={host} ai={ai} now={now} />
               </div>
 
               <h1>{state.title}</h1>
@@ -968,7 +987,7 @@ function IngestForm({
         <main className="src-reader">
           <div className="iform">
             <h2>Add Source Material</h2>
-            <p className="lede">{pasteLede(isDesktopHost())}</p>
+            <p className="lede">{pasteLede(queueHost())}</p>
             <div className="two">
               <div>
                 <label htmlFor="in-title">Title</label>

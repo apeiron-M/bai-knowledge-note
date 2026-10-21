@@ -7,9 +7,13 @@ const task: QueueTask = { taskType: "claim", status: "IN_PROGRESS", currentPhase
 
 describe("the queue status line", () => {
   it("renders the line in the queued style", () => {
-    expect(renderToStaticMarkup(<QueueStatusLine task={task} desktop now={0} />)).toBe('<span class="queued">Processing — checking notes</span>');
+    expect(renderToStaticMarkup(<QueueStatusLine task={task} host="desktop" now={0} />)).toBe('<span class="queued">Processing — checking notes</span>');
   });
   it("renders nothing without an open task", () => {
-    expect(renderToStaticMarkup(<QueueStatusLine task={undefined} desktop={false} now={0} />)).toBe("");
+    expect(renderToStaticMarkup(<QueueStatusLine task={undefined} host="server" now={0} />)).toBe("");
+  });
+  it("in the browser, says why a queued source waits", () => {
+    const queued: QueueTask = { ...task, status: "PENDING", currentPhase: "create" };
+    expect(renderToStaticMarkup(<QueueStatusLine task={queued} host="browser" ai="no-ai" now={0} />)).toBe('<span class="queued">Waiting for your AI — connect one in Ask</span>');
   });
 });

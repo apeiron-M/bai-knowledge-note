@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ingestAndQueue, openTaskFor, pasteLede, queueStatusLine, STUCK_AFTER_MS, type QueueTask } from "./queue-status.js";
+import { failedLine, ingestAndQueue, latestTaskFor, openTaskFor, pasteLede, processAgainOffered, queueStatusLine, STUCK_AFTER_MS, type QueueTask } from "./queue-status.js";
 
 const T0 = Date.parse("2026-10-16T10:00:00Z");
 const task = (extra: Partial<QueueTask> = {}): QueueTask => ({
@@ -29,40 +29,74 @@ describe("the open task for a source", () => {
 describe("the status line", () => {
   const at = (ms: number) => ({ now: T0 + ms });
   it("says nothing without an open task", () => {
-    expect(queueStatusLine(undefined, { desktop: true, ...at(0) })).toBeNull();
+    expect(queueStatusLine(undefined, { host: "desktop", ...at(0) })).toBeNull();
   });
   it("says a queued source is processed in the background on the desktop, and just queued on the web", () => {
-    expect(queueStatusLine(task(), { desktop: true, ...at(1000) })).toBe("Queued — the app processes it in the background");
-    expect(queueStatusLine(task(), { desktop: false, ...at(1000) })).toBe("Queued for processing");
-    expect(queueStatusLine(task({ currentPhase: null }), { desktop: false, ...at(1000) })).toBe("Queued for processing");
+    expect(queueStatusLine(task(), { host: "desktop", ...at(1000) })).toBe("Queued — the app processes it in the background");
+    expect(queueStatusLine(task(), { host: "server", ...at(1000) })).toBe("Queued for processing");
+    expect(queueStatusLine(task({ currentPhase: null }), { host: "server", ...at(1000) })).toBe("Queued for processing");
   });
   it("on the web, says nothing has started it after 10 minutes with no handoff", () => {
     const stuck = "Queued for processing — nothing has started it yet. If this vault's server does not process sources, run /powerhouse-knowledge:pipeline in Claude Code.";
-    expect(queueStatusLine(task(), { desktop: false, ...at(STUCK_AFTER_MS - 1) })).toBe("Queued for processing");
-    expect(queueStatusLine(task(), { desktop: false, ...at(STUCK_AFTER_MS) })).toBe(stuck);
-    expect(queueStatusLine(task(), { desktop: true, ...at(STUCK_AFTER_MS * 3) })).toBe("Queued — the app processes it in the background");
-    expect(queueStatusLine(task({ handoffs: [handoff] }), { desktop: false, ...at(STUCK_AFTER_MS * 3) })).toBe("Queued for processing");
+    expect(queueStatusLine(task(), { host: "server", ...at(STUCK_AFTER_MS - 1) })).toBe("Queued for processing");
+    expect(queueStatusLine(task(), { host: "server", ...at(STUCK_AFTER_MS) })).toBe(stuck);
+    expect(queueStatusLine(task(), { host: "desktop", ...at(STUCK_AFTER_MS * 3) })).toBe("Queued — the app processes it in the background");
+    expect(queueStatusLine(task({ handoffs: [handoff] }), { host: "server", ...at(STUCK_AFTER_MS * 3) })).toBe("Queued for processing");
   });
   it("names the phase of a task that is working or past create", () => {
     const words: Record<string, string> = { create: "extracting notes", reflect: "connecting notes", reweave: "placing notes in topics", verify: "checking notes" };
     for (const [phase, w] of Object.entries(words)) {
-      expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: phase }), { desktop: true, ...at(0) })).toBe(`Processing — ${w}`);
+      expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: phase }), { host: "desktop", ...at(0) })).toBe(`Processing — ${w}`);
     }
-    expect(queueStatusLine(task({ status: "PENDING", currentPhase: "reflect" }), { desktop: false, ...at(STUCK_AFTER_MS * 3) })).toBe("Processing — connecting notes");
-    expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: null }), { desktop: true, ...at(0) })).toBe("Processing");
-    expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: "enrich" }), { desktop: true, ...at(0) })).toBe("Processing");
+    expect(queueStatusLine(task({ status: "PENDING", currentPhase: "reflect" }), { host: "server", ...at(STUCK_AFTER_MS * 3) })).toBe("Processing — connecting notes");
+    expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: null }), { host: "desktop", ...at(0) })).toBe("Processing");
+    expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: "enrich" }), { host: "desktop", ...at(0) })).toBe("Processing");
   });
-  it("points to the Processing queue when blocked, on both hosts", () => {
-    for (const desktop of [true, false]) {
-      expect(queueStatusLine(task({ status: "BLOCKED" }), { desktop, ...at(0) })).toBe("Processing is blocked — see Processing queue");
+  it("points to the Processing queue when blocked, on every host", () => {
+    for (const host of ["desktop", "browser", "server"] as const) {
+      expect(queueStatusLine(task({ status: "BLOCKED" }), { host, ...at(0) })).toBe("Processing is blocked — see Processing queue");
     }
   });
 });
 
+describe("the status line in the browser vault", () => {
+  const at = (ms: number) => ({ now: T0 + ms });
+  it("says why a queued source waits, and what to do", () => {
+    expect(queueStatusLine(task(), { host: "browser", ai: "no-ai", ...at(0) })).toBe("Waiting for your AI — connect one in Ask");
+    expect(queueStatusLine(task(), { host: "browser", ai: "unreachable", ...at(0) })).toBe("Can't reach your AI — check it is running and allows this page");
+    expect(queueStatusLine(task(), { host: "browser", ai: "ready", ...at(0) })).toBe("Queued — your AI starts in a moment");
+    expect(queueStatusLine(task(), { host: "browser", ai: "working", ...at(0) })).toBe("Queued — your AI starts in a moment");
+    expect(queueStatusLine(task(), { host: "browser", ...at(0) })).toBe("Queued — your AI starts in a moment");
+  });
+  it("never sends the visitor to Claude Code, however long it waits", () => {
+    expect(queueStatusLine(task(), { host: "browser", ai: "ready", ...at(STUCK_AFTER_MS * 3) })).toBe("Queued — your AI starts in a moment");
+  });
+  it("names the phase while the AI works", () => {
+    expect(queueStatusLine(task({ status: "IN_PROGRESS", currentPhase: "reflect" }), { host: "browser", ai: "working", ...at(0) })).toBe("Processing — connecting notes");
+  });
+});
+
+describe("a source whose processing failed", () => {
+  it("offers to process it again when its latest task failed and none is open", () => {
+    const failed = task({ status: "FAILED", createdAt: "2026-10-16T11:00:00Z" });
+    expect(latestTaskFor([task({ status: "DONE" }), failed], "s1")).toBe(failed);
+    expect(processAgainOffered([task({ status: "DONE" }), failed], "s1")).toBe(true);
+    expect(processAgainOffered([failed, task({ status: "DONE", createdAt: "2026-10-16T12:00:00Z" })], "s1")).toBe(false);
+    expect(processAgainOffered([failed, task({ status: "PENDING", createdAt: "2026-10-16T12:00:00Z" })], "s1")).toBe(false);
+    expect(processAgainOffered([task({ status: "FAILED", documentRef: "s2" })], "s1")).toBe(false);
+    expect(processAgainOffered([], "s1")).toBe(false);
+  });
+  it("says it was not processed, and why when known", () => {
+    expect(failedLine("Your AI did not answer in time")).toBe("Not processed — Your AI did not answer in time");
+    expect(failedLine(null)).toBe("Not processed");
+  });
+});
+
 describe("the paste form", () => {
-  it("words the lede for the desktop and the web", () => {
-    expect(pasteLede(true)).toBe("Paste the text. Once added, the app turns it into notes in the background.");
-    expect(pasteLede(false)).toBe("Paste the text. Once added, it is queued to be turned into notes.");
+  it("words the lede for the desktop, the browser vault and a server", () => {
+    expect(pasteLede("desktop")).toBe("Paste the text. Once added, the app turns it into notes in the background.");
+    expect(pasteLede("browser")).toBe("Paste the text. Once added, your AI turns it into notes.");
+    expect(pasteLede("server")).toBe("Paste the text. Once added, it is queued to be turned into notes.");
   });
   it("adds the source first, then the queue task, then moves the source to extracting", () => {
     const log: string[] = [];

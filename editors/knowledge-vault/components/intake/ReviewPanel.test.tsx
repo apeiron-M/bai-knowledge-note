@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { setHostConfig } from "../../../shared/host-config.js";
 import {
   FORMULA_PLACEHOLDER,
   PICTURE_PLACEHOLDER,
@@ -169,5 +170,16 @@ describe("ReviewSheet — checking one file", () => {
     expect(html).toContain("Kept as an image");
     expect(html.indexOf("Before.")).toBeLessThan(html.indexOf("<img"));
     expect(html.lastIndexOf("<img")).toBeGreaterThan(html.indexOf("After."));
+  });
+});
+
+describe("the review sheet in the browser vault", () => {
+  afterEach(() => setHostConfig(undefined));
+  it("says the visitor's AI turns the kept sections into notes, one after another", () => {
+    setHostConfig({ kind: "browser", switchboardOrigin: "https://knowledge-vault.invalid" });
+    expect(sheet(readyFile([300, 300, 300]))).toContain("Your AI turns these 3 sources into notes, one after another.");
+  });
+  it("says nothing about an AI elsewhere", () => {
+    expect(sheet(readyFile([300, 300, 300]))).not.toContain("Your AI turns");
   });
 });

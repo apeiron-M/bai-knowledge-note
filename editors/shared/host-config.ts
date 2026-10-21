@@ -34,6 +34,25 @@ export type KnowledgeVaultHostDocuments = {
   remove(documentId: string, driveId?: string): Promise<void>;
 };
 
+/** What the browser vault's pipeline is doing, so the editors can say so. */
+export type HostPipelineState =
+  /** An AI is connected and nothing is running. */
+  | { kind: "ready" }
+  /** No AI is connected: queued sources wait. */
+  | { kind: "no-ai" }
+  /** The connected AI does not answer (stopped, offline, CORS): retried every 30 s. */
+  | { kind: "unreachable" }
+  | { kind: "working"; taskId: string };
+
+/** The browser vault's pipeline (browser/pipeline/runner.ts), declared by its host. */
+export type HostPipeline = {
+  state(): HostPipelineState;
+  /** Why this vault's pipeline failed a task; null when it did not, or does not know. */
+  failureReason(taskId: string): string | null;
+  /** Called on every change; returns the unsubscribe. */
+  subscribe(listener: () => void): () => void;
+};
+
 /** Who the host is signed in as (its own Renown session, held outside the webview). */
 export type KnowledgeVaultHostIdentity = {
   address: string;
@@ -108,6 +127,8 @@ export type KnowledgeVaultHostConfig = {
   setBusy?: (reason: string | null) => void;
   /** Document writes performed by the host's own engine (see KnowledgeVaultHostDocuments). */
   documents?: KnowledgeVaultHostDocuments;
+  /** The browser vault's pipeline: how the editors learn whether an AI is processing sources. */
+  pipeline?: HostPipeline;
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -154,6 +175,7 @@ export function setHostConfig(
     ...(config.readDroppedFiles ? { readDroppedFiles: config.readDroppedFiles } : {}),
     ...(config.setBusy ? { setBusy: config.setBusy } : {}),
     ...(config.documents ? { documents: config.documents } : {}),
+    ...(config.pipeline ? { pipeline: config.pipeline } : {}),
   };
   notifyHostChanged();
 }
