@@ -124,7 +124,8 @@ card to its target — and everything else quiet.
 
 ### 2. The welcome *(copy: my calls, content: user and meeting)*
 
-Shown on load, in front of the vault while it starts (the visitor reads while the engine boots).
+Shown once the vault is on screen — its sidebar shown, then a beat — never over the loading screen.
+*(user, after trying it: the first version opened on load, over the blank "starting" page.)*
 
 > **Your vault lives in this browser**
 > Nothing is saved on our servers. No account, no backup.
