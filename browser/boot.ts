@@ -8,6 +8,7 @@ import {
   ensurePHEventHandlers,
   extractDriveSlugFromPath,
   findDriveBySlug,
+  makeDriveSlug,
   setPHGlobalConfig,
   syncSelectionFromPath,
   setDocumentCache,
@@ -222,17 +223,21 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
   // reopen what a reloaded or shared URL names — when it names this vault's drive. A URL from
   // before a reset, from a reload while the guide was still being written (that vault never
   // reached the disk), or from someone else's vault names a drive that is not here: selected,
-  // it left the app on "Opening your vault…" for good. Open the vault and drop the stale URL.
+  // it left the app on "Opening your vault…" for good. It is pointed at this vault's drive
+  // instead. Its document goes (it may not exist here); its query stays, and the address is
+  // already the one the app would move to, so the app does not navigate and drop it: the chat's
+  // OpenRouter sign-in returns with ?code, and a sign-in started while the guide was being
+  // written comes back to a new vault.
   const basePath = options.basePath ?? "/";
   setPHGlobalConfig({ basePath });
   const drive = await publishDrive();
   const named = extractDriveSlugFromPath(window.location.pathname);
-  if (named && findDriveBySlug([drive], named)) {
-    syncSelectionFromPath(window.location.pathname);
-  } else {
-    if (named) window.history.replaceState(window.history.state, "", basePath);
-    setSelectedDrive(drive);
+  if (named && !findDriveBySlug([drive], named)) {
+    const here = `${basePath.replace(/\/$/, "")}/d/${makeDriveSlug(drive)}`;
+    window.history.replaceState(window.history.state, "", `${here}${window.location.search}${window.location.hash}`);
   }
+  if (named) syncSelectionFromPath(window.location.pathname);
+  else setSelectedDrive(drive);
 
   let pending: ReturnType<typeof setTimeout> | undefined;
   const stopFeed = startLiveFeed(client, vaultDriveId, () => {
