@@ -27,6 +27,7 @@ import { setHostConfig, type KnowledgeVaultHostDocuments } from "../editors/shar
 import manifest from "../powerhouse.manifest.json" with { type: "json" };
 import { createCoreGraphQLService } from "./core-graphql.js";
 import { createBrowserEngine, engineDatabases, legacyIndexDatabase, type BrowserEngine } from "./engine.js";
+import { writeHealthReport } from "./health.js";
 import { createKnowledgeGraphService } from "./knowledge-graph.js";
 import { startLiveFeed } from "./live-feed.js";
 import { installLocalOrigin, LOCAL_ORIGIN } from "./local-origin.js";
@@ -267,6 +268,15 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
           // Stopped (a reset, the page going away): not a failure to report.
           if (abort.signal.aborted) throw new DOMException("The vault stopped.", "AbortError");
           throw error;
+        }
+        // The guide's health report, in the same write as the guide. The graph is rebuilt from the
+        // documents first: the indexer follows writes a moment behind, and a report read from it
+        // straight away could miss the last links.
+        try {
+          await knowledgeGraph.reindex(vaultDriveId);
+          await writeHealthReport({ client, knowledgeGraph, driveId: vaultDriveId });
+        } catch (error) {
+          console.warn("[BrowserVault] The guide's health report could not be written.", error);
         }
         mark("seeded");
         await engine.flushes.release();
