@@ -1207,3 +1207,27 @@ The gaps from pilot 1 were closed in `training/`, then a second pilot ran with t
 - **Observed:** about 284 s over the stages, 79 calls, 304k input and 71k output tokens, $1.77 CLI-reported API-equivalent cost.
 - **Extrapolation, not measured:** 12,000 items would take about 5.4 h at concurrency 3 (24M input, 5.7M output, about $140) and keep about 8.4k rows. About 16k kept rows would take about 10 h.
 - **Data:** `training/results/teacher-pilot2-2026-10-21.json` and `training/data/teacher-pilot2-2026-10-21/agreed.jsonl`.
+
+## Teacher batch-size comparison (2026-10-21)
+
+How many items should one `claude -p` generation call ask for? Before this, pilot 2 asked for about 2.7 per call. The comparison ran 1, 10 and 25 items per call (B1, B10, B25) on the same 12 ops (7 ref, 5 non-ref, 8 models) plus wbs no-action, with the same 325 specs, seeded states and targets in each arm, through the same validation and blind-label chain. Details are in `training/README.md` ("Teacher batch-size comparison"). The full run was **not** started.
+
+| | B1 | B10 | B25 |
+|---|---|---|---|
+| Calls | 325 | 39 | 13 |
+| Kept (yield) | 274 (84.3%) | 253 (77.8%) | 234 (72.0%) |
+| Label agreement, op / exact | 93.9% / 88.1% | 91.0% / 80.1% | 84.1% / 81.0% |
+| Distinct 2-grams per 100 items / gte-small cosine | 1105 / 0.827 | 1243 / 0.820 | 1186 / 0.820 |
+| Generation wall / input tokens | 482 s / 1,077k | 387 s / 167k | 314 s / 85k |
+| Cost per kept row | $0.0188 | $0.0108 | $0.0096 |
+
+- **Recommendation:** generation batch **10**, label batch **8**.
+  - B25's losses are correlated within a call: one call per op picks one reading for all 25 items. 3 of 13 calls lost 64 items.
+  - List position has no effect.
+  - B1 is the most repetitive arm, and its independent calls reproduced a held-out phrase 4 times.
+  - Label batch 20 saves 24% of input tokens at the same cost, and its agreement is not shown to be better.
+- **Extrapolation, not measured** (12,000 items at B10): about 5.2 h, 14.5M input and 5.8M output tokens, about $100 API-equivalent, and about 9.3k kept rows. Pilot 2's shape gave about 5.4 h, 24M input and $140.
+- **Fixed on the way:**
+  - `dedup.py` now also rejects a row that contains a whole eval utterance.
+  - A 429 spend/session limit now stops `run` instead of burning retries. The label passes were resumed after the reset, and the interrupted attempts are counted apart from failures.
+- **Data:** `training/results/teacher-batchsize-2026-10-21.json`.

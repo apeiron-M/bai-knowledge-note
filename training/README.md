@@ -6,7 +6,8 @@ This directory builds training data for the chat's two steps (op choice, then ar
 - The pipeline is built and smoke-tested end to end on this Mac.
 - Rows render in the runtime prompt format **r6.1**, through the chat core's own builders, so training and runtime prompts are byte-identical (`tests/unit/training-prompt-format.test.ts`). The render and token-parity step was re-run on the smoke rows in r6.1 (see "Re-render in r6.1" below). The model was not retrained.
 - The teacher runs through headless Claude Code (`claude -p`), with no API key needed. The ~100-row pilot ran on 2026-10-21 and kept 73 rows (see "Teacher pilot" below).
-- Pilot 2 (2026-10-21, 150 items) covers all 40 ref ops on seeded document states, per-item wording specs and batched blind labels. It kept 105 rows (see "Teacher pilot 2"). The full run waits on the user's review.
+- Pilot 2 (2026-10-21, 150 items) covers all 40 ref ops on seeded document states, per-item wording specs and batched blind labels. It kept 105 rows (see "Teacher pilot 2").
+- The batch-size comparison (2026-10-21; 1, 10 and 25 items per call, 325 items each) recommends 10 per call (see "Teacher batch-size comparison"). The full run waits on the user's review.
 
 The plan is the scratchpad `lora-plan.md` from the spike session. Spike results are in `docs/superpowers/specs/2026-10-20-in-browser-llm-spike-results.md`.
 
@@ -342,14 +343,111 @@ Pilot 2 total, summed over stages: about 284 s, 79 CLI calls, 0 retries, $1.77.
 
 **Fixed after pilot 2, for the next plan** (the stored pilot-2 states are as the teacher saw them): notes linked to themselves in 3 knowledge-note states, the "Other notes in the drive" list repeated linked notes, the person-field spec, and the list-ref spec.
 
+### Teacher batch-size comparison (observed, 2026-10-21, `claude -p`, concurrency 3)
+
+**What generation asked for per call before this:** the teacher already returned a JSON `items` list per call. Pilot 2 asked for 2 or 3 items per ref-op call and 4 per non-ref or no-action call: 55 calls for 150 items, about 2.7 per call. The other 24 of its 79 calls were labels, 8 per call. `--items` only applied to the `pilot`/`all` modes.
+
+**Now `plan --batch-size B` sets the batch size** (with `--items-per-op N` and `--avoid-share S`). Every job (an op, or a no-action model) gets its N specs and, for a ref op, its seeded state and per-spec targets once, drawn from `--seed` and the job key only. `call_specs` then splits the job into calls of B items, numbered 1..B per call, keeping the job-wide number as `i`. So any two batch sizes send the same specs, states and targets, and only the grouping differs. When B > 1 the prompt asks for mutually distinct messages. Tests: `training/.venv/bin/python -m unittest training/py/test_teacher.py` (chunking, two-sided specs, the quota, `rows` list parsing and per-item checks, limit detection, dedup containment).
+
+**Design:**
+- 12 ops: 7 ref ops (wbs SET_GOAL_STATUS, ASSIGN_GOAL; knowledge-note REMOVE_TOPIC; project REMOVE_MEMBER; pipeline-queue FAIL_TASK; moc REMOVE_CORE_IDEA; research-claim REMOVE_RESEARCH_CONNECTION) and 5 non-ref ops (knowledge-note SET_DESCRIPTION, project SET_OWNER, source SET_SOURCE_STATUS, tension ADD_INVOLVED_REF, moc UPDATE_ORIENTATION). That is 8 models, plus wbs no-action.
+- 25 items per job, so **325 items per arm, not about 100.** With one (op, state) pair per call, B25 needs 25 items per op. The same specs in every arm then need the same count in every arm. B1 = 325 calls, B10 = 39 calls (10, 10, 5 per job), B25 = 13 calls.
+- **States are held fixed:** one seeded state per ref op, shared by all three arms, so each arm has **7 distinct states**. This meets the fairness rule (B25 does not get fewer states than B1), but it means states do not vary across the batches of one op. A production B1 or B10 run could give each call its own state; this comparison does not measure that.
+- **Two-sided op-word quota:** 60% of an op's specs avoid its op words, and the other 40% must use one (`Natural wording: use at least one of …`). `agree --max-free 0.7` caps op-word-free rows per op on top of the 0.5 floor. "A question" left the registers and became a form axis: 30% of action specs are questions that ask for the change.
+- `--name-cap 0`: the 80-name pool over 325 items puts each name in up to 5 specs by construction, so the cap of 2 would drop rows by design. Max name reuse is reported instead.
+- Every arm went through the same chain: `rows` (grounding, account-email and spec checks), `render.sh` (dedup/eval leak, zod, replay, ref checks, r6.1 render), label `--batch 8`, `agree --manifest` (r6.1 gate). Same `claude -p` flags and isolation as pilots 1–2, each run from its own empty scratchpad cwd. The raw artifacts are under `artifacts/teacher-batch/` (gitignored), and the summary is `results/teacher-batchsize-2026-10-21.json` (`py/batchcmp.py`).
+
+**Found on the way, fixed and committed:**
+- **Eval leak inside a longer row.** B1 wrote held-out-2 `src2-03` ("mark this source as extracted") inside 4 longer messages, from 4 independent calls. B25 did it once and B10 never. The trigram Jaccard stays under 0.5 when a row adds context. `dedup.py` now also rejects a row that contains a whole eval utterance of 3+ words. Pilot 1 and 2 rows are unaffected. `label`'s prompt leak check caught it first.
+- **The spend/session limit was not detected.** The 429 said "You've hit your org's monthly spend limit … session limit resets 3pm", which `LIMIT_RE` ("resets at") missed, so `run` burned every label call's retries. Any 429 now stops the run (exit 4, journal kept). The label passes were resumed from the journal after the reset. Those **limit-interrupted attempts** (B1 180, B10 188, B25 44, label-20 84; 0 tokens, $0) are counted apart from failures. Generation was not affected.
+
+| | **B1** | **B10** | **B25** |
+|---|---|---|---|
+| Generation calls (per-call parse/model failures, retries) | 325 (0, 0) | 39 (0, 0) | 13 (0, 0) |
+| Items requested / returned | 325 / 325 | 325 / 325 | 325 / 325 |
+| `rows`: grounding / spec-wording / leak | 5 / 2 / 0 | 0 / 1 / 0 | **25** / 2 / 0 |
+| Dedup: eval leak / near-duplicate | **4** / 0 | 0 / 0 | 1 / 0 |
+| zod, replay, ref checks / r6.1 gate | 0 / 3 | 1 / 2 | 0 / 2 |
+| Blind label: on op / args only | 19 / 18 | 29 / 35 | **47** / 9 |
+| Quota dropped | 0 | 4 | 5 |
+| **Kept (yield)** | **274 (84.3%)** | **253 (77.8%)** | **234 (72.0%)** |
+| Label agreement, op / exact | 93.9% / 88.1% | 91.0% / 80.1% | 84.1% / 81.0% |
+| Distinct utterances | 100% | 100% | 100% |
+| Distinct word 2-grams / 3-grams per 100 items (per op, mean) | 1105 / 1205 | **1243 / 1314** | 1186 / 1250 |
+| Mean pairwise gte-small cosine per op (lower = more diverse) | 0.827 | 0.820 | 0.820 |
+| Op-word-free (target 60%, quota 50–70%) | 61% | 61% | 61% |
+| Avoid specs kept free / use specs used the words | 178/180, 116/120 | 179/180, 117/120 | 179/180, 117/120 |
+| Max name reuse | 5 | 5 | 5 |
+| Words, median (min–max) | 14 (3–41) | 16 (3–43) | 16 (3–44) |
+| Lengths: very short / short / medium / long | 68 / 90 / 118 / 49 | 76 / 83 / 116 / 50 | 79 / 80 / 117 / 49 |
+| Top opener ("can you") | 26 | 17 | 14 |
+| Generation input / output tokens (thinking) | 1,077k / 98k (48k) | 167k / 129k (93k) | 85k / 106k (76k) |
+| Generation wall; per-call median / p90 | 482 s; 3.9 / 6.9 s | 387 s; 23.7 / 54.4 s | 314 s; 61.2 / 93.3 s |
+| Generation `total_cost_usd` | $4.40 | $1.86 | $1.39 |
+| Label calls (batch 8); input / output tokens; cost | 45; 227k / 29k; $0.75 | 47; 226k / 29k; $0.87 | 43; 204k / 26k; $0.86 |
+| Label wall (sum of latencies / 3) | 92 s | 94 s | 84 s |
+| Local stages (rows, render, label build, agree) | 19 s | 19 s | 18 s |
+| **Cost per kept row** (generation + label) | **$0.0188** | **$0.0108** | **$0.0096** |
+| Generation cost per kept row | $0.0161 | $0.0073 | $0.0059 |
+
+Diversity is measured on all 325 returned items per arm, per op (25 items each), then averaged over the 13 jobs. Similarity is gte-small cosine on the browser's wasm numerics (`gen/pairwise-similarity.ts`). Each arm ran once.
+
+**B25's losses come in whole calls.** Each op gets one call, and that call makes one interpretive choice for all 25 items:
+- SET_DESCRIPTION: all 25 args were "Sets the note description to '…'" (grounding drop).
+- UPDATE_ORIENTATION: 24 of 25 put a pointer in `orientation` ("bongani's notes", "gabriel"), and the labeler rightly said none.
+- FAIL_TASK: 15 read as "flag it stuck" and were labeled BLOCK_TASK.
+
+So 3 of 13 calls cost 64 items. B10 showed the same effect, bounded: one UPDATE_ORIENTATION call lost 9. B1's 19 op disagreements are spread over 19 different calls.
+
+**Position in the list: no effect.**
+- B10 (full 10-item calls): positions 1–5 vs 6–10 had 2/130 vs 2/130 drops before labeling, and 25/128 vs 23/128 label disagreements.
+- B25: positions 1–5 vs 21–25 had 6/65 vs 6/65 drops and 11/59 vs 11/59 disagreements.
+
+**Templating (my read, plus the 5 random kept rows per arm in the results JSON):** B25 does not read as templated on the surface. It has the fewest stock openers ("can you" 14 vs B1's 26), and its n-gram diversity sits between B1 and B10. B1 is the most repetitive arm: independent calls converge on the same opener and phrasing, which is how the same held-out phrase showed up 4 times. B25's templating is semantic instead: one reading per call, repeated.
+- B1: "Archive this, Greta's done." → SET_SOURCE_STATUS ARCHIVED; "Can you mark the pen-test findings done, Oskar finished them?" → SET_GOAL_STATUS COMPLETED.
+- B10: "Please remove the core idea concerning symbiont clades and heat tolerance, as Zainab Musa has superseded that method in her latest draft." → REMOVE_CORE_IDEA; "check Saoirse's deadline again" → none.
+- B25: "siddharth says just take off the margin note alredy" → REMOVE_RESEARCH_CONNECTION (a vague ref that was kept); "I'm running late for the archive, just put Keiko Tanabe in charge of this one before I lose the thread." → project SET_OWNER.
+
+**Label batch 8 vs 20 (B10's 323 rows, `labelcmp`):**
+- Agreement with generation: batch 20 was 92.6% on the op and 86.1% exact; batch 8 was 91.0% and 80.2%. The two label runs agree with each other 95.0% on the op and 86.4% exact.
+- Batch 20 used 21 calls (vs 47), 171k input tokens (vs 226k, −24%) and 32k output (vs 29k, more thinking). It cost $0.93 vs $0.87 and took 89 s vs 97 s of wall, with a median of 12.1 s vs 5.7 s per call.
+- So batch 20 saves input tokens but not cost. Its higher agreement is inside the gap between two label runs (86% exact), so one run does not show that it is better.
+
+**Recommendation: generation batch size 10, label batch 8.**
+- B10 halves the cost per kept row compared with B1 ($0.0108 vs $0.0188), cuts generation input tokens by 84%, and had the highest lexical diversity.
+- B25 is only 11% cheaper again per kept row. It loses 6 points of yield, and its failures arrive in blocks of 25 that wipe out an op's slice of the data.
+- Label batch 20 is an option if input tokens (the subscription's usage window) matter more than API-equivalent cost. It is not shown to be better.
+- Thinking is 70–72% of B10/B25 generation output, so effort low is the next lever. It is unmeasured.
+
+**Extrapolation to a 12,000-item run at B10 and label batch 8 (not measured; B10's per-item rates, concurrency 3):**
+- Generation: about 1,440 calls, 6.2M input and 4.8M output tokens, **about 4.0 h** wall, about $69.
+- Label: 99% of items reach it, so about 11.9k rows in about 1,740 calls: 8.3M input and 1.1M output tokens, **about 1.0 h**, about $32.
+- Local stages: about 0.2 h.
+- **Total: about 5.2 h, about 3.2k calls, about 14.5M input and 5.8M output tokens, about $100 API-equivalent, and about 9.3k kept rows at 77.8% yield.**
+- Against pilot 2's shape (about 5.4 h, 24M input, about $140, about 8.4k rows), input tokens fall by 40% and cost by 30%. Wall-clock barely moves, because output (mostly thinking) is what sets it.
+- At B1 and B25 the same run would take about 4.9 h and 3.2 h of generation.
+
+Commands (one arm; repeat with `--batch-size 1 | 10 | 25`):
+
+```bash
+P=training/.venv/bin/python; T=training/artifacts/teacher-batch; A=$T/b10
+$P training/py/teacher.py plan --context $T/context.json --ops batchcmp --batch-size 10 --items-per-op 25 --seed 20261021 --out $A/gen-requests.jsonl
+$P training/py/teacher.py run $A/gen-requests.jsonl --out $A/gen-results.jsonl --timeout 600 --max-requests 400 --cli-cwd <empty dir>
+$P training/py/teacher.py rows $A/gen-results.jsonl --context $T/context.json --meta $A/gen-requests.jsonl.meta.json --out $A/rows.jsonl
+training/scripts/render.sh $A/rows.jsonl $A/r1
+$P training/py/teacher.py label $A/r1/rendered.jsonl --context $T/context.json --rows $A/r1/rows-valid.jsonl --batch 8 --out $A/label-requests.jsonl
+$P training/py/teacher.py run $A/label-requests.jsonl --out $A/label-results.jsonl --timeout 600 --cli-cwd <empty dir>
+$P training/py/teacher.py agree $A/label-results.jsonl --keys $A/label-requests.jsonl.keys.json --rows $A/r1/rows-valid.jsonl \
+    --manifest $A/r1/rendered.manifest.json --context $T/context.json --max-free 0.7 --name-cap 0 --out $A/agreed.jsonl
+$P training/py/batchcmp.py $T/b1 $T/b10 $T/b25 --context $T/context.json --out $T/batchcmp-summary.json
+```
+
 ## Next, waiting on the user
 
 1. **Round 6 is done.** The format is r6.1, and the renderer uses it. Every change to the core's step-1/step-2 builders, the op descriptions or the vocabularies bumps `PROMPT_FORMAT_VERSION` (`chat/core/prompt-format.ts`). After a bump, re-run `render.sh`.
 2. **Both blind held-out sets** are in `spike/llm-harness/eval/` (`heldout-eval.json`, `heldout2-eval.json`), so `dedup.py` filters against both.
 3. **The user** reviews pilot 2 (above) and approves the full run. `run` refuses more than 200 requests unless `--max-requests` is raised. Ref ops are supported. The teacher's output schemas come from `export-teacher-context.ts`, which carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). Before the full run:
-   - Set a two-sided op-word quota.
-   - Reword the "a question" register for action ops.
-   - Use larger requests per seeded state.
+   - Two-sided op-word quota, the question form axis and `--batch-size`: done and measured ("Teacher batch-size comparison"). The recommendation is generation batch 10 and label batch 8.
    - Decide the runtime's ref labels for non-note models.
    - Decide `requireOneOf` with an optional ref (UPDATE_DELIVERABLE).
 4. **The real training run** comes after that: 3 epochs, effective batch 32, then a dev-checkpoint pick, export, and the in-browser eval arms. Judge it against gte-small top-1 (round 6: O2 47.3% scoped, U1 26.4% unscoped).
