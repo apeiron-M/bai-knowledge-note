@@ -104,6 +104,13 @@ LENGTHS = {"very short": (2, 5), "short": (6, 12), "medium": (13, 25), "long": (
 LENGTH_WEIGHTS = [0.2, 0.35, 0.3, 0.15]
 MULTI_CLAUSE = "two or more clauses or sentences, one of them context that does not affect the change (why, what you are in the middle of, an aside)"
 MIN_AVOID = 0.5
+# Two-sided quota (batch-size comparison): `plan --avoid-share` sets the
+# share of avoid specs, the other action specs are told to use the op's own
+# words, and `agree --max-free` caps the op-word-free share per op.
+DEFAULT_MAX_FREE = 0.7
+QUESTION_SHARE = 0.3  # action specs phrased as a question that asks for the change
+FORMS = {"question": 'a question that asks for the change (for example "can you …?"), not a question about the document',
+         "instruction": "an instruction or a statement of what should change, not a question"}
 TRIVIAL_OP_WORDS = {"set", "add", "update", "to", "for", "of", "the", "a", "an", "and", "on", "in", "by",
                     "from", "with", "into", "as"}
 # Person-valued semantic fields; the spec's name goes there when one is named.
@@ -135,12 +142,26 @@ def uses_op_words(utterance: str, words: list[str]) -> list[str]:
     return hits
 
 
-def item_specs(rng: random.Random, k: int, op_name: str | None, people: list[str]) -> list[dict]:
+def item_specs(rng: random.Random, k: int, op_name: str | None, people: list[str],
+               avoid_share: float | None = None) -> list[dict]:
     """k specs: ceil(k/2) (+1 from 4 items) avoid the op words; registers
-    differ inside a request; one in four is multi-clause (at least medium)."""
-    n_avoid = 0 if op_name is None else -(-k // 2) + (1 if k >= 4 else 0)
+    differ inside a request; one in four is multi-clause (at least medium).
+
+    With `avoid_share` (the batched planner): round(k * share) specs avoid
+    the op words and the other action specs must use one of them (the
+    two-sided quota); the register "a question" is replaced by a separate
+    form axis, QUESTION_SHARE of action specs being questions that ask for
+    the change."""
+    two_sided = avoid_share is not None
+    if op_name is None:
+        n_avoid = 0
+    elif two_sided:
+        n_avoid = round(k * avoid_share)
+    else:
+        n_avoid = -(-k // 2) + (1 if k >= 4 else 0)
     avoid = rng.sample(range(k), n_avoid)
-    regs = rng.sample(REGISTERS, min(k, len(REGISTERS)))
+    pool = [r for r in REGISTERS if r != "a question"] if two_sided else REGISTERS
+    regs = rng.sample(pool, min(k, len(pool)))
     lens = rng.choices(list(LENGTHS), weights=LENGTH_WEIGHTS, k=k)
     n_multi = k // 4 + (rng.random() < (k % 4) / 4)  # one in four, in expectation
     multi = set(rng.sample(range(k), n_multi))
@@ -156,8 +177,24 @@ def item_specs(rng: random.Random, k: int, op_name: str | None, people: list[str
               "name": people.pop(0) if people else None}
         if i in avoid:
             sp["avoid"] = op_words(op_name or "")
+        elif two_sided and op_name is not None and op_words(op_name):
+            sp["use"] = op_words(op_name)
         specs.append(sp)
+    if two_sided and op_name is not None:
+        questions = set(rng.sample(range(k), round(k * QUESTION_SHARE)))
+        for i, sp in enumerate(specs):
+            sp["form"] = "question" if i in questions else "instruction"
     return specs
+
+
+def call_specs(specs: list[dict], size: int) -> list[list[dict]]:
+    """One job's specs split into calls of `size` items: `n` is renumbered
+    1..len per call (what the teacher sees and `rows` checks), `i` keeps the
+    job-wide spec number, so every batch size gets the same specs."""
+    if size < 1:
+        raise ValueError("batch size must be >= 1")
+    return [[{**sp, "n": j + 1, "i": sp.get("i", sp["n"])} for j, sp in enumerate(specs[s:s + size])]
+            for s in range(0, len(specs), size)]
 
 
 def spec_text(sp: dict, ref: dict | None = None) -> str:
@@ -176,8 +213,13 @@ def spec_text(sp: dict, ref: dict | None = None) -> str:
     bits.append(f"Register: {sp['register']}. Length: {lo}-{hi} words.")
     if sp["multiClause"]:
         bits.append(f"Shape: {MULTI_CLAUSE}.")
+    if sp.get("form"):
+        bits.append(f"Form: {FORMS[sp['form']]}.")
     if sp.get("avoid"):
         bits.append("Do not use these words or any form of them: " + ", ".join(f'"{w}"' for w in sp["avoid"]) + ".")
+    if sp.get("use"):
+        bits.append("Natural wording: use at least one of these words (or a form of it): "
+                    + ", ".join(f'"{w}"' for w in sp["use"]) + ".")
     if sp.get("name"):
         bits.append(f"Any person in the message or its arguments (author, owner, assignee, member) is "
                     f"{sp['name']} (full or first name), never the account holder.")
@@ -327,6 +369,17 @@ PILOT2_REF_ITEMS3 = {  # ref ops a chat user hits most get 3 items, the rest 2
     "project:REMOVE_MEMBER", "project:SET_DELIVERABLE_STATUS", "pipeline-queue:ASSIGN_TASK",
 }
 PILOT2_NO_ACTION_MODELS = ["project", "moc", "pipeline-queue"]
+# Batch-size comparison: 7 ops that act on an existing item (ref ops) and 5
+# that do not, over 8 models, plus one no-action model.
+BATCHCMP_OPS = [
+    "wbs:SET_GOAL_STATUS", "wbs:ASSIGN_GOAL", "knowledge-note:REMOVE_TOPIC", "project:REMOVE_MEMBER",
+    "pipeline-queue:FAIL_TASK", "moc:REMOVE_CORE_IDEA", "research-claim:REMOVE_RESEARCH_CONNECTION",
+    "knowledge-note:SET_DESCRIPTION", "project:SET_OWNER", "source:SET_SOURCE_STATUS",
+    "tension:ADD_INVOLVED_REF", "moc:UPDATE_ORIENTATION",
+]
+BATCHCMP_NO_ACTION_MODELS = ["wbs"]
+DISTINCT_LINE = ("Make the messages mutually distinct: vary the opening, sentence structure and vocabulary, "
+                 "and do not reuse a phrasing from another message.")
 
 
 def tsx(*args: str) -> str:
@@ -340,6 +393,8 @@ def cmd_plan(a) -> int:
     ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
     listing = json.loads(tsx("training/gen/ref-scenarios.ts", "--list").strip().splitlines()[-1])
     ref_ops, people_pool = listing["refOps"], listing["people"]
+    if a.batch_size:
+        return plan_batched(a, ctx, ref_ops, people_pool)
     rng = random.Random(a.seed)
     people: list[str] = []
 
@@ -396,6 +451,84 @@ def cmd_plan(a) -> int:
         reqs.append(request(c, NO_ACTION_SYSTEM, user, NO_ACTION_SCHEMA, "medium", 8000))
         meta[c] = {"specs": specs}
 
+    return finish_plan(out, reqs, meta, len(scen))
+
+
+def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
+    """`plan --batch-size B`: every job (op, or no-action model) gets
+    `--items-per-op` specs and, for a ref op, one seeded state with a target
+    per spec, all drawn from `--seed` and the job key only. The job is then
+    split into calls of B items (`call_specs`), so any two batch sizes send
+    the same specs, states and targets; only the grouping per call differs."""
+    if a.ops == "batchcmp":
+        keys, na_models = BATCHCMP_OPS, BATCHCMP_NO_ACTION_MODELS
+    elif a.ops == "all":
+        keys, na_models = list(ctx), sorted({o["model"] for o in ctx.values()})
+    else:
+        keys, na_models = [k for k in a.ops.split(",") if k], []
+    unknown = [k for k in keys if k not in ctx]
+    if unknown:
+        raise SystemExit(f"unknown ops: {', '.join(unknown)}")
+    n, size = a.items_per_op, a.batch_size
+    name_rng = random.Random(f"{a.seed}:names")
+    people: list[str] = []
+
+    def names(k: int) -> list[str]:
+        while len(people) < k:
+            people.extend(name_rng.sample(people_pool, len(people_pool)))
+        return [people.pop(0) for _ in range(k)]
+    jobs = []  # (job id, op key or None, model, specs, persona, rng)
+    for key in keys:
+        rj = random.Random(f"{a.seed}:{key}")
+        jobs.append((f"gen-{key.replace(':', '--')}", key, ctx[key]["model"],
+                     item_specs(rj, n, ctx[key]["opName"], names(n), a.avoid_share), rj.choice(PERSONAS), rj))
+    for m in na_models:
+        rj = random.Random(f"{a.seed}:noaction:{m}")
+        jobs.append((f"noaction-{m}", None, m, item_specs(rj, n, None, names(n), a.avoid_share), rj.choice(PERSONAS), rj))
+    out = Path(a.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    spec = [{"cid": j, "op": key, "items": n, "seed": rj.randrange(2**31)} for j, key, _, _, _, rj in jobs if key in ref_ops]
+    scen: dict[str, dict] = {}
+    if spec:
+        sp_file, sc_file = Path(str(out) + ".scenario-spec.json"), Path(str(out) + ".scenarios.json")
+        sp_file.write_text(json.dumps(spec) + "\n")
+        tsx("training/gen/ref-scenarios.ts", str(sp_file), str(sc_file))
+        scen = {x["cid"]: x for x in json.loads(sc_file.read_text())}
+    reqs, meta = [], {}
+    for job, key, model, specs, persona, _ in jobs:
+        sc = scen.get(job)
+        for ci, chunk in enumerate(call_specs(specs, size)):
+            c = f"{job}-{ci}"
+            k = len(chunk)
+            seed_line = f"Seed: {random.Random(f'{a.seed}:{job}:{ci}').randrange(10**6)}."
+            distinct = f"\n{DISTINCT_LINE}" if k > 1 else ""
+            plural = "message" if k == 1 else "messages"
+            if key is None:
+                ops_m = [o for o in ctx.values() if o["model"] == model]
+                listing_m = "\n".join(f"- {o['key']}: {o['description'] or o['opName']}" for o in ops_m)
+                user = (f"Document type: {ops_m[0]['docType']}\nIts operations:\n{listing_m}\n\n"
+                        f"Write exactly {k} {plural} that need no operation, one per spec. Persona: {persona}.{distinct}\n"
+                        + "\n".join(spec_text(sp) for sp in chunk) + f"\n{seed_line}")
+                reqs.append(request(c, NO_ACTION_SYSTEM, user, NO_ACTION_SCHEMA, "medium", 8000 + 500 * k))
+                meta[c] = {"job": job, "specs": chunk}
+                continue
+            op = ctx[key]
+            items = [sc["items"][sp["i"] - 1] for sp in chunk] if sc else None
+            refs = None
+            if sc:
+                refs = {p: ([x["label"] for x in cs], isinstance(sc["items"][0]["refs"].get(p), list))
+                        for p, cs in sc["refCandidates"].items()}
+            lines = [spec_text(sp, items[j] if items else None) for j, sp in enumerate(chunk)]
+            user = (f"{op_brief(op, sc['state'] if sc else None)}\n\n"
+                    f"Write exactly {k} {plural}, one per spec. Persona: "
+                    f"{('someone working on a ' + sc['theme']) if sc else persona}.{distinct}\n"
+                    + "\n".join(lines) + f"\n{seed_line}")
+            reqs.append(request(c, SYSTEM, user, gen_schema(op["modelSchema"], refs), "medium", 16000 + 1000 * k))
+            meta[c] = {"job": job, "specs": chunk, **({"scenario": {**sc, "cid": c, "items": items}} if sc else {})}
+    return finish_plan(out, reqs, meta, len(scen))
+
+
+def finish_plan(out: Path, reqs: list[dict], meta: dict, n_scen: int) -> int:
     out.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in reqs))
     Path(str(out) + ".meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n")
     leaks = prompt_leaks([r["params"]["system"] + "\n" + r["params"]["messages"][0]["content"] for r in reqs])
@@ -407,7 +540,7 @@ def cmd_plan(a) -> int:
     out_lo, out_hi = items * 70 + len(reqs) * 300, items * 70 + len(reqs) * 3000
     cost = lambda i, o: round((i * PRICE_IN + o * PRICE_OUT) / 1e6 * BATCH_DISCOUNT, 4)  # noqa: E731
     est = {"label": "ESTIMATE (chars/4 input, guessed output incl. thinking); not measured",
-           "requests": len(reqs), "itemsRequested": items, "refOpRequests": len(scen), "inputTokens": in_tok,
+           "requests": len(reqs), "itemsRequested": items, "refStates": n_scen, "inputTokens": in_tok,
            "outputTokensRange": [out_lo, out_hi], "batchCostUsdRange": [cost(in_tok, out_lo), cost(in_tok, out_hi)],
            "sha256": hashlib.sha256(out.read_bytes()).hexdigest(),
            "evalUtterancesInPrompts": leaks,
@@ -844,6 +977,7 @@ def cmd_rows(a) -> int:
     ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
     meta = json.loads(Path(a.meta).read_text()) if a.meta else {}
     rows, dropped = [], []
+    calls: dict[str, dict] = {}  # per call: items requested (specs) and returned
     leak = context_leak_terms() if a.leak_check else []
 
     def leaked(it: dict) -> bool:
@@ -851,17 +985,28 @@ def cmd_rows(a) -> int:
         return any(t in blob for t in leak)
     for line in Path(a.results).read_text().splitlines():
         r = json.loads(line)
+        m = meta.get(r["custom_id"], {})
+        calls[r["custom_id"]] = {"requested": len(m["specs"]) if m.get("specs") is not None else None, "returned": 0}
         if r["type"] != "succeeded" or r.get("stop_reason") != "end_turn":
             dropped.append({"custom_id": r["custom_id"], "reason": r.get("stop_reason") or r["type"]})
             continue
-        items = json.loads(r["text"])["items"]
-        m = meta.get(r["custom_id"], {})
+        try:
+            items = json.loads(r["text"])["items"]
+            if not isinstance(items, list):
+                raise TypeError("items is not a list")
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            dropped.append({"custom_id": r["custom_id"], "reason": f"unparseable result: {e}"})
+            continue
+        calls[r["custom_id"]]["returned"] = len(items)
         specs, scen, seen = m.get("specs"), m.get("scenario"), set()
         for j, it in enumerate(items):
             rid = f"{r['custom_id']}-{j}"
 
             def drop(reason: str) -> None:
                 dropped.append({"id": rid, "reason": reason, "utterance": it.get("utterance")})
+            if not isinstance(it, dict) or not isinstance(it.get("utterance"), str):
+                dropped.append({"id": rid, "reason": "item is not an object with an utterance"})
+                continue
             if leaked(it):
                 dropped.append({"id": rid, "reason": "context-leak (account/machine context)"})
                 continue
@@ -913,7 +1058,12 @@ def cmd_rows(a) -> int:
                 row["fixture"] = FIXTURES[key]
             rows.append(row)
     Path(a.out).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
-    summary = {"rows": len(rows), "dropped": len(dropped), "droppedDetail": dropped}
+    req = [c["requested"] for c in calls.values() if c["requested"] is not None]
+    summary = {"rows": len(rows), "dropped": len(dropped),
+               "calls": len(calls), "itemsRequested": sum(req) if req else None,
+               "itemsReturned": sum(c["returned"] for c in calls.values()),
+               "shortCalls": {k: c for k, c in calls.items() if c["requested"] is not None and c["returned"] < c["requested"]},
+               "droppedDetail": dropped}
     Path(a.out + ".summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n")
     print(json.dumps({**summary, "droppedDetail": dropped[:20]}, ensure_ascii=False))
     return 0
@@ -1071,10 +1221,17 @@ def args_equal(got: dict | None, gold: dict, tolerant: bool = False) -> bool:
     return norm_val(g) == norm_val(w) if tolerant else g == w
 
 
-def wording_quota(rows: list[dict], ctx: dict) -> tuple[list[dict], list[str], list[str]]:
+def _fits(n: float) -> int:
+    return int(n + 1e-9)  # floor, robust to 0.7/0.3-style float error
+
+
+def wording_quota(rows: list[dict], ctx: dict, max_free: float = 1.0,
+                  name_cap: int | None = 2) -> tuple[list[dict], list[str], list[str]]:
     """Per op, at most as many op-word rows as op-word-free ones (MIN_AVOID
-    0.5); each pool name in at most 2 kept utterances. Rows with no spec
-    (pilot 1) pass through."""
+    0.5) and, with max_free < 1, at most max_free of the op's kept rows
+    op-word-free (the two-sided quota); each pool name in at most `name_cap`
+    kept utterances (None: no cap). Excess rows are dropped from the end.
+    Rows with no spec (pilot 1) pass through."""
     by_op: dict[str, list[dict]] = {}
     for r in rows:
         if r["op"] and (r.get("meta") or {}).get("spec"):
@@ -1083,9 +1240,14 @@ def wording_quota(rows: list[dict], ctx: dict) -> tuple[list[dict], list[str], l
     for key, rs in by_op.items():
         words = op_words(ctx[key]["opName"])
         withw = [r for r in rs if uses_op_words(r["utterance"], words)]
-        free = len(rs) - len(withw)
-        excess = len(withw) - int(free * (1 - MIN_AVOID) / MIN_AVOID)
-        drop |= {r["id"] for r in withw[len(withw) - excess:]} if excess > 0 else set()
+        free = [r for r in rs if r not in withw]
+        excess = len(withw) - _fits(len(free) * (1 - MIN_AVOID) / MIN_AVOID)
+        if excess > 0:
+            drop |= {r["id"] for r in withw[len(withw) - excess:]}
+            withw = withw[:len(withw) - excess]
+        if max_free < 1:
+            excess = len(free) - _fits(len(withw) * max_free / (1 - max_free))
+            drop |= {r["id"] for r in free[len(free) - excess:]} if excess > 0 else set()
     quota = sorted(drop)
     seen: dict[str, int] = {}
     cap = []
@@ -1095,7 +1257,7 @@ def wording_quota(rows: list[dict], ctx: dict) -> tuple[list[dict], list[str], l
         name = ((r.get("meta") or {}).get("spec") or {}).get("name")
         if name and any(t.lower() in r["utterance"].lower() for t in name.split()):
             seen[name] = seen.get(name, 0) + 1
-            if seen[name] > 2:
+            if name_cap is not None and seen[name] > name_cap:
                 cap.append(r["id"])
                 drop.add(r["id"])
     return [r for r in rows if r["id"] not in drop], quota, cap
@@ -1126,7 +1288,7 @@ def cmd_agree(a) -> int:
                                                           "on": "args" if op_ok else "op"})
     quota, cap = [], []
     if ctx:
-        kept, quota, cap = wording_quota(kept, ctx)
+        kept, quota, cap = wording_quota(kept, ctx, a.max_free, a.name_cap or None)
     Path(a.out).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in kept))
     summary = {"kept": len(kept), "gateRejected": len(gate), "disagree": len(disagree),
                "disagreeOnOp": sum(d["on"] == "op" for d in disagree),
@@ -1237,6 +1399,11 @@ def main() -> int:
     p = sub.add_parser("plan"); p.add_argument("--context", required=True); p.add_argument("--out", required=True)
     p.add_argument("--ops", default="pilot"); p.add_argument("--requests-per-op", type=int, default=2)
     p.add_argument("--items", type=int, default=5); p.add_argument("--seed", type=int, default=7)
+    p.add_argument("--batch-size", type=int, default=0,
+                   help="items per generation call; enables the batched planner (--ops batchcmp|all|<op,op,...>)")
+    p.add_argument("--items-per-op", type=int, default=25, help="batched planner: specs per op / no-action model")
+    p.add_argument("--avoid-share", type=float, default=0.6,
+                   help="batched planner: share of an op's specs that avoid its op words (the rest use them)")
     p = sub.add_parser("submit"); p.add_argument("requests"); p.add_argument("--yes-spend", action="store_true")
     p.add_argument("--max-requests", type=int, default=200)
     p = sub.add_parser("collect"); p.add_argument("batch_id"); p.add_argument("--out", required=True)
@@ -1260,6 +1427,9 @@ def main() -> int:
     p.add_argument("--keys", help="<label requests>.keys.json for batched labels")
     p.add_argument("--context", help="context.json: enables the per-op wording quota and name cap")
     p.add_argument("--manifest", help="rendered.manifest.json: also drop rows with a grammar-rejected target")
+    p.add_argument("--max-free", type=float, default=1.0,
+                   help=f"two-sided quota: max op-word-free share per op (batch comparison: {DEFAULT_MAX_FREE})")
+    p.add_argument("--name-cap", type=int, default=2, help="max kept utterances per pool name (0: no cap)")
     p = sub.add_parser("mix"); p.add_argument("rows"); p.add_argument("--context", required=True)
     p.add_argument("--ref-ops", help="JSON list or object of ref op keys, to list ops with no kept row")
     p = sub.add_parser("redact"); p.add_argument("files", nargs="+")
