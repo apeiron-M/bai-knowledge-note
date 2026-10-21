@@ -4,7 +4,11 @@ Rows come from render_template.py: `input_ids` are the exact ids the runtime
 feeds the model (llama-server tokenization), and `completion_mask` limits the
 loss to the target JSON plus <|im_end|>. Nothing is re-templated here.
 
-  python training/py/train_lora.py train.jsonl --out artifacts/run [--max-steps N]
+  python training/py/train_lora.py train.jsonl --out artifacts/run [--max-steps N] [--val val.jsonl]
+
+With --val, the completion-only loss on the val rows is logged every
+--eval-steps steps and at the end (monitoring only: no checkpoint is
+picked on it). MPS driver memory is sampled at every log step.
 """
 
 from __future__ import annotations
@@ -30,10 +34,15 @@ TARGETS = ["q_proj", "k_proj", "v_proj", "out_proj", "in_proj", "w1", "w2", "w3"
 class LogCallback(TrainerCallback):
     def __init__(self) -> None:
         self.rows: list[dict] = []
+        self.peak_mps = 0.0
+        self.t0 = time.time()
 
     def on_log(self, args, state, control, logs=None, **kwargs):
+        if torch.backends.mps.is_available():
+            self.peak_mps = max(self.peak_mps, torch.mps.driver_allocated_memory() / 2**30)
         if logs:
-            self.rows.append({"step": state.global_step, **logs})
+            self.rows.append({"step": state.global_step, "epoch": state.epoch,
+                              "wallSec": round(time.time() - self.t0, 1), **logs})
 
 
 def device() -> str:
@@ -72,6 +81,8 @@ def main() -> int:
     ap.add_argument("--max-length", type=int, default=1024)
     ap.add_argument("--precision", choices=["bf16", "fp32"], default="bf16")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--val", help="val rows (same format), loss logged only")
+    ap.add_argument("--eval-steps", type=int, default=25)
     args = ap.parse_args()
 
     out = Path(args.out)
@@ -80,6 +91,9 @@ def main() -> int:
     rows = [json.loads(l) for l in Path(args.train).read_text().splitlines() if l.strip()]
     sanity = check_rows(rows, tok)
     ds = Dataset.from_list([{"input_ids": r["input_ids"], "completion_mask": r["completion_mask"]} for r in rows])
+    val_rows = [json.loads(l) for l in Path(args.val).read_text().splitlines() if l.strip()] if args.val else []
+    val_ds = (Dataset.from_list([{"input_ids": r["input_ids"], "completion_mask": r["completion_mask"]} for r in val_rows])
+              if val_rows else None)
 
     dtype = torch.bfloat16 if args.precision == "bf16" else torch.float32
     model = AutoModelForCausalLM.from_pretrained(args.base, dtype=dtype)
@@ -102,9 +116,12 @@ def main() -> int:
         report_to=[],
         seed=args.seed,
         dataloader_pin_memory=False,
+        eval_strategy="steps" if val_ds is not None else "no",
+        eval_steps=args.eval_steps,
+        per_device_eval_batch_size=args.batch,
     )
     log = LogCallback()
-    trainer = SFTTrainer(model=model, args=cfg, train_dataset=ds, processing_class=tok,
+    trainer = SFTTrainer(model=model, args=cfg, train_dataset=ds, eval_dataset=val_ds, processing_class=tok,
                          peft_config=lora, callbacks=[log])
     trainable, total = trainer.model.get_nb_trainable_parameters()
     # The collated labels must cover the completion only (prompt = -100).
@@ -117,6 +134,7 @@ def main() -> int:
     t0 = time.time()
     trainer.train()
     wall = time.time() - t0
+    final_eval = trainer.evaluate() if val_ds is not None else None
     trainer.model.save_pretrained(out / "adapter")
 
     stats = {
@@ -131,9 +149,15 @@ def main() -> int:
         "firstLoss": next((r["loss"] for r in log.rows if "loss" in r), None),
         "lastLoss": next((r["loss"] for r in reversed(log.rows) if "loss" in r), None),
         "rowCheck": sanity,
+        "valRows": len(val_rows),
+        "finalEval": final_eval,
+        "evalLoss": [{"step": r["step"], "epoch": r.get("epoch"), "eval_loss": r["eval_loss"]}
+                     for r in log.rows if "eval_loss" in r],
+        "args": vars(args),
     }
     if dev == "mps":
         stats["mpsDriverAllocatedGB"] = round(torch.mps.driver_allocated_memory() / 2**30, 3)
+        stats["mpsDriverPeakSampledGB"] = round(log.peak_mps, 3)
     (out / "train-log.json").write_text(json.dumps(log.rows, indent=1) + "\n")
     (out / "train-stats.json").write_text(json.dumps(stats, indent=2) + "\n")
     print(json.dumps(stats))
