@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
-import { generateId } from "document-model/core";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import { computeHealth } from "../lib/health-checks.js";
 import {
   useReactorDocsWithRefetch,
   type ReactorDocSpec,
@@ -81,18 +81,23 @@ export function HealthDashboard() {
   }, [documents]);
 
   // Compute live health from the subgraph projection + server tree —
-  // no per-document reads for the (potentially thousands of) notes.
+  // no per-document reads for the (potentially thousands of) notes. The
+  // checks themselves are lib/health-checks.ts, shared with the browser vault.
   const health = useMemo(() => {
     const docs = documents ?? [];
     const mocs = serverFileNodes.filter((n) => n.documentType === "bai/moc");
     const sources = serverFileNodes.filter(
       (n) => n.documentType === "bai/source",
     );
-    const observations = docs.filter(
-      (d) => d.header.documentType === "bai/observation",
+    const stateStatus = (d: (typeof docs)[number]) =>
+      (d.state as unknown as { global: { status?: string } }).global.status;
+    const pendingObs = docs.filter(
+      (d) =>
+        d.header.documentType === "bai/observation" &&
+        stateStatus(d) === "PENDING",
     );
-    const tensions = docs.filter(
-      (d) => d.header.documentType === "bai/tension",
+    const openTensions = docs.filter(
+      (d) => d.header.documentType === "bai/tension" && stateStatus(d) === "OPEN",
     );
 
     // Note metadata comes entirely from the subgraph projection: title,
@@ -104,39 +109,17 @@ export function HealthDashboard() {
       status: n.status ?? "DRAFT",
       noteType: n.noteType,
       description: n.description,
-      links: n.links.map((l) => ({ targetDocumentId: l.targetDocumentId })),
-      topics: n.topics,
+      links: n.links.flatMap((l) => (l.targetDocumentId ? [l.targetDocumentId] : [])),
+      topics: n.topics.map((topic) => topic.name),
     }));
 
-    const noteIds = new Set(noteStates.map((n) => n.id));
-    const edgeCount = noteStates.reduce(
-      (sum, n) =>
-        sum +
-        n.links.filter(
-          (l) => l.targetDocumentId && noteIds.has(l.targetDocumentId),
-        ).length,
-      0,
-    );
-
-    // Incoming link counts
-    const incomingCounts = new Map<string, number>();
-    for (const note of noteStates) {
-      for (const link of note.links) {
-        if (link.targetDocumentId && noteIds.has(link.targetDocumentId)) {
-          incomingCounts.set(
-            link.targetDocumentId,
-            (incomingCounts.get(link.targetDocumentId) ?? 0) + 1,
-          );
-        }
-      }
-    }
-
-    const orphans = noteStates.filter((n) => !incomingCounts.has(n.id));
-    const density =
-      noteStates.length > 1
-        ? edgeCount / (noteStates.length * (noteStates.length - 1))
-        : 0;
-    const avgLinks = noteStates.length > 0 ? edgeCount / noteStates.length : 0;
+    const result = computeHealth({
+      notes: noteStates,
+      mocs: mocs.map((m) => ({ id: m.id, coreIdeas: [] })),
+      pendingObservations: pendingObs.map((d) => ({ id: d.header.id, title: d.header.name })),
+      openTensions: openTensions.map((d) => ({ id: d.header.id, title: d.header.name })),
+      otherDocumentIds: serverFileNodes.map((n) => n.id),
+    });
 
     // Status distribution
     const statusDist: Record<string, number> = {};
@@ -144,146 +127,19 @@ export function HealthDashboard() {
       statusDist[n.status] = (statusDist[n.status] ?? 0) + 1;
     }
 
-    // Build checks
-    const checks: HealthCheck[] = [];
-
-    checks.push({
-      id: generateId(),
-      category: "ORPHAN_DETECTION",
-      status:
-        orphans.length === 0 ? "PASS" : orphans.length <= 3 ? "WARN" : "FAIL",
-      message:
-        orphans.length === 0
-          ? "All notes have incoming links"
-          : `${orphans.length} orphan note(s)`,
-      affectedItems: orphans.map((n) => n.title),
-    });
-
-    checks.push({
-      id: generateId(),
-      category: "LINK_HEALTH",
-      status: avgLinks >= 2 ? "PASS" : avgLinks >= 1 ? "WARN" : "FAIL",
-      message: `Avg ${avgLinks.toFixed(1)} links/note${avgLinks < 2 ? " (target: 2+)" : ""}`,
-      affectedItems: noteStates
-        .filter((n) => n.links.length < 2)
-        .map((n) => n.title),
-    });
-
-    const noDesc = noteStates.filter((n) => !n.description);
-    checks.push({
-      id: generateId(),
-      category: "DESCRIPTION_QUALITY",
-      status:
-        noDesc.length === 0 ? "PASS" : noDesc.length <= 2 ? "WARN" : "FAIL",
-      message:
-        noDesc.length === 0
-          ? "All notes have descriptions"
-          : `${noDesc.length} missing descriptions`,
-      affectedItems: noDesc.map((n) => n.title),
-    });
-
-    const noType = noteStates.filter((n) => !n.noteType);
-    checks.push({
-      id: generateId(),
-      category: "SCHEMA_COMPLIANCE",
-      status: noType.length === 0 ? "PASS" : "WARN",
-      message:
-        noType.length === 0
-          ? "All notes have a type"
-          : `${noType.length} note(s) missing type`,
-      affectedItems: noType.map((n) => n.title),
-    });
-
-    const noTopics = noteStates.filter((n) => n.topics.length === 0);
-    checks.push({
-      id: generateId(),
-      category: "MOC_COHERENCE",
-      status:
-        noTopics.length === 0 ? "PASS" : noTopics.length <= 3 ? "WARN" : "FAIL",
-      message:
-        noTopics.length === 0
-          ? "All notes have topics"
-          : `${noTopics.length} note(s) without topics`,
-      affectedItems: noTopics.map((n) => n.title),
-    });
-
-    const pendingObs = observations.filter((d) => {
-      const s = (d.state as unknown as { global: { status?: string } }).global;
-      return s.status === "PENDING";
-    });
-    if (pendingObs.length > 0) {
-      checks.push({
-        id: generateId(),
-        category: "PROCESSING_THROUGHPUT",
-        status: pendingObs.length > 5 ? "FAIL" : "WARN",
-        message: `${pendingObs.length} pending observation(s) — review and promote or archive`,
-        affectedItems: pendingObs.map((d) => d.header.name),
-      });
-    }
-
-    const openTensions = tensions.filter((d) => {
-      const s = (d.state as unknown as { global: { status?: string } }).global;
-      return s.status === "OPEN";
-    });
-    if (openTensions.length > 0) {
-      checks.push({
-        id: generateId(),
-        category: "THREE_SPACE_BOUNDARIES",
-        status: openTensions.length > 3 ? "FAIL" : "WARN",
-        message: `${openTensions.length} open tension(s) — resolve or dissolve`,
-        affectedItems: openTensions.map((d) => d.header.name),
-      });
-    }
-
-    const overallStatus = checks.some((c) => c.status === "FAIL")
-      ? "FAIL"
-      : checks.some((c) => c.status === "WARN")
-        ? "WARN"
-        : "PASS";
-
-    // Build recommendations with actionable note IDs
-    type Recommendation = { text: string; noteIds: string[] };
-    const recommendations: Recommendation[] = [];
-    if (orphans.length > 0)
-      recommendations.push({
-        text: `Connect ${orphans.length} orphan note(s) — open each and add links via the Links tab`,
-        noteIds: orphans.map((n) => n.id),
-      });
-    if (avgLinks < 2) {
-      const lowLink = noteStates.filter((n) => n.links.length < 2);
-      recommendations.push({
-        text: `${lowLink.length} note(s) have fewer than 2 links — open and add connections`,
-        noteIds: lowLink.map((n) => n.id),
-      });
-    }
-    if (noDesc.length > 0)
-      recommendations.push({
-        text: `Add descriptions to ${noDesc.length} note(s)`,
-        noteIds: noDesc.map((n) => n.id),
-      });
-    if (noType.length > 0)
-      recommendations.push({
-        text: `Set note types on ${noType.length} note(s)`,
-        noteIds: noType.map((n) => n.id),
-      });
-    if (noTopics.length > 0)
-      recommendations.push({
-        text: `Tag ${noTopics.length} note(s) with topics`,
-        noteIds: noTopics.map((n) => n.id),
-      });
-
     return {
-      noteCount: noteStates.length,
-      mocCount: mocs.length,
+      noteCount: result.metrics.noteCount,
+      mocCount: result.metrics.mocCount,
       sourceCount: sources.length,
-      edgeCount,
-      density,
-      orphanCount: orphans.length,
-      avgLinksPerNote: avgLinks,
+      edgeCount: result.metrics.connectionCount,
+      density: result.metrics.density,
+      orphanCount: result.metrics.orphanCount,
+      avgLinksPerNote: result.metrics.averageLinksPerNote,
       statusDist,
-      overallStatus,
-      checks,
-      recommendations,
+      overallStatus: result.overallStatus,
+      // A category appears once, so it keys the row.
+      checks: result.checks.map((c): HealthCheck => ({ id: c.category, ...c })),
+      recommendations: result.recommendations,
     };
   }, [documents, subgraphNotes, serverFileNodes]);
 
