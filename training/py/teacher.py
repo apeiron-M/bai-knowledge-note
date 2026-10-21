@@ -166,7 +166,7 @@ def spec_text(sp: dict, ref: dict | None = None) -> str:
             if lab is None:
                 bits.append(f"`{path}`: none (refs.{path} = \"none\").")
             elif isinstance(lab, list):
-                bits.append(f"`{path}` = {json.dumps(lab, ensure_ascii=False)}.")
+                bits.append(f"`{path}` = {json.dumps(lab, ensure_ascii=False)} (refs.{path} is this whole list, in this order).")
             else:
                 bits.append(f"`{path}` = {json.dumps(lab, ensure_ascii=False)}.")
         if ref.get("hint"):
@@ -177,7 +177,8 @@ def spec_text(sp: dict, ref: dict | None = None) -> str:
     if sp.get("avoid"):
         bits.append("Do not use these words or any form of them: " + ", ".join(f'"{w}"' for w in sp["avoid"]) + ".")
     if sp.get("name"):
-        bits.append(f"If the message names a person, it is {sp['name']} (full or first name).")
+        bits.append(f"Any person in the message or its arguments (author, owner, assignee, member) is "
+                    f"{sp['name']} (full or first name), never the account holder.")
     return " ".join(bits)
 
 
@@ -191,7 +192,8 @@ def wording_error(utterance: str, sp: dict) -> str | None:
     lo, hi = LENGTHS[sp["length"]]
     if not (max(1, int(lo * 0.6)) <= n <= int(hi * 1.5) + 1):
         return f"length {n} words, spec {lo}-{hi}"
-    if sp["multiClause"] and (n < 10 or not re.search(r"[.;!?—–:]\s|,\s*(and|but|so|because)\b|\s(and|but|so|because)\s", utterance)):
+    if sp["multiClause"] and (n < 10 or not re.search(
+            r"[.;!?—–:,]\s|\s(and|but|so|because|since|while|as|after|before|when|if)\s", utterance, re.I)):
         return "multi-clause spec, single clause"
     return None
 
@@ -518,11 +520,16 @@ def cli_auth_status() -> dict:
         return {}
 
 
+# What `redact` writes over a leaked term in a raw results file; `rows`
+# still drops any item that carries it.
+REDACTED = "[account-context-redacted]"
+
+
 def context_leak_terms() -> list[str]:
     """Strings Claude Code puts in the teacher's context that no flag removes
     (the account email; the user name and home dir in the environment block).
     A row that contains one is dropped by `rows`."""
-    terms = set()
+    terms = {REDACTED}
     email = cli_auth_status().get("email")
     if email:
         terms |= {email.lower(), email.split("@")[0].lower()}
@@ -784,14 +791,24 @@ def grounded(args: dict, utterance: str, schema: dict, evidence: list[dict]) -> 
             vals |= set(b.get("enum", []))
         return vals
 
+    def leaves(v: object, s: dict, path: str):
+        """(path, string, schema) for every string leaf, nested objects too."""
+        if isinstance(v, dict):
+            sub = next((b for b in s.get("anyOf", []) if b.get("type") == "object"), s)
+            for k2, v2 in v.items():
+                yield from leaves(v2, sub.get("properties", {}).get(k2, {}), f"{path}.{k2}")
+        elif isinstance(v, list):
+            for x in v:
+                yield from leaves(x, s.get("items", s), path)
+        elif isinstance(v, str):
+            yield path, v, s
+
     for k, v in args.items():
         if v is None:
             continue
-        s = props.get(k, {})
-        values = v if isinstance(v, list) else [v]
-        for x in values:
-            if isinstance(x, str) and x not in enum_values(s) and x.lower() not in low:
-                return f"{k}: value not in utterance"
+        for path, x, s in leaves(v, props.get(k, {}), k):
+            if x not in enum_values(s) and x.lower() not in low:
+                return f"{path}: value not in utterance"
         if k not in required and k not in spans:
             return f"{k}: optional field without evidence"
     return None
@@ -905,7 +922,8 @@ LABEL_SYSTEM = ("You label chat messages for a document app. Given one message a
                 "and give its arguments copied verbatim from the message.")
 LABEL_BATCH_SYSTEM = ("You label chat messages for a document app. Label each message on its own: pick the single "
                       "operation the user wants, or \"none\" if it needs no document change, and give its arguments "
-                      "copied verbatim from the message. For a field with listed choices, give the exact choice label.")
+                      "copied verbatim from the message. A choice field names an existing item: give that item's "
+                      "exact label as shown in the message's document state.")
 
 
 def label_listing(ctx: dict, cands: list[str], with_choices: bool) -> str:
@@ -920,9 +938,14 @@ def label_listing(ctx: dict, cands: list[str], with_choices: bool) -> str:
     return "\n".join(lines)
 
 
-def choice_lines(refs: dict | None) -> str:
-    return "".join(f"\n  Choices for {p}: " + ", ".join(json.dumps(c["label"], ensure_ascii=False) for c in cs)
-                   for p, cs in (refs or {}).items())
+def state_lines(row: dict | None) -> str:
+    """The document state the row was written against (the listing the
+    teacher saw), never the gold op's own choice list, so the op stays blind."""
+    if row is None:
+        return ""
+    state = (row.get("meta") or {}).get("state")
+    body = "\n".join(f"    {l}" for l in state.splitlines()) if state else "    no listed items"
+    return f"\n  Document state:\n{body}"
 
 
 def cmd_label(a) -> int:
@@ -930,11 +953,13 @@ def cmd_label(a) -> int:
     --batch N: N messages of one docType per call, shuffled, keyed m1..mN
     (row ids name the generation op, so they never reach the labeler)."""
     ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
-    refs = {}
+    rows: dict[str, dict] = {}
     if a.rows:
         for line in Path(a.rows).read_text().splitlines():
             row = json.loads(line)
-            refs[row["id"]] = row.get("refCandidates")
+            rows[row["id"]] = row
+    stateful = any(r.get("refContext") is not None for r in rows.values())
+    states = (lambda rid: state_lines(rows.get(rid))) if stateful else (lambda rid: "")  # noqa: E731
     steps = []
     for line in Path(a.rendered).read_text().splitlines():
         st = json.loads(line)
@@ -955,8 +980,8 @@ def cmd_label(a) -> int:
                 "op": {"type": "string", "enum": [*cands, "none"]},
                 "args_json": {"type": "string"}}, "required": ["op", "args_json"], "additionalProperties": False}
             reqs.append(request(f"label-{rid}", LABEL_SYSTEM,
-                                f"Candidates:\n{label_listing(ctx, list(cands), bool(refs.get(rid)))}\n\n"
-                                f"Message: {utt}{choice_lines(refs.get(rid))}\n\n"
+                                f"Candidates:\n{label_listing(ctx, list(cands), stateful)}\n\n"
+                                f"Message: {utt}{states(rid)}\n\n"
                                 "args_json is a JSON object of the chosen operation's arguments ({} for none).",
                                 schema, "low", 4000))
     else:
@@ -971,15 +996,14 @@ def cmd_label(a) -> int:
                 chunk = members[bi::n_batches]  # even sizes
                 cid = f"labelb-{gi}-{bi}"
                 keys[cid] = {f"m{j + 1}": rid for j, (rid, _, _) in enumerate(chunk)}
-                with_choices = any(refs.get(rid) for rid, _, _ in chunk)
-                msgs = "\n".join(f"[m{j + 1}] {utt}{choice_lines(refs.get(rid))}" for j, (rid, _, utt) in enumerate(chunk))
+                msgs = "\n".join(f"[m{j + 1}] {utt}{states(rid)}" for j, (rid, _, utt) in enumerate(chunk))
                 one = {"type": "object", "properties": {
                     "op": {"type": "string", "enum": [*cands, "none"]}, "args_json": {"type": "string"}},
                     "required": ["op", "args_json"], "additionalProperties": False}
                 schema = {"type": "object", "properties": {k: one for k in keys[cid]},
                           "required": list(keys[cid]), "additionalProperties": False}
                 reqs.append(request(cid, LABEL_BATCH_SYSTEM,
-                                    f"Candidates:\n{label_listing(ctx, list(cands), with_choices)}\n\n"
+                                    f"Candidates:\n{label_listing(ctx, list(cands), stateful)}\n\n"
                                     f"Messages (each is independent):\n{msgs}\n\n"
                                     "For each message key, args_json is a JSON object of the chosen operation's "
                                     "arguments ({} for none).", schema, "low", 8000))
@@ -1112,6 +1136,73 @@ def cmd_agree(a) -> int:
     return 0
 
 
+def cmd_mix(a) -> int:
+    """Observed wording mix and ref-position spread of a rows file."""
+    ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
+    rows = [json.loads(l) for l in Path(a.rows).read_text().splitlines() if l.strip()]
+    act = [r for r in rows if r["op"]]
+    free = {r["id"] for r in act if not uses_op_words(r["utterance"], op_words(ctx[r["op"]]["opName"]))}
+    per_op: dict[str, list[int]] = {}
+    for r in act:
+        per_op.setdefault(r["op"], [0, 0])
+        per_op[r["op"]][0] += r["id"] in free
+        per_op[r["op"]][1] += 1
+    words = [len(r["utterance"].split()) for r in rows]
+    bucket = lambda n: next(k for k, (lo, hi) in LENGTHS.items() if n <= hi) if n <= 50 else "over 50"  # noqa: E731
+    specs = [(r.get("meta") or {}).get("spec") or {} for r in rows]
+    names = [sp.get("name") for sp, r in zip(specs, rows)
+             if sp.get("name") and any(t.lower() in r["utterance"].lower() for t in sp["name"].split())]
+    firsts: dict[str, int] = {}
+    for r in rows:
+        for w in re.findall(r"\b[A-Z][a-z]+\b", r["utterance"]):
+            firsts[w] = firsts.get(w, 0) + 1
+    pos: dict[str, int] = {}
+    ns: dict[int, int] = {}
+    for r in act:
+        for path, (i, n) in ((r.get("meta") or {}).get("refPosition") or {}).items():
+            pos[f"{i}/{n}"] = pos.get(f"{i}/{n}", 0) + 1
+            ns[i] = ns.get(i, 0) + 1
+    ref_rows = [r for r in act if r.get("refContext") is not None]
+    out = {
+        "rows": len(rows), "actionRows": len(act), "noActionRows": len(rows) - len(act),
+        "opWordFree": f"{len(free)}/{len(act)}",
+        "opsBelowMinAvoid": sorted(k for k, (f, n) in per_op.items() if f / n < MIN_AVOID),
+        "registerAssigned": dict(sorted({sp.get("register"): sum(1 for x in specs if x.get("register") == sp.get("register"))
+                                         for sp in specs if sp}.items(), key=lambda kv: -kv[1])),
+        "lengthObserved": {k: sum(1 for n in words if bucket(n) == k) for k in [*LENGTHS, "over 50"]},
+        "wordsMedianMinMax": [statistics.median(words), min(words), max(words)] if words else None,
+        "multiClauseAssigned": sum(1 for sp in specs if sp.get("multiClause")),
+        "questions": sum(1 for r in rows if r["utterance"].rstrip().endswith("?")),
+        "allLowercase": sum(1 for r in rows if r["utterance"] == r["utterance"].lower()),
+        "poolNamesUsed": len(names), "distinctPoolNames": len(set(names)),
+        "maxUsesOfOneName": max((names.count(n) for n in set(names)), default=0),
+        "topCapitalisedWords": sorted(firsts.items(), key=lambda kv: -kv[1])[:8],
+        "refRows": len(ref_rows), "refOpsKept": len({r["op"] for r in ref_rows}),
+        "refPositionByIndex": dict(sorted(ns.items())), "refPositionOfN": dict(sorted(pos.items())),
+        "refFirstShare": f"{ns.get(1, 0)}/{sum(ns.values())}",
+    }
+    if a.ref_ops:
+        out["refOpsWithNoKeptRow"] = sorted(set(json.loads(Path(a.ref_ops).read_text())) - {r["op"] for r in ref_rows})
+    print(json.dumps(out, indent=1, ensure_ascii=False))
+    return 0
+
+
+def cmd_redact(a) -> int:
+    """Overwrite leaked account/machine terms in teacher output files with
+    REDACTED, so raw artifacts do not keep them. Prints counts only."""
+    terms = sorted((t for t in context_leak_terms() if t != REDACTED), key=len, reverse=True)
+    for f in a.files:
+        text = Path(f).read_text()
+        n = 0
+        for t in terms:
+            text, k = re.subn(re.escape(t), REDACTED, text, flags=re.I)
+            n += k
+        if n:
+            Path(f).write_text(text)
+        print(json.dumps({"file": f, "redacted": n}))
+    return 0
+
+
 def cmd_labelcmp(a) -> int:
     """Agreement of two label runs on the same rows: each with the generation
     labels (gold) and with each other, exact (agree's rule) and op only."""
@@ -1167,11 +1258,14 @@ def main() -> int:
     p.add_argument("--keys", help="<label requests>.keys.json for batched labels")
     p.add_argument("--context", help="context.json: enables the per-op wording quota and name cap")
     p.add_argument("--manifest", help="rendered.manifest.json: also drop rows with a grammar-rejected target")
+    p = sub.add_parser("mix"); p.add_argument("rows"); p.add_argument("--context", required=True)
+    p.add_argument("--ref-ops", help="JSON list or object of ref op keys, to list ops with no kept row")
+    p = sub.add_parser("redact"); p.add_argument("files", nargs="+")
     p = sub.add_parser("labelcmp"); p.add_argument("--rows", required=True)
     p.add_argument("--a", required=True); p.add_argument("--a-keys"); p.add_argument("--b", required=True); p.add_argument("--b-keys")
     a = ap.parse_args()
     return {"plan": cmd_plan, "submit": cmd_submit, "collect": cmd_collect, "run": cmd_run, "rows": cmd_rows,
-            "label": cmd_label, "agree": cmd_agree, "labelcmp": cmd_labelcmp}[a.cmd](a)
+            "label": cmd_label, "agree": cmd_agree, "labelcmp": cmd_labelcmp, "redact": cmd_redact, "mix": cmd_mix}[a.cmd](a)
 
 
 if __name__ == "__main__":

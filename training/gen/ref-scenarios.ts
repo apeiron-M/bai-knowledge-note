@@ -124,14 +124,13 @@ const okIf = (cond: boolean, why: string) => (cond ? null : why);
 const LINK_TYPES = ["RELATES_TO", "BUILDS_ON", "CONTRADICTS", "SUPERSEDES", "DERIVED_FROM"];
 
 function noteBase(r: Rng, t: Theme, nTopics: number, nLinks: number, extraNotes = 0) {
-  const fixture: FixtureStep[] = [
-    { op: "knowledge-note:SET_TITLE", args: { title: pick(r, t.notes) } },
-  ];
+  const title = pick(r, t.notes);
+  const fixture: FixtureStep[] = [{ op: "knowledge-note:SET_TITLE", args: { title } }];
   const topics = sample(r, t.topics, nTopics);
   topics.forEach((name, i) =>
     fixture.push({ op: "knowledge-note:ADD_TOPIC", args: { name }, newIds: [`topic-${i + 1}`] }),
   );
-  const docs = sample(r, t.notes, nLinks + extraNotes);
+  const docs = sample(r, t.notes.filter((x) => x !== title), nLinks + extraNotes);
   const ctx: CtxItem[] = docs.map((title, i) => ({ id: `doc-note-${i + 1}`, title, kind: "note" }));
   ctx.slice(0, nLinks).forEach((d, i) =>
     fixture.push({
@@ -809,12 +808,14 @@ export function describeState(docType: string, s: Rec, ctx: CtxItem[]): string {
   }
   for (const kind of [...new Set(ctx.map((c) => c.kind))]) {
     // Items that only name things already shown above are not listed again.
+    const linked = new Set(recs(s.links).map((l) => l.targetDocumentId));
+    const shown = ctx.filter((c) => c.kind === kind && !linked.has(c.id));
     const labelOnly =
       (docType === "bai/moc" && kind === "note") ||
       (docType === "bai/research-claim" && kind === "claim") ||
       (kind === "wbs" && !!s.wbsRef);
     if (!labelOnly)
-      list(CTX_HEADINGS[kind] ?? kind, ctx.filter((c) => c.kind === kind).map((c) => q(c.title)));
+      list(CTX_HEADINGS[kind] ?? kind, shown.map((c) => q(c.title)));
   }
   return out.join("\n");
 }
