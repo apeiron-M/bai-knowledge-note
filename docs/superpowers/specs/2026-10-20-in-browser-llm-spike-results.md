@@ -1173,7 +1173,7 @@ The teacher moved from the Anthropic API to headless Claude Code: `training/py/t
   | Blind-label disagreements (4 on the op, 9 on args only, mostly case or final punctuation) | 13 |
 
   **73 rows were kept.** They gave 132 trainable steps with full template and token parity. `training-prompt-format.test.ts` passes.
-- **Observed time and usage** at concurrency 3: about 206 s end to end, 117 CLI calls and 0 retries.
+- **Observed time and usage** at concurrency 3: about 206 s, summed over the stage wall times, for 117 CLI calls with 0 retries.
   - Generation took 64 s (median 9.2 s per call).
   - The label pass took 85 s (median 2.4 s per call).
   - Tokens: 314k input, including cache writes, and 27k output.

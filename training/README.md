@@ -151,17 +151,19 @@ claude -p --output-format json --tools "" \
 ```
 
 - The child's environment drops the parent session's variables (`CLAUDECODE`, `CLAUDE_CODE_*`, `CLAUDE_PID`, `CLAUDE_EFFORT`) and `ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`.
-- `--tools ""` gives no tools. `--strict-mcp-config` with an empty config gives no MCP servers. `--setting-sources ""` reads no user, project or local settings. `--safe-mode` disables CLAUDE.md, installed plugins and their hooks, skills, the claude.ai connectors and auto-memory. `--no-session-persistence` keeps the runs out of `~/.claude/projects`.
+- `--tools ""` gives no tools. `--strict-mcp-config` with an empty config gives no MCP servers. `--setting-sources ""` reads no user, project or local settings. `--safe-mode` disables CLAUDE.md, installed plugins and their hooks, skills and the claude.ai connectors. Its debug log also reports "project memory is off". `--no-session-persistence` keeps the runs out of `~/.claude/projects`.
 - `--system-prompt` replaces Claude Code's system prompt with the teacher's (`SYSTEM`, `NO_ACTION_SYSTEM`, `LABEL_SYSTEM`, the same text the API path sends).
 - Structured output comes from `--json-schema`. The CLI implements it as a tool call (`stop_reason: "tool_use"`, 2 turns), not constrained decoding, so `run` re-checks every `structured_output` against the schema. A response that fails the check, a timeout (`--timeout`, 300 s) or a CLI error is retried (`--retries 3`, backoff 5/15/45 s) and is never written as data.
 - `run` first calls `claude auth status`. If the account is not logged in, or a call returns 401/403 or an auth message, it stops without writing results. Concurrency is `--concurrency` (default 3).
 - **No `max_tokens` flag exists.** The request's `max_tokens` is ignored by the CLI backend. `--max-budget-usd` (per call, CLI-reported cost) is the closest runaway guard.
 - `<out>.usage.json` records each call's wall time, tokens and `total_cost_usd`.
+- **Resume.** Each succeeded row is appended to `<out>.partial.jsonl` as it lands. A re-run with the same `--out` skips those `custom_id`s, and errored rows run again. The journal is deleted once every row has succeeded.
+- **Usage limit.** If the subscription's usage limit is hit ("usage limit", "limit reached", "resets at"), `run` stops at once (exit 4) instead of burning its retries. It keeps the journal, so the same command resumes after the reset.
 
 **Isolation gaps (observed in a debug log and a probe):**
 - Claude Code still adds about 500 tokens of context that no flag removes with `--system-prompt`: the **account email**, the cwd, platform and OS, model identity, a token budget and the date. `--exclude-dynamic-system-prompt-sections` is ignored with `--system-prompt`. `--bare` would drop them but accepts only `ANTHROPIC_API_KEY` auth.
 - **The email leaked into data.** The first pilot run (before the fix) put the account email in 2 of 100 utterances, as a CREATE_GOAL assignee. The fix has two parts. The teacher prompts now say to invent every name, email and date and to ignore account/machine context, and the second run had 0 leaks. `rows` also drops any item that contains the account email (from `claude auth status`), its local part, `$USER` or the home path (`--no-leak-check` turns this off).
-- The built-in `agents-md` and `telemetry` plugins still load (agents-md reports "project memory is off"). Managed and remote policy settings still apply. `~/.claude.json` is rewritten on every call.
+- The built-in `agents-md` and `telemetry` plugins still load. Managed and remote policy settings still apply. `~/.claude.json` is rewritten on every call.
 - There is a fixed per-call overhead of about 1.7–2.0k input tokens: the StructuredOutput tool and its schema, plus the injected context. Every call writes its whole prompt to the 1 h prompt cache, and no call read from it (`cacheRead` 0 over 117 calls).
 
 **Other teacher-side changes:**
@@ -199,7 +201,7 @@ The pilot had 20 generation requests of 5 items each: 9 ops across 4 models (kno
 | Grounding (`rows`) | 1 | 99 | ADD_MEMBER `kind` set with no evidence span. Context-leak filter: 0 (2 in the first run) |
 | Dedup / eval leak | 2 | 97 | Both "Submit this for review." match held-out-2 `kn2-12` exactly |
 | Vocabulary, zod, reducer replay | 0 | 97 | |
-| r6.1 grammar gate (step-2 target rejected) | 11 | 86 | ADD_MEMBER `role` ×5, CREATE_GOAL `assignee` ×4, SET_OWNER ×2 (owner meant but unnamed, or a clear to `{}`). Their step-1 rows are still trainable |
+| r6.1 grammar gate (step-2 target rejected) | 11 | 86 | ADD_MEMBER `role` ×5, CREATE_GOAL `assignee` ×4, SET_OWNER ×2 (owner meant but unnamed, or a clear to `{}`). `agree --manifest` drops the whole row, so their step-1 rows are not in `train.jsonl` either; a step-1-only keep is possible |
 | Blind label disagreement | 13 | **73** | 4 on the op: two SET_PROJECT_STATUS → none ("Kick it off now.", a question), SET_OWNER → ASSIGN_GOAL, RESOLVE → DISSOLVE. 9 on the args only: the labeler changed case, added a final period or reworded the span |
 
 - **Final render** of the 73 kept rows gave 132 steps, all trainable. There were 0 template or token mismatches, 0 boundary merges and one BOS per row, through the chat core's builders. `tests/unit/training-prompt-format.test.ts` passes.
@@ -210,6 +212,17 @@ The pilot had 20 generation requests of 5 items each: 9 ops across 4 models (kno
 - The utterances are varied in register and length: 3–74 words, median 14. Personas and the requested styles show through, and the no-action items are close to edits ("which goals have no owner?").
 - They are realistic, with a tendency toward long, chatty, persona-flavoured messages (gardening and thesis asides).
 - **Op words are common.** 27 of the 63 kept action rows contain the op's own noun or verb: CREATE_GOAL 5/5 "goal", SET_TITLE 7/10 "title", RESOLVE 4/7. The style axis "uses a synonym…" covers only part of each request. For the full run, `plan` should state the no-op-words rule per item, or set a quota.
+- **10 random kept rows** (`random.seed(20261021)`, `random.sample(rows, 10)` over `pilot-agreed.jsonl`):
+  1. "This WBS is looking a lot cleaner than the spreadsheet we used to track sprint goals with — nice to finally have dependencies visible in one place." → none
+  2. "Oh gosh, I almost forgot to log this properly! … can you set the owner on this garden journal to Marigold Pete? …" (74 words) → wbs:SET_OWNER `{"owner": "Marigold Pete"}`
+  3. "add the tag victorian mourning rituals to this one, i keep losing track of it otherwise" → knowledge-note:ADD_TOPIC `{"name": "victorian mourning rituals"}`
+  4. "add a goal: draft chapter 3 introduction on thermal conductivity models" → wbs:CREATE_GOAL `{"description": "draft chapter 3 introduction on thermal conductivity models"}`
+  5. "set owner to Walt" → wbs:SET_OWNER `{"owner": "Walt"}`
+  6. "Could you add Elena Vasquez to this project?" → project:ADD_MEMBER `{"name": "Elena Vasquez"}`
+  7. "Kick it back to draft — the risk section is missing concrete mitigation steps." → knowledge-note:REJECT_NOTE `{"comment": "the risk section is missing concrete mitigation steps"}`
+  8. "Please mark this tension as resolved. The resolution is: Engineering and Design reconciled the onboarding flow discrepancy after a joint review session on Tuesday, and both teams signed off on the final spec." → tension:RESOLVE_TENSION `{"resolution": "Engineering and Design reconciled … the final spec."}`
+  9. "Quick question: which goals currently have no owner assigned? Trying to figure out where the gaps are before standup." → none
+  10. "Can you check how many topics are currently tagged on this note? Feels like it's getting cluttered." → none
 - The teacher sometimes reports a style label of its own ("formal", "casual") instead of the requested axis.
 - **Names repeat.** "Priya" appears 7 times in 99 rows, and Elena Vasquez, Okafor and "Bayesian Priors…" titles twice each. Some messages are formulaic ("Please mark this tension as resolved. The resolution is: …").
 - **Grounding lets a degenerate span through:** "new goal, assign to mkim@university.edu" had `description: "new goal"`. That row was gated out anyway.
@@ -221,7 +234,7 @@ The pilot had 20 generation requests of 5 items each: 9 ops across 4 models (kno
 | Generation (effort medium) | 20 | 64.0 s | 9.2 / 13.2 s | 61,223 | 16,461 (4,439) | $0.41 |
 | Blind label (effort low) | 97 | 85.0 s | 2.4 / 3.2 s | 253,016 | 10,593 (345) | $1.12 |
 | Local stages (rows, render ×2, label build, agree) | | 56.8 s | | | | |
-| **Pilot total** | 117 | **~206 s** | | 314k | 27k | **$1.53** |
+| **Pilot total** (sum of the stage wall times; no single start-to-end timing) | 117 | **~206 s** | | 314k | 27k | **$1.53** |
 
 - 0 retries, 0 timeouts and 0 schema failures.
 - `total_cost_usd` is the CLI's figure at API list prices (`costBasis: "list"`), including 1 h cache writes. **It is an API-equivalent number, not subscription usage**, which the CLI does not report.
@@ -233,6 +246,7 @@ The pilot had 20 generation requests of 5 items each: 9 ops across 4 models (kno
 - That totals about **3.9 h** at concurrency 3, about 34M input and 2.3M output tokens, and about $160 in CLI-reported API-equivalent cost.
 - Label input is the largest share: about 2.6k tokens per call. Only about 0.66k of that is the label prompt itself (chars/4); the rest is CLI overhead.
 - At the pilot's 73% yield, 12,000 items would give about 8.8k kept rows. That assumes ref ops are supported; today they would fail replay.
+- **Risk: about 34M tokens in about 4 h will very likely hit the subscription's usage window.** `run` stops and resumes (above), so the run can span several windows. Two other ways to cut the label pass's volume, which is 88% of the input: move it to the Batches API, or label 5–10 utterances of one docType per call. That stays blind, since no first-pass label is shown.
 
 ## Next, waiting on the user
 
