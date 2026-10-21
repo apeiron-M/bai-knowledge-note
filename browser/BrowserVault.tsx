@@ -409,7 +409,7 @@ export function BrowserVault({
         loadSeed,
         onEvent: tell,
         onProgress: (stage, done, total) => {
-          if (!cancelled) setPhase({ kind: "starting", stage, done, total });
+          if (!cancelled && !lost) setPhase({ kind: "starting", stage, done, total });
         },
       });
       if (cancelled || lost) {
@@ -417,6 +417,7 @@ export function BrowserVault({
         // another tab while it started: halt it, writing nothing more.
         await (lost ? vault.halt() : vault.stop());
         releaseLock?.();
+        if (lost && !cancelled) setPhase({ kind: "moved" });
         return;
       }
       booted.current = vault;

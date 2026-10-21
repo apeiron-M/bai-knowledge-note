@@ -151,7 +151,10 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
   const listeners = new Set<() => void>();
   const stopping = new AbortController();
   let state: HostPipelineState = { kind: "ready" };
-  /** The AI connection that turned its key away: sources wait until the visitor changes it. */
+  /**
+   * The AI connection that turned its key away: sources wait until the visitor acts — another key
+   * or model, queueing a source ("Process again" after a top-up), or connecting the AI again.
+   */
   let refused: string | null = null;
   /** Tasks already in the queue at a look: only those after the first look were added now. */
   const known = new Set<string>();
@@ -213,7 +216,11 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
   function noticeAdded(tasks: readonly RunnerTask[]) {
     const fresh = tasks.filter((t) => t.taskType === "claim" && !known.has(t.id));
     for (const t of fresh) known.add(t.id);
-    if (looked && fresh.length > 0) tell({ type: "source-added", count: fresh.length });
+    if (looked && fresh.length > 0) {
+      tell({ type: "source-added", count: fresh.length });
+      // The visitor queued something: a key topped up since is worth asking again.
+      refused = null;
+    }
     looked = true;
   }
 
@@ -358,11 +365,15 @@ export function startPipelineRunner(deps: RunnerDeps): PipelineRunner {
     const ai = await askAi(stopping.signal);
     if (stopped()) return false;
     if (!ai) {
+      // Disconnected: whatever is connected next is asked afresh.
+      refused = null;
       setState({ kind: "no-ai" });
       return false;
     }
     if (refused !== null && ai.connection === refused) {
       setState({ kind: "refused" });
+      // Looked at again in 30 s, not at every vault change: each look fetches the AI's model list.
+      pause();
       return false;
     }
     refused = null;

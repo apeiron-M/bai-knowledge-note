@@ -289,6 +289,8 @@ export async function bootBrowserVault(options: BootOptions): Promise<BootedVaul
         mark("seeded");
         await engine.flushes.release();
         mark("stored");
+        // Halted meanwhile (another tab took the vault): nothing was written, so nothing is marked.
+        if (abort.signal.aborted) return;
         writeStamp(namespace, { version: guide.version, driveId: vaultDriveId, ids: { ...guideIds } });
         console.info(`[BrowserVault] guide written: ${JSON.stringify(timings)} (ms since start)`);
       })()

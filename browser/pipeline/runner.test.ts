@@ -425,9 +425,56 @@ describe("the browser pipeline runner", () => {
     expect([v.tasks[1].status, v.tasks[2].status]).toEqual(["PENDING", "PENDING"]);
     expect(r.runner.state()).toEqual({ kind: "refused" });
     current = aiNamed("model-a", () => Promise.resolve(), "key-2");
-    await vi.advanceTimersByTimeAsync(PICKUP_MS);
+    // A held queue looks again every 30 s.
+    await vi.advanceTimersByTimeAsync(UNREACHABLE_RETRY_MS);
     await settle();
     expect([v.tasks[1].status, v.tasks[2].status]).toEqual(["DONE", "DONE"]);
+    warn.mockRestore();
+  });
+
+  it("lets the visitor lift a refused-key hold: a topped-up key and \"Process again\", or connecting again", async () => {
+    const v = queueVault([task("t1"), task("t2")]);
+    let credit = false;
+    let connected = true;
+    let asked = 0;
+    const reach = () => (credit ? Promise.resolve() : Promise.reject(new AiRefusedError()));
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const r = start(v, {
+      ai: () => {
+        asked++;
+        return Promise.resolve(connected ? aiNamed("model-a", reach, "key-1") : null);
+      },
+    });
+    await settle();
+    expect(r.runner.state()).toEqual({ kind: "refused" });
+    // Held, it looks again every 30 s — not at every 10 s look.
+    const before = asked;
+    await vi.advanceTimersByTimeAsync(60_000);
+    await settle();
+    expect(asked - before).toBeLessThanOrEqual(2);
+    // The same key, topped up; "Process again" queues the failed source anew.
+    credit = true;
+    v.tasks.push(task("t1-again"));
+    r.change();
+    await vi.advanceTimersByTimeAsync(UNREACHABLE_RETRY_MS);
+    await settle();
+    expect(v.tasks.map((t) => t.status)).toEqual(["FAILED", "DONE", "DONE"]);
+
+    // Refused again; disconnecting the AI and connecting it again lifts the hold too.
+    const w = queueVault([task("u1"), task("u2")]);
+    credit = false;
+    const again = start(w, { ai: () => Promise.resolve(connected ? aiNamed("model-a", reach, "key-1") : null) });
+    await settle();
+    expect(again.runner.state()).toEqual({ kind: "refused" });
+    connected = false;
+    await vi.advanceTimersByTimeAsync(UNREACHABLE_RETRY_MS);
+    await settle();
+    expect(again.runner.state()).toEqual({ kind: "no-ai" });
+    connected = true;
+    credit = true;
+    await vi.advanceTimersByTimeAsync(PICKUP_MS);
+    await settle();
+    expect(w.tasks.map((t) => t.status)).toEqual(["FAILED", "DONE"]);
     warn.mockRestore();
   });
 

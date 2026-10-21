@@ -51,7 +51,7 @@ async function create(ctx: PhaseContext): Promise<PhaseOutcome> {
       const steps = read.status === "INBOX" ? ["EXTRACTING", "EXTRACTED"] : ["EXTRACTED"];
       await client
         .request({ method: "POST", path: "actions", json: { documentId: read.source_id, actions: steps.map((status) => ({ type: "SET_SOURCE_STATUS", input: { status } })) } })
-        .catch(() => undefined);
+        .catch((error: unknown) => console.warn("[BrowserVault] pipeline: the source could not be marked extracted again.", error));
     }
     return { workDone: `Already extracted: ${plural(existing, "note")}.`, filesModified: [] };
   }
