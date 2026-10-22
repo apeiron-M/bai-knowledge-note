@@ -50,6 +50,8 @@ export interface SourceRow {
   refCandidates?: RowRefs;
   /** Default true: all ops of the row's docType, as the Chat tab scopes. */
   scoped?: boolean;
+  /** Train step 1 only (why: "grammar-gate" | "args-disagree"). */
+  step1Only?: string;
   meta?: Record<string, unknown>;
 }
 
@@ -139,9 +141,12 @@ async function main(): Promise<void> {
     }
     // Step 2 is trained for the gold op even when retrieval missed it: the
     // app can reach it through a retry or a manual pick.
-    const s2 = gold
-      ? step2Prompt(row.utterance, gold, row.refCandidates)
-      : null;
+    // `step1Only` (agree --step1-only): the op is agreed, the args are not
+    // trainable (grammar-gate rejected, or the blind label disagreed).
+    const s2 =
+      gold && !row.step1Only
+        ? step2Prompt(row.utterance, gold, row.refCandidates)
+        : null;
     if (gold && s2) {
       out.push({
         id: row.id,

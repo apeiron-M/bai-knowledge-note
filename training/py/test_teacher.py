@@ -265,5 +265,38 @@ class PerCallStates(unittest.TestCase):
         self.assertEqual(len(states), 1)
 
 
+class AgreeStep1Only(unittest.TestCase):
+    """`agree --step1-only`: op-agreed rows with an untrainable step 2 stay as step-1 rows."""
+
+    def test_reasons_and_drops(self) -> None:
+        rows = [
+            {"id": "r-gate", "op": "wbs:SET_OWNER", "utterance": "give it to Ann", "args": {"owner": "Ann"}},
+            {"id": "r-args", "op": "wbs:SET_OWNER", "utterance": "hand it to Bo", "args": {"owner": "Bo"}},
+            {"id": "r-op", "op": "wbs:SET_OWNER", "utterance": "Cy takes it", "args": {"owner": "Cy"}},
+            {"id": "r-ok", "op": "wbs:SET_OWNER", "utterance": "Dee owns it", "args": {"owner": "Dee"}},
+        ]
+        labels = {"r-gate": ("wbs:SET_OWNER", {"owner": "Ann"}), "r-args": ("wbs:SET_OWNER", {"owner": "Bob"}),
+                  "r-op": ("wbs:ASSIGN_GOAL", {}), "r-ok": ("wbs:SET_OWNER", {"owner": "Dee"})}
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d)
+            (p / "rows.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+            (p / "labels.jsonl").write_text("".join(json.dumps({
+                "custom_id": f"label-{rid}", "type": "succeeded", "stop_reason": "end_turn",
+                "text": json.dumps({"op": op, "args_json": json.dumps(args)})}) + "\n" for rid, (op, args) in labels.items()))
+            (p / "manifest.json").write_text(json.dumps({"targetRejected": ["r-gate#2"]}))
+            a = argparse.Namespace(results=str(p / "labels.jsonl"), keys=None, rows=str(p / "rows.jsonl"),
+                                   manifest=str(p / "manifest.json"), context=None, max_free=1.0, name_cap=0,
+                                   step1_only=True, out=str(p / "agreed.jsonl"))
+            with open(p / "stdout.txt", "w") as so:
+                old, sys.stdout = sys.stdout, so
+                try:
+                    t.cmd_agree(a)
+                finally:
+                    sys.stdout = old
+            kept = [json.loads(l) for l in (p / "agreed.jsonl").read_text().splitlines()]
+        self.assertEqual([(r["id"], r.get("step1Only")) for r in kept],
+                         [("r-ok", None), ("r-gate", "grammar-gate"), ("r-args", "args-disagree")])
+
+
 if __name__ == "__main__":
     unittest.main()

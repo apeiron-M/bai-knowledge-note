@@ -1313,24 +1313,38 @@ def cmd_agree(a) -> int:
         gated = {k.rsplit("#", 1)[0] for k in json.loads(Path(a.manifest).read_text())["targetRejected"]}
     kept, disagree, gate = [], [], []
     tolerant = 0
+    step1_only: list[str] = []  # --step1-only: op agreed, step 2 not trainable
     for line in Path(a.rows).read_text().splitlines():
         row = json.loads(line)
-        if row["id"] in gated:
-            gate.append(row["id"])
-            continue
         lab = labels.get(row["id"])
         gold_op = row["op"] or "none"
-        got = label_args(lab, row)
         op_ok = lab is not None and lab["op"] == gold_op
+        if row["id"] in gated:
+            gate.append(row["id"])
+            if a.step1_only and op_ok:
+                kept.append({**row, "step1Only": "grammar-gate"})
+                step1_only.append(row["id"])
+            continue
+        got = label_args(lab, row)
         ok = op_ok and (row["op"] is None or args_equal(got, row.get("args", {})))
         tolerant += op_ok and (row["op"] is None or args_equal(got, row.get("args", {}), True))
-        (kept if ok else disagree).append(row if ok else {"id": row["id"], "gold": gold_op, "label": lab,
-                                                          "on": "args" if op_ok else "op"})
+        if not ok and op_ok and a.step1_only:
+            kept.append({**row, "step1Only": "args-disagree"})
+            step1_only.append(row["id"])
+        elif ok:
+            kept.append(row)
+        if not ok:
+            disagree.append({"id": row["id"], "gold": gold_op, "label": lab, "on": "args" if op_ok else "op"})
+    # Full rows first: the quota drops from the end, so step-1-only rows go first.
+    kept = [r for r in kept if not r.get("step1Only")] + [r for r in kept if r.get("step1Only")]
     quota, cap = [], []
     if ctx:
         kept, quota, cap = wording_quota(kept, ctx, a.max_free, a.name_cap or None)
     Path(a.out).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in kept))
-    summary = {"kept": len(kept), "gateRejected": len(gate), "disagree": len(disagree),
+    summary = {"kept": len(kept), "keptStep1Only": sum(1 for r in kept if r.get("step1Only")),
+               "keptStep1OnlyByReason": {k: sum(1 for r in kept if r.get("step1Only") == k)
+                                         for k in ("grammar-gate", "args-disagree")},
+               "gateRejected": len(gate), "disagree": len(disagree),
                "disagreeOnOp": sum(d["on"] == "op" for d in disagree),
                "agreeTolerant(case/final punctuation)": tolerant,
                "quotaDropped": len(quota), "nameCapDropped": len(cap),
@@ -1475,6 +1489,9 @@ def main() -> int:
     p.add_argument("--max-free", type=float, default=1.0,
                    help=f"two-sided quota: max op-word-free share per op (batch comparison: {DEFAULT_MAX_FREE})")
     p.add_argument("--name-cap", type=int, default=2, help="max kept utterances per pool name (0: no cap)")
+    p.add_argument("--step1-only", action="store_true",
+                   help="keep rows whose op the labeler agreed with but whose step 2 is not trainable "
+                        "(grammar-gate rejected, or args disagree) as step-1-only rows (`step1Only`)")
     p = sub.add_parser("mix"); p.add_argument("rows"); p.add_argument("--context", required=True)
     p.add_argument("--ref-ops", help="JSON list or object of ref op keys, to list ops with no kept row")
     p = sub.add_parser("redact"); p.add_argument("files", nargs="+")
