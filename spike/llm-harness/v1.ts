@@ -1,7 +1,9 @@
 /**
- * Round 7: the v1 pipeline exactly as the Chat tab runs it (`runV1` from
- * the chat core), on the dev sets only, plus a parity check of the
- * precomputed op vectors (node, CPU) against the browser embedder (wasm).
+ * The v1 pipeline exactly as the Chat tab runs it (`runV1` from the chat
+ * core: R2c by default since "v1 default"; `step1` selects another config,
+ * e.g. `{kind: "embedding-top1"}` for round 7's), on the dev sets only,
+ * plus a parity check of the precomputed op vectors (node, CPU) against the
+ * browser embedder (wasm).
  */
 import { buildRuntimeCatalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
 import type { LlmClient } from "../../editors/knowledge-vault/chat/core/llm-client.js";
@@ -15,6 +17,9 @@ import type { ScoreCache } from "../../editors/knowledge-vault/chat/core/op-scor
 import {
   loadV1Runtime,
   runV1,
+  V1_DEFAULT_STEP1,
+  v1Step1Label,
+  type V1Step1,
 } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
 import { scoreArgs } from "./r5.js";
 import { loadR6, type R6Item } from "./r6.js";
@@ -37,8 +42,9 @@ async function devItems(sets: DevSet[]): Promise<R6Item[]> {
 
 export async function v1Pipeline(
   c: LlmClient,
-  o: { sets: DevSet[] },
+  o: { sets: DevSet[]; step1?: V1Step1 },
 ): Promise<Json> {
+  const step1 = o.step1 ?? V1_DEFAULT_STEP1;
   const t0 = performance.now();
   const runtime = await loadV1Runtime();
   const runtimeMs = performance.now() - t0;
@@ -56,6 +62,7 @@ export async function v1Pipeline(
         scoreText: c.scoreText,
         cache,
       },
+      { step1 },
     );
     const pick = r.kind === "action" ? r.entry.key : null;
     const row: Json = {
@@ -65,10 +72,13 @@ export async function v1Pipeline(
       expectedOp: it.expectedOp ?? null,
       pick,
       opCorrect: pick === (it.expectedOp ?? null),
-      gateScore: Math.round(r.gate.score * 1000) / 1000,
-      question: r.gate.question,
+      gateScore: r.gate ? Math.round(r.gate.score * 1000) / 1000 : null,
+      question: r.gate?.question ?? null,
+      noActionReason: r.kind === "no-action" ? r.reason : null,
+      step1Raw: r.step1?.raw ?? null,
       ms: {
         embed: Math.round(r.embedMs),
+        op: Math.round(r.step1?.ms ?? 0),
         args:
           r.kind === "action" ? Math.round(r.step2.refMs + r.step2.genMs) : 0,
         total: Math.round(performance.now() - t),
@@ -93,6 +103,8 @@ export async function v1Pipeline(
   return {
     summary: {
       sets: o.sets,
+      pipeline: v1Step1Label(step1),
+      model: c.info.model,
       runtimeLoadMs: Math.round(runtimeMs),
       embedderLoadMs: Math.round(runtime.embedderLoadMs),
       opAcc: `${cnt(action, "opCorrect")}/${action.length}`,

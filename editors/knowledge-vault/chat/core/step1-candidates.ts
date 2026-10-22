@@ -8,6 +8,7 @@
  */
 import type { CatalogEntry } from "./op-catalog.js";
 import type { RetrievedOp } from "./op-retriever.js";
+import { forcedOpsText, gbnfLiteral, NONE_KEY } from "./op-scorer.js";
 
 export type Step1Candidates =
   | { mode: "scoped-topk"; k: number }
@@ -57,4 +58,34 @@ export function step1CandidatesLabel(spec: Step1Candidates): string {
     case "unscoped-topk":
       return `unscoped-k${spec.k}`;
   }
+}
+
+/**
+ * The v1 default (round 9 R2c): every global op of the document's model in
+ * catalog order, the list the round-8 LoRA's full-list rows were trained on.
+ */
+export const V1_STEP1: Step1Candidates = { mode: "scoped-all", order: "catalog" };
+
+/** Step-1 grammar: the alternation of every allowed answer (as trained). */
+export function step1Grammar(cands: CatalogEntry[]): string {
+  const answers = [...cands.map((c) => [c.key]), []].map((k) =>
+    gbnfLiteral(forcedOpsText(k)),
+  );
+  return `root ::= ${answers.join(" | ")}`;
+}
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+/**
+ * The op key a step-1 answer picks: `NONE_KEY` for `{"ops": []}`, null
+ * when the answer is not one of `keys` (the grammar should prevent that).
+ */
+export function step1Pick(parsed: unknown, keys: string[]): string | null {
+  if (!isRecord(parsed) || !Array.isArray(parsed.ops)) return null;
+  const ops: unknown[] = parsed.ops;
+  if (ops.length === 0) return NONE_KEY;
+  const k = ops[0];
+  return typeof k === "string" && keys.includes(k) ? k : null;
 }

@@ -12,10 +12,7 @@ import {
   embeddingGateScore,
   looksLikeQuestion,
 } from "../../editors/knowledge-vault/chat/core/no-action-gate.js";
-import type { CatalogEntry } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
 import {
-  forcedOpsText,
-  gbnfLiteral,
   NONE_KEY,
   pickFromRequests,
   scoreOptions,
@@ -24,6 +21,7 @@ import {
   type ScoreCache,
 } from "../../editors/knowledge-vault/chat/core/op-scorer.js";
 import { PROMPT_FORMAT_VERSION } from "../../editors/knowledge-vault/chat/core/prompt-format.js";
+import { step1Grammar } from "../../editors/knowledge-vault/chat/core/step1-candidates.js";
 import {
   loadV1Runtime,
   runV1,
@@ -71,13 +69,8 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
-/** Step-1 grammar: the alternation of every allowed answer (as trained). */
-export function step1Grammar(cands: CatalogEntry[]): string {
-  const answers = [...cands.map((c) => [c.key]), []].map((k) =>
-    gbnfLiteral(forcedOpsText(k)),
-  );
-  return `root ::= ${answers.join(" | ")}`;
-}
+// Moved to the chat core (the v1 default runs it); re-exported for round 9.
+export { step1Grammar };
 
 /** The op key in a parsed `{"ops": [...]}` answer, NONE_KEY for `[]`. */
 function opsPick(parsed: unknown, keys: string[]): string | null {

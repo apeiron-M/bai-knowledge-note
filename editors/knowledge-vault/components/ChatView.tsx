@@ -46,7 +46,7 @@ export function ChatView({ notes }: { notes: KnowledgeNoteInfo[] }) {
       if (reply.kind === "answer") {
         push({
           role: "system",
-          text: `No document change (${reply.result.gate.question ? "question" : `gate score ${reply.result.gate.score.toFixed(3)}`}); answering.`,
+          text: `No document change (${reply.result.kind === "no-action" ? reply.result.reason : "answer"}); answering.`,
         });
         push({ role: "assistant", text: reply.text });
       } else setProposal(reply.proposal);

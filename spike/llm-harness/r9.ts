@@ -22,13 +22,14 @@ import { PROMPT_FORMAT_VERSION } from "../../editors/knowledge-vault/chat/core/p
 import {
   step1Candidates,
   step1CandidatesLabel,
+  step1Grammar,
+  step1Pick,
   type Step1Candidates,
 } from "../../editors/knowledge-vault/chat/core/step1-candidates.js";
 import {
   loadV1Runtime,
   V1_ARGS,
 } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
-import { step1Grammar } from "./r8.js";
 import { flatten } from "./r5.js";
 import {
   argsByKind,
@@ -80,14 +81,6 @@ function status(text: string) {
   if (el) el.textContent = text;
 }
 
-function opsPick(parsed: unknown, keys: string[]): string | null {
-  if (!isRecord(parsed) || !Array.isArray(parsed.ops)) return null;
-  const ops: unknown[] = parsed.ops;
-  if (ops.length === 0) return NONE_KEY;
-  const k = ops[0];
-  return typeof k === "string" && keys.includes(k) ? k : null;
-}
-
 export async function r9Run(c: LlmClient, o: R9Options): Promise<Json> {
   const runtime = await loadV1Runtime();
   const cache: ScoreCache = new Map();
@@ -120,7 +113,7 @@ export async function r9Run(c: LlmClient, o: R9Options): Promise<Json> {
       { kind: "grammar", grammar: step1Grammar(cands) },
       { temperature: 0, maxTokens: 64 },
     );
-    const loraPick = opsPick(r.parsed, keys);
+    const loraPick = step1Pick(r.parsed, keys);
     const opMs = performance.now() - t1;
     const gold = it.expectedOp;
     const row: Json = {
