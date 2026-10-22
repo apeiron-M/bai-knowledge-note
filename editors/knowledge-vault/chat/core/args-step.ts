@@ -185,6 +185,12 @@ export interface ArgsStepOptions {
   scoreEnums?: boolean;
   refAggregate?: Aggregate;
   cache?: ScoreCache;
+  /**
+   * Round 9 ("relax the safe gate"): optional root fields with these names
+   * are never dropped by the gate, even when the utterance does not name
+   * them. Default none (the r6.1 / v1 behaviour).
+   */
+  alwaysOffer?: readonly string[];
 }
 
 export interface ArgsStepResult {
@@ -235,18 +241,33 @@ export interface PreparedArgsStep {
   messages: WllamaChatMessage[] | null;
 }
 
+/** Root properties of `schema` named in `names` (the gate keeps them). */
+export function offeredFields(
+  schema: JsonSchema,
+  names: readonly string[],
+): string[] {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  return Object.keys(props).filter((k) => names.includes(k));
+}
+
 export function prepareArgsStep(
   utterance: string,
   entry: CatalogEntry,
   refCandidates: Record<string, { id: string; label?: string | null }[]>,
   gate: GateMode,
+  alwaysOffer: readonly string[] = [],
 ): PreparedArgsStep {
   const labeled = labelRefCandidates(refCandidates);
   const refPaths = Object.keys(labeled);
   const full = buildModelSchema(entry, {
     refCandidates: refEnumValues(labeled),
   });
-  const schema = gateOptional(full, utterance, gate, new Set(refPaths));
+  const schema = gateOptional(
+    full,
+    utterance,
+    gate,
+    new Set([...refPaths, ...offeredFields(full, alwaysOffer)]),
+  );
   const choices = choicesOf(labeled);
   const props = isRecord(schema.properties) ? schema.properties : {};
   const rootRefs = Object.keys(props).filter((k) => refPaths.includes(k));
@@ -299,7 +320,13 @@ export async function fillArgsStep(
   refCandidates: Record<string, { id: string; label?: string | null }[]>,
   opts: ArgsStepOptions,
 ): Promise<ArgsStepResult> {
-  const p = prepareArgsStep(utterance, entry, refCandidates, opts.gate);
+  const p = prepareArgsStep(
+    utterance,
+    entry,
+    refCandidates,
+    opts.gate,
+    opts.alwaysOffer,
+  );
   const { labeled, choices, schema, ordered, order, rootRefs } = p;
   const base: ArgsStepResult = {
     args: null,
