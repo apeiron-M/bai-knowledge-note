@@ -1,0 +1,34 @@
+# Round 8 remote training running log (Constantine)
+- 09:50 ssh trainbox OK (BatchMode). M4 Max (40-core GPU), arm64, 64 GiB, macOS 26.3 (25D125), 309 GiB free, AC power. Fallback IP 192.168.2.155.
+- uv 0.11.18 + cpython 3.13.12 already in ~/.local. venv in ~/bai-training/training/.venv from requirements.lock --no-deps (the lock is a full freeze; datasets 5.0.1 vs hf-hub 2.2.0 metadata conflict, identical to local venv).
+- MPS available; recommendedMaxMemory 55662788608 B; HIGH=0.5/LOW=0.45 -> max allowed 25.92 GiB (30 GiB alloc rejected). LOW default 1.4 must be lowered with HIGH.
+- Synced: py/ 168K, base model 693M (45 s), train-split 27M, val 1.4M; sha256 matched both sides.
+- 09:57 memtest launched (60 steps, --val, --save-steps 50). Watchdog first matched the screen wrapper; fixed (f8a7e25b) and restarted 09:57:37. First sample: rss 1.3 GB, footprint 7.07 GB.
+- 10:04:17 memtest EXIT 0 (60 steps, b8 x ga4, --val, save 50): trainWall 394 s; loss 1.199 -> 0.029; eval 0.0606@25, 0.0479@50, 0.0446@60. mpsDriverPeakSampled 14.435 GiB, end alloc 11.29 GiB. Watchdog peak footprint 14.0 GiB (GB-granular), peak RSS 1.44 GiB; swap flat 1007.62M. Per-minute fp max 6.6/9.2/11/12/12/14/13/12, min 7.7->5.9 (not rising). s/step: 2-12 5.03, 12-24 5.64, 27-37 5.43, 38-49 5.54, 52-60 6.06 (eval steps ~25 s). Checkpoints 50 + 60 written.
+- 10:05 resume test: copy of memtest, --resume checkpoint-50 to 60.
+- 10:06:29 resume test EXIT 0: resumed at step 51 (log rows 51..), steps 60, wall 74 s, lastLoss 0.02940 (orig 0.02903), eval@60 0.04472 (orig 0.04461). firstLoss kept from history (1.1989). Resume works.
+- Decision: memory plateaued at b8 x ga4 (fp 12-14 GiB, mins not rising, swap flat) -> full run at b8 x ga4, no batch-4 retest.
+- 10:06:42 full run launched: screen r8-train, out training/artifacts/round8/run, --val, --save-steps 50 --save-limit 2. Repo HEAD f8a7e25b. Step 11 at 55 s (5.32 s/it).
+- poll 10:08:54   3%|▎         | 22/741 [01:55<1:06:57,  5.59s/it] {'loss': '0.09673 10:08:42 rss=1431289856 footprint=8240758784 swap_used=1007.62M screens=1 
+- poll 10:18:18  14%|█▍        | 107/741 [11:20<1:07:08,  6.35s/it] {'loss': '0.02524 eval_loss': '0.04487 fpmax_last10min=15032385536 10:18:17 rss=1595981824 footprint=6306136064 swap_used=1007.62M screens=1 
+- poll 10:27:24  26%|██▌       | 191/741 [20:25<54:22,  5.93s/it] {'loss': '0.02169 eval_loss': '0.02467 fpmax_last10min=16106127360 10:27:22 rss=1702494208 footprint=8531214336 swap_used=1007.62M screens=1 
+- poll 10:36:32  37%|███▋      | 275/741 [29:23<44:24,  5.72s/it] {'loss': '0.008731 eval_loss': '0.02551 fpmax_last10min=16106127360 10:36:26 rss=1842233344 footprint=8995733504 swap_used=1007.62M screens=1 
+- poll 10:45:37  49%|████▊     | 360/741 [38:39<37:33,  5.91s/it] {'loss': '0.001722 eval_loss': '0.02148 fpmax_last10min=17179869184 10:45:31 rss=1936097280 footprint=8774483968 swap_used=1007.62M screens=1 
+- poll 10:54:44  60%|█████▉    | 444/741 [47:43<29:34,  5.97s/it] {'loss': '0.008841 eval_loss': '0.01485 fpmax_last10min=17179869184 10:54:35 rss=2025308160 footprint=9403629568 swap_used=1007.62M screens=1 
+- poll 11:03:52  71%|███████   | 525/741 [56:54<20:34,  5.71s/it] {'loss': '0.002146 eval_loss': '0.01552 fpmax_last10min=16106127360 11:03:40 rss=2156920832 footprint=9137291264 swap_used=1007.62M screens=1 
+- poll 11:12:56  82%|████████▏ | 605/741 [1:05:54<15:28,  6.83s/it] {'loss': '9.777e-05 eval_loss': '0.01646 fpmax_last10min=17179869184 11:12:45 rss=2243969024 footprint=12884901888 swap_used=1007.62M screens=1 
+- poll 11:22:03  93%|█████████▎| 686/741 [1:15:04<06:01,  6.58s/it] {'loss': '0.0002174 eval_loss': '0.01619 fpmax_last10min=16106127360 11:21:49 rss=2329591808 footprint=9163505664 swap_used=1007.62M screens=1 
+- poll 11:28:54 eval_loss": 0.01613517291843891 2026-10-22 11:28:46 EXIT 0 fpmax_last10min=17179869184 11:28:38 rss=2432974848 footprint=13958643712 swap_used=1007.62M screens=0 
+- 11:28:46 full run EXIT 0, 741 steps, no resumes, watchdog never triggered. trainWall 4890.5 s. lastLoss 0.00048, final eval 0.01614 (min 0.01427 @450). Peak MPS 15.89 GiB, footprint 16 GiB, RSS 2.27 GiB (1.19 -> 2.27 slow rise), swap flat.
+- Pulled run (minus checkpoint-*) + logs to training/artifacts/round8/remote/; sha256 all match (SHA256SUMS). adapter_model.safetensors 9e303687...4def.
+- Cleanup: screen sessions quit, watchdog killed, no train_lora/watchdog/caffeinate left; ~/bai-training (2.0G) kept.
+
+# Round 10 remote training (Constantine)
+- 15:03 rsync split (train-split 7,187 seq, val 377); sha256 match both sides (66917b8f… / 1aa6b1c5…); train_lora.py sha 2434f439… same both sides.
+- 15:03:50 launched: ./launch.sh r10-train … --epochs 2 --batch 8 --grad-accum 4 --save-steps 50 --save-limit 2, out training/artifacts/round10/run; watchdog pid 23897 (limit 32 GiB, 15 s); 450 steps planned.
+- poll 15:15 100/450, eval 0.0768@25 0.0471@50 0.0388@75 0.0351@100; footprint ~11 GB, swap flat 1007.62M
+- poll 15:27 203/450, eval 0.0300@125 0.0197@150 0.0252@175 0.0186@200; footprint 8.7 GB, swap flat
+- poll 15:36 282/450, eval 0.0216@225 0.0179@250 0.0154@275; footprint 11.8 GB, swap flat
+- poll 15:45 359/450, eval 0.0153@300 0.0145@325 0.0137@350; footprint 10 GB, swap flat
+- 15:56:54 EXIT 0, 450 steps, no resume, watchdog never triggered. trainWall 3135 s. loss 1.288 -> 0.0038; val 0.0767@25 ... 0.0126@425 (min) = final 0.0126@450. Peak footprint 16 GiB, RSS 1.99 GiB, MPS peak 16.96 GB, swap flat.
+- Pulled adapter + logs to training/artifacts/round10/remote/, sha256 OK (adapter_model 6a7fe975…). Watchdog killed, no screen/train/caffeinate left; ~/bai-training kept.
