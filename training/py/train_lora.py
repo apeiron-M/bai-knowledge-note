@@ -37,6 +37,13 @@ class LogCallback(TrainerCallback):
         self.peak_mps = 0.0
         self.t0 = time.time()
 
+    def on_step_end(self, args, state, control, **kwargs):
+        # MPS keeps a cached buffer per distinct tensor shape; with variable
+        # sequence lengths the cache grew past 40 GB in round 8's first try.
+        if torch.backends.mps.is_available():
+            self.peak_mps = max(self.peak_mps, torch.mps.driver_allocated_memory() / 2**30)
+            torch.mps.empty_cache()
+
     def on_log(self, args, state, control, logs=None, **kwargs):
         if torch.backends.mps.is_available():
             self.peak_mps = max(self.peak_mps, torch.mps.driver_allocated_memory() / 2**30)
@@ -83,6 +90,7 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--val", help="val rows (same format), loss logged only")
     ap.add_argument("--eval-steps", type=int, default=25)
+    ap.add_argument("--pad-multiple", type=int, default=64)
     args = ap.parse_args()
 
     out = Path(args.out)
@@ -109,6 +117,7 @@ def main() -> int:
         per_device_train_batch_size=args.batch,
         gradient_accumulation_steps=args.grad_accum,
         max_length=args.max_length,
+        pad_to_multiple_of=args.pad_multiple,  # fewer distinct shapes on MPS
         completion_only_loss=True,
         bf16=args.precision == "bf16",
         logging_steps=1,
