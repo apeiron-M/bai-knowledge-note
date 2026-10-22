@@ -1,0 +1,3052 @@
+{
+  "r9Run:\"webgpu\":{\"name\":\"R0-dev\",\"sets\":[\"dev\",\"devx\",\"devna\"],\"cands\":{\"mode\":\"scoped-topk\",\"k\":5},\"preGate\":true,\"model\":\"lora\"}": {
+    "summary": {
+      "preGate": true,
+      "bySet": {
+        "dev": {
+          "n": 59,
+          "action": 49,
+          "opAcc": "42/49",
+          "opAccPct": 85.7,
+          "opByStyle": {
+            "all": "42/49",
+            "style=dev": "42/49",
+            "dev/null": "42/49"
+          },
+          "recallList": "45/49",
+          "opAccGivenInList": "42/45",
+          "listLen": {
+            "median": 5
+          },
+          "args": {
+            "n": 42,
+            "exact": "25/27",
+            "fieldsMatch": "25/27",
+            "withExtras": 4,
+            "requiredPresent": "0/0",
+            "refExact": "12/12",
+            "zodOk": "42/42",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {
+              "all": "25/27",
+              "style=dev": "25/27",
+              "dev/null": "25/27"
+            },
+            "refByStyle": {
+              "all": "12/12",
+              "style=dev": "12/12",
+              "dev/null": "12/12"
+            }
+          },
+          "fullyRight": "40/49",
+          "fullyRightPct": 81.6,
+          "fullyRightByStyle": {
+            "all": "40/49",
+            "style=dev": "40/49",
+            "dev/null": "40/49"
+          },
+          "noAction": {
+            "tp": 10,
+            "fn": 0,
+            "fp": 1,
+            "precision": 90.9,
+            "recall": 100
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 275,
+            "p90": 582
+          },
+          "misses": {
+            "gold not in list": 4,
+            "sibling in list": 2,
+            "pre-gate no-action": 1
+          },
+          "confusions": {
+            "knowledge-note:ADD_TOPIC -> knowledge-note:SET_DESCRIPTION": 1,
+            "project:UPDATE_MEMBER -> project:SET_OWNER": 1
+          },
+          "argsMisses": {
+            "project:ADD_MEMBER.role": 1,
+            "knowledge-note:SET_METADATA_FIELD.value": 1
+          }
+        },
+        "devx": {
+          "n": 19,
+          "action": 19,
+          "opAcc": "17/19",
+          "opAccPct": 89.5,
+          "opByStyle": {
+            "all": "17/19",
+            "style=dev": "17/19",
+            "dev/null": "17/19"
+          },
+          "recallList": "18/19",
+          "opAccGivenInList": "17/18",
+          "listLen": {
+            "median": 5
+          },
+          "args": {
+            "n": 17,
+            "exact": "10/11",
+            "fieldsMatch": "10/11",
+            "withExtras": 0,
+            "requiredPresent": "0/0",
+            "refExact": "12/12",
+            "zodOk": "17/17",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {
+              "all": "10/11",
+              "style=dev": "10/11",
+              "dev/null": "10/11"
+            },
+            "refByStyle": {
+              "all": "12/12",
+              "style=dev": "12/12",
+              "dev/null": "12/12"
+            }
+          },
+          "fullyRight": "16/19",
+          "fullyRightPct": 84.2,
+          "fullyRightByStyle": {
+            "all": "16/19",
+            "style=dev": "16/19",
+            "dev/null": "16/19"
+          },
+          "noAction": {
+            "tp": 0,
+            "fn": 0,
+            "fp": 0,
+            "precision": null,
+            "recall": null
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 523,
+            "p90": 666
+          },
+          "misses": {
+            "sibling in list": 1,
+            "gold not in list": 1
+          },
+          "confusions": {
+            "project:UPDATE_MEMBER -> project:SET_OWNER": 1
+          },
+          "argsMisses": {
+            "knowledge-note:SET_METADATA_FIELD.value": 1
+          }
+        },
+        "devna": {
+          "n": 10,
+          "action": 0,
+          "opAcc": "0/0",
+          "opAccPct": null,
+          "opByStyle": {},
+          "recallList": "0/0",
+          "opAccGivenInList": "0/0",
+          "listLen": {
+            "median": null
+          },
+          "args": {
+            "n": 0,
+            "exact": "0/0",
+            "fieldsMatch": "0/0",
+            "withExtras": 0,
+            "requiredPresent": "0/0",
+            "refExact": "0/0",
+            "zodOk": "0/0",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {},
+            "refByStyle": {}
+          },
+          "fullyRight": "0/0",
+          "fullyRightPct": null,
+          "fullyRightByStyle": {},
+          "noAction": {
+            "tp": 10,
+            "fn": 0,
+            "fp": 0,
+            "precision": 100,
+            "recall": 100
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 23,
+            "p90": 24
+          },
+          "misses": {},
+          "confusions": {},
+          "argsMisses": {}
+        }
+      }
+    },
+    "rows": [
+      {
+        "id": "dev-01",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "tag this note with distributed systems",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:UPDATE_LINK_TYPE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.04281112627223205,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:ADD_TOPIC\"]}",
+        "loraPick": "knowledge-note:ADD_TOPIC",
+        "args": {
+          "name": "distributed systems"
+        },
+        "raw": "{\"name\": \"distributed systems\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 40,
+          "op": 188,
+          "args": 103,
+          "ungated": 330,
+          "gated": 330
+        }
+      },
+      {
+        "id": "dev-02",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "add the topic machine learning",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SUBMIT_FOR_REVIEW"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.06483858883021432,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:ADD_TOPIC\"]}",
+        "loraPick": "knowledge-note:ADD_TOPIC",
+        "args": {
+          "name": "machine learning"
+        },
+        "raw": "{\"name\": \"machine learning\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 25,
+          "op": 158,
+          "args": 97,
+          "ungated": 279,
+          "gated": 279
+        }
+      },
+      {
+        "id": "dev-03",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "label this as epistemology",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:ADD_TOPIC"
+        ],
+        "goldRank": 5,
+        "inList": true,
+        "gate": {
+          "score": 0.033180216277385766,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_DESCRIPTION\"]}",
+        "loraPick": "knowledge-note:SET_DESCRIPTION",
+        "args": {
+          "description": "epistemology"
+        },
+        "raw": "{\"description\": \"epistemology\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "ms": {
+          "embed": 21,
+          "op": 153,
+          "args": 96,
+          "ungated": 270,
+          "gated": 270
+        }
+      },
+      {
+        "id": "dev-04",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "file this note under productivity",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:REJECT_NOTE"
+        ],
+        "goldRank": null,
+        "inList": false,
+        "gate": {
+          "score": -0.045897936457600874,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:ARCHIVE_NOTE\"]}",
+        "loraPick": "knowledge-note:ARCHIVE_NOTE",
+        "args": {
+          "comment": "productivity"
+        },
+        "raw": "{\"comment\": \"productivity\"}",
+        "argsError": null,
+        "argsOrder": [
+          "comment"
+        ],
+        "ms": {
+          "embed": 23,
+          "op": 147,
+          "args": 92,
+          "ungated": 262,
+          "gated": 262
+        }
+      },
+      {
+        "id": "dev-05",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "rename this note to Spaced repetition beats cramming",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.02587264444353532,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_TITLE\"]}",
+        "loraPick": "knowledge-note:SET_TITLE",
+        "args": {
+          "title": "Spaced repetition beats cramming"
+        },
+        "raw": "{\"title\": \"Spaced repetition beats cramming\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 33,
+          "op": 156,
+          "args": 135,
+          "ungated": 324,
+          "gated": 324
+        }
+      },
+      {
+        "id": "dev-06",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "set the title to CAP theorem tradeoffs",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:ADD_TOPIC"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.022033716314214136,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_TITLE\"]}",
+        "loraPick": "knowledge-note:SET_TITLE",
+        "args": {
+          "title": "CAP theorem tradeoffs"
+        },
+        "raw": "{\"title\": \"CAP theorem tradeoffs\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 28,
+          "op": 164,
+          "args": 115,
+          "ungated": 307,
+          "gated": 307
+        }
+      },
+      {
+        "id": "dev-07",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "change the heading of the note to Why caches lie",
+        "expectedOp": "knowledge-note:SET_TITLE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:RESTORE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.03700705238904467,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_TITLE\"]}",
+        "loraPick": "knowledge-note:SET_TITLE",
+        "args": {
+          "title": "Why caches lie"
+        },
+        "raw": "{\"title\": \"Why caches lie\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 34,
+          "op": 154,
+          "args": 103,
+          "ungated": 290,
+          "gated": 290
+        }
+      },
+      {
+        "id": "dev-08",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "set the description to A short argument for writing every day",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_METADATA_LIST_FIELD"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.0682269218579068,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_DESCRIPTION\"]}",
+        "loraPick": "knowledge-note:SET_DESCRIPTION",
+        "args": {
+          "description": "A short argument for writing every day"
+        },
+        "raw": "{\"description\": \"A short argument for writing every day\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 33,
+          "op": 155,
+          "args": 116,
+          "ungated": 304,
+          "gated": 304
+        }
+      },
+      {
+        "id": "dev-09",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "update the summary: explains how consensus protocols tolerate faults",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "goldRank": null,
+        "inList": false,
+        "gate": {
+          "score": 0.0197785779929196,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_METADATA_FIELD\"]}",
+        "loraPick": "knowledge-note:SET_METADATA_FIELD",
+        "args": {
+          "field": "context"
+        },
+        "raw": "{\"field\": \"context\"}",
+        "argsError": null,
+        "argsOrder": [
+          "field"
+        ],
+        "ms": {
+          "embed": 28,
+          "op": 160,
+          "args": 107,
+          "ungated": 295,
+          "gated": 295
+        }
+      },
+      {
+        "id": "dev-10",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "describe this note as notes from the Raft paper",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:SET_PROVENANCE"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.035036295744414914,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_DESCRIPTION\"]}",
+        "loraPick": "knowledge-note:SET_DESCRIPTION",
+        "args": {
+          "description": "notes from the Raft paper"
+        },
+        "raw": "{\"description\": \"notes from the Raft paper\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 31,
+          "op": 165,
+          "args": 111,
+          "ungated": 307,
+          "gated": 307
+        }
+      },
+      {
+        "id": "dev-11",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "submit this note for review",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.10061373767480541,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SUBMIT_FOR_REVIEW\"]}",
+        "loraPick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 23,
+          "op": 165,
+          "args": 0,
+          "ungated": 188,
+          "gated": 188
+        }
+      },
+      {
+        "id": "dev-12",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "send it to review, it's ready",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.01223081154085126,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SUBMIT_FOR_REVIEW\"]}",
+        "loraPick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 31,
+          "op": 166,
+          "args": 0,
+          "ungated": 196,
+          "gated": 196
+        }
+      },
+      {
+        "id": "dev-13",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "I'm done drafting, request a review",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_DESCRIPTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.048947851266150644,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SUBMIT_FOR_REVIEW\"]}",
+        "loraPick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 31,
+          "op": 170,
+          "args": 0,
+          "ungated": 201,
+          "gated": 201
+        }
+      },
+      {
+        "id": "dev-14",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "remove the topic tag",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:UPDATE_LINK_TYPE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.11540612502231262,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REMOVE_TOPIC\"]}",
+        "loraPick": "knowledge-note:REMOVE_TOPIC",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 20,
+          "op": 146,
+          "args": 0,
+          "ungated": 166,
+          "gated": 166
+        }
+      },
+      {
+        "id": "dev-15",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "untag this note",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.048947040861088476,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REMOVE_TOPIC\"]}",
+        "loraPick": "knowledge-note:REMOVE_TOPIC",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 20,
+          "op": 144,
+          "args": 0,
+          "ungated": 163,
+          "gated": 163
+        }
+      },
+      {
+        "id": "dev-16",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "add an open question: does spacing help procedural memory?",
+        "expectedOp": "moc:ADD_OPEN_QUESTION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:ADD_OPEN_QUESTION",
+          "moc:ADD_CORE_IDEA",
+          "moc:ADD_TENSION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:REMOVE_OPEN_QUESTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.047001273598106574,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": [\"moc:ADD_OPEN_QUESTION\"]}",
+        "loraPick": "moc:ADD_OPEN_QUESTION",
+        "args": {
+          "question": "does spacing help procedural memory?"
+        },
+        "raw": "{\"question\": \"does spacing help procedural memory?\"}",
+        "argsError": null,
+        "argsOrder": [
+          "question"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 37,
+          "op": 142,
+          "args": 110,
+          "ungated": 289,
+          "gated": 37
+        }
+      },
+      {
+        "id": "dev-17",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "note an unexplored direction: how do CRDTs handle deletes",
+        "expectedOp": "moc:ADD_OPEN_QUESTION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REMOVE_TENSION",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:ADD_TENSION"
+        ],
+        "goldRank": null,
+        "inList": false,
+        "gate": {
+          "score": 0.007876551713851154,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:ADD_TENSION\"]}",
+        "loraPick": "moc:ADD_TENSION",
+        "args": {
+          "description": "how do CRDTs handle deletes",
+          "involvedRefs": [
+            "CRDTs"
+          ]
+        },
+        "raw": "{\"description\": \"how do CRDTs handle deletes\", \"involvedRefs\": [\"CRDTs\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "description",
+          "involvedRefs"
+        ],
+        "ms": {
+          "embed": 46,
+          "op": 140,
+          "args": 177,
+          "ungated": 363,
+          "gated": 363
+        }
+      },
+      {
+        "id": "dev-18",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "rewrite the synthesis paragraph to say memory is reconstructive",
+        "expectedOp": "moc:UPDATE_ORIENTATION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:UPDATE_ORIENTATION",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:CREATE_MOC",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:UPDATE_DESCRIPTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.02781023335895605,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:UPDATE_ORIENTATION\"]}",
+        "loraPick": "moc:UPDATE_ORIENTATION",
+        "args": {
+          "orientation": "memory is reconstructive"
+        },
+        "raw": "{\"orientation\": \"memory is reconstructive\"}",
+        "argsError": null,
+        "argsOrder": [
+          "orientation"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 41,
+          "op": 156,
+          "args": 117,
+          "ungated": 314,
+          "gated": 314
+        }
+      },
+      {
+        "id": "dev-19",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "update the orientation of this map",
+        "expectedOp": "moc:UPDATE_ORIENTATION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:UPDATE_ORIENTATION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:ADD_CORE_IDEA"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.10788496191887587,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:UPDATE_ORIENTATION\"]}",
+        "loraPick": "moc:UPDATE_ORIENTATION",
+        "args": {
+          "orientation": "this map"
+        },
+        "raw": "{\"orientation\": \"this map\"}",
+        "argsError": null,
+        "argsOrder": [
+          "orientation"
+        ],
+        "fieldsMatch": null,
+        "extras": [
+          "orientation"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 21,
+          "op": 146,
+          "args": 92,
+          "ungated": 259,
+          "gated": 259
+        }
+      },
+      {
+        "id": "dev-20",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "queue a new extraction task for the Raft paper",
+        "expectedOp": "pipeline-queue:ADD_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:COMPLETE_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.06093448473834717,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:ADD_TASK\"]}",
+        "loraPick": "pipeline-queue:ADD_TASK",
+        "args": {
+          "taskType": "enrichment",
+          "target": "Raft paper"
+        },
+        "raw": "{\"taskType\": \"enrichment\", \"target\": \"Raft paper\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskType",
+          "target"
+        ],
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 31,
+          "op": 137,
+          "args": 137,
+          "ungated": 305,
+          "gated": 305
+        }
+      },
+      {
+        "id": "dev-21",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "add a task to reflect on the CRDT notes",
+        "expectedOp": "pipeline-queue:ADD_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:BLOCK_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.027809056910626184,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:ADD_TASK\"]}",
+        "loraPick": "pipeline-queue:ADD_TASK",
+        "args": {
+          "taskType": "enrichment",
+          "target": "CRDT notes",
+          "currentPhase": "reflect"
+        },
+        "raw": "{\"taskType\": \"enrichment\", \"target\": \"CRDT notes\", \"currentPhase\": \"reflect\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskType",
+          "target",
+          "currentPhase"
+        ],
+        "fieldsMatch": null,
+        "extras": [
+          "taskType",
+          "target",
+          "currentPhase"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 28,
+          "op": 136,
+          "args": 182,
+          "ungated": 346,
+          "gated": 346
+        }
+      },
+      {
+        "id": "dev-22",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "mark the task as blocked because the source is missing",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ADD_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.09750902955978624,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:BLOCK_TASK\"]}",
+        "loraPick": "pipeline-queue:BLOCK_TASK",
+        "args": {
+          "reason": "the source is missing"
+        },
+        "raw": "{\"reason\": \"the source is missing\"}",
+        "argsError": null,
+        "argsOrder": [
+          "reason"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 28,
+          "op": 141,
+          "args": 106,
+          "ungated": 275,
+          "gated": 275
+        }
+      },
+      {
+        "id": "dev-23",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "the task is stuck waiting on review, block it",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.08883120136858791,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:BLOCK_TASK\"]}",
+        "loraPick": "pipeline-queue:BLOCK_TASK",
+        "args": {
+          "reason": "waiting on review"
+        },
+        "raw": "{\"reason\": \"waiting on review\"}",
+        "argsError": null,
+        "argsOrder": [
+          "reason"
+        ],
+        "fieldsMatch": null,
+        "extras": [
+          "reason"
+        ],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 28,
+          "op": 141,
+          "args": 106,
+          "ungated": 275,
+          "gated": 275
+        }
+      },
+      {
+        "id": "dev-24",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "add Alice to the team as designer",
+        "expectedOp": "project:ADD_MEMBER",
+        "expectedOps": null,
+        "candidates": [
+          "project:ADD_MEMBER",
+          "project:UPDATE_MEMBER",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:ADD_DELIVERABLE",
+          "project:SET_OWNER"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.018318929051435062,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:ADD_MEMBER\"]}",
+        "loraPick": "project:ADD_MEMBER",
+        "args": {
+          "name": "Alice"
+        },
+        "raw": "{\"name\": \"Alice\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 24,
+          "op": 142,
+          "args": 86,
+          "ungated": 252,
+          "gated": 252
+        }
+      },
+      {
+        "id": "dev-25",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "add a team member named Bob",
+        "expectedOp": "project:ADD_MEMBER",
+        "expectedOps": null,
+        "candidates": [
+          "project:ADD_MEMBER",
+          "project:UPDATE_MEMBER",
+          "project:REMOVE_MEMBER",
+          "project:ADD_DELIVERABLE",
+          "project:SET_OWNER"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.08133954912539065,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:ADD_MEMBER\"]}",
+        "loraPick": "project:ADD_MEMBER",
+        "args": {
+          "name": "Bob"
+        },
+        "raw": "{\"name\": \"Bob\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 21,
+          "op": 123,
+          "args": 82,
+          "ungated": 226,
+          "gated": 226
+        }
+      },
+      {
+        "id": "dev-26",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "put the project on hold",
+        "expectedOp": "project:SET_PROJECT_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:SET_TARGET_DATE",
+          "project:SET_OWNER",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:UPDATE_PROJECT_INFO"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.07288941687625305,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_PROJECT_STATUS\"]}",
+        "loraPick": "project:SET_PROJECT_STATUS",
+        "args": {
+          "status": "ON_HOLD"
+        },
+        "raw": "{\"status\": \"ON_HOLD\"}",
+        "argsError": null,
+        "argsOrder": [
+          "status"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 23,
+          "op": 121,
+          "args": 97,
+          "ungated": 242,
+          "gated": 242
+        }
+      },
+      {
+        "id": "dev-27",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "mark the project as completed",
+        "expectedOp": "project:SET_PROJECT_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:SET_TARGET_DATE",
+          "project:LINK_WBS",
+          "project:CREATE_PROJECT",
+          "project:ADD_DELIVERABLE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.054226213969769455,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_PROJECT_STATUS\"]}",
+        "loraPick": "project:SET_PROJECT_STATUS",
+        "args": {
+          "status": "COMPLETED"
+        },
+        "raw": "{\"status\": \"COMPLETED\"}",
+        "argsError": null,
+        "argsOrder": [
+          "status"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 23,
+          "op": 137,
+          "args": 103,
+          "ungated": 264,
+          "gated": 264
+        }
+      },
+      {
+        "id": "dev-28",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "create a goal to write the onboarding guide",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:CREATE_GOAL",
+          "wbs:ADD_NOTE",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ASSIGN_GOAL",
+          "wbs:ADD_DEPENDENCIES"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.0696865698736524,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:CREATE_GOAL\"]}",
+        "loraPick": "wbs:CREATE_GOAL",
+        "args": {
+          "description": "write the onboarding guide"
+        },
+        "raw": "{\"description\": \"write the onboarding guide\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 31,
+          "op": 139,
+          "args": 111,
+          "ungated": 280,
+          "gated": 280
+        }
+      },
+      {
+        "id": "dev-29",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "new goal: ship the beta",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:CREATE_GOAL",
+          "wbs:REORDER",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ASSIGN_GOAL"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.03818015730982638,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:CREATE_GOAL\"]}",
+        "loraPick": "wbs:CREATE_GOAL",
+        "args": {
+          "description": "ship the beta"
+        },
+        "raw": "{\"description\": \"ship the beta\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 21,
+          "op": 138,
+          "args": 91,
+          "ungated": 250,
+          "gated": 250
+        }
+      },
+      {
+        "id": "dev-30",
+        "set": "dev",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "set the goal status to in progress",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:CREATE_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:ASSIGN_GOAL"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.12806916918403322,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_GOAL_STATUS\"]}",
+        "loraPick": "wbs:SET_GOAL_STATUS",
+        "args": {
+          "status": "IN_PROGRESS"
+        },
+        "raw": "{\"status\": \"IN_PROGRESS\"}",
+        "argsError": null,
+        "argsOrder": [
+          "status"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 24,
+          "op": 137,
+          "args": 104,
+          "ungated": 265,
+          "gated": 265
+        }
+      },
+      {
+        "id": "dx-01",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "drop the machine learning tag",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_METADATA_LIST_FIELD"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.031161734299140376,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REMOVE_TOPIC\"]}",
+        "loraPick": "knowledge-note:REMOVE_TOPIC",
+        "args": {
+          "id": "t-2"
+        },
+        "raw": "{\"id\": \"machine learning\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 23,
+          "op": 145,
+          "args": 409,
+          "ungated": 577,
+          "gated": 577
+        }
+      },
+      {
+        "id": "dx-02",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "this note is not about epistemology anymore, untag it",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.044142854425363476,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REMOVE_TOPIC\"]}",
+        "loraPick": "knowledge-note:REMOVE_TOPIC",
+        "args": {
+          "id": "t-3"
+        },
+        "raw": "{\"id\": \"epistemology\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 41,
+          "op": 153,
+          "args": 412,
+          "ungated": 606,
+          "gated": 606
+        }
+      },
+      {
+        "id": "dx-03",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "the link to the Raft paper should say it contradicts this note",
+        "expectedOp": "knowledge-note:UPDATE_LINK_TYPE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:ARCHIVE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.012142206611961637,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:UPDATE_LINK_TYPE\"]}",
+        "loraPick": "knowledge-note:UPDATE_LINK_TYPE",
+        "args": {
+          "id": "l-2",
+          "linkType": "CONTRADICTS"
+        },
+        "raw": "{\"id\": \"Raft paper\", \"linkType\": \"CONTRADICTS\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "linkType"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 36,
+          "op": 158,
+          "args": 506,
+          "ungated": 700,
+          "gated": 700
+        }
+      },
+      {
+        "id": "dx-04",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "get rid of the link to CAP theorem",
+        "expectedOp": "knowledge-note:REMOVE_LINK",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:REJECT_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.04977085880222798,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REMOVE_LINK\"]}",
+        "loraPick": "knowledge-note:REMOVE_LINK",
+        "args": {
+          "id": "l-3"
+        },
+        "raw": "{\"id\": \"CAP theorem\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 27,
+          "op": 145,
+          "args": 410,
+          "ungated": 582,
+          "gated": 582
+        }
+      },
+      {
+        "id": "dx-05",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "the onboarding guide goal is finished",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:ADD_NOTE",
+          "wbs:CREATE_GOAL",
+          "wbs:ASSIGN_GOAL"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.04149696389539592,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_GOAL_STATUS\"]}",
+        "loraPick": "wbs:SET_GOAL_STATUS",
+        "args": {
+          "id": "g-2",
+          "status": "COMPLETED"
+        },
+        "raw": "{\"id\": \"Write the onboarding guide\", \"status\": \"COMPLETED\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "status"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 24,
+          "op": 139,
+          "args": 503,
+          "ungated": 666,
+          "gated": 666
+        }
+      },
+      {
+        "id": "dx-06",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "delete the CI goal",
+        "expectedOp": "wbs:DELETE_GOAL",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:DELETE_GOAL",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:REMOVE_NOTE",
+          "wbs:ASSIGN_GOAL",
+          "wbs:CREATE_GOAL"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.11088424259127294,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:DELETE_GOAL\"]}",
+        "loraPick": "wbs:DELETE_GOAL",
+        "args": {
+          "id": "g-3"
+        },
+        "raw": "{\"id\": \"Set up CI\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 23,
+          "op": 133,
+          "args": 421,
+          "ungated": 577,
+          "gated": 577
+        }
+      },
+      {
+        "id": "dx-07",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "give the beta goal to Priya",
+        "expectedOp": "wbs:ASSIGN_GOAL",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:CREATE_GOAL",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ASSIGN_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION"
+        ],
+        "goldRank": 4,
+        "inList": true,
+        "gate": {
+          "score": -0.02714623844306674,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:ASSIGN_GOAL\"]}",
+        "loraPick": "wbs:ASSIGN_GOAL",
+        "args": {
+          "id": "g-2",
+          "assignee": "Priya"
+        },
+        "raw": "{\"id\": \"Ship the beta\", \"assignee\": \"Priya\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "assignee"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 24,
+          "op": 137,
+          "args": 386,
+          "ungated": 547,
+          "gated": 547
+        }
+      },
+      {
+        "id": "dx-08",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "Bob left, take him off the team",
+        "expectedOp": "project:REMOVE_MEMBER",
+        "expectedOps": null,
+        "candidates": [
+          "project:REMOVE_MEMBER",
+          "project:REMOVE_DELIVERABLE",
+          "project:UPDATE_MEMBER",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:SET_OWNER"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.06666884229600623,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:REMOVE_MEMBER\"]}",
+        "loraPick": "project:REMOVE_MEMBER",
+        "args": {
+          "id": "m-2"
+        },
+        "raw": "{\"id\": \"Bob\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 27,
+          "op": 127,
+          "args": 369,
+          "ungated": 523,
+          "gated": 523
+        }
+      },
+      {
+        "id": "dx-09",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "the API docs deliverable shipped today",
+        "expectedOp": "project:SET_DELIVERABLE_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_DELIVERABLE_STATUS",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_PROJECT_STATUS",
+          "project:LINK_WBS"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.0514553963061386,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_DELIVERABLE_STATUS\"]}",
+        "loraPick": "project:SET_DELIVERABLE_STATUS",
+        "args": {
+          "id": "d-2",
+          "status": "DELIVERED"
+        },
+        "raw": "{\"id\": \"API docs\", \"status\": \"DELIVERED\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "status"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 27,
+          "op": 141,
+          "args": 352,
+          "ungated": 520,
+          "gated": 520
+        }
+      },
+      {
+        "id": "dx-10",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "Carol is now our tech lead",
+        "expectedOp": "project:UPDATE_MEMBER",
+        "expectedOps": null,
+        "candidates": [
+          "project:UPDATE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_OWNER",
+          "project:SET_DELIVERABLE_STATUS"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.036067994176477214,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_OWNER\"]}",
+        "loraPick": "project:SET_OWNER",
+        "args": {
+          "owner": "Carol"
+        },
+        "raw": "{\"owner\": \"Carol\"}",
+        "argsError": null,
+        "argsOrder": [
+          "owner"
+        ],
+        "ms": {
+          "embed": 21,
+          "op": 135,
+          "args": 97,
+          "ungated": 253,
+          "gated": 253
+        }
+      },
+      {
+        "id": "dx-11",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "block the CRDT reflection task because the notes are not written yet",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ADD_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.05807415938600158,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:BLOCK_TASK\"]}",
+        "loraPick": "pipeline-queue:BLOCK_TASK",
+        "args": {
+          "taskId": "q-2",
+          "reason": "the notes are not written yet"
+        },
+        "raw": "{\"taskId\": \"reflect on CRDT notes\", \"reason\": \"the notes are not written yet\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskId",
+          "reason"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 42,
+          "op": 152,
+          "args": 420,
+          "ungated": 614,
+          "gated": 614
+        }
+      },
+      {
+        "id": "dx-12",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "take the spacing effect idea out of this map",
+        "expectedOp": "moc:REMOVE_CORE_IDEA",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REMOVE_CORE_IDEA",
+          "moc:ADD_CORE_IDEA",
+          "moc:REMOVE_TENSION",
+          "moc:UPDATE_ORIENTATION",
+          "moc:UPDATE_CORE_IDEA"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.055103169815488795,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:REMOVE_CORE_IDEA\"]}",
+        "loraPick": "moc:REMOVE_CORE_IDEA",
+        "args": {
+          "id": "c-2"
+        },
+        "raw": "{\"id\": \"Spacing effect\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 29,
+          "op": 148,
+          "args": 413,
+          "ungated": 589,
+          "gated": 589
+        }
+      },
+      {
+        "id": "dx-13",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "stop extracting the quotes category",
+        "expectedOp": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:UPDATE_PIPELINE_CONFIG"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.07060107113842062,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:TOGGLE_EXTRACTION_CATEGORY\"]}",
+        "loraPick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "args": {
+          "id": "x-2",
+          "active": false
+        },
+        "raw": "{\"id\": \"quotes\", \"active\": false}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "active"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 21,
+          "op": 184,
+          "args": 302,
+          "ungated": 507,
+          "gated": 507
+        }
+      },
+      {
+        "id": "dx-14",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "record the root cause: the cache key ignored the locale",
+        "expectedOp": "knowledge-note:SET_METADATA_FIELD",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_METADATA_FIELD"
+        ],
+        "goldRank": 5,
+        "inList": true,
+        "gate": {
+          "score": 0.008782931202302446,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_METADATA_FIELD\"]}",
+        "loraPick": "knowledge-note:SET_METADATA_FIELD",
+        "args": {
+          "field": "rootCause"
+        },
+        "raw": "{\"field\": \"rootCause\"}",
+        "argsError": null,
+        "argsOrder": [
+          "field"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "value"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 37,
+          "op": 158,
+          "args": 116,
+          "ungated": 311,
+          "gated": 311
+        }
+      },
+      {
+        "id": "dx-15",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "this is a decision record",
+        "expectedOp": "knowledge-note:SET_NOTE_TYPE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:APPROVE_NOTE"
+        ],
+        "goldRank": null,
+        "inList": false,
+        "gate": {
+          "score": 0.006326690017310566,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:APPROVE_NOTE\"]}",
+        "loraPick": "knowledge-note:APPROVE_NOTE",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "ms": {
+          "embed": 23,
+          "op": 150,
+          "args": 0,
+          "ungated": 174,
+          "gated": 174
+        }
+      },
+      {
+        "id": "dx-16",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "flag notes as stale after 60 days",
+        "expectedOp": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.031707990414822196,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:UPDATE_MAINTENANCE_THRESHOLD\"]}",
+        "loraPick": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "args": {
+          "condition": "staleNoteDays",
+          "threshold": 60
+        },
+        "raw": "{\"condition\": \"staleNoteDays\", \"threshold\": 60}",
+        "argsError": null,
+        "argsOrder": [
+          "condition",
+          "threshold"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 24,
+          "op": 195,
+          "args": 149,
+          "ungated": 369,
+          "gated": 369
+        }
+      },
+      {
+        "id": "dx-17",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "call the inbox \"capture\" from now on",
+        "expectedOp": "vault-config:UPDATE_VOCABULARY",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.0069852805181276345,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:UPDATE_VOCABULARY\"]}",
+        "loraPick": "vault-config:UPDATE_VOCABULARY",
+        "args": {
+          "key": "inbox",
+          "value": "capture"
+        },
+        "raw": "{\"key\": \"inbox\", \"value\": \"capture\"}",
+        "argsError": null,
+        "argsOrder": [
+          "key",
+          "value"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 30,
+          "op": 176,
+          "args": 144,
+          "ungated": 350,
+          "gated": 350
+        }
+      },
+      {
+        "id": "dx-18",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "use the deep processing pipeline",
+        "expectedOp": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_VOCABULARY"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.058461941427366604,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:UPDATE_PIPELINE_CONFIG\"]}",
+        "loraPick": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "args": {
+          "depth": "deep"
+        },
+        "raw": "{\"depth\": \"deep\"}",
+        "argsError": null,
+        "argsOrder": [
+          "depth"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 24,
+          "op": 170,
+          "args": 92,
+          "ungated": 286,
+          "gated": 286
+        }
+      },
+      {
+        "id": "dx-19",
+        "set": "devx",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "rename the project to Atlas",
+        "expectedOp": "project:UPDATE_PROJECT_INFO",
+        "expectedOps": null,
+        "candidates": [
+          "project:UPDATE_PROJECT_INFO",
+          "project:UPDATE_DELIVERABLE",
+          "project:UPDATE_MEMBER",
+          "project:CREATE_PROJECT",
+          "project:SET_REFERENCES"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.053300486188209706,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:UPDATE_PROJECT_INFO\"]}",
+        "loraPick": "project:UPDATE_PROJECT_INFO",
+        "args": {
+          "name": "Atlas"
+        },
+        "raw": "{\"name\": \"Atlas\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name",
+          "description"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 21,
+          "op": 138,
+          "args": 92,
+          "ungated": 251,
+          "gated": 251
+        }
+      },
+      {
+        "id": "dn-01",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "what is this note about?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_DESCRIPTION"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.0040985105193342974,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 21,
+          "op": 101,
+          "args": 0,
+          "ungated": 121,
+          "gated": 21
+        }
+      },
+      {
+        "id": "dn-02",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "thanks!",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.11045737697627933,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 13,
+          "op": 99,
+          "args": 0,
+          "ungated": 112,
+          "gated": 13
+        }
+      },
+      {
+        "id": "dn-03",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "how many topics does it have?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_METADATA_FIELD"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.0021981965103499146,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 24,
+          "op": 99,
+          "args": 0,
+          "ungated": 123,
+          "gated": 24
+        }
+      },
+      {
+        "id": "dn-04",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "which goals are blocked right now?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:REORDER",
+          "wbs:DELETE_GOAL",
+          "wbs:CREATE_GOAL",
+          "wbs:ADD_DEPENDENCIES"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.04815493002482529,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 24,
+          "op": 95,
+          "args": 0,
+          "ungated": 118,
+          "gated": 24
+        }
+      },
+      {
+        "id": "dn-05",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "is the project on track?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:LINK_WBS",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:SET_TARGET_DATE",
+          "project:ADD_DELIVERABLE"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.03448101499120226,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 21,
+          "op": 89,
+          "args": 0,
+          "ungated": 110,
+          "gated": 21
+        }
+      },
+      {
+        "id": "dn-06",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "summarize this map for me",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "moc:CREATE_MOC",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_ORIENTATION",
+          "moc:REORDER_CORE_IDEAS"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.0744672341626369,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": [\"moc:UPDATE_DESCRIPTION\"]}",
+        "loraPick": "moc:UPDATE_DESCRIPTION",
+        "args": {
+          "description": "this map for me"
+        },
+        "raw": "{\"description\": \"this map for me\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "ms": {
+          "embed": 24,
+          "op": 146,
+          "args": 141,
+          "ungated": 311,
+          "gated": 24
+        }
+      },
+      {
+        "id": "dn-07",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "hmm, let me think about that",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:UNBLOCK_TASK"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.15885508473600607,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 24,
+          "op": 99,
+          "args": 0,
+          "ungated": 123,
+          "gated": 24
+        }
+      },
+      {
+        "id": "dn-08",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "what does reweave mean?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:TOGGLE_FEATURE"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.026881279460111207,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 24,
+          "op": 100,
+          "args": 0,
+          "ungated": 124,
+          "gated": 24
+        }
+      },
+      {
+        "id": "dn-09",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "great, that looks right",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:SET_OWNER",
+          "project:LINK_WBS",
+          "project:ADD_DELIVERABLE"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.14858177978513876,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 23,
+          "op": 90,
+          "args": 0,
+          "ungated": 113,
+          "gated": 23
+        }
+      },
+      {
+        "id": "dn-10",
+        "set": "devna",
+        "style": "dev",
+        "difficulty": null,
+        "utterance": "who wrote the Raft paper?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "source:INGEST_SOURCE",
+          "source:RECORD_EXTRACTION_STATS",
+          "source:ADD_EXTRACTED_CLAIM",
+          "source:SET_SOURCE_STATUS"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.00287537408969174,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 21,
+          "op": 95,
+          "args": 0,
+          "ungated": 115,
+          "gated": 21
+        }
+      }
+    ],
+    "config": {
+      "name": "R0-dev",
+      "sets": [
+        "dev",
+        "devx",
+        "devna"
+      ],
+      "cands": {
+        "mode": "scoped-topk",
+        "k": 5
+      },
+      "preGate": true,
+      "model": "lora",
+      "candsLabel": "scoped-k5"
+    },
+    "promptFormat": "r6.1",
+    "model": {
+      "repo": "url",
+      "file": "/lora/LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf"
+    },
+    "backend": "webgpu",
+    "summaryUngated": {
+      "preGate": false,
+      "bySet": {
+        "dev": {
+          "n": 59,
+          "action": 49,
+          "opAcc": "43/49",
+          "opAccPct": 87.8,
+          "opByStyle": {
+            "all": "43/49",
+            "style=dev": "43/49",
+            "dev/null": "43/49"
+          },
+          "recallList": "45/49",
+          "opAccGivenInList": "43/45",
+          "listLen": {
+            "median": 5
+          },
+          "args": {
+            "n": 43,
+            "exact": "26/28",
+            "fieldsMatch": "26/28",
+            "withExtras": 4,
+            "requiredPresent": "0/0",
+            "refExact": "12/12",
+            "zodOk": "43/43",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {
+              "all": "26/28",
+              "style=dev": "26/28",
+              "dev/null": "26/28"
+            },
+            "refByStyle": {
+              "all": "12/12",
+              "style=dev": "12/12",
+              "dev/null": "12/12"
+            }
+          },
+          "fullyRight": "41/49",
+          "fullyRightPct": 83.7,
+          "fullyRightByStyle": {
+            "all": "41/49",
+            "style=dev": "41/49",
+            "dev/null": "41/49"
+          },
+          "noAction": {
+            "tp": 9,
+            "fn": 1,
+            "fp": 0,
+            "precision": 100,
+            "recall": 90
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 280,
+            "p90": 582
+          },
+          "misses": {
+            "gold not in list": 4,
+            "sibling in list": 2
+          },
+          "confusions": {
+            "knowledge-note:ADD_TOPIC -> knowledge-note:SET_DESCRIPTION": 1,
+            "project:UPDATE_MEMBER -> project:SET_OWNER": 1
+          },
+          "argsMisses": {
+            "project:ADD_MEMBER.role": 1,
+            "knowledge-note:SET_METADATA_FIELD.value": 1
+          }
+        },
+        "devx": {
+          "n": 19,
+          "action": 19,
+          "opAcc": "17/19",
+          "opAccPct": 89.5,
+          "opByStyle": {
+            "all": "17/19",
+            "style=dev": "17/19",
+            "dev/null": "17/19"
+          },
+          "recallList": "18/19",
+          "opAccGivenInList": "17/18",
+          "listLen": {
+            "median": 5
+          },
+          "args": {
+            "n": 17,
+            "exact": "10/11",
+            "fieldsMatch": "10/11",
+            "withExtras": 0,
+            "requiredPresent": "0/0",
+            "refExact": "12/12",
+            "zodOk": "17/17",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {
+              "all": "10/11",
+              "style=dev": "10/11",
+              "dev/null": "10/11"
+            },
+            "refByStyle": {
+              "all": "12/12",
+              "style=dev": "12/12",
+              "dev/null": "12/12"
+            }
+          },
+          "fullyRight": "16/19",
+          "fullyRightPct": 84.2,
+          "fullyRightByStyle": {
+            "all": "16/19",
+            "style=dev": "16/19",
+            "dev/null": "16/19"
+          },
+          "noAction": {
+            "tp": 0,
+            "fn": 0,
+            "fp": 0,
+            "precision": null,
+            "recall": null
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 523,
+            "p90": 666
+          },
+          "misses": {
+            "sibling in list": 1,
+            "gold not in list": 1
+          },
+          "confusions": {
+            "project:UPDATE_MEMBER -> project:SET_OWNER": 1
+          },
+          "argsMisses": {
+            "knowledge-note:SET_METADATA_FIELD.value": 1
+          }
+        },
+        "devna": {
+          "n": 10,
+          "action": 0,
+          "opAcc": "0/0",
+          "opAccPct": null,
+          "opByStyle": {},
+          "recallList": "0/0",
+          "opAccGivenInList": "0/0",
+          "listLen": {
+            "median": null
+          },
+          "args": {
+            "n": 0,
+            "exact": "0/0",
+            "fieldsMatch": "0/0",
+            "withExtras": 0,
+            "requiredPresent": "0/0",
+            "refExact": "0/0",
+            "zodOk": "0/0",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {},
+            "refByStyle": {}
+          },
+          "fullyRight": "0/0",
+          "fullyRightPct": null,
+          "fullyRightByStyle": {},
+          "noAction": {
+            "tp": 9,
+            "fn": 1,
+            "fp": 0,
+            "precision": 100,
+            "recall": 90
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 118,
+            "p90": 124
+          },
+          "misses": {},
+          "confusions": {},
+          "argsMisses": {}
+        }
+      }
+    }
+  }
+}

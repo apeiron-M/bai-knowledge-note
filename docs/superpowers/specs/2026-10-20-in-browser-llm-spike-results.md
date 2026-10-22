@@ -1407,3 +1407,51 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
   - (3) relax the safe gate for meant-but-unnamed `owner`/`role`/`assignee`, which also blocked 291 training targets;
   - (4) one more epoch is not needed: the val minimum is at epoch 1.8.
 - **Q&A:** a mild regression (4 base better, 2 LoRA better, 9 same) with no JSON leakage. Serving Ask mode from the LoRA looks acceptable on this small check; a larger judged set is needed before shipping.
+
+## Round 9: gate & retrieval fixes (held-out-3) (2026-10-22)
+
+**Question:** without new data or training, how much of the round-8 LoRA's op gap closes when the no-action pre-gate is dropped and step 1 sees a longer candidate list, measured on a fresh blind set?
+
+### Pre-registration (written and committed before held-out-3 was opened or run)
+
+**Model.** The round-8 fine-tune, `training/artifacts/round8/gguf/LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf`, served from `/lora/`, OPFS cache off, WebGPU, temperature 0. sha256 now: `6930e31eefea9b27cafa5674f7be2679d3773a6819acf4ae4e56fbebcd510e00`. **Round 8 recorded no sha256 of the GGUF**, only its size (229,312,224 B, matches) and the export logs; the file's mtime (2026-10-22 11:31) is before the round-8 C1–C3 runs, and the dev re-run below reproduces round 8's dev C3 k=5 numbers exactly (42/49 op, 40/49 fully right, LoRA-only no-action 9/9 and 9/10). That is the strongest check available, not a checksum match.
+
+**Changes (all opt-in; the v1 pipeline and the r6.1 prompt bytes are unchanged):**
+- `chat/core/step1-candidates.ts`: the step-1 list is `scoped-topk k` (round 8), `scoped-all` (every global op of the document's model, at most 18, by gte-small rank or in catalog order) or `unscoped-topk k` (gte-small's top k over all 99 global ops). The r6.1 step-1 prompt and the alternation grammar (the listed keys plus `{"ops": []}`) are unchanged apart from the list.
+- The G3 pre-gate stays in code; `preGate: false` lets the LoRA's own `{"ops": []}` decide.
+- `ArgsStepOptions.alwaysOffer` (fix 4, "relax the safe gate", round 8 verdict step 3): optional root fields with these names are never dropped by the safe gate. The list is the verdict's: `owner`, `role`, `assignee` (`author` is not included; the verdict did not name it). The field stays optional in the grammar; it is not required. Default empty.
+- Harness `spike/llm-harness/r9.ts` (`r9Run`), held-out-3 loader sets `h3` / `h3na` / `h3multi`, pure metrics in `r9-metrics.ts`; unit tests `tests/unit/chat-round9.test.ts`.
+
+**Two notes on the brief.** (1) The round-8 LoRA was trained on full-list step-1 rows, every global op of the row's model **in catalog order** (`training/gen/prompt-format.ts` `scopedCandidates`; 3,286 rows), as well as top-5 rows. An all-ops list is therefore in distribution; only the embedding-rank *order* of R2 is new. R2c (catalog order) is added to measure exactly that. (2) "Unscoped" follows Rounds 1–6: all 99 global ops, no document type. No round-8 training row is unscoped (val render: 168 full + 144 top-5, 0 unscoped), so R3/R4 are out of distribution in both length/order and composition.
+
+**Configs.** Every config runs step 1 on every item (also those the gate would send to no-action) and step 2 on the LoRA's pick; the gate decides only the config's pick and its latency.
+
+| # | Step-1 list | Pre-gate (G3) | Step-2 gate |
+|---|---|---|---|
+| **R0** | scoped top 5, gte-small rank (round 8 C3 k=5) | on | safe |
+| **R1** | as R0 | **off** | safe |
+| **R2** | **scoped, all ops**, gte-small rank | off | safe |
+| **R2c** | scoped, all ops, **catalog order** (as trained) | off | safe |
+| **R3** | **unscoped top 10**, gte-small rank | off | safe |
+| **R4** | **unscoped top 15**, gte-small rank | off | safe |
+| **R5** | as R2 | off | safe + `alwaysOffer` owner/role/assignee |
+
+- **R0 and R1 come from one run** (R1 = the same rows with the LoRA's pick); round 8 reported its LoRA-only variant the same way. Six runs in all, each **once** on held-out-3 (`h3`, `h3na`, `h3multi`), fresh caches, no reruns unless a run breaks (then the bug is fixed, both numbers reported, nothing else changes).
+- **Metrics** (observed only): op accuracy over action items, overall, by style and by difficulty; recall of the gold op in the list (100% by construction for R2/R2c/R5, so not a metric there); op accuracy given the gold op is in the list; args exact, `requiredPresent` and ref-id exact over action items with the right op; fully right end to end (right op, exact args and refs where scored); no-action precision/recall (action items sent to no-action are false positives); multi-action: out of scope for v1 (the step-1 grammar admits one op), reported as how often the single emitted op is one of the expected ones and how often it is the first; median and p90 wall time per utterance (embed + step 1 + step 2; gated items count only the embed under R0).
+- **Miss causes** in round 8's order: pre-gate no-action; LoRA chose `{"ops": []}`; gold op not in the list; other model's op (unscoped only); sibling in the list.
+- **Bars** (unchanged): op ≥ 90% and args exact ≥ 80% given the right op. Picking the best of seven configs on one set flatters the winner; that is stated with the result.
+- **Disclosure.** Developed and debugged on dev only (30 seed + 19 dev-extra + 10 dev-extra no-action); held-out-1 and held-out-2 were not run or read. Held-out-3 is copied into `spike/llm-harness/eval/` unchanged and committed before its first run; for the loader only field names and counts are printed.
+
+**Dev (reference only, one run each, 49 action + 10 no-action; `eval/results-r9-*-dev.json`):**
+
+| Config | Op | In list | Args exact | Refs | Fully right | No-action P / R | Median / p90 |
+|---|---|---|---|---|---|---|---|
+| R0 | 42/49 | 45/49 | 25/27 | 12/12 | 40/49 | 10/11 / 10/10 | 275 / 582 ms |
+| R1 | 43/49 | 45/49 | 26/28 | 12/12 | 41/49 | 9/9 / 9/10 | 280 / 582 ms |
+| R2 | 47/49 | 49/49 | 30/32 | 12/12 | 45/49 | 9/9 / 9/10 | 347 / 665 ms |
+| R2c | 46/49 | 49/49 | 29/31 | 12/12 | 44/49 | 9/9 / 9/10 | 347 / 677 ms |
+| R3 | 37/49 | 42/49 | 23/24 | 11/11 | 36/49 | 8/8 / 8/10 | 318 / 615 ms |
+| R4 | 38/49 | 44/49 | 24/25 | 11/11 | 37/49 | 8/8 / 8/10 | 348 / 662 ms |
+| R5 | 47/49 | 49/49 | 28/32 | 12/12 | 43/49 | 9/9 / 9/10 | 267 / 667 ms |
+
+- R3/R4 lose items to other models' ops (4 and 5). R5 on dev: of 4 changed args, 1 gains a stated role ("as designer"; the dev gold omits it, so it scores as an extra) and 3 invent one (`role: "team member"`, `assignee: "beta"`, `assignee: "onboarding guide"`). This is reported, not acted on: R5 stays as registered.
