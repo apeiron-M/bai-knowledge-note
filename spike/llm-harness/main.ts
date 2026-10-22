@@ -29,6 +29,7 @@ import {
   r6Retrieval,
 } from "./r6.js";
 import { r8Qa, r8Run } from "./r8.js";
+import { r9Run } from "./r9.js";
 import { v1EmbedParity, v1Pipeline } from "./v1.js";
 
 type Json = Record<string, unknown>;
@@ -635,6 +636,9 @@ const EXPERIMENTS: Record<string, (...args: unknown[]) => Promise<unknown>> = {
   r8Run: (b, o) =>
     r8Run(client(backendArg(b)), o as Parameters<typeof r8Run>[1]),
   r8Qa: (b) => r8Qa(client(backendArg(b))),
+  // Round 9: gate & retrieval fixes, configs R0–R5.
+  r9Run: (b, o) =>
+    r9Run(client(backendArg(b)), o as Parameters<typeof r9Run>[1]),
 };
 
 /* ------------------------------------------------------------------ */
