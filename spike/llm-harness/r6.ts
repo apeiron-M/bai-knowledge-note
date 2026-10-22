@@ -172,6 +172,8 @@ export interface R6Item extends EvalItem {
   set: R6Set;
   style?: string;
   difficulty?: string;
+  /** Round 10 (held-out-4): item tags such as `sibling-confusion`, `list`. */
+  tags?: string[];
   /** Multi-action items: the expected op sequence. */
   expectedOps?: string[];
 }
@@ -181,6 +183,7 @@ interface RawItem {
   utterance: string;
   style?: string;
   difficulty?: string;
+  tags?: string[];
   context: {
     docType: string;
     refCandidates?: Record<string, { id: string; label?: string }[]>;
@@ -213,6 +216,7 @@ function fromRaw(set: R6Set, it: RawItem): R6Item {
     docType: it.context.docType,
     style: it.style,
     difficulty: it.difficulty,
+    ...(it.tags ? { tags: it.tags } : {}),
     refCandidates: labelRefCandidates(it.context.refCandidates ?? {}),
   };
   if (Array.isArray(exp)) {

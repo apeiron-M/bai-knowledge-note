@@ -128,6 +128,7 @@ export async function r9Run(c: LlmClient, o: R9Options): Promise<Json> {
       set: it.set,
       style: it.style ?? null,
       difficulty: it.difficulty ?? null,
+      tags: it.tags ?? null,
       utterance: it.utterance,
       expectedOp: gold,
       expectedOps: it.expectedOps ?? null,
