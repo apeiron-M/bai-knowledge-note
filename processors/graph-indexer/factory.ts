@@ -1,8 +1,14 @@
+// `IProcessorHostModule` moved out of `@powerhousedao/shared/processors`
+// in 6.2.2-dev.71 (only `IProcessorHostModuleBase` remains there); the
+// codegen-emitted factory builders now source these types from
+// reactor-browser, so this hand-written factory follows the same
+// convention. Type-only: erased at compile time, safe in the
+// switchboard (node) bundle.
 import type {
-  ProcessorRecord,
   IProcessorHostModule,
-} from "@powerhousedao/shared/processors";
-import type { ProcessorFilter } from "@powerhousedao/shared/processors";
+  ProcessorFilter,
+  ProcessorRecord,
+} from "@powerhousedao/reactor-browser";
 import type { PHDocumentHeader } from "document-model";
 import { GraphIndexerProcessor } from "./index.js";
 
