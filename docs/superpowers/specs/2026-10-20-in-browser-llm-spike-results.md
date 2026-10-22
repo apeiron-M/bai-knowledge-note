@@ -1518,3 +1518,36 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
   3. **Step-2 rows for lists, span boundaries and enum values**, the remaining args errors.
   4. **Meant-but-unnamed fields** (`owner`, `role`, `assignee`) only together with training rows that fill them; relaxing the gate at inference alone invents values.
 - **For v1 now (no retrain):** R1 or R2c with no pre-gate. R2c is the simpler pipeline (no retrieval in step 1) at +60 ms; R1 keeps the top-5 list and its latency. They tie on op.
+
+## Round 10: targeted retrain (2026-10-22)
+
+**Question:** does a LoRA retrained from base on Round 8's rows plus about 1.2k rows aimed at Round 9's error types (sibling confusion on paraphrases; lists, copied spans and enum values) beat the Round 8 LoRA on a fresh blind set, and does it reach the bars (op ≥ 90%, args exact ≥ 80%)?
+
+### Pre-registration (written and committed before the final render, before held-out-4 was copied into the repo, and before training)
+
+**Targeted data** (teacher `claude -p --model claude-sonnet-5`, the README's isolation flags, label batch 8):
+- **(a) Contrastive sibling sets.** `training/py/sibling_groups.py` derives 28 groups (94 memberships, 80 distinct ops; `training/data/round10/sibling-groups.json`) from the op catalog: per model, ops on the same entity (op name minus its verb and a STATUS/TYPE/INFO/... qualifier), status/lifecycle ops, and free-text property ops (TITLE, DESCRIPTION, CONTENT, ORIENTATION, INFO, OUTCOME); subset groups dropped, near-equal groups merged. Observed same-model confusion pairs not yet grouped are unioned in: Round 9's aggregate R2c confusions as listed in this doc, Round 8's error analysis on the retired held-out-1/2, and the Round 8–9 dev runs (none there). All 24 listed pairs are covered. For each group and each of 2 rounds, one seeded state is shared by every member (`ref-scenarios.ts --groups`: the first anchor builder that serves every ref member; a ref member it cannot serve falls back to its own builder with the same seed and theme, reported); non-ref members see the same state for context only. Each member gets one call of 6 items against it, with the group's other members listed as the contrast set: 188 calls, 1,128 items, op-word avoid share 0.65.
+- **(c) Step-2 argument stress.** `plan --ops stress`: every op with a list, enum or free-text field; each spec stresses one field: an enum value (every value of every enum field, from the catalog's canonical vocabularies), a list of exactly 2–4 verbatim items, or a span with a capital and internal punctuation copied verbatim. Ops with a list or enum field get 10 items (12 with a list field, lists weighted twice), span-only ops 6: 88 calls (batch 10), 612 items (357 span, 157 enum, 98 list specs). `rows` drops an item whose stressed field breaks its spec (enum value, list length, case-exact span).
+- **(b) Step 1 in the R2c format only:** every kept row renders one step-1 row over every global op of its model in catalog order (`render.sh` without `TOPK`).
+- Same chain as Round 8: `rows` (grounding, wording spec, ref echo, account-email/context leak), dedup and eval leak (every `utterance` under `spike/llm-harness/eval/`, which will include held-out-3 and held-out-4), vocabulary/zod/replay/ref checks, blind label (batch 8), r6.1 grammar gate, `agree --step1-only --max-free 0.7 --name-cap 0` (two-sided op-word quota). The prompt leak check is re-run over every generation and label request once held-out-4 is in the eval directory. Any HTTP 429 stops the run.
+- Deviations from the brief's defaults: contrastive calls carry 6 items, not 10 (two shared states per group member instead of one); generation runs at concurrency 5 (Round 8: 3).
+
+**Training set (fixed before training).** Round 8's 3,286 kept rows (`teacher-full/agreed-s1.jsonl`), followed by the new kept rows, re-rendered together with the current builders (`render.sh`, no `TOPK`; template and token parity; `tests/unit/training-prompt-format.test.ts` must pass). Round 8's 2,905 top-5 step-1 sequences are therefore **not** in this set (R2c never serves a top-5 list); the full-list step-1 and step-2 rows are. Dedup runs over the combined file with Round 8's rows first, so a new row that near-duplicates a Round 8 row of the same op is dropped (counted). Val: 5% by source row, stratified by op (`split.py`, seed 20261021), used for loss monitoring only.
+
+**Training.** From the base `LiquidAI/LFM2.5-350M` (not continued from the Round 8 adapter). Round 8's LoRA settings except epochs: r 16, α 32, dropout 0.05, all linear layers, LR 2e-4 cosine, effective batch 32 (8 × 4), max length 1024, bf16, seed 42, completion-only loss, pad to a multiple of 64. **2 epochs** (Round 8's val loss bottomed at epoch 1.8). Val loss every 25 steps; checkpoints every 50 steps (last 2) only as crash insurance. **The final adapter is evaluated**; no checkpoint is picked. On the second laptop (Constantine) with the Round 8 launch and watchdog scripts, MPS cap HIGH 0.5 / LOW 0.45.
+
+**Export.** Merge on this Mac's CPU (stop if RSS > 8 GB), logits checked against base+adapter on 16 val rows, llama.cpp b11364 convert, the published GGUF's chat template, Q4_K_M: `LFM2.5-350M-vault-r10a-20261022-Q4_K_M.gguf`, sha256 recorded.
+
+**Configs** (harness `r9Run`, WebGPU, temperature 0, prompt format r6.1, fresh caches, one page):
+
+| # | Pipeline | Model |
+|---|---|---|
+| **E8** | R2c: step 1 over every scoped op in catalog order, no pre-gate (the LoRA's own `{"ops": []}`), step 2 safe gate, calibrated ref-label scoring | Round 8 GGUF, sha256 `6930e31eefea9b27cafa5674f7be2679d3773a6819acf4ae4e56fbebcd510e00` |
+| **E10** | R2c, the same | Round 10 GGUF |
+
+- **Held-out-4** (`heldout4-eval.json`, blind, written for this round by the coordinator): E8 and E10 run **once** each on its action, no-action and multi-action items. **E10 also runs once on held-out-3** (its second use; secondary, not for the bars).
+- **Metrics** (observed only): op accuracy overall, by style and by difficulty; op on items tagged `sibling-confusion` and on items whose gold op is in a Round 10 sibling group; args exact given the right op, plus per-kind sub-scores (gold fields whose step-2 schema type is a list, an enum or a free string, and items carrying the set's `list` / `exact-copy` / `enum` tags); ref-id exact; no-action precision/recall (action items sent to no-action are false positives); fully right; median and p90 latency; op misses by cause (round 8's order).
+- **Bars:** E10 on held-out-4 reaches op ≥ 90% and args exact ≥ 80% given the right op. The primary comparison is E10 vs E8 on held-out-4.
+- **Q&A regression:** Round 8's 15 prompts (`eval/r8-qa-prompts.json`) on the Round 10 model, judged against the stored base and Round 8 answers (faithfulness, fluency, format leakage).
+- **Disclosure.** For held-out-4 only its top-level keys, field names, counts and the counts of its `style`, `difficulty` and `tags` labels were printed; no utterance or expected value of held-out-3 or held-out-4 was read. The sibling groups use Round 9's aggregate confusion list from this doc, not held-out-3 items.
+- **If a run breaks,** the bug is fixed, both numbers are reported, and nothing else changes.
