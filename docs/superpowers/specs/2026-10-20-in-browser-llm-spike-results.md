@@ -1552,3 +1552,93 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
 - **Q&A regression:** Round 8's 15 prompts (`eval/r8-qa-prompts.json`) on the Round 10 model, judged against the stored base and Round 8 answers (faithfulness, fluency, format leakage).
 - **Disclosure.** For held-out-4 only its top-level keys, field names, counts and the counts of its `style`, `difficulty` and `tags` labels were printed; no utterance or expected value of held-out-3 or held-out-4 was read. The sibling groups use Round 9's aggregate confusion list from this doc, not held-out-3 items.
 - **If a run breaks,** the bug is fixed, both numbers are reported, and nothing else changes.
+
+### Data, training and export (observed)
+
+**Teacher funnel** (`claude -p --model claude-sonnet-5`, concurrency 5, label batch 8):
+
+| Stage | Contrastive (28 + 2 groups) | Argument stress | Notes |
+|---|---|---|---|
+| Generated | 1,188 (198 calls) | 612 (88 calls) | 0 failed calls; stress specs 357 span, 157 enum, 98 list |
+| `rows` (grounding, wording, ref echo, account-email leak, stress check) | 1,130 | 563 | contrastive: grounding 56, wording 2; stress: grounding 47, person 2, stress check 0; leak 0 |
+| Dedup / eval leak | 1,127 | 561 | 5 eval leaks (held-out-2 2, held-out-3 2, `results-cpu` 1), **0 from held-out-4** |
+| Vocabulary, zod, replay, ref checks | 1,113 | 524 | PATCH_CONTENT replay 18, SET_REFERENCES zod 24, SET_TARGET_DATE zod 6, 3 others |
+| Blind label (143 + 70 calls) and r6.1 gate, `--step1-only` | **905** (662 full + 243 step-1-only) | **419** (217 full + 202 step-1-only) | op disagreements 142 and 68; quota drops 46 and 20 |
+
+- **1,324 kept rows from 1,800 items (73.6%).** The kept stress rows with a trainable step 2 are 118 span, 77 enum and **only 22 list** rows (another 34 list rows are step-1-only: the labeler or the grammar gate rejected their lists).
+- **Shared states:** 89 of 96 ref members of the contrastive groups got the group's shared state (7 fell back to their own builder with the same seed and theme); all 80 non-ref members saw the shared state. Models without any ref recipe (source, observation, tension) share the empty state.
+- **Prompt leak check** with held-out-4 in the eval directory: 0 hits over all 286 generation and 213 label requests.
+- **Cost (CLI-reported API-equivalent):** generation $16.45 (contrastive $10.25, stress $6.20), labels $4.60, smoke $0.17: **$21.22**, about $0.016 per kept row. Wall: contrastive generation 19.6 min, stress 11.6 min (resumed session), labels 5.4 + 2.3 min, local stages about 3 min.
+- **Usage limit:** the first stress session hit the org spend limit (HTTP 429) after 19 calls; 69 calls were lost to the limit (1 got the 429, 68 were never sent), none failed otherwise. A one-call `--limit 1` probe then **deleted the journal** (all of the truncated list had succeeded, so `run` removed the journal of the whole file): 18 finished stress results were lost and re-run, and their first cost is not recorded. Fixed in `422460c1` (a `--limit` run keeps its journal). The limit had lifted by then, and the rest resumed from the journal.
+- **Account email:** 0 occurrences in any Round 10 artifact (grep).
+
+**Training set** (`render.sh`, no `TOPK`): Round 8's 3,286 rows plus the 1,324 new rows, 4,610 in; dedup dropped 1 (a Round 8 row containing a held-out-3 utterance, which did not exist in Round 8). 7,564 sequences: 4,609 full-list step-1 (R2c format) and 2,955 step-2, all trainable, 0 template or token mismatches, 0 boundary merges, one BOS; render manifest: format r6.1, no dirty chat-core files; `training-prompt-format.test.ts` passes. Split: 7,187 train / 377 val sequences (228 source rows, 98 ops).
+
+**Training** (Constantine, M4 Max 64 GB, `launch.sh` + watchdog, HIGH 0.5 / LOW 0.45, caffeinate, screen; checksums matched both ways): from base, 450 steps (2 epochs), wall 3,135 s (52.3 min), 5,996,544 trainable parameters. Train loss 1.288 → 0.0038. **Val loss** 0.0767 (step 25) → 0.0197 (150) → 0.0216 (225, end of epoch 1) → 0.0153 (300) → **0.0126 at steps 425 and 450 (minimum = final)**, still falling slowly at the end, so 2 epochs did not overfit by val loss. Peak footprint 16 GiB, MPS driver peak 17.0 GB, swap flat, no resume, watchdog never triggered. Adapter sha256 `6a7fe975…fd5cb`.
+
+**Export** (this Mac, CPU): merge 16.7 s, max RSS 4.8 GB; merged vs base+adapter logits on 16 val rows (4,120 tokens) max |Δ| 2.8e-4, argmax equal everywhere. Convert 4.7 s, template 1.7 s, quantize 1.4 s: `LFM2.5-350M-vault-r10a-20261022-Q4_K_M.gguf`, 229,312,224 B, sha256 `f56deeb16c1aedf07a0911c52fe21277bf39944e8d6d9658d88c59734b8c9517`.
+
+### Held-out-4 results
+
+`heldout4-eval.json` (sha256 `25c51a7b…14c0cc`, committed unchanged in `57c4d994` after the pre-registration `e6db5c2a`): 104 action items (52 natural, 52 paraphrase; 9 easy, 50 medium, 45 hard), 10 no-action, 6 multi-action, over 94 ops; tags: 73 `sibling-confusion`, 40 `exact-copy`, 40 `ref`, 33 `enum`, 16 `list`. E8 and E10 each ran **once** (WebGPU, Apple `metal-3`, one page, 15:06–16:05; no errors, no reruns). Per-item rows: `eval/results-r10-{E8-h4,E10-h4,E10-h3}.json`; tables from `training/py/r10_report.py`, summary `training/results/round10-2026-10-22.json`. Args, refs and sub-scores are over action items with the right op.
+
+| | **E8** (Round 8 LoRA) | **E10** (Round 10 LoRA) |
+|---|---|---|
+| Op | **84/104 (80.8%)** | 82/104 (78.8%) |
+| Natural / paraphrase | 48/52 / 36/52 | 47/52 / 35/52 |
+| Natural easy / medium / hard | 9/9 / 29/30 / 10/13 | 9/9 / 27/30 / 11/13 |
+| Paraphrase medium / hard | 16/20 / 20/32 | 15/20 / 20/32 |
+| Op on `sibling-confusion` items (nat / para) | 53/73 (21/25 / 32/48) | 53/73 (21/25 / 32/48) |
+| Op, gold op in a Round 10 group / not | 70/88 / 14/16 | 67/88 / 15/16 |
+| Args exact | 42/55 (76.4%) | **43/55 (78.2%)** |
+| Fields matched: list / enum / span / other | 10/11 / 22/27 / 36/39 / 12/19 | **14/14 / 24/27** / 34/39 / 10/16 |
+| Args exact on items tagged `list` / `exact-copy` / `enum` | 6/8 / 26/34 / 18/27 | **10/11** / 27/35 / **20/27** |
+| Ref ids exact | **29/33 (87.9%)** | 24/30 (80.0%) |
+| `requiredPresent` | 22/22 | 20/20 |
+| No-action P / R | 6/7 / 6/10 | **6/6** / 6/10 |
+| Multi-action: single op among the expected | 6/6 | 6/6 |
+| Fully right (nat / para) | **68/104 (65.4%)** (38 / 30) | 64/104 (61.5%) (37 / 27) |
+| Latency median / p90 | 459 / 842 ms | 411 / 769 ms |
+| Op misses: sibling in list / LoRA `[]` | 19 / 1 | 22 / 0 |
+
+- **Paired (same 104 items):** E10 gains 7 ops (6 paraphrases: SET_TITLE, SET_METADATA_LIST_FIELD ×2, SET_REFERENCES, FAIL_TASK, DISSOLVE_TENSION, ADD_RESEED_ENTRY) and loses 9 (7 paraphrases: SUBMIT_FOR_REVIEW → ADD_LINK, UPDATE_ORIENTATION → UPDATE_DESCRIPTION, ADD_OPEN_QUESTION → REMOVE_TENSION, ADD_DELIVERABLE → ADD_KNOWLEDGE_REF, ADD_NOTE → REMOVE_NOTE, UNBLOCK_TASK → COMPLETE_TASK, UPDATE_MAINTENANCE_THRESHOLD → UPDATE_PIPELINE_CONFIG, TOGGLE_EXTRACTION_CATEGORY → TOGGLE_FEATURE, INGEST_SOURCE → SET_SOURCE_STATUS). Fully right: 8 gained, 12 lost. On the 51 items both got the op right, args exact 39 (E8) vs 40 (E10); on the 29 with refs, 25 vs 23.
+- **Remaining misses (E10, 22, all siblings in the list):** most are within the targeted groups (wbs goal/dependency ops ×4, moc text ops ×2, project status/deliverable/reference ops ×4, the vault-config toggles ×3, pipeline task ops ×2, source ×1, note lifecycle ×2). Args misses: `SET_METADATA_FIELD.value` ×2, `INGEST_SOURCE` `sourceType`/`author`/`url`, and single date, sort-order, enum-phase, meant-but-unnamed `assignee`, `parentRef` and span misses.
+
+**E10 on held-out-3 (second use; secondary):**
+
+| | R2c (Round 9, Round 8 LoRA) | E10 |
+|---|---|---|
+| Op | 79/92 (85.9%) | 77/92 (83.7%) |
+| Natural / paraphrase | 44/45 / 35/47 | 44/45 / 33/47 |
+| Args exact | 26/38 (68.4%) | 26/38 (68.4%) |
+| Refs | 35/35 | 33/35 |
+| No-action P / R | 7/8 / 7/10 | 7/8 / 7/10 |
+| Fully right | 67/92 (72.8%) | 63/92 (68.5%) |
+| Latency median / p90 | 443 / 938 ms | 474 / 938 ms |
+| Op misses: sibling / LoRA `[]` | 12 / 1 | 14 / 1 |
+
+### Q&A regression check (Round 8's 15 prompts, temperature 0, 256 tokens)
+
+| | Other better | Same | Round 10 better |
+|---|---|---|---|
+| Round 10 vs base | 3 (base) | 11 | 1 |
+| Round 10 vs Round 8 | 2 (Round 8) | 11 | 2 |
+
+- **Base better than Round 10:** qa-04 (Round 10 names the wrong contradicted note, as Round 8 did), qa-14 (Round 10 computes 0.08 × 800 = 64 g of salt; the base restates 3% without a number, Round 8 got 24 g), qa-15 (Round 10 picks the finished book, as Round 8 did).
+- **Round 10 better than base:** qa-07 (it keeps all four values; the base drops the 200 reviews).
+- **Against Round 8:** Round 8 better on qa-08 (it states both sides with their reasons; Round 10 names only the two labels) and qa-14; Round 10 better on qa-02 (no stray `\boxed{285}`) and qa-07 (Round 8 dropped both numbers).
+- No JSON or `{"ops"…}` text in any Round 10 answer. Judged by me, once.
+
+### Verdict
+
+- **The bars are not met, and Round 10 does not beat Round 8.** On held-out-4, E10 reaches op 78.8% (bar 90%) and args exact 78.2% (bar 80%); E8 has op 80.8% and args 76.4%. Op −2, args +1, fully right −4 items on 104: all within one run's noise, and the paired view (7 ops gained, 9 lost) shows reshuffling, not progress. On held-out-3 E10 is also slightly below Round 8's R2c (77 vs 79 op).
+- **Sibling confusion did not move.** On the 73 `sibling-confusion` items both models score exactly 53/73, and paraphrases stay at 67–69% op. About 1,190 contrastive items (905 kept rows, about a fifth of the training set) against shared states did not teach this model the distinctions the blind set tests: Round 10's misses are mostly the very groups that were targeted (goal vs dependency, orientation vs description, project vs deliverable, the vault-config toggles).
+- **Arguments moved where the data was aimed, by small counts:** list fields 14/14 vs 10/11 and `list`-tagged items 10/11 vs 6/8, enum fields 24/27 vs 22/27, while spans (34/39 vs 36/39) and refs (24/30 vs 29/33) slipped. These are single-digit differences on 11–39 fields.
+- **Training itself was healthy:** val loss fell to 0.0126 (Round 8: 0.0143 minimum) with no overfitting in 2 epochs. The gap is between the teacher's distribution and held-out writers', as Round 8 concluded, and more teacher rows of the same kind do not close it.
+- **Q&A:** no new regression against Round 8 (2 vs 2), still slightly behind the base (3 vs 1), one new arithmetic error (qa-14).
+- **What next** (not measured):
+  1. **Stop adding teacher rows of this kind.** Two training sets (3.3k and 4.6k rows) give the same blind-set op accuracy; the val/held-out gap (val loss 0.013, held-out op about 80%) is a distribution gap.
+  2. **Get wording closer to real users:** paraphrases written by other people or models than the generator (or real chat logs), and labels that contrast siblings explicitly (the blind labeler disagreed on the op for 12.8% of contrastive rows, so the teacher's own sibling distinctions are not crisp either).
+  3. **Give step 1 more than the op key:** the R2c list shows only keys; a one-line description of each candidate in the step-1 prompt (a format change, r6.2) would let the model use the distinction the catalog already states, for example orientation vs description. That needs a re-render, a retrain and a fresh blind set.
+  4. **Larger base model:** if the 350M model cannot hold the distinctions, try the next size up within the latency budget (E10's median is 411 ms).
+  5. **For v1 now:** keep the Round 8 LoRA with R2c; Round 10's LoRA is not better.
