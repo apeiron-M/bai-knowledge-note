@@ -1,0 +1,196 @@
+/**
+ * Labeled ref candidates from a document's state, for step 2: which items a
+ * ref field may point at, and the label the model sees for each. The labels
+ * follow the training data's conventions (`training/gen/ref-scenarios.ts`,
+ * `RECIPES[op].paths`): goal description, member name, deliverable title,
+ * task target, topic name, link target title, the drive's document titles.
+ * `tests/unit/chat-ref-candidates.test.ts` checks every recipe against this.
+ */
+import type { RefCandidates } from "./v1-pipeline.js";
+
+type Rec = Record<string, unknown>;
+
+export interface RefCandidate {
+  id: string;
+  label: string;
+}
+
+/**
+ * An item listed from outside the document (other documents in the drive,
+ * goals of a linked plan), by kind: `note`, `knowledge`, `wbs`, `project`,
+ * `wbs-goal`, `topic`, `session`.
+ */
+export interface RefContextItem {
+  id: string;
+  title: string;
+  kind: string;
+}
+
+type Extract = (state: Rec, ctx: RefContextItem[]) => RefCandidate[];
+
+function isRec(v: unknown): v is Rec {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+const recs = (v: unknown): Rec[] => (Array.isArray(v) ? v.filter(isRec) : []);
+const str = (v: unknown): string => (typeof v === "string" ? v : "");
+const titleOf = (ctx: RefContextItem[], id: unknown) =>
+  ctx.find((c) => c.id === id)?.title ?? str(id);
+const ctxOf =
+  (kind: string): Extract =>
+  (_s, ctx) =>
+    ctx.filter((c) => c.kind === kind).map((c) => ({ id: c.id, label: c.title }));
+
+const noteTopics: Extract = (s) =>
+  recs(s.topics).map((x) => ({ id: str(x.id), label: str(x.name) }));
+const noteLinks: Extract = (s) =>
+  recs(s.links).map((x) => ({
+    id: str(x.id),
+    label: str(x.targetTitle) || str(x.targetDocumentId),
+  }));
+const unlinkedNotes: Extract = (s, ctx) => {
+  const linked = new Set(recs(s.links).map((l) => l.targetDocumentId));
+  return ctxOf("note")(s, ctx).filter((c) => !linked.has(c.id));
+};
+const wbsGoals: Extract = (s) =>
+  recs(s.goals).map((g) => ({ id: str(g.id), label: str(g.description) }));
+const wbsNotes: Extract = (s) =>
+  recs(s.goals).flatMap((g) =>
+    recs(g.notes).map((n) => ({ id: str(n.id), label: str(n.note) })),
+  );
+const team: Extract = (s) =>
+  recs(s.team).map((m) => ({ id: str(m.id), label: str(m.name) }));
+const deliverables: Extract = (s) =>
+  recs(s.deliverables).map((d) => ({ id: str(d.id), label: str(d.title) }));
+const linkedKnowledge: Extract = (s, ctx) =>
+  (Array.isArray(s.knowledgeRefs) ? s.knowledgeRefs : []).map((id) => ({
+    id: str(id),
+    label: titleOf(ctx, id),
+  }));
+const unlinkedKnowledge: Extract = (s, ctx) => {
+  const linked = new Set(Array.isArray(s.knowledgeRefs) ? s.knowledgeRefs : []);
+  return ctxOf("knowledge")(s, ctx).filter((c) => !linked.has(c.id));
+};
+const coreIdeas: Extract = (s, ctx) =>
+  recs(s.coreIdeas).map((c) => ({
+    id: str(c.id),
+    label: titleOf(ctx, c.noteRef),
+  }));
+const mocTensions: Extract = (s) =>
+  recs(s.tensions).map((x) => ({ id: str(x.id), label: str(x.description) }));
+const tasks: Extract = (s) =>
+  recs(s.tasks).map((x) => ({ id: str(x.id), label: str(x.target) }));
+const batchIds: Extract = (s) =>
+  [...new Set(recs(s.tasks).map((x) => str(x.batchId)).filter(Boolean))].map(
+    (b) => ({ id: b, label: b }),
+  );
+
+/** Ref paths per op key, as in the training recipes. */
+export const REF_EXTRACTORS: Record<string, Record<string, Extract>> = {
+  "knowledge-note:SET_PROVENANCE": { sessionId: ctxOf("session") },
+  "knowledge-note:ADD_LINK": { targetDocumentId: unlinkedNotes },
+  "knowledge-note:REMOVE_LINK": { id: noteLinks },
+  "knowledge-note:UPDATE_LINK_TYPE": { id: noteLinks },
+  "knowledge-note:ADD_TOPIC": { topicDocumentId: ctxOf("topic") },
+  "knowledge-note:REMOVE_TOPIC": { id: noteTopics },
+  "moc:UPDATE_CORE_IDEA": { id: coreIdeas },
+  "moc:REMOVE_CORE_IDEA": { id: coreIdeas },
+  "moc:REORDER_CORE_IDEAS": { ids: coreIdeas },
+  "moc:REMOVE_TENSION": { id: mocTensions },
+  "pipeline-queue:ADD_TASK": { batchId: batchIds },
+  "pipeline-queue:ASSIGN_TASK": { taskId: tasks },
+  "pipeline-queue:ADVANCE_PHASE": { taskId: tasks },
+  "pipeline-queue:COMPLETE_TASK": { taskId: tasks },
+  "pipeline-queue:FAIL_TASK": { taskId: tasks },
+  "pipeline-queue:BLOCK_TASK": { taskId: tasks },
+  "pipeline-queue:UNBLOCK_TASK": { taskId: tasks },
+  "project:LINK_WBS": { wbsRef: ctxOf("wbs") },
+  "project:UPDATE_MEMBER": { id: team },
+  "project:REMOVE_MEMBER": { id: team },
+  "project:ADD_DELIVERABLE": { goalRef: ctxOf("wbs-goal") },
+  "project:UPDATE_DELIVERABLE": { id: deliverables, goalRef: ctxOf("wbs-goal") },
+  "project:SET_DELIVERABLE_STATUS": { id: deliverables },
+  "project:REMOVE_DELIVERABLE": { id: deliverables },
+  "project:ADD_KNOWLEDGE_REF": { ref: unlinkedKnowledge },
+  "project:REMOVE_KNOWLEDGE_REF": { ref: linkedKnowledge },
+  "research-claim:REMOVE_RESEARCH_CONNECTION": {
+    id: (s, ctx) =>
+      recs(s.connections).map((c) => ({
+        id: str(c.id),
+        label: titleOf(ctx, c.targetRef),
+      })),
+  },
+  "vault-config:TOGGLE_EXTRACTION_CATEGORY": {
+    id: (s) =>
+      recs(s.extractionCategories).map((c) => ({
+        id: str(c.id),
+        label: str(c.name),
+      })),
+  },
+  "wbs:CREATE_GOAL": { parentId: wbsGoals, insertBefore: wbsGoals },
+  "wbs:UPDATE_GOAL_DESCRIPTION": { id: wbsGoals },
+  "wbs:DELETE_GOAL": { id: wbsGoals },
+  "wbs:REORDER": { id: wbsGoals, parentId: wbsGoals, insertBefore: wbsGoals },
+  "wbs:SET_GOAL_STATUS": { id: wbsGoals },
+  "wbs:ASSIGN_GOAL": { id: wbsGoals },
+  "wbs:SET_OUTCOME": { id: wbsGoals },
+  "wbs:ADD_DEPENDENCIES": { id: wbsGoals, dependencies: wbsGoals },
+  "wbs:REMOVE_DEPENDENCIES": { id: wbsGoals, dependencies: wbsGoals },
+  "wbs:ADD_NOTE": { goalId: wbsGoals },
+  "wbs:REMOVE_NOTE": { goalId: wbsGoals, noteId: wbsNotes },
+  "wbs:SET_PROJECT_REF": { projectRef: ctxOf("project") },
+};
+
+/** Labeled candidates for every ref path of `opKey` (none for other ops). */
+export function refCandidatesFor(
+  opKey: string,
+  state: Rec,
+  ctx: RefContextItem[],
+): RefCandidates {
+  const paths = REF_EXTRACTORS[opKey] ?? {};
+  return Object.fromEntries(
+    Object.entries(paths).map(([p, f]) => [p, f(state, ctx)]),
+  );
+}
+
+/** A drive document as the chat sees it: id, type, title and global state. */
+export interface ChatDocument {
+  id: string;
+  docType: string;
+  title: string;
+  state: Rec;
+}
+
+const CTX_KIND_BY_TYPE: Record<string, string[]> = {
+  "bai/knowledge-note": ["note", "knowledge"],
+  "bai/wbs": ["wbs"],
+  "bai/project": ["project"],
+};
+
+/**
+ * The drive's items a ref field may point at, from the target document's
+ * point of view: other notes (`note`, `knowledge`), plans (`wbs`), projects
+ * (`project`) and, for a project with a linked plan, that plan's goals
+ * (`wbs-goal`). Topic pages and capture sessions have no drive source yet.
+ */
+export function driveRefContext(
+  target: ChatDocument,
+  documents: ChatDocument[],
+): RefContextItem[] {
+  const out: RefContextItem[] = [];
+  for (const d of documents) {
+    if (d.id === target.id) continue;
+    for (const kind of CTX_KIND_BY_TYPE[d.docType] ?? [])
+      out.push({ id: d.id, title: d.title, kind });
+  }
+  const wbsRef = str(target.state.wbsRef);
+  const wbs = wbsRef ? documents.find((d) => d.id === wbsRef) : undefined;
+  if (target.docType === "bai/project" && wbs)
+    for (const g of recs(wbs.state.goals))
+      out.push({ id: str(g.id), title: str(g.description), kind: "wbs-goal" });
+  return out;
+}
+
+/** A document's display title: its state's title or name, else `fallback`. */
+export function documentTitle(state: Rec, fallback: string): string {
+  return str(state.title) || str(state.name) || fallback;
+}
