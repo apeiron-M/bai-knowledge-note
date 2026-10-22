@@ -1,0 +1,6104 @@
+{
+  "r9Run:\"webgpu\":{\"name\":\"R2-h3\",\"sets\":[\"h3\",\"h3na\",\"h3multi\"],\"model\":\"lora\",\"cands\":{\"mode\":\"scoped-all\",\"order\":\"rank\"},\"preGate\":false}": {
+    "summary": {
+      "preGate": false,
+      "bySet": {
+        "h3": {
+          "n": 92,
+          "action": 92,
+          "opAcc": "78/92",
+          "opAccPct": 84.8,
+          "opByStyle": {
+            "all": "78/92",
+            "style=paraphrase": "34/47",
+            "paraphrase/medium": "28/39",
+            "style=natural": "44/45",
+            "natural/easy": "14/14",
+            "natural/medium": "25/25",
+            "natural/hard": "5/6",
+            "paraphrase/hard": "6/8"
+          },
+          "recallList": "92/92",
+          "opAccGivenInList": "78/92",
+          "listLen": {
+            "median": 14
+          },
+          "args": {
+            "n": 78,
+            "exact": "26/39",
+            "fieldsMatch": "26/39",
+            "withExtras": 0,
+            "requiredPresent": "26/26",
+            "refExact": "34/35",
+            "zodOk": "78/78",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {
+              "all": "26/39",
+              "style=paraphrase": "9/17",
+              "paraphrase/medium": "9/14",
+              "style=natural": "17/22",
+              "natural/easy": "5/5",
+              "natural/medium": "10/15",
+              "natural/hard": "2/2",
+              "paraphrase/hard": "0/3"
+            },
+            "refByStyle": {
+              "all": "34/35",
+              "style=natural": "19/19",
+              "natural/medium": "9/9",
+              "style=paraphrase": "15/16",
+              "paraphrase/medium": "12/12",
+              "natural/easy": "7/7",
+              "natural/hard": "3/3",
+              "paraphrase/hard": "3/4"
+            }
+          },
+          "fullyRight": "65/92",
+          "fullyRightPct": 70.7,
+          "fullyRightByStyle": {
+            "all": "65/92",
+            "style=paraphrase": "26/47",
+            "paraphrase/medium": "23/39",
+            "style=natural": "39/45",
+            "natural/easy": "14/14",
+            "natural/medium": "20/25",
+            "natural/hard": "5/6",
+            "paraphrase/hard": "3/8"
+          },
+          "noAction": {
+            "tp": 0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0,
+            "recall": null
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 429,
+            "p90": 947
+          },
+          "misses": {
+            "sibling in list": 13,
+            "LoRA chose no-action": 1
+          },
+          "confusions": {
+            "knowledge-note:SET_METADATA_FIELD -> knowledge-note:SET_NOTE_TYPE": 1,
+            "knowledge-note:SET_METADATA_LIST_FIELD -> knowledge-note:UPDATE_LINK_TYPE": 1,
+            "moc:UPDATE_ORIENTATION -> moc:UPDATE_DESCRIPTION": 1,
+            "moc:UPDATE_CORE_IDEA -> moc:UPDATE_DESCRIPTION": 1,
+            "project:UPDATE_PROJECT_INFO -> project:UPDATE_DELIVERABLE": 1,
+            "project:SET_PROJECT_STATUS -> project:SET_DELIVERABLE_STATUS": 1,
+            "project:SET_DELIVERABLE_STATUS -> project:UPDATE_DELIVERABLE": 1,
+            "project:SET_REFERENCES -> project:ADD_KNOWLEDGE_REF": 1,
+            "pipeline-queue:FAIL_TASK -> pipeline-queue:BLOCK_TASK": 1,
+            "source:INGEST_SOURCE -> source:ADD_EXTRACTED_CLAIM": 1,
+            "vault-config:UPDATE_VOCABULARY -> vault-config:UPDATE_PIPELINE_CONFIG": 1,
+            "vault-config:UPDATE_PIPELINE_CONFIG -> vault-config:TOGGLE_EXTRACTION_CATEGORY": 1,
+            "vault-config:ADD_EXTRACTION_CATEGORY -> vault-config:TOGGLE_EXTRACTION_CATEGORY": 1
+          },
+          "argsMisses": {
+            "health-report:ADD_CHECK.affectedItems": 2,
+            "knowledge-note:SET_DESCRIPTION.description": 1,
+            "moc:REMOVE_OPEN_QUESTION.question": 1,
+            "moc:REMOVE_CHILD_MOC.childRef": 1,
+            "project:CREATE_PROJECT.owner": 1,
+            "project:SET_TARGET_DATE.targetDate": 1,
+            "project:ADD_MEMBER.role": 1,
+            "wbs:SET_GOAL_STATUS.status": 1,
+            "pipeline-queue:ADVANCE_PHASE.handoff.phase": 1,
+            "pipeline-queue:ADVANCE_PHASE.handoff.filesModified": 1,
+            "source:INGEST_SOURCE.url": 1,
+            "source:INGEST_SOURCE.author": 1,
+            "source:INGEST_SOURCE.content": 1,
+            "research-claim:CREATE_CLAIM.methodology": 1,
+            "health-report:ADD_CHECK.category": 1,
+            "derivation:ADD_SIGNAL.influencedDimensions": 1
+          }
+        },
+        "h3na": {
+          "n": 10,
+          "action": 0,
+          "opAcc": "0/0",
+          "opAccPct": null,
+          "opByStyle": {},
+          "recallList": "0/0",
+          "opAccGivenInList": "0/0",
+          "listLen": {
+            "median": null
+          },
+          "args": {
+            "n": 0,
+            "exact": "0/0",
+            "fieldsMatch": "0/0",
+            "withExtras": 0,
+            "requiredPresent": "0/0",
+            "refExact": "0/0",
+            "zodOk": "0/0",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {},
+            "refByStyle": {}
+          },
+          "fullyRight": "0/0",
+          "fullyRightPct": null,
+          "fullyRightByStyle": {},
+          "noAction": {
+            "tp": 7,
+            "fn": 3,
+            "fp": 0,
+            "precision": 100,
+            "recall": 70
+          },
+          "multiAction": {
+            "n": 0,
+            "firstInExpected": "0/0",
+            "firstIsExpectedFirst": "0/0",
+            "none": 0
+          },
+          "latency": {
+            "median": 173,
+            "p90": 718
+          },
+          "misses": {},
+          "confusions": {},
+          "argsMisses": {}
+        },
+        "h3multi": {
+          "n": 6,
+          "action": 0,
+          "opAcc": "0/0",
+          "opAccPct": null,
+          "opByStyle": {},
+          "recallList": "0/0",
+          "opAccGivenInList": "0/0",
+          "listLen": {
+            "median": null
+          },
+          "args": {
+            "n": 0,
+            "exact": "0/0",
+            "fieldsMatch": "0/0",
+            "withExtras": 0,
+            "requiredPresent": "0/0",
+            "refExact": "0/0",
+            "zodOk": "0/0",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {},
+            "refByStyle": {}
+          },
+          "fullyRight": "0/0",
+          "fullyRightPct": null,
+          "fullyRightByStyle": {},
+          "noAction": {
+            "tp": 0,
+            "fn": 0,
+            "fp": 0,
+            "precision": null,
+            "recall": null
+          },
+          "multiAction": {
+            "n": 6,
+            "firstInExpected": "4/6",
+            "firstIsExpectedFirst": "2/6",
+            "none": 0
+          },
+          "latency": {
+            "median": null,
+            "p90": null
+          },
+          "misses": {},
+          "confusions": {},
+          "argsMisses": {}
+        },
+        "heldout3": {
+          "n": 108,
+          "action": 92,
+          "opAcc": "78/92",
+          "opAccPct": 84.8,
+          "opByStyle": {
+            "all": "78/92",
+            "style=paraphrase": "34/47",
+            "paraphrase/medium": "28/39",
+            "style=natural": "44/45",
+            "natural/easy": "14/14",
+            "natural/medium": "25/25",
+            "natural/hard": "5/6",
+            "paraphrase/hard": "6/8"
+          },
+          "recallList": "92/92",
+          "opAccGivenInList": "78/92",
+          "listLen": {
+            "median": 14
+          },
+          "args": {
+            "n": 78,
+            "exact": "26/39",
+            "fieldsMatch": "26/39",
+            "withExtras": 0,
+            "requiredPresent": "26/26",
+            "refExact": "34/35",
+            "zodOk": "78/78",
+            "emptyArgs": 0,
+            "genMedianMs": null,
+            "genP90Ms": null,
+            "refMedianMs": null,
+            "refP90Ms": null,
+            "refCfMedianMs": null,
+            "exactByStyle": {
+              "all": "26/39",
+              "style=paraphrase": "9/17",
+              "paraphrase/medium": "9/14",
+              "style=natural": "17/22",
+              "natural/easy": "5/5",
+              "natural/medium": "10/15",
+              "natural/hard": "2/2",
+              "paraphrase/hard": "0/3"
+            },
+            "refByStyle": {
+              "all": "34/35",
+              "style=natural": "19/19",
+              "natural/medium": "9/9",
+              "style=paraphrase": "15/16",
+              "paraphrase/medium": "12/12",
+              "natural/easy": "7/7",
+              "natural/hard": "3/3",
+              "paraphrase/hard": "3/4"
+            }
+          },
+          "fullyRight": "65/92",
+          "fullyRightPct": 70.7,
+          "fullyRightByStyle": {
+            "all": "65/92",
+            "style=paraphrase": "26/47",
+            "paraphrase/medium": "23/39",
+            "style=natural": "39/45",
+            "natural/easy": "14/14",
+            "natural/medium": "20/25",
+            "natural/hard": "5/6",
+            "paraphrase/hard": "3/8"
+          },
+          "noAction": {
+            "tp": 7,
+            "fn": 3,
+            "fp": 1,
+            "precision": 87.5,
+            "recall": 70
+          },
+          "multiAction": {
+            "n": 6,
+            "firstInExpected": "4/6",
+            "firstIsExpectedFirst": "2/6",
+            "none": 0
+          },
+          "latency": {
+            "median": 423,
+            "p90": 916
+          },
+          "misses": {
+            "sibling in list": 13,
+            "LoRA chose no-action": 1
+          },
+          "confusions": {
+            "knowledge-note:SET_METADATA_FIELD -> knowledge-note:SET_NOTE_TYPE": 1,
+            "knowledge-note:SET_METADATA_LIST_FIELD -> knowledge-note:UPDATE_LINK_TYPE": 1,
+            "moc:UPDATE_ORIENTATION -> moc:UPDATE_DESCRIPTION": 1,
+            "moc:UPDATE_CORE_IDEA -> moc:UPDATE_DESCRIPTION": 1,
+            "project:UPDATE_PROJECT_INFO -> project:UPDATE_DELIVERABLE": 1,
+            "project:SET_PROJECT_STATUS -> project:SET_DELIVERABLE_STATUS": 1,
+            "project:SET_DELIVERABLE_STATUS -> project:UPDATE_DELIVERABLE": 1,
+            "project:SET_REFERENCES -> project:ADD_KNOWLEDGE_REF": 1,
+            "pipeline-queue:FAIL_TASK -> pipeline-queue:BLOCK_TASK": 1,
+            "source:INGEST_SOURCE -> source:ADD_EXTRACTED_CLAIM": 1,
+            "vault-config:UPDATE_VOCABULARY -> vault-config:UPDATE_PIPELINE_CONFIG": 1,
+            "vault-config:UPDATE_PIPELINE_CONFIG -> vault-config:TOGGLE_EXTRACTION_CATEGORY": 1,
+            "vault-config:ADD_EXTRACTION_CATEGORY -> vault-config:TOGGLE_EXTRACTION_CATEGORY": 1
+          },
+          "argsMisses": {
+            "health-report:ADD_CHECK.affectedItems": 2,
+            "knowledge-note:SET_DESCRIPTION.description": 1,
+            "moc:REMOVE_OPEN_QUESTION.question": 1,
+            "moc:REMOVE_CHILD_MOC.childRef": 1,
+            "project:CREATE_PROJECT.owner": 1,
+            "project:SET_TARGET_DATE.targetDate": 1,
+            "project:ADD_MEMBER.role": 1,
+            "wbs:SET_GOAL_STATUS.status": 1,
+            "pipeline-queue:ADVANCE_PHASE.handoff.phase": 1,
+            "pipeline-queue:ADVANCE_PHASE.handoff.filesModified": 1,
+            "source:INGEST_SOURCE.url": 1,
+            "source:INGEST_SOURCE.author": 1,
+            "source:INGEST_SOURCE.content": 1,
+            "research-claim:CREATE_CLAIM.methodology": 1,
+            "health-report:ADD_CHECK.category": 1,
+            "derivation:ADD_SIGNAL.influencedDimensions": 1
+          }
+        }
+      }
+    },
+    "rows": [
+      {
+        "id": "kn3-01",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "what kind of entry is this really? it records a choice we made and the reasons behind it, so file it as that kind",
+        "expectedOp": "knowledge-note:SET_NOTE_TYPE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:REMOVE_LINK"
+        ],
+        "goldRank": 11,
+        "inList": true,
+        "gate": {
+          "score": -0.010627284937558601,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_NOTE_TYPE\"]}",
+        "loraPick": "knowledge-note:SET_NOTE_TYPE",
+        "args": {
+          "noteType": "decision"
+        },
+        "raw": "{\"noteType\": \"decision\"}",
+        "argsError": null,
+        "argsOrder": [
+          "noteType"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 62,
+          "op": 266,
+          "args": 110,
+          "ungated": 438,
+          "gated": 438
+        }
+      },
+      {
+        "id": "kn3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the one-line blurb that shows under the heading should say: Cold retards trade oven spring for deeper flavor.",
+        "expectedOp": "knowledge-note:SET_DESCRIPTION",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.015146141093485221,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_DESCRIPTION\"]}",
+        "loraPick": "knowledge-note:SET_DESCRIPTION",
+        "args": {
+          "description": "Cold retards trade oven spring for deeper flavor"
+        },
+        "raw": "{\"description\": \"Cold retards trade oven spring for deeper flavor\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "description"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 68,
+          "op": 270,
+          "args": 131,
+          "ungated": 469,
+          "gated": 469
+        }
+      },
+      {
+        "id": "kn3-03",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "replace the body with: Salt slows yeast but tightens gluten, so add it after a 30 minute autolyse.",
+        "expectedOp": "knowledge-note:SET_CONTENT",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:REMOVE_TOPIC"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.023932914837131003,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_CONTENT\"]}",
+        "loraPick": "knowledge-note:SET_CONTENT",
+        "args": {
+          "content": "Salt slows yeast but tightens gluten, so add it after a 30 minute autolyse."
+        },
+        "raw": "{\"content\": \"Salt slows yeast but tightens gluten, so add it after a 30 minute autolyse.\"}",
+        "argsError": null,
+        "argsOrder": [
+          "content"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 68,
+          "op": 361,
+          "args": 172,
+          "ungated": 602,
+          "gated": 602
+        }
+      },
+      {
+        "id": "kn3-04",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "link this to \"Starter hydration ratios\" as builds on",
+        "expectedOp": "knowledge-note:ADD_LINK",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.0010907393969390444,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:ADD_LINK\"]}",
+        "loraPick": "knowledge-note:ADD_LINK",
+        "args": {
+          "targetDocumentId": "kn-a41",
+          "linkType": "BUILDS_ON"
+        },
+        "raw": "{\"targetDocumentId\": \"Starter hydration ratios\", \"linkType\": \"BUILDS_ON\"}",
+        "argsError": null,
+        "argsOrder": [
+          "targetDocumentId",
+          "linkType"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 40,
+          "op": 260,
+          "args": 648,
+          "ungated": 947,
+          "gated": 947
+        }
+      },
+      {
+        "id": "kn3-05",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the poolish piece actually undercuts our claim here, so mark that relationship accordingly",
+        "expectedOp": "knowledge-note:UPDATE_LINK_TYPE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_NOTE_TYPE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.030025612309292682,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:UPDATE_LINK_TYPE\"]}",
+        "loraPick": "knowledge-note:UPDATE_LINK_TYPE",
+        "args": {
+          "id": "lk-12",
+          "linkType": "CONTRADICTS"
+        },
+        "raw": "{\"id\": \"Poolish vs biga (RELATES_TO)\", \"linkType\": \"CONTRADICTS\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "linkType"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 49,
+          "op": 275,
+          "args": 650,
+          "ungated": 975,
+          "gated": 975
+        }
+      },
+      {
+        "id": "kn3-06",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove the link to \"Rye sours faster\"",
+        "expectedOp": "knowledge-note:REMOVE_LINK",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.05637531711450128,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REMOVE_LINK\"]}",
+        "loraPick": "knowledge-note:REMOVE_LINK",
+        "args": {
+          "id": "lk-23"
+        },
+        "raw": "{\"id\": \"Rye sours faster (RELATES_TO)\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 30,
+          "op": 263,
+          "args": 595,
+          "ungated": 888,
+          "gated": 888
+        }
+      },
+      {
+        "id": "kn3-07",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "tag this with fermentation",
+        "expectedOp": "knowledge-note:ADD_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:REMOVE_LINK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.014306602844229022,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:ADD_TOPIC\"]}",
+        "loraPick": "knowledge-note:ADD_TOPIC",
+        "args": {
+          "name": "fermentation"
+        },
+        "raw": "{\"name\": \"fermentation\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 24,
+          "op": 223,
+          "args": 92,
+          "ungated": 339,
+          "gated": 339
+        }
+      },
+      {
+        "id": "kn3-08",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "it isn't about enzymes at all, drop that label",
+        "expectedOp": "knowledge-note:REMOVE_TOPIC",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.038898201801763954,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REMOVE_TOPIC\"]}",
+        "loraPick": "knowledge-note:REMOVE_TOPIC",
+        "args": {
+          "id": "tp-12"
+        },
+        "raw": "{\"id\": \"enzymes\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 44,
+          "op": 263,
+          "args": 391,
+          "ungated": 698,
+          "gated": 698
+        }
+      },
+      {
+        "id": "kn3-09",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "I'm only moderately sure about this one, put my certainty down as medium",
+        "expectedOp": "knowledge-note:SET_METADATA_FIELD",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 4,
+        "inList": true,
+        "gate": {
+          "score": 0.10161957800952792,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SET_NOTE_TYPE\"]}",
+        "loraPick": "knowledge-note:SET_NOTE_TYPE",
+        "args": {
+          "noteType": "observation"
+        },
+        "raw": "{\"noteType\": \"observation\"}",
+        "argsError": null,
+        "argsOrder": [
+          "noteType"
+        ],
+        "ms": {
+          "embed": 54,
+          "op": 279,
+          "args": 101,
+          "ungated": 434,
+          "gated": 54
+        }
+      },
+      {
+        "id": "kn3-11",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "the alternatives we looked at were instant yeast and a commercial preferment",
+        "expectedOp": "knowledge-note:SET_METADATA_LIST_FIELD",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 8,
+        "inList": true,
+        "gate": {
+          "score": 0.06982861185722333,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:UPDATE_LINK_TYPE\"]}",
+        "loraPick": "knowledge-note:UPDATE_LINK_TYPE",
+        "args": {
+          "linkType": "RELATES_TO"
+        },
+        "raw": "{\"linkType\": \"RELATES_TO\"}",
+        "argsError": null,
+        "argsOrder": [
+          "linkType"
+        ],
+        "ms": {
+          "embed": 48,
+          "op": 266,
+          "args": 115,
+          "ungated": 429,
+          "gated": 48
+        }
+      },
+      {
+        "id": "kn3-12",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "ok I'm happy with it, submit it for review",
+        "expectedOp": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.004639102446525212,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:SUBMIT_FOR_REVIEW\"]}",
+        "loraPick": "knowledge-note:SUBMIT_FOR_REVIEW",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 43,
+          "op": 266,
+          "args": 0,
+          "ungated": 308,
+          "gated": 308
+        }
+      },
+      {
+        "id": "kn3-13",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "Mira's write-up checks out, sign off on it and make it official",
+        "expectedOp": "knowledge-note:APPROVE_NOTE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:REMOVE_TOPIC"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.022716288676804086,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:APPROVE_NOTE\"]}",
+        "loraPick": "knowledge-note:APPROVE_NOTE",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 56,
+          "op": 250,
+          "args": 0,
+          "ungated": 306,
+          "gated": 306
+        }
+      },
+      {
+        "id": "kn3-14",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "not ready yet, bounce it back to Tomás: the timings in step 3 contradict the table",
+        "expectedOp": "knowledge-note:REJECT_NOTE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_TITLE"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.023213069681485954,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:REJECT_NOTE\"]}",
+        "loraPick": "knowledge-note:REJECT_NOTE",
+        "args": {
+          "comment": "the timings in step 3 contradict the table"
+        },
+        "raw": "{\"comment\": \"the timings in step 3 contradict the table\"}",
+        "argsError": null,
+        "argsOrder": [
+          "comment"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 62,
+          "op": 260,
+          "args": 129,
+          "ungated": 451,
+          "gated": 451
+        }
+      },
+      {
+        "id": "kn3-15",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "archive this, we replaced it with the new hydration guide",
+        "expectedOp": "knowledge-note:ARCHIVE_NOTE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_PROVENANCE"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.03722913317088483,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:ARCHIVE_NOTE\"]}",
+        "loraPick": "knowledge-note:ARCHIVE_NOTE",
+        "args": {
+          "comment": "we replaced it with the new hydration guide"
+        },
+        "raw": "{\"comment\": \"we replaced it with the new hydration guide\"}",
+        "argsError": null,
+        "argsOrder": [
+          "comment"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 44,
+          "op": 263,
+          "args": 123,
+          "ungated": 429,
+          "gated": 429
+        }
+      },
+      {
+        "id": "kn3-16",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "bring this back out of storage, the bakery class still cites it",
+        "expectedOp": "knowledge-note:RESTORE_NOTE",
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ADD_LINK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.020423835296144,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:RESTORE_NOTE\"]}",
+        "loraPick": "knowledge-note:RESTORE_NOTE",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 48,
+          "op": 363,
+          "args": 0,
+          "ungated": 411,
+          "gated": 411
+        }
+      },
+      {
+        "id": "moc3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "new topic map \"Wild yeast ecology\": it's about how starter microbes compete and cooperate, and readers should begin with the LAB-to-yeast balance notes",
+        "expectedOp": "moc:CREATE_MOC",
+        "expectedOps": null,
+        "candidates": [
+          "moc:CREATE_MOC",
+          "moc:ADD_CORE_IDEA",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_CHILD_MOC",
+          "moc:ADD_TENSION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_TENSION",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:SET_METADATA_FIELD",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:REMOVE_CHILD_MOC"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.02076635906585711,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:CREATE_MOC\"]}",
+        "loraPick": "moc:CREATE_MOC",
+        "args": {
+          "tier": "TOPIC",
+          "title": "Wild yeast ecology",
+          "description": "how starter microbes compete and cooperate",
+          "orientation": "LAB-to-yeast balance notes"
+        },
+        "raw": "{\"tier\": \"TOPIC\", \"title\": \"Wild yeast ecology\", \"description\": \"how starter microbes compete and cooperate\", \"orientation\": \"LAB-to-yeast balance notes\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title",
+          "description",
+          "orientation",
+          "tier"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 95,
+          "op": 216,
+          "args": 206,
+          "ungated": 518,
+          "gated": 518
+        }
+      },
+      {
+        "id": "moc3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "tell readers to start with the salt pieces and only then move on to timing",
+        "expectedOp": "moc:UPDATE_ORIENTATION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REORDER_CORE_IDEAS",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_TENSION",
+          "moc:REMOVE_TENSION",
+          "moc:CREATE_MOC",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:SET_METADATA_FIELD",
+          "moc:ADD_CHILD_MOC"
+        ],
+        "goldRank": 5,
+        "inList": true,
+        "gate": {
+          "score": -0.007819205453021505,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:UPDATE_DESCRIPTION\"]}",
+        "loraPick": "moc:UPDATE_DESCRIPTION",
+        "args": {
+          "description": "start with the salt pieces and only then move on to timing"
+        },
+        "raw": "{\"description\": \"start with the salt pieces and only then move on to timing\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "ms": {
+          "embed": 48,
+          "op": 217,
+          "args": 146,
+          "ungated": 411,
+          "gated": 411
+        }
+      },
+      {
+        "id": "moc3-03",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "update the description to \"What controls crust color and thickness\"",
+        "expectedOp": "moc:UPDATE_DESCRIPTION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:UPDATE_DESCRIPTION",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_TENSION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_CORE_IDEA",
+          "moc:CREATE_MOC",
+          "moc:SET_METADATA_FIELD",
+          "moc:REMOVE_TENSION",
+          "moc:ADD_CHILD_MOC",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:REMOVE_OPEN_QUESTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.02464990369117437,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:UPDATE_DESCRIPTION\"]}",
+        "loraPick": "moc:UPDATE_DESCRIPTION",
+        "args": {
+          "description": "What controls crust color and thickness"
+        },
+        "raw": "{\"description\": \"What controls crust color and thickness\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 46,
+          "op": 212,
+          "args": 110,
+          "ungated": 367,
+          "gated": 367
+        }
+      },
+      {
+        "id": "moc3-04",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add \"Fridge proofing builds acetic tang\" to the core ideas, it's the main flavor lever",
+        "expectedOp": "moc:ADD_CORE_IDEA",
+        "expectedOps": null,
+        "candidates": [
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:ADD_TENSION",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:CREATE_MOC",
+          "moc:ADD_CHILD_MOC",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:REMOVE_TENSION",
+          "moc:SET_METADATA_FIELD",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:REMOVE_OPEN_QUESTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.017424739616652585,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:ADD_CORE_IDEA\"]}",
+        "loraPick": "moc:ADD_CORE_IDEA",
+        "args": {
+          "noteRef": "Fridge proofing builds acetic tang",
+          "contextPhrase": "it's the main flavor lever",
+          "sortOrder": 0
+        },
+        "raw": "{\"noteRef\": \"Fridge proofing builds acetic tang\", \"contextPhrase\": \"it's the main flavor lever\", \"sortOrder\": 0}",
+        "argsError": null,
+        "argsOrder": [
+          "noteRef",
+          "contextPhrase",
+          "sortOrder"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 61,
+          "op": 215,
+          "args": 248,
+          "ungated": 525,
+          "gated": 525
+        }
+      },
+      {
+        "id": "moc3-05",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the gloss beside \"Steam injection timing\" should say \"why the crust blisters\" instead",
+        "expectedOp": "moc:UPDATE_CORE_IDEA",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REMOVE_TENSION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:ADD_TENSION",
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:UPDATE_ORIENTATION",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:SET_METADATA_FIELD",
+          "moc:CREATE_MOC",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:ADD_CHILD_MOC"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.016268774767663974,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:UPDATE_DESCRIPTION\"]}",
+        "loraPick": "moc:UPDATE_DESCRIPTION",
+        "args": {
+          "description": "why the crust blisters"
+        },
+        "raw": "{\"description\": \"why the crust blisters\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description"
+        ],
+        "ms": {
+          "embed": 57,
+          "op": 211,
+          "args": 116,
+          "ungated": 384,
+          "gated": 384
+        }
+      },
+      {
+        "id": "moc3-06",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "put the lamination one first and leave the other two in their current order",
+        "expectedOp": "moc:REORDER_CORE_IDEAS",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REORDER_CORE_IDEAS",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_CORE_IDEA",
+          "moc:REMOVE_TENSION",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:ADD_TENSION",
+          "moc:CREATE_MOC",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:ADD_CHILD_MOC",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:SET_METADATA_FIELD",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:ADD_OPEN_QUESTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.03311251774035995,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:REORDER_CORE_IDEAS\"]}",
+        "loraPick": "moc:REORDER_CORE_IDEAS",
+        "args": {
+          "ids": [
+            "ci-23",
+            "ci-21",
+            "ci-22"
+          ]
+        },
+        "raw": "{\"ids\": [\"Lamination\", \"Stretch and folds\", \"Coil folds\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "ids"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 45,
+          "op": 219,
+          "args": 160,
+          "ungated": 423,
+          "gated": 423
+        }
+      },
+      {
+        "id": "moc3-07",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add a tension on this map: long autolyse vs early salt, between the autolyse note and the salt timing note",
+        "expectedOp": "moc:ADD_TENSION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:ADD_TENSION",
+          "moc:REMOVE_TENSION",
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:ADD_CHILD_MOC",
+          "moc:UPDATE_ORIENTATION",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:CREATE_MOC",
+          "moc:SET_METADATA_FIELD",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:REMOVE_CHILD_MOC"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.05436181592516265,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:ADD_TENSION\"]}",
+        "loraPick": "moc:ADD_TENSION",
+        "args": {
+          "description": "long autolyse vs early salt",
+          "involvedRefs": [
+            "autolyse note",
+            "salt timing note"
+          ]
+        },
+        "raw": "{\"description\": \"long autolyse vs early salt\", \"involvedRefs\": [\"autolyse note\", \"salt timing note\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "description",
+          "involvedRefs"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 69,
+          "op": 209,
+          "args": 207,
+          "ungated": 485,
+          "gated": 485
+        }
+      },
+      {
+        "id": "moc3-08",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we settled whether the two-day fridge rest pays off, so that one can come off our list of unknowns",
+        "expectedOp": "moc:REMOVE_OPEN_QUESTION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REMOVE_CORE_IDEA",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:REMOVE_TENSION",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:ADD_TENSION",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:ADD_CORE_IDEA",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_CHILD_MOC",
+          "moc:UPDATE_ORIENTATION",
+          "moc:CREATE_MOC",
+          "moc:SET_METADATA_FIELD"
+        ],
+        "goldRank": 7,
+        "inList": true,
+        "gate": {
+          "score": 0.040007537746991395,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": [\"moc:REMOVE_OPEN_QUESTION\"]}",
+        "loraPick": "moc:REMOVE_OPEN_QUESTION",
+        "args": {
+          "question": "whether the two-day fridge rest pays off"
+        },
+        "raw": "{\"question\": \"whether the two-day fridge rest pays off\"}",
+        "argsError": null,
+        "argsOrder": [
+          "question"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "question"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 65,
+          "op": 223,
+          "args": 120,
+          "ungated": 408,
+          "gated": 65
+        }
+      },
+      {
+        "id": "moc3-09",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "add an open question: does water hardness change rise time?",
+        "expectedOp": "moc:ADD_OPEN_QUESTION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:REMOVE_TENSION",
+          "moc:ADD_CORE_IDEA",
+          "moc:ADD_TENSION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:UPDATE_ORIENTATION",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:SET_METADATA_FIELD",
+          "moc:CREATE_MOC",
+          "moc:ADD_CHILD_MOC",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:REMOVE_CHILD_MOC"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.009832808452362007,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": [\"moc:ADD_OPEN_QUESTION\"]}",
+        "loraPick": "moc:ADD_OPEN_QUESTION",
+        "args": {
+          "question": "does water hardness change rise time?"
+        },
+        "raw": "{\"question\": \"does water hardness change rise time?\"}",
+        "argsError": null,
+        "argsOrder": [
+          "question"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 40,
+          "op": 211,
+          "args": 110,
+          "ungated": 361,
+          "gated": 40
+        }
+      },
+      {
+        "id": "moc3-10",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "nest the \"Rye baking\" map underneath this one",
+        "expectedOp": "moc:ADD_CHILD_MOC",
+        "expectedOps": null,
+        "candidates": [
+          "moc:CREATE_MOC",
+          "moc:ADD_CHILD_MOC",
+          "moc:ADD_CORE_IDEA",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:UPDATE_ORIENTATION",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_TENSION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:SET_METADATA_FIELD",
+          "moc:REMOVE_TENSION"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.034617016759426966,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:ADD_CHILD_MOC\"]}",
+        "loraPick": "moc:ADD_CHILD_MOC",
+        "args": {
+          "childRef": "Rye baking"
+        },
+        "raw": "{\"childRef\": \"Rye baking\"}",
+        "argsError": null,
+        "argsOrder": [
+          "childRef"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 34,
+          "op": 203,
+          "args": 142,
+          "ungated": 379,
+          "gated": 379
+        }
+      },
+      {
+        "id": "moc3-11",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "the enriched doughs sub-map doesn't belong under here anymore, detach it",
+        "expectedOp": "moc:REMOVE_CHILD_MOC",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REMOVE_CHILD_MOC",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:REMOVE_TENSION",
+          "moc:ADD_CHILD_MOC",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:CREATE_MOC",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:ADD_TENSION",
+          "moc:SET_METADATA_FIELD"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.04748879856035193,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:REMOVE_CHILD_MOC\"]}",
+        "loraPick": "moc:REMOVE_CHILD_MOC",
+        "args": {
+          "childRef": "doughs sub-map"
+        },
+        "raw": "{\"childRef\": \"doughs sub-map\"}",
+        "argsError": null,
+        "argsOrder": [
+          "childRef"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "childRef"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 51,
+          "op": 218,
+          "args": 117,
+          "ungated": 386,
+          "gated": 386
+        }
+      },
+      {
+        "id": "moc3-12",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "remove the hydration tension",
+        "expectedOp": "moc:REMOVE_TENSION",
+        "expectedOps": null,
+        "candidates": [
+          "moc:REMOVE_TENSION",
+          "moc:ADD_TENSION",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:ADD_CHILD_MOC",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_CORE_IDEA",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:CREATE_MOC",
+          "moc:SET_METADATA_FIELD"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.09216419445304125,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:REMOVE_TENSION\"]}",
+        "loraPick": "moc:REMOVE_TENSION",
+        "args": {
+          "id": "tn-12"
+        },
+        "raw": "{\"id\": \"Higher hydration vs easier handling\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 25,
+          "op": 203,
+          "args": 359,
+          "ungated": 588,
+          "gated": 588
+        }
+      },
+      {
+        "id": "prj3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "start a project called \"Riverside greenway study\", Hana owns it, and it's still in planning",
+        "expectedOp": "project:CREATE_PROJECT",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_OWNER",
+          "project:SET_PROJECT_STATUS",
+          "project:CREATE_PROJECT",
+          "project:LINK_WBS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:SET_TARGET_DATE",
+          "project:UPDATE_PROJECT_INFO",
+          "project:SET_REFERENCES",
+          "project:ADD_MEMBER",
+          "project:REMOVE_DELIVERABLE",
+          "project:UPDATE_MEMBER",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:REMOVE_MEMBER"
+        ],
+        "goldRank": 3,
+        "inList": true,
+        "gate": {
+          "score": -0.0030452473206377118,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:CREATE_PROJECT\"]}",
+        "loraPick": "project:CREATE_PROJECT",
+        "args": {
+          "name": "Riverside greenway study",
+          "status": "PLANNING"
+        },
+        "raw": "{\"name\": \"Riverside greenway study\", \"status\": \"PLANNING\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name",
+          "status"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "owner"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 60,
+          "op": 184,
+          "args": 156,
+          "ungated": 401,
+          "gated": 401
+        }
+      },
+      {
+        "id": "prj3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the blurb for this effort should mention it covers the Eastside corridor plus both bridge approaches",
+        "expectedOp": "project:UPDATE_PROJECT_INFO",
+        "expectedOps": null,
+        "candidates": [
+          "project:LINK_WBS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:SET_REFERENCES",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_OWNER",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:ADD_MEMBER",
+          "project:SET_TARGET_DATE",
+          "project:REMOVE_DELIVERABLE",
+          "project:UPDATE_MEMBER",
+          "project:CREATE_PROJECT",
+          "project:REMOVE_MEMBER",
+          "project:UPDATE_PROJECT_INFO"
+        ],
+        "goldRank": 16,
+        "inList": true,
+        "gate": {
+          "score": -0.03838947983088714,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:UPDATE_DELIVERABLE\"]}",
+        "loraPick": "project:UPDATE_DELIVERABLE",
+        "args": {
+          "description": "covers the Eastside corridor plus both bridge approaches"
+        },
+        "raw": "{\"description\": \"covers the Eastside corridor plus both bridge approaches\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title",
+          "description",
+          "url"
+        ],
+        "ms": {
+          "embed": 51,
+          "op": 196,
+          "args": 133,
+          "ungated": 380,
+          "gated": 380
+        }
+      },
+      {
+        "id": "prj3-03",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "everything shipped last month, so mark the whole effort as finished",
+        "expectedOp": "project:SET_PROJECT_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_DELIVERABLE_STATUS",
+          "project:ADD_DELIVERABLE",
+          "project:SET_TARGET_DATE",
+          "project:SET_PROJECT_STATUS",
+          "project:LINK_WBS",
+          "project:UPDATE_DELIVERABLE",
+          "project:ADD_MEMBER",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:SET_OWNER",
+          "project:REMOVE_DELIVERABLE",
+          "project:UPDATE_MEMBER",
+          "project:UPDATE_PROJECT_INFO",
+          "project:SET_REFERENCES",
+          "project:REMOVE_MEMBER",
+          "project:CREATE_PROJECT",
+          "project:REMOVE_KNOWLEDGE_REF"
+        ],
+        "goldRank": 4,
+        "inList": true,
+        "gate": {
+          "score": 0.04357348167262276,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_DELIVERABLE_STATUS\"]}",
+        "loraPick": "project:SET_DELIVERABLE_STATUS",
+        "args": {
+          "status": "DELIVERED"
+        },
+        "raw": "{\"status\": \"DELIVERED\"}",
+        "argsError": null,
+        "argsOrder": [
+          "status"
+        ],
+        "ms": {
+          "embed": 42,
+          "op": 193,
+          "args": 111,
+          "ungated": 346,
+          "gated": 42
+        }
+      },
+      {
+        "id": "prj3-04",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "make Dario the owner",
+        "expectedOp": "project:SET_OWNER",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_OWNER",
+          "project:ADD_MEMBER",
+          "project:CREATE_PROJECT",
+          "project:UPDATE_MEMBER",
+          "project:REMOVE_MEMBER",
+          "project:SET_PROJECT_STATUS",
+          "project:ADD_DELIVERABLE",
+          "project:REMOVE_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:LINK_WBS",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:UPDATE_PROJECT_INFO",
+          "project:SET_TARGET_DATE",
+          "project:SET_REFERENCES"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.02521126760258474,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_OWNER\"]}",
+        "loraPick": "project:SET_OWNER",
+        "args": {
+          "owner": "Dario"
+        },
+        "raw": "{\"owner\": \"Dario\"}",
+        "argsError": null,
+        "argsOrder": [
+          "owner"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 22,
+          "op": 171,
+          "args": 88,
+          "ungated": 281,
+          "gated": 281
+        }
+      },
+      {
+        "id": "prj3-05",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we need this wrapped by the end of next month",
+        "expectedOp": "project:SET_TARGET_DATE",
+        "expectedOps": null,
+        "candidates": [
+          "project:LINK_WBS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:SET_TARGET_DATE",
+          "project:ADD_DELIVERABLE",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:REMOVE_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:REMOVE_MEMBER",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:SET_PROJECT_STATUS",
+          "project:ADD_MEMBER",
+          "project:UPDATE_MEMBER",
+          "project:SET_OWNER",
+          "project:SET_REFERENCES",
+          "project:UPDATE_PROJECT_INFO",
+          "project:CREATE_PROJECT"
+        ],
+        "goldRank": 3,
+        "inList": true,
+        "gate": {
+          "score": 0.03868712228594562,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_TARGET_DATE\"]}",
+        "loraPick": "project:SET_TARGET_DATE",
+        "args": {
+          "targetDate": "2023-10-31T00:00:00Z"
+        },
+        "raw": "{\"targetDate\": \"2023-10-31T00:00:00Z\"}",
+        "argsError": null,
+        "argsOrder": [
+          "targetDate"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "targetDate"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 32,
+          "op": 177,
+          "args": 160,
+          "ungated": 369,
+          "gated": 369
+        }
+      },
+      {
+        "id": "prj3-06",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "hook this up to the \"Eastside rollout breakdown\" so its task tree shows here",
+        "expectedOp": "project:LINK_WBS",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_DELIVERABLE_STATUS",
+          "project:SET_PROJECT_STATUS",
+          "project:LINK_WBS",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_REFERENCES",
+          "project:SET_TARGET_DATE",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:REMOVE_DELIVERABLE",
+          "project:SET_OWNER",
+          "project:CREATE_PROJECT",
+          "project:UPDATE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:UPDATE_PROJECT_INFO",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:REMOVE_MEMBER"
+        ],
+        "goldRank": 3,
+        "inList": true,
+        "gate": {
+          "score": -0.01674268382807409,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:LINK_WBS\"]}",
+        "loraPick": "project:LINK_WBS",
+        "args": {
+          "wbsRef": "ph-wbs-12"
+        },
+        "raw": "{\"wbsRef\": \"Eastside rollout breakdown\"}",
+        "argsError": null,
+        "argsOrder": [
+          "wbsRef"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 49,
+          "op": 176,
+          "args": 124,
+          "ungated": 349,
+          "gated": 349
+        }
+      },
+      {
+        "id": "prj3-07",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add Keiko to the team as the community liaison",
+        "expectedOp": "project:ADD_MEMBER",
+        "expectedOps": null,
+        "candidates": [
+          "project:ADD_MEMBER",
+          "project:UPDATE_MEMBER",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:LINK_WBS",
+          "project:REMOVE_MEMBER",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_OWNER",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:SET_REFERENCES",
+          "project:REMOVE_DELIVERABLE",
+          "project:CREATE_PROJECT",
+          "project:SET_TARGET_DATE",
+          "project:UPDATE_PROJECT_INFO"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.006632250162316611,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:ADD_MEMBER\"]}",
+        "loraPick": "project:ADD_MEMBER",
+        "args": {
+          "name": "Keiko"
+        },
+        "raw": "{\"name\": \"Keiko\"}",
+        "argsError": null,
+        "argsOrder": [
+          "name"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "role"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 34,
+          "op": 171,
+          "args": 92,
+          "ungated": 297,
+          "gated": 297
+        }
+      },
+      {
+        "id": "prj3-08",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "Priya's moved over to the community outreach side now",
+        "expectedOp": "project:UPDATE_MEMBER",
+        "expectedOps": null,
+        "candidates": [
+          "project:UPDATE_MEMBER",
+          "project:UPDATE_DELIVERABLE",
+          "project:REMOVE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:LINK_WBS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_OWNER",
+          "project:REMOVE_DELIVERABLE",
+          "project:ADD_DELIVERABLE",
+          "project:SET_REFERENCES",
+          "project:UPDATE_PROJECT_INFO",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:SET_TARGET_DATE",
+          "project:CREATE_PROJECT"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.038456654793441625,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:UPDATE_MEMBER\"]}",
+        "loraPick": "project:UPDATE_MEMBER",
+        "args": {
+          "id": "tm-3",
+          "role": "community outreach"
+        },
+        "raw": "{\"id\": \"Priya (traffic analyst)\", \"role\": \"community outreach\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "name",
+          "role",
+          "kind"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 41,
+          "op": 181,
+          "args": 518,
+          "ungated": 739,
+          "gated": 739
+        }
+      },
+      {
+        "id": "prj3-09",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove Lin from the team",
+        "expectedOp": "project:REMOVE_MEMBER",
+        "expectedOps": null,
+        "candidates": [
+          "project:REMOVE_MEMBER",
+          "project:REMOVE_DELIVERABLE",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:UPDATE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:LINK_WBS",
+          "project:SET_OWNER",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_TARGET_DATE",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:ADD_DELIVERABLE",
+          "project:SET_REFERENCES",
+          "project:UPDATE_PROJECT_INFO",
+          "project:CREATE_PROJECT",
+          "project:ADD_KNOWLEDGE_REF"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.044345650119488766,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:REMOVE_MEMBER\"]}",
+        "loraPick": "project:REMOVE_MEMBER",
+        "args": {
+          "id": "tm-2"
+        },
+        "raw": "{\"id\": \"Lin (designer)\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 26,
+          "op": 176,
+          "args": 478,
+          "ungated": 679,
+          "gated": 679
+        }
+      },
+      {
+        "id": "prj3-10",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add a deliverable \"Parking impact memo\" tied to the curbside audit goal",
+        "expectedOp": "project:ADD_DELIVERABLE",
+        "expectedOps": null,
+        "candidates": [
+          "project:ADD_DELIVERABLE",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:UPDATE_DELIVERABLE",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:LINK_WBS",
+          "project:SET_PROJECT_STATUS",
+          "project:REMOVE_DELIVERABLE",
+          "project:SET_TARGET_DATE",
+          "project:ADD_MEMBER",
+          "project:SET_OWNER",
+          "project:UPDATE_MEMBER",
+          "project:CREATE_PROJECT",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:REMOVE_MEMBER",
+          "project:UPDATE_PROJECT_INFO",
+          "project:SET_REFERENCES"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.045659188790479366,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:ADD_DELIVERABLE\"]}",
+        "loraPick": "project:ADD_DELIVERABLE",
+        "args": {
+          "goalRef": "g-2",
+          "title": "Parking impact memo"
+        },
+        "raw": "{\"goalRef\": \"Curbside audit\", \"title\": \"Parking impact memo\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title",
+          "goalRef"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 47,
+          "op": 189,
+          "args": 159,
+          "ungated": 396,
+          "gated": 396
+        }
+      },
+      {
+        "id": "prj3-11",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the draft design packet lives at https://files.example.org/eastside/design-v2.pdf now",
+        "expectedOp": "project:UPDATE_DELIVERABLE",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_PROJECT_STATUS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:LINK_WBS",
+          "project:UPDATE_DELIVERABLE",
+          "project:ADD_DELIVERABLE",
+          "project:SET_REFERENCES",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:REMOVE_DELIVERABLE",
+          "project:CREATE_PROJECT",
+          "project:ADD_MEMBER",
+          "project:SET_OWNER",
+          "project:UPDATE_MEMBER",
+          "project:UPDATE_PROJECT_INFO",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:SET_TARGET_DATE",
+          "project:REMOVE_MEMBER"
+        ],
+        "goldRank": 4,
+        "inList": true,
+        "gate": {
+          "score": -0.011097724169646606,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:UPDATE_DELIVERABLE\"]}",
+        "loraPick": "project:UPDATE_DELIVERABLE",
+        "args": {
+          "id": "dl-2",
+          "url": "https://files.example.org/eastside/design-v2.pdf"
+        },
+        "raw": "{\"id\": \"Design packet (IN_PROGRESS)\", \"url\": \"https://files.example.org/eastside/design-v2.pdf\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "title",
+          "description",
+          "url"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 70,
+          "op": 195,
+          "args": 784,
+          "ungated": 1049,
+          "gated": 1049
+        }
+      },
+      {
+        "id": "prj3-12",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the signage plan went out to the city on Monday",
+        "expectedOp": "project:SET_DELIVERABLE_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "project:SET_DELIVERABLE_STATUS",
+          "project:LINK_WBS",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_OWNER",
+          "project:SET_TARGET_DATE",
+          "project:REMOVE_DELIVERABLE",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:SET_REFERENCES",
+          "project:CREATE_PROJECT",
+          "project:UPDATE_PROJECT_INFO",
+          "project:UPDATE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:REMOVE_MEMBER"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.003100299364440784,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:UPDATE_DELIVERABLE\"]}",
+        "loraPick": "project:UPDATE_DELIVERABLE",
+        "args": {
+          "id": "dl-3",
+          "description": "the signage plan went out to the city on Monday"
+        },
+        "raw": "{\"id\": \"Signage plan (IN_PROGRESS)\", \"description\": \"the signage plan went out to the city on Monday\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "title",
+          "description",
+          "url"
+        ],
+        "ms": {
+          "embed": 33,
+          "op": 194,
+          "args": 659,
+          "ungated": 886,
+          "gated": 886
+        }
+      },
+      {
+        "id": "prj3-13",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "delete the press kit deliverable, it was never in scope",
+        "expectedOp": "project:REMOVE_DELIVERABLE",
+        "expectedOps": null,
+        "candidates": [
+          "project:REMOVE_DELIVERABLE",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:UPDATE_DELIVERABLE",
+          "project:ADD_DELIVERABLE",
+          "project:REMOVE_MEMBER",
+          "project:SET_OWNER",
+          "project:SET_TARGET_DATE",
+          "project:LINK_WBS",
+          "project:SET_PROJECT_STATUS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:CREATE_PROJECT",
+          "project:ADD_MEMBER",
+          "project:UPDATE_PROJECT_INFO",
+          "project:UPDATE_MEMBER",
+          "project:SET_REFERENCES"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.050342957151861545,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:REMOVE_DELIVERABLE\"]}",
+        "loraPick": "project:REMOVE_DELIVERABLE",
+        "args": {
+          "id": "dl-4"
+        },
+        "raw": "{\"id\": \"Press kit (PLANNED)\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 55,
+          "op": 206,
+          "args": 804,
+          "ungated": 1064,
+          "gated": 1064
+        }
+      },
+      {
+        "id": "prj3-14",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "link the \"Protected lanes reduce injury rates\" note to this project",
+        "expectedOp": "project:ADD_KNOWLEDGE_REF",
+        "expectedOps": null,
+        "candidates": [
+          "project:LINK_WBS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:SET_REFERENCES",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:UPDATE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_OWNER",
+          "project:ADD_DELIVERABLE",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:UPDATE_DELIVERABLE",
+          "project:REMOVE_MEMBER",
+          "project:CREATE_PROJECT",
+          "project:UPDATE_PROJECT_INFO",
+          "project:SET_TARGET_DATE",
+          "project:REMOVE_DELIVERABLE"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.011588863559155782,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:ADD_KNOWLEDGE_REF\"]}",
+        "loraPick": "project:ADD_KNOWLEDGE_REF",
+        "args": {
+          "ref": "ph-kn-233"
+        },
+        "raw": "{\"ref\": \"Protected lanes reduce injury rates\"}",
+        "argsError": null,
+        "argsOrder": [
+          "ref"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 51,
+          "op": 211,
+          "args": 588,
+          "ungated": 851,
+          "gated": 851
+        }
+      },
+      {
+        "id": "prj3-15",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "also cite https://nacto.org/publication/urban-bikeway-design-guide/ alongside the plan PDF we already have",
+        "expectedOp": "project:SET_REFERENCES",
+        "expectedOps": null,
+        "candidates": [
+          "project:ADD_KNOWLEDGE_REF",
+          "project:LINK_WBS",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_REFERENCES",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:SET_PROJECT_STATUS",
+          "project:UPDATE_PROJECT_INFO",
+          "project:REMOVE_DELIVERABLE",
+          "project:CREATE_PROJECT",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:SET_OWNER",
+          "project:UPDATE_MEMBER",
+          "project:ADD_MEMBER",
+          "project:SET_TARGET_DATE",
+          "project:REMOVE_MEMBER"
+        ],
+        "goldRank": 5,
+        "inList": true,
+        "gate": {
+          "score": -0.02509694434903642,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:ADD_KNOWLEDGE_REF\"]}",
+        "loraPick": "project:ADD_KNOWLEDGE_REF",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "ms": {
+          "embed": 76,
+          "op": 205,
+          "args": 0,
+          "ungated": 281,
+          "gated": 281
+        }
+      },
+      {
+        "id": "prj3-16",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "remove the e-scooter parking note from this project's knowledge refs",
+        "expectedOp": "project:REMOVE_KNOWLEDGE_REF",
+        "expectedOps": null,
+        "candidates": [
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:REMOVE_DELIVERABLE",
+          "project:REMOVE_MEMBER",
+          "project:LINK_WBS",
+          "project:SET_REFERENCES",
+          "project:SET_OWNER",
+          "project:UPDATE_PROJECT_INFO",
+          "project:SET_PROJECT_STATUS",
+          "project:UPDATE_DELIVERABLE",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:SET_TARGET_DATE",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_MEMBER",
+          "project:CREATE_PROJECT",
+          "project:ADD_MEMBER"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.07064468402357327,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:REMOVE_KNOWLEDGE_REF\"]}",
+        "loraPick": "project:REMOVE_KNOWLEDGE_REF",
+        "args": {
+          "ref": "ph-kn-240"
+        },
+        "raw": "{\"ref\": \"E-scooter parking conflicts\"}",
+        "argsError": null,
+        "argsOrder": [
+          "ref"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 53,
+          "op": 200,
+          "args": 577,
+          "ungated": 830,
+          "gated": 830
+        }
+      },
+      {
+        "id": "wbs3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add a goal \"Order paint\" under procurement",
+        "expectedOp": "wbs:CREATE_GOAL",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:REORDER",
+          "wbs:CREATE_GOAL",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ASSIGN_GOAL",
+          "wbs:ADD_NOTE",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:DELETE_GOAL",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_OUTCOME",
+          "wbs:SET_OWNER",
+          "wbs:SET_REFERENCES",
+          "wbs:REMOVE_NOTE"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.06406262029957477,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:CREATE_GOAL\"]}",
+        "loraPick": "wbs:CREATE_GOAL",
+        "args": {
+          "parentId": "g-10",
+          "description": "Order paint"
+        },
+        "raw": "{\"parentId\": \"Procurement\", \"description\": \"Order paint\"}",
+        "argsError": null,
+        "argsOrder": [
+          "description",
+          "parentId",
+          "insertBefore"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 38,
+          "op": 194,
+          "args": 142,
+          "ungated": 374,
+          "gated": 374
+        }
+      },
+      {
+        "id": "wbs3-03",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "reword the curb survey item so it reads \"Survey curbs and loading zones on 5 blocks\"",
+        "expectedOp": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:REORDER",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_OWNER",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:SET_OUTCOME",
+          "wbs:REMOVE_NOTE",
+          "wbs:ADD_NOTE",
+          "wbs:ASSIGN_GOAL",
+          "wbs:CREATE_GOAL",
+          "wbs:SET_REFERENCES",
+          "wbs:DELETE_GOAL",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:REMOVE_DEPENDENCIES"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.005284630151595526,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:UPDATE_GOAL_DESCRIPTION\"]}",
+        "loraPick": "wbs:UPDATE_GOAL_DESCRIPTION",
+        "args": {
+          "id": "g-30",
+          "description": "Survey curbs and loading zones on 5 blocks"
+        },
+        "raw": "{\"id\": \"Survey curbs\", \"description\": \"Survey curbs and loading zones on 5 blocks\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "description"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 55,
+          "op": 198,
+          "args": 631,
+          "ungated": 884,
+          "gated": 884
+        }
+      },
+      {
+        "id": "wbs3-04",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "delete the rent cones goal, the city is lending us cones",
+        "expectedOp": "wbs:DELETE_GOAL",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:DELETE_GOAL",
+          "wbs:ASSIGN_GOAL",
+          "wbs:REMOVE_NOTE",
+          "wbs:REORDER",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:SET_OWNER",
+          "wbs:CREATE_GOAL",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:SET_PROJECT_REF",
+          "wbs:ADD_NOTE",
+          "wbs:SET_OUTCOME",
+          "wbs:SET_REFERENCES"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.012113518907758358,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:DELETE_GOAL\"]}",
+        "loraPick": "wbs:DELETE_GOAL",
+        "args": {
+          "id": "g-12"
+        },
+        "raw": "{\"id\": \"Rent cones\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 44,
+          "op": 179,
+          "args": 455,
+          "ungated": 678,
+          "gated": 678
+        }
+      },
+      {
+        "id": "wbs3-05",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "we're skipping the night-time count entirely, but leave it on the board so people can see we decided that",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:REMOVE_NOTE",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:ADD_NOTE",
+          "wbs:DELETE_GOAL",
+          "wbs:SET_OUTCOME",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:REORDER",
+          "wbs:ASSIGN_GOAL",
+          "wbs:CREATE_GOAL",
+          "wbs:SET_OWNER",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_REFERENCES"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.004638230967132673,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_GOAL_STATUS\"]}",
+        "loraPick": "wbs:SET_GOAL_STATUS",
+        "args": {
+          "id": "g-60",
+          "status": "IN_PROGRESS"
+        },
+        "raw": "{\"id\": \"Install bollards\", \"status\": \"IN_PROGRESS\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "status"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": false,
+        "mismatched": [
+          "status"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 66,
+          "op": 186,
+          "args": 617,
+          "ungated": 870,
+          "gated": 870
+        }
+      },
+      {
+        "id": "wbs3-06",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "set \"Install bollards\" to blocked, we're waiting on the supplier",
+        "expectedOp": "wbs:SET_GOAL_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:SET_OWNER",
+          "wbs:REORDER",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:SET_PROJECT_REF",
+          "wbs:ADD_NOTE",
+          "wbs:ASSIGN_GOAL",
+          "wbs:CREATE_GOAL",
+          "wbs:SET_REFERENCES",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_OUTCOME",
+          "wbs:REMOVE_NOTE",
+          "wbs:DELETE_GOAL"
+        ],
+        "goldRank": 4,
+        "inList": true,
+        "gate": {
+          "score": 0.0024058839934150145,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_GOAL_STATUS\"]}",
+        "loraPick": "wbs:SET_GOAL_STATUS",
+        "args": {
+          "id": "g-60",
+          "status": "BLOCKED",
+          "blockReason": "we're waiting on the supplier"
+        },
+        "raw": "{\"id\": \"Install bollards\", \"status\": \"BLOCKED\", \"blockReason\": \"we're waiting on the supplier\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "status",
+          "blockReason"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 51,
+          "op": 184,
+          "args": 681,
+          "ungated": 916,
+          "gated": 916
+        }
+      },
+      {
+        "id": "wbs3-07",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "Keiko is going to handle the signage installation",
+        "expectedOp": "wbs:ASSIGN_GOAL",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_OWNER",
+          "wbs:ADD_NOTE",
+          "wbs:REORDER",
+          "wbs:SET_PROJECT_REF",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:CREATE_GOAL",
+          "wbs:ASSIGN_GOAL",
+          "wbs:SET_OUTCOME",
+          "wbs:SET_REFERENCES",
+          "wbs:REMOVE_NOTE",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:DELETE_GOAL"
+        ],
+        "goldRank": 9,
+        "inList": true,
+        "gate": {
+          "score": -0.011089881728794881,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:ASSIGN_GOAL\"]}",
+        "loraPick": "wbs:ASSIGN_GOAL",
+        "args": {
+          "id": "g-80",
+          "assignee": "Keiko"
+        },
+        "raw": "{\"id\": \"Signage installation\", \"assignee\": \"Keiko\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "assignee"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 35,
+          "op": 173,
+          "args": 461,
+          "ungated": 669,
+          "gated": 669
+        }
+      },
+      {
+        "id": "wbs3-08",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "set the outcome on the curb survey: 212 parking spaces counted across 5 blocks",
+        "expectedOp": "wbs:SET_OUTCOME",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_OUTCOME",
+          "wbs:SET_OWNER",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ADD_NOTE",
+          "wbs:REORDER",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:SET_REFERENCES",
+          "wbs:ASSIGN_GOAL",
+          "wbs:CREATE_GOAL",
+          "wbs:SET_PROJECT_REF",
+          "wbs:REMOVE_NOTE",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:DELETE_GOAL",
+          "wbs:REMOVE_DEPENDENCIES"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.016666407707532693,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_OUTCOME\"]}",
+        "loraPick": "wbs:SET_OUTCOME",
+        "args": {
+          "id": "g-30",
+          "outcome": "212 parking spaces counted across 5 blocks"
+        },
+        "raw": "{\"id\": \"Survey curbs\", \"outcome\": \"212 parking spaces counted across 5 blocks\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "outcome"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 44,
+          "op": 177,
+          "args": 504,
+          "ungated": 725,
+          "gated": 725
+        }
+      },
+      {
+        "id": "wbs3-09",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "painting doesn't have to wait for the permit to come through anymore",
+        "expectedOp": "wbs:REMOVE_DEPENDENCIES",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_OWNER",
+          "wbs:ADD_NOTE",
+          "wbs:REORDER",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:CREATE_GOAL",
+          "wbs:SET_PROJECT_REF",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:SET_OUTCOME",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_REFERENCES",
+          "wbs:REMOVE_NOTE",
+          "wbs:ASSIGN_GOAL",
+          "wbs:DELETE_GOAL"
+        ],
+        "goldRank": 8,
+        "inList": true,
+        "gate": {
+          "score": -0.000318359718905592,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:REMOVE_DEPENDENCIES\"]}",
+        "loraPick": "wbs:REMOVE_DEPENDENCIES",
+        "args": {
+          "id": "g-50",
+          "dependencies": [
+            "g-40"
+          ]
+        },
+        "raw": "{\"id\": \"Paint lane markings\", \"dependencies\": [\"Get road-closure permit\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "dependencies"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 41,
+          "op": 196,
+          "args": 490,
+          "ungated": 727,
+          "gated": 727
+        }
+      },
+      {
+        "id": "wbs3-10",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "make \"Install bollards\" depend on \"Order bollards\"",
+        "expectedOp": "wbs:ADD_DEPENDENCIES",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:REORDER",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:SET_OWNER",
+          "wbs:ADD_NOTE",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_REFERENCES",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:CREATE_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ASSIGN_GOAL",
+          "wbs:DELETE_GOAL",
+          "wbs:SET_OUTCOME",
+          "wbs:REMOVE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.05300775041175643,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:ADD_DEPENDENCIES\"]}",
+        "loraPick": "wbs:ADD_DEPENDENCIES",
+        "args": {
+          "id": "g-60",
+          "dependencies": [
+            "g-11"
+          ]
+        },
+        "raw": "{\"id\": \"Install bollards\", \"dependencies\": [\"Order bollards\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "dependencies"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 44,
+          "op": 192,
+          "args": 582,
+          "ungated": 818,
+          "gated": 818
+        }
+      },
+      {
+        "id": "wbs3-11",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "jot down on the permit item that the city clerk quoted 10 business days",
+        "expectedOp": "wbs:ADD_NOTE",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:ADD_NOTE",
+          "wbs:SET_PROJECT_REF",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_OWNER",
+          "wbs:CREATE_GOAL",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:REMOVE_NOTE",
+          "wbs:ASSIGN_GOAL",
+          "wbs:SET_REFERENCES",
+          "wbs:SET_OUTCOME",
+          "wbs:REORDER",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:DELETE_GOAL"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.033958193709193396,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:ADD_NOTE\"]}",
+        "loraPick": "wbs:ADD_NOTE",
+        "args": {
+          "goalId": "g-40",
+          "note": "the city clerk quoted 10 business days"
+        },
+        "raw": "{\"goalId\": \"Get road-closure permit\", \"note\": \"the city clerk quoted 10 business days\"}",
+        "argsError": null,
+        "argsOrder": [
+          "goalId",
+          "note"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 47,
+          "op": 170,
+          "args": 540,
+          "ungated": 756,
+          "gated": 756
+        }
+      },
+      {
+        "id": "wbs3-12",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "remove the note about calling the supplier from Order bollards",
+        "expectedOp": "wbs:REMOVE_NOTE",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:REMOVE_NOTE",
+          "wbs:ADD_NOTE",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:REORDER",
+          "wbs:SET_OWNER",
+          "wbs:SET_PROJECT_REF",
+          "wbs:DELETE_GOAL",
+          "wbs:ASSIGN_GOAL",
+          "wbs:SET_REFERENCES",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_OUTCOME",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:CREATE_GOAL"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.03501730070289688,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:REMOVE_NOTE\"]}",
+        "loraPick": "wbs:REMOVE_NOTE",
+        "args": {
+          "goalId": "g-11",
+          "noteId": "nt-1"
+        },
+        "raw": "{\"goalId\": \"Order bollards\", \"noteId\": \"Call the supplier Tuesday\"}",
+        "argsError": null,
+        "argsOrder": [
+          "goalId",
+          "noteId"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 43,
+          "op": 174,
+          "args": 515,
+          "ungated": 731,
+          "gated": 731
+        }
+      },
+      {
+        "id": "wbs3-13",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "move the signage installation item so it sits under Design",
+        "expectedOp": "wbs:REORDER",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:ADD_NOTE",
+          "wbs:REORDER",
+          "wbs:SET_OWNER",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_REFERENCES",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:CREATE_GOAL",
+          "wbs:REMOVE_NOTE",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:ASSIGN_GOAL",
+          "wbs:SET_OUTCOME",
+          "wbs:DELETE_GOAL"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.014047303188968074,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:REORDER\"]}",
+        "loraPick": "wbs:REORDER",
+        "args": {
+          "id": "g-80",
+          "parentId": "g-20"
+        },
+        "raw": "{\"id\": \"Signage installation\", \"parentId\": \"Design\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "parentId",
+          "insertBefore"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 32,
+          "op": 156,
+          "args": 345,
+          "ungated": 533,
+          "gated": 533
+        }
+      },
+      {
+        "id": "wbs3-14",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "keep the street design manual at https://www.nyc.gov/html/dot/html/pedestrians/streetdesignmanual.shtml pinned on this breakdown as a source",
+        "expectedOp": "wbs:SET_REFERENCES",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_REFERENCES",
+          "wbs:SET_OWNER",
+          "wbs:ADD_NOTE",
+          "wbs:CREATE_GOAL",
+          "wbs:ASSIGN_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:REMOVE_NOTE",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:SET_OUTCOME",
+          "wbs:REORDER",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:DELETE_GOAL",
+          "wbs:REMOVE_DEPENDENCIES"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.007050278281345634,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_REFERENCES\"]}",
+        "loraPick": "wbs:SET_REFERENCES",
+        "args": {
+          "references": [
+            "https://www.nyc.gov/html/dot/html/pedestrians/streetdesignmanual.shtml"
+          ]
+        },
+        "raw": "{\"references\": [\"https://www.nyc.gov/html/dot/html/pedestrians/streetdesignmanual.shtml\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "references"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 105,
+          "op": 187,
+          "args": 190,
+          "ungated": 482,
+          "gated": 482
+        }
+      },
+      {
+        "id": "wbs3-15",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "set the project ref to the Riverside greenway study",
+        "expectedOp": "wbs:SET_PROJECT_REF",
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_REFERENCES",
+          "wbs:SET_OUTCOME",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:CREATE_GOAL",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:SET_OWNER",
+          "wbs:REORDER",
+          "wbs:ADD_NOTE",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ASSIGN_GOAL",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:DELETE_GOAL",
+          "wbs:REMOVE_NOTE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.04138602830069882,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_PROJECT_REF\"]}",
+        "loraPick": "wbs:SET_PROJECT_REF",
+        "args": {
+          "projectRef": "ph-prj-05"
+        },
+        "raw": "{\"projectRef\": \"Riverside greenway study\"}",
+        "argsError": null,
+        "argsOrder": [
+          "projectRef"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 32,
+          "op": 172,
+          "args": 120,
+          "ungated": 323,
+          "gated": 323
+        }
+      },
+      {
+        "id": "pq3-01",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "line up an enrichment pass on \"Cloze deletion cards\" as part of the October batch",
+        "expectedOp": "pipeline-queue:ADD_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:FAIL_TASK"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.00577405640267703,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:ADD_TASK\"]}",
+        "loraPick": "pipeline-queue:ADD_TASK",
+        "args": {
+          "batchId": "b-oct",
+          "taskType": "enrichment",
+          "target": "Cloze deletion cards"
+        },
+        "raw": "{\"batchId\": \"October batch\", \"taskType\": \"enrichment\", \"target\": \"Cloze deletion cards\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskType",
+          "target",
+          "batchId"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 60,
+          "op": 156,
+          "args": 191,
+          "ungated": 407,
+          "gated": 407
+        }
+      },
+      {
+        "id": "pq3-02",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "assign the spacing effect task to Ravi",
+        "expectedOp": "pipeline-queue:ASSIGN_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:UNBLOCK_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.017184722208275938,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:ASSIGN_TASK\"]}",
+        "loraPick": "pipeline-queue:ASSIGN_TASK",
+        "args": {
+          "taskId": "tk-1",
+          "assignedTo": "Ravi"
+        },
+        "raw": "{\"taskId\": \"Spacing effect meta-analysis (claim, create, PENDING)\", \"assignedTo\": \"Ravi\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskId",
+          "assignedTo"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 31,
+          "op": 147,
+          "args": 1106,
+          "ungated": 1283,
+          "gated": 1283
+        }
+      },
+      {
+        "id": "pq3-03",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "reflect is done on the interleaving one: I wrote the cross-links and touched notes/interleaving.md, pass it along to the next step",
+        "expectedOp": "pipeline-queue:ADVANCE_PHASE",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.01517920511971338,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:ADVANCE_PHASE\"]}",
+        "loraPick": "pipeline-queue:ADVANCE_PHASE",
+        "args": {
+          "taskId": "tk-2",
+          "handoff": {
+            "phase": "create",
+            "workDone": "cross-links and touched notes/interleaving.md",
+            "filesModified": [
+              "interleaving"
+            ]
+          }
+        },
+        "raw": "{\"taskId\": \"Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)\", \"handoff\": {\"phase\": \"create\", \"workDone\": \"cross-links and touched notes/interleaving.md\", \"filesModified\": [\"interleaving\"]}}",
+        "argsError": null,
+        "argsOrder": [
+          "taskId",
+          "handoff"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [
+          "handoff.phase",
+          "handoff.filesModified"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 94,
+          "op": 192,
+          "args": 1312,
+          "ungated": 1597,
+          "gated": 1597
+        }
+      },
+      {
+        "id": "pq3-04",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "mark the retrieval practice task complete",
+        "expectedOp": "pipeline-queue:COMPLETE_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.06310872929498179,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:COMPLETE_TASK\"]}",
+        "loraPick": "pipeline-queue:COMPLETE_TASK",
+        "args": {
+          "taskId": "tk-3"
+        },
+        "raw": "{\"taskId\": \"Retrieval practice review (claim, verify, IN_PROGRESS)\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskId"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 23,
+          "op": 157,
+          "args": 1149,
+          "ungated": 1329,
+          "gated": 1329
+        }
+      },
+      {
+        "id": "pq3-05",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the podcast transcript job is a lost cause, the audio file is corrupted",
+        "expectedOp": "pipeline-queue:FAIL_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:COMPLETE_TASK"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.010367902827187803,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:BLOCK_TASK\"]}",
+        "loraPick": "pipeline-queue:BLOCK_TASK",
+        "args": {
+          "taskId": "tk-5",
+          "reason": "the audio file is corrupted"
+        },
+        "raw": "{\"taskId\": \"Podcast ep. 41 transcript (claim, create, IN_PROGRESS)\", \"reason\": \"the audio file is corrupted\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskId",
+          "reason"
+        ],
+        "ms": {
+          "embed": 45,
+          "op": 171,
+          "args": 1304,
+          "ungated": 1521,
+          "gated": 1521
+        }
+      },
+      {
+        "id": "pq3-06",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "put the spacing effect task on hold until we get the full PDF",
+        "expectedOp": "pipeline-queue:BLOCK_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:FAIL_TASK"
+        ],
+        "goldRank": 5,
+        "inList": true,
+        "gate": {
+          "score": -0.014441902666631479,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:BLOCK_TASK\"]}",
+        "loraPick": "pipeline-queue:BLOCK_TASK",
+        "args": {
+          "taskId": "tk-1",
+          "reason": "we get the full PDF"
+        },
+        "raw": "{\"taskId\": \"Spacing effect meta-analysis (claim, create, PENDING)\", \"reason\": \"we get the full PDF\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskId",
+          "reason"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 49,
+          "op": 276,
+          "args": 943,
+          "ungated": 1267,
+          "gated": 1267
+        }
+      },
+      {
+        "id": "pq3-07",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "the testing-effect paper finally arrived, so that one can get moving again",
+        "expectedOp": "pipeline-queue:UNBLOCK_TASK",
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:FAIL_TASK"
+        ],
+        "goldRank": 5,
+        "inList": true,
+        "gate": {
+          "score": 0.012418163993663245,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:UNBLOCK_TASK\"]}",
+        "loraPick": "pipeline-queue:UNBLOCK_TASK",
+        "args": {
+          "taskId": "tk-4"
+        },
+        "raw": "{\"taskId\": \"Testing effect in L2 vocabulary (claim, create, BLOCKED)\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskId"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 52,
+          "op": 177,
+          "args": 1101,
+          "ungated": 1330,
+          "gated": 1330
+        }
+      },
+      {
+        "id": "src3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "ingest this article: \"Why spacing works\" by Rosa Lim, https://example.edu/spacing, text: Distributed practice beats massed practice across ages and subjects.",
+        "expectedOp": "source:INGEST_SOURCE",
+        "expectedOps": null,
+        "candidates": [
+          "source:INGEST_SOURCE",
+          "source:RECORD_EXTRACTION_STATS",
+          "source:SET_SOURCE_STATUS",
+          "source:ADD_EXTRACTED_CLAIM"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.00013618443797935864,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"source:INGEST_SOURCE\"]}",
+        "loraPick": "source:INGEST_SOURCE",
+        "args": {
+          "sourceType": "ARTICLE",
+          "title": "Why spacing works",
+          "content": "Distributed practice beats massed practice across ages and subjects"
+        },
+        "raw": "{\"sourceType\": \"ARTICLE\", \"title\": \"Why spacing works\", \"content\": \"Distributed practice beats massed practice across ages and subjects\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title",
+          "content",
+          "sourceType"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [
+          "url",
+          "author",
+          "content"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 113,
+          "op": 143,
+          "args": 188,
+          "ungated": 444,
+          "gated": 444
+        }
+      },
+      {
+        "id": "src3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "save what was said on Lingua Talk episode 41 into the vault as a new item: \"Host: so the forgetting curve flattens with each review. Guest: right, that's the whole trick.\"",
+        "expectedOp": "source:INGEST_SOURCE",
+        "expectedOps": null,
+        "candidates": [
+          "source:INGEST_SOURCE",
+          "source:RECORD_EXTRACTION_STATS",
+          "source:ADD_EXTRACTED_CLAIM",
+          "source:SET_SOURCE_STATUS"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.018356819457950424,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"source:ADD_EXTRACTED_CLAIM\"]}",
+        "loraPick": "source:ADD_EXTRACTED_CLAIM",
+        "args": {
+          "claimRef": "Lingua Talk episode 41"
+        },
+        "raw": "{\"claimRef\": \"Lingua Talk episode 41\"}",
+        "argsError": null,
+        "argsOrder": [
+          "claimRef"
+        ],
+        "ms": {
+          "embed": 118,
+          "op": 158,
+          "args": 129,
+          "ungated": 405,
+          "gated": 405
+        }
+      },
+      {
+        "id": "src3-03",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "set status to extracting",
+        "expectedOp": "source:SET_SOURCE_STATUS",
+        "expectedOps": null,
+        "candidates": [
+          "source:SET_SOURCE_STATUS",
+          "source:RECORD_EXTRACTION_STATS",
+          "source:ADD_EXTRACTED_CLAIM",
+          "source:INGEST_SOURCE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.11789937424208119,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"source:SET_SOURCE_STATUS\"]}",
+        "loraPick": "source:SET_SOURCE_STATUS",
+        "args": {
+          "status": "EXTRACTING"
+        },
+        "raw": "{\"status\": \"EXTRACTING\"}",
+        "argsError": null,
+        "argsOrder": [
+          "status"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 29,
+          "op": 136,
+          "args": 110,
+          "ungated": 275,
+          "gated": 275
+        }
+      },
+      {
+        "id": "src3-05",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add the claim \"Sleep consolidates new vocabulary\" to what we got from this paper",
+        "expectedOp": "source:ADD_EXTRACTED_CLAIM",
+        "expectedOps": null,
+        "candidates": [
+          "source:ADD_EXTRACTED_CLAIM",
+          "source:INGEST_SOURCE",
+          "source:RECORD_EXTRACTION_STATS",
+          "source:SET_SOURCE_STATUS"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.0030741290398141885,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"source:ADD_EXTRACTED_CLAIM\"]}",
+        "loraPick": "source:ADD_EXTRACTED_CLAIM",
+        "args": {
+          "claimRef": "Sleep consolidates new vocabulary"
+        },
+        "raw": "{\"claimRef\": \"Sleep consolidates new vocabulary\"}",
+        "argsError": null,
+        "argsOrder": [
+          "claimRef"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 60,
+          "op": 164,
+          "args": 116,
+          "ungated": 340,
+          "gated": 340
+        }
+      },
+      {
+        "id": "src3-06",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "kept 12 usable findings and tossed 3, so a 20% discard rate",
+        "expectedOp": "source:RECORD_EXTRACTION_STATS",
+        "expectedOps": null,
+        "candidates": [
+          "source:RECORD_EXTRACTION_STATS",
+          "source:ADD_EXTRACTED_CLAIM",
+          "source:INGEST_SOURCE",
+          "source:SET_SOURCE_STATUS"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.0059680975153793,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"source:RECORD_EXTRACTION_STATS\"]}",
+        "loraPick": "source:RECORD_EXTRACTION_STATS",
+        "args": {
+          "claimCount": 12,
+          "skippedCount": 3,
+          "skipRate": 0.2
+        },
+        "raw": "{\"claimCount\": 12, \"skippedCount\": 3, \"skipRate\": 0.20}",
+        "argsError": null,
+        "argsOrder": [
+          "claimCount",
+          "skippedCount",
+          "skipRate"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 47,
+          "op": 157,
+          "args": 176,
+          "ungated": 380,
+          "gated": 380
+        }
+      },
+      {
+        "id": "rc3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a research claim \"Retrieval practice beats rereading\", kind research, source Roediger & Karpicke 2006, topics memory and testing",
+        "expectedOp": "research-claim:CREATE_CLAIM",
+        "expectedOps": null,
+        "candidates": [
+          "research-claim:CREATE_CLAIM",
+          "research-claim:UPDATE_CLAIM_CONTENT",
+          "research-claim:ADD_RESEARCH_CONNECTION",
+          "research-claim:REMOVE_RESEARCH_CONNECTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.07635696257480329,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"research-claim:CREATE_CLAIM\"]}",
+        "loraPick": "research-claim:CREATE_CLAIM",
+        "args": {
+          "kind": "research",
+          "title": "Retrieval practice beats rereading",
+          "description": "memory and testing",
+          "content": "Retrieval practice beats rereading",
+          "methodology": [
+            "Roediger & Karpicke 2006"
+          ],
+          "sources": [
+            "Roediger & Karpicke 2006"
+          ],
+          "topics": [
+            "memory",
+            "testing"
+          ]
+        },
+        "raw": "{\"kind\": \"research\", \"title\": \"Retrieval practice beats rereading\", \"description\": \"memory and testing\", \"content\": \"Retrieval practice beats rereading\", \"methodology\": [\"Roediger & Karpicke 2006\"], \"sources\": [\"Roediger & Karpicke 2006\"], \"topics\": [\"memory\", \"testing\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "title",
+          "description",
+          "content",
+          "kind",
+          "methodology",
+          "sources",
+          "topics"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "methodology"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 90,
+          "op": 170,
+          "args": 464,
+          "ungated": 724,
+          "gated": 724
+        }
+      },
+      {
+        "id": "rc3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "this links to the \"Desirable difficulties\" claim; it's the mechanism behind it",
+        "expectedOp": "research-claim:ADD_RESEARCH_CONNECTION",
+        "expectedOps": null,
+        "candidates": [
+          "research-claim:ADD_RESEARCH_CONNECTION",
+          "research-claim:REMOVE_RESEARCH_CONNECTION",
+          "research-claim:CREATE_CLAIM",
+          "research-claim:UPDATE_CLAIM_CONTENT"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.017612595057222347,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"research-claim:ADD_RESEARCH_CONNECTION\"]}",
+        "loraPick": "research-claim:ADD_RESEARCH_CONNECTION",
+        "args": {
+          "targetRef": "Desirable difficulties",
+          "contextPhrase": "the mechanism behind it"
+        },
+        "raw": "{\"targetRef\": \"Desirable difficulties\", \"contextPhrase\": \"the mechanism behind it\"}",
+        "argsError": null,
+        "argsOrder": [
+          "targetRef",
+          "contextPhrase"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 59,
+          "op": 171,
+          "args": 154,
+          "ungated": 383,
+          "gated": 383
+        }
+      },
+      {
+        "id": "rc3-03",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "remove the connection to \"Massed practice feels fluent\"",
+        "expectedOp": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "expectedOps": null,
+        "candidates": [
+          "research-claim:REMOVE_RESEARCH_CONNECTION",
+          "research-claim:UPDATE_CLAIM_CONTENT",
+          "research-claim:ADD_RESEARCH_CONNECTION",
+          "research-claim:CREATE_CLAIM"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.012166592762701156,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"research-claim:REMOVE_RESEARCH_CONNECTION\"]}",
+        "loraPick": "research-claim:REMOVE_RESEARCH_CONNECTION",
+        "args": {
+          "id": "cx-3"
+        },
+        "raw": "{\"id\": \"Massed practice feels fluent\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 42,
+          "op": 166,
+          "args": 438,
+          "ungated": 646,
+          "gated": 646
+        }
+      },
+      {
+        "id": "rc3-04",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "rewrite the body: the effect holds at roughly d = 0.5 across 29 studies, smaller for children",
+        "expectedOp": "research-claim:UPDATE_CLAIM_CONTENT",
+        "expectedOps": null,
+        "candidates": [
+          "research-claim:UPDATE_CLAIM_CONTENT",
+          "research-claim:CREATE_CLAIM",
+          "research-claim:REMOVE_RESEARCH_CONNECTION",
+          "research-claim:ADD_RESEARCH_CONNECTION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.024222289233103322,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"research-claim:UPDATE_CLAIM_CONTENT\"]}",
+        "loraPick": "research-claim:UPDATE_CLAIM_CONTENT",
+        "args": {
+          "content": "the effect holds at roughly d = 0.5 across 29 studies, smaller for children"
+        },
+        "raw": "{\"content\": \"the effect holds at roughly d = 0.5 across 29 studies, smaller for children\"}",
+        "argsError": null,
+        "argsOrder": [
+          "content"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 58,
+          "op": 168,
+          "args": 175,
+          "ungated": 401,
+          "gated": 401
+        }
+      },
+      {
+        "id": "obs3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "log an observation, friction: the inbox keeps clogging with half-processed sources",
+        "expectedOp": "observation:CREATE_OBSERVATION",
+        "expectedOps": null,
+        "candidates": [
+          "observation:CREATE_OBSERVATION",
+          "observation:ARCHIVE_OBSERVATION",
+          "observation:IMPLEMENT_OBSERVATION",
+          "observation:PROMOTE_OBSERVATION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.04628619811168899,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"observation:CREATE_OBSERVATION\"]}",
+        "loraPick": "observation:CREATE_OBSERVATION",
+        "args": {
+          "category": "FRICTION",
+          "title": "the inbox keeps clogging with half-processed sources",
+          "description": "the inbox keeps clogging with half-processed sources"
+        },
+        "raw": "{\"category\": \"FRICTION\", \"title\": \"the inbox keeps clogging with half-processed sources\", \"description\": \"the inbox keeps clogging with half-processed sources\"}",
+        "argsError": null,
+        "argsOrder": [
+          "title",
+          "description",
+          "category"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 53,
+          "op": 160,
+          "args": 205,
+          "ungated": 417,
+          "gated": 417
+        }
+      },
+      {
+        "id": "obs3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "this deserves to become a proper note, turn it into \"Inbox needs a weekly sweep\"",
+        "expectedOp": "observation:PROMOTE_OBSERVATION",
+        "expectedOps": null,
+        "candidates": [
+          "observation:PROMOTE_OBSERVATION",
+          "observation:ARCHIVE_OBSERVATION",
+          "observation:IMPLEMENT_OBSERVATION",
+          "observation:CREATE_OBSERVATION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.008583005334714344,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"observation:PROMOTE_OBSERVATION\"]}",
+        "loraPick": "observation:PROMOTE_OBSERVATION",
+        "args": {
+          "promotedTo": "Inbox needs a weekly sweep"
+        },
+        "raw": "{\"promotedTo\": \"Inbox needs a weekly sweep\"}",
+        "argsError": null,
+        "argsOrder": [
+          "promotedTo"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 54,
+          "op": 164,
+          "args": 120,
+          "ungated": 338,
+          "gated": 338
+        }
+      },
+      {
+        "id": "obs3-03",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "easy",
+        "utterance": "we added the weekly sweep, mark this implemented",
+        "expectedOp": "observation:IMPLEMENT_OBSERVATION",
+        "expectedOps": null,
+        "candidates": [
+          "observation:IMPLEMENT_OBSERVATION",
+          "observation:PROMOTE_OBSERVATION",
+          "observation:CREATE_OBSERVATION",
+          "observation:ARCHIVE_OBSERVATION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.0030265737637564794,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"observation:IMPLEMENT_OBSERVATION\"]}",
+        "loraPick": "observation:IMPLEMENT_OBSERVATION",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 34,
+          "op": 249,
+          "args": 0,
+          "ungated": 283,
+          "gated": 283
+        }
+      },
+      {
+        "id": "obs3-04",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we're not going to act on this one, shelve it",
+        "expectedOp": "observation:ARCHIVE_OBSERVATION",
+        "expectedOps": null,
+        "candidates": [
+          "observation:ARCHIVE_OBSERVATION",
+          "observation:IMPLEMENT_OBSERVATION",
+          "observation:PROMOTE_OBSERVATION",
+          "observation:CREATE_OBSERVATION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.02468702074195661,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"observation:ARCHIVE_OBSERVATION\"]}",
+        "loraPick": "observation:ARCHIVE_OBSERVATION",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 45,
+          "op": 155,
+          "args": 0,
+          "ungated": 200,
+          "gated": 200
+        }
+      },
+      {
+        "id": "ten3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "create a tension \"Spacing vs cramming before exams\": spacing wins long-term but cramming wins next-day scores; it involves the spacing and the cramming notes",
+        "expectedOp": "tension:CREATE_TENSION",
+        "expectedOps": null,
+        "candidates": [
+          "tension:CREATE_TENSION",
+          "tension:ADD_INVOLVED_REF",
+          "tension:RESOLVE_TENSION",
+          "tension:DISSOLVE_TENSION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.04578309770432454,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"tension:CREATE_TENSION\"]}",
+        "loraPick": "tension:CREATE_TENSION",
+        "args": {
+          "title": "Spacing vs cramming before exams",
+          "description": "spacing wins long-term but cramming wins next-day scores",
+          "involvedRefs": [
+            "spacing",
+            "cramming"
+          ]
+        },
+        "raw": "{\"title\": \"Spacing vs cramming before exams\", \"description\": \"spacing wins long-term but cramming wins next-day scores\", \"involvedRefs\": [\"spacing\", \"cramming\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "title",
+          "description",
+          "involvedRefs"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 112,
+          "op": 147,
+          "args": 260,
+          "ungated": 519,
+          "gated": 519
+        }
+      },
+      {
+        "id": "ten3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "we figured it out: both hold, it depends on the retention interval. close it out with that answer",
+        "expectedOp": "tension:RESOLVE_TENSION",
+        "expectedOps": null,
+        "candidates": [
+          "tension:RESOLVE_TENSION",
+          "tension:ADD_INVOLVED_REF",
+          "tension:DISSOLVE_TENSION",
+          "tension:CREATE_TENSION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.02501976879279688,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"tension:RESOLVE_TENSION\"]}",
+        "loraPick": "tension:RESOLVE_TENSION",
+        "args": {
+          "resolution": "both hold, it depends on the retention interval"
+        },
+        "raw": "{\"resolution\": \"both hold, it depends on the retention interval\"}",
+        "argsError": null,
+        "argsOrder": [
+          "resolution"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 62,
+          "op": 160,
+          "args": 130,
+          "ungated": 351,
+          "gated": 351
+        }
+      },
+      {
+        "id": "ten3-03",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "hard",
+        "utterance": "there never was a real conflict here, the two studies measured different things",
+        "expectedOp": "tension:DISSOLVE_TENSION",
+        "expectedOps": null,
+        "candidates": [
+          "tension:DISSOLVE_TENSION",
+          "tension:CREATE_TENSION",
+          "tension:RESOLVE_TENSION",
+          "tension:ADD_INVOLVED_REF"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": 0.006928626193896892,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 42,
+          "op": 106,
+          "args": 0,
+          "ungated": 148,
+          "gated": 148
+        }
+      },
+      {
+        "id": "ten3-04",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "this also involves the \"Sleep and consolidation\" note, add it",
+        "expectedOp": "tension:ADD_INVOLVED_REF",
+        "expectedOps": null,
+        "candidates": [
+          "tension:ADD_INVOLVED_REF",
+          "tension:CREATE_TENSION",
+          "tension:RESOLVE_TENSION",
+          "tension:DISSOLVE_TENSION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.02439776699659668,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"tension:ADD_INVOLVED_REF\"]}",
+        "loraPick": "tension:ADD_INVOLVED_REF",
+        "args": {
+          "ref": "Sleep and consolidation"
+        },
+        "raw": "{\"ref\": \"Sleep and consolidation\"}",
+        "argsError": null,
+        "argsOrder": [
+          "ref"
+        ],
+        "fieldsMatch": null,
+        "extras": [],
+        "exact": null,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 45,
+          "op": 161,
+          "args": 98,
+          "ungated": 304,
+          "gated": 304
+        }
+      },
+      {
+        "id": "vc3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "set linking to 4 with 0.8 confidence",
+        "expectedOp": "vault-config:UPDATE_DIMENSION",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:INITIALIZE_CONFIG",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:TOGGLE_FEATURE"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.010541838922594637,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:UPDATE_DIMENSION\"]}",
+        "loraPick": "vault-config:UPDATE_DIMENSION",
+        "args": {
+          "dimension": "linking",
+          "value": 4,
+          "confidence": 0.8
+        },
+        "raw": "{\"dimension\": \"linking\", \"value\": 4, \"confidence\": 0.8}",
+        "argsError": null,
+        "argsOrder": [
+          "dimension",
+          "value",
+          "confidence"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 33,
+          "op": 176,
+          "args": 165,
+          "ungated": 374,
+          "gated": 374
+        }
+      },
+      {
+        "id": "vc3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "in this vault the pass where we revisit old notes with new connections should be called \"tending\"",
+        "expectedOp": "vault-config:UPDATE_VOCABULARY",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.02748160027151869,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:UPDATE_PIPELINE_CONFIG\"]}",
+        "loraPick": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "args": {
+          "depth": "quick"
+        },
+        "raw": "{\"depth\": \"quick\"}",
+        "argsError": null,
+        "argsOrder": [
+          "depth",
+          "autoChain",
+          "extractionSelectivity"
+        ],
+        "ms": {
+          "embed": 59,
+          "op": 196,
+          "args": 100,
+          "ungated": 355,
+          "gated": 355
+        }
+      },
+      {
+        "id": "vc3-04",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "go for the thorough processing mode, and be pickier: only keep about 5% of candidate claims",
+        "expectedOp": "vault-config:UPDATE_PIPELINE_CONFIG",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.008791192916998813,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:TOGGLE_EXTRACTION_CATEGORY\"]}",
+        "loraPick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "args": {
+          "active": true
+        },
+        "raw": "{\"active\": true}",
+        "argsError": null,
+        "argsOrder": [
+          "active"
+        ],
+        "ms": {
+          "embed": 55,
+          "op": 215,
+          "args": 82,
+          "ungated": 352,
+          "gated": 352
+        }
+      },
+      {
+        "id": "vc3-05",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "set the stale note threshold to 60 days",
+        "expectedOp": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.05693231369222451,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:UPDATE_MAINTENANCE_THRESHOLD\"]}",
+        "loraPick": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+        "args": {
+          "condition": "staleNoteDays",
+          "threshold": 60
+        },
+        "raw": "{\"condition\": \"staleNoteDays\", \"threshold\": 60}",
+        "argsError": null,
+        "argsOrder": [
+          "condition",
+          "threshold"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 30,
+          "op": 206,
+          "args": 142,
+          "ungated": 378,
+          "gated": 378
+        }
+      },
+      {
+        "id": "vc3-06",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "start pulling out worked examples too, anything that shows a technique applied to a real sentence",
+        "expectedOp": "vault-config:ADD_EXTRACTION_CATEGORY",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": -0.009122332716494874,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:TOGGLE_EXTRACTION_CATEGORY\"]}",
+        "loraPick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "args": {
+          "active": true
+        },
+        "raw": "{\"active\": true}",
+        "argsError": null,
+        "argsOrder": [
+          "active"
+        ],
+        "ms": {
+          "embed": 51,
+          "op": 208,
+          "args": 81,
+          "ungated": 340,
+          "gated": 340
+        }
+      },
+      {
+        "id": "vc3-07",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "stop harvesting anecdotes for now, I might want them back later",
+        "expectedOp": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": 3,
+        "inList": true,
+        "gate": {
+          "score": 0.024130091551198052,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:TOGGLE_EXTRACTION_CATEGORY\"]}",
+        "loraPick": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+        "args": {
+          "id": "ec-2",
+          "active": false
+        },
+        "raw": "{\"id\": \"anecdotes (active)\", \"active\": false}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "active"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": true,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 45,
+          "op": 221,
+          "args": 499,
+          "ungated": 765,
+          "gated": 765
+        }
+      },
+      {
+        "id": "vc3-08",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "hard",
+        "utterance": "turn off auto-reweave",
+        "expectedOp": "vault-config:TOGGLE_FEATURE",
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": 3,
+        "inList": true,
+        "gate": {
+          "score": -0.01522210055009865,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:TOGGLE_FEATURE\"]}",
+        "loraPick": "vault-config:TOGGLE_FEATURE",
+        "args": {
+          "feature": "auto-reweave",
+          "enabled": false
+        },
+        "raw": "{\"feature\": \"auto-reweave\", \"enabled\": false}",
+        "argsError": null,
+        "argsOrder": [
+          "feature",
+          "enabled"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": null,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 31,
+          "op": 187,
+          "args": 125,
+          "ungated": 342,
+          "gated": 342
+        }
+      },
+      {
+        "id": "hr3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add a failing link health check: 4 links point to deleted notes",
+        "expectedOp": "health-report:ADD_CHECK",
+        "expectedOps": null,
+        "candidates": [
+          "health-report:ADD_CHECK",
+          "health-report:GENERATE_REPORT"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.05710217065810064,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"health-report:ADD_CHECK\"]}",
+        "loraPick": "health-report:ADD_CHECK",
+        "args": {
+          "category": "LINK_HEALTH",
+          "status": "FAIL",
+          "message": "4 links point to deleted notes",
+          "affectedItems": [
+            "deleted notes"
+          ]
+        },
+        "raw": "{\"category\": \"LINK_HEALTH\", \"status\": \"FAIL\", \"message\": \"4 links point to deleted notes\", \"affectedItems\": [\"deleted notes\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "category",
+          "status",
+          "message",
+          "affectedItems"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "affectedItems"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 43,
+          "op": 130,
+          "args": 251,
+          "ungated": 424,
+          "gated": 424
+        }
+      },
+      {
+        "id": "hr3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "flag as a warning that \"Interleaving\" and \"Cloze deletion\" haven't been touched in over 90 days",
+        "expectedOp": "health-report:ADD_CHECK",
+        "expectedOps": null,
+        "candidates": [
+          "health-report:GENERATE_REPORT",
+          "health-report:ADD_CHECK"
+        ],
+        "goldRank": 2,
+        "inList": true,
+        "gate": {
+          "score": 0.02348682808411373,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"health-report:ADD_CHECK\"]}",
+        "loraPick": "health-report:ADD_CHECK",
+        "args": {
+          "category": "ORPHAN_DETECTION",
+          "status": "WARN",
+          "message": "Interleaving",
+          "affectedItems": [
+            "Cloze deletion"
+          ]
+        },
+        "raw": "{\"category\": \"ORPHAN_DETECTION\", \"status\": \"WARN\", \"message\": \"Interleaving\", \"affectedItems\": [\"Cloze deletion\"]}",
+        "argsError": null,
+        "argsOrder": [
+          "category",
+          "status",
+          "message",
+          "affectedItems"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "category",
+          "affectedItems"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 74,
+          "op": 132,
+          "args": 264,
+          "ungated": 470,
+          "gated": 470
+        }
+      },
+      {
+        "id": "der3-01",
+        "set": "h3",
+        "style": "natural",
+        "difficulty": "medium",
+        "utterance": "add a signal: I said \"I mostly capture quotes from papers\", which points to processing and granularity",
+        "expectedOp": "derivation:ADD_SIGNAL",
+        "expectedOps": null,
+        "candidates": [
+          "derivation:ADD_SIGNAL",
+          "derivation:UPDATE_DIMENSION_RATIONALE",
+          "derivation:ADD_RESEED_ENTRY",
+          "derivation:INITIALIZE_DERIVATION"
+        ],
+        "goldRank": 1,
+        "inList": true,
+        "gate": {
+          "score": -0.046598244858317206,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"derivation:ADD_SIGNAL\"]}",
+        "loraPick": "derivation:ADD_SIGNAL",
+        "args": {
+          "utterance": "I mostly capture quotes from papers",
+          "influencedDimensions": [
+            "processing",
+            "granularity"
+          ],
+          "interpretation": "which points to processing and granularity"
+        },
+        "raw": "{\"utterance\": \"I mostly capture quotes from papers\", \"influencedDimensions\": [\"processing\", \"granularity\"], \"interpretation\": \"which points to processing and granularity\"}",
+        "argsError": null,
+        "argsOrder": [
+          "utterance",
+          "influencedDimensions",
+          "interpretation"
+        ],
+        "fieldsMatch": true,
+        "extras": [],
+        "exact": true,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [],
+        "zodOk": true,
+        "ms": {
+          "embed": 60,
+          "op": 148,
+          "args": 248,
+          "ungated": 456,
+          "gated": 456
+        }
+      },
+      {
+        "id": "der3-02",
+        "set": "h3",
+        "style": "paraphrase",
+        "difficulty": "medium",
+        "utterance": "when I told you \"I never reread old notes\", that suggests the vault needs more upkeep prompts and stronger cross-linking; keep that on file",
+        "expectedOp": "derivation:ADD_SIGNAL",
+        "expectedOps": null,
+        "candidates": [
+          "derivation:ADD_RESEED_ENTRY",
+          "derivation:INITIALIZE_DERIVATION",
+          "derivation:ADD_SIGNAL",
+          "derivation:UPDATE_DIMENSION_RATIONALE"
+        ],
+        "goldRank": 3,
+        "inList": true,
+        "gate": {
+          "score": -0.01301247876758238,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"derivation:ADD_SIGNAL\"]}",
+        "loraPick": "derivation:ADD_SIGNAL",
+        "args": {
+          "utterance": "I never reread old notes",
+          "influencedDimensions": [
+            "the vault"
+          ],
+          "interpretation": "the vault needs more upkeep prompts and stronger cross-linking"
+        },
+        "raw": "{\"utterance\": \"I never reread old notes\", \"influencedDimensions\": [\"the vault\"], \"interpretation\": \"the vault needs more upkeep prompts and stronger cross-linking\"}",
+        "argsError": null,
+        "argsOrder": [
+          "utterance",
+          "influencedDimensions",
+          "interpretation"
+        ],
+        "fieldsMatch": false,
+        "extras": [],
+        "exact": false,
+        "requiredPresent": true,
+        "refExact": null,
+        "mismatched": [
+          "influencedDimensions"
+        ],
+        "zodOk": true,
+        "ms": {
+          "embed": 91,
+          "op": 147,
+          "args": 255,
+          "ungated": 492,
+          "gated": 492
+        }
+      },
+      {
+        "id": "none3-01",
+        "set": "h3na",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "which of my links point to notes that are still drafts?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:PATCH_CONTENT"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.08124618525197513,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 38,
+          "op": 209,
+          "args": 0,
+          "ungated": 247,
+          "gated": 38
+        }
+      },
+      {
+        "id": "none3-02",
+        "set": "h3na",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "change the link type",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "knowledge-note:UPDATE_LINK_TYPE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SET_PROVENANCE"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.08329504957759537,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:UPDATE_LINK_TYPE\"]}",
+        "loraPick": "knowledge-note:UPDATE_LINK_TYPE",
+        "args": {
+          "id": "lk-12",
+          "linkType": "RELATES_TO"
+        },
+        "raw": "{\"id\": \"Poolish vs biga (RELATES_TO)\", \"linkType\": \"RELATES_TO\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "linkType"
+        ],
+        "ms": {
+          "embed": 21,
+          "op": 223,
+          "args": 473,
+          "ungated": 718,
+          "gated": 718
+        }
+      },
+      {
+        "id": "none3-03",
+        "set": "h3na",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "thanks, the map reads way better now",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "moc:UPDATE_DESCRIPTION",
+          "moc:UPDATE_ORIENTATION",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:ADD_CORE_IDEA",
+          "moc:CREATE_MOC",
+          "moc:REMOVE_CORE_IDEA",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:REMOVE_TENSION",
+          "moc:ADD_TENSION",
+          "moc:SET_METADATA_FIELD",
+          "moc:ADD_CHILD_MOC",
+          "moc:REMOVE_CHILD_MOC"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.004309287105433768,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 29,
+          "op": 158,
+          "args": 0,
+          "ungated": 187,
+          "gated": 187
+        }
+      },
+      {
+        "id": "none3-04",
+        "set": "h3na",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "who's on the team besides me?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "project:ADD_MEMBER",
+          "project:UPDATE_MEMBER",
+          "project:REMOVE_MEMBER",
+          "project:SET_OWNER",
+          "project:ADD_DELIVERABLE",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:UPDATE_DELIVERABLE",
+          "project:LINK_WBS",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:REMOVE_DELIVERABLE",
+          "project:SET_TARGET_DATE",
+          "project:CREATE_PROJECT",
+          "project:SET_REFERENCES",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:UPDATE_PROJECT_INFO"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.01561196079625371,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 33,
+          "op": 140,
+          "args": 0,
+          "ungated": 173,
+          "gated": 33
+        }
+      },
+      {
+        "id": "none3-05",
+        "set": "h3na",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "set the goal status to done",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:CREATE_GOAL",
+          "wbs:ASSIGN_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:DELETE_GOAL",
+          "wbs:SET_OUTCOME",
+          "wbs:REORDER",
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:ADD_NOTE",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_REFERENCES",
+          "wbs:SET_OWNER",
+          "wbs:REMOVE_NOTE"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.13017876775994786,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:SET_GOAL_STATUS\"]}",
+        "loraPick": "wbs:SET_GOAL_STATUS",
+        "args": {
+          "id": "g-21",
+          "status": "COMPLETED"
+        },
+        "raw": "{\"id\": \"Draft signage plan\", \"status\": \"COMPLETED\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "status"
+        ],
+        "ms": {
+          "embed": 22,
+          "op": 171,
+          "args": 615,
+          "ungated": 807,
+          "gated": 807
+        }
+      },
+      {
+        "id": "none3-06",
+        "set": "h3na",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "why does the step after reflect always take so long?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:ASSIGN_TASK",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:UNBLOCK_TASK"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.006506718626081209,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 35,
+          "op": 115,
+          "args": 0,
+          "ungated": 150,
+          "gated": 35
+        }
+      },
+      {
+        "id": "none3-07",
+        "set": "h3na",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "is going thorough on processing even worth it for a vault this small?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.05605738948126926,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 38,
+          "op": 126,
+          "args": 0,
+          "ungated": 164,
+          "gated": 38
+        }
+      },
+      {
+        "id": "none3-08",
+        "set": "h3na",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "remind me what this paper was arguing?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "source:INGEST_SOURCE",
+          "source:ADD_EXTRACTED_CLAIM",
+          "source:RECORD_EXTRACTION_STATS",
+          "source:SET_SOURCE_STATUS"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.02721187297256844,
+          "question": true,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 28,
+          "op": 95,
+          "args": 0,
+          "ungated": 123,
+          "gated": 28
+        }
+      },
+      {
+        "id": "none3-09",
+        "set": "h3na",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "hmm, not sure yet if this one is worth turning into anything",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "observation:PROMOTE_OBSERVATION",
+          "observation:CREATE_OBSERVATION",
+          "observation:ARCHIVE_OBSERVATION",
+          "observation:IMPLEMENT_OBSERVATION"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.11035929216996099,
+          "question": false,
+          "noAction": true
+        },
+        "step1Raw": "{\"ops\": []}",
+        "loraPick": "none",
+        "ms": {
+          "embed": 45,
+          "op": 102,
+          "args": 0,
+          "ungated": 147,
+          "gated": 45
+        }
+      },
+      {
+        "id": "none3-10",
+        "set": "h3na",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "can you deal with this conflict somehow?",
+        "expectedOp": null,
+        "expectedOps": null,
+        "candidates": [
+          "tension:RESOLVE_TENSION",
+          "tension:DISSOLVE_TENSION",
+          "tension:CREATE_TENSION",
+          "tension:ADD_INVOLVED_REF"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.013011412940577283,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"tension:RESOLVE_TENSION\"]}",
+        "loraPick": "tension:RESOLVE_TENSION",
+        "args": {
+          "resolution": "deal with this conflict somehow"
+        },
+        "raw": "{\"resolution\": \"deal with this conflict somehow\"}",
+        "argsError": null,
+        "argsOrder": [
+          "resolution"
+        ],
+        "ms": {
+          "embed": 28,
+          "op": 140,
+          "args": 119,
+          "ungated": 287,
+          "gated": 287
+        }
+      },
+      {
+        "id": "ma3-01",
+        "set": "h3multi",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "restore this note and put it straight back up for review",
+        "expectedOp": null,
+        "expectedOps": [
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:SUBMIT_FOR_REVIEW"
+        ],
+        "candidates": [
+          "knowledge-note:RESTORE_NOTE",
+          "knowledge-note:REJECT_NOTE",
+          "knowledge-note:SUBMIT_FOR_REVIEW",
+          "knowledge-note:APPROVE_NOTE",
+          "knowledge-note:SET_CONTENT",
+          "knowledge-note:ARCHIVE_NOTE",
+          "knowledge-note:REMOVE_LINK",
+          "knowledge-note:REMOVE_TOPIC",
+          "knowledge-note:SET_PROVENANCE",
+          "knowledge-note:SET_TITLE",
+          "knowledge-note:SET_DESCRIPTION",
+          "knowledge-note:SET_NOTE_TYPE",
+          "knowledge-note:ADD_LINK",
+          "knowledge-note:SET_METADATA_LIST_FIELD",
+          "knowledge-note:SET_METADATA_FIELD",
+          "knowledge-note:ADD_TOPIC",
+          "knowledge-note:PATCH_CONTENT",
+          "knowledge-note:UPDATE_LINK_TYPE"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.1237803554010285,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"knowledge-note:RESTORE_NOTE\"]}",
+        "loraPick": "knowledge-note:RESTORE_NOTE",
+        "args": {},
+        "raw": null,
+        "argsError": null,
+        "argsOrder": [],
+        "ms": {
+          "embed": 36,
+          "op": 275,
+          "args": 0,
+          "ungated": 311,
+          "gated": 311
+        }
+      },
+      {
+        "id": "ma3-02",
+        "set": "h3multi",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "swap \"Banneton flour choice\" out of the key points for \"Rice flour stops sticking\", same blurb",
+        "expectedOp": null,
+        "expectedOps": [
+          "moc:REMOVE_CORE_IDEA",
+          "moc:ADD_CORE_IDEA"
+        ],
+        "candidates": [
+          "moc:REMOVE_CORE_IDEA",
+          "moc:REORDER_CORE_IDEAS",
+          "moc:UPDATE_CORE_IDEA",
+          "moc:UPDATE_ORIENTATION",
+          "moc:ADD_TENSION",
+          "moc:ADD_CORE_IDEA",
+          "moc:UPDATE_DESCRIPTION",
+          "moc:REMOVE_OPEN_QUESTION",
+          "moc:REMOVE_TENSION",
+          "moc:REMOVE_CHILD_MOC",
+          "moc:CREATE_MOC",
+          "moc:ADD_CHILD_MOC",
+          "moc:ADD_OPEN_QUESTION",
+          "moc:SET_METADATA_FIELD"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.011494512192960937,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"moc:UPDATE_CORE_IDEA\"]}",
+        "loraPick": "moc:UPDATE_CORE_IDEA",
+        "args": {
+          "id": "ci-42",
+          "contextPhrase": "Rice flour stops sticking"
+        },
+        "raw": "{\"id\": \"Banneton flour choice\", \"contextPhrase\": \"Rice flour stops sticking\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id",
+          "contextPhrase",
+          "sortOrder"
+        ],
+        "ms": {
+          "embed": 64,
+          "op": 217,
+          "args": 414,
+          "ungated": 695,
+          "gated": 695
+        }
+      },
+      {
+        "id": "ma3-03",
+        "set": "h3multi",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "set the project back to active and move the target date to January 15",
+        "expectedOp": null,
+        "expectedOps": [
+          "project:SET_PROJECT_STATUS",
+          "project:SET_TARGET_DATE"
+        ],
+        "candidates": [
+          "project:SET_TARGET_DATE",
+          "project:SET_PROJECT_STATUS",
+          "project:SET_DELIVERABLE_STATUS",
+          "project:UPDATE_DELIVERABLE",
+          "project:UPDATE_PROJECT_INFO",
+          "project:REMOVE_DELIVERABLE",
+          "project:LINK_WBS",
+          "project:CREATE_PROJECT",
+          "project:SET_REFERENCES",
+          "project:SET_OWNER",
+          "project:ADD_DELIVERABLE",
+          "project:UPDATE_MEMBER",
+          "project:REMOVE_MEMBER",
+          "project:REMOVE_KNOWLEDGE_REF",
+          "project:ADD_KNOWLEDGE_REF",
+          "project:ADD_MEMBER"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.1112643150318906,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"project:SET_TARGET_DATE\"]}",
+        "loraPick": "project:SET_TARGET_DATE",
+        "args": {
+          "targetDate": "2024-01-15T00:00:00Z"
+        },
+        "raw": "{\"targetDate\": \"2024-01-15T00:00:00Z\"}",
+        "argsError": null,
+        "argsOrder": [
+          "targetDate"
+        ],
+        "ms": {
+          "embed": 45,
+          "op": 207,
+          "args": 162,
+          "ungated": 413,
+          "gated": 413
+        }
+      },
+      {
+        "id": "ma3-04",
+        "set": "h3multi",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "bollard install is stuck until the supplier ships, and jot on it that Dario is chasing them",
+        "expectedOp": null,
+        "expectedOps": [
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ADD_NOTE"
+        ],
+        "candidates": [
+          "wbs:REMOVE_DEPENDENCIES",
+          "wbs:ADD_DEPENDENCIES",
+          "wbs:REORDER",
+          "wbs:SET_OWNER",
+          "wbs:ADD_NOTE",
+          "wbs:SET_PROJECT_REF",
+          "wbs:SET_GOAL_STATUS",
+          "wbs:ASSIGN_GOAL",
+          "wbs:DELETE_GOAL",
+          "wbs:CREATE_GOAL",
+          "wbs:UPDATE_GOAL_DESCRIPTION",
+          "wbs:REMOVE_NOTE",
+          "wbs:SET_OUTCOME",
+          "wbs:SET_REFERENCES"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": 0.009282877492904129,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"wbs:ADD_DEPENDENCIES\"]}",
+        "loraPick": "wbs:ADD_DEPENDENCIES",
+        "args": {
+          "id": "g-60"
+        },
+        "raw": "{\"id\": \"Install bollards\"}",
+        "argsError": null,
+        "argsOrder": [
+          "id"
+        ],
+        "ms": {
+          "embed": 62,
+          "op": 203,
+          "args": 441,
+          "ungated": 706,
+          "gated": 706
+        }
+      },
+      {
+        "id": "ma3-05",
+        "set": "h3multi",
+        "style": "paraphrase",
+        "difficulty": null,
+        "utterance": "the transcript job is hopeless since the audio is corrupt; line up a fresh claim pass on the show notes PDF instead",
+        "expectedOp": null,
+        "expectedOps": [
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:ADD_TASK"
+        ],
+        "candidates": [
+          "pipeline-queue:FAIL_TASK",
+          "pipeline-queue:BLOCK_TASK",
+          "pipeline-queue:ADVANCE_PHASE",
+          "pipeline-queue:UNBLOCK_TASK",
+          "pipeline-queue:ADD_TASK",
+          "pipeline-queue:COMPLETE_TASK",
+          "pipeline-queue:ASSIGN_TASK"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.017448664941603353,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"pipeline-queue:ADD_TASK\"]}",
+        "loraPick": "pipeline-queue:ADD_TASK",
+        "args": {
+          "taskType": "claim",
+          "target": "show notes PDF"
+        },
+        "raw": "{\"taskType\": \"claim\", \"target\": \"show notes PDF\"}",
+        "argsError": null,
+        "argsOrder": [
+          "taskType",
+          "target"
+        ],
+        "ms": {
+          "embed": 60,
+          "op": 158,
+          "args": 146,
+          "ungated": 363,
+          "gated": 363
+        }
+      },
+      {
+        "id": "ma3-06",
+        "set": "h3multi",
+        "style": "natural",
+        "difficulty": null,
+        "utterance": "turn off the weekly digest feature and set processing depth to quick",
+        "expectedOp": null,
+        "expectedOps": [
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:UPDATE_PIPELINE_CONFIG"
+        ],
+        "candidates": [
+          "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_PIPELINE_CONFIG",
+          "vault-config:TOGGLE_FEATURE",
+          "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+          "vault-config:UPDATE_VOCABULARY",
+          "vault-config:ADD_EXTRACTION_CATEGORY",
+          "vault-config:UPDATE_DIMENSION",
+          "vault-config:INITIALIZE_CONFIG"
+        ],
+        "goldRank": null,
+        "inList": null,
+        "gate": {
+          "score": -0.0376401408502719,
+          "question": false,
+          "noAction": false
+        },
+        "step1Raw": "{\"ops\": [\"vault-config:TOGGLE_FEATURE\"]}",
+        "loraPick": "vault-config:TOGGLE_FEATURE",
+        "args": {
+          "feature": "weekly digest",
+          "enabled": false
+        },
+        "raw": "{\"feature\": \"weekly digest\", \"enabled\": false}",
+        "argsError": null,
+        "argsOrder": [
+          "feature",
+          "enabled"
+        ],
+        "ms": {
+          "embed": 38,
+          "op": 189,
+          "args": 128,
+          "ungated": 355,
+          "gated": 355
+        }
+      }
+    ],
+    "config": {
+      "name": "R2-h3",
+      "sets": [
+        "h3",
+        "h3na",
+        "h3multi"
+      ],
+      "model": "lora",
+      "cands": {
+        "mode": "scoped-all",
+        "order": "rank"
+      },
+      "preGate": false,
+      "candsLabel": "scoped-all-rank"
+    },
+    "promptFormat": "r6.1",
+    "model": {
+      "repo": "url",
+      "file": "/lora/LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf"
+    },
+    "backend": "webgpu"
+  }
+}

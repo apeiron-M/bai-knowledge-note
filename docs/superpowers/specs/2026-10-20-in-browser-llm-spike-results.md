@@ -1455,3 +1455,65 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
 | R5 | 47/49 | 49/49 | 28/32 | 12/12 | 43/49 | 9/9 / 9/10 | 267 / 667 ms |
 
 - R3/R4 lose items to other models' ops (4 and 5). R5 on dev: of 4 changed args, 1 gains a stated role ("as designer"; the dev gold omits it, so it scores as an extra) and 3 invent one (`role: "team member"`, `assignee: "beta"`, `assignee: "onboarding guide"`). This is reported, not acted on: R5 stays as registered.
+
+### Held-out-3 (observed)
+
+`spike/llm-harness/eval/heldout3-eval.json`, committed unchanged (`3cf1daed`, sha256 `cbf9883e…555f4d`) after the pre-registration (`adb99a4e`): 92 action items (45 natural, 47 paraphrase; 14 easy, 64 medium, 14 hard; every easy item is natural), 10 no-action, 6 multi-action. 38 action items carry labeled `refCandidates`. Only field names, counts and an op-key check (all 92 + 12 expected ops are in the catalog) were printed before the runs. Each of the six runs ran **once** (WebGPU, Apple `metal-3`, one page, 13:35–13:42; no errors, no reruns). Per-item rows: `eval/results-r9-{R0,R2,R2c,R3,R4,R5}-h3.json` (R1 is `summaryUngated` in the R0 file). Args, `requiredPresent` and refs are over action items with the right op.
+
+| Config | Op | Natural / paraphrase | Gold in list | Op given in list | Args exact | `requiredPresent` | Refs | Fully right (nat / para) | No-action P / R | Latency median / p90 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| R0 (round 8 C3 k=5) | 77 (83.7%) | 43/45 / 34/47 | 86/92 | 77/86 | 25/39 (64.1%) | 26/26 | 35/36 | 63 (68.5%) (38 / 25) | 7/13 / 7/10 | 380 / 858 ms |
+| **R1** (no pre-gate) | **79 (85.9%)** | 44/45 / 35/47 | 86/92 | 79/86 | 25/40 (62.5%) | 27/27 | 35/36 | 64 (69.6%) (39 / 25) | **7/8** / 7/10 | 380 / 858 ms |
+| R2 (all scoped, rank) | 78 (84.8%) | 44/45 / 34/47 | 92/92 | 78/92 | 26/39 (66.7%) | 26/26 | 34/35 | 65 (70.7%) (39 / 26) | 7/8 / 7/10 | 423 / 916 ms |
+| **R2c** (all scoped, catalog) | **79 (85.9%)** | 44/45 / 35/47 | 92/92 | 79/92 | **26/38 (68.4%)** | 28/28 | 35/35 | **67 (72.8%) (39 / 28)** | 7/8 / 7/10 | 443 / 938 ms |
+| R3 (unscoped k=10) | 34 (37.0%) | 24/45 / 10/47 | 68/92 | 34/68 | 12/17 | 13/13 | 12/12 | 29 (31.5%) (21 / 8) | 7/8 / 7/10 | 404 / 797 ms |
+| R4 (unscoped k=15) | 36 (39.1%) | 24/45 / 12/47 | 73/92 | 36/73 | 12/18 | 13/13 | 13/13 | 30 (32.6%) (21 / 9) | 7/8 / 7/10 | 423 / 789 ms |
+| R5 (R2 + relaxed gate) | 78 (84.8%) | 44/45 / 34/47 | 92/92 | 78/92 | 26/39 (66.7%) | 26/26 | 34/35 | 65 (70.7%) (39 / 26) | 7/8 / 7/10 | 405 / 833 ms |
+
+**By difficulty (op):**
+
+| Config | Natural easy | Natural medium | Natural hard | Paraphrase medium | Paraphrase hard |
+|---|---|---|---|---|---|
+| R0 | 13/14 | 25/25 | 5/6 | 28/39 | 6/8 |
+| R1 | 14/14 | 25/25 | 5/6 | 29/39 | 6/8 |
+| R2 | 14/14 | 25/25 | 5/6 | 28/39 | 6/8 |
+| R2c | 14/14 | 25/25 | 5/6 | 30/39 | 5/8 |
+| R3 | 8/14 | 14/25 | 2/6 | 9/39 | 1/8 |
+| R4 | 8/14 | 14/25 | 2/6 | 11/39 | 1/8 |
+| R5 | 14/14 | 25/25 | 5/6 | 28/39 | 6/8 |
+
+- **Held-out-3 is easier for this pipeline than held-out-1/2.** R0 reproduces round 8's C3 k=5 code path exactly and scores 83.7% op here, against 57.4% and 73.6% there; gte-small's top-5 recall is 86/92 (93%) against 52/68 and 82/91. Compare configs within this table, not with round 8's.
+- **Pre-gate (R0 → R1): +2 op, and no-action precision 7/13 → 7/8 at the same recall 7/10.** G3 sent 5 action items to no-action; the LoRA alone sent 1. G3 caught no no-action item that the LoRA missed: the same 3 no-action items get an op either way (`UPDATE_LINK_TYPE`, `SET_GOAL_STATUS`, `RESOLVE_TENSION`).
+- **All scoped ops (R1 → R2 / R2c): the retrieval ceiling goes, the op count does not move.** Of R1's 6 gold-not-in-top-5 misses, the full list recovers 4 (R2, rank order) and 5 (R2c). But it loses 6 (R2) and 6 (R2c) items that R1 had right, all paraphrases, to siblings that the top 5 had kept out (e.g. `UPDATE_ORIENTATION`, `UPDATE_CORE_IDEA` → `UPDATE_DESCRIPTION`; `SET_DELIVERABLE_STATUS` → `UPDATE_DELIVERABLE`; `FAIL_TASK` → `BLOCK_TASK`; `SET_REFERENCES` → `ADD_KNOWLEDGE_REF`). Net: R2 −1, R2c ±0 (6 gained, 6 lost).
+- **Order (R2 vs R2c): catalog order, as trained, is +1 op, +2 fully right**, 4 items gained and 3 lost: within noise. Rank order is not worse because it is out of distribution in any measurable way here.
+- **Unscoped (R3, R4) collapses:** 31 and 34 of the misses are another model's op; the LoRA has never seen a mixed-model list. Unscoped is not usable with this LoRA.
+- **Relaxed gate (R5 vs R2): no net change in args (26/39 both).** It fixes `ADD_MEMBER` (`role: "community liaison"`) and invents `assignee: "procurement"` for a `CREATE_GOAL` that named none; a `CREATE_PROJECT` now gets its owner but misses `status`, so it stays wrong. On dev it invented 3 of 4 changed values. Without training rows that fill these fields, keeping them in the schema just moves the error.
+- **Multi-action (out of scope for v1; the grammar admits one op):** the single op is one of the expected ones in 3/6 (R0, R1, R3, R4) or 4/6 (R2, R2c, R5), and the first expected one in 2/6.
+- **Latency:** the full scoped list (median 16 ops) adds about 45–65 ms median and 60–80 ms p90 over the top 5 (R1 380 / 858 ms → R2c 443 / 938 ms). R5 ran faster than R2 on the same calls apart from step 2, so differences of ±20 ms are run-to-run noise.
+
+**Remaining op misses by cause** (round 8's order; held-out-3 action items, 92):
+
+| Config | Misses | Pre-gate | LoRA `[]` | Gold not in list | Other model | Sibling in list |
+|---|---|---|---|---|---|---|
+| R0 | 15 | 5 | 1 | 4 | 0 | 5 |
+| R1 | 13 | – | 1 | 6 | 0 | 6 |
+| R2 | 14 | – | 1 | 0 | 0 | 13 |
+| R2c | 13 | – | 1 | 0 | 0 | 12 |
+| R3 | 58 | – | 1 | 24 | 31 | 2 |
+| R4 | 56 | – | 1 | 19 | 34 | 2 |
+
+- R2c's 12 sibling confusions, all paraphrases but one: `UPDATE_ORIENTATION` / `UPDATE_CORE_IDEA` → `UPDATE_DESCRIPTION`, `REMOVE_OPEN_QUESTION` → `REMOVE_TENSION`, `SET_PROJECT_STATUS` / `SET_DELIVERABLE_STATUS` → deliverable ops, `SET_REFERENCES` → `ADD_KNOWLEDGE_REF`, `SET_GOAL_STATUS` → `SET_OUTCOME`, `INGEST_SOURCE` → `ADD_EXTRACTED_CLAIM`, and four vault-config pairs (`UPDATE_VOCABULARY`, `ADD_EXTRACTION_CATEGORY`, `UPDATE_PIPELINE_CONFIG`, `TOGGLE_FEATURE` among themselves). The one `[]` is a paraphrased `DISSOLVE_TENSION`.
+- **Args misses (R2c, 12 of 38 items, 16 fields):** free-text span boundaries 6 (`description`, `value`, `url`, `author`, `content`, `methodology`); lists 4 (`affectedItems` ×2, `filesModified`, `influencedDimensions`); enum values 2 (`handoff.phase`, `category`); meant-but-unnamed `owner` / `role` 2; date 1 (`targetDate`); ref 1 (`childRef`). Refs are otherwise 35/35.
+
+### Verdict
+
+- **The bars are not met.** Best op: R1 and R2c at 79/92 (85.9%), against ≥ 90%; best args exact given the right op: R2c 26/38 (68.4%), against ≥ 80%. R2c is the best of seven configs on one set, so it is flattered slightly; R1 ties it on op.
+- **Natural requests are at the bar, paraphrases are not:** natural 44/45 (97.8%) in R1–R2c, paraphrase 35/47 (74.5%). Fully right: natural 39/45, paraphrase 28/47 at best.
+- **What the fixes did:** dropping the pre-gate is a clear, free win (+2 op, no-action precision 54% → 88% at equal recall) and should be the default for a LoRA step 1. The full scoped list removes the retrieval ceiling (0 gold-not-in-list) but trades those items for as many new sibling errors, so op is flat; it costs about 60 ms. Unscoped retrieval and the relaxed step-2 gate do not help this LoRA.
+- **The gap is now on the LoRA's side.** With R2c, 12 of 13 op misses are siblings within the model, in paraphrases, and the args misses are span boundaries, lists and enum values. Neither gating nor retrieval reaches these.
+- **A retrain is now worth it, and it should target:**
+  1. **Paraphrased requests for confusable sibling pairs**: contrastive rows for exactly the pairs above (description vs orientation vs core idea, project vs deliverable status, fail vs block, references vs knowledge refs, the vault-config quartet, extracted claim vs ingest), in wording without the op's words.
+  2. **Step 1 over the full scoped list only** (drop the top-5 rows), in the order served. If the app serves R2c, catalog order needs nothing new; the retrieval step is then unnecessary for step 1.
+  3. **Step-2 rows for lists, span boundaries and enum values**, the remaining args errors.
+  4. **Meant-but-unnamed fields** (`owner`, `role`, `assignee`) only together with training rows that fill them; relaxing the gate at inference alone invents values.
+- **For v1 now (no retrain):** R1 or R2c with no pre-gate. R2c is the simpler pipeline (no retrieval in step 1) at +60 ms; R1 keeps the top-5 list and its latency. They tie on op.
