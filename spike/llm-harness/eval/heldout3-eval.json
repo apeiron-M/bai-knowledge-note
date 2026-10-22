@@ -1,0 +1,7215 @@
+{
+ "name": "heldout3-chat-op-eval",
+ "version": 1,
+ "createdAt": "2026-10-22",
+ "conventions": {
+  "opKey": "<model>:<OP_NAME>, model = docType without the 'bai/' prefix (work-breakdown-structure is 'wbs'), matching CatalogEntry.key in op-catalog.ts",
+  "style": "'natural' = how a user would type it, may reuse the op's own words; 'paraphrase' = indirect wording that avoids the op name's non-trivial words AND their inflections (stem match, enforced by validate_heldout3.py). Report results per style.",
+  "args": "Semantic (model-filled) fields that must match exactly (subject to argMatch). App-filled fields (new-id, timestamp, actor, DateTime) never appear.",
+  "ambiguousArgs": "Semantic fields whose wording/value is open; reference values only, EXCLUDED from exact match.",
+  "refArgs": "ref-id fields the model must choose from context.refCandidates (keys are dotted paths). Score separately from args.",
+  "requiredPresent": "Dotted paths of ambiguousArgs fields that must be present and non-empty (schema-required ones, plus fields the reducer or the request makes necessary).",
+  "argMatch": "Optional per-field comparator: 'ci', 'date' (YYYY-MM-DD prefix), 'unordered', 'ci-unordered'. Fields without one compare exactly; list refArgs without one compare in order.",
+  "omittedOptional": "Optional semantic fields absent from args and ambiguousArgs are expected to be omitted or null.",
+  "context": "context.state is a partial snapshot that satisfies the reducer preconditions. refCandidates entries are {id,label}.",
+  "multiAction": "Utterances whose correct answer is two actions. expected is an ordered list of steps in the same shape as items[].expected. orderSensitive=true means the reducers make only the given order valid; otherwise the utterance order is the reference and any order is acceptable.",
+  "noAction": "Correct output is no operation (answer the question, or ask a clarifying question).",
+  "today": "2026-10-22 (for relative dates)",
+  "actor": "ben (app-supplied; never expected in args)"
+ },
+ "items": [
+  {
+   "id": "kn3-01",
+   "style": "paraphrase",
+   "utterance": "what kind of entry is this really? it records a choice we made and the reasons behind it, so file it as that kind",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "We standardized on 75% hydration for the class loaves",
+     "noteType": "concept",
+     "status": "DRAFT"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_NOTE_TYPE",
+    "args": {
+     "noteType": "decision"
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "kn3-02",
+   "style": "paraphrase",
+   "utterance": "the one-line blurb that shows under the heading should say: Cold retards trade oven spring for deeper flavor.",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Cold retard trade-offs",
+     "description": null,
+     "content": "Overnight in the fridge at 4C...",
+     "status": "DRAFT"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_DESCRIPTION",
+    "args": {
+     "description": "Cold retards trade oven spring for deeper flavor."
+    },
+    "argMatch": {
+     "description": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:SET_CONTENT",
+     "knowledge-note:SET_TITLE"
+    ],
+    "why": "the short summary line under the heading is the description, not the body or the heading itself"
+   }
+  },
+  {
+   "id": "kn3-03",
+   "style": "natural",
+   "utterance": "replace the body with: Salt slows yeast but tightens gluten, so add it after a 30 minute autolyse.",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "When to add salt",
+     "content": "TODO",
+     "status": "DRAFT"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_CONTENT",
+    "args": {
+     "content": "Salt slows yeast but tightens gluten, so add it after a 30 minute autolyse."
+    },
+    "argMatch": {
+     "content": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:PATCH_CONTENT"
+    ],
+    "why": "the whole body is replaced, not an offset edit"
+   }
+  },
+  {
+   "id": "kn3-04",
+   "style": "natural",
+   "utterance": "link this to \"Starter hydration ratios\" as builds on",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Stiff starters ferment slower",
+     "links": [],
+     "status": "DRAFT"
+    },
+    "refCandidates": {
+     "targetDocumentId": [
+      {
+       "id": "kn-a17",
+       "label": "Starter feeding schedule"
+      },
+      {
+       "id": "kn-a29",
+       "label": "Liquid levain basics"
+      },
+      {
+       "id": "kn-a41",
+       "label": "Starter hydration ratios"
+      },
+      {
+       "id": "kn-a56",
+       "label": "Rye starter maintenance"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:ADD_LINK",
+    "args": {
+     "linkType": "BUILDS_ON"
+    },
+    "refArgs": {
+     "targetDocumentId": "kn-a41"
+    },
+    "ambiguousArgs": {
+     "targetTitle": "Starter hydration ratios"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "kn3-05",
+   "style": "paraphrase",
+   "utterance": "the poolish piece actually undercuts our claim here, so mark that relationship accordingly",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Preferments always improve flavor",
+     "links": [
+      {
+       "id": "lk-11",
+       "targetTitle": "Biga timing",
+       "linkType": "BUILDS_ON"
+      },
+      {
+       "id": "lk-12",
+       "targetTitle": "Poolish vs biga",
+       "linkType": "RELATES_TO"
+      },
+      {
+       "id": "lk-13",
+       "targetTitle": "Old dough method",
+       "linkType": "RELATES_TO"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "lk-11",
+       "label": "Biga timing (BUILDS_ON)"
+      },
+      {
+       "id": "lk-12",
+       "label": "Poolish vs biga (RELATES_TO)"
+      },
+      {
+       "id": "lk-13",
+       "label": "Old dough method (RELATES_TO)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:UPDATE_LINK_TYPE",
+    "args": {
+     "linkType": "CONTRADICTS"
+    },
+    "refArgs": {
+     "id": "lk-12"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:ADD_LINK"
+    ],
+    "why": "the connection to the poolish note already exists; only its kind changes"
+   }
+  },
+  {
+   "id": "kn3-06",
+   "style": "natural",
+   "utterance": "remove the link to \"Rye sours faster\"",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Whole grain flours absorb more water",
+     "links": [
+      {
+       "id": "lk-21",
+       "targetTitle": "Bran cuts gluten strands",
+       "linkType": "RELATES_TO"
+      },
+      {
+       "id": "lk-22",
+       "targetTitle": "Autolyse length",
+       "linkType": "BUILDS_ON"
+      },
+      {
+       "id": "lk-23",
+       "targetTitle": "Rye sours faster",
+       "linkType": "RELATES_TO"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "lk-21",
+       "label": "Bran cuts gluten strands (RELATES_TO)"
+      },
+      {
+       "id": "lk-22",
+       "label": "Autolyse length (BUILDS_ON)"
+      },
+      {
+       "id": "lk-23",
+       "label": "Rye sours faster (RELATES_TO)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:REMOVE_LINK",
+    "args": {},
+    "refArgs": {
+     "id": "lk-23"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "kn3-07",
+   "style": "natural",
+   "utterance": "tag this with fermentation",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Bulk ferment ends at 50% rise",
+     "links": [
+      {
+       "id": "lk-31",
+       "targetTitle": "Fermentation timeline",
+       "linkType": "BUILDS_ON"
+      }
+     ],
+     "topics": [
+      {
+       "id": "tp-1",
+       "name": "bulk"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:ADD_TOPIC",
+    "args": {
+     "name": "fermentation"
+    },
+    "argMatch": {
+     "name": "ci"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:ADD_LINK"
+    ],
+    "why": "a linked note titled 'Fermentation timeline' exists, but tagging means a topic label, not a relation"
+   }
+  },
+  {
+   "id": "kn3-08",
+   "style": "paraphrase",
+   "utterance": "it isn't about enzymes at all, drop that label",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Rye needs acid to stay sliceable",
+     "topics": [
+      {
+       "id": "tp-11",
+       "name": "rye"
+      },
+      {
+       "id": "tp-13",
+       "name": "whole grain"
+      },
+      {
+       "id": "tp-12",
+       "name": "enzymes"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "tp-11",
+       "label": "rye"
+      },
+      {
+       "id": "tp-13",
+       "label": "whole grain"
+      },
+      {
+       "id": "tp-12",
+       "label": "enzymes"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:REMOVE_TOPIC",
+    "args": {},
+    "refArgs": {
+     "id": "tp-12"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "kn3-09",
+   "style": "paraphrase",
+   "utterance": "I'm only moderately sure about this one, put my certainty down as medium",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Steam matters less in a dutch oven",
+     "noteType": "concept",
+     "confidence": "high"
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_METADATA_FIELD",
+    "args": {
+     "field": "confidence",
+     "value": "medium"
+    },
+    "argMatch": {
+     "value": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "kn3-11",
+   "style": "natural",
+   "utterance": "the alternatives we looked at were instant yeast and a commercial preferment",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Use a home-grown levain for the course",
+     "noteType": "decision",
+     "alternatives": []
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SET_METADATA_LIST_FIELD",
+    "args": {
+     "field": "alternatives",
+     "values": [
+      "instant yeast",
+      "commercial preferment"
+     ]
+    },
+    "argMatch": {
+     "values": "ci-unordered"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:SET_METADATA_FIELD",
+     "knowledge-note:SET_CONTENT"
+    ],
+    "why": "alternatives is a list field: two entries, not one comma-joined string"
+   }
+  },
+  {
+   "id": "kn3-12",
+   "style": "natural",
+   "utterance": "ok I'm happy with it, submit it for review",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Shaping tension checklist",
+     "status": "DRAFT",
+     "provenance": {
+      "author": "ben"
+     }
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+    "args": {}
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "kn3-13",
+   "style": "paraphrase",
+   "utterance": "Mira's write-up checks out, sign off on it and make it official",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Scoring angle controls the ear",
+     "status": "IN_REVIEW",
+     "provenance": {
+      "author": "mira"
+     }
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:APPROVE_NOTE",
+    "args": {}
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:SUBMIT_FOR_REVIEW"
+    ],
+    "why": "already IN_REVIEW; signing off moves it to CANONICAL"
+   }
+  },
+  {
+   "id": "kn3-14",
+   "style": "paraphrase",
+   "utterance": "not ready yet, bounce it back to Tomás: the timings in step 3 contradict the table",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Lamination for high-hydration doughs",
+     "status": "IN_REVIEW",
+     "provenance": {
+      "author": "tomas"
+     }
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:REJECT_NOTE",
+    "args": {},
+    "ambiguousArgs": {
+     "comment": "The timings in step 3 contradict the table."
+    },
+    "requiredPresent": [
+     "comment"
+    ]
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "knowledge-note:APPROVE_NOTE",
+     "knowledge-note:ARCHIVE_NOTE",
+     "knowledge-note:SET_CONTENT"
+    ],
+    "why": "sending a note under review back to its author is a rejection (to DRAFT) with the reason as comment"
+   }
+  },
+  {
+   "id": "kn3-15",
+   "style": "natural",
+   "utterance": "archive this, we replaced it with the new hydration guide",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Hydration rules of thumb (2025)",
+     "status": "CANONICAL",
+     "provenance": {
+      "author": "ben"
+     }
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:ARCHIVE_NOTE",
+    "args": {},
+    "ambiguousArgs": {
+     "comment": "Replaced by the new hydration guide."
+    },
+    "requiredPresent": [
+     "comment"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "kn3-16",
+   "style": "paraphrase",
+   "utterance": "bring this back out of storage, the bakery class still cites it",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Oven spring depends on surface tension",
+     "status": "ARCHIVED",
+     "provenance": {
+      "author": "ben"
+     }
+    }
+   },
+   "expected": {
+    "op": "knowledge-note:RESTORE_NOTE",
+    "args": {},
+    "ambiguousArgs": {
+     "comment": "The bakery class still cites it."
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "comment is optional; any reason text (or none) is acceptable"
+  },
+  {
+   "id": "moc3-01",
+   "style": "natural",
+   "utterance": "new topic map \"Wild yeast ecology\": it's about how starter microbes compete and cooperate, and readers should begin with the LAB-to-yeast balance notes",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {}
+   },
+   "expected": {
+    "op": "moc:CREATE_MOC",
+    "args": {
+     "title": "Wild yeast ecology",
+     "tier": "TOPIC"
+    },
+    "argMatch": {
+     "title": "ci"
+    },
+    "ambiguousArgs": {
+     "description": "How starter microbes compete and cooperate.",
+     "orientation": "Begin with the LAB-to-yeast balance notes."
+    },
+    "requiredPresent": [
+     "description",
+     "orientation"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "moc3-02",
+   "style": "paraphrase",
+   "utterance": "tell readers to start with the salt pieces and only then move on to timing",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Dough strength",
+     "description": "Everything we know about dough strength",
+     "orientation": "Read in any order."
+    }
+   },
+   "expected": {
+    "op": "moc:UPDATE_ORIENTATION",
+    "args": {},
+    "ambiguousArgs": {
+     "orientation": "Start with the salt notes, then move on to timing."
+    },
+    "requiredPresent": [
+     "orientation"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:UPDATE_DESCRIPTION"
+    ],
+    "why": "advice on where readers start is the orientation, not the description"
+   }
+  },
+  {
+   "id": "moc3-03",
+   "style": "natural",
+   "utterance": "update the description to \"What controls crust color and thickness\"",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Crust",
+     "description": "crust stuff",
+     "orientation": "Start with Maillard basics."
+    }
+   },
+   "expected": {
+    "op": "moc:UPDATE_DESCRIPTION",
+    "args": {
+     "description": "What controls crust color and thickness"
+    },
+    "argMatch": {
+     "description": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "moc3-04",
+   "style": "natural",
+   "utterance": "add \"Fridge proofing builds acetic tang\" to the core ideas, it's the main flavor lever",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Sourdough flavor",
+     "coreIdeas": [
+      {
+       "id": "ci-1",
+       "noteRef": "Lactic vs acetic acid",
+       "contextPhrase": "the two acids",
+       "sortOrder": 0
+      },
+      {
+       "id": "ci-2",
+       "noteRef": "Whole grain adds sourness",
+       "contextPhrase": "flour choice",
+       "sortOrder": 1
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_CORE_IDEA",
+    "args": {},
+    "ambiguousArgs": {
+     "noteRef": "Fridge proofing builds acetic tang",
+     "contextPhrase": "the main flavor lever",
+     "sortOrder": 2
+    },
+    "requiredPresent": [
+     "noteRef",
+     "contextPhrase",
+     "sortOrder"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "noteRef is a semantic String; any reference that names the 'Fridge proofing builds acetic tang' note is acceptable. sortOrder 2 = append."
+  },
+  {
+   "id": "moc3-05",
+   "style": "paraphrase",
+   "utterance": "the gloss beside \"Steam injection timing\" should say \"why the crust blisters\" instead",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Crust",
+     "coreIdeas": [
+      {
+       "id": "ci-11",
+       "noteRef": "Maillard basics",
+       "contextPhrase": "where color comes from",
+       "sortOrder": 0
+      },
+      {
+       "id": "ci-12",
+       "noteRef": "Bake temperature curve",
+       "contextPhrase": "the heat profile",
+       "sortOrder": 1
+      },
+      {
+       "id": "ci-13",
+       "noteRef": "Steam injection timing",
+       "contextPhrase": "steam",
+       "sortOrder": 2
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "ci-11",
+       "label": "Maillard basics"
+      },
+      {
+       "id": "ci-12",
+       "label": "Bake temperature curve"
+      },
+      {
+       "id": "ci-13",
+       "label": "Steam injection timing"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:UPDATE_CORE_IDEA",
+    "args": {
+     "contextPhrase": "why the crust blisters"
+    },
+    "argMatch": {
+     "contextPhrase": "ci"
+    },
+    "refArgs": {
+     "id": "ci-13"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:ADD_CORE_IDEA",
+     "moc:REORDER_CORE_IDEAS"
+    ],
+    "why": "the entry exists; only its context phrase changes"
+   }
+  },
+  {
+   "id": "moc3-06",
+   "style": "paraphrase",
+   "utterance": "put the lamination one first and leave the other two in their current order",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Dough strength",
+     "coreIdeas": [
+      {
+       "id": "ci-21",
+       "noteRef": "Stretch and folds",
+       "contextPhrase": "gentle building",
+       "sortOrder": 0
+      },
+      {
+       "id": "ci-22",
+       "noteRef": "Coil folds",
+       "contextPhrase": "for wet doughs",
+       "sortOrder": 1
+      },
+      {
+       "id": "ci-23",
+       "noteRef": "Lamination",
+       "contextPhrase": "one big stretch",
+       "sortOrder": 2
+      }
+     ]
+    },
+    "refCandidates": {
+     "ids": [
+      {
+       "id": "ci-21",
+       "label": "Stretch and folds"
+      },
+      {
+       "id": "ci-22",
+       "label": "Coil folds"
+      },
+      {
+       "id": "ci-23",
+       "label": "Lamination"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:REORDER_CORE_IDEAS",
+    "args": {},
+    "refArgs": {
+     "ids": [
+      "ci-23",
+      "ci-21",
+      "ci-22"
+     ]
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "ids compared in order"
+  },
+  {
+   "id": "moc3-07",
+   "style": "natural",
+   "utterance": "add a tension on this map: long autolyse vs early salt, between the autolyse note and the salt timing note",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Dough strength",
+     "tensions": []
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_TENSION",
+    "args": {},
+    "ambiguousArgs": {
+     "description": "Long autolyse vs early salt",
+     "involvedRefs": [
+      "Autolyse length",
+      "When to add salt"
+     ]
+    },
+    "requiredPresent": [
+     "description",
+     "involvedRefs"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "tension:CREATE_TENSION",
+     "moc:ADD_OPEN_QUESTION"
+    ],
+    "why": "scoped to this map, so it is an entry on the MOC"
+   }
+  },
+  {
+   "id": "moc3-08",
+   "style": "paraphrase",
+   "utterance": "we settled whether the two-day fridge rest pays off, so that one can come off our list of unknowns",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Sourdough flavor",
+     "openQuestions": [
+      "Does rye need a different salt percentage?",
+      "Is a 48h cold retard ever worth it?"
+     ],
+     "tensions": [
+      {
+       "id": "tn-1",
+       "description": "Cold retard flavor vs oven spring",
+       "involvedRefs": [
+        "Cold retard trade-offs"
+       ]
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:REMOVE_OPEN_QUESTION",
+    "args": {
+     "question": "Is a 48h cold retard ever worth it?"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:REMOVE_TENSION"
+    ],
+    "why": "a cold-retard tension also exists; 'list of unknowns' means the open question, removed by its exact stored text"
+   }
+  },
+  {
+   "id": "moc3-09",
+   "style": "natural",
+   "utterance": "add an open question: does water hardness change rise time?",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Dough strength",
+     "openQuestions": []
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_OPEN_QUESTION",
+    "args": {},
+    "ambiguousArgs": {
+     "question": "Does water hardness change rise time?"
+    },
+    "requiredPresent": [
+     "question"
+    ]
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "moc3-10",
+   "style": "paraphrase",
+   "utterance": "nest the \"Rye baking\" map underneath this one",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Bread",
+     "tier": "HUB",
+     "childRefs": [
+      "moc/enriched-doughs"
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:ADD_CHILD_MOC",
+    "args": {},
+    "ambiguousArgs": {
+     "childRef": "moc/rye-baking"
+    },
+    "requiredPresent": [
+     "childRef"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:ADD_CORE_IDEA"
+    ],
+    "why": "another map placed below this one is a child MOC, not a core idea"
+   },
+   "notes": "childRef is a semantic String; any reference naming the Rye baking map is acceptable"
+  },
+  {
+   "id": "moc3-11",
+   "style": "paraphrase",
+   "utterance": "the enriched doughs sub-map doesn't belong under here anymore, detach it",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Bread",
+     "tier": "HUB",
+     "childRefs": [
+      "moc/enriched-doughs",
+      "moc/rye-baking"
+     ],
+     "coreIdeas": [
+      {
+       "id": "ci-31",
+       "noteRef": "Enriched doughs need more yeast",
+       "contextPhrase": "sugar and fat",
+       "sortOrder": 0
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:REMOVE_CHILD_MOC",
+    "args": {
+     "childRef": "moc/enriched-doughs"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:REMOVE_CORE_IDEA"
+    ],
+    "why": "a core idea mentions enriched doughs too; 'sub-map' means the child MOC, matched by its stored ref string"
+   }
+  },
+  {
+   "id": "moc3-12",
+   "style": "natural",
+   "utterance": "remove the hydration tension",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Dough strength",
+     "openQuestions": [
+      "How much hydration can a beginner handle?"
+     ],
+     "tensions": [
+      {
+       "id": "tn-11",
+       "description": "Coil folds vs slap and fold",
+       "involvedRefs": [
+        "Coil folds",
+        "Slap and fold"
+       ]
+      },
+      {
+       "id": "tn-12",
+       "description": "Higher hydration vs easier handling",
+       "involvedRefs": [
+        "Hydration targets",
+        "Shaping wet dough"
+       ]
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "tn-11",
+       "label": "Coil folds vs slap and fold"
+      },
+      {
+       "id": "tn-12",
+       "label": "Higher hydration vs easier handling"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "moc:REMOVE_TENSION",
+    "args": {},
+    "refArgs": {
+     "id": "tn-12"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "moc:REMOVE_OPEN_QUESTION"
+    ],
+    "why": "an open question also mentions hydration; the user names the tension"
+   }
+  },
+  {
+   "id": "prj3-01",
+   "style": "natural",
+   "utterance": "start a project called \"Riverside greenway study\", Hana owns it, and it's still in planning",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {}
+   },
+   "expected": {
+    "op": "project:CREATE_PROJECT",
+    "args": {
+     "name": "Riverside greenway study",
+     "owner": "Hana",
+     "status": "PLANNING"
+    },
+    "argMatch": {
+     "name": "ci",
+     "owner": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "prj3-02",
+   "style": "paraphrase",
+   "utterance": "the blurb for this effort should mention it covers the Eastside corridor plus both bridge approaches",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "description": "Bike lanes."
+    }
+   },
+   "expected": {
+    "op": "project:UPDATE_PROJECT_INFO",
+    "args": {},
+    "ambiguousArgs": {
+     "description": "Covers the Eastside corridor plus both bridge approaches."
+    },
+    "requiredPresent": [
+     "description"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "name must be omitted (unchanged)"
+  },
+  {
+   "id": "prj3-03",
+   "style": "paraphrase",
+   "utterance": "everything shipped last month, so mark the whole effort as finished",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben"
+    }
+   },
+   "expected": {
+    "op": "project:SET_PROJECT_STATUS",
+    "args": {
+     "status": "COMPLETED"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:SET_DELIVERABLE_STATUS"
+    ],
+    "why": "the whole effort, not one item; finished = COMPLETED (not ARCHIVED)"
+   }
+  },
+  {
+   "id": "prj3-04",
+   "style": "natural",
+   "utterance": "make Dario the owner",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "team": [
+      {
+       "id": "tm-1",
+       "name": "Dario",
+       "role": "project lead",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-2",
+       "name": "Lin",
+       "role": "designer",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-3",
+       "name": "Priya",
+       "role": "traffic analyst",
+       "kind": "HUMAN"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:SET_OWNER",
+    "args": {
+     "owner": "Dario"
+    },
+    "argMatch": {
+     "owner": "ci"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:UPDATE_MEMBER"
+    ],
+    "why": "ownership is a project field, not a member role"
+   }
+  },
+  {
+   "id": "prj3-05",
+   "style": "paraphrase",
+   "utterance": "we need this wrapped by the end of next month",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "targetDate": null
+    }
+   },
+   "expected": {
+    "op": "project:SET_TARGET_DATE",
+    "args": {
+     "targetDate": "2026-11-30T00:00:00Z"
+    },
+    "argMatch": {
+     "targetDate": "date"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "today is 2026-10-22, so the end of next month is 2026-11-30"
+  },
+  {
+   "id": "prj3-06",
+   "style": "paraphrase",
+   "utterance": "hook this up to the \"Eastside rollout breakdown\" so its task tree shows here",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "wbsRef": null,
+     "knowledgeRefs": [
+      "ph-kn-201"
+     ]
+    },
+    "refCandidates": {
+     "wbsRef": [
+      {
+       "id": "ph-wbs-07",
+       "label": "Westside rollout breakdown"
+      },
+      {
+       "id": "ph-wbs-12",
+       "label": "Eastside rollout breakdown"
+      },
+      {
+       "id": "ph-wbs-19",
+       "label": "Signal timing breakdown"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:LINK_WBS",
+    "args": {},
+    "refArgs": {
+     "wbsRef": "ph-wbs-12"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:ADD_KNOWLEDGE_REF",
+     "project:SET_REFERENCES"
+    ],
+    "why": "a task-tree breakdown document is the project's WBS, not a knowledge ref or a URL"
+   }
+  },
+  {
+   "id": "prj3-07",
+   "style": "natural",
+   "utterance": "add Keiko to the team as the community liaison",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "team": [
+      {
+       "id": "tm-1",
+       "name": "Dario",
+       "role": "project lead",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-2",
+       "name": "Lin",
+       "role": "designer",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-3",
+       "name": "Priya",
+       "role": "traffic analyst",
+       "kind": "HUMAN"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:ADD_MEMBER",
+    "args": {
+     "name": "Keiko",
+     "role": "community liaison"
+    },
+    "argMatch": {
+     "name": "ci",
+     "role": "ci"
+    },
+    "ambiguousArgs": {
+     "kind": "HUMAN"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "kind may be HUMAN or omitted"
+  },
+  {
+   "id": "prj3-08",
+   "style": "paraphrase",
+   "utterance": "Priya's moved over to the community outreach side now",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "team": [
+      {
+       "id": "tm-1",
+       "name": "Dario",
+       "role": "project lead",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-2",
+       "name": "Lin",
+       "role": "designer",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-3",
+       "name": "Priya",
+       "role": "traffic analyst",
+       "kind": "HUMAN"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "tm-1",
+       "label": "Dario (project lead)"
+      },
+      {
+       "id": "tm-2",
+       "label": "Lin (designer)"
+      },
+      {
+       "id": "tm-3",
+       "label": "Priya (traffic analyst)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:UPDATE_MEMBER",
+    "args": {},
+    "refArgs": {
+     "id": "tm-3"
+    },
+    "ambiguousArgs": {
+     "role": "community outreach"
+    },
+    "requiredPresent": [
+     "role"
+    ]
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:ADD_MEMBER",
+     "project:SET_OWNER",
+     "project:REMOVE_MEMBER"
+    ],
+    "why": "Priya is already on the team; only her role changes"
+   },
+   "notes": "name and kind must be omitted (unchanged)"
+  },
+  {
+   "id": "prj3-09",
+   "style": "natural",
+   "utterance": "remove Lin from the team",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "team": [
+      {
+       "id": "tm-1",
+       "name": "Dario",
+       "role": "project lead",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-2",
+       "name": "Lin",
+       "role": "designer",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-3",
+       "name": "Priya",
+       "role": "traffic analyst",
+       "kind": "HUMAN"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "tm-1",
+       "label": "Dario (project lead)"
+      },
+      {
+       "id": "tm-2",
+       "label": "Lin (designer)"
+      },
+      {
+       "id": "tm-3",
+       "label": "Priya (traffic analyst)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:REMOVE_MEMBER",
+    "args": {},
+    "refArgs": {
+     "id": "tm-2"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "prj3-10",
+   "style": "natural",
+   "utterance": "add a deliverable \"Parking impact memo\" tied to the curbside audit goal",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "deliverables": [
+      {
+       "id": "dl-1",
+       "title": "Corridor survey report",
+       "status": "DELIVERED"
+      },
+      {
+       "id": "dl-2",
+       "title": "Design packet",
+       "status": "IN_PROGRESS",
+       "url": null
+      },
+      {
+       "id": "dl-3",
+       "title": "Signage plan",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "dl-4",
+       "title": "Press kit",
+       "status": "PLANNED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "goalRef": [
+      {
+       "id": "g-1",
+       "label": "Corridor survey"
+      },
+      {
+       "id": "g-2",
+       "label": "Curbside audit"
+      },
+      {
+       "id": "g-3",
+       "label": "Public meeting"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:ADD_DELIVERABLE",
+    "args": {
+     "title": "Parking impact memo"
+    },
+    "argMatch": {
+     "title": "ci"
+    },
+    "refArgs": {
+     "goalRef": "g-2"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "prj3-11",
+   "style": "paraphrase",
+   "utterance": "the draft design packet lives at https://files.example.org/eastside/design-v2.pdf now",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "deliverables": [
+      {
+       "id": "dl-1",
+       "title": "Corridor survey report",
+       "status": "DELIVERED"
+      },
+      {
+       "id": "dl-2",
+       "title": "Design packet",
+       "status": "IN_PROGRESS",
+       "url": null
+      },
+      {
+       "id": "dl-3",
+       "title": "Signage plan",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "dl-4",
+       "title": "Press kit",
+       "status": "PLANNED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "dl-1",
+       "label": "Corridor survey report (DELIVERED)"
+      },
+      {
+       "id": "dl-2",
+       "label": "Design packet (IN_PROGRESS)"
+      },
+      {
+       "id": "dl-3",
+       "label": "Signage plan (IN_PROGRESS)"
+      },
+      {
+       "id": "dl-4",
+       "label": "Press kit (PLANNED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:UPDATE_DELIVERABLE",
+    "args": {
+     "url": "https://files.example.org/eastside/design-v2.pdf"
+    },
+    "refArgs": {
+     "id": "dl-2"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "title/description/goalRef omitted"
+  },
+  {
+   "id": "prj3-12",
+   "style": "paraphrase",
+   "utterance": "the signage plan went out to the city on Monday",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "deliverables": [
+      {
+       "id": "dl-1",
+       "title": "Corridor survey report",
+       "status": "DELIVERED"
+      },
+      {
+       "id": "dl-2",
+       "title": "Design packet",
+       "status": "IN_PROGRESS",
+       "url": null
+      },
+      {
+       "id": "dl-3",
+       "title": "Signage plan",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "dl-4",
+       "title": "Press kit",
+       "status": "PLANNED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "dl-1",
+       "label": "Corridor survey report (DELIVERED)"
+      },
+      {
+       "id": "dl-2",
+       "label": "Design packet (IN_PROGRESS)"
+      },
+      {
+       "id": "dl-3",
+       "label": "Signage plan (IN_PROGRESS)"
+      },
+      {
+       "id": "dl-4",
+       "label": "Press kit (PLANNED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:SET_DELIVERABLE_STATUS",
+    "args": {
+     "status": "DELIVERED"
+    },
+    "refArgs": {
+     "id": "dl-3"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "deliveredAt is a DateTime (app-filled), never expected in args"
+  },
+  {
+   "id": "prj3-13",
+   "style": "natural",
+   "utterance": "delete the press kit deliverable, it was never in scope",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "deliverables": [
+      {
+       "id": "dl-1",
+       "title": "Corridor survey report",
+       "status": "DELIVERED"
+      },
+      {
+       "id": "dl-2",
+       "title": "Design packet",
+       "status": "IN_PROGRESS",
+       "url": null
+      },
+      {
+       "id": "dl-3",
+       "title": "Signage plan",
+       "status": "IN_PROGRESS"
+      },
+      {
+       "id": "dl-4",
+       "title": "Press kit",
+       "status": "PLANNED"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "dl-1",
+       "label": "Corridor survey report (DELIVERED)"
+      },
+      {
+       "id": "dl-2",
+       "label": "Design packet (IN_PROGRESS)"
+      },
+      {
+       "id": "dl-3",
+       "label": "Signage plan (IN_PROGRESS)"
+      },
+      {
+       "id": "dl-4",
+       "label": "Press kit (PLANNED)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:REMOVE_DELIVERABLE",
+    "args": {},
+    "refArgs": {
+     "id": "dl-4"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:SET_DELIVERABLE_STATUS"
+    ],
+    "why": "delete means remove from the list, not CANCELLED"
+   }
+  },
+  {
+   "id": "prj3-14",
+   "style": "natural",
+   "utterance": "link the \"Protected lanes reduce injury rates\" note to this project",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "knowledgeRefs": [
+      "ph-kn-201"
+     ],
+     "references": [
+      "https://example.org/eastside-plan.pdf"
+     ],
+     "wbsRef": null
+    },
+    "refCandidates": {
+     "ref": [
+      {
+       "id": "ph-kn-218",
+       "label": "Curb parking turnover"
+      },
+      {
+       "id": "ph-kn-226",
+       "label": "Bike counts double after protection"
+      },
+      {
+       "id": "ph-kn-233",
+       "label": "Protected lanes reduce injury rates"
+      },
+      {
+       "id": "ph-kn-240",
+       "label": "E-scooter parking conflicts"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:ADD_KNOWLEDGE_REF",
+    "args": {},
+    "refArgs": {
+     "ref": "ph-kn-233"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:LINK_WBS",
+     "project:SET_REFERENCES"
+    ],
+    "why": "'link' and a vault note: a knowledge ref, not the WBS link or the URL references"
+   }
+  },
+  {
+   "id": "prj3-15",
+   "style": "paraphrase",
+   "utterance": "also cite https://nacto.org/publication/urban-bikeway-design-guide/ alongside the plan PDF we already have",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "knowledgeRefs": [
+      "ph-kn-201"
+     ],
+     "references": [
+      "https://example.org/eastside-plan.pdf"
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:SET_REFERENCES",
+    "args": {
+     "references": [
+      "https://example.org/eastside-plan.pdf",
+      "https://nacto.org/publication/urban-bikeway-design-guide/"
+     ]
+    },
+    "argMatch": {
+     "references": "unordered"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "project:ADD_KNOWLEDGE_REF"
+    ],
+    "why": "an external URL goes in references; SET_REFERENCES replaces the list, so the existing URL must be kept"
+   }
+  },
+  {
+   "id": "prj3-16",
+   "style": "natural",
+   "utterance": "remove the e-scooter parking note from this project's knowledge refs",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "knowledgeRefs": [
+      "ph-kn-201",
+      "ph-kn-226",
+      "ph-kn-218",
+      "ph-kn-240"
+     ]
+    },
+    "refCandidates": {
+     "ref": [
+      {
+       "id": "ph-kn-201",
+       "label": "Lane width standards"
+      },
+      {
+       "id": "ph-kn-226",
+       "label": "Bike counts double after protection"
+      },
+      {
+       "id": "ph-kn-218",
+       "label": "Curb parking turnover"
+      },
+      {
+       "id": "ph-kn-240",
+       "label": "E-scooter parking conflicts"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "project:REMOVE_KNOWLEDGE_REF",
+    "args": {},
+    "refArgs": {
+     "ref": "ph-kn-240"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "wbs3-01",
+   "style": "natural",
+   "utterance": "add a goal \"Order paint\" under procurement",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "parentId": [
+      {
+       "id": "g-20",
+       "label": "Design"
+      },
+      {
+       "id": "g-10",
+       "label": "Procurement"
+      },
+      {
+       "id": "g-30",
+       "label": "Survey curbs"
+      },
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      }
+     ],
+     "insertBefore": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-12",
+       "label": "Rent cones"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:CREATE_GOAL",
+    "args": {
+     "description": "Order paint"
+    },
+    "argMatch": {
+     "description": "ci"
+    },
+    "refArgs": {
+     "parentId": "g-10"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "assignee and insertBefore omitted"
+  },
+  {
+   "id": "wbs3-03",
+   "style": "paraphrase",
+   "utterance": "reword the curb survey item so it reads \"Survey curbs and loading zones on 5 blocks\"",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-21",
+       "label": "Draft signage plan"
+      },
+      {
+       "id": "g-30",
+       "label": "Survey curbs"
+      },
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:UPDATE_GOAL_DESCRIPTION",
+    "args": {
+     "description": "Survey curbs and loading zones on 5 blocks"
+    },
+    "argMatch": {
+     "description": "ci"
+    },
+    "refArgs": {
+     "id": "g-30"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_OUTCOME",
+     "wbs:ADD_NOTE"
+    ],
+    "why": "rewording the item itself changes its description"
+   }
+  },
+  {
+   "id": "wbs3-04",
+   "style": "natural",
+   "utterance": "delete the rent cones goal, the city is lending us cones",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      },
+      {
+       "id": "g-12",
+       "label": "Rent cones"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:DELETE_GOAL",
+    "args": {},
+    "refArgs": {
+     "id": "g-12"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_GOAL_STATUS"
+    ],
+    "why": "explicit delete; contrast wbs3-05 (WONT_DO, kept on the board)"
+   }
+  },
+  {
+   "id": "wbs3-05",
+   "style": "paraphrase",
+   "utterance": "we're skipping the night-time count entirely, but leave it on the board so people can see we decided that",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-30",
+       "label": "Survey curbs"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      },
+      {
+       "id": "g-70",
+       "label": "Night-time bike count"
+      },
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_GOAL_STATUS",
+    "args": {
+     "status": "WONT_DO"
+    },
+    "refArgs": {
+     "id": "g-70"
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:DELETE_GOAL"
+    ],
+    "why": "not doing it but keeping it visible is WONT_DO, not a deletion"
+   }
+  },
+  {
+   "id": "wbs3-06",
+   "style": "natural",
+   "utterance": "set \"Install bollards\" to blocked, we're waiting on the supplier",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      },
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_GOAL_STATUS",
+    "args": {
+     "status": "BLOCKED"
+    },
+    "refArgs": {
+     "id": "g-60"
+    },
+    "ambiguousArgs": {
+     "blockReason": "Waiting on the supplier"
+    },
+    "requiredPresent": [
+     "blockReason"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "the reducer throws MissingBlockReasonError without blockReason"
+  },
+  {
+   "id": "wbs3-07",
+   "style": "paraphrase",
+   "utterance": "Keiko is going to handle the signage installation",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      },
+      {
+       "id": "g-21",
+       "label": "Draft signage plan"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:ASSIGN_GOAL",
+    "args": {
+     "assignee": "Keiko"
+    },
+    "argMatch": {
+     "assignee": "ci"
+    },
+    "refArgs": {
+     "id": "g-80"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_OWNER"
+    ],
+    "why": "one item gets a person, not the whole breakdown"
+   }
+  },
+  {
+   "id": "wbs3-08",
+   "style": "natural",
+   "utterance": "set the outcome on the curb survey: 212 parking spaces counted across 5 blocks",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-21",
+       "label": "Draft signage plan"
+      },
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      },
+      {
+       "id": "g-30",
+       "label": "Survey curbs"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_OUTCOME",
+    "args": {},
+    "refArgs": {
+     "id": "g-30"
+    },
+    "ambiguousArgs": {
+     "outcome": "212 parking spaces counted across 5 blocks"
+    },
+    "requiredPresent": [
+     "outcome"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_GOAL_STATUS",
+     "wbs:ADD_NOTE"
+    ],
+    "why": "the goal is already COMPLETED; only the outcome is recorded"
+   }
+  },
+  {
+   "id": "wbs3-09",
+   "style": "paraphrase",
+   "utterance": "painting doesn't have to wait for the permit to come through anymore",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      },
+      {
+       "id": "g-50",
+       "label": "Paint lane markings"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      }
+     ],
+     "dependencies": [
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      },
+      {
+       "id": "g-50",
+       "label": "Paint lane markings"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:REMOVE_DEPENDENCIES",
+    "args": {},
+    "refArgs": {
+     "id": "g-50",
+     "dependencies": [
+      "g-40"
+     ]
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_GOAL_STATUS",
+     "wbs:DELETE_GOAL"
+    ],
+    "why": "dropping an ordering constraint between two goals, not a status change"
+   }
+  },
+  {
+   "id": "wbs3-10",
+   "style": "natural",
+   "utterance": "make \"Install bollards\" depend on \"Order bollards\"",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      },
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      }
+     ],
+     "dependencies": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      },
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:ADD_DEPENDENCIES",
+    "args": {},
+    "argMatch": {
+     "dependencies": "unordered"
+    },
+    "refArgs": {
+     "id": "g-60",
+     "dependencies": [
+      "g-11"
+     ]
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "wbs3-11",
+   "style": "paraphrase",
+   "utterance": "jot down on the permit item that the city clerk quoted 10 business days",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "goalId": [
+      {
+       "id": "g-30",
+       "label": "Survey curbs"
+      },
+      {
+       "id": "g-50",
+       "label": "Paint lane markings"
+      },
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:ADD_NOTE",
+    "args": {},
+    "refArgs": {
+     "goalId": "g-40"
+    },
+    "ambiguousArgs": {
+     "note": "City clerk quoted 10 business days."
+    },
+    "requiredPresent": [
+     "note"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:SET_OUTCOME",
+     "wbs:UPDATE_GOAL_DESCRIPTION"
+    ],
+    "why": "a side remark is a note, not the outcome"
+   },
+   "notes": "author omitted"
+  },
+  {
+   "id": "wbs3-12",
+   "style": "natural",
+   "utterance": "remove the note about calling the supplier from Order bollards",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": [
+        {
+         "id": "nt-1",
+         "note": "Call the supplier Tuesday",
+         "author": "ben"
+        },
+        {
+         "id": "nt-2",
+         "note": "Quote came in at $4k",
+         "author": "Dario"
+        }
+       ]
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "goalId": [
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      },
+      {
+       "id": "g-10",
+       "label": "Procurement"
+      },
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      }
+     ],
+     "noteId": [
+      {
+       "id": "nt-2",
+       "label": "Quote came in at $4k"
+      },
+      {
+       "id": "nt-1",
+       "label": "Call the supplier Tuesday"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:REMOVE_NOTE",
+    "args": {},
+    "refArgs": {
+     "goalId": "g-11",
+     "noteId": "nt-1"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "wbs3-13",
+   "style": "paraphrase",
+   "utterance": "move the signage installation item so it sits under Design",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-21",
+       "label": "Draft signage plan"
+      },
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      }
+     ],
+     "parentId": [
+      {
+       "id": "g-10",
+       "label": "Procurement"
+      },
+      {
+       "id": "g-30",
+       "label": "Survey curbs"
+      },
+      {
+       "id": "g-20",
+       "label": "Design"
+      }
+     ],
+     "insertBefore": [
+      {
+       "id": "g-21",
+       "label": "Draft signage plan"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:REORDER",
+    "args": {},
+    "refArgs": {
+     "id": "g-80",
+     "parentId": "g-20"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "insertBefore omitted (append under Design)"
+  },
+  {
+   "id": "wbs3-14",
+   "style": "paraphrase",
+   "utterance": "keep the street design manual at https://www.nyc.gov/html/dot/html/pedestrians/streetdesignmanual.shtml pinned on this breakdown as a source",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_REFERENCES",
+    "args": {
+     "references": [
+      "https://www.nyc.gov/html/dot/html/pedestrians/streetdesignmanual.shtml"
+     ]
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "wbs:ADD_NOTE"
+    ],
+    "why": "a URL pinned to the whole breakdown goes in its references list"
+   }
+  },
+  {
+   "id": "wbs3-15",
+   "style": "natural",
+   "utterance": "set the project ref to the Riverside greenway study",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "projectRef": [
+      {
+       "id": "ph-prj-02",
+       "label": "Eastside protected bike lanes"
+      },
+      {
+       "id": "ph-prj-09",
+       "label": "School streets pilot"
+      },
+      {
+       "id": "ph-prj-05",
+       "label": "Riverside greenway study"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "wbs:SET_PROJECT_REF",
+    "args": {},
+    "refArgs": {
+     "projectRef": "ph-prj-05"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "pq3-01",
+   "style": "paraphrase",
+   "utterance": "line up an enrichment pass on \"Cloze deletion cards\" as part of the October batch",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "batchId": [
+      {
+       "id": "b-sep",
+       "label": "September batch"
+      },
+      {
+       "id": "b-oct",
+       "label": "October batch"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:ADD_TASK",
+    "args": {
+     "taskType": "enrichment",
+     "target": "Cloze deletion cards"
+    },
+    "argMatch": {
+     "target": "ci"
+    },
+    "refArgs": {
+     "batchId": "b-oct"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "ref"
+   ],
+   "notes": "currentPhase and documentRef omitted (reducer derives the first phase)"
+  },
+  {
+   "id": "pq3-02",
+   "style": "natural",
+   "utterance": "assign the spacing effect task to Ravi",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "Spacing effect meta-analysis (claim, create, PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-3",
+       "label": "Retrieval practice review (claim, verify, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-4",
+       "label": "Testing effect in L2 vocabulary (claim, create, BLOCKED)"
+      },
+      {
+       "id": "tk-5",
+       "label": "Podcast ep. 41 transcript (claim, create, IN_PROGRESS)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:ASSIGN_TASK",
+    "args": {
+     "assignedTo": "Ravi"
+    },
+    "argMatch": {
+     "assignedTo": "ci"
+    },
+    "refArgs": {
+     "taskId": "tk-1"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "pq3-03",
+   "style": "paraphrase",
+   "utterance": "reflect is done on the interleaving one: I wrote the cross-links and touched notes/interleaving.md, pass it along to the next step",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "Spacing effect meta-analysis (claim, create, PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-3",
+       "label": "Retrieval practice review (claim, verify, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-4",
+       "label": "Testing effect in L2 vocabulary (claim, create, BLOCKED)"
+      },
+      {
+       "id": "tk-5",
+       "label": "Podcast ep. 41 transcript (claim, create, IN_PROGRESS)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:ADVANCE_PHASE",
+    "args": {
+     "handoff": {
+      "phase": "reflect",
+      "filesModified": [
+       "notes/interleaving.md"
+      ]
+     }
+    },
+    "refArgs": {
+     "taskId": "tk-2"
+    },
+    "ambiguousArgs": {
+     "handoff": {
+      "workDone": "Wrote the cross-links."
+     }
+    },
+    "requiredPresent": [
+     "handoff.workDone"
+    ]
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:COMPLETE_TASK"
+    ],
+    "why": "one phase finished and handed on; the task still has reweave and verify ahead"
+   }
+  },
+  {
+   "id": "pq3-04",
+   "style": "natural",
+   "utterance": "mark the retrieval practice task complete",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "Spacing effect meta-analysis (claim, create, PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-3",
+       "label": "Retrieval practice review (claim, verify, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-4",
+       "label": "Testing effect in L2 vocabulary (claim, create, BLOCKED)"
+      },
+      {
+       "id": "tk-5",
+       "label": "Podcast ep. 41 transcript (claim, create, IN_PROGRESS)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:COMPLETE_TASK",
+    "args": {},
+    "refArgs": {
+     "taskId": "tk-3"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:ADVANCE_PHASE"
+    ],
+    "why": "explicit completion of the whole task"
+   }
+  },
+  {
+   "id": "pq3-05",
+   "style": "paraphrase",
+   "utterance": "the podcast transcript job is a lost cause, the audio file is corrupted",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "Spacing effect meta-analysis (claim, create, PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-3",
+       "label": "Retrieval practice review (claim, verify, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-4",
+       "label": "Testing effect in L2 vocabulary (claim, create, BLOCKED)"
+      },
+      {
+       "id": "tk-5",
+       "label": "Podcast ep. 41 transcript (claim, create, IN_PROGRESS)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:FAIL_TASK",
+    "args": {},
+    "refArgs": {
+     "taskId": "tk-5"
+    },
+    "ambiguousArgs": {
+     "reason": "The audio file is corrupted."
+    },
+    "requiredPresent": [
+     "reason"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:BLOCK_TASK"
+    ],
+    "why": "a lost cause is unrecoverable: failed, not blocked"
+   }
+  },
+  {
+   "id": "pq3-06",
+   "style": "natural",
+   "utterance": "put the spacing effect task on hold until we get the full PDF",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "Spacing effect meta-analysis (claim, create, PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-3",
+       "label": "Retrieval practice review (claim, verify, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-4",
+       "label": "Testing effect in L2 vocabulary (claim, create, BLOCKED)"
+      },
+      {
+       "id": "tk-5",
+       "label": "Podcast ep. 41 transcript (claim, create, IN_PROGRESS)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:BLOCK_TASK",
+    "args": {},
+    "refArgs": {
+     "taskId": "tk-1"
+    },
+    "ambiguousArgs": {
+     "reason": "Waiting for the full PDF."
+    },
+    "requiredPresent": [
+     "reason"
+    ]
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:FAIL_TASK",
+     "pipeline-queue:UNBLOCK_TASK"
+    ],
+    "why": "on hold until an input arrives is a recoverable block"
+   }
+  },
+  {
+   "id": "pq3-07",
+   "style": "paraphrase",
+   "utterance": "the testing-effect paper finally arrived, so that one can get moving again",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "Spacing effect meta-analysis (claim, create, PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-3",
+       "label": "Retrieval practice review (claim, verify, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-4",
+       "label": "Testing effect in L2 vocabulary (claim, create, BLOCKED)"
+      },
+      {
+       "id": "tk-5",
+       "label": "Podcast ep. 41 transcript (claim, create, IN_PROGRESS)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "pipeline-queue:UNBLOCK_TASK",
+    "args": {},
+    "refArgs": {
+     "taskId": "tk-4"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "pipeline-queue:ASSIGN_TASK"
+    ],
+    "why": "no person named; the task goes from BLOCKED back to PENDING"
+   }
+  },
+  {
+   "id": "src3-01",
+   "style": "natural",
+   "utterance": "ingest this article: \"Why spacing works\" by Rosa Lim, https://example.edu/spacing, text: Distributed practice beats massed practice across ages and subjects.",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {}
+   },
+   "expected": {
+    "op": "source:INGEST_SOURCE",
+    "args": {
+     "title": "Why spacing works",
+     "sourceType": "ARTICLE",
+     "url": "https://example.edu/spacing",
+     "author": "Rosa Lim",
+     "content": "Distributed practice beats massed practice across ages and subjects."
+    },
+    "argMatch": {
+     "title": "ci",
+     "author": "ci",
+     "content": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "src3-02",
+   "style": "paraphrase",
+   "utterance": "save what was said on Lingua Talk episode 41 into the vault as a new item: \"Host: so the forgetting curve flattens with each review. Guest: right, that's the whole trick.\"",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {}
+   },
+   "expected": {
+    "op": "source:INGEST_SOURCE",
+    "args": {
+     "sourceType": "TRANSCRIPT",
+     "content": "Host: so the forgetting curve flattens with each review. Guest: right, that's the whole trick."
+    },
+    "argMatch": {
+     "content": "ci"
+    },
+    "ambiguousArgs": {
+     "title": "Lingua Talk episode 41"
+    },
+    "requiredPresent": [
+     "title"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "source:ADD_EXTRACTED_CLAIM"
+    ],
+    "why": "spoken dialogue is a TRANSCRIPT source, captured whole"
+   }
+  },
+  {
+   "id": "src3-03",
+   "style": "natural",
+   "utterance": "set status to extracting",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "Why spacing works",
+     "status": "INBOX"
+    }
+   },
+   "expected": {
+    "op": "source:SET_SOURCE_STATUS",
+    "args": {
+     "status": "EXTRACTING"
+    }
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "src3-05",
+   "style": "natural",
+   "utterance": "add the claim \"Sleep consolidates new vocabulary\" to what we got from this paper",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "Sleep and L2 learning",
+     "status": "EXTRACTING",
+     "extractedClaims": [
+      "Naps help retention"
+     ]
+    }
+   },
+   "expected": {
+    "op": "source:ADD_EXTRACTED_CLAIM",
+    "args": {},
+    "ambiguousArgs": {
+     "claimRef": "Sleep consolidates new vocabulary"
+    },
+    "requiredPresent": [
+     "claimRef"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "claimRef is a semantic String"
+  },
+  {
+   "id": "src3-06",
+   "style": "paraphrase",
+   "utterance": "kept 12 usable findings and tossed 3, so a 20% discard rate",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "Sleep and L2 learning",
+     "status": "EXTRACTING"
+    }
+   },
+   "expected": {
+    "op": "source:RECORD_EXTRACTION_STATS",
+    "args": {
+     "claimCount": 12,
+     "skippedCount": 3,
+     "skipRate": 0.2
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "source:SET_SOURCE_STATUS"
+    ],
+    "why": "counts and rate, not a status change"
+   }
+  },
+  {
+   "id": "rc3-01",
+   "style": "natural",
+   "utterance": "create a research claim \"Retrieval practice beats rereading\", kind research, source Roediger & Karpicke 2006, topics memory and testing",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {}
+   },
+   "expected": {
+    "op": "research-claim:CREATE_CLAIM",
+    "args": {
+     "title": "Retrieval practice beats rereading",
+     "kind": "research",
+     "topics": [
+      "memory",
+      "testing"
+     ],
+     "methodology": []
+    },
+    "argMatch": {
+     "title": "ci",
+     "topics": "ci-unordered"
+    },
+    "ambiguousArgs": {
+     "description": "Practising recall improves retention more than rereading.",
+     "content": "Practising recall improves long-term retention more than rereading the material.",
+     "sources": [
+      "Roediger & Karpicke 2006"
+     ]
+    },
+    "requiredPresent": [
+     "description",
+     "content",
+     "sources"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "methodology is not mentioned, so []"
+  },
+  {
+   "id": "rc3-02",
+   "style": "paraphrase",
+   "utterance": "this links to the \"Desirable difficulties\" claim; it's the mechanism behind it",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Effortful recall strengthens memory",
+     "connections": []
+    }
+   },
+   "expected": {
+    "op": "research-claim:ADD_RESEARCH_CONNECTION",
+    "args": {},
+    "ambiguousArgs": {
+     "targetRef": "Desirable difficulties",
+     "contextPhrase": "the mechanism behind it"
+    },
+    "requiredPresent": [
+     "targetRef",
+     "contextPhrase"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "'links' is not an op word here; targetRef is a semantic String"
+  },
+  {
+   "id": "rc3-03",
+   "style": "natural",
+   "utterance": "remove the connection to \"Massed practice feels fluent\"",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Effortful recall strengthens memory",
+     "connections": [
+      {
+       "id": "cx-1",
+       "targetRef": "Desirable difficulties",
+       "contextPhrase": "mechanism"
+      },
+      {
+       "id": "cx-2",
+       "targetRef": "Testing effect",
+       "contextPhrase": "classic result"
+      },
+      {
+       "id": "cx-3",
+       "targetRef": "Massed practice feels fluent",
+       "contextPhrase": "the illusion"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "cx-1",
+       "label": "Desirable difficulties"
+      },
+      {
+       "id": "cx-2",
+       "label": "Testing effect"
+      },
+      {
+       "id": "cx-3",
+       "label": "Massed practice feels fluent"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+    "args": {},
+    "refArgs": {
+     "id": "cx-3"
+    }
+   },
+   "difficulty": "easy",
+   "tags": [
+    "ref"
+   ]
+  },
+  {
+   "id": "rc3-04",
+   "style": "paraphrase",
+   "utterance": "rewrite the body: the effect holds at roughly d = 0.5 across 29 studies, smaller for children",
+   "context": {
+    "docType": "bai/research-claim",
+    "model": "research-claim",
+    "state": {
+     "title": "Retrieval practice beats rereading",
+     "content": "Big effect."
+    }
+   },
+   "expected": {
+    "op": "research-claim:UPDATE_CLAIM_CONTENT",
+    "args": {},
+    "ambiguousArgs": {
+     "content": "The effect holds at roughly d = 0.5 across 29 studies, smaller for children."
+    },
+    "requiredPresent": [
+     "content"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "obs3-01",
+   "style": "natural",
+   "utterance": "log an observation, friction: the inbox keeps clogging with half-processed sources",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {}
+   },
+   "expected": {
+    "op": "observation:CREATE_OBSERVATION",
+    "args": {
+     "category": "FRICTION"
+    },
+    "ambiguousArgs": {
+     "title": "Inbox clogs with half-processed sources",
+     "description": "The inbox keeps clogging with half-processed sources."
+    },
+    "requiredPresent": [
+     "title",
+     "description"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "obs3-02",
+   "style": "paraphrase",
+   "utterance": "this deserves to become a proper note, turn it into \"Inbox needs a weekly sweep\"",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {
+     "title": "Inbox clogs with half-processed sources",
+     "status": "PENDING",
+     "category": "FRICTION"
+    }
+   },
+   "expected": {
+    "op": "observation:PROMOTE_OBSERVATION",
+    "args": {},
+    "ambiguousArgs": {
+     "promotedTo": "Inbox needs a weekly sweep"
+    },
+    "requiredPresent": [
+     "promotedTo"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "observation:IMPLEMENT_OBSERVATION"
+    ],
+    "why": "turned into a note = promoted, not implemented"
+   }
+  },
+  {
+   "id": "obs3-03",
+   "style": "natural",
+   "utterance": "we added the weekly sweep, mark this implemented",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {
+     "title": "Inbox clogs with half-processed sources",
+     "status": "PROMOTED",
+     "category": "FRICTION"
+    }
+   },
+   "expected": {
+    "op": "observation:IMPLEMENT_OBSERVATION",
+    "args": {}
+   },
+   "difficulty": "easy",
+   "tags": []
+  },
+  {
+   "id": "obs3-04",
+   "style": "paraphrase",
+   "utterance": "we're not going to act on this one, shelve it",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {
+     "title": "Tag names drift between people",
+     "status": "PENDING",
+     "category": "PROCESS"
+    }
+   },
+   "expected": {
+    "op": "observation:ARCHIVE_OBSERVATION",
+    "args": {}
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "observation:IMPLEMENT_OBSERVATION",
+     "observation:PROMOTE_OBSERVATION"
+    ],
+    "why": "no action taken and none planned: archived"
+   }
+  },
+  {
+   "id": "ten3-01",
+   "style": "natural",
+   "utterance": "create a tension \"Spacing vs cramming before exams\": spacing wins long-term but cramming wins next-day scores; it involves the spacing and the cramming notes",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {}
+   },
+   "expected": {
+    "op": "tension:CREATE_TENSION",
+    "args": {
+     "title": "Spacing vs cramming before exams"
+    },
+    "argMatch": {
+     "title": "ci"
+    },
+    "ambiguousArgs": {
+     "description": "Spacing wins long-term but cramming wins next-day scores.",
+     "involvedRefs": [
+      "Spacing effect",
+      "Cramming"
+     ]
+    },
+    "requiredPresent": [
+     "description",
+     "involvedRefs"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "ten3-02",
+   "style": "paraphrase",
+   "utterance": "we figured it out: both hold, it depends on the retention interval. close it out with that answer",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Spacing vs cramming before exams",
+     "status": "OPEN"
+    }
+   },
+   "expected": {
+    "op": "tension:RESOLVE_TENSION",
+    "args": {},
+    "ambiguousArgs": {
+     "resolution": "Both hold; it depends on the retention interval."
+    },
+    "requiredPresent": [
+     "resolution"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "tension:DISSOLVE_TENSION"
+    ],
+    "why": "a real conflict answered with a reconciling explanation"
+   }
+  },
+  {
+   "id": "ten3-03",
+   "style": "paraphrase",
+   "utterance": "there never was a real conflict here, the two studies measured different things",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Immersion vs explicit grammar",
+     "status": "OPEN"
+    }
+   },
+   "expected": {
+    "op": "tension:DISSOLVE_TENSION",
+    "args": {},
+    "ambiguousArgs": {
+     "resolution": "The two studies measured different things."
+    },
+    "requiredPresent": [
+     "resolution"
+    ]
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "tension:RESOLVE_TENSION"
+    ],
+    "why": "the conflict was illusory: dissolved, not resolved"
+   }
+  },
+  {
+   "id": "ten3-04",
+   "style": "natural",
+   "utterance": "this also involves the \"Sleep and consolidation\" note, add it",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Spacing vs cramming before exams",
+     "status": "OPEN",
+     "involvedRefs": [
+      "Spacing effect",
+      "Cramming"
+     ]
+    }
+   },
+   "expected": {
+    "op": "tension:ADD_INVOLVED_REF",
+    "args": {},
+    "ambiguousArgs": {
+     "ref": "Sleep and consolidation"
+    },
+    "requiredPresent": [
+     "ref"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "ref is a semantic String"
+  },
+  {
+   "id": "vc3-01",
+   "style": "natural",
+   "utterance": "set linking to 4 with 0.8 confidence",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:UPDATE_DIMENSION",
+    "args": {
+     "dimension": "linking",
+     "value": 4,
+     "confidence": 0.8
+    }
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "rationale omitted"
+  },
+  {
+   "id": "vc3-02",
+   "style": "paraphrase",
+   "utterance": "in this vault the pass where we revisit old notes with new connections should be called \"tending\"",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:UPDATE_VOCABULARY",
+    "args": {
+     "key": "reweave",
+     "value": "tending"
+    },
+    "argMatch": {
+     "value": "ci"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "vault-config:UPDATE_PIPELINE_CONFIG"
+    ],
+    "why": "renaming a process step is a vocabulary entry"
+   }
+  },
+  {
+   "id": "vc3-04",
+   "style": "paraphrase",
+   "utterance": "go for the thorough processing mode, and be pickier: only keep about 5% of candidate claims",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+    "args": {
+     "depth": "deep",
+     "extractionSelectivity": 0.05
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "vc3-05",
+   "style": "natural",
+   "utterance": "set the stale note threshold to 60 days",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+    "args": {
+     "condition": "staleNoteDays",
+     "threshold": 60
+    }
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "vc3-06",
+   "style": "paraphrase",
+   "utterance": "start pulling out worked examples too, anything that shows a technique applied to a real sentence",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:ADD_EXTRACTION_CATEGORY",
+    "args": {
+     "name": "worked examples",
+     "active": true
+    },
+    "argMatch": {
+     "name": "ci"
+    },
+    "ambiguousArgs": {
+     "description": "A technique applied to a real sentence."
+    },
+    "requiredPresent": [
+     "description"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+    ],
+    "why": "no such category exists yet, so it is added (active)"
+   }
+  },
+  {
+   "id": "vc3-07",
+   "style": "paraphrase",
+   "utterance": "stop harvesting anecdotes for now, I might want them back later",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "ec-1",
+       "label": "definitions (active)"
+      },
+      {
+       "id": "ec-2",
+       "label": "anecdotes (active)"
+      },
+      {
+       "id": "ec-3",
+       "label": "statistics (active)"
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+    "args": {
+     "active": false
+    },
+    "refArgs": {
+     "id": "ec-2"
+    }
+   },
+   "difficulty": "medium",
+   "tags": [
+    "sibling-confusion",
+    "ref"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "vault-config:ADD_EXTRACTION_CATEGORY",
+     "vault-config:UPDATE_PIPELINE_CONFIG"
+    ],
+    "why": "the category exists; it is switched off, not added or deleted"
+   }
+  },
+  {
+   "id": "vc3-08",
+   "style": "natural",
+   "utterance": "turn off auto-reweave",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "expected": {
+    "op": "vault-config:TOGGLE_FEATURE",
+    "args": {
+     "feature": "auto-reweave",
+     "enabled": false
+    }
+   },
+   "difficulty": "hard",
+   "tags": [
+    "hard",
+    "sibling-confusion"
+   ],
+   "hardCase": {
+    "confusableWith": [
+     "vault-config:UPDATE_PIPELINE_CONFIG"
+    ],
+    "why": "auto-reweave is a feature flag in state, not the pipeline's autoChain setting"
+   }
+  },
+  {
+   "id": "hr3-01",
+   "style": "natural",
+   "utterance": "add a failing link health check: 4 links point to deleted notes",
+   "context": {
+    "docType": "bai/health-report",
+    "model": "health-report",
+    "state": {
+     "overallStatus": "WARN",
+     "checks": []
+    }
+   },
+   "expected": {
+    "op": "health-report:ADD_CHECK",
+    "args": {
+     "category": "LINK_HEALTH",
+     "status": "FAIL",
+     "affectedItems": []
+    },
+    "ambiguousArgs": {
+     "message": "4 links point to deleted notes."
+    },
+    "requiredPresent": [
+     "message"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": [],
+   "notes": "no items named, so affectedItems is []"
+  },
+  {
+   "id": "hr3-02",
+   "style": "paraphrase",
+   "utterance": "flag as a warning that \"Interleaving\" and \"Cloze deletion\" haven't been touched in over 90 days",
+   "context": {
+    "docType": "bai/health-report",
+    "model": "health-report",
+    "state": {
+     "overallStatus": "PASS",
+     "checks": []
+    }
+   },
+   "expected": {
+    "op": "health-report:ADD_CHECK",
+    "args": {
+     "category": "STALE_NOTES",
+     "status": "WARN",
+     "affectedItems": [
+      "Interleaving",
+      "Cloze deletion"
+     ]
+    },
+    "argMatch": {
+     "affectedItems": "ci-unordered"
+    },
+    "ambiguousArgs": {
+     "message": "Not touched in over 90 days."
+    },
+    "requiredPresent": [
+     "message"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "der3-01",
+   "style": "natural",
+   "utterance": "add a signal: I said \"I mostly capture quotes from papers\", which points to processing and granularity",
+   "context": {
+    "docType": "bai/derivation",
+    "model": "derivation",
+    "state": {
+     "signals": []
+    }
+   },
+   "expected": {
+    "op": "derivation:ADD_SIGNAL",
+    "args": {
+     "utterance": "I mostly capture quotes from papers",
+     "influencedDimensions": [
+      "processing",
+      "granularity"
+     ]
+    },
+    "argMatch": {
+     "utterance": "ci",
+     "influencedDimensions": "unordered"
+    },
+    "ambiguousArgs": {
+     "interpretation": "Source-heavy capture suggests heavier processing and finer granularity."
+    },
+    "requiredPresent": [
+     "interpretation"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  },
+  {
+   "id": "der3-02",
+   "style": "paraphrase",
+   "utterance": "when I told you \"I never reread old notes\", that suggests the vault needs more upkeep prompts and stronger cross-linking; keep that on file",
+   "context": {
+    "docType": "bai/derivation",
+    "model": "derivation",
+    "state": {
+     "signals": []
+    }
+   },
+   "expected": {
+    "op": "derivation:ADD_SIGNAL",
+    "args": {
+     "utterance": "I never reread old notes",
+     "influencedDimensions": [
+      "maintenance",
+      "linking"
+     ]
+    },
+    "argMatch": {
+     "utterance": "ci",
+     "influencedDimensions": "unordered"
+    },
+    "ambiguousArgs": {
+     "interpretation": "Needs more maintenance prompts and stronger linking."
+    },
+    "requiredPresent": [
+     "interpretation"
+    ]
+   },
+   "difficulty": "medium",
+   "tags": []
+  }
+ ],
+ "noAction": [
+  {
+   "id": "none3-01",
+   "style": "natural",
+   "utterance": "which of my links point to notes that are still drafts?",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Stiff starters ferment slower",
+     "links": [
+      {
+       "id": "lk-41",
+       "targetTitle": "Starter hydration ratios",
+       "linkType": "BUILDS_ON"
+      }
+     ]
+    }
+   },
+   "reason": "Question about links; tempting false positive is REMOVE_LINK / UPDATE_LINK_TYPE."
+  },
+  {
+   "id": "none3-02",
+   "style": "natural",
+   "utterance": "change the link type",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Preferments always improve flavor",
+     "links": [
+      {
+       "id": "lk-11",
+       "targetTitle": "Biga timing",
+       "linkType": "BUILDS_ON"
+      },
+      {
+       "id": "lk-12",
+       "targetTitle": "Poolish vs biga",
+       "linkType": "RELATES_TO"
+      },
+      {
+       "id": "lk-13",
+       "targetTitle": "Old dough method",
+       "linkType": "RELATES_TO"
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "lk-11",
+       "label": "Biga timing (BUILDS_ON)"
+      },
+      {
+       "id": "lk-12",
+       "label": "Poolish vs biga (RELATES_TO)"
+      },
+      {
+       "id": "lk-13",
+       "label": "Old dough method (RELATES_TO)"
+      }
+     ]
+    }
+   },
+   "reason": "Uses the op's own words but names neither the link nor the new type; should ask which link and which type."
+  },
+  {
+   "id": "none3-03",
+   "style": "natural",
+   "utterance": "thanks, the map reads way better now",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Dough strength"
+    }
+   },
+   "reason": "Chit-chat; tempting false positive is UPDATE_ORIENTATION."
+  },
+  {
+   "id": "none3-04",
+   "style": "natural",
+   "utterance": "who's on the team besides me?",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ACTIVE",
+     "owner": "ben",
+     "team": [
+      {
+       "id": "tm-1",
+       "name": "Dario",
+       "role": "project lead",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-2",
+       "name": "Lin",
+       "role": "designer",
+       "kind": "HUMAN"
+      },
+      {
+       "id": "tm-3",
+       "name": "Priya",
+       "role": "traffic analyst",
+       "kind": "HUMAN"
+      }
+     ]
+    }
+   },
+   "reason": "Question; tempting false positive is ADD_MEMBER / REMOVE_MEMBER."
+  },
+  {
+   "id": "none3-05",
+   "style": "natural",
+   "utterance": "set the goal status to done",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-21",
+       "label": "Draft signage plan"
+      },
+      {
+       "id": "g-40",
+       "label": "Get road-closure permit"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      }
+     ]
+    }
+   },
+   "reason": "Op words present but no goal is named and several are open; should ask which goal."
+  },
+  {
+   "id": "none3-06",
+   "style": "paraphrase",
+   "utterance": "why does the step after reflect always take so long?",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    }
+   },
+   "reason": "Question about the pipeline; tempting false positive is ADVANCE_PHASE."
+  },
+  {
+   "id": "none3-07",
+   "style": "paraphrase",
+   "utterance": "is going thorough on processing even worth it for a vault this small?",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "reason": "Advice question; tempting false positive is UPDATE_PIPELINE_CONFIG (depth deep)."
+  },
+  {
+   "id": "none3-08",
+   "style": "paraphrase",
+   "utterance": "remind me what this paper was arguing?",
+   "context": {
+    "docType": "bai/source",
+    "model": "source",
+    "state": {
+     "title": "Sleep and L2 learning",
+     "status": "EXTRACTING"
+    }
+   },
+   "reason": "Recall question; tempting false positive is ADD_EXTRACTED_CLAIM / SET_SOURCE_STATUS."
+  },
+  {
+   "id": "none3-09",
+   "style": "paraphrase",
+   "utterance": "hmm, not sure yet if this one is worth turning into anything",
+   "context": {
+    "docType": "bai/observation",
+    "model": "observation",
+    "state": {
+     "title": "Tag names drift between people",
+     "status": "PENDING",
+     "category": "PROCESS"
+    }
+   },
+   "reason": "Undecided musing; tempting false positives are PROMOTE_OBSERVATION / ARCHIVE_OBSERVATION."
+  },
+  {
+   "id": "none3-10",
+   "style": "paraphrase",
+   "utterance": "can you deal with this conflict somehow?",
+   "context": {
+    "docType": "bai/tension",
+    "model": "tension",
+    "state": {
+     "title": "Immersion vs explicit grammar",
+     "status": "OPEN"
+    }
+   },
+   "reason": "Ambiguous: settle or dismiss, and with what explanation? Should ask; tempting RESOLVE / DISSOLVE."
+  }
+ ],
+ "multiAction": [
+  {
+   "id": "ma3-01",
+   "style": "natural",
+   "utterance": "restore this note and put it straight back up for review",
+   "context": {
+    "docType": "bai/knowledge-note",
+    "model": "knowledge-note",
+    "state": {
+     "title": "Oven spring depends on surface tension",
+     "status": "ARCHIVED",
+     "provenance": {
+      "author": "ben"
+     }
+    }
+   },
+   "expected": [
+    {
+     "op": "knowledge-note:RESTORE_NOTE",
+     "args": {}
+    },
+    {
+     "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+     "args": {}
+    }
+   ],
+   "orderSensitive": true,
+   "notes": "RESTORE moves ARCHIVED to DRAFT; SUBMIT_FOR_REVIEW only accepts DRAFT, so the order is forced."
+  },
+  {
+   "id": "ma3-02",
+   "style": "paraphrase",
+   "utterance": "swap \"Banneton flour choice\" out of the key points for \"Rice flour stops sticking\", same blurb",
+   "context": {
+    "docType": "bai/moc",
+    "model": "moc",
+    "state": {
+     "title": "Shaping",
+     "coreIdeas": [
+      {
+       "id": "ci-41",
+       "noteRef": "Pre-shape then rest",
+       "contextPhrase": "relax the gluten",
+       "sortOrder": 0
+      },
+      {
+       "id": "ci-42",
+       "noteRef": "Banneton flour choice",
+       "contextPhrase": "release from the basket",
+       "sortOrder": 1
+      }
+     ]
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "ci-41",
+       "label": "Pre-shape then rest"
+      },
+      {
+       "id": "ci-42",
+       "label": "Banneton flour choice"
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "moc:REMOVE_CORE_IDEA",
+     "args": {},
+     "refArgs": {
+      "id": "ci-42"
+     }
+    },
+    {
+     "op": "moc:ADD_CORE_IDEA",
+     "args": {
+      "contextPhrase": "release from the basket"
+     },
+     "argMatch": {
+      "contextPhrase": "ci"
+     },
+     "ambiguousArgs": {
+      "noteRef": "Rice flour stops sticking",
+      "sortOrder": 1
+     },
+     "requiredPresent": [
+      "noteRef",
+      "sortOrder"
+     ]
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Independent edits; sortOrder 1 (same slot) or 2 (append) are both acceptable."
+  },
+  {
+   "id": "ma3-03",
+   "style": "natural",
+   "utterance": "set the project back to active and move the target date to January 15",
+   "context": {
+    "docType": "bai/project",
+    "model": "project",
+    "state": {
+     "name": "Eastside protected bike lanes",
+     "status": "ON_HOLD",
+     "owner": "ben",
+     "targetDate": "2026-12-01T00:00:00Z"
+    }
+   },
+   "expected": [
+    {
+     "op": "project:SET_PROJECT_STATUS",
+     "args": {
+      "status": "ACTIVE"
+     }
+    },
+    {
+     "op": "project:SET_TARGET_DATE",
+     "args": {
+      "targetDate": "2027-01-15T00:00:00Z"
+     },
+     "argMatch": {
+      "targetDate": "date"
+     }
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Today is 2026-10-22, so January 15 is 2027-01-15."
+  },
+  {
+   "id": "ma3-04",
+   "style": "paraphrase",
+   "utterance": "bollard install is stuck until the supplier ships, and jot on it that Dario is chasing them",
+   "context": {
+    "docType": "bai/wbs",
+    "model": "wbs",
+    "state": {
+     "owner": "ben",
+     "goals": [
+      {
+       "id": "g-10",
+       "description": "Procurement",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-11",
+       "description": "Order bollards",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-12",
+       "description": "Rent cones",
+       "status": "TODO",
+       "parentId": "g-10",
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-20",
+       "description": "Design",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-21",
+       "description": "Draft signage plan",
+       "status": "IN_PROGRESS",
+       "parentId": "g-20",
+       "assignee": "Lin",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-30",
+       "description": "Survey curbs",
+       "status": "COMPLETED",
+       "parentId": null,
+       "assignee": "Priya",
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-40",
+       "description": "Get road-closure permit",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-50",
+       "description": "Paint lane markings",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [
+        "g-40"
+       ],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-60",
+       "description": "Install bollards",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-70",
+       "description": "Night-time bike count",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      },
+      {
+       "id": "g-80",
+       "description": "Signage installation",
+       "status": "TODO",
+       "parentId": null,
+       "assignee": null,
+       "dependencies": [],
+       "outcome": null,
+       "notes": []
+      }
+     ],
+     "references": [],
+     "projectRef": null
+    },
+    "refCandidates": {
+     "id": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      },
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      }
+     ],
+     "goalId": [
+      {
+       "id": "g-11",
+       "label": "Order bollards"
+      },
+      {
+       "id": "g-60",
+       "label": "Install bollards"
+      },
+      {
+       "id": "g-80",
+       "label": "Signage installation"
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "wbs:SET_GOAL_STATUS",
+     "args": {
+      "status": "BLOCKED"
+     },
+     "refArgs": {
+      "id": "g-60"
+     },
+     "ambiguousArgs": {
+      "blockReason": "Waiting for the supplier to ship."
+     },
+     "requiredPresent": [
+      "blockReason"
+     ]
+    },
+    {
+     "op": "wbs:ADD_NOTE",
+     "args": {},
+     "refArgs": {
+      "goalId": "g-60"
+     },
+     "ambiguousArgs": {
+      "note": "Dario is chasing the supplier."
+     },
+     "requiredPresent": [
+      "note"
+     ]
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Independent edits on the same goal."
+  },
+  {
+   "id": "ma3-05",
+   "style": "paraphrase",
+   "utterance": "the transcript job is hopeless since the audio is corrupt; line up a fresh claim pass on the show notes PDF instead",
+   "context": {
+    "docType": "bai/pipeline-queue",
+    "model": "pipeline-queue",
+    "state": {
+     "phaseOrder": [
+      {
+       "taskType": "claim",
+       "phases": [
+        "create",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      },
+      {
+       "taskType": "enrichment",
+       "phases": [
+        "enrich",
+        "reflect",
+        "reweave",
+        "verify"
+       ]
+      }
+     ],
+     "tasks": [
+      {
+       "id": "tk-1",
+       "taskType": "claim",
+       "target": "Spacing effect meta-analysis",
+       "status": "PENDING",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-2",
+       "taskType": "enrichment",
+       "target": "Interleaving vs blocking",
+       "status": "IN_PROGRESS",
+       "currentPhase": "reflect",
+       "assignedTo": "Ravi",
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-3",
+       "taskType": "claim",
+       "target": "Retrieval practice review",
+       "status": "IN_PROGRESS",
+       "currentPhase": "verify",
+       "assignedTo": "ben",
+       "batchId": "b-sep"
+      },
+      {
+       "id": "tk-4",
+       "taskType": "claim",
+       "target": "Testing effect in L2 vocabulary",
+       "status": "BLOCKED",
+       "currentPhase": "create",
+       "assignedTo": null,
+       "batchId": "b-oct"
+      },
+      {
+       "id": "tk-5",
+       "taskType": "claim",
+       "target": "Podcast ep. 41 transcript",
+       "status": "IN_PROGRESS",
+       "currentPhase": "create",
+       "assignedTo": "ben",
+       "batchId": null
+      }
+     ],
+     "activeCount": 5,
+     "completedCount": 12
+    },
+    "refCandidates": {
+     "taskId": [
+      {
+       "id": "tk-1",
+       "label": "Spacing effect meta-analysis (claim, create, PENDING)"
+      },
+      {
+       "id": "tk-2",
+       "label": "Interleaving vs blocking (enrichment, reflect, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-3",
+       "label": "Retrieval practice review (claim, verify, IN_PROGRESS)"
+      },
+      {
+       "id": "tk-4",
+       "label": "Testing effect in L2 vocabulary (claim, create, BLOCKED)"
+      },
+      {
+       "id": "tk-5",
+       "label": "Podcast ep. 41 transcript (claim, create, IN_PROGRESS)"
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "pipeline-queue:FAIL_TASK",
+     "args": {},
+     "refArgs": {
+      "taskId": "tk-5"
+     },
+     "ambiguousArgs": {
+      "reason": "The audio is corrupt."
+     },
+     "requiredPresent": [
+      "reason"
+     ]
+    },
+    {
+     "op": "pipeline-queue:ADD_TASK",
+     "args": {
+      "taskType": "claim"
+     },
+     "ambiguousArgs": {
+      "target": "Lingua Talk ep. 41 show notes PDF"
+     },
+     "requiredPresent": [
+      "target"
+     ]
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Independent; ADD_TASK target wording is open."
+  },
+  {
+   "id": "ma3-06",
+   "style": "natural",
+   "utterance": "turn off the weekly digest feature and set processing depth to quick",
+   "context": {
+    "docType": "bai/vault-config",
+    "model": "vault-config",
+    "state": {
+     "name": "Lingua vault",
+     "domain": "language learning research",
+     "features": [
+      "auto-reweave",
+      "weekly-digest"
+     ],
+     "pipeline": {
+      "depth": "standard",
+      "autoChain": false,
+      "extractionSelectivity": 0.1
+     },
+     "extractionCategories": [
+      {
+       "id": "ec-1",
+       "name": "definitions",
+       "description": "Term definitions",
+       "active": true
+      },
+      {
+       "id": "ec-2",
+       "name": "anecdotes",
+       "description": "Classroom stories",
+       "active": true
+      },
+      {
+       "id": "ec-3",
+       "name": "statistics",
+       "description": "Effect sizes and counts",
+       "active": true
+      }
+     ]
+    }
+   },
+   "expected": [
+    {
+     "op": "vault-config:TOGGLE_FEATURE",
+     "args": {
+      "feature": "weekly-digest",
+      "enabled": false
+     }
+    },
+    {
+     "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+     "args": {
+      "depth": "quick"
+     }
+    }
+   ],
+   "orderSensitive": false,
+   "notes": "Independent edits."
+  }
+ ]
+}
