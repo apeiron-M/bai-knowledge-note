@@ -14,7 +14,7 @@ LIMIT=${2:-$(( $(sysctl -n hw.memsize) / 2 ))}
 INTERVAL=${3:-15}
 echo "$(date '+%F %T') watchdog start pid=$$ limit=${LIMIT} interval=${INTERVAL}s" >> "$LOG"
 while true; do
-  PID=$(pgrep -f 'py/train_lora.py' | head -1)
+  PID=$(pgrep -f '^[^ ]*python[^ ]* [^ ]*py/train_lora.py' | head -1)  # python itself, not the screen/caffeinate wrappers
   if [ -n "$PID" ]; then
     RSS=$(( $(ps -o rss= -p "$PID" 2>/dev/null | tr -d ' ' || echo 0) * 1024 ))
     # "phys_footprint: 12 GB" -> bytes
