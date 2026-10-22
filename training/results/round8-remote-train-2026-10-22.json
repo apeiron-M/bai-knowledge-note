@@ -1,0 +1,372 @@
+{
+  "what": "Round 8 LoRA training run on the second laptop (Constantine) over SSH; merge/GGUF/eval not done here",
+  "date": "2026-10-22",
+  "repoCommit": "f8a7e25b9c5d8fda92a4d2d67864ed28930b4d96",
+  "codeSha256": {
+    "training/py/train_lora.py": "2434f43978c8d4f7d815755e8001aa627854ae5c5898451affec06b95c0e916d",
+    "training/scripts/watchdog.sh": "95c0a61565ea4c27f7f1e8fd3a798c846aa35100657ca8070c3ba6a9309a61eb"
+  },
+  "remote": {
+    "host": "Constantine.local",
+    "chip": "Apple M4 Max (40-core GPU)",
+    "arch": "arm64",
+    "ramBytes": 68719476736,
+    "macOS": "26.3 (25D125)",
+    "power": "AC",
+    "mpsRecommendedMaxBytes": 55662788608
+  },
+  "env": {
+    "python": "3.13.12 (uv 0.11.18, already in ~/.local)",
+    "torch": "2.11.0",
+    "transformers": "5.20.2",
+    "trl": "1.16.0",
+    "peft": "0.21.2",
+    "accelerate": "1.15.0",
+    "datasets": "5.0.1",
+    "install": "uv pip install --no-deps -r requirements.lock: the lock is a full freeze that does not resolve (datasets 5.0.1 declares huggingface-hub<2.0, the lock pins 2.2.0); identical to the local venv"
+  },
+  "limits": {
+    "PYTORCH_MPS_HIGH_WATERMARK_RATIO": 0.5,
+    "PYTORCH_MPS_LOW_WATERMARK_RATIO": 0.45,
+    "mpsMaxAllowedGiB": 25.92,
+    "watchdogLimitBytes": 34359738368,
+    "watchdogMeasure": "max(RSS, phys_footprint) every 15 s",
+    "wrapper": "screen + caffeinate -dimsu",
+    "watchdogTriggered": false
+  },
+  "command": "train_lora.py train-split.jsonl --val val.jsonl --out training/artifacts/round8/run --batch 8 --grad-accum 4 --save-steps 50 --save-limit 2",
+  "config": {
+    "epochs": 3,
+    "lr": 0.0002,
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "batch": 8,
+    "grad_accum": 4,
+    "max_length": 1024,
+    "precision": "bf16",
+    "seed": 42,
+    "eval_steps": 25,
+    "pad_multiple": 64,
+    "save_steps": 50,
+    "save_limit": 2
+  },
+  "memtest": {
+    "steps": 60,
+    "trainWallSec": 394.23,
+    "mpsDriverPeakSampledGB": 14.435,
+    "peakFootprintGiB": 14.0,
+    "peakRssGiB": 1.44,
+    "sPerStep": {
+      "2-12": 5.03,
+      "12-24": 5.64,
+      "27-37": 5.43,
+      "38-49": 5.54,
+      "52-60": 6.06
+    },
+    "verdict": "flat enough: per-minute footprint peaks 12-14 GiB after minute 3, minima not rising, swap flat; batch 8 x 4 kept, no batch-4 retest",
+    "resumeTest": {
+      "from": "checkpoint-50",
+      "toStep": 60,
+      "lastLoss": 0.0294,
+      "lastLossUninterrupted": 0.02903,
+      "evalLoss60": 0.04472,
+      "evalLoss60Uninterrupted": 0.04461
+    }
+  },
+  "run": {
+    "started": "2026-10-22T10:06:52",
+    "exited": "2026-10-22T11:28:46",
+    "exit": 0,
+    "resumes": 0,
+    "steps": 741,
+    "rows": 7895,
+    "valRows": 419,
+    "effectiveBatch": 32,
+    "trainableParams": 5996544,
+    "trainWallSec": 4890.52,
+    "medianSecPerStep": {
+      "2-50": 5.5,
+      "100-150": 5.6,
+      "350-400": 5.8,
+      "690-741": 6.0
+    },
+    "meanSecPerStepInclEval": 6.57,
+    "firstLoss": 1.1988534927368164,
+    "lastLoss": 0.0004804274649359286,
+    "finalEval": {
+      "eval_loss": 0.01613517291843891,
+      "eval_runtime": 19.3899,
+      "eval_samples_per_second": 21.609,
+      "eval_steps_per_second": 2.733,
+      "eval_entropy": 0.00859381380339399,
+      "eval_mean_token_accuracy": 0.994276872221029,
+      "eval_num_tokens": 6107673.0,
+      "epoch": 3.0
+    },
+    "mpsDriverPeakSampledGB": 15.89,
+    "mpsDriverAllocatedEndGB": 11.293,
+    "peakFootprintGiB": 16.0,
+    "peakRssGiB": 2.27,
+    "rssStartEndGiB": [
+      1.19,
+      2.27
+    ],
+    "swapUsed": "1007.62M throughout",
+    "trainLossEvery25": [
+      {
+        "step": 1,
+        "loss": 1.1988534927368164
+      },
+      {
+        "step": 25,
+        "loss": 0.08789585530757904
+      },
+      {
+        "step": 50,
+        "loss": 0.06768222898244858
+      },
+      {
+        "step": 75,
+        "loss": 0.02067265473306179
+      },
+      {
+        "step": 100,
+        "loss": 0.03525014966726303
+      },
+      {
+        "step": 125,
+        "loss": 0.028594162315130234
+      },
+      {
+        "step": 150,
+        "loss": 0.0498138889670372
+      },
+      {
+        "step": 175,
+        "loss": 0.01652691513299942
+      },
+      {
+        "step": 200,
+        "loss": 0.030785206705331802
+      },
+      {
+        "step": 225,
+        "loss": 0.02976854145526886
+      },
+      {
+        "step": 250,
+        "loss": 0.00957491435110569
+      },
+      {
+        "step": 275,
+        "loss": 0.00873088464140892
+      },
+      {
+        "step": 300,
+        "loss": 0.004147126339375973
+      },
+      {
+        "step": 325,
+        "loss": 0.01018233597278595
+      },
+      {
+        "step": 350,
+        "loss": 0.029522400349378586
+      },
+      {
+        "step": 375,
+        "loss": 0.0074416049756109715
+      },
+      {
+        "step": 400,
+        "loss": 0.0038575180806219578
+      },
+      {
+        "step": 425,
+        "loss": 0.004246828146278858
+      },
+      {
+        "step": 450,
+        "loss": 0.008548775687813759
+      },
+      {
+        "step": 475,
+        "loss": 0.006737159099429846
+      },
+      {
+        "step": 500,
+        "loss": 0.00011179596185684204
+      },
+      {
+        "step": 525,
+        "loss": 0.0021458498667925596
+      },
+      {
+        "step": 550,
+        "loss": 0.0012847273610532284
+      },
+      {
+        "step": 575,
+        "loss": 0.0004976746859028935
+      },
+      {
+        "step": 600,
+        "loss": 0.007912850938737392
+      },
+      {
+        "step": 625,
+        "loss": 0.001005608937703073
+      },
+      {
+        "step": 650,
+        "loss": 0.0007788264192640781
+      },
+      {
+        "step": 675,
+        "loss": 0.0011699744500219822
+      },
+      {
+        "step": 700,
+        "loss": 0.00012581638293340802
+      },
+      {
+        "step": 725,
+        "loss": 0.001648093108087778
+      },
+      {
+        "step": 741,
+        "loss": 0.0004804274649359286
+      }
+    ],
+    "evalLoss": [
+      {
+        "step": 25,
+        "eval_loss": 0.08278504014015198
+      },
+      {
+        "step": 50,
+        "eval_loss": 0.05559901148080826
+      },
+      {
+        "step": 75,
+        "eval_loss": 0.03925998881459236
+      },
+      {
+        "step": 100,
+        "eval_loss": 0.04487253352999687
+      },
+      {
+        "step": 125,
+        "eval_loss": 0.03035738319158554
+      },
+      {
+        "step": 150,
+        "eval_loss": 0.0243619866669178
+      },
+      {
+        "step": 175,
+        "eval_loss": 0.024670220911502838
+      },
+      {
+        "step": 200,
+        "eval_loss": 0.03002176620066166
+      },
+      {
+        "step": 225,
+        "eval_loss": 0.025935323908925056
+      },
+      {
+        "step": 250,
+        "eval_loss": 0.025508098304271698
+      },
+      {
+        "step": 275,
+        "eval_loss": 0.025548124685883522
+      },
+      {
+        "step": 300,
+        "eval_loss": 0.02125423401594162
+      },
+      {
+        "step": 325,
+        "eval_loss": 0.02290399745106697
+      },
+      {
+        "step": 350,
+        "eval_loss": 0.02148124761879444
+      },
+      {
+        "step": 375,
+        "eval_loss": 0.01731680892407894
+      },
+      {
+        "step": 400,
+        "eval_loss": 0.017070043832063675
+      },
+      {
+        "step": 425,
+        "eval_loss": 0.014847380109131336
+      },
+      {
+        "step": 450,
+        "eval_loss": 0.014269392937421799
+      },
+      {
+        "step": 475,
+        "eval_loss": 0.0164993517100811
+      },
+      {
+        "step": 500,
+        "eval_loss": 0.015481525100767612
+      },
+      {
+        "step": 525,
+        "eval_loss": 0.015516271814703941
+      },
+      {
+        "step": 550,
+        "eval_loss": 0.014941061846911907
+      },
+      {
+        "step": 575,
+        "eval_loss": 0.016530118882656097
+      },
+      {
+        "step": 600,
+        "eval_loss": 0.01645861193537712
+      },
+      {
+        "step": 625,
+        "eval_loss": 0.016596965491771698
+      },
+      {
+        "step": 650,
+        "eval_loss": 0.016149861738085747
+      },
+      {
+        "step": 675,
+        "eval_loss": 0.016188276931643486
+      },
+      {
+        "step": 700,
+        "eval_loss": 0.016343440860509872
+      },
+      {
+        "step": 725,
+        "eval_loss": 0.016038645058870316
+      },
+      {
+        "step": 741,
+        "eval_loss": 0.01613517291843891
+      }
+    ]
+  },
+  "artifacts": {
+    "localDir": "training/artifacts/round8/remote/ (gitignored)",
+    "adapterSha256": "9e30368746f0f48a7ea14c41673dc43cac7373ac0bd9140b324a142944814def",
+    "adapterConfigSha256": "becd4198f8d716576aa5876b4e3b473ba992f0fa6d830aa07563a96e2a8334dd",
+    "checksums": "SHA256SUMS in that dir; all matched the remote copies",
+    "remoteCheckpoints": "~/bai-training/training/artifacts/round8/run/checkpoints/checkpoint-700, checkpoint-741 (not copied)"
+  }
+}
