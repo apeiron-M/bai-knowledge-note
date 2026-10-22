@@ -2,12 +2,13 @@
 
 This directory builds training data for the chat's two steps (op choice, then arguments) and fine-tunes `LiquidAI/LFM2.5-350M` with LoRA. It then ships the result as a merged Q4_K_M GGUF that wllama 3.8.1 loads like today's file.
 
-**Status (2026-10-22, round 8):**
+**Status (2026-10-22, round 10):**
 - The pipeline is built and smoke-tested end to end on this Mac.
 - Rows render in the runtime prompt format **r6.1**, through the chat core's own builders, so training and runtime prompts are byte-identical (`tests/unit/training-prompt-format.test.ts`). The render and token-parity step was re-run on the smoke rows in r6.1 (see "Re-render in r6.1" below). The model was not retrained.
 - The teacher runs through headless Claude Code (`claude -p`), with no API key needed. The ~100-row pilot ran on 2026-10-21 and kept 73 rows (see "Teacher pilot" below).
 - Pilot 2 (2026-10-21, 150 items) covers all 40 ref ops on seeded document states, per-item wording specs and batched blind labels. It kept 105 rows (see "Teacher pilot 2").
 - The batch-size comparison (2026-10-21; 1, 10 and 25 items per call, 325 items each) recommends 10 per call (see "Teacher batch-size comparison").
+- **Round 10 (2026-10-22): targeted retrain.** 1,800 targeted teacher items (contrastive sibling sets, argument stress) gave 1,324 kept rows; with Round 8's rows (no top-5 rows) the LoRA trained 2 epochs from base on Constantine and ships as `LFM2.5-350M-vault-r10a-20261022-Q4_K_M.gguf` (local, gitignored, sha256 `f56deeb1…`). It does not beat Round 8 on held-out-4 (op 78.8% vs 80.8%, args 78.2% vs 76.4%); see "Round 10" below.
 - **Round 8 (2026-10-21/22): the first real LoRA.** 4,035 teacher items gave 3,286 kept rows; the LoRA trained 3 epochs (on the user's second laptop) and ships as `LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf` (local, gitignored). It does not meet the bars, but it doubles end-to-end accuracy on both held-out sets (see "Round 8" below and the results doc).
 
 The plan is the scratchpad `lora-plan.md` from the spike session. Spike results are in `docs/superpowers/specs/2026-10-20-in-browser-llm-spike-results.md`.
@@ -507,6 +508,46 @@ training/scripts/export-gguf.sh $R/merged $R/gguf/LFM2.5-350M-vault-r8a-20261022
 $P training/py/r8_report.py spike/llm-harness/eval/results-r8-*.json
 ```
 
+## Round 10: targeted retrain (observed, 2026-10-22)
+
+Details, the pre-registration and the verdict are in the results doc ("Round 10: targeted retrain"); the summary is `results/round10-2026-10-22.json`.
+
+**Changes for it:**
+- `py/sibling_groups.py` derives groups of confusable ops from the catalog (same entity, lifecycle/status, free-text property; subset groups dropped, near-equal groups merged) and unions in observed confusion pairs. `training/data/round10/sibling-groups.json` (28 groups) and `sibling-groups-dev.json` (2 dev-pair groups, a supplement after a parsing fix).
+- `plan --ops contrast --groups G --rounds 2 --items-per-op 6`: per group and round one seeded state shared by every member (`ref-scenarios.ts --groups`: the first anchor builder that serves every ref member, otherwise the member's own builder with the same seed); each member's call lists the other members as the contrast set. custom_id `gen-<op>-<group>r<round>`.
+- `plan --ops stress`: each spec stresses one field: an enum value (every value cycled), an exact 2–4-item list, or a span with a capital and internal punctuation; `rows` checks it (`stress_error`). custom_id `gen-<op>-s<i>`. `plan_batched` takes prebuilt jobs and a call tag.
+- `run --limit N` keeps the journal (it used to delete it when the truncated list had all succeeded).
+- `py/r10_report.py`: op by style, difficulty, `sibling-confusion` tag and group membership; args by schema kind and item tag; refs, no-action, fully right, latency, misses. The harness rows now carry `tags` and `argKinds`; `r9Run` loads `h4`/`h4na`/`h4multi`; Vite serves `training/artifacts/round10/gguf/` at `/lora10/`.
+
+**Funnel:** 1,188 contrastive + 612 stress items (286 calls) → `rows` 1,693 → dedup 1,688 (0 held-out-4 leaks) → zod/replay 1,637 → blind label (213 calls) → **1,324 kept** (879 full + 445 step-1-only). Cost $21.22 CLI-reported. One HTTP 429 (org spend limit) in the stress pass; resumed from the journal.
+
+**Training set:** 4,609 rows (3,286 Round 8 + 1,324 new − 1 dedup) → 7,564 sequences (4,609 full-list step 1, 2,955 step 2; no top-5 rows), parity clean; 7,187 train / 377 val.
+
+**Training:** Constantine, 450 steps (2 epochs), 52.3 min, peak footprint 16 GiB; val loss 0.0767 → 0.0126 (minimum = final). **Export:** merge 4.8 GB RSS, logits within 2.8e-4, Q4_K_M 229,312,224 B.
+
+**Held-out-4 (R2c pipeline):** Round 10 op 82/104, args exact 43/55, fully right 64/104; Round 8 84/104, 42/55, 68/104. Bars not met.
+
+**Commands:**
+
+```bash
+P=training/.venv/bin/python; A=training/artifacts/round10
+$P training/py/sibling_groups.py --context $A/context.json --out training/data/round10/sibling-groups.json
+$P training/py/teacher.py plan --context $A/context.json --ops contrast --groups training/data/round10/sibling-groups.json \
+    --rounds 2 --items-per-op 6 --avoid-share 0.65 --seed 20261022 --out $A/contrast/gen-requests.jsonl
+$P training/py/teacher.py plan --context $A/context.json --ops stress --batch-size 10 --items-per-op 10 --span-items 6 \
+    --seed 20261022 --out $A/stress/gen-requests.jsonl
+$P training/py/teacher.py run $A/contrast/gen-requests.jsonl --out $A/contrast/gen-results.jsonl --timeout 600 --max-requests 300 --concurrency 5 --cli-cwd <empty dir>
+# rows / render.sh / label / run / agree --step1-only --max-free 0.7 --name-cap 0 per set, as in Round 8, then:
+cat training/artifacts/teacher-full/agreed-s1.jsonl $A/cd/agreed-s1.jsonl $A/stress/agreed-s1.jsonl > $A/final-in/rows.jsonl
+training/scripts/render.sh $A/final-in/rows.jsonl $A/final            # no TOPK: R2c-format step 1 only
+$P training/py/split.py $A/final/train.jsonl --out-dir $A/split --share 0.05
+# Constantine: ~/bai-training/launch.sh r10-train <split>/train-split.jsonl --val <split>/val.jsonl --out training/artifacts/round10/run --epochs 2 --save-steps 50 --save-limit 2
+$P training/py/merge.py $A/remote/adapter --out $A/merged --check $A/split/val.jsonl --check-rows 16
+training/scripts/export-gguf.sh $A/merged $A/gguf/LFM2.5-350M-vault-r10a-20261022
+# harness: spike.run("load", "webgpu", false, "/lora10/<file>"), spike.run("r9Run", "webgpu", {name, sets: ["h4","h4na","h4multi"], cands: {mode: "scoped-all", order: "catalog"}, preGate: false, model})
+$P training/py/r10_report.py --groups training/data/round10/sibling-groups.json --groups training/data/round10/sibling-groups-dev.json E8=... E10=...
+```
+
 ## Next, waiting on the user
 
 1. **Round 6 is done.** The format is r6.1, and the renderer uses it. Every change to the core's step-1/step-2 builders, the op descriptions or the vocabularies bumps `PROMPT_FORMAT_VERSION` (`chat/core/prompt-format.ts`). After a bump, re-run `render.sh`.
@@ -516,8 +557,9 @@ $P training/py/r8_report.py spike/llm-harness/eval/results-r8-*.json
    - Two-sided op-word quota, the question form axis and `--batch-size`: done and measured ("Teacher batch-size comparison"). The recommendation is generation batch 10 and label batch 8.
    - Decide the runtime's ref labels for non-note models.
    - Decide `requireOneOf` with an optional ref (UPDATE_DELIVERABLE).
-4. **The first real training run is done (round 8).** Before scaling the data, the results doc's verdict lists cheaper steps: no G3 gate in front of a LoRA step 1, step 1 over all ops of the model (removing the top-5 retrieval ceiling), and relaxing the safe gate for meant-but-unnamed person fields.
-5. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
+4. **Round 10's targeted retrain did not beat Round 8** (results doc). More teacher rows of the same kind are not the lever; the doc's verdict lists the next options (wording from other writers, op descriptions in the step-1 prompt, a larger base).
+5. **The first real training run is done (round 8).** Before scaling the data, the results doc's verdict lists cheaper steps: no G3 gate in front of a LoRA step 1, step 1 over all ops of the model (removing the top-5 retrieval ceiling), and relaxing the safe gate for meant-but-unnamed person fields.
+6. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
 
 **Not done here:**
 - The in-browser wllama parity check (`createCompletion(prompt, grammar)` against `createChatCompletion`), because Chrome was off-limits.
