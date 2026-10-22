@@ -1,0 +1,462 @@
+{
+ "what": "Round 10 targeted retrain: data funnel, training on Constantine, export, evals (E8/E10 on held-out-4, E10 on held-out-3) and Q&A",
+ "date": "2026-10-22",
+ "teacher": {
+  "model": "claude-sonnet-5",
+  "via": "claude -p, README isolation flags",
+  "labelBatch": 8,
+  "contrast": {
+   "groups": "28 + 2 dev-supplement",
+   "calls": 198,
+   "itemsRequested": 1188,
+   "rows": 1130,
+   "dedup": 1127,
+   "valid": 1113,
+   "labelCalls": 143,
+   "kept": 905,
+   "keptFull": 662,
+   "keptStep1Only": 243,
+   "opDisagree": 142,
+   "quotaDropped": 46,
+   "refMembersSharedState": "89/96"
+  },
+  "stress": {
+   "calls": 88,
+   "itemsRequested": 612,
+   "specsByKind": {
+    "span": 357,
+    "enum": 157,
+    "list": 98
+   },
+   "rows": 563,
+   "dedup": 561,
+   "valid": 524,
+   "labelCalls": 70,
+   "kept": 419,
+   "keptFull": 217,
+   "keptStep1Only": 202,
+   "opDisagree": 68,
+   "quotaDropped": 20,
+   "keptFullByKind": {
+    "span": 118,
+    "enum": 77,
+    "list": 22
+   },
+   "keptStep1OnlyByKind": {
+    "span": 139,
+    "enum": 29,
+    "list": 34
+   }
+  },
+  "evalLeakDrops": {
+   "heldout2": 2,
+   "heldout3": 2,
+   "results-cpu": 1,
+   "heldout4": 0
+  },
+  "promptLeakCheckWithHeldout4": "0 hits over 286 generation requests and 213 label requests",
+  "costUsdCliReported": {
+   "generation": 16.45,
+   "labels": 4.6,
+   "smoke": 0.17,
+   "total": 21.22,
+   "note": "18 stress calls' results were lost and re-run; their first cost is not recorded"
+  },
+  "usageLimit": {
+   "stressFirstSession": {
+    "succeeded": 19,
+    "limitLost": 69,
+    "realFailures": 0
+   },
+   "resumedAfter": "limit lifted before 6:10pm reset; resumed from journal"
+  }
+ },
+ "trainingSet": {
+  "rows": 4609,
+  "r8Rows": 3286,
+  "r10Rows": 1324,
+  "dedupDropped": 1,
+  "sequences": 7564,
+  "step1FullList": 4609,
+  "step2": 2955,
+  "top5Step1": 0,
+  "parity": {
+   "templateMismatch": 0,
+   "tokenMismatch": 0,
+   "boundaryMerges": 0
+  },
+  "train": 7187,
+  "val": 377,
+  "valRows": 228,
+  "sha256": {
+   "train-split.jsonl": "66917b8f3e7c11c8e56ed645e9c71980de7e34365627adcb94f457d87473720c",
+   "val.jsonl": "1aa6b1c50688335292304d7d7d456e83eff9ee853604ba7adf9a00f059592e39"
+  }
+ },
+ "training": {
+  "host": "Constantine (M4 Max 64 GB)",
+  "fromBase": true,
+  "epochs": 2,
+  "steps": 450,
+  "rank": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "lr": 0.0002,
+  "effectiveBatch": 32,
+  "trainWallSec": 3135.26,
+  "firstLoss": 1.2884,
+  "lastLoss": 0.00385,
+  "valLoss": {
+   "25": 0.0767,
+   "50": 0.0471,
+   "100": 0.0351,
+   "150": 0.0197,
+   "225": 0.0216,
+   "300": 0.0153,
+   "375": 0.0133,
+   "425": 0.0126,
+   "450": 0.0126
+  },
+  "valMin": [
+   425,
+   0.0126
+  ],
+  "peakFootprintGiB": 16,
+  "mpsPeakGB": 16.96,
+  "resumes": 0,
+  "watchdogTriggered": false,
+  "adapterSha256": "6a7fe975d68eaac9a7b6b770883b3a581d5219bd79cf4f66d58bdbddcfdfd5cb"
+ },
+ "export": {
+  "mergeWallSec": 16.69,
+  "mergeMaxRssBytes": 4812554240,
+  "logitCheck": {
+   "rows": 16,
+   "tokens": 4120,
+   "maxAbsDiff": 0.000277,
+   "argmaxAgree": true
+  },
+  "gguf": "LFM2.5-350M-vault-r10a-20261022-Q4_K_M.gguf",
+  "bytes": 229312224,
+  "sha256": "f56deeb16c1aedf07a0911c52fe21277bf39944e8d6d9658d88c59734b8c9517"
+ },
+ "eval": {
+  "E8": {
+   "file": "spike/llm-harness/eval/results-r10-E8-h4.json",
+   "model": {
+    "repo": "url",
+    "file": "/lora/LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf"
+   },
+   "action": 104,
+   "noAction": 10,
+   "multiAction": 6,
+   "op": "84/104 (80.8%)",
+   "opByStyle": {
+    "natural": "48/52 (92.3%)",
+    "paraphrase": "36/52 (69.2%)"
+   },
+   "opByDifficulty": {
+    "natural/easy": "9/9 (100.0%)",
+    "natural/hard": "10/13 (76.9%)",
+    "natural/medium": "29/30 (96.7%)",
+    "paraphrase/hard": "20/32 (62.5%)",
+    "paraphrase/medium": "16/20 (80.0%)"
+   },
+   "opSiblingTagged": "53/73 (72.6%)",
+   "opSiblingTaggedByStyle": {
+    "natural": "21/25 (84.0%)",
+    "paraphrase": "32/48 (66.7%)"
+   },
+   "opGoldInGroup": "70/88 (79.5%)",
+   "opGoldNotInGroup": "14/16 (87.5%)",
+   "argsExact": "42/55 (76.4%)",
+   "argsByKindFields": {
+    "enum": "22/27 (81.5%)",
+    "list": "10/11 (90.9%)",
+    "other": "12/19 (63.2%)",
+    "span": "36/39 (92.3%)"
+   },
+   "argsExactByTag": {
+    "list": "6/8 (75.0%)",
+    "exact-copy": "26/34 (76.5%)",
+    "enum": "18/27 (66.7%)",
+    "date": "0/1 (0.0%)",
+    "ref": "11/13 (84.6%)"
+   },
+   "refExact": "29/33 (87.9%)",
+   "requiredPresent": "22/22 (100.0%)",
+   "noActionPR": {
+    "tp": 6,
+    "fp": 1,
+    "fn": 4,
+    "precision": "6/7 (85.7%)",
+    "recall": "6/10 (60.0%)"
+   },
+   "multiFirstInExpected": "6/6 (100.0%)",
+   "fullyRight": "68/104 (65.4%)",
+   "fullyRightByStyle": {
+    "natural": "38/52 (73.1%)",
+    "paraphrase": "30/52 (57.7%)"
+   },
+   "latencyMs": {
+    "median": 459,
+    "p90": 842
+   },
+   "misses": {
+    "sibling in list": 19,
+    "LoRA chose no-action": 1
+   },
+   "siblingConfusions": {
+    "SET_TITLE -> SET_DESCRIPTION": 1,
+    "SET_METADATA_LIST_FIELD -> SET_METADATA_FIELD": 1,
+    "SET_METADATA_LIST_FIELD -> ADD_LINK": 1,
+    "REJECT_NOTE -> REMOVE_LINK": 1,
+    "UPDATE_CORE_IDEA -> UPDATE_DESCRIPTION": 1,
+    "ADD_CHILD_MOC -> REORDER_CORE_IDEAS": 1,
+    "SET_PROJECT_STATUS -> SET_DELIVERABLE_STATUS": 1,
+    "UPDATE_DELIVERABLE -> LINK_WBS": 1,
+    "SET_REFERENCES -> ADD_KNOWLEDGE_REF": 1,
+    "DELETE_GOAL -> REMOVE_DEPENDENCIES": 1,
+    "SET_GOAL_STATUS -> ADD_DEPENDENCIES": 1,
+    "SET_GOAL_STATUS -> SET_OUTCOME": 1,
+    "ASSIGN_GOAL -> DELETE_GOAL": 1,
+    "SET_REFERENCES -> UPDATE_GOAL_DESCRIPTION": 1,
+    "ADD_TASK -> ADVANCE_PHASE": 1,
+    "FAIL_TASK -> BLOCK_TASK": 1,
+    "TOGGLE_FEATURE -> TOGGLE_EXTRACTION_CATEGORY": 1,
+    "IMPLEMENT_OBSERVATION -> PROMOTE_OBSERVATION": 1,
+    "ADD_RESEED_ENTRY -> UPDATE_DIMENSION_RATIONALE": 1
+   },
+   "argsMisses": {
+    "SET_METADATA_FIELD.value": 2,
+    "INGEST_SOURCE.author": 2,
+    "ADD_CORE_IDEA.sortOrder": 1,
+    "REMOVE_OPEN_QUESTION.question": 1,
+    "CREATE_PROJECT.name": 1,
+    "CREATE_PROJECT.status": 1,
+    "SET_TARGET_DATE.targetDate": 1,
+    "ADD_MEMBER.kind": 1,
+    "CREATE_GOAL.assignee": 1,
+    "ADVANCE_PHASE.handoff.phase": 1,
+    "UPDATE_PIPELINE_CONFIG.depth": 1,
+    "INGEST_SOURCE.sourceType": 1,
+    "INGEST_SOURCE.url": 1,
+    "ADD_CHECK.affectedItems": 1
+   }
+  },
+  "E10": {
+   "file": "spike/llm-harness/eval/results-r10-E10-h4.json",
+   "model": {
+    "repo": "url",
+    "file": "/lora10/LFM2.5-350M-vault-r10a-20261022-Q4_K_M.gguf"
+   },
+   "action": 104,
+   "noAction": 10,
+   "multiAction": 6,
+   "op": "82/104 (78.8%)",
+   "opByStyle": {
+    "natural": "47/52 (90.4%)",
+    "paraphrase": "35/52 (67.3%)"
+   },
+   "opByDifficulty": {
+    "natural/easy": "9/9 (100.0%)",
+    "natural/hard": "11/13 (84.6%)",
+    "natural/medium": "27/30 (90.0%)",
+    "paraphrase/hard": "20/32 (62.5%)",
+    "paraphrase/medium": "15/20 (75.0%)"
+   },
+   "opSiblingTagged": "53/73 (72.6%)",
+   "opSiblingTaggedByStyle": {
+    "natural": "21/25 (84.0%)",
+    "paraphrase": "32/48 (66.7%)"
+   },
+   "opGoldInGroup": "67/88 (76.1%)",
+   "opGoldNotInGroup": "15/16 (93.8%)",
+   "argsExact": "43/55 (78.2%)",
+   "argsByKindFields": {
+    "enum": "24/27 (88.9%)",
+    "list": "14/14 (100.0%)",
+    "other": "10/16 (62.5%)",
+    "span": "34/39 (87.2%)"
+   },
+   "argsExactByTag": {
+    "list": "10/11 (90.9%)",
+    "exact-copy": "27/35 (77.1%)",
+    "enum": "20/27 (74.1%)",
+    "date": "0/1 (0.0%)",
+    "ref": "9/11 (81.8%)"
+   },
+   "refExact": "24/30 (80.0%)",
+   "requiredPresent": "20/20 (100.0%)",
+   "noActionPR": {
+    "tp": 6,
+    "fp": 0,
+    "fn": 4,
+    "precision": "6/6 (100.0%)",
+    "recall": "6/10 (60.0%)"
+   },
+   "multiFirstInExpected": "6/6 (100.0%)",
+   "fullyRight": "64/104 (61.5%)",
+   "fullyRightByStyle": {
+    "natural": "37/52 (71.2%)",
+    "paraphrase": "27/52 (51.9%)"
+   },
+   "latencyMs": {
+    "median": 411,
+    "p90": 769
+   },
+   "misses": {
+    "sibling in list": 22
+   },
+   "siblingConfusions": {
+    "SUBMIT_FOR_REVIEW -> ADD_LINK": 1,
+    "REJECT_NOTE -> REMOVE_TOPIC": 1,
+    "UPDATE_ORIENTATION -> UPDATE_DESCRIPTION": 1,
+    "UPDATE_CORE_IDEA -> UPDATE_DESCRIPTION": 1,
+    "ADD_OPEN_QUESTION -> REMOVE_TENSION": 1,
+    "ADD_CHILD_MOC -> ADD_CORE_IDEA": 1,
+    "SET_PROJECT_STATUS -> SET_DELIVERABLE_STATUS": 1,
+    "ADD_DELIVERABLE -> ADD_KNOWLEDGE_REF": 1,
+    "UPDATE_DELIVERABLE -> LINK_WBS": 1,
+    "SET_REFERENCES -> UPDATE_DELIVERABLE": 1,
+    "DELETE_GOAL -> REMOVE_DEPENDENCIES": 1,
+    "SET_GOAL_STATUS -> ADD_DEPENDENCIES": 1,
+    "SET_GOAL_STATUS -> SET_OUTCOME": 1,
+    "ASSIGN_GOAL -> REMOVE_DEPENDENCIES": 1,
+    "ADD_NOTE -> REMOVE_NOTE": 1,
+    "ADD_TASK -> ADVANCE_PHASE": 1,
+    "UNBLOCK_TASK -> COMPLETE_TASK": 1,
+    "UPDATE_MAINTENANCE_THRESHOLD -> UPDATE_PIPELINE_CONFIG": 1,
+    "TOGGLE_EXTRACTION_CATEGORY -> TOGGLE_FEATURE": 1,
+    "TOGGLE_FEATURE -> TOGGLE_EXTRACTION_CATEGORY": 1,
+    "INGEST_SOURCE -> SET_SOURCE_STATUS": 1,
+    "IMPLEMENT_OBSERVATION -> CREATE_OBSERVATION": 1
+   },
+   "argsMisses": {
+    "SET_METADATA_FIELD.value": 2,
+    "SET_TITLE.title": 1,
+    "CREATE_MOC.parentRef": 1,
+    "ADD_CORE_IDEA.sortOrder": 1,
+    "REMOVE_OPEN_QUESTION.question": 1,
+    "CREATE_PROJECT.name": 1,
+    "SET_TARGET_DATE.targetDate": 1,
+    "CREATE_GOAL.assignee": 1,
+    "ADVANCE_PHASE.handoff.phase": 1,
+    "UPDATE_PIPELINE_CONFIG.depth": 1,
+    "INGEST_SOURCE.sourceType": 1,
+    "INGEST_SOURCE.author": 1,
+    "INGEST_SOURCE.url": 1
+   }
+  },
+  "E10h3": {
+   "file": "spike/llm-harness/eval/results-r10-E10-h3.json",
+   "model": {
+    "repo": "url",
+    "file": "/lora10/LFM2.5-350M-vault-r10a-20261022-Q4_K_M.gguf"
+   },
+   "action": 92,
+   "noAction": 10,
+   "multiAction": 6,
+   "op": "77/92 (83.7%)",
+   "opByStyle": {
+    "natural": "44/45 (97.8%)",
+    "paraphrase": "33/47 (70.2%)"
+   },
+   "opByDifficulty": {
+    "natural/easy": "14/14 (100.0%)",
+    "natural/hard": "5/6 (83.3%)",
+    "natural/medium": "25/25 (100.0%)",
+    "paraphrase/hard": "4/8 (50.0%)",
+    "paraphrase/medium": "29/39 (74.4%)"
+   },
+   "opSiblingTagged": "33/44 (75.0%)",
+   "opSiblingTaggedByStyle": {
+    "natural": "12/13 (92.3%)",
+    "paraphrase": "21/31 (67.7%)"
+   },
+   "opGoldInGroup": "65/79 (82.3%)",
+   "opGoldNotInGroup": "12/13 (92.3%)",
+   "argsExact": "26/38 (68.4%)",
+   "argsByKindFields": {
+    "enum": "19/21 (90.5%)",
+    "list": "5/8 (62.5%)",
+    "other": "7/12 (58.3%)",
+    "span": "18/22 (81.8%)"
+   },
+   "argsExactByTag": {
+    "list": "0/0",
+    "exact-copy": "0/0",
+    "enum": "0/0",
+    "date": "0/0",
+    "ref": "11/13 (84.6%)"
+   },
+   "refExact": "33/35 (94.3%)",
+   "requiredPresent": "26/26 (100.0%)",
+   "noActionPR": {
+    "tp": 7,
+    "fp": 1,
+    "fn": 3,
+    "precision": "7/8 (87.5%)",
+    "recall": "7/10 (70.0%)"
+   },
+   "multiFirstInExpected": "4/6 (66.7%)",
+   "fullyRight": "63/92 (68.5%)",
+   "fullyRightByStyle": {
+    "natural": "37/45 (82.2%)",
+    "paraphrase": "26/47 (55.3%)"
+   },
+   "latencyMs": {
+    "median": 474,
+    "p90": 938
+   },
+   "misses": {
+    "sibling in list": 14,
+    "LoRA chose no-action": 1
+   },
+   "siblingConfusions": {
+    "REMOVE_TOPIC -> SET_NOTE_TYPE": 1,
+    "SET_METADATA_FIELD -> SET_NOTE_TYPE": 1,
+    "REJECT_NOTE -> REMOVE_LINK": 1,
+    "UPDATE_ORIENTATION -> UPDATE_DESCRIPTION": 1,
+    "REMOVE_OPEN_QUESTION -> REMOVE_TENSION": 1,
+    "SET_PROJECT_STATUS -> SET_DELIVERABLE_STATUS": 1,
+    "UPDATE_DELIVERABLE -> SET_DELIVERABLE_STATUS": 1,
+    "SET_REFERENCES -> ADD_KNOWLEDGE_REF": 1,
+    "SET_GOAL_STATUS -> REMOVE_NOTE": 1,
+    "INGEST_SOURCE -> SET_SOURCE_STATUS": 1,
+    "UPDATE_VOCABULARY -> UPDATE_PIPELINE_CONFIG": 1,
+    "ADD_EXTRACTION_CATEGORY -> TOGGLE_EXTRACTION_CATEGORY": 1,
+    "TOGGLE_FEATURE -> UPDATE_PIPELINE_CONFIG": 1,
+    "ADD_SIGNAL -> ADD_RESEED_ENTRY": 1
+   },
+   "argsMisses": {
+    "ADD_CHECK.affectedItems": 2,
+    "SET_DESCRIPTION.description": 1,
+    "REMOVE_CHILD_MOC.childRef": 1,
+    "CREATE_PROJECT.owner": 1,
+    "SET_TARGET_DATE.targetDate": 1,
+    "ADD_MEMBER.role": 1,
+    "SET_DELIVERABLE_STATUS.status": 1,
+    "ADVANCE_PHASE.handoff.phase": 1,
+    "INGEST_SOURCE.url": 1,
+    "INGEST_SOURCE.author": 1,
+    "INGEST_SOURCE.content": 1,
+    "CREATE_CLAIM.methodology": 1,
+    "UPDATE_PIPELINE_CONFIG.extractionSelectivity": 1
+   }
+  }
+ },
+ "qa": {
+  "vsBase": {
+   "baseBetter": 3,
+   "same": 11,
+   "r10Better": 1
+  },
+  "vsR8": {
+   "r8Better": 2,
+   "same": 11,
+   "r10Better": 2
+  },
+  "jsonLeak": 0
+ }
+}
