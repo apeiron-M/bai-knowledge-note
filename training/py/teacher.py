@@ -1127,7 +1127,9 @@ def run_cli(reqs: list[dict], cfg: argparse.Namespace, out_path: str) -> int:
     Path(out_path).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in ordered))
     summary = summarize_cli(ordered, time.monotonic() - t0, cfg.concurrency)
     summary["resumedFromJournal"] = resumed  # wallS covers this invocation only
-    if summary["errored"] == 0:
+    # Keep the journal after a `--limit` run: it holds rows of the whole
+    # request file, not just the first N (deleting it once lost a resume).
+    if summary["errored"] == 0 and not getattr(cfg, "limit", 0):
         journal.unlink()
     summary["command"] = ["claude", *CLI_BASE, "--model", MODEL, "--effort", "<request effort>",
                           "--max-budget-usd", str(cfg.max_budget_usd), "--system-prompt", "<request system>",
