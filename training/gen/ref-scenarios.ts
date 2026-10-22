@@ -853,8 +853,143 @@ function stateOf(doc: PHDocument): Rec {
   return isRec(global) ? global : {};
 }
 
+/**
+ * Round 10 contrastive sets: one seeded state shared by the members of a
+ * sibling group. A group spec `{gid, seed, anchors, members: [{cid, op, items}]}`
+ * tries each anchor op's builder (fresh `mulberry32(seed)`, theme first, as
+ * in `main`) and keeps the first that gives every ref member 2+ distinct
+ * labels per path (or the one that satisfies the most). A ref member the
+ * chosen state cannot serve falls back to its own builder with the same
+ * seed (same theme), `sharedState: false`. Non-ref members get the state
+ * for display only (`displayOnly`, no items, no candidates).
+ */
+interface GroupSpec {
+  gid: string;
+  seed: number;
+  anchors: string[];
+  members: { cid: string; op: string; items: number }[];
+}
+type GroupScenario = Partial<Scenario> & {
+  cid: string;
+  op: string;
+  docType: string;
+  theme: string;
+  state: string;
+  gid: string;
+  stateFrom: string | null;
+  sharedState: boolean;
+  displayOnly: boolean;
+};
+
+function groupScenarios(
+  g: GroupSpec,
+  catalog: Map<string, CatalogEntry>,
+  reps: ReturnType<typeof replayers>,
+): GroupScenario[] {
+  const isRef = (op: string) => Boolean(RECIPES[op]);
+  const refMembers = g.members.filter((m) => isRef(m.op));
+  const docType = catalog.get(g.members[0].op)?.docType ?? "";
+  type Built = { r: Rng; theme: Theme; built: ReturnType<Recipe["build"]>; state: Rec };
+  const buildWith = (anchor: string): Built | null => {
+    const r = mulberry32(g.seed);
+    const theme = pick(r, THEMES);
+    const built = RECIPES[anchor].build(r, theme);
+    const rep = replayFixture(catalog, reps, docType, built.fixture, new IdSource());
+    return rep.error ? null : { r, theme, built, state: stateOf(rep.doc) };
+  };
+  // Every path has 2+ distinct labels, and the recipe can assign targets
+  // there (some assign from the state, e.g. UNBLOCK_TASK's blocked tasks).
+  const serves = (b: Built, op: string) => {
+    const cands = candidatesFor(op, b.state, b.built.ctx);
+    const ok = Object.values(cands).every(
+      (cs) => cs.length >= 2 && new Set(cs.map((c) => c.label)).size === cs.length,
+    );
+    if (!ok) return false;
+    try {
+      const as = RECIPES[op].assign(mulberry32(1), cands, b.state, 6);
+      return as.every((a) => Object.values(a.refs).every((v) => v !== undefined &&
+        (Array.isArray(v) ? v.every((x) => typeof x === "string") : true)));
+    } catch {
+      return false;
+    }
+  };
+  let best: { anchor: string; b: Built; n: number } | null = null;
+  for (const anchor of g.anchors) {
+    const b = buildWith(anchor);
+    if (!b) continue;
+    const n = refMembers.filter((m) => serves(b, m.op)).length;
+    if (!best || n > best.n) best = { anchor, b, n };
+    if (n === refMembers.length) break;
+  }
+  return g.members.map((m) => {
+    const base = { cid: m.cid, op: m.op, docType, gid: g.gid };
+    if (!isRef(m.op)) {
+      return {
+        ...base,
+        theme: best?.b.theme.name ?? "",
+        state: best ? describeState(docType, best.b.state, best.b.built.ctx) : "",
+        stateFrom: best?.anchor ?? null,
+        sharedState: best !== null,
+        displayOnly: true,
+      };
+    }
+    // Shared state when it serves this member, else the member's own builder.
+    let b = best && serves(best.b, m.op) ? best.b : null;
+    const shared = b !== null;
+    if (!b) b = buildWith(m.op);
+    if (!b) throw new Error(`${m.cid}: own fixture failed`);
+    // A fresh assignment stream per member, so members do not consume each other's draws.
+    const r = mulberry32((g.seed ^ hashStr(m.op)) >>> 0);
+    const cands = candidatesFor(m.op, b.state, b.built.ctx);
+    for (const [p, cs] of Object.entries(cands))
+      if (cs.length < 2 || new Set(cs.map((c) => c.label)).size !== cs.length)
+        throw new Error(`${m.cid}: ${p} needs 2+ distinct labels, got ${JSON.stringify(cs)}`);
+    const items = RECIPES[m.op].assign(r, cands, b.state, m.items).map((a) => {
+      const labels: Record<string, string | string[] | null> = {};
+      const position: Record<string, [number, number]> = {};
+      for (const [p, v] of Object.entries(a.refs)) {
+        const lab = (id: string) => cands[p].find((c) => c.id === id)?.label ?? id;
+        labels[p] = v === null ? null : Array.isArray(v) ? v.map(lab) : lab(v);
+        if (typeof v === "string") position[p] = [cands[p].findIndex((c) => c.id === v) + 1, cands[p].length];
+      }
+      return { ...a, labels, position };
+    });
+    return {
+      ...base,
+      theme: b.theme.name,
+      fixture: b.built.fixture,
+      refContext: b.built.ctx,
+      refCandidates: cands,
+      state: describeState(docType, b.state, b.built.ctx),
+      items,
+      stateFrom: shared ? (best?.anchor ?? null) : m.op,
+      sharedState: shared,
+      displayOnly: false,
+    };
+  });
+}
+
+function hashStr(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+
 function main(): void {
   const [specFile, outFile] = process.argv.slice(2);
+  if (specFile === "--groups") {
+    const [gFile, gOut] = process.argv.slice(3);
+    const catalog = new Map(buildTrainingCatalog().map((e) => [e.key, e]));
+    const reps = replayers();
+    const groups = JSON.parse(readFileSync(gFile, "utf8")) as GroupSpec[];
+    const out = groups.flatMap((g) => groupScenarios(g, catalog, reps));
+    writeFileSync(gOut, JSON.stringify(out, null, 1) + "\n");
+    const ref = out.filter((s) => !s.displayOnly);
+    console.log(JSON.stringify({ groups: groups.length, scenarios: out.length, refMembers: ref.length,
+      refShared: ref.filter((s) => s.sharedState).length, displayOnly: out.length - ref.length,
+      displayWithState: out.filter((s) => s.displayOnly && s.sharedState).length }));
+    return;
+  }
   const catalog = new Map(buildTrainingCatalog().map((e) => [e.key, e]));
   if (specFile === "--list") {
     const ops = [...catalog.values()].filter((e) => e.scope === "global" && refPaths(e).length);

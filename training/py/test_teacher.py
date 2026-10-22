@@ -298,5 +298,37 @@ class AgreeStep1Only(unittest.TestCase):
                          [("r-ok", None), ("r-gate", "grammar-gate"), ("r-args", "args-disagree")])
 
 
+class Round10Stress(unittest.TestCase):
+    SCHEMA = {"type": "object", "properties": {
+        "status": {"anyOf": [{"type": "string", "enum": ["A", "B"]}, {"type": "null"}]},
+        "items": {"type": "array", "items": {"type": "string"}},
+        "note": {"type": "string"}, "n": {"type": "number"},
+        "handoff": {"type": "object", "properties": {"phase": {"type": "string", "enum": ["x"]}}}}}
+
+    def test_field_kinds_resolves_anyof_and_nesting(self) -> None:
+        self.assertEqual(t.field_kinds(self.SCHEMA),
+                         [("status", "enum", ["A", "B"]), ("items", "list", None), ("note", "span", None),
+                          ("handoff.phase", "enum", ["x"])])
+
+    def test_stress_plan_covers_every_enum_value_and_weights_lists(self) -> None:
+        plan = t.stress_plan(random.Random(3), t.field_kinds(self.SCHEMA), 12)
+        kinds = [p["kind"] for p in plan]
+        self.assertEqual(kinds.count("list"), 6)
+        self.assertEqual({(p["field"], p["value"]) for p in plan if p["kind"] == "enum"},
+                         {("status", "A"), ("status", "B"), ("handoff.phase", "x")})
+        self.assertEqual(sorted(p["n"] for p in plan if p["kind"] == "list"), [2, 2, 3, 3, 4, 4])
+
+    def test_stress_error(self) -> None:
+        u = 'Add "Q3 Plan, v2" and Bob\'s notes, please.'
+        self.assertIsNone(t.stress_error({"note": "Q3 Plan, v2"}, u, {"kind": "span", "field": "note"}))
+        self.assertIn("case-exact", t.stress_error({"note": "q3 plan, v2"}, u, {"kind": "span", "field": "note"}))
+        self.assertIn("lacks", t.stress_error({"note": "Plan"}, "Plan it", {"kind": "span", "field": "note"}))
+        self.assertIsNone(t.stress_error({"items": ["Q3 Plan, v2", "Bob's notes"]}, u,
+                                         {"kind": "list", "field": "items", "n": 2}))
+        self.assertIn("items", t.stress_error({"items": ["Q3 Plan, v2"]}, u, {"kind": "list", "field": "items", "n": 2}))
+        self.assertIsNone(t.stress_error({"handoff": {"phase": "x"}}, u, {"kind": "enum", "field": "handoff.phase", "value": "x"}))
+        self.assertIsNotNone(t.stress_error({"status": "A"}, u, {"kind": "enum", "field": "status", "value": "B"}))
+
+
 if __name__ == "__main__":
     unittest.main()

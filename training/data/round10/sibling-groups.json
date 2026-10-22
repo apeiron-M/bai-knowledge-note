@@ -1,0 +1,667 @@
+{
+ "rules": [
+  "    training/.venv/bin/python training/py/sibling_groups.py --context <context.json> --out <groups.json>",
+  "Groups come from the op catalog's structure, per model:\n  - entity: ops on the same entity (the op name minus its leading verb and a\n    trailing STATUS/TYPE/INFO/... qualifier, singular), e.g. ADD_/UPDATE_/\n    SET_..._STATUS/REMOVE_DELIVERABLE;\n  - lifecycle: status and lifecycle ops (a lifecycle verb, or STATUS in the name);\n  - text: ops that set a free-text property (TITLE, DESCRIPTION, CONTENT,\n    ORIENTATION, INFO, OUTCOME in the name).\nA group that is a subset of another is dropped, and two groups that differ by\nat most one op each way are merged. Then observed confusion pairs\n(same model) that no group holds yet are unioned in: into a group that holds\none of the pair (the smallest such, if it stays at most MAX_SIZE), else as a\nnew pair group. Pair sources: the Round 9 results doc (aggregate R2c sibling\nconfusions on held-out-3, as listed there), Round 8's error analysis on the\nretired held-out-1/2 (C3 k=5) and the dev runs of Rounds 8-9. No held-out-3\nor held-out-4 item is read."
+ ],
+ "maxSize": 6,
+ "groups": [
+  {
+   "model": "knowledge-note",
+   "rule": "entity:NOTE+lifecycle",
+   "ops": [
+    "knowledge-note:SET_NOTE_TYPE",
+    "knowledge-note:SUBMIT_FOR_REVIEW",
+    "knowledge-note:APPROVE_NOTE",
+    "knowledge-note:REJECT_NOTE",
+    "knowledge-note:ARCHIVE_NOTE",
+    "knowledge-note:RESTORE_NOTE"
+   ],
+   "id": "g01"
+  },
+  {
+   "model": "knowledge-note",
+   "rule": "entity:METADATA",
+   "ops": [
+    "knowledge-note:SET_METADATA_FIELD",
+    "knowledge-note:SET_METADATA_LIST_FIELD"
+   ],
+   "id": "g02"
+  },
+  {
+   "model": "knowledge-note",
+   "rule": "entity:LINK",
+   "ops": [
+    "knowledge-note:ADD_LINK",
+    "knowledge-note:REMOVE_LINK",
+    "knowledge-note:UPDATE_LINK_TYPE"
+   ],
+   "id": "g03"
+  },
+  {
+   "model": "knowledge-note",
+   "rule": "entity:TOPIC",
+   "ops": [
+    "knowledge-note:ADD_TOPIC",
+    "knowledge-note:REMOVE_TOPIC"
+   ],
+   "id": "g04"
+  },
+  {
+   "model": "knowledge-note",
+   "rule": "text",
+   "ops": [
+    "knowledge-note:SET_TITLE",
+    "knowledge-note:SET_DESCRIPTION",
+    "knowledge-note:SET_CONTENT",
+    "knowledge-note:PATCH_CONTENT"
+   ],
+   "id": "g05"
+  },
+  {
+   "model": "moc",
+   "rule": "entity:CORE_IDEA",
+   "ops": [
+    "moc:ADD_CORE_IDEA",
+    "moc:UPDATE_CORE_IDEA",
+    "moc:REMOVE_CORE_IDEA",
+    "moc:REORDER_CORE_IDEAS"
+   ],
+   "id": "g06"
+  },
+  {
+   "model": "moc",
+   "rule": "entity:TENSION",
+   "ops": [
+    "moc:ADD_TENSION",
+    "moc:REMOVE_TENSION",
+    "moc:REMOVE_OPEN_QUESTION"
+   ],
+   "added": [
+    {
+     "op": "moc:REMOVE_OPEN_QUESTION",
+     "pair": [
+      "moc:REMOVE_OPEN_QUESTION",
+      "moc:REMOVE_TENSION"
+     ],
+     "source": "round9-doc"
+    }
+   ],
+   "id": "g07"
+  },
+  {
+   "model": "moc",
+   "rule": "entity:OPEN_QUESTION",
+   "ops": [
+    "moc:ADD_OPEN_QUESTION",
+    "moc:REMOVE_OPEN_QUESTION"
+   ],
+   "id": "g08"
+  },
+  {
+   "model": "moc",
+   "rule": "entity:CHILD_MOC",
+   "ops": [
+    "moc:ADD_CHILD_MOC",
+    "moc:REMOVE_CHILD_MOC"
+   ],
+   "id": "g09"
+  },
+  {
+   "model": "moc",
+   "rule": "text",
+   "ops": [
+    "moc:UPDATE_ORIENTATION",
+    "moc:UPDATE_DESCRIPTION",
+    "moc:UPDATE_CORE_IDEA"
+   ],
+   "added": [
+    {
+     "op": "moc:UPDATE_CORE_IDEA",
+     "pair": [
+      "moc:UPDATE_CORE_IDEA",
+      "moc:UPDATE_DESCRIPTION"
+     ],
+     "source": "round9-doc"
+    }
+   ],
+   "id": "g10"
+  },
+  {
+   "model": "observation",
+   "rule": "entity:OBSERVATION",
+   "ops": [
+    "observation:CREATE_OBSERVATION",
+    "observation:PROMOTE_OBSERVATION",
+    "observation:IMPLEMENT_OBSERVATION",
+    "observation:ARCHIVE_OBSERVATION"
+   ],
+   "id": "g11"
+  },
+  {
+   "model": "pipeline-queue",
+   "rule": "entity:TASK",
+   "ops": [
+    "pipeline-queue:ADD_TASK",
+    "pipeline-queue:ASSIGN_TASK",
+    "pipeline-queue:COMPLETE_TASK",
+    "pipeline-queue:FAIL_TASK",
+    "pipeline-queue:BLOCK_TASK",
+    "pipeline-queue:UNBLOCK_TASK"
+   ],
+   "id": "g12"
+  },
+  {
+   "model": "pipeline-queue",
+   "rule": "lifecycle",
+   "ops": [
+    "pipeline-queue:ADVANCE_PHASE",
+    "pipeline-queue:COMPLETE_TASK",
+    "pipeline-queue:FAIL_TASK",
+    "pipeline-queue:BLOCK_TASK",
+    "pipeline-queue:UNBLOCK_TASK"
+   ],
+   "id": "g13"
+  },
+  {
+   "model": "project",
+   "rule": "entity:PROJECT",
+   "ops": [
+    "project:CREATE_PROJECT",
+    "project:UPDATE_PROJECT_INFO",
+    "project:SET_PROJECT_STATUS"
+   ],
+   "id": "g14"
+  },
+  {
+   "model": "project",
+   "rule": "entity:MEMBER",
+   "ops": [
+    "project:ADD_MEMBER",
+    "project:UPDATE_MEMBER",
+    "project:REMOVE_MEMBER"
+   ],
+   "id": "g15"
+  },
+  {
+   "model": "project",
+   "rule": "entity:DELIVERABLE",
+   "ops": [
+    "project:ADD_DELIVERABLE",
+    "project:UPDATE_DELIVERABLE",
+    "project:SET_DELIVERABLE_STATUS",
+    "project:REMOVE_DELIVERABLE"
+   ],
+   "id": "g16"
+  },
+  {
+   "model": "project",
+   "rule": "entity:KNOWLEDGE",
+   "ops": [
+    "project:ADD_KNOWLEDGE_REF",
+    "project:REMOVE_KNOWLEDGE_REF",
+    "project:SET_REFERENCES"
+   ],
+   "added": [
+    {
+     "op": "project:SET_REFERENCES",
+     "pair": [
+      "project:SET_REFERENCES",
+      "project:ADD_KNOWLEDGE_REF"
+     ],
+     "source": "round9-doc"
+    }
+   ],
+   "id": "g17"
+  },
+  {
+   "model": "project",
+   "rule": "lifecycle",
+   "ops": [
+    "project:SET_PROJECT_STATUS",
+    "project:SET_DELIVERABLE_STATUS"
+   ],
+   "id": "g18"
+  },
+  {
+   "model": "research-claim",
+   "rule": "entity:CLAIM",
+   "ops": [
+    "research-claim:CREATE_CLAIM",
+    "research-claim:UPDATE_CLAIM_CONTENT"
+   ],
+   "id": "g19"
+  },
+  {
+   "model": "research-claim",
+   "rule": "entity:RESEARCH_CONNECTION",
+   "ops": [
+    "research-claim:ADD_RESEARCH_CONNECTION",
+    "research-claim:REMOVE_RESEARCH_CONNECTION"
+   ],
+   "id": "g20"
+  },
+  {
+   "model": "source",
+   "rule": "entity:SOURCE",
+   "ops": [
+    "source:INGEST_SOURCE",
+    "source:SET_SOURCE_STATUS",
+    "source:ADD_EXTRACTED_CLAIM",
+    "source:RECORD_EXTRACTION_STATS"
+   ],
+   "added": [
+    {
+     "op": "source:ADD_EXTRACTED_CLAIM",
+     "pair": [
+      "source:INGEST_SOURCE",
+      "source:ADD_EXTRACTED_CLAIM"
+     ],
+     "source": "round9-doc"
+    },
+    {
+     "op": "source:RECORD_EXTRACTION_STATS",
+     "pair": [
+      "source:INGEST_SOURCE",
+      "source:RECORD_EXTRACTION_STATS"
+     ],
+     "source": "round8-errors"
+    }
+   ],
+   "id": "g21"
+  },
+  {
+   "model": "tension",
+   "rule": "entity:TENSION",
+   "ops": [
+    "tension:CREATE_TENSION",
+    "tension:RESOLVE_TENSION",
+    "tension:DISSOLVE_TENSION"
+   ],
+   "id": "g22"
+  },
+  {
+   "model": "vault-config",
+   "rule": "entity:EXTRACTION_CATEGORY",
+   "ops": [
+    "vault-config:UPDATE_PIPELINE_CONFIG",
+    "vault-config:ADD_EXTRACTION_CATEGORY",
+    "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+   ],
+   "added": [
+    {
+     "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+     "pair": [
+      "vault-config:UPDATE_PIPELINE_CONFIG",
+      "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+     ],
+     "source": "round8-errors"
+    }
+   ],
+   "id": "g23"
+  },
+  {
+   "model": "wbs",
+   "rule": "entity:GOAL",
+   "ops": [
+    "wbs:CREATE_GOAL",
+    "wbs:UPDATE_GOAL_DESCRIPTION",
+    "wbs:DELETE_GOAL",
+    "wbs:SET_GOAL_STATUS",
+    "wbs:ASSIGN_GOAL",
+    "wbs:SET_OWNER"
+   ],
+   "added": [
+    {
+     "op": "wbs:SET_OWNER",
+     "pair": [
+      "wbs:SET_OWNER",
+      "wbs:ASSIGN_GOAL"
+     ],
+     "source": "round8-errors"
+    }
+   ],
+   "id": "g24"
+  },
+  {
+   "model": "wbs",
+   "rule": "entity:DEPENDENCY",
+   "ops": [
+    "wbs:SET_GOAL_STATUS",
+    "wbs:ASSIGN_GOAL",
+    "wbs:ADD_DEPENDENCIES",
+    "wbs:REMOVE_DEPENDENCIES"
+   ],
+   "added": [
+    {
+     "op": "wbs:SET_GOAL_STATUS",
+     "pair": [
+      "wbs:SET_GOAL_STATUS",
+      "wbs:ADD_DEPENDENCIES"
+     ],
+     "source": "round8-errors"
+    },
+    {
+     "op": "wbs:ASSIGN_GOAL",
+     "pair": [
+      "wbs:ASSIGN_GOAL",
+      "wbs:REMOVE_DEPENDENCIES"
+     ],
+     "source": "round8-errors"
+    }
+   ],
+   "id": "g25"
+  },
+  {
+   "model": "wbs",
+   "rule": "entity:NOTE",
+   "ops": [
+    "wbs:ADD_NOTE",
+    "wbs:REMOVE_NOTE"
+   ],
+   "id": "g26"
+  },
+  {
+   "model": "wbs",
+   "rule": "text",
+   "ops": [
+    "wbs:UPDATE_GOAL_DESCRIPTION",
+    "wbs:SET_GOAL_STATUS",
+    "wbs:SET_OUTCOME"
+   ],
+   "added": [
+    {
+     "op": "wbs:SET_GOAL_STATUS",
+     "pair": [
+      "wbs:SET_GOAL_STATUS",
+      "wbs:SET_OUTCOME"
+     ],
+     "source": "round9-doc"
+    }
+   ],
+   "id": "g27"
+  },
+  {
+   "model": "vault-config",
+   "rule": "observed:round9-doc",
+   "ops": [
+    "vault-config:UPDATE_VOCABULARY",
+    "vault-config:UPDATE_PIPELINE_CONFIG",
+    "vault-config:ADD_EXTRACTION_CATEGORY",
+    "vault-config:TOGGLE_FEATURE"
+   ],
+   "id": "g28"
+  }
+ ],
+ "pairsUnioned": [
+  {
+   "pair": [
+    "moc:UPDATE_CORE_IDEA",
+    "moc:UPDATE_DESCRIPTION"
+   ],
+   "source": "round9-doc"
+  },
+  {
+   "pair": [
+    "moc:REMOVE_OPEN_QUESTION",
+    "moc:REMOVE_TENSION"
+   ],
+   "source": "round9-doc"
+  },
+  {
+   "pair": [
+    "project:SET_REFERENCES",
+    "project:ADD_KNOWLEDGE_REF"
+   ],
+   "source": "round9-doc"
+  },
+  {
+   "pair": [
+    "wbs:SET_GOAL_STATUS",
+    "wbs:SET_OUTCOME"
+   ],
+   "source": "round9-doc"
+  },
+  {
+   "pair": [
+    "source:INGEST_SOURCE",
+    "source:ADD_EXTRACTED_CLAIM"
+   ],
+   "source": "round9-doc"
+  },
+  {
+   "pair": [
+    "wbs:SET_GOAL_STATUS",
+    "wbs:ADD_DEPENDENCIES"
+   ],
+   "source": "round8-errors"
+  },
+  {
+   "pair": [
+    "wbs:SET_OWNER",
+    "wbs:ASSIGN_GOAL"
+   ],
+   "source": "round8-errors"
+  },
+  {
+   "pair": [
+    "source:INGEST_SOURCE",
+    "source:RECORD_EXTRACTION_STATS"
+   ],
+   "source": "round8-errors"
+  },
+  {
+   "pair": [
+    "wbs:ASSIGN_GOAL",
+    "wbs:REMOVE_DEPENDENCIES"
+   ],
+   "source": "round8-errors"
+  },
+  {
+   "pair": [
+    "vault-config:UPDATE_PIPELINE_CONFIG",
+    "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+   ],
+   "source": "round8-errors"
+  }
+ ],
+ "pairCoverage": [
+  {
+   "pair": [
+    "moc:UPDATE_ORIENTATION",
+    "moc:UPDATE_DESCRIPTION"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "moc:UPDATE_CORE_IDEA",
+    "moc:UPDATE_DESCRIPTION"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "moc:REMOVE_OPEN_QUESTION",
+    "moc:REMOVE_TENSION"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "project:SET_PROJECT_STATUS",
+    "project:SET_DELIVERABLE_STATUS"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "project:SET_DELIVERABLE_STATUS",
+    "project:UPDATE_DELIVERABLE"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "project:SET_REFERENCES",
+    "project:ADD_KNOWLEDGE_REF"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "wbs:SET_GOAL_STATUS",
+    "wbs:SET_OUTCOME"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "source:INGEST_SOURCE",
+    "source:ADD_EXTRACTED_CLAIM"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "pipeline-queue:FAIL_TASK",
+    "pipeline-queue:BLOCK_TASK"
+   ],
+   "source": "round9-doc",
+   "covered": true
+  },
+  {
+   "pair": [
+    "source:SET_SOURCE_STATUS",
+    "source:ADD_EXTRACTED_CLAIM"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "moc:REMOVE_OPEN_QUESTION",
+    "moc:REMOVE_TENSION"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "project:SET_REFERENCES",
+    "project:ADD_KNOWLEDGE_REF"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "wbs:SET_GOAL_STATUS",
+    "wbs:ADD_DEPENDENCIES"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "wbs:SET_OWNER",
+    "wbs:ASSIGN_GOAL"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "wbs:SET_OUTCOME",
+    "wbs:SET_GOAL_STATUS"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "knowledge-note:SET_METADATA_LIST_FIELD",
+    "knowledge-note:SET_METADATA_FIELD"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "moc:UPDATE_ORIENTATION",
+    "moc:UPDATE_CORE_IDEA"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "source:INGEST_SOURCE",
+    "source:RECORD_EXTRACTION_STATS"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "project:SET_PROJECT_STATUS",
+    "project:SET_DELIVERABLE_STATUS"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "project:ADD_MEMBER",
+    "project:UPDATE_MEMBER"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "wbs:ASSIGN_GOAL",
+    "wbs:REMOVE_DEPENDENCIES"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "observation:PROMOTE_OBSERVATION",
+    "observation:CREATE_OBSERVATION"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "vault-config:ADD_EXTRACTION_CATEGORY",
+    "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  },
+  {
+   "pair": [
+    "vault-config:UPDATE_PIPELINE_CONFIG",
+    "vault-config:TOGGLE_EXTRACTION_CATEGORY"
+   ],
+   "source": "round8-errors",
+   "covered": true
+  }
+ ],
+ "summary": {
+  "groups": 28,
+  "memberships": 94,
+  "distinctOps": 80,
+  "pairsCovered": "24/24"
+ }
+}

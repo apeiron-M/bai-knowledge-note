@@ -229,7 +229,54 @@ def spec_text(sp: dict, ref: dict | None = None) -> str:
     if sp.get("name"):
         bits.append(f"Any person in the message or its arguments (author, owner, assignee, member) is "
                     f"{sp['name']} (full or first name), never the account holder.")
+    if sp.get("stress"):
+        bits.append(stress_text(sp["stress"]))
     return " ".join(bits)
+
+
+# Round 10 argument stress (`plan --ops stress`): one field per spec is a list,
+# an enum value or an exact copied span; `rows` checks it (`stress_error`).
+SPAN_PUNCT = re.compile(r"[,:;'’()\"“”/&?!-]")
+
+
+def stress_text(st: dict) -> str:
+    f = st["field"]
+    if st["kind"] == "enum":
+        return (f"Argument `{f}` must be {st['value']}: the message must state or clearly imply exactly this value "
+                f"(in everyday words), so that no other listed value fits.")
+    if st["kind"] == "list":
+        return (f"Argument `{f}` must hold exactly {st['n']} items, every one stated in the message and listed in "
+                f"the message's order, each copied verbatim; at least one item has a capital letter or punctuation "
+                f"inside it (a name, an acronym, a hyphen, an apostrophe or a colon).")
+    return (f"Argument `{f}` must be a value that contains a capitalized name or acronym and internal punctuation "
+            f"(a comma, colon, hyphen, apostrophe, parenthesis or quotation marks), copied into `{f}` verbatim with "
+            f"the same capitals and punctuation; the message goes on after the value, or ends with sentence "
+            f"punctuation that is not part of it.")
+
+
+def arg_at(args: dict, path: str) -> object:
+    v: object = args
+    for k in path.split("."):
+        v = v.get(k) if isinstance(v, dict) else None
+    return v
+
+
+def stress_error(args: dict, utterance: str, st: dict) -> str | None:
+    """The stressed field as the spec asked: the enum value, an n-item list of
+    case-exact spans, or a case-exact span with a capital and punctuation."""
+    v = arg_at(args, st["field"])
+    if st["kind"] == "enum":
+        return None if v == st["value"] else f"stress: {st['field']}={v!r}, spec {st['value']}"
+    if st["kind"] == "list":
+        if not isinstance(v, list) or len(v) != st["n"]:
+            return f"stress: {st['field']} has {len(v) if isinstance(v, list) else 'no'} items, spec {st['n']}"
+        bad = [x for x in v if not isinstance(x, str) or x not in utterance]
+        return f"stress: list item {bad[0]!r} not verbatim" if bad else None
+    if not isinstance(v, str) or v not in utterance:
+        return f"stress: {st['field']} not a case-exact span"
+    if not (re.search(r"[A-Z]", v) and SPAN_PUNCT.search(v[:-1])):
+        return f"stress: {st['field']} lacks a capital or internal punctuation"
+    return None
 
 
 def wording_error(utterance: str, sp: dict) -> str | None:
@@ -399,6 +446,10 @@ def cmd_plan(a) -> int:
     ctx = {o["key"]: o for o in json.loads(Path(a.context).read_text())}
     listing = json.loads(tsx("training/gen/ref-scenarios.ts", "--list").strip().splitlines()[-1])
     ref_ops, people_pool = listing["refOps"], listing["people"]
+    if a.ops == "contrast":
+        return plan_contrast(a, ctx, ref_ops, people_pool)
+    if a.ops == "stress":
+        return plan_stress(a, ctx, ref_ops, people_pool)
     if a.batch_size:
         return plan_batched(a, ctx, ref_ops, people_pool)
     rng = random.Random(a.seed)
@@ -460,7 +511,8 @@ def cmd_plan(a) -> int:
     return finish_plan(out, reqs, meta, len(scen))
 
 
-def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
+def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str], jobs: list | None = None,
+                 tag: str = "") -> int:
     """`plan --batch-size B`: every job (op, or no-action model) gets
     `--items-per-op` specs (`--ref-items-per-op` / `--noaction-items` per
     class), drawn from `--seed` and the job key only, then split into calls
@@ -470,7 +522,9 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
     per spec of that call (`scenario_specs`). `--shared-state` gives the job
     one state shared by all its calls instead, as in the batch-size
     comparison (same states and targets for every batch size)."""
-    if a.ops == "batchcmp":
+    if jobs is not None:
+        keys, na_models = [], []
+    elif a.ops == "batchcmp":
         keys, na_models = BATCHCMP_OPS, BATCHCMP_NO_ACTION_MODELS
     elif a.ops == "all":
         keys, na_models = list(ctx), sorted({o["model"] for o in ctx.values()})
@@ -490,7 +544,7 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
         while len(people) < k:
             people.extend(name_rng.sample(people_pool, len(people_pool)))
         return [people.pop(0) for _ in range(k)]
-    jobs = []  # (job id, op key or None, model, specs, persona, rng)
+    jobs = list(jobs or [])  # (job id, op key or None, model, specs, persona, rng)
     for key in keys:
         rj = random.Random(f"{a.seed}:{key}")
         n = ref_n if key in ref_ops else a.items_per_op
@@ -502,7 +556,7 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
                      rj.choice(PERSONAS), rj))
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    spec = scenario_specs(jobs, ref_ops, size, a.seed, per_call)
+    spec = scenario_specs(jobs, ref_ops, size, a.seed, per_call, tag)
     scen: dict[str, dict] = {}
     if spec:
         sp_file, sc_file = Path(str(out) + ".scenario-spec.json"), Path(str(out) + ".scenarios.json")
@@ -512,10 +566,10 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
     reqs, meta = [], {}
     for job, key, model, specs, persona, _ in jobs:
         for ci, chunk in enumerate(call_specs(specs, size)):
-            c = f"{job}-{ci}"
+            c = f"{job}-{tag}{ci}"
             sc = scen.get(c) if per_call else scen.get(job)
             k = len(chunk)
-            seed_line = f"Seed: {random.Random(f'{a.seed}:{job}:{ci}').randrange(10**6)}."
+            seed_line = f"Seed: {random.Random(f'{a.seed}:{job}:{tag}{ci}').randrange(10**6)}."
             distinct = f"\n{DISTINCT_LINE}" if k > 1 else ""
             plural = "message" if k == 1 else "messages"
             if key is None:
@@ -547,7 +601,159 @@ def plan_batched(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
     return finish_plan(out, reqs, meta, len(scen))
 
 
-def scenario_specs(jobs: list[tuple], ref_ops: dict, size: int, seed: int, per_call: bool) -> list[dict]:
+def field_kinds(schema: dict, path: str = "") -> list[tuple[str, str, list | None]]:
+    """(dotted path, kind, enum values) for every leaf a teacher fills:
+    `enum`, `list` (array of strings), `span` (free string); `anyOf` with
+    null is resolved to its non-null branch; numbers and booleans are skipped."""
+    out = []
+    for k, v in (schema.get("properties") or {}).items():
+        p = f"{path}{k}"
+        alts = [b for b in v.get("anyOf", []) if b.get("type") != "null"] or [v]
+        b = alts[0]
+        if "enum" in b:
+            out.append((p, "enum", list(b["enum"])))
+        elif b.get("type") == "array" and (b.get("items") or {}).get("type") == "string" and "enum" not in b["items"]:
+            out.append((p, "list", None))
+        elif b.get("type") == "object":
+            out += field_kinds(b, p + ".")
+        elif b.get("type") == "string":
+            out.append((p, "span", None))
+    return out
+
+
+def stress_plan(rj: random.Random, kinds: list[tuple[str, str, list | None]], n: int) -> list[dict]:
+    """n stress assignments: every enum value, lists of 2-4 items and spans,
+    round-robin over the three kinds (enum values shuffled)."""
+    pools: dict[str, list[dict]] = {"enum": [], "list": [], "span": []}
+    for f, kind, vals in kinds:
+        if kind == "enum":
+            pools["enum"] += [{"kind": "enum", "field": f, "value": v} for v in vals]
+        elif kind == "list":
+            pools["list"] += [{"kind": "list", "field": f, "n": m} for m in (2, 3, 4)]
+        else:
+            pools["span"].append({"kind": "span", "field": f})
+    for q in pools.values():
+        rj.shuffle(q)
+    order = [k for k in ("list", "enum", "list", "span") if pools[k]]  # lists weighted twice
+    out, i, used = [], 0, {k: 0 for k in pools}
+    while len(out) < n and order:
+        k = order[i % len(order)]
+        out.append(dict(pools[k][used[k] % len(pools[k])]))
+        used[k] += 1
+        i += 1
+    return out
+
+
+def plan_stress(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
+    """Round 10 `plan --ops stress`: step-2 rows for list fields, exact
+    copied spans and enum values. Ops with a list or enum field get
+    `--items-per-op` specs, span-only ops `--span-items`; each spec stresses
+    one field (`stress_plan`). Calls are tagged `s` (`gen-<op>-s<i>`)."""
+    name_rng = random.Random(f"{a.seed}:stress:names")
+    people: list[str] = []
+
+    def names(k: int) -> list[str]:
+        while len(people) < k:
+            people.extend(name_rng.sample(people_pool, len(people_pool)))
+        return [people.pop(0) for _ in range(k)]
+    jobs = []
+    for key, op in ctx.items():
+        kinds = field_kinds(op["modelSchema"])
+        if not kinds:
+            continue
+        rich = any(k in ("enum", "list") for _, k, _ in kinds)
+        n = (a.items_per_op + 2 * any(k == "list" for _, k, _ in kinds)) if rich else a.span_items
+        rj = random.Random(f"{a.seed}:stress:{key}")
+        specs = item_specs(rj, n, op["opName"], names(n), a.avoid_share)
+        for sp, st in zip(specs, stress_plan(rj, kinds, n)):
+            sp["stress"] = st
+            # A list needs room, a span needs words around it.
+            if st["kind"] == "list" and sp["length"] in ("very short", "short"):
+                sp["length"] = "medium"
+            elif st["kind"] == "span" and sp["length"] == "very short":
+                sp["length"] = "short"
+        jobs.append((f"gen-{key.replace(':', '--')}", key, op["model"], specs, rj.choice(PERSONAS), rj))
+    return plan_batched(a, ctx, ref_ops, people_pool, jobs=jobs, tag="s")
+
+
+CONTRAST_LINE = ("Each of your messages must be one that a careful reader maps to {key} and to none of these. "
+                 "Make the deciding detail clear in plain words (which item or property changes, and whether it "
+                 "is added, replaced, removed or has its status changed), without naming any operation.")
+
+
+def plan_contrast(a, ctx: dict, ref_ops: dict, people_pool: list[str]) -> int:
+    """Round 10 `plan --ops contrast --groups <groups.json>`: for each sibling
+    group and round, one seeded state shared by every member (built by
+    `ref-scenarios.ts --groups`), and one call of `--items-per-op` specs per
+    member against it. Each call lists the group's other members as the
+    contrast set. custom_id `gen-<op>-<group>r<round>`."""
+    groups = json.loads(Path(a.groups).read_text())["groups"]
+    keys = list(ctx)
+    name_rng = random.Random(f"{a.seed}:contrast:names")
+    people: list[str] = []
+
+    def names(k: int) -> list[str]:
+        while len(people) < k:
+            people.extend(name_rng.sample(people_pool, len(people_pool)))
+        return [people.pop(0) for _ in range(k)]
+    gspecs, jobs = [], []
+    for g in groups:
+        model_ref = [k for k in keys if ctx[k]["model"] == g["model"] and k in ref_ops]
+        grp_ref = [k for k in g["ops"] if k in ref_ops]
+        for rd in range(a.rounds):
+            base = grp_ref or model_ref
+            sh = rd % len(base) if base else 0
+            anchors = base[sh:] + base[:sh]
+            anchors += [k for k in model_ref if k not in anchors]
+            members = []
+            for key in g["ops"]:
+                rj = random.Random(f"{a.seed}:{g['id']}:{rd}:{key}")
+                n = a.items_per_op
+                specs = call_specs(item_specs(rj, n, ctx[key]["opName"], names(n), a.avoid_share), n)[0]
+                cid = f"gen-{key.replace(':', '--')}-{g['id']}r{rd}"
+                members.append({"cid": cid, "op": key, "items": n})
+                jobs.append((cid, key, g, specs, rj.choice(PERSONAS)))
+            if anchors:
+                gspecs.append({"gid": f"{g['id']}r{rd}", "anchors": anchors, "members": members,
+                               "seed": random.Random(f"{a.seed}:{g['id']}:{rd}:state").randrange(2**31)})
+    out = Path(a.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    scen: dict[str, dict] = {}
+    if gspecs:
+        sp_file, sc_file = Path(str(out) + ".group-spec.json"), Path(str(out) + ".scenarios.json")
+        sp_file.write_text(json.dumps(gspecs) + "\n")
+        print(tsx("training/gen/ref-scenarios.ts", "--groups", str(sp_file), str(sc_file)).strip(), file=sys.stderr)
+        scen = {x["cid"]: x for x in json.loads(sc_file.read_text())}
+    reqs, meta = [], {}
+    for cid, key, g, specs, persona in jobs:
+        op, sc = ctx[key], scen.get(cid)
+        k = len(specs)
+        ref_sc = sc if sc and not sc["displayOnly"] else None
+        state = sc["state"] if sc and sc["state"] else None
+        refs = None
+        if ref_sc:
+            refs = {p: ([x["label"] for x in cs], isinstance(ref_sc["items"][0]["refs"].get(p), list))
+                    for p, cs in ref_sc["refCandidates"].items()}
+        lines = [spec_text(sp, ref_sc["items"][j] if ref_sc else None) for j, sp in enumerate(specs)]
+        others = "\n".join(f"- {o}: {ctx[o]['description'] or ctx[o]['opName']}"
+                           f" (fields: {', '.join(ctx[o]['modelSchema'].get('properties') or {}) or 'none'})"
+                           for o in g["ops"] if o != key)
+        contrast = (f"Contrast set: the same document also gets messages for these sibling operations, "
+                    f"written against the same state:\n{others}\n" + CONTRAST_LINE.format(key=key))
+        seed_line = f"Seed: {random.Random(f'{a.seed}:{cid}').randrange(10**6)}."
+        who = f"someone working on a {sc['theme']}" if sc and sc.get("theme") else persona
+        user = (f"{op_brief(op, state)}\n\n{contrast}\n\n"
+                f"Write exactly {k} messages, one per spec. Persona: {who}.\n{DISTINCT_LINE}\n"
+                + "\n".join(lines) + f"\n{seed_line}")
+        reqs.append(request(cid, SYSTEM, user, gen_schema(op["modelSchema"], refs), "medium", 16000 + 1000 * k))
+        meta[cid] = {"job": cid, "group": g["id"], "specs": specs,
+                     "stateShared": bool(sc and sc["sharedState"]), "stateFrom": sc["stateFrom"] if sc else None,
+                     **({"scenario": {**ref_sc, "items": ref_sc["items"]}} if ref_sc else {})}
+    return finish_plan(out, reqs, meta, len(scen))
+
+
+def scenario_specs(jobs: list[tuple], ref_ops: dict, size: int, seed: int, per_call: bool,
+                   tag: str = "") -> list[dict]:
     """Ref-scenario requests for `ref-scenarios.ts`. Per call (the default):
     one freshly seeded state per generation call, `cid` = the call's
     custom_id, seed from (`--seed`, job, call index) only, one target per
@@ -561,8 +767,8 @@ def scenario_specs(jobs: list[tuple], ref_ops: dict, size: int, seed: int, per_c
             out.append({"cid": job, "op": key, "items": len(specs), "seed": rj.randrange(2**31)})
             continue
         for ci, chunk in enumerate(call_specs(specs, size)):
-            s = random.Random(f"{seed}:{job}:{ci}:state").randrange(2**31)
-            out.append({"cid": f"{job}-{ci}", "op": key, "items": len(chunk), "seed": s})
+            s = random.Random(f"{seed}:{job}:{tag}{ci}:state").randrange(2**31)
+            out.append({"cid": f"{job}-{tag}{ci}", "op": key, "items": len(chunk), "seed": s})
     return out
 
 
@@ -1075,6 +1281,11 @@ def cmd_rows(a) -> int:
             if why:
                 drop(why)
                 continue
+            if sp and sp.get("stress"):
+                why = stress_error(args, it["utterance"], sp["stress"])
+                if why:
+                    drop(why)
+                    continue
             if sp and sp.get("name"):
                 who = person_value(key, args)
                 if who and not set(who.lower().split()) & set(sp["name"].lower().split()):
@@ -1461,6 +1672,9 @@ def main() -> int:
     p.add_argument("--shared-state", action="store_true",
                    help="batched planner: one seeded state per ref-op job (the batch-size comparison) "
                         "instead of one per call")
+    p.add_argument("--groups", help="contrast planner: sibling-groups.json (py/sibling_groups.py)")
+    p.add_argument("--rounds", type=int, default=2, help="contrast planner: shared states per group")
+    p.add_argument("--span-items", type=int, default=6, help="stress planner: specs per span-only op")
     p.add_argument("--avoid-share", type=float, default=0.6,
                    help="batched planner: share of an op's specs that avoid its op words (the rest use them)")
     p = sub.add_parser("submit"); p.add_argument("requests"); p.add_argument("--yes-spend", action="store_true")
