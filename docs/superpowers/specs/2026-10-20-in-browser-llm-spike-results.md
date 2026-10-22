@@ -1287,6 +1287,7 @@ How many items should one `claude -p` generation call ask for? Before this, pilo
 - **Usage limit:** the label pass stopped at the org spend limit after 287 of 485 calls; 198 calls were lost to it (1 got the 429, 197 never sent) and resumed from the journal after the reset. No call failed otherwise.
 
 **Training** (the user's second laptop, M4 Max 64 GB, over SSH; `training/results/round8-remote-train-2026-10-22.json`):
+- **What ran vs the addendum:** val loss was evaluated every 25 steps, not 50, and checkpoints were saved every 50 steps (last 2 kept) as crash insurance; no resume was needed, and the final adapter was used as pre-registered.
 - The planned settings, unchanged: 741 steps, 3 epochs, effective batch 32 (8 × 4), bf16 on MPS, pad to a multiple of 64, completion-only loss, 5,996,544 trainable parameters.
 - Wall 4,891 s (81.5 min, about 6.6 s per step including eval). Peak footprint 16.0 GiB, MPS driver peak 15.9 GB.
 - **Train loss** 1.199 → 0.00048. **Val loss** 0.083 (step 25) → 0.0244 (step 150, epoch 0.6) → **minimum 0.0143 at step 450** (epoch 1.8) → **0.0161 final**. The val curve is flat from about step 400, and the final value is 13% above its minimum while train loss kept falling about 30×: mild overfitting in the third epoch. The final adapter was used as pre-registered; no checkpoint was picked.
@@ -1363,6 +1364,24 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
   - qa-08: it states both sides of the tension from the context; the base is vague.
   - qa-14: it computes 24 g of salt; the base restates the 3% rule without answering.
 - **Same (9):** qa-01, 03, 05, 09–13 are near-identical. In qa-06 both are half right: the base lists timer setup and wrongly says the rain barrel is done, and the LoRA lists the rain barrel and misses the timer.
+| Id | Label | Reason |
+|---|---|---|
+| qa-01 | same | Both: feed once a week in the fridge. |
+| qa-02 | base better | Both compute 285 EUR; the LoRA appends a stray `\boxed{285}`. |
+| qa-03 | same | Identical, faithful. |
+| qa-04 | base better | The base names the contradicted note correctly; the LoRA names the wrong one. |
+| qa-05 | same | Identical: Fridays. |
+| qa-06 | same | Both half right (base: timer only, and calls the rain barrel done; LoRA: rain barrel only). |
+| qa-07 | base better | The base keeps more of the values in one sentence; the LoRA drops 15 and 200. |
+| qa-08 | LoRA better | The LoRA states both sides from the context; the base is vague. |
+| qa-09 | same | Identical (both slightly ungrammatical). |
+| qa-10 | same | Both correctly say no. |
+| qa-11 | same | Both: waiting on finance numbers. |
+| qa-12 | same | Both: double-wall tent with a full fly. |
+| qa-13 | same | Identical. |
+| qa-14 | LoRA better | The LoRA computes 24 g; the base restates 3% without answering. |
+| qa-15 | base better | The base picks the half-read book; the LoRA recommends the finished one. |
+
 - **Format leakage:** no JSON or `{"ops"…}` text in any LoRA answer. One LaTeX `\boxed{}` artifact (qa-02).
 - 15 pairs judged by me, once; a 4-vs-2 split is within noise but leans toward a mild regression.
 
@@ -1380,7 +1399,7 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
   - Given the gold op in the top 5, op accuracy is 75.0% and 81.7%.
 - **Will more data (the full run) help? Probably only partly** (an inference, not measured):
   - **Against:** the val loss bottomed at epoch 1.8 and the model already scores about 93% on teacher-distribution val (native check). Op accuracy shows no clear trend with per-op row count, and about 60% of the op errors (retrieval, gate) are outside step 1.
-  - **For:** the remaining LoRA-side errors are sibling and enum-value semantics and paraphrase (55.6% op on held-out-2 paraphrases, the training data was about 60% op-word-free), which more varied data targets directly.
+  - **For:** the remaining LoRA-side errors are sibling and enum-value semantics and paraphrase (55.6% op on held-out-2 paraphrases, while 1,741 of the 2,928 kept action rows, 59.5%, are op-word-free; "Hey" opens 399 rows), which more varied data targets directly.
   - The held-out vs val gap (≈74% vs ≈93%) points to a distribution shift between the teacher's wording and the held-out writers', not to too few rows.
 - **Cheaper next steps before a 3× data run** (not measured):
   - (1) drop G3 in front of a LoRA step 1, since the LoRA's own no-action is better (held-out-2 C3 LoRA-only op 75.8%, no-action P/R 6/6 and 6/8);
