@@ -1,0 +1,2141 @@
+{
+ "what": "Round 8 eval summary (first LoRA); per-item rows are in spike/llm-harness/eval/results-r8-*.json",
+ "gguf": {
+  "file": "LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf",
+  "bytes": 229312224,
+  "dir": "training/artifacts/round8/gguf/ (gitignored)"
+ },
+ "adapterSha256": "9e30368746f0f48a7ea14c41673dc43cac7373ac0bd9140b324a142944814def",
+ "merge": {
+  "checkRows": 16,
+  "checkTokens": 4450,
+  "maxAbsLogitDiffFp32": 0.0004138946533203125,
+  "argmaxAgree": true,
+  "mergeWallSec": 34.76,
+  "safetensorsBytes": 708984464
+ },
+ "valNativeQ4": [
+  {
+   "gguf": "LFM2.5-350M-Q4_K_M.gguf",
+   "bytes": 229312224,
+   "serverStartSec": 0.53,
+   "step1Exact": 80,
+   "step1N": 312,
+   "step2Exact": 47,
+   "step2N": 107
+  },
+  {
+   "gguf": "LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf",
+   "bytes": 229312224,
+   "serverStartSec": 0.51,
+   "step1Exact": 290,
+   "step1N": 312,
+   "step2Exact": 99,
+   "step2N": 107
+  }
+ ],
+ "tables": {
+  "C0": {
+   "heldout1": {
+    "n": 74,
+    "action": 68,
+    "op": "23/68 (33.8%)",
+    "argsExact": "9/16 (56.2%)",
+    "requiredPresent": "9/9 (100.0%)",
+    "refExact": "3/7 (42.9%)",
+    "fullyRight": "14/68 (20.6%)",
+    "noActionP": "5/10 (50.0%)",
+    "noActionR": "5/6 (83.3%)",
+    "latMedian": 190,
+    "latP90": 698
+   },
+   "heldout2": {
+    "n": 99,
+    "action": 91,
+    "op": "42/91 (46.2%)",
+    "argsExact": "14/29 (48.3%)",
+    "requiredPresent": "11/11 (100.0%)",
+    "refExact": "10/13 (76.9%)",
+    "fullyRight": "25/91 (27.5%)",
+    "noActionP": "8/13 (61.5%)",
+    "noActionR": "8/8 (100.0%)",
+    "latMedian": 199,
+    "latP90": 1003
+   },
+   "dev": {
+    "n": 59,
+    "action": 49,
+    "op": "40/49 (81.6%)",
+    "argsExact": "17/25 (68.0%)",
+    "requiredPresent": "\u2013",
+    "refExact": "10/12 (83.3%)",
+    "fullyRight": "31/49 (63.3%)",
+    "noActionP": "10/11 (90.9%)",
+    "noActionR": "10/10 (100.0%)",
+    "latMedian": 136,
+    "latP90": 801
+   },
+   "heldout2/natural": {
+    "n": 50,
+    "action": 46,
+    "op": "30/46 (65.2%)",
+    "argsExact": "12/22 (54.5%)",
+    "requiredPresent": "8/8 (100.0%)",
+    "refExact": "5/8 (62.5%)",
+    "fullyRight": "18/46 (39.1%)",
+    "noActionP": "4/5 (80.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 213,
+    "latP90": 925
+   },
+   "heldout2/paraphrase": {
+    "n": 49,
+    "action": 45,
+    "op": "12/45 (26.7%)",
+    "argsExact": "2/7 (28.6%)",
+    "requiredPresent": "3/3 (100.0%)",
+    "refExact": "5/5 (100.0%)",
+    "fullyRight": "7/45 (15.6%)",
+    "noActionP": "4/8 (50.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 183,
+    "latP90": 1012
+   }
+  },
+  "C1": {
+   "heldout1": {
+    "n": 74,
+    "action": 68,
+    "op": "23/68 (33.8%)",
+    "argsExact": "12/16 (75.0%)",
+    "requiredPresent": "9/9 (100.0%)",
+    "refExact": "7/7 (100.0%)",
+    "fullyRight": "19/68 (27.9%)",
+    "noActionP": "5/10 (50.0%)",
+    "noActionR": "5/6 (83.3%)",
+    "latMedian": 195,
+    "latP90": 718
+   },
+   "heldout2": {
+    "n": 99,
+    "action": 91,
+    "op": "42/91 (46.2%)",
+    "argsExact": "19/29 (65.5%)",
+    "requiredPresent": "11/11 (100.0%)",
+    "refExact": "13/13 (100.0%)",
+    "fullyRight": "32/91 (35.2%)",
+    "noActionP": "8/13 (61.5%)",
+    "noActionR": "8/8 (100.0%)",
+    "latMedian": 190,
+    "latP90": 971
+   },
+   "dev": {
+    "n": 59,
+    "action": 49,
+    "op": "40/49 (81.6%)",
+    "argsExact": "24/25 (96.0%)",
+    "requiredPresent": "\u2013",
+    "refExact": "12/12 (100.0%)",
+    "fullyRight": "39/49 (79.6%)",
+    "noActionP": "10/11 (90.9%)",
+    "noActionR": "10/10 (100.0%)",
+    "latMedian": 150,
+    "latP90": 788
+   },
+   "heldout2/natural": {
+    "n": 50,
+    "action": 46,
+    "op": "30/46 (65.2%)",
+    "argsExact": "13/22 (59.1%)",
+    "requiredPresent": "8/8 (100.0%)",
+    "refExact": "8/8 (100.0%)",
+    "fullyRight": "21/46 (45.7%)",
+    "noActionP": "4/5 (80.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 191,
+    "latP90": 938
+   },
+   "heldout2/paraphrase": {
+    "n": 49,
+    "action": 45,
+    "op": "12/45 (26.7%)",
+    "argsExact": "6/7 (85.7%)",
+    "requiredPresent": "3/3 (100.0%)",
+    "refExact": "5/5 (100.0%)",
+    "fullyRight": "11/45 (24.4%)",
+    "noActionP": "4/8 (50.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 186,
+    "latP90": 971
+   }
+  },
+  "C2-k5": {
+   "heldout1": {
+    "n": 74,
+    "action": 68,
+    "op": "38/68 (55.9%)",
+    "argsExact": "19/28 (67.9%)",
+    "requiredPresent": "14/14 (100.0%)",
+    "refExact": "11/11 (100.0%)",
+    "fullyRight": "29/68 (42.6%)",
+    "noActionP": "6/11 (54.5%)",
+    "noActionR": "6/6 (100.0%)",
+    "latMedian": 1464,
+    "latP90": 1862,
+    "recallTopK": "52/68 (76.5%)",
+    "opGivenTopK": "38/52 (73.1%)",
+    "loraOnly": {
+     "op": "42/68 (61.8%)",
+     "fullyRight": "33/68 (48.5%)",
+     "noActionP": "2/2 (100.0%)",
+     "noActionR": "2/6 (33.3%)"
+    },
+    "variants": {
+     "S2-mean+none": "42/68 (61.8%)",
+     "S1-mean+none": "43/68 (63.2%)",
+     "S2-mean": "42/68 (61.8%)"
+    }
+   },
+   "heldout2": {
+    "n": 99,
+    "action": 91,
+    "op": "65/91 (71.4%)",
+    "argsExact": "29/44 (65.9%)",
+    "requiredPresent": "19/19 (100.0%)",
+    "refExact": "22/23 (95.7%)",
+    "fullyRight": "49/91 (53.8%)",
+    "noActionP": "8/13 (61.5%)",
+    "noActionR": "8/8 (100.0%)",
+    "latMedian": 1519,
+    "latP90": 1864,
+    "recallTopK": "82/91 (90.1%)",
+    "opGivenTopK": "65/82 (79.3%)",
+    "loraOnly": {
+     "op": "67/91 (73.6%)",
+     "fullyRight": "51/91 (56.0%)",
+     "noActionP": "2/2 (100.0%)",
+     "noActionR": "2/8 (25.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "67/91 (73.6%)",
+     "S1-mean+none": "69/91 (75.8%)",
+     "S2-mean": "67/91 (73.6%)"
+    }
+   },
+   "dev": {
+    "n": 59,
+    "action": 49,
+    "op": "39/49 (79.6%)",
+    "argsExact": "24/25 (96.0%)",
+    "requiredPresent": "\u2013",
+    "refExact": "12/12 (100.0%)",
+    "fullyRight": "38/49 (77.6%)",
+    "noActionP": "10/11 (90.9%)",
+    "noActionR": "10/10 (100.0%)",
+    "latMedian": 1477,
+    "latP90": 1825,
+    "recallTopK": "45/49 (91.8%)",
+    "opGivenTopK": "39/45 (86.7%)",
+    "loraOnly": {
+     "op": "40/49 (81.6%)",
+     "fullyRight": "39/49 (79.6%)",
+     "noActionP": "3/3 (100.0%)",
+     "noActionR": "3/10 (30.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "40/49 (81.6%)",
+     "S1-mean+none": "43/49 (87.8%)",
+     "S2-mean": "40/49 (81.6%)"
+    }
+   },
+   "heldout2/natural": {
+    "n": 50,
+    "action": 46,
+    "op": "41/46 (89.1%)",
+    "argsExact": "20/31 (64.5%)",
+    "requiredPresent": "13/13 (100.0%)",
+    "refExact": "11/12 (91.7%)",
+    "fullyRight": "29/46 (63.0%)",
+    "noActionP": "4/5 (80.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 1519,
+    "latP90": 1861,
+    "recallTopK": "44/46 (95.7%)",
+    "opGivenTopK": "41/44 (93.2%)",
+    "loraOnly": {
+     "op": "42/46 (91.3%)",
+     "fullyRight": "30/46 (65.2%)",
+     "noActionP": "1/1 (100.0%)",
+     "noActionR": "1/4 (25.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "42/46 (91.3%)",
+     "S1-mean+none": "43/46 (93.5%)",
+     "S2-mean": "42/46 (91.3%)"
+    }
+   },
+   "heldout2/paraphrase": {
+    "n": 49,
+    "action": 45,
+    "op": "24/45 (53.3%)",
+    "argsExact": "9/13 (69.2%)",
+    "requiredPresent": "6/6 (100.0%)",
+    "refExact": "11/11 (100.0%)",
+    "fullyRight": "20/45 (44.4%)",
+    "noActionP": "4/8 (50.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 1484,
+    "latP90": 1917,
+    "recallTopK": "38/45 (84.4%)",
+    "opGivenTopK": "24/38 (63.2%)",
+    "loraOnly": {
+     "op": "25/45 (55.6%)",
+     "fullyRight": "21/45 (46.7%)",
+     "noActionP": "1/1 (100.0%)",
+     "noActionR": "1/4 (25.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "25/45 (55.6%)",
+     "S1-mean+none": "26/45 (57.8%)",
+     "S2-mean": "25/45 (55.6%)"
+    }
+   }
+  },
+  "C2-k3": {
+   "heldout1": {
+    "n": 74,
+    "action": 68,
+    "op": "34/68 (50.0%)",
+    "argsExact": "18/24 (75.0%)",
+    "requiredPresent": "12/12 (100.0%)",
+    "refExact": "10/10 (100.0%)",
+    "fullyRight": "28/68 (41.2%)",
+    "noActionP": "5/10 (50.0%)",
+    "noActionR": "5/6 (83.3%)",
+    "latMedian": 1077,
+    "latP90": 1362,
+    "recallTopK": "42/68 (61.8%)",
+    "opGivenTopK": "34/42 (81.0%)",
+    "loraOnly": {
+     "op": "38/68 (55.9%)",
+     "fullyRight": "32/68 (47.1%)",
+     "noActionP": "1/1 (100.0%)",
+     "noActionR": "1/6 (16.7%)"
+    },
+    "variants": {
+     "S2-mean+none": "38/68 (55.9%)",
+     "S1-mean+none": "34/68 (50.0%)",
+     "S2-mean": "38/68 (55.9%)"
+    }
+   },
+   "heldout2": {
+    "n": 99,
+    "action": 91,
+    "op": "65/91 (71.4%)",
+    "argsExact": "29/44 (65.9%)",
+    "requiredPresent": "19/19 (100.0%)",
+    "refExact": "21/22 (95.5%)",
+    "fullyRight": "49/91 (53.8%)",
+    "noActionP": "8/13 (61.5%)",
+    "noActionR": "8/8 (100.0%)",
+    "latMedian": 1113,
+    "latP90": 1530,
+    "recallTopK": "75/91 (82.4%)",
+    "opGivenTopK": "65/75 (86.7%)",
+    "loraOnly": {
+     "op": "68/91 (74.7%)",
+     "fullyRight": "51/91 (56.0%)",
+     "noActionP": "2/2 (100.0%)",
+     "noActionR": "2/8 (25.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "68/91 (74.7%)",
+     "S1-mean+none": "64/91 (70.3%)",
+     "S2-mean": "68/91 (74.7%)"
+    }
+   },
+   "dev": {
+    "n": 59,
+    "action": 49,
+    "op": "40/49 (81.6%)",
+    "argsExact": "24/25 (96.0%)",
+    "requiredPresent": "\u2013",
+    "refExact": "12/12 (100.0%)",
+    "fullyRight": "39/49 (79.6%)",
+    "noActionP": "10/11 (90.9%)",
+    "noActionR": "10/10 (100.0%)",
+    "latMedian": 970,
+    "latP90": 1216,
+    "recallTopK": "42/49 (85.7%)",
+    "opGivenTopK": "40/42 (95.2%)",
+    "loraOnly": {
+     "op": "41/49 (83.7%)",
+     "fullyRight": "40/49 (81.6%)",
+     "noActionP": "3/3 (100.0%)",
+     "noActionR": "3/10 (30.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "41/49 (83.7%)",
+     "S1-mean+none": "42/49 (85.7%)",
+     "S2-mean": "41/49 (83.7%)"
+    }
+   },
+   "heldout2/natural": {
+    "n": 50,
+    "action": 46,
+    "op": "42/46 (91.3%)",
+    "argsExact": "21/32 (65.6%)",
+    "requiredPresent": "13/13 (100.0%)",
+    "refExact": "11/12 (91.7%)",
+    "fullyRight": "30/46 (65.2%)",
+    "noActionP": "4/5 (80.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 1104,
+    "latP90": 1522,
+    "recallTopK": "43/46 (93.5%)",
+    "opGivenTopK": "42/43 (97.7%)",
+    "loraOnly": {
+     "op": "43/46 (93.5%)",
+     "fullyRight": "31/46 (67.4%)",
+     "noActionP": "1/1 (100.0%)",
+     "noActionR": "1/4 (25.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "43/46 (93.5%)",
+     "S1-mean+none": "43/46 (93.5%)",
+     "S2-mean": "43/46 (93.5%)"
+    }
+   },
+   "heldout2/paraphrase": {
+    "n": 49,
+    "action": 45,
+    "op": "23/45 (51.1%)",
+    "argsExact": "8/12 (66.7%)",
+    "requiredPresent": "6/6 (100.0%)",
+    "refExact": "10/10 (100.0%)",
+    "fullyRight": "19/45 (42.2%)",
+    "noActionP": "4/8 (50.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 1114,
+    "latP90": 1578,
+    "recallTopK": "32/45 (71.1%)",
+    "opGivenTopK": "23/32 (71.9%)",
+    "loraOnly": {
+     "op": "25/45 (55.6%)",
+     "fullyRight": "20/45 (44.4%)",
+     "noActionP": "1/1 (100.0%)",
+     "noActionR": "1/4 (25.0%)"
+    },
+    "variants": {
+     "S2-mean+none": "25/45 (55.6%)",
+     "S1-mean+none": "21/45 (46.7%)",
+     "S2-mean": "25/45 (55.6%)"
+    }
+   }
+  },
+  "C3-k5": {
+   "heldout1": {
+    "n": 74,
+    "action": 68,
+    "op": "39/68 (57.4%)",
+    "argsExact": "18/28 (64.3%)",
+    "requiredPresent": "15/15 (100.0%)",
+    "refExact": "13/13 (100.0%)",
+    "fullyRight": "29/68 (42.6%)",
+    "noActionP": "6/14 (42.9%)",
+    "noActionR": "6/6 (100.0%)",
+    "latMedian": 335,
+    "latP90": 600,
+    "recallTopK": "52/68 (76.5%)",
+    "opGivenTopK": "39/52 (75.0%)",
+    "loraOnly": {
+     "op": "42/68 (61.8%)",
+     "fullyRight": "32/68 (47.1%)",
+     "noActionP": "6/11 (54.5%)",
+     "noActionR": "6/6 (100.0%)"
+    },
+    "variants": {
+     "gen": "42/68 (61.8%)"
+    }
+   },
+   "heldout2": {
+    "n": 99,
+    "action": 91,
+    "op": "67/91 (73.6%)",
+    "argsExact": "31/45 (68.9%)",
+    "requiredPresent": "18/18 (100.0%)",
+    "refExact": "24/25 (96.0%)",
+    "fullyRight": "52/91 (57.1%)",
+    "noActionP": "8/13 (61.5%)",
+    "noActionR": "8/8 (100.0%)",
+    "latMedian": 358,
+    "latP90": 756,
+    "recallTopK": "82/91 (90.1%)",
+    "opGivenTopK": "67/82 (81.7%)",
+    "loraOnly": {
+     "op": "69/91 (75.8%)",
+     "fullyRight": "54/91 (59.3%)",
+     "noActionP": "6/6 (100.0%)",
+     "noActionR": "6/8 (75.0%)"
+    },
+    "variants": {
+     "gen": "69/91 (75.8%)"
+    }
+   },
+   "dev": {
+    "n": 59,
+    "action": 49,
+    "op": "42/49 (85.7%)",
+    "argsExact": "25/27 (92.6%)",
+    "requiredPresent": "\u2013",
+    "refExact": "12/12 (100.0%)",
+    "fullyRight": "40/49 (81.6%)",
+    "noActionP": "10/11 (90.9%)",
+    "noActionR": "10/10 (100.0%)",
+    "latMedian": 264,
+    "latP90": 578,
+    "recallTopK": "45/49 (91.8%)",
+    "opGivenTopK": "42/45 (93.3%)",
+    "loraOnly": {
+     "op": "43/49 (87.8%)",
+     "fullyRight": "41/49 (83.7%)",
+     "noActionP": "9/9 (100.0%)",
+     "noActionR": "9/10 (90.0%)"
+    },
+    "variants": {
+     "gen": "43/49 (87.8%)"
+    }
+   },
+   "heldout2/natural": {
+    "n": 50,
+    "action": 46,
+    "op": "42/46 (91.3%)",
+    "argsExact": "21/32 (65.6%)",
+    "requiredPresent": "13/13 (100.0%)",
+    "refExact": "11/12 (91.7%)",
+    "fullyRight": "30/46 (65.2%)",
+    "noActionP": "4/5 (80.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 329,
+    "latP90": 712,
+    "recallTopK": "44/46 (95.7%)",
+    "opGivenTopK": "42/44 (95.5%)",
+    "loraOnly": {
+     "op": "43/46 (93.5%)",
+     "fullyRight": "31/46 (67.4%)",
+     "noActionP": "4/4 (100.0%)",
+     "noActionR": "4/4 (100.0%)"
+    },
+    "variants": {
+     "gen": "43/46 (93.5%)"
+    }
+   },
+   "heldout2/paraphrase": {
+    "n": 49,
+    "action": 45,
+    "op": "25/45 (55.6%)",
+    "argsExact": "10/13 (76.9%)",
+    "requiredPresent": "5/5 (100.0%)",
+    "refExact": "13/13 (100.0%)",
+    "fullyRight": "22/45 (48.9%)",
+    "noActionP": "4/8 (50.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 369,
+    "latP90": 779,
+    "recallTopK": "38/45 (84.4%)",
+    "opGivenTopK": "25/38 (65.8%)",
+    "loraOnly": {
+     "op": "26/45 (57.8%)",
+     "fullyRight": "23/45 (51.1%)",
+     "noActionP": "2/2 (100.0%)",
+     "noActionR": "2/4 (50.0%)"
+    },
+    "variants": {
+     "gen": "26/45 (57.8%)"
+    }
+   }
+  },
+  "C3-k3": {
+   "heldout1": {
+    "n": 74,
+    "action": 68,
+    "op": "30/68 (44.1%)",
+    "argsExact": "16/22 (72.7%)",
+    "requiredPresent": "12/12 (100.0%)",
+    "refExact": "9/9 (100.0%)",
+    "fullyRight": "24/68 (35.3%)",
+    "noActionP": "6/14 (42.9%)",
+    "noActionR": "6/6 (100.0%)",
+    "latMedian": 321,
+    "latP90": 559,
+    "recallTopK": "42/68 (61.8%)",
+    "opGivenTopK": "30/42 (71.4%)",
+    "loraOnly": {
+     "op": "33/68 (48.5%)",
+     "fullyRight": "27/68 (39.7%)",
+     "noActionP": "6/11 (54.5%)",
+     "noActionR": "6/6 (100.0%)"
+    },
+    "variants": {
+     "gen": "33/68 (48.5%)"
+    }
+   },
+   "heldout2": {
+    "n": 99,
+    "action": 91,
+    "op": "62/91 (68.1%)",
+    "argsExact": "29/43 (67.4%)",
+    "requiredPresent": "17/17 (100.0%)",
+    "refExact": "20/21 (95.2%)",
+    "fullyRight": "47/91 (51.6%)",
+    "noActionP": "8/13 (61.5%)",
+    "noActionR": "8/8 (100.0%)",
+    "latMedian": 352,
+    "latP90": 758,
+    "recallTopK": "75/91 (82.4%)",
+    "opGivenTopK": "62/75 (82.7%)",
+    "loraOnly": {
+     "op": "64/91 (70.3%)",
+     "fullyRight": "48/91 (52.7%)",
+     "noActionP": "6/7 (85.7%)",
+     "noActionR": "6/8 (75.0%)"
+    },
+    "variants": {
+     "gen": "64/91 (70.3%)"
+    }
+   },
+   "dev": {
+    "n": 59,
+    "action": 49,
+    "op": "41/49 (83.7%)",
+    "argsExact": "25/26 (96.2%)",
+    "requiredPresent": "\u2013",
+    "refExact": "12/12 (100.0%)",
+    "fullyRight": "40/49 (81.6%)",
+    "noActionP": "10/11 (90.9%)",
+    "noActionR": "10/10 (100.0%)",
+    "latMedian": 273,
+    "latP90": 578,
+    "recallTopK": "42/49 (85.7%)",
+    "opGivenTopK": "41/42 (97.6%)",
+    "loraOnly": {
+     "op": "42/49 (85.7%)",
+     "fullyRight": "41/49 (83.7%)",
+     "noActionP": "9/9 (100.0%)",
+     "noActionR": "9/10 (90.0%)"
+    },
+    "variants": {
+     "gen": "42/49 (85.7%)"
+    }
+   },
+   "heldout2/natural": {
+    "n": 50,
+    "action": 46,
+    "op": "42/46 (91.3%)",
+    "argsExact": "21/32 (65.6%)",
+    "requiredPresent": "13/13 (100.0%)",
+    "refExact": "11/12 (91.7%)",
+    "fullyRight": "30/46 (65.2%)",
+    "noActionP": "4/5 (80.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 342,
+    "latP90": 742,
+    "recallTopK": "43/46 (93.5%)",
+    "opGivenTopK": "42/43 (97.7%)",
+    "loraOnly": {
+     "op": "43/46 (93.5%)",
+     "fullyRight": "31/46 (67.4%)",
+     "noActionP": "4/4 (100.0%)",
+     "noActionR": "4/4 (100.0%)"
+    },
+    "variants": {
+     "gen": "43/46 (93.5%)"
+    }
+   },
+   "heldout2/paraphrase": {
+    "n": 49,
+    "action": 45,
+    "op": "20/45 (44.4%)",
+    "argsExact": "8/11 (72.7%)",
+    "requiredPresent": "4/4 (100.0%)",
+    "refExact": "9/9 (100.0%)",
+    "fullyRight": "17/45 (37.8%)",
+    "noActionP": "4/8 (50.0%)",
+    "noActionR": "4/4 (100.0%)",
+    "latMedian": 372,
+    "latP90": 761,
+    "recallTopK": "32/45 (71.1%)",
+    "opGivenTopK": "20/32 (62.5%)",
+    "loraOnly": {
+     "op": "21/45 (46.7%)",
+     "fullyRight": "17/45 (37.8%)",
+     "noActionP": "2/3 (66.7%)",
+     "noActionR": "2/4 (50.0%)"
+    },
+    "variants": {
+     "gen": "21/45 (46.7%)"
+    }
+   }
+  },
+  "A-base": {
+   "heldout1": {
+    "n": 68,
+    "action": 68,
+    "op": "68/68 (100.0%)",
+    "argsExact": "26/50 (52.0%)",
+    "requiredPresent": "22/23 (95.7%)",
+    "refExact": "13/22 (59.1%)",
+    "fullyRight": "38/68 (55.9%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 195,
+    "latP90": 761
+   },
+   "heldout2": {
+    "n": 91,
+    "action": 91,
+    "op": "91/91 (100.0%)",
+    "argsExact": "29/65 (44.6%)",
+    "requiredPresent": "22/22 (100.0%)",
+    "refExact": "21/32 (65.6%)",
+    "fullyRight": "48/91 (52.7%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 197,
+    "latP90": 1144
+   },
+   "dev": {
+    "n": 49,
+    "action": 49,
+    "op": "49/49 (100.0%)",
+    "argsExact": "23/34 (67.6%)",
+    "requiredPresent": "\u2013",
+    "refExact": "11/13 (84.6%)",
+    "fullyRight": "37/49 (75.5%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 119,
+    "latP90": 818
+   },
+   "heldout2/natural": {
+    "n": 46,
+    "action": 46,
+    "op": "46/46 (100.0%)",
+    "argsExact": "18/36 (50.0%)",
+    "requiredPresent": "13/13 (100.0%)",
+    "refExact": "8/13 (61.5%)",
+    "fullyRight": "25/46 (54.3%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 197,
+    "latP90": 1144
+   },
+   "heldout2/paraphrase": {
+    "n": 45,
+    "action": 45,
+    "op": "45/45 (100.0%)",
+    "argsExact": "11/29 (37.9%)",
+    "requiredPresent": "9/9 (100.0%)",
+    "refExact": "13/19 (68.4%)",
+    "fullyRight": "23/45 (51.1%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 192,
+    "latP90": 1158
+   }
+  },
+  "A-lora": {
+   "heldout1": {
+    "n": 68,
+    "action": 68,
+    "op": "68/68 (100.0%)",
+    "argsExact": "33/50 (66.0%)",
+    "requiredPresent": "22/23 (95.7%)",
+    "refExact": "21/22 (95.5%)",
+    "fullyRight": "50/68 (73.5%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 170,
+    "latP90": 726
+   },
+   "heldout2": {
+    "n": 91,
+    "action": 91,
+    "op": "91/91 (100.0%)",
+    "argsExact": "43/65 (66.2%)",
+    "requiredPresent": "22/22 (100.0%)",
+    "refExact": "30/32 (93.8%)",
+    "fullyRight": "67/91 (73.6%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 203,
+    "latP90": 1043
+   },
+   "dev": {
+    "n": 49,
+    "action": 49,
+    "op": "49/49 (100.0%)",
+    "argsExact": "32/34 (94.1%)",
+    "requiredPresent": "\u2013",
+    "refExact": "13/13 (100.0%)",
+    "fullyRight": "47/49 (95.9%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 112,
+    "latP90": 734
+   },
+   "heldout2/natural": {
+    "n": 46,
+    "action": 46,
+    "op": "46/46 (100.0%)",
+    "argsExact": "24/36 (66.7%)",
+    "requiredPresent": "13/13 (100.0%)",
+    "refExact": "12/13 (92.3%)",
+    "fullyRight": "33/46 (71.7%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 206,
+    "latP90": 1043
+   },
+   "heldout2/paraphrase": {
+    "n": 45,
+    "action": 45,
+    "op": "45/45 (100.0%)",
+    "argsExact": "19/29 (65.5%)",
+    "requiredPresent": "9/9 (100.0%)",
+    "refExact": "18/19 (94.7%)",
+    "fullyRight": "34/45 (75.6%)",
+    "noActionP": "\u2013",
+    "noActionR": "\u2013",
+    "latMedian": 179,
+    "latP90": 1062
+   }
+  }
+ },
+ "errors": {
+  "C3-k5": {
+   "config": {
+    "config": "C3",
+    "sets": [
+     "h1",
+     "h1na",
+     "h2",
+     "h2na",
+     "dev",
+     "devx",
+     "devna"
+    ],
+    "k": 5,
+    "model": "lora"
+   },
+   "heldoutActionItems": 159,
+   "opMisses": {
+    "gold not in top k": 24,
+    "LoRA chose no-action": 3,
+    "gated by G3": 10,
+    "wrong op among candidates": 16
+   },
+   "confusions": [
+    "source:SET_SOURCE_STATUS -> source:ADD_EXTRACTED_CLAIM x2",
+    "moc:REMOVE_OPEN_QUESTION -> moc:REMOVE_TENSION x1",
+    "project:SET_REFERENCES -> project:ADD_KNOWLEDGE_REF x1",
+    "wbs:SET_GOAL_STATUS -> wbs:ADD_DEPENDENCIES x1",
+    "wbs:SET_OWNER -> wbs:ASSIGN_GOAL x1",
+    "wbs:SET_OUTCOME -> wbs:SET_GOAL_STATUS x1",
+    "knowledge-note:SET_METADATA_LIST_FIELD -> knowledge-note:SET_METADATA_FIELD x1",
+    "moc:UPDATE_ORIENTATION -> moc:UPDATE_CORE_IDEA x1",
+    "source:INGEST_SOURCE -> source:RECORD_EXTRACTION_STATS x1",
+    "project:SET_PROJECT_STATUS -> project:SET_DELIVERABLE_STATUS x1",
+    "project:ADD_MEMBER -> project:UPDATE_MEMBER x1",
+    "wbs:ASSIGN_GOAL -> wbs:REMOVE_DEPENDENCIES x1",
+    "observation:PROMOTE_OBSERVATION -> observation:CREATE_OBSERVATION x1",
+    "vault-config:ADD_EXTRACTION_CATEGORY -> vault-config:TOGGLE_EXTRACTION_CATEGORY x1",
+    "vault-config:UPDATE_PIPELINE_CONFIG -> vault-config:TOGGLE_EXTRACTION_CATEGORY x1"
+   ],
+   "argsMisses": {
+    "source:INGEST_SOURCE.sourceType": 2,
+    "source:INGEST_SOURCE.url": 2,
+    "project:SET_TARGET_DATE.targetDate": 2,
+    "project:ADD_MEMBER.role": 2,
+    "derivation:ADD_SIGNAL.influencedDimensions": 2,
+    "research-claim:UPDATE_CLAIM_CONTENT.content": 2,
+    "health-report:ADD_CHECK.affectedItems": 2,
+    "knowledge-note:SET_DESCRIPTION.description": 1,
+    "source:INGEST_SOURCE.author": 1,
+    "source:INGEST_SOURCE.content": 1,
+    "wbs:SET_GOAL_STATUS.status": 1,
+    "research-claim:CREATE_CLAIM.topics": 1,
+    "pipeline-queue:ADVANCE_PHASE.handoff.phase": 1,
+    "vault-config:UPDATE_PIPELINE_CONFIG.autoChain": 1,
+    "vault-config:UPDATE_PIPELINE_CONFIG.depth (extra)": 1,
+    "health-report:ADD_CHECK.category": 1,
+    "knowledge-note:UPDATE_LINK_TYPE (ref)": 1,
+    "moc:SET_METADATA_FIELD.value": 1,
+    "research-claim:CREATE_CLAIM.kind": 1,
+    "research-claim:CREATE_CLAIM.sources": 1,
+    "observation:CREATE_OBSERVATION.category": 1,
+    "pipeline-queue:ADD_TASK.taskType": 1,
+    "moc:ADD_TENSION.involvedRefs": 1,
+    "wbs:SET_OUTCOME.outcome": 1
+   },
+   "opAccByTrainRows": {
+    "0": "2/2",
+    "1-19": "29/44",
+    "20-39": "37/61",
+    "40+": "38/52"
+   },
+   "perOp": [
+    {
+     "op": "knowledge-note:SET_CONTENT",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 12,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "knowledge-note:SET_METADATA_FIELD",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 0,
+     "trainStep1Only": 23
+    },
+    {
+     "op": "knowledge-note:SET_METADATA_LIST_FIELD",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 19,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "moc:ADD_OPEN_QUESTION",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 9,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "moc:REMOVE_OPEN_QUESTION",
+     "items": 1,
+     "hits": 0,
+     "trainFull": 8,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "project:CREATE_PROJECT",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 5,
+     "trainStep1Only": 16
+    },
+    {
+     "op": "project:SET_OWNER",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 21,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "project:SET_PROJECT_STATUS",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 18,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "project:UPDATE_PROJECT_INFO",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 11,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "tension:RESOLVE_TENSION",
+     "items": 2,
+     "hits": 0,
+     "trainFull": 15,
+     "trainStep1Only": 8
+    },
+    {
+     "op": "vault-config:ADD_EXTRACTION_CATEGORY",
+     "items": 1,
+     "hits": 0,
+     "trainFull": 9,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "vault-config:UPDATE_DIMENSION",
+     "items": 1,
+     "hits": 0,
+     "trainFull": 7,
+     "trainStep1Only": 10
+    },
+    {
+     "op": "wbs:SET_GOAL_STATUS",
+     "items": 5,
+     "hits": 1,
+     "trainFull": 41,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "project:SET_DELIVERABLE_STATUS",
+     "items": 3,
+     "hits": 1,
+     "trainFull": 50,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "wbs:ASSIGN_GOAL",
+     "items": 3,
+     "hits": 1,
+     "trainFull": 44,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "wbs:CREATE_GOAL",
+     "items": 3,
+     "hits": 1,
+     "trainFull": 2,
+     "trainStep1Only": 48
+    },
+    {
+     "op": "knowledge-note:ADD_LINK",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 0,
+     "trainStep1Only": 41
+    },
+    {
+     "op": "knowledge-note:ADD_TOPIC",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 34,
+     "trainStep1Only": 8
+    },
+    {
+     "op": "knowledge-note:SET_NOTE_TYPE",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 24,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 17,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:UPDATE_LINK_TYPE",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 45,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:ADD_TENSION",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 0,
+     "trainStep1Only": 18
+    },
+    {
+     "op": "moc:UPDATE_CORE_IDEA",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 14,
+     "trainStep1Only": 16
+    },
+    {
+     "op": "moc:UPDATE_DESCRIPTION",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 14,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "moc:UPDATE_ORIENTATION",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 7,
+     "trainStep1Only": 5
+    },
+    {
+     "op": "observation:IMPLEMENT_OBSERVATION",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 14,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "observation:PROMOTE_OBSERVATION",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 19,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "project:SET_REFERENCES",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 23,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "project:UPDATE_MEMBER",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 48,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "source:SET_SOURCE_STATUS",
+     "items": 4,
+     "hits": 2,
+     "trainFull": 24,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "tension:DISSOLVE_TENSION",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 8,
+     "trainStep1Only": 12
+    },
+    {
+     "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 25,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "wbs:ADD_NOTE",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 1,
+     "trainStep1Only": 37
+    },
+    {
+     "op": "wbs:SET_OUTCOME",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 3,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "wbs:SET_OWNER",
+     "items": 2,
+     "hits": 1,
+     "trainFull": 12,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "project:ADD_MEMBER",
+     "items": 3,
+     "hits": 2,
+     "trainFull": 14,
+     "trainStep1Only": 11
+    },
+    {
+     "op": "source:INGEST_SOURCE",
+     "items": 3,
+     "hits": 2,
+     "trainFull": 3,
+     "trainStep1Only": 20
+    },
+    {
+     "op": "derivation:ADD_SIGNAL",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 6,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "health-report:ADD_CHECK",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 2,
+     "trainStep1Only": 14
+    },
+    {
+     "op": "knowledge-note:APPROVE_NOTE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 20,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:ARCHIVE_NOTE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 7,
+     "trainStep1Only": 11
+    },
+    {
+     "op": "knowledge-note:REJECT_NOTE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 18,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "knowledge-note:REMOVE_LINK",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 52,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "knowledge-note:REMOVE_TOPIC",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 53,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:RESTORE_NOTE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 22,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:SET_DESCRIPTION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 11,
+     "trainStep1Only": 10
+    },
+    {
+     "op": "knowledge-note:SET_TITLE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 22,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:ADD_CHILD_MOC",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 10,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:ADD_CORE_IDEA",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 3,
+     "trainStep1Only": 13
+    },
+    {
+     "op": "moc:CREATE_MOC",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 1,
+     "trainStep1Only": 14
+    },
+    {
+     "op": "moc:REMOVE_CORE_IDEA",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 53,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:REMOVE_TENSION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 53,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "moc:REORDER_CORE_IDEAS",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 35,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "moc:SET_METADATA_FIELD",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 0,
+     "trainStep1Only": 20
+    },
+    {
+     "op": "observation:ARCHIVE_OBSERVATION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 16,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "observation:CREATE_OBSERVATION",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 0,
+     "trainStep1Only": 13
+    },
+    {
+     "op": "pipeline-queue:ADD_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 34,
+     "trainStep1Only": 7
+    },
+    {
+     "op": "pipeline-queue:ADVANCE_PHASE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 3,
+     "trainStep1Only": 20
+    },
+    {
+     "op": "pipeline-queue:ASSIGN_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 41,
+     "trainStep1Only": 8
+    },
+    {
+     "op": "pipeline-queue:BLOCK_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 25,
+     "trainStep1Only": 21
+    },
+    {
+     "op": "pipeline-queue:COMPLETE_TASK",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 49,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "pipeline-queue:FAIL_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 27,
+     "trainStep1Only": 19
+    },
+    {
+     "op": "pipeline-queue:UNBLOCK_TASK",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 45,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "project:ADD_DELIVERABLE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 21,
+     "trainStep1Only": 30
+    },
+    {
+     "op": "project:REMOVE_DELIVERABLE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 54,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "project:REMOVE_MEMBER",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 52,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "project:SET_TARGET_DATE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "project:UPDATE_DELIVERABLE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 18,
+     "trainStep1Only": 28
+    },
+    {
+     "op": "research-claim:ADD_RESEARCH_CONNECTION",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 8,
+     "trainStep1Only": 14
+    },
+    {
+     "op": "research-claim:CREATE_CLAIM",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 54,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "research-claim:UPDATE_CLAIM_CONTENT",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 14,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "source:ADD_EXTRACTED_CLAIM",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 18,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "source:RECORD_EXTRACTION_STATS",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 23,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "tension:ADD_INVOLVED_REF",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 19,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "tension:CREATE_TENSION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 17
+    },
+    {
+     "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 53,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "vault-config:TOGGLE_FEATURE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 21,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 21,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "vault-config:UPDATE_VOCABULARY",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 22,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "wbs:ADD_DEPENDENCIES",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 43,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "wbs:DELETE_GOAL",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 52,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "wbs:REMOVE_DEPENDENCIES",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 48,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "wbs:REORDER",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 46,
+     "trainStep1Only": 5
+    },
+    {
+     "op": "wbs:UPDATE_GOAL_DESCRIPTION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 10,
+     "trainStep1Only": 11
+    }
+   ]
+  },
+  "A-lora": {
+   "config": {
+    "config": "A",
+    "sets": [
+     "h1",
+     "h2",
+     "dev",
+     "devx"
+    ],
+    "model": "lora"
+   },
+   "heldoutActionItems": 159,
+   "opMisses": {},
+   "confusions": [],
+   "argsMisses": {
+    "wbs:SET_GOAL_STATUS.status": 3,
+    "moc:ADD_TENSION.involvedRefs": 2,
+    "source:INGEST_SOURCE.sourceType": 2,
+    "source:INGEST_SOURCE.url": 2,
+    "project:CREATE_PROJECT.owner": 2,
+    "project:SET_TARGET_DATE.targetDate": 2,
+    "project:ADD_MEMBER.role": 2,
+    "wbs:CREATE_GOAL (ref)": 2,
+    "vault-config:UPDATE_PIPELINE_CONFIG.autoChain": 2,
+    "vault-config:UPDATE_PIPELINE_CONFIG.depth (extra)": 2,
+    "derivation:ADD_SIGNAL.influencedDimensions": 2,
+    "research-claim:UPDATE_CLAIM_CONTENT.content": 2,
+    "health-report:ADD_CHECK.affectedItems": 2,
+    "knowledge-note:SET_DESCRIPTION.description": 1,
+    "knowledge-note:SET_METADATA_FIELD.field": 1,
+    "knowledge-note:SET_METADATA_LIST_FIELD.field": 1,
+    "moc:UPDATE_DESCRIPTION.description": 1,
+    "moc:REMOVE_OPEN_QUESTION.question": 1,
+    "source:INGEST_SOURCE.author": 1,
+    "source:INGEST_SOURCE.content": 1,
+    "research-claim:CREATE_CLAIM.topics": 1,
+    "pipeline-queue:ADVANCE_PHASE.handoff.phase": 1,
+    "health-report:ADD_CHECK.category": 1,
+    "knowledge-note:UPDATE_LINK_TYPE (ref)": 1,
+    "knowledge-note:SET_METADATA_FIELD.value": 1,
+    "moc:UPDATE_ORIENTATION.orientation": 1,
+    "moc:SET_METADATA_FIELD.value": 1,
+    "source:SET_SOURCE_STATUS.status": 1,
+    "project:UPDATE_PROJECT_INFO.description": 1,
+    "project:SET_OWNER.owner": 1,
+    "research-claim:CREATE_CLAIM.kind": 1,
+    "research-claim:CREATE_CLAIM.sources": 1,
+    "observation:CREATE_OBSERVATION.category": 1,
+    "pipeline-queue:ADD_TASK.taskType": 1,
+    "wbs:SET_OUTCOME.outcome": 1
+   },
+   "opAccByTrainRows": {
+    "0": "2/2",
+    "1-19": "44/44",
+    "20-39": "61/61",
+    "40+": "52/52"
+   },
+   "perOp": [
+    {
+     "op": "derivation:ADD_SIGNAL",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 6,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "health-report:ADD_CHECK",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 2,
+     "trainStep1Only": 14
+    },
+    {
+     "op": "knowledge-note:ADD_LINK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 41
+    },
+    {
+     "op": "knowledge-note:ADD_TOPIC",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 34,
+     "trainStep1Only": 8
+    },
+    {
+     "op": "knowledge-note:APPROVE_NOTE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 20,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:ARCHIVE_NOTE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 7,
+     "trainStep1Only": 11
+    },
+    {
+     "op": "knowledge-note:REJECT_NOTE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 18,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "knowledge-note:REMOVE_LINK",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 52,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "knowledge-note:REMOVE_TOPIC",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 53,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:RESTORE_NOTE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 22,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:SET_CONTENT",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 12,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "knowledge-note:SET_DESCRIPTION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 11,
+     "trainStep1Only": 10
+    },
+    {
+     "op": "knowledge-note:SET_METADATA_FIELD",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 23
+    },
+    {
+     "op": "knowledge-note:SET_METADATA_LIST_FIELD",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 19,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "knowledge-note:SET_NOTE_TYPE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 24,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "knowledge-note:SET_TITLE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 22,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "knowledge-note:SUBMIT_FOR_REVIEW",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 17,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "knowledge-note:UPDATE_LINK_TYPE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 45,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:ADD_CHILD_MOC",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 10,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:ADD_CORE_IDEA",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 3,
+     "trainStep1Only": 13
+    },
+    {
+     "op": "moc:ADD_OPEN_QUESTION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 9,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "moc:ADD_TENSION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 18
+    },
+    {
+     "op": "moc:CREATE_MOC",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 1,
+     "trainStep1Only": 14
+    },
+    {
+     "op": "moc:REMOVE_CORE_IDEA",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 53,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:REMOVE_OPEN_QUESTION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 8,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "moc:REMOVE_TENSION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 53,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "moc:REORDER_CORE_IDEAS",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 35,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "moc:SET_METADATA_FIELD",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 0,
+     "trainStep1Only": 20
+    },
+    {
+     "op": "moc:UPDATE_CORE_IDEA",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 14,
+     "trainStep1Only": 16
+    },
+    {
+     "op": "moc:UPDATE_DESCRIPTION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 14,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "moc:UPDATE_ORIENTATION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 7,
+     "trainStep1Only": 5
+    },
+    {
+     "op": "observation:ARCHIVE_OBSERVATION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 16,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "observation:CREATE_OBSERVATION",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 0,
+     "trainStep1Only": 13
+    },
+    {
+     "op": "observation:IMPLEMENT_OBSERVATION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 14,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "observation:PROMOTE_OBSERVATION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 19,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "pipeline-queue:ADD_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 34,
+     "trainStep1Only": 7
+    },
+    {
+     "op": "pipeline-queue:ADVANCE_PHASE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 3,
+     "trainStep1Only": 20
+    },
+    {
+     "op": "pipeline-queue:ASSIGN_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 41,
+     "trainStep1Only": 8
+    },
+    {
+     "op": "pipeline-queue:BLOCK_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 25,
+     "trainStep1Only": 21
+    },
+    {
+     "op": "pipeline-queue:COMPLETE_TASK",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 49,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "pipeline-queue:FAIL_TASK",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 27,
+     "trainStep1Only": 19
+    },
+    {
+     "op": "pipeline-queue:UNBLOCK_TASK",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 45,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "project:ADD_DELIVERABLE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 21,
+     "trainStep1Only": 30
+    },
+    {
+     "op": "project:ADD_MEMBER",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 14,
+     "trainStep1Only": 11
+    },
+    {
+     "op": "project:CREATE_PROJECT",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 5,
+     "trainStep1Only": 16
+    },
+    {
+     "op": "project:REMOVE_DELIVERABLE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 54,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "project:REMOVE_MEMBER",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 52,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "project:SET_DELIVERABLE_STATUS",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 50,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "project:SET_OWNER",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 21,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "project:SET_PROJECT_STATUS",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 18,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "project:SET_REFERENCES",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 23,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "project:SET_TARGET_DATE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "project:UPDATE_DELIVERABLE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 18,
+     "trainStep1Only": 28
+    },
+    {
+     "op": "project:UPDATE_MEMBER",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 48,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "project:UPDATE_PROJECT_INFO",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 11,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "research-claim:ADD_RESEARCH_CONNECTION",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 8,
+     "trainStep1Only": 14
+    },
+    {
+     "op": "research-claim:CREATE_CLAIM",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 6
+    },
+    {
+     "op": "research-claim:REMOVE_RESEARCH_CONNECTION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 54,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "research-claim:UPDATE_CLAIM_CONTENT",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 14,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "source:ADD_EXTRACTED_CLAIM",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 18,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "source:INGEST_SOURCE",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 3,
+     "trainStep1Only": 20
+    },
+    {
+     "op": "source:RECORD_EXTRACTION_STATS",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 23,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "source:SET_SOURCE_STATUS",
+     "items": 4,
+     "hits": 4,
+     "trainFull": 24,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "tension:ADD_INVOLVED_REF",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 19,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "tension:CREATE_TENSION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 0,
+     "trainStep1Only": 17
+    },
+    {
+     "op": "tension:DISSOLVE_TENSION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 8,
+     "trainStep1Only": 12
+    },
+    {
+     "op": "tension:RESOLVE_TENSION",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 15,
+     "trainStep1Only": 8
+    },
+    {
+     "op": "vault-config:ADD_EXTRACTION_CATEGORY",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 9,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 53,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "vault-config:TOGGLE_FEATURE",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 21,
+     "trainStep1Only": 2
+    },
+    {
+     "op": "vault-config:UPDATE_DIMENSION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 7,
+     "trainStep1Only": 10
+    },
+    {
+     "op": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 21,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "vault-config:UPDATE_PIPELINE_CONFIG",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 25,
+     "trainStep1Only": 0
+    },
+    {
+     "op": "vault-config:UPDATE_VOCABULARY",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 22,
+     "trainStep1Only": 3
+    },
+    {
+     "op": "wbs:ADD_DEPENDENCIES",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 43,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "wbs:ADD_NOTE",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 1,
+     "trainStep1Only": 37
+    },
+    {
+     "op": "wbs:ASSIGN_GOAL",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 44,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "wbs:CREATE_GOAL",
+     "items": 3,
+     "hits": 3,
+     "trainFull": 2,
+     "trainStep1Only": 48
+    },
+    {
+     "op": "wbs:DELETE_GOAL",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 52,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "wbs:REMOVE_DEPENDENCIES",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 48,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "wbs:REORDER",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 46,
+     "trainStep1Only": 5
+    },
+    {
+     "op": "wbs:SET_GOAL_STATUS",
+     "items": 5,
+     "hits": 5,
+     "trainFull": 41,
+     "trainStep1Only": 4
+    },
+    {
+     "op": "wbs:SET_OUTCOME",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 3,
+     "trainStep1Only": 1
+    },
+    {
+     "op": "wbs:SET_OWNER",
+     "items": 2,
+     "hits": 2,
+     "trainFull": 12,
+     "trainStep1Only": 9
+    },
+    {
+     "op": "wbs:UPDATE_GOAL_DESCRIPTION",
+     "items": 1,
+     "hits": 1,
+     "trainFull": 10,
+     "trainStep1Only": 11
+    }
+   ]
+  }
+ }
+}
