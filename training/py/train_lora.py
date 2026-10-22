@@ -9,6 +9,10 @@ loss to the target JSON plus <|im_end|>. Nothing is re-templated here.
 With --val, the completion-only loss on the val rows is logged every
 --eval-steps steps and at the end (monitoring only: no checkpoint is
 picked on it). MPS driver memory is sampled at every log step.
+
+With --save-steps N, a checkpoint goes to <out>/checkpoints every N steps
+(the last --save-limit are kept), and --resume continues from one: a
+checkpoint path, or `auto` for the newest under <out>/checkpoints.
 """
 
 from __future__ import annotations
@@ -22,6 +26,7 @@ import torch
 from datasets import Dataset
 from peft import LoraConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainerCallback
+from transformers.trainer_utils import get_last_checkpoint
 from trl import SFTConfig, SFTTrainer
 
 REPO = Path(__file__).resolve().parents[2]
@@ -91,6 +96,9 @@ def main() -> int:
     ap.add_argument("--val", help="val rows (same format), loss logged only")
     ap.add_argument("--eval-steps", type=int, default=25)
     ap.add_argument("--pad-multiple", type=int, default=64)
+    ap.add_argument("--save-steps", type=int, default=0, help="checkpoint every N steps (0 = no checkpoints)")
+    ap.add_argument("--save-limit", type=int, default=2, help="checkpoints to keep")
+    ap.add_argument("--resume", help="checkpoint dir to resume from, or 'auto' for the newest in <out>/checkpoints")
     args = ap.parse_args()
 
     out = Path(args.out)
@@ -121,7 +129,9 @@ def main() -> int:
         completion_only_loss=True,
         bf16=args.precision == "bf16",
         logging_steps=1,
-        save_strategy="no",
+        save_strategy="steps" if args.save_steps > 0 else "no",
+        save_steps=args.save_steps if args.save_steps > 0 else 500,
+        save_total_limit=args.save_limit,
         report_to=[],
         seed=args.seed,
         dataloader_pin_memory=False,
@@ -139,12 +149,19 @@ def main() -> int:
     assert labelled == sanity["nCompletion"], f"{labelled} labelled tokens, expected {sanity['nCompletion']}"
     sanity["labelledTokens"] = labelled
 
+    resume = args.resume
+    if resume == "auto":
+        ckpts = out / "checkpoints"
+        resume = get_last_checkpoint(str(ckpts)) if ckpts.is_dir() else None
     dev = device()
     t0 = time.time()
-    trainer.train()
+    trainer.train(resume_from_checkpoint=resume)
     wall = time.time() - t0
     final_eval = trainer.evaluate() if val_ds is not None else None
     trainer.model.save_pretrained(out / "adapter")
+    trainer.save_state()  # <out>/checkpoints/trainer_state.json: the full log history, across resumes
+    # log.rows restarts on a resume; the trainer's history is restored from the checkpoint.
+    history = trainer.state.log_history
 
     stats = {
         "device": dev,
@@ -155,13 +172,14 @@ def main() -> int:
         "steps": trainer.state.global_step,
         "effectiveBatch": args.batch * args.grad_accum,
         "trainWallSec": round(wall, 2),
-        "firstLoss": next((r["loss"] for r in log.rows if "loss" in r), None),
-        "lastLoss": next((r["loss"] for r in reversed(log.rows) if "loss" in r), None),
+        "resumedFrom": resume,
+        "firstLoss": next((r["loss"] for r in history if "loss" in r), None),
+        "lastLoss": next((r["loss"] for r in reversed(history) if "loss" in r), None),
         "rowCheck": sanity,
         "valRows": len(val_rows),
         "finalEval": final_eval,
         "evalLoss": [{"step": r["step"], "epoch": r.get("epoch"), "eval_loss": r["eval_loss"]}
-                     for r in log.rows if "eval_loss" in r],
+                     for r in history if "eval_loss" in r],
         "args": vars(args),
     }
     if dev == "mps":
