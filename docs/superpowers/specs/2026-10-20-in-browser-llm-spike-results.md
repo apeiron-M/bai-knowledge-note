@@ -1269,3 +1269,122 @@ How many items should one `claude -p` generation call ask for? Before this, pilo
 - **Fixture fix.** ARCHIVE_NOTE and RESTORE_NOTE needed submit → approve (→ archive) replay fixtures; without them all 50 of their rows failed replay.
 - **Usage limit.** The label pass hit the org's monthly spend limit (HTTP 429) after 287 of 485 calls. 198 calls were lost to the limit (1 got the 429, 197 were never sent); none failed for any other reason. After the reset, `run` resumed from its journal and ran exactly those 198.
 - **Rendered set.** 8,695 steps from the 3,286 rows: 6,572 step 1 (3,286 full-list, 3,286 top-5, of which 381 top-5 rows have no target because the gold op is not in gte-small's top 5) and 2,123 step 2. 8,314 sequences are trainable, with template and token parity on all of them and no grammar-rejected target. The gold op's rank in the top-5 rows: 1 in 1,566, 2–5 in 981. Split (5%, by source row, stratified by op): 7,895 train / 419 val sequences (168 source rows). Val loss is logged every 50 steps.
+
+### Data, training and export (observed)
+
+**Teacher funnel** (`claude -p --model claude-sonnet-5`, same isolation flags as the pilots, concurrency 3):
+
+| Stage | Left | Notes |
+|---|---|---|
+| Generated (453 calls, batch 10, 240 per-call ref states) | 4,035 | 40 ref ops × 55, 59 non-ref ops × 25, 12 no-action models × 30; 0 failed calls |
+| `rows` (grounding 156, wording spec 11, ref echo 1, account-context leak 0) | 3,867 | |
+| Dedup / eval leak | 3,862 | 5 contained a held-out utterance |
+| Vocabulary, zod, replay, ref checks | 3,824 | PATCH_CONTENT ×24 (no fixture content), SET_OUTCOME ×11 (ref effect), 3 others |
+| Blind label (485 calls, batch 8) and r6.1 grammar gate | 2,526 strict / **3,286 kept** | 291 grammar-rejected targets, 955 label disagreements (471 on the op); with `--step1-only`: 2,570 full + 716 step-1-only, 29 quota drops |
+
+- Ops with no kept row: knowledge-note PATCH_CONTENT and project SET_TARGET_DATE. Seven more have step-1-only rows and no step-2 row (SET_METADATA_FIELD in knowledge-note and moc, ADD_LINK, ADD_TENSION, CREATE_OBSERVATION, CREATE_CLAIM, CREATE_TENSION).
+- **Time and cost (CLI-reported API-equivalent, not subscription usage):** generation 95 min (per call median 32.7 s, p90 64.0 s), 2.15M cache-write input, 1.95M output (1.39M thinking), $28.12. Labels 14 + 10 min over the two sessions, $10.18. Local stages about 4 min. Total about $38.30, or $0.0117 per kept row.
+- **Usage limit:** the label pass stopped at the org spend limit after 287 of 485 calls; 198 calls were lost to it (1 got the 429, 197 never sent) and resumed from the journal after the reset. No call failed otherwise.
+
+**Training** (the user's second laptop, M4 Max 64 GB, over SSH; `training/results/round8-remote-train-2026-10-22.json`):
+- The planned settings, unchanged: 741 steps, 3 epochs, effective batch 32 (8 × 4), bf16 on MPS, pad to a multiple of 64, completion-only loss, 5,996,544 trainable parameters.
+- Wall 4,891 s (81.5 min, about 6.6 s per step including eval). Peak footprint 16.0 GiB, MPS driver peak 15.9 GB.
+- **Train loss** 1.199 → 0.00048. **Val loss** 0.083 (step 25) → 0.0244 (step 150, epoch 0.6) → **minimum 0.0143 at step 450** (epoch 1.8) → **0.0161 final**. The val curve is flat from about step 400, and the final value is 13% above its minimum while train loss kept falling about 30×: mild overfitting in the third epoch. The final adapter was used as pre-registered; no checkpoint was picked.
+- **The first attempt on this Mac was stopped** at step 48 of 741 when the process reached about 44 GB (swap 30–34 GB). The cause is not confirmed; batches padded to their own longest row give many tensor shapes, and the MPS cache grows with them. `train_lora.py` now empties the MPS cache per step and pads to a multiple of 64.
+
+**Export** (this Mac, CPU): merge 34.8 s, peak footprint 5.1 GB. Merged vs base+adapter logits on 16 val rows (4,450 tokens): max |Δ| 4.1e-4, argmax equal at every position. Convert 8.8 s, template carry-over 2.2 s, quantize 2.5 s: `LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf`, 229,312,224 B (same size as the published Q4_K_M).
+
+**Val sanity check, native llama-server (Metal), Q4_K_M, greedy under the rendered grammar** (419 val sequences, teacher distribution, no ref scoring): base 80/312 step-1 and 47/107 step-2 targets exact; LoRA **290/312 (92.9%) and 99/107 (92.5%)**.
+
+### Held-out results
+
+Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no reruns). Per-item rows: `spike/llm-harness/eval/results-r8-{C0,C1,C2-k5,C2-k3,C3-k5,C3-k3,A-base,A-lora,qa-base,qa-lora}.json`; summary `training/results/round8-eval-2026-10-22.json`. C0, A-base and the base Q&A ran on 2026-10-21, before training; the rest on 2026-10-22. Args, `requiredPresent` and refs are over action items with the right op; latency is per utterance (embed + step 1 + step 2).
+
+**Held-out-1** (68 action + 6 no-action):
+
+| Config | Op | Op given in top k | Args exact | `requiredPresent` | Refs | No-action P / R | Fully right | Latency median / p90 |
+|---|---|---|---|---|---|---|---|---|
+| C0 (v1, base) | 23 (33.8%) | – | 9/16 | 9/9 | 3/7 | 5/10 / 5/6 | 14 (20.6%) | 190 / 698 ms |
+| C1 (v1 op, LoRA args) | 23 (33.8%) | – | 12/16 | 9/9 | 7/7 | 5/10 / 5/6 | 19 (27.9%) | 195 / 718 ms |
+| C2 k=5 (scored) | 38 (55.9%) | 38/52 (73.1%) | 19/28 (67.9%) | 14/14 | 11/11 | 6/11 / 6/6 | 29 (42.6%) | 1 464 / 1 862 ms |
+| C2 k=3 | 34 (50.0%) | 34/42 (81.0%) | 18/24 | 12/12 | 10/10 | 5/10 / 5/6 | 28 (41.2%) | 1 077 / 1 362 ms |
+| **C3 k=5 (generated)** | **39 (57.4%)** | 39/52 (75.0%) | 18/28 (64.3%) | 15/15 | 13/13 | 6/14 / 6/6 | **29 (42.6%)** | **335 / 600 ms** |
+| C3 k=3 | 30 (44.1%) | 30/42 (71.4%) | 16/22 | 12/12 | 9/9 | 6/14 / 6/6 | 24 (35.3%) | 321 / 559 ms |
+| A-base (oracle op) | – | – | 26/50 (52.0%) | 22/23 | 13/22 (59.1%) | – | 38 (55.9%) | 195 / 761 ms |
+| A-LoRA (oracle op) | – | – | **33/50 (66.0%)** | 22/23 | **21/22 (95.5%)** | – | 50 (73.5%) | 170 / 726 ms |
+
+**Held-out-2** (91 action + 8 no-action; natural 46 / paraphrase 45):
+
+| Config | Op | Natural / paraphrase | Op given in top k | Args exact | Refs | No-action P / R | Fully right (nat / para) | Latency median / p90 |
+|---|---|---|---|---|---|---|---|---|
+| C0 | 42 (46.2%) | 30 / 12 | – | 14/29 (48.3%) | 10/13 | 8/13 / 8/8 | 25 (27.5%) (18 / 7) | 199 / 1 003 ms |
+| C1 | 42 (46.2%) | 30 / 12 | – | 19/29 (65.5%) | 13/13 | 8/13 / 8/8 | 32 (35.2%) (21 / 11) | 190 / 971 ms |
+| C2 k=5 | 65 (71.4%) | 41 / 24 | 65/82 (79.3%) | 29/44 (65.9%) | 22/23 | 8/13 / 8/8 | 49 (53.8%) (29 / 20) | 1 519 / 1 864 ms |
+| C2 k=3 | 65 (71.4%) | 42 / 23 | 65/75 (86.7%) | 29/44 (65.9%) | 21/22 | 8/13 / 8/8 | 49 (53.8%) (30 / 19) | 1 113 / 1 530 ms |
+| **C3 k=5** | **67 (73.6%)** | **42 (91.3%) / 25 (55.6%)** | 67/82 (81.7%) | **31/45 (68.9%)** | 24/25 | 8/13 / 8/8 | **52 (57.1%) (30 / 22)** | **358 / 756 ms** |
+| C3 k=3 | 62 (68.1%) | 42 / 20 | 62/75 (82.7%) | 29/43 (67.4%) | 20/21 | 8/13 / 8/8 | 47 (51.6%) (30 / 17) | 352 / 758 ms |
+| A-base | – | – | – | 29/65 (44.6%) | 21/32 (65.6%) | – | 48 (52.7%) | 197 / 1 144 ms |
+| A-LoRA | – | – | – | **43/65 (66.2%)**; nat 24/36, para 19/29 | **30/32 (93.8%)** | – | 67 (73.6%) | 203 / 1 043 ms |
+
+- `requiredPresent` was 100% for every configuration on held-out-2 (C2/C3: 17–19 of 17–19 scored).
+- **Top-k recall** (gte-small scoped): k=5 52/68 and 82/91; k=3 42/68 and 75/91.
+- **The no-action gate in front costs op accuracy.** From the same runs, the LoRA alone (no G3 gate, its own `{"ops": []}`):
+  - C3 k=5: op 42/68 (61.8%) and 69/91 (75.8%). No-action P/R: held-out-1 6/11 and 6/6; held-out-2 **6/6 and 6/8**; dev 9/9 and 9/10.
+  - C2 k=5: op 42/68 and 67/91; the scored `{"ops": []}` almost never wins (recall 2/6 and 2/8), as in Rounds 5–6.
+  - With G3 in front, every config has the same no-action recall as v1 (G3 catches them), and G3's false positives on action items (held-out-1 5, held-out-2 5) set the precision.
+- **Calibration does not help the LoRA.** Uncalibrated S1-mean picks from the same C2 requests: 43/68 and 69/91 (k=5) vs S2-mean 42/68 and 67/91. C3 (plain generation) is at least as accurate as C2 and 4× faster.
+- **Dev (reference only):** C0 40/49 op, 31/49 fully right; C3 k=5 42/49, 40/49; A-LoRA args 32/34.
+
+**Remaining error types (C3 k=5, both held-out sets, 159 action items, 53 op misses):**
+- **Gold op not in gte-small's top 5: 24.** A retriever ceiling: step 1 never sees the right op.
+- **G3 gate sends an action to no-action: 10;** the LoRA picks `{"ops": []}`: 3.
+- **Wrong op among the candidates: 16,** mostly siblings: SET_SOURCE_STATUS → ADD_EXTRACTED_CLAIM ×2, SET_OWNER → ASSIGN_GOAL, SET_OUTCOME → SET_GOAL_STATUS, SET_PROJECT_STATUS → SET_DELIVERABLE_STATUS, ADD_MEMBER → UPDATE_MEMBER, SET_METADATA_LIST_FIELD → SET_METADATA_FIELD.
+- **Args, oracle op (A-LoRA, 39 of 115 scored items wrong, 49 field misses):**
+  - enum or boolean value: 17 (SET_GOAL_STATUS `status` ×3, `sourceType`, `autoChain`/`depth`, `category`, `kind`, `taskType`, `field`);
+  - free-text span: 14 (`description`, `content`, `url`, `value`, `question`);
+  - lists: 8 (`involvedRefs`, `influencedDimensions`, `affectedItems`, `topics`, `sources`);
+  - meant-but-unnamed `owner`/`role` dropped by the safe gate: 5;
+  - dates not normalized: 2;
+  - refs: 3.
+- **Per-op accuracy vs kept training rows (C3 k=5):** ops with 1–19 rows 29/44 (66%), 20–39 rows 37/61 (61%), 40+ rows 38/52 (73%). There is no clear trend with row count; the ops with fewer rows are mostly the non-ref ops (25 items each by design), so this split mixes volume with op type.
+
+### Q&A regression check (15 written prompts, temperature 0, 256 tokens)
+
+| | Base better | Same | LoRA better |
+|---|---|---|---|
+| Pairs | 4 | 9 | 2 |
+
+- **Base better:**
+  - qa-02: the LoRA appends a stray `\boxed{285}` after the right answer.
+  - qa-04: the LoRA names the wrong contradicted note; the base is right.
+  - qa-07: the LoRA's one-line summary drops both numbers (15 new cards, 200 reviews).
+  - qa-15: the LoRA recommends the book already finished; the base picks the half-read one.
+- **LoRA better:**
+  - qa-08: it states both sides of the tension from the context; the base is vague.
+  - qa-14: it computes 24 g of salt; the base restates the 3% rule without answering.
+- **Same (9):** qa-01, 03, 05, 09–13 are near-identical. In qa-06 both are half right: the base lists timer setup and wrongly says the rain barrel is done, and the LoRA lists the rain barrel and misses the timer.
+- **Format leakage:** no JSON or `{"ops"…}` text in any LoRA answer. One LaTeX `\boxed{}` artifact (qa-02).
+- 15 pairs judged by me, once; a 4-vs-2 split is within noise but leans toward a mild regression.
+
+### Verdict
+
+- **The bars are not met.** Best primary config C3 k=5: op 57.4% (held-out-1) and 73.6% (held-out-2) against ≥ 90%; args exact given the right op 64.3% and 68.9% against ≥ 80% (A-LoRA with the oracle op: 66.0% and 66.2%). C3 was the best of three primary configs on the same sets, so its numbers are flattered slightly.
+- **But the LoRA is a large step over v1**, and it is the first change in this spike that moved paraphrases:
+  - **Op:** +16 items on held-out-1 (23 → 39) and +25 on held-out-2 (42 → 67). Held-out-2 paraphrase went from 12/45 to 25/45, and **held-out-2 natural reached 91.3% (42/46), above the op bar.**
+  - **Fully right:** 20.6% → 42.6% and 27.5% → 57.1%.
+  - **Refs:** about 95% given the right op (A-LoRA 21/22 and 30/32, against 13/22 and 21/32 for the base).
+  - **Latency:** C3 k=5 adds about 150 ms per utterance (median 335–358 ms, p90 600–756 ms).
+- **Gap per error type (op, C3 k=5):**
+  - retrieval misses (24 of 53) and the G3 gate (10) together account for about two thirds of the op errors;
+  - sibling confusion among the candidates (16) is the LoRA's own share.
+  - Given the gold op in the top 5, op accuracy is 75.0% and 81.7%.
+- **Will more data (the full run) help? Probably only partly** (an inference, not measured):
+  - **Against:** the val loss bottomed at epoch 1.8 and the model already scores about 93% on teacher-distribution val (native check). Op accuracy shows no clear trend with per-op row count, and about 60% of the op errors (retrieval, gate) are outside step 1.
+  - **For:** the remaining LoRA-side errors are sibling and enum-value semantics and paraphrase (55.6% op on held-out-2 paraphrases, the training data was about 60% op-word-free), which more varied data targets directly.
+  - The held-out vs val gap (≈74% vs ≈93%) points to a distribution shift between the teacher's wording and the held-out writers', not to too few rows.
+- **Cheaper next steps before a 3× data run** (not measured):
+  - (1) drop G3 in front of a LoRA step 1, since the LoRA's own no-action is better (held-out-2 C3 LoRA-only op 75.8%, no-action P/R 6/6 and 6/8);
+  - (2) score or generate over all ops of the scoped model, a list the LoRA was also trained on, to remove the top-5 retrieval ceiling;
+  - (3) relax the safe gate for meant-but-unnamed `owner`/`role`/`assignee`, which also blocked 291 training targets;
+  - (4) one more epoch is not needed: the val minimum is at epoch 1.8.
+- **Q&A:** a mild regression (4 base better, 2 LoRA better, 9 same) with no JSON leakage. Serving Ask mode from the LoRA looks acceptable on this small check; a larger judged set is needed before shipping.

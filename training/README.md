@@ -2,12 +2,13 @@
 
 This directory builds training data for the chat's two steps (op choice, then arguments) and fine-tunes `LiquidAI/LFM2.5-350M` with LoRA. It then ships the result as a merged Q4_K_M GGUF that wllama 3.8.1 loads like today's file.
 
-**Status (2026-10-20, round 7):**
+**Status (2026-10-22, round 8):**
 - The pipeline is built and smoke-tested end to end on this Mac.
 - Rows render in the runtime prompt format **r6.1**, through the chat core's own builders, so training and runtime prompts are byte-identical (`tests/unit/training-prompt-format.test.ts`). The render and token-parity step was re-run on the smoke rows in r6.1 (see "Re-render in r6.1" below). The model was not retrained.
 - The teacher runs through headless Claude Code (`claude -p`), with no API key needed. The ~100-row pilot ran on 2026-10-21 and kept 73 rows (see "Teacher pilot" below).
 - Pilot 2 (2026-10-21, 150 items) covers all 40 ref ops on seeded document states, per-item wording specs and batched blind labels. It kept 105 rows (see "Teacher pilot 2").
-- The batch-size comparison (2026-10-21; 1, 10 and 25 items per call, 325 items each) recommends 10 per call (see "Teacher batch-size comparison"). The full run waits on the user's review.
+- The batch-size comparison (2026-10-21; 1, 10 and 25 items per call, 325 items each) recommends 10 per call (see "Teacher batch-size comparison").
+- **Round 8 (2026-10-21/22): the first real LoRA.** 4,035 teacher items gave 3,286 kept rows; the LoRA trained 3 epochs (on the user's second laptop) and ships as `LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf` (local, gitignored). It does not meet the bars, but it doubles end-to-end accuracy on both held-out sets (see "Round 8" below and the results doc).
 
 The plan is the scratchpad `lora-plan.md` from the spike session. Spike results are in `docs/superpowers/specs/2026-10-20-in-browser-llm-spike-results.md`.
 
@@ -444,16 +445,78 @@ $P training/py/teacher.py agree $A/label-results.jsonl --keys $A/label-requests.
 $P training/py/batchcmp.py $T/b1 $T/b10 $T/b25 --context $T/context.json --out $T/batchcmp-summary.json
 ```
 
+## Round 8: first LoRA (observed, 2026-10-21/22)
+
+Full details, the pre-registration and the verdict are in the results doc ("Round 8: first LoRA"). The summaries are `results/round8-remote-train-2026-10-22.json` and `results/round8-eval-2026-10-22.json`.
+
+**Changes for it:**
+- `plan --batch-size` seeds **one ref-op state per call** (`--shared-state` keeps the comparison's one state per job and reproduces its requests byte for byte). `--ref-items-per-op` and `--noaction-items` set per-class counts.
+- `TOPK=5 render.sh` adds a second step-1 row per row over gte-small's scoped top 5 (similarity order), the list the LoRA picks from at run time. When the gold op is not in it, that row gets no target.
+- `agree --step1-only` keeps rows whose op the labeler agreed with but whose step 2 is not trainable, for step 1 only.
+- FIXTURES for ARCHIVE_NOTE and RESTORE_NOTE.
+- `split.py` (val by source row, stratified by op), `train_lora.py --val` (val loss), and the MPS memory fix (empty cache per step, pad to a multiple of 64).
+- `merge.py --check-rows`.
+- `r8_report.py` and `r8_errors.py` (eval tables, error types).
+
+**Funnel:**
+
+| Stage | Left |
+|---|---|
+| Generated (453 calls, batch 10, 240 states) | 4,035 |
+| `rows` (grounding, spec, ref echo, leak 0) | 3,867 |
+| Dedup / eval leak | 3,862 |
+| zod / replay / ref checks | 3,824 |
+| Blind label (485 calls, batch 8) + grammar gate, `--step1-only` | 3,286 (2,570 full + 716 step-1-only) |
+
+- Rendered to 8,314 trainable sequences: 3,286 full-list step 1, 2,905 top-5 step 1 and 2,123 step 2. Train/val 7,895 / 419 sequences.
+- Generation took 95 min and $28.12; labels about 24 min and $10.18 (CLI-reported API-equivalent).
+- The label pass hit the org spend limit after 287 calls; 198 calls were lost to the limit and resumed after the reset.
+
+**Training:** planned settings, 741 steps, 81.5 min, peak footprint 16 GiB (M4 Max 64 GB). Train loss 1.199 → 0.00048; val loss minimum 0.0143 at step 450, final 0.0161. The first attempt on the 36 GB Mac grew to about 44 GB and was stopped at step 48; see the memory fix above.
+
+**Export:** merge on CPU (5.1 GB peak); logits equal to base+adapter within 4.1e-4 on 16 rows, argmax equal; Q4_K_M 229,312,224 B. Native val check: 92.9% step-1 and 92.5% step-2 targets exact, against 25.6% and 43.9% for the base.
+
+**Held-out (C3 k=5 = LoRA step 1 by constrained generation over gte-small's top 5, LoRA step 2):**
+- op 57.4% / 73.6% (held-out-1 / -2), against v1's 33.8% / 46.2%;
+- args exact given the right op 64.3% / 68.9%;
+- fully right 42.6% / 57.1%, against 20.6% / 27.5%;
+- median latency about 350 ms.
+
+Bars (op ≥ 90%, args ≥ 80%) not met.
+
+**Commands:**
+
+```bash
+P=training/.venv/bin/python; A=training/artifacts/teacher-full; R=training/artifacts/round8
+$P training/py/teacher.py plan --context $A/context.json --ops all --batch-size 10 --items-per-op 25 \
+    --ref-items-per-op 55 --noaction-items 30 --seed 20261021 --out $A/gen-requests.jsonl
+$P training/py/teacher.py run $A/gen-requests.jsonl --out $A/gen-results.jsonl --timeout 600 --max-requests 500 --cli-cwd <empty dir>
+$P training/py/teacher.py rows $A/gen-results.jsonl --context $A/context.json --meta $A/gen-requests.jsonl.meta.json --out $A/rows.jsonl
+training/scripts/render.sh $A/rows.jsonl $A/r1
+$P training/py/teacher.py label $A/r1/rendered.jsonl --context $A/context.json --rows $A/r1/rows-valid.jsonl --batch 8 --out $A/label-requests.jsonl
+$P training/py/teacher.py run $A/label-requests.jsonl --out $A/label-results.jsonl --timeout 600 --max-requests 500 --cli-cwd <empty dir>
+$P training/py/teacher.py agree $A/label-results.jsonl --keys $A/label-requests.jsonl.keys.json --rows $A/r1/rows-valid.jsonl \
+    --manifest $A/r1/rendered.manifest.json --context $A/context.json --max-free 0.7 --name-cap 0 --step1-only --out $A/agreed-s1.jsonl
+TOPK=5 training/scripts/render.sh $A/agreed-s1.jsonl $A/final
+$P training/py/split.py $A/final/train.jsonl --out-dir $R/split --share 0.05
+$P training/py/train_lora.py $R/split/train-split.jsonl --val $R/split/val.jsonl --out $R/run   # needs ~16 GiB; ran on a 64 GB machine
+$P training/py/merge.py $R/run/adapter --out $R/merged --check $R/split/val.jsonl --check-rows 16
+training/scripts/export-gguf.sh $R/merged $R/gguf/LFM2.5-350M-vault-r8a-20261022
+# harness (Vite on :5199 serves $R/gguf at /lora/): spike.run("load", "webgpu", false, "/lora/<file>-Q4_K_M.gguf"),
+# then spike.run("r8Run", "webgpu", {config: "C3", k: 5, sets: [...], model: "lora"}) and r8Qa
+$P training/py/r8_report.py spike/llm-harness/eval/results-r8-*.json
+```
+
 ## Next, waiting on the user
 
 1. **Round 6 is done.** The format is r6.1, and the renderer uses it. Every change to the core's step-1/step-2 builders, the op descriptions or the vocabularies bumps `PROMPT_FORMAT_VERSION` (`chat/core/prompt-format.ts`). After a bump, re-run `render.sh`.
 2. **Both blind held-out sets** are in `spike/llm-harness/eval/` (`heldout-eval.json`, `heldout2-eval.json`), so `dedup.py` filters against both.
 3. **The user** reviews pilot 2 (above) and approves the full run. `run` refuses more than 200 requests unless `--max-requests` is raised. Ref ops are supported. The teacher's output schemas come from `export-teacher-context.ts`, which carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). Before the full run:
-   - **Per-call state seeding is needed before the full run.** `plan --batch-size` seeds one state per job, so `--ops all --items-per-op 110` would put all 110 of an op's items on one state. Add per-call seeding (or a `--states-per-op` option) first.
+   - Per-call state seeding: done (round 8).
    - Two-sided op-word quota, the question form axis and `--batch-size`: done and measured ("Teacher batch-size comparison"). The recommendation is generation batch 10 and label batch 8.
    - Decide the runtime's ref labels for non-note models.
    - Decide `requireOneOf` with an optional ref (UPDATE_DELIVERABLE).
-4. **The real training run** comes after that: 3 epochs, effective batch 32, then a dev-checkpoint pick, export, and the in-browser eval arms. Judge it against gte-small top-1 (round 6: O2 47.3% scoped, U1 26.4% unscoped).
+4. **The first real training run is done (round 8).** Before scaling the data, the results doc's verdict lists cheaper steps: no G3 gate in front of a LoRA step 1, step 1 over all ops of the model (removing the top-5 retrieval ceiling), and relaxing the safe gate for meant-but-unnamed person fields.
 5. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
 
 **Not done here:**
