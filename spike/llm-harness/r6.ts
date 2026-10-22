@@ -162,7 +162,11 @@ export type R6Set =
   /** Round 9: held-out-3 (blind; same schema as held-out-2). */
   | "h3"
   | "h3na"
-  | "h3multi";
+  | "h3multi"
+  /** Round 10: held-out-4 (blind; same schema as held-out-3). */
+  | "h4"
+  | "h4na"
+  | "h4multi";
 
 export interface R6Item extends EvalItem {
   set: R6Set;
@@ -263,6 +267,12 @@ export async function loadR6(set: R6Set): Promise<R6Item[]> {
     const a3 =
       set === "h3" ? f3.items : set === "h3na" ? f3.noAction : f3.multiAction;
     return (a3 ?? []).map((i) => fromRaw(set, i));
+  }
+  if (set === "h4" || set === "h4na" || set === "h4multi") {
+    const f4 = await heldoutFile("heldout4-eval.json");
+    const a4 =
+      set === "h4" ? f4.items : set === "h4na" ? f4.noAction : f4.multiAction;
+    return (a4 ?? []).map((i) => fromRaw(set, i));
   }
   const f = await h2();
   const arr =

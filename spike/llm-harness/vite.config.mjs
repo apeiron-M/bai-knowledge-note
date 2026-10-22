@@ -43,7 +43,8 @@ const TYPES = {
 
 /**
  * Dev-only static mounts: `/models/` (gte-small), `/ort/` (ort wasm) and
- * `/lora/` (round 8: locally exported fine-tune GGUFs, gitignored).
+ * `/lora/` (round 8: locally exported fine-tune GGUFs, gitignored) and
+ * `/lora10/` (round 10's).
  */
 const staticMounts = {
   name: "spike-static-mounts",
@@ -52,6 +53,7 @@ const staticMounts = {
       ["/models/", `${repo}models/`],
       ["/ort/", `${ORT_DIST}/`],
       ["/lora/", `${repo}training/artifacts/round8/gguf/`],
+      ["/lora10/", `${repo}training/artifacts/round10/gguf/`],
     ]) {
       server.middlewares.use(prefix, (req, res, next) => {
         const rel = normalize(

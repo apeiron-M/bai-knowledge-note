@@ -42,3 +42,52 @@ export function count<T>(xs: T[]): Record<string, number> {
   for (const x of xs) m[String(x)] = (m[String(x)] ?? 0) + 1;
   return Object.fromEntries(Object.entries(m).sort((a, b) => b[1] - a[1]));
 }
+
+/** Round 10: an argument path's kind in the step-2 JSON schema. */
+export type ArgKind = "list" | "enum" | "span" | "other";
+
+export function fieldKind(schema: unknown, path: string): ArgKind {
+  let s: unknown = schema;
+  for (const k of path.split(".")) {
+    const props = isRecord(s) && isRecord(s.properties) ? s.properties : null;
+    s = props ? props[k] : undefined;
+    if (isRecord(s) && Array.isArray(s.anyOf)) {
+      const alts: unknown[] = s.anyOf;
+      s = alts.find((b) => isRecord(b) && b.type !== "null") ?? s;
+    }
+  }
+  if (!isRecord(s)) return "other";
+  if (Array.isArray(s.enum)) return "enum";
+  if (s.type === "array") return "list";
+  if (s.type === "string") return "span";
+  return "other";
+}
+
+/**
+ * Per kind, over rows with the right op and scored args: gold fields of
+ * that kind that match (`fields`), and items whose fields of that kind all
+ * match (`items`). Rows carry `argKinds` (path -> kind) and `mismatched`.
+ */
+export function argsByKind(rows: Json[]): Record<ArgKind, { fields: string; items: string }> {
+  const out = {} as Record<ArgKind, { fields: string; items: string }>;
+  for (const kind of ["list", "enum", "span", "other"] as ArgKind[]) {
+    let f = 0;
+    let fOk = 0;
+    let i = 0;
+    let iOk = 0;
+    for (const r of rows) {
+      if (!isRecord(r.argKinds)) continue;
+      const bad = new Set((r.mismatched as string[] | undefined) ?? []);
+      const paths = Object.entries(r.argKinds)
+        .filter(([, k]) => k === kind)
+        .map(([p]) => p);
+      if (paths.length === 0) continue;
+      f += paths.length;
+      fOk += paths.filter((p) => !bad.has(p)).length;
+      i += 1;
+      if (paths.every((p) => !bad.has(p))) iOk += 1;
+    }
+    out[kind] = { fields: `${fOk}/${f}`, items: `${iOk}/${i}` };
+  }
+  return out;
+}

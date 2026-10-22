@@ -29,7 +29,15 @@ import {
   V1_ARGS,
 } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
 import { step1Grammar } from "./r8.js";
-import { count, fullyRight, r9MissCause, r9Pick } from "./r9-metrics.js";
+import { flatten } from "./r5.js";
+import {
+  argsByKind,
+  count,
+  fieldKind,
+  fullyRight,
+  r9MissCause,
+  r9Pick,
+} from "./r9-metrics.js";
 import {
   loadR6,
   scoreArgRow,
@@ -157,8 +165,13 @@ export async function r9Run(c: LlmClient, o: R9Options): Promise<Json> {
       row.argsOrder = Object.keys(
         isRecord(s2.schema.properties) ? s2.schema.properties : {},
       );
-      if (loraPick === gold)
+      if (loraPick === gold) {
         Object.assign(row, scoreArgRow(it, entry, { args: s2.args }));
+        // Round 10: the kind (list / enum / span / other) of each gold arg path.
+        row.argKinds = Object.fromEntries(
+          [...flatten(it.args ?? {}).keys()].map((p) => [p, fieldKind(s2.schema, p)]),
+        );
+      }
     }
     row.ms = {
       embed: Math.round(embedMs),
@@ -221,6 +234,7 @@ export function r9Summary(rows: Json[], preGate: boolean): Json {
         ),
       },
       args: summarizeArgs(right),
+      argsByKind: argsByKind(right),
       fullyRight: `${action.filter((r) => fullyRight(r, preGate)).length}/${action.length}`,
       fullyRightPct: pct(
         action.filter((r) => fullyRight(r, preGate)).length,
@@ -255,6 +269,7 @@ export function r9Summary(rows: Json[], preGate: boolean): Json {
   for (const s of sets) bySet[s] = group(rows.filter((r) => r.set === s));
   const fold: Record<string, string[]> = {
     heldout3: ["h3", "h3na", "h3multi"],
+    heldout4: ["h4", "h4na", "h4multi"],
     dev: ["dev", "devx", "devna"],
   };
   for (const [name, members] of Object.entries(fold))

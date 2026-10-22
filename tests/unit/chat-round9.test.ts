@@ -13,7 +13,9 @@ import {
   step1CandidatesLabel,
 } from "../../editors/knowledge-vault/chat/core/step1-candidates.js";
 import {
+  argsByKind,
   count,
+  fieldKind,
   fullyRight,
   r9MissCause,
   r9Pick,
@@ -184,5 +186,40 @@ describe("round 9 metrics", () => {
 
   it("counts, most frequent first", () => {
     expect(count(["a", "b", "b"])).toEqual({ b: 2, a: 1 });
+  });
+});
+
+describe("round 10 args by kind", () => {
+  const schema = {
+    type: "object",
+    properties: {
+      status: { anyOf: [{ type: "string", enum: ["A", "B"] }, { type: "null" }] },
+      items: { type: "array", items: { type: "string" } },
+      note: { type: "string" },
+      n: { type: "number" },
+      handoff: { type: "object", properties: { phase: { enum: ["x"] } } },
+    },
+  };
+
+  it("classifies paths, through anyOf and nesting", () => {
+    expect(fieldKind(schema, "status")).toBe("enum");
+    expect(fieldKind(schema, "items")).toBe("list");
+    expect(fieldKind(schema, "note")).toBe("span");
+    expect(fieldKind(schema, "n")).toBe("other");
+    expect(fieldKind(schema, "handoff.phase")).toBe("enum");
+    expect(fieldKind(schema, "missing")).toBe("other");
+  });
+
+  it("scores fields and items per kind", () => {
+    const rows = [
+      { argKinds: { note: "span", items: "list" }, mismatched: ["items"] },
+      { argKinds: { note: "span", status: "enum" }, mismatched: [] },
+      { mismatched: ["note"] },
+    ];
+    const s = argsByKind(rows);
+    expect(s.span).toEqual({ fields: "2/2", items: "2/2" });
+    expect(s.list).toEqual({ fields: "0/1", items: "0/1" });
+    expect(s.enum).toEqual({ fields: "1/1", items: "1/1" });
+    expect(s.other).toEqual({ fields: "0/0", items: "0/0" });
   });
 });
