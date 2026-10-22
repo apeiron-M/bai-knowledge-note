@@ -15,8 +15,8 @@ at most one op each way are merged. Then observed confusion pairs
 one of the pair (the smallest such, if it stays at most MAX_SIZE), else as a
 new pair group. Pair sources: the Round 9 results doc (aggregate R2c sibling
 confusions on held-out-3, as listed there), Round 8's error analysis on the
-retired held-out-1/2 (C3 k=5) and the dev runs of Rounds 8-9. No held-out-3
-or held-out-4 item is read.
+retired held-out-1/2 (C3 k=5) and the Round 9 dev runs over the full scoped
+list (as a supplement, see `supplement`). No held-out-3 or held-out-4 item is read.
 """
 from __future__ import annotations
 
@@ -74,11 +74,18 @@ def entity(op: str) -> str:
     return "_".join(t) or op
 
 
+# Round 9 dev runs whose step-1 list is every scoped op (the served R2c shape).
+DEV_RUNS = ["R2", "R2c", "R5"]
+
+
 def dev_pairs() -> list[tuple[str, str]]:
-    """Same-model confusions in the committed dev runs of Rounds 8-9 (dev only)."""
+    """Same-model confusions in the committed Round 9 dev runs over the full
+    scoped list (dev only; top-5 and unscoped lists are not served)."""
     out = set()
-    for f in sorted(glob.glob(str(REPO / "spike/llm-harness/eval/results-r9-*-dev.json"))):
-        for r in json.loads(Path(f).read_text()).get("rows", []):
+    for f in [str(REPO / f"spike/llm-harness/eval/results-r9-{n}-dev.json") for n in DEV_RUNS]:
+        d = json.loads(Path(f).read_text())
+        runs = [d] if "rows" in d else list(d.values())  # results files are keyed by the harness call
+        for r in (x for run in runs for x in run.get("rows", [])):
             g, p = r.get("expectedOp"), r.get("loraPick")
             if g and isinstance(p, str) and ":" in p and p != g and p.split(":")[0] == g.split(":")[0]:
                 out.add((g, p))
@@ -161,12 +168,43 @@ def derive(ctx: list[dict]) -> dict:
                         "pairsCovered": f"{sum(c['covered'] for c in covered)}/{len(covered)}"}}
 
 
+def supplement(ctx: list[dict], base: dict) -> dict:
+    """Pair groups (ids d01..) for the dev pairs that `base` does not hold.
+    Round 10's first derivation missed the dev pairs (the results files are
+    keyed by the harness call; fixed in `dev_pairs`); its groups were already
+    planned, so the dev pairs are added as a supplement, not re-derived."""
+    order = {o["key"]: i for i, o in enumerate(ctx)}
+    sets: list[set[str]] = []
+    pairs = []
+    for a, b in dev_pairs():
+        if any(a in g["ops"] and b in g["ops"] for g in base["groups"]):
+            continue
+        pairs.append([a, b])
+        hit = [x for x in sets if a in x or b in x]
+        for x in hit:
+            sets.remove(x)
+        sets.append(set().union({a, b}, *hit))  # pairs sharing an op form one group
+    groups = [{"model": next(iter(x)).split(":")[0], "rule": "observed:dev", "id": f"d{i + 1:02d}",
+               "ops": sorted(x, key=order.__getitem__)} for i, x in enumerate(sets)]
+    return {"supplementOf": "sibling-groups.json", "devRuns": DEV_RUNS, "pairs": pairs, "groups": groups,
+            "summary": {"groups": len(groups), "memberships": sum(len(g["ops"]) for g in groups)}}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--context", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--dev-supplement", help="existing groups.json: write only pair groups for uncovered dev pairs")
     a = ap.parse_args()
-    res = derive(json.loads(Path(a.context).read_text()))
+    ctx = json.loads(Path(a.context).read_text())
+    if a.dev_supplement:
+        res = supplement(ctx, json.loads(Path(a.dev_supplement).read_text()))
+        Path(a.out).write_text(json.dumps(res, indent=1) + "\n")
+        print(json.dumps(res["summary"]))
+        for g in res["groups"]:
+            print(g["id"], g["model"], " ".join(k.split(":")[1] for k in g["ops"]))
+        return 0
+    res = derive(ctx)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(res, indent=1) + "\n")
     print(json.dumps(res["summary"]))

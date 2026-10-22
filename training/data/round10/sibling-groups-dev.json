@@ -1,0 +1,47 @@
+{
+ "supplementOf": "sibling-groups.json",
+ "devRuns": [
+  "R2",
+  "R2c",
+  "R5"
+ ],
+ "pairs": [
+  [
+   "knowledge-note:ADD_TOPIC",
+   "knowledge-note:SET_NOTE_TYPE"
+  ],
+  [
+   "knowledge-note:ADD_TOPIC",
+   "knowledge-note:SET_TITLE"
+  ],
+  [
+   "project:UPDATE_MEMBER",
+   "project:SET_OWNER"
+  ]
+ ],
+ "groups": [
+  {
+   "model": "knowledge-note",
+   "rule": "observed:dev",
+   "id": "d01",
+   "ops": [
+    "knowledge-note:SET_TITLE",
+    "knowledge-note:SET_NOTE_TYPE",
+    "knowledge-note:ADD_TOPIC"
+   ]
+  },
+  {
+   "model": "project",
+   "rule": "observed:dev",
+   "id": "d02",
+   "ops": [
+    "project:SET_OWNER",
+    "project:UPDATE_MEMBER"
+   ]
+  }
+ ],
+ "summary": {
+  "groups": 2,
+  "memberships": 5
+ }
+}
