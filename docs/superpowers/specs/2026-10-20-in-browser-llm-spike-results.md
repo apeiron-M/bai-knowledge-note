@@ -1580,7 +1580,7 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
 
 ### Held-out-4 results
 
-`heldout4-eval.json` (sha256 `25c51a7b…14c0cc`, committed unchanged in `57c4d994` after the pre-registration `e6db5c2a`): 104 action items (52 natural, 52 paraphrase; 9 easy, 50 medium, 45 hard), 10 no-action, 6 multi-action, over 94 ops; tags: 73 `sibling-confusion`, 40 `exact-copy`, 40 `ref`, 33 `enum`, 16 `list`. E8 and E10 each ran **once** (WebGPU, Apple `metal-3`, one page, 15:06–16:05; no errors, no reruns). Per-item rows: `eval/results-r10-{E8-h4,E10-h4,E10-h3}.json`; tables from `training/py/r10_report.py`, summary `training/results/round10-2026-10-22.json`. Args, refs and sub-scores are over action items with the right op.
+`heldout4-eval.json` (sha256 `25c51a7b…14c0cc`, committed unchanged in `57c4d994` after the pre-registration `e6db5c2a`): 104 action items (52 natural, 52 paraphrase; 9 easy, 50 medium, 45 hard), 10 no-action, 6 multi-action, over 94 ops; tags: 73 `sibling-confusion`, 40 `exact-copy`, 40 `ref`, 33 `enum`, 16 `list`. E8 and E10 each ran **once** (WebGPU, Apple `metal-3`, one page, about 15:06 (E8) and 16:02 (E10); no errors, no reruns). Per-item rows: `eval/results-r10-{E8-h4,E10-h4,E10-h3}.json`; tables from `training/py/r10_report.py`, summary `training/results/round10-2026-10-22.json`. Args, refs and sub-scores are over action items with the right op.
 
 | | **E8** (Round 8 LoRA) | **E10** (Round 10 LoRA) |
 |---|---|---|
@@ -1602,7 +1602,7 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
 | Op misses: sibling in list / LoRA `[]` | 19 / 1 | 22 / 0 |
 
 - **Paired (same 104 items):** E10 gains 7 ops (6 paraphrases: SET_TITLE, SET_METADATA_LIST_FIELD ×2, SET_REFERENCES, FAIL_TASK, DISSOLVE_TENSION, ADD_RESEED_ENTRY) and loses 9 (7 paraphrases: SUBMIT_FOR_REVIEW → ADD_LINK, UPDATE_ORIENTATION → UPDATE_DESCRIPTION, ADD_OPEN_QUESTION → REMOVE_TENSION, ADD_DELIVERABLE → ADD_KNOWLEDGE_REF, ADD_NOTE → REMOVE_NOTE, UNBLOCK_TASK → COMPLETE_TASK, UPDATE_MAINTENANCE_THRESHOLD → UPDATE_PIPELINE_CONFIG, TOGGLE_EXTRACTION_CATEGORY → TOGGLE_FEATURE, INGEST_SOURCE → SET_SOURCE_STATUS). Fully right: 8 gained, 12 lost. On the 51 items both got the op right, args exact 39 (E8) vs 40 (E10); on the 29 with refs, 25 vs 23.
-- **Remaining misses (E10, 22, all siblings in the list):** most are within the targeted groups (wbs goal/dependency ops ×4, moc text ops ×2, project status/deliverable/reference ops ×4, the vault-config toggles ×3, pipeline task ops ×2, source ×1, note lifecycle ×2). Args misses: `SET_METADATA_FIELD.value` ×2, `INGEST_SOURCE` `sourceType`/`author`/`url`, and single date, sort-order, enum-phase, meant-but-unnamed `assignee`, `parentRef` and span misses.
+- **Remaining misses (E10, 22, all siblings in the list):** most are within the targeted groups (wbs goal, dependency and note ops ×5, moc ops ×4, project status/deliverable/reference ops ×4, vault-config ×3, pipeline task ops ×2, knowledge-note ×2, source ×1, observation ×1). Args misses: `SET_METADATA_FIELD.value` ×2, `INGEST_SOURCE` `sourceType`/`author`/`url`, and single date, sort-order, enum-phase, meant-but-unnamed `assignee`, `parentRef` and span misses.
 
 **E10 on held-out-3 (second use; secondary):**
 
