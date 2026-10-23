@@ -52,3 +52,25 @@ Scoring: STRICT is primary and NORMALISED (trailing punctuation) is secondary. T
 - **Pipeline fixes for arguments** (from X6): relative dates need today's date; open-question, list and sort-order candidates are needed.
 - **Final step:** a single run of the winner on held-out-6.
 - **Browser cost of C2:** Kev Q4 adds 530 MB, and it needs a second wllama instance (WebGPU latency is unverified).
+
+## UPDATE: held-out-5 blind run 1 is DONE (results in `exp-2026-10-23/heldout5-run1-RESULTS.md`)
+
+| held-out-5 (165 single-action + 15 none) | C1 LoRA | C2 LoRA×Kev + ship args | C3 = C2 + gate |
+|---|---|---|---|
+| Op one-shot | 135 (81.8%) | **146 (88.5%)** | 146 |
+| Fully correct, STRICT (base / ship args) | 104 / 111 | 111 / **118** | effective 121 / 128 |
+| Gold among choices / ask rate | – | – | **97.0% / 24.4%** |
+| Wrong dispatches | 33 | 22 | 6 |
+
+- **Pre-registered hypotheses:**
+  - H1 (C2 > C1 on op accuracy) holds: one-sided McNemar p=0.0064, with 14 items fixed and 3 broken.
+  - H3 (all three gate bars) holds.
+- **Where the gain is:** all of it is on `messy` wording (70 → 81 of 98). On `plain` wording C1 and C2 are identical (65/67).
+- **Arguments are now the bottleneck.** Given the right op, args are exact on 124 (base) or 131 (ship) of 165. The ship patch's first out-of-sample test: +10 / −3.
+- **Not yet at 90% one-shot.** Remaining levers:
+  - a fine-tuned Kev;
+  - the X1 1.2B LoRA;
+  - X5 paraphrase data;
+  - argument pipeline fixes.
+
+  Every later comparison on held-out-5 counts as a further reuse of that set. Keep held-out-6 for the final run.
