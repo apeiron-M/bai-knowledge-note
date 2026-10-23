@@ -1,113 +1,144 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { generateId } from "document-model/core";
 import type { Action } from "document-model";
+import { loadLlm, type LlmClient, type LlmInfo } from "../chat/core/index.js";
 import {
-  loadLlm,
-  type CatalogEntry,
-  type LlmClient,
-  type LlmInfo,
-} from "../chat/core/index.js";
+  resolveModelSource,
+  type ResolvedModel,
+} from "../chat/core/model-source.js";
 import type { ScoreCache } from "../chat/core/op-scorer.js";
 import {
-  loadV1Runtime,
+  driveRefContext,
+  refCandidatesFor,
+  type ChatDocument,
+} from "../chat/core/ref-candidates.js";
+import {
   runV1,
   v1Action,
+  v1Catalog,
   type RefCandidates,
   type V1Result,
-  type V1Runtime,
 } from "../chat/core/v1-pipeline.js";
-import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 
 export type ChatLlmStatus = "idle" | "loading" | "ready" | "error";
 
 export interface ProposedAction {
   result: Extract<V1Result, { kind: "action" }>;
+  /** The document the action targets. */
+  doc: ChatDocument;
+  /** The labeled ref candidates step 2 saw, by dotted path. */
+  refs: RefCandidates;
   /** Present when the args built a zod-valid action. */
   action?: Action;
   error?: string;
 }
 
 export type ChatReply =
-  | { kind: "answer"; text: string; result: V1Result }
+  | { kind: "answer"; text: string; result: V1Result | null }
   | { kind: "proposal"; proposal: ProposedAction };
 
 export interface ChatLoadInfo {
   llm: LlmInfo;
-  /** gte-small import + model load (first load in this page), ms. */
-  embedderLoadMs: number;
   /** Wall time of this `ensureLoaded` call, ms. */
   wallMs: number;
 }
 
-export const NOTE_DOC_TYPE = "bai/knowledge-note";
+/** localStorage key of the tab's model URL setting. */
+export const MODEL_URL_KEY = "bai.chat.modelUrl";
 
-// One model per page: switching tabs must not reload 229 MB.
-let clientPromise: Promise<LlmClient> | null = null;
-// Content-free ref-scoring requests, reused for the whole page.
-const scoreCache: ScoreCache = new Map();
+function readSetting(): string | null {
+  try {
+    return globalThis.localStorage.getItem(MODEL_URL_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function saveModelUrlSetting(url: string): void {
+  try {
+    if (url.trim()) globalThis.localStorage.setItem(MODEL_URL_KEY, url.trim());
+    else globalThis.localStorage.removeItem(MODEL_URL_KEY);
+  } catch {
+    // Storage blocked: the setting lasts for this page only.
+  }
+}
+
+/** `VITE_CHAT_MODEL_URL`, when the host's Vite exposes it to this package. */
+function envModelUrl(): string | undefined {
+  const meta = import.meta as ImportMeta & {
+    env?: Record<string, string | undefined>;
+  };
+  return meta.env?.VITE_CHAT_MODEL_URL;
+}
+
+// One model per page: switching tabs must not reload 229 MB. Content-free
+// ref-scoring requests depend on the model, so the cache goes with it.
+let loaded: {
+  key: string;
+  client: Promise<LlmClient>;
+  cache: ScoreCache;
+} | null = null;
 
 function hasWebGpu(): boolean {
   return typeof navigator !== "undefined" && "gpu" in navigator;
 }
 
-/** The note's referenceable items for an op, labeled for step 2. */
-export function noteRefCandidates(
-  entry: CatalogEntry,
-  note: KnowledgeNoteInfo,
-): RefCandidates {
-  if (entry.opName === "REMOVE_TOPIC")
-    return { id: note.topics.map((t) => ({ id: t.id, label: t.name })) };
-  if (entry.opName === "REMOVE_LINK" || entry.opName === "UPDATE_LINK_TYPE")
-    return {
-      id: note.links.map((l) => ({
-        id: l.id,
-        label: l.targetTitle ?? l.targetDocumentId,
-      })),
-    };
-  return {};
-}
-
 export function useChatLlm() {
+  const [setting, setSetting] = useState<string | null>(readSetting);
+  const model: ResolvedModel = useMemo(
+    () => resolveModelSource(setting, envModelUrl()),
+    [setting],
+  );
   const [status, setStatus] = useState<ChatLlmStatus>(
-    clientPromise ? "ready" : "idle",
+    loaded?.key === model.key ? "ready" : "idle",
   );
   const [progress, setProgress] = useState(0);
   const [load, setLoad] = useState<ChatLoadInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /** wllama + LFM2.5 and the v1 runtime (gte-small, op index), in parallel. */
-  const ensureLoaded = useCallback(async (): Promise<{
-    client: LlmClient;
-    runtime: V1Runtime;
-  }> => {
+  const setModelUrl = useCallback((url: string) => {
+    saveModelUrlSetting(url);
+    setSetting(url.trim() || null);
+    setStatus("idle");
+    setLoad(null);
+  }, []);
+
+  /** wllama + the chosen GGUF (the R2c default needs no embedder). */
+  const ensureLoaded = useCallback(async () => {
     const t0 = performance.now();
-    if (!clientPromise) {
+    if (loaded?.key !== model.key) {
+      const old = loaded;
       setStatus("loading");
-      clientPromise = loadLlm({
-        backend: hasWebGpu() ? "webgpu" : "cpu",
-        onProgress: (loaded, total) => setProgress(total ? loaded / total : 0),
-      });
+      setError(null);
+      const src = model.source;
+      loaded = {
+        key: model.key,
+        cache: new Map(),
+        client: (async () => {
+          if (old) await (await old.client.catch(() => null))?.exit();
+          return loadLlm({
+            backend: hasWebGpu() ? "webgpu" : "cpu",
+            onProgress: (l, t) => setProgress(t ? l / t : 0),
+            ...(src.kind === "url"
+              ? { modelUrl: src.url }
+              : { model: { repo: src.repo, file: src.file } }),
+          });
+        })(),
+      };
     }
+    const mine = loaded;
     try {
-      const [client, runtime] = await Promise.all([
-        clientPromise,
-        loadV1Runtime(),
-      ]);
-      setLoad({
-        llm: client.info,
-        embedderLoadMs: runtime.embedderLoadMs,
-        wallMs: performance.now() - t0,
-      });
+      const client = await mine.client;
+      setLoad({ llm: client.info, wallMs: performance.now() - t0 });
       setStatus("ready");
-      return { client, runtime };
+      return { client, cache: mine.cache };
     } catch (err) {
-      clientPromise = null;
-      const msg = err instanceof Error ? err.message : String(err);
-      setError(msg);
+      if (loaded === mine) loaded = null;
+      setError(err instanceof Error ? err.message : String(err));
       setStatus("error");
       throw err;
     }
-  }, []);
+  }, [model]);
 
   /** Plain answer for a request that changes nothing (Q&A stub). */
   const answer = useCallback(async (client: LlmClient, question: string) => {
@@ -126,22 +157,37 @@ export function useChatLlm() {
     return r.text;
   }, []);
 
+  /** A question with no target document: answered, nothing dispatched. */
+  const ask = useCallback(
+    async (utterance: string): Promise<ChatReply> => {
+      const { client } = await ensureLoaded();
+      return { kind: "answer", text: await answer(client, utterance), result: null };
+    },
+    [answer, ensureLoaded],
+  );
+
   /**
-   * The v1 pipeline on the selected note: a no-action request is answered,
+   * The v1 pipeline (R2c) on `doc`: the model's no-action is answered,
    * anything else becomes one proposed action (confirm before dispatch).
    */
   const send = useCallback(
-    async (utterance: string, note: KnowledgeNoteInfo): Promise<ChatReply> => {
-      const { client, runtime } = await ensureLoaded();
+    async (
+      utterance: string,
+      doc: ChatDocument,
+      documents: ChatDocument[],
+    ): Promise<ChatReply> => {
+      const { client, cache } = await ensureLoaded();
+      const ctx = driveRefContext(doc, documents);
+      let refs: RefCandidates = {};
       const result = await runV1(
         utterance,
-        NOTE_DOC_TYPE,
-        (entry) => noteRefCandidates(entry, note),
+        doc.docType,
+        (entry) => (refs = refCandidatesFor(entry.key, doc.state, ctx)),
         {
-          runtime,
+          runtime: { catalog: v1Catalog() },
           completeJson: client.completeJson,
           scoreText: client.scoreText,
-          cache: scoreCache,
+          cache,
         },
       );
       if (result.kind === "no-action")
@@ -159,12 +205,22 @@ export function useChatLlm() {
       return {
         kind: "proposal",
         proposal: built.ok
-          ? { result, action: built.action }
-          : { result, error: built.error },
+          ? { result, doc, refs, action: built.action }
+          : { result, doc, refs, error: built.error },
       };
     },
     [answer, ensureLoaded],
   );
 
-  return { status, progress, load, error, ensureLoaded, send };
+  return {
+    status,
+    progress,
+    load,
+    error,
+    model,
+    setModelUrl,
+    ensureLoaded,
+    send,
+    ask,
+  };
 }

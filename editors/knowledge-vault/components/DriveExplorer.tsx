@@ -402,7 +402,7 @@ export function DriveExplorer({ children }: EditorProps) {
           ) : viewMode === "health" ? (
             <HealthDashboard />
           ) : viewMode === "chat" ? (
-            <ChatView notes={notes} />
+            <ChatView documents={documents ?? []} />
           ) : (
             <NoteList notes={notes} />
           )}

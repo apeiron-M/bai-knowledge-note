@@ -141,7 +141,7 @@ function noteBase(r: Rng, t: Theme, nTopics: number, nLinks: number, extraNotes 
   );
   return { fixture, ctx };
 }
-// Mirrors `noteRefCandidates` (hooks/use-chat-llm.ts): topic name, link title.
+// Mirrored by the runtime (chat/core/ref-candidates.ts): topic name, link title.
 const noteTopics: Extract = (s) =>
   recs(s.topics).map((x) => ({ id: str(x.id), label: str(x.name) }));
 const noteLinks: Extract = (s) =>

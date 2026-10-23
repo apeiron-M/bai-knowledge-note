@@ -1,34 +1,50 @@
+import { readableOpName } from "../chat/core/op-scorer.js";
+import { documentTypeName } from "../chat/core/target-document.js";
 import type { ProposedAction } from "../hooks/use-chat-llm.js";
 
 interface ChatProposalCardProps {
   proposal: ProposedAction;
-  targetTitle: string;
   dispatching: boolean;
   onConfirm: () => void;
-  onDiscard: () => void;
+  onCancel: () => void;
+}
+
+function sentenceCase(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function show(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  return JSON.stringify(v);
+}
+
+/** The args the model filled, with ref ids shown with their labels. */
+function argRows(p: ProposedAction): [string, string][] {
+  const args = p.result.step2.args ?? {};
+  return Object.entries(args).map(([k, v]) => {
+    const cands = Object.entries(p.refs).find(([path]) => path === k)?.[1];
+    if (!cands) return [k, show(v)];
+    const label = (id: unknown) => {
+      const c = cands.find((x) => x.id === id);
+      return c?.label ? `${c.label} (${show(id)})` : show(id);
+    };
+    return [k, Array.isArray(v) ? v.map(label).join(", ") : label(v)];
+  });
 }
 
 export function ChatProposalCard({
   proposal,
-  targetTitle,
   dispatching,
   onConfirm,
-  onDiscard,
+  onCancel,
 }: ChatProposalCardProps) {
-  const { result, action, error } = proposal;
-  const { entry, step2 } = result;
-  const runnersUp = result.hits
-    .slice(0, 3)
-    .map((h) => `${h.entry.opName} ${h.score.toFixed(3)}`)
-    .join(" · ");
-  const refChoice =
-    step2.refField && step2.refScores
-      ? Object.entries(step2.refScores)
-          .map(([label, s]) => `${label} ${s.toFixed(2)}`)
-          .join(" · ")
-      : null;
+  const { result, action, error, doc } = proposal;
+  const { entry, step1 } = result;
+  const rows = argRows(proposal);
   return (
     <div
+      data-testid="chat-proposal"
       className="rounded-md p-3 text-xs"
       style={{
         border: "1px solid var(--bai-border)",
@@ -36,36 +52,68 @@ export function ChatProposalCard({
       }}
     >
       <div
-        className="mb-1 font-semibold"
+        className="mb-1 text-sm font-semibold"
         style={{ color: "var(--bai-accent)" }}
       >
-        Proposed action: {entry.opName}
+        {sentenceCase(readableOpName(entry.opName))}
       </div>
       <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
-        {entry.description} &middot; target: {targetTitle}
+        on <strong>{doc.title}</strong> ({documentTypeName(doc.docType)})
+        {" · "}
+        <code>{entry.opName}</code>
+        {step1 && ` · picked from ${step1.candidates.length} operations`}
       </div>
-      <div className="mb-1" style={{ color: "var(--bai-text-muted)" }}>
-        Op by embedding ({result.promptFormat}): {runnersUp}
-      </div>
-      {refChoice && (
-        <div className="mb-1" style={{ color: "var(--bai-text-muted)" }}>
-          {step2.refField} by label score: {refChoice}
+      {entry.description && (
+        <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
+          {entry.description}
         </div>
       )}
-      <pre
-        className="mb-2 overflow-auto rounded p-2"
-        style={{
-          backgroundColor: "var(--bai-hover)",
-          color: "var(--bai-text-secondary)",
-        }}
-      >
-        {JSON.stringify(action?.input ?? step2.args, null, 2)}
-      </pre>
+      {rows.length > 0 ? (
+        <table className="mb-2 w-full">
+          <tbody>
+            {rows.map(([k, v]) => (
+              <tr key={k}>
+                <td
+                  className="pr-3 align-top"
+                  style={{ color: "var(--bai-text-muted)" }}
+                >
+                  {k}
+                </td>
+                <td
+                  className="whitespace-pre-wrap"
+                  style={{ color: "var(--bai-text-secondary)" }}
+                >
+                  {v}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
+          No arguments to fill.
+        </div>
+      )}
+      <details className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
+        <summary className="cursor-pointer">Action input</summary>
+        <pre
+          className="mt-1 overflow-auto rounded p-2"
+          style={{
+            backgroundColor: "var(--bai-hover)",
+            color: "var(--bai-text-secondary)",
+          }}
+        >
+          {JSON.stringify(action?.input ?? result.step2.args, null, 2)}
+        </pre>
+      </details>
       {error && (
         <div className="mb-2" style={{ color: "#ef4444" }}>
-          {error}
+          Can't build this action: {error}
         </div>
       )}
+      <div className="mb-2" style={{ color: "#d97706" }}>
+        Local model, may be wrong: check before confirming.
+      </div>
       <div className="flex gap-2">
         <button
           type="button"
@@ -81,11 +129,15 @@ export function ChatProposalCard({
         </button>
         <button
           type="button"
-          onClick={onDiscard}
+          disabled={dispatching}
+          onClick={onCancel}
           className="rounded-md px-3 py-1"
-          style={{ color: "var(--bai-text-tertiary)" }}
+          style={{
+            border: "1px solid var(--bai-border)",
+            color: "var(--bai-text-tertiary)",
+          }}
         >
-          Discard
+          Cancel
         </button>
       </div>
     </div>
