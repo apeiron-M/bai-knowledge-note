@@ -1644,3 +1644,91 @@ Each configuration ran once (WebGPU, Apple `metal-3`, one page; no errors, no re
   3. **Give step 1 more than the op key:** the R2c list shows only keys; a one-line description of each candidate in the step-1 prompt (a format change, r6.2) would let the model use the distinction the catalog already states, for example orientation vs description. That needs a re-render, a retrain and a fresh blind set.
   4. **Larger base model:** if the 350M model cannot hold the distinctions, try the next size up within the latency budget (E10's median is 411 ms).
   5. **For v1 now:** keep the Round 8 LoRA with R2c; Round 10's LoRA is not better.
+
+## v1 default (2026-10-22)
+
+**Goal:** make the Chat tab run the best measured setup, verify it end to end in Connect, and stop the tab from guessing when it has no document. Best measured setup: the Round 8 LoRA in Round 9's R2c pipeline, at 85.9% op on held-out-3 and 80.8% on held-out-4. No held-out set was run in this round.
+
+### What changed
+
+| Commit | Change |
+|---|---|
+| `b97299cc` | **R2c is `runV1`'s default** (`V1_DEFAULT_STEP1`). Step 1 is a model call over every global op of the document's model, in catalog order, under the alternation grammar of those keys plus `{"ops": []}`. There is no pre-gate, and the model's own `{"ops": []}` means no-action (`reason: "model"`). Step 2 is unchanged: safe gate, label-scored refs. Under R2c the utterance is not embedded at all, because the embedding is not on its decision path. The round 6/7 pipeline (G3 gate, then gte-small top-1) is `{step1: V1_EMBEDDING_TOP1}`; the other round 9 lists are `{kind: "model", candidates, preGate}`. `step1Grammar` and `step1Pick` moved from the harness into `chat/core/step1-candidates.ts`. The harness's `v1Pipeline` entry now runs R2c by default. |
+| `5698ad45` | **Ref candidates from document state** (`chat/core/ref-candidates.ts`). `refCandidatesFor(op, state, ctx)` covers all 44 ref ops of the training recipes (`training/gen/ref-scenarios.ts`) with the same label conventions: goal description, member name, deliverable title, task target, topic name, link title. `driveRefContext` lists other notes, plans and projects in the drive, plus a project's linked-plan goals. |
+| `b4c1889a` | **A target document is required** (`chat/core/target-document.ts`). The target is the picked document if the chat has ops for its type. If nothing is picked, it is the one supported document whose title the request names as a whole phrase. Otherwise the chat asks the user to pick one and lists each document with its type. A question with no target (`looksLikeQuestion`) goes to the answer path. With a target there is no question rule: R2c decides. |
+| `fa7ea95a` | **The tab.** The picker covers every drive document whose type has ops, labelled with its type. Refs come from `refCandidatesFor` instead of the note-only extractor. gte-small is no longer loaded. The model URL is configurable. The proposal card shows the readable op, the target document and its type, the args with ref labels, the raw input folded away, Confirm and Cancel, and the note "Local model, may be wrong: check before confirming." A dispatch failure shows in red ("Dispatch failed: … Nothing was changed."). The vault's own `--bai-*` styled elements are used, as in the rest of the tab; the design-system components in use here are Connect-shell ones (toolbar, breadcrumbs) and do not take the vault theme. |
+
+- **Agreement with training** (`tests/unit/chat-v1-pipeline.test.ts`):
+  - for all 12 models, the served step-1 list equals the training renderer's `scopedCandidates`;
+  - the step-1 messages and grammar `runV1` sends equal `step1Prompt`'s bytes.
+  - `tests/unit/chat-ref-candidates.test.ts` replays each training recipe's seeded states (3 seeds) and compares them with `candidatesFor`.
+  - The r6.1 prompt bytes are unchanged, and `chat-prompt-format.test.ts` passes.
+- **Not run:** the harness dev smoke of the new default with the Round 8 GGUF, which should reproduce Round 9's R2c dev numbers (46/49 op). The byte-equality tests above are the evidence that the code path is the same.
+
+### Model source and how to load the fine-tune
+
+- **Order of precedence:**
+  1. the tab's setting: Chat tab → model line → "GGUF URL" → Use, saved in `localStorage` as `bai.chat.modelUrl`;
+  2. `VITE_CHAT_MODEL_URL`;
+  3. the base model from Hugging Face (`LiquidAI/LFM2.5-350M-GGUF` Q4_K_M), as before.
+- **Label:** the line shows which model is loaded:
+  - "Round 8 fine-tune: <file> (from <host>)" when the file name starts with `LFM2.5-350M-vault-r8a-20261022`;
+  - "Custom GGUF: …" for any other URL;
+  - "Base model: …" for the default.
+  - Any model other than the Round 8 GGUF carries the warning "not measured with this pipeline; expect more wrong proposals". **Base + R2c was never measured.** The closest data point is Round 8's base-model dev smoke, C3 16/30 op.
+- **Loading:** a URL model loads with `loadModelFromUrl`, OPFS cache off, the same as the harness. Each model gets its own client and its own ref-score cache.
+- **`VITE_CHAT_MODEL_URL` was not verified under `ph connect studio`.** The variable is read via `import.meta.env` when the host's Vite exposes it, but Connect's Vite uses its own `envDir`. Use the tab setting.
+- **Serving the Round 8 GGUF to Connect (dev):** no extra server is needed. Studio's Vite serves repo paths at the root, so set the URL to `/training/artifacts/round8/gguf/LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf`.
+  - `curl -I` returned 200 with `Content-Length: 229312224`, and a `Range: bytes=0-1023` request returned 206.
+  - The file is gitignored and is only served by the Vite dev path. A built package (`dist/`) does not contain it.
+- **CSP:** the page CSP is unchanged: `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://registry.vetra.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self';`. It has no `connect-src` or `default-src`, so `fetch` to any origin is allowed by CSP. A GGUF on another host only needs CORS (`Access-Control-Allow-Origin` for the Connect origin) and Range support.
+- **Hosting the fine-tune is open (user decision).** Until it has a public host, the default stays the base model.
+
+### Connect end to end (`ph connect studio --port 3100`, Vite dev path, Round 8 GGUF)
+
+Setup: the drive "Chat E2E Vault", with the note "CRDT merge semantics" from Rounds 3 and 7. A new project "Rooftop beehives" was created through its editor, with deliverables "Hive inspection checklist" and "Volunteer rota for June". The model URL was set in the tab. Screenshots are in the session scratchpad `v1-check/`.
+
+| Check | Request | Result |
+|---|---|---|
+| (d) no document | "tag it with eventual consistency", nothing picked | Asked "Which document should this change?" and listed the 5 supported documents with their types. No model load, no dispatch. |
+| (c) question, no document | "what is a CRDT?" | "No target document; answering the question." The model answered correctly. No dispatch. |
+| (a) note, Confirm | "tag this note with eventual consistency" on the note | Proposal: Add topic, `name: "eventual consistency"`, picked from 18 operations. Round 7's base model cut this span to `"eventual"`. Confirm gave `Dispatched ADD_TOPIC to "CRDT merge semantics".` The editor shows the chip, and revision history shows revision 4, `ADD_TOPIC`, "1/1 signature verified", "No errors". |
+| (c) question on the note | "what does this note say about merge conflicts?" | "No document change (the model chose no document change); answering." The answer was vague: the answer path gets no note content. No dispatch. |
+| (e) Cancel | "add the topic replication" on the note | Proposal: ADD_TOPIC `name: "replication"`. Cancel gave "Cancelled ADD_TOPIC; nothing dispatched." History still ends at revision 4, and there is no `replication` chip. |
+| (b) project, ref | "the volunteer rota is delivered" on the project | Proposal: Set deliverable status, `id: Volunteer rota for June (b1b122d4-…)`, `status: DELIVERED`, picked from 16 operations. Confirm gave `Dispatched SET_DELIVERABLE_STATUS to "Rooftop beehives".` History shows revision 4, `SET_DELIVERABLE_STATUS`, no errors. The editor shows "DELIVERABLES (1/2)", with the rota Delivered. |
+| title tie, Cancel | "in Rooftop beehives, the hive inspection checklist is in progress now", nothing picked | `Target: "Rooftop beehives" (named in the request).` Proposal: SET_DELIVERABLE_STATUS, `id: Hive inspection checklist`, `status: IN_PROGRESS`. Cancel dispatched nothing. |
+
+Every proposal in this session was right: op, args and refs.
+
+**Load times:**
+
+| | First load in the page | After a full reload |
+|---|---|---|
+| wllama `loadMs` (webgpu, GGUF from `localhost:3100`, OPFS off) | 1 085 ms | 683 ms |
+| Send → proposal card, model already loaded (step 1 + step 2) | 377 ms | – |
+| Send → proposal card, including the model load | – | 1 548 ms |
+
+**Console and network:**
+
+- **No CSP violation.** The only errors and warnings were the known ones:
+  - `localhost:4001` connection refusals (no Switchboard), with the `[useGraphSearch]` / `[useGraphMetadata]` warnings;
+  - the form-field id/name issues.
+- **Requests:**
+  - the GGUF `HEAD` (200) on `localhost:3100` and `/vendor/wllama/3.8.1/wllama.wasm`;
+  - no request to `huggingface.co` or `cdn.jsdelivr.net`;
+  - no gte-small or onnxruntime asset, since the R2c tab no longer loads the embedder;
+  - `crossOriginIsolated` false, as before.
+
+**Not exercised:** a real dispatch failure. The red error path shows the reactor's errors, or "the reactor returned no result", and is covered only by code review.
+
+### Checks
+
+- `npx tsc --incremental false --noEmit`: 203 errors before and after; the sorted lists are identical.
+- `npm test` (vitest, excluding the two `kysely-pglite-dialect` suites, which cannot resolve that package): 64 files passed, 1 skipped, 455 tests passed, 6 skipped. Chat and training suites: 16 files, 176 tests.
+- oxlint 1.70.0 (`--type-aware --type-check`, from the npx cache with `oxlint-tsgolint`): no diagnostics on the changed files, apart from an unused `pipelineExists` in `DriveExplorer.tsx` that predates this round.
+
+### Still open
+
+- **Model hosting** for the Round 8 GGUF (229,312,224 B, sha256 `6930e31e…510e00`). This needs a host that sends CORS and Range headers. Licence checks for redistributing a derivative are still open (training README).
+- **The answer path is not grounded:** it does not see the target document.
+- `VITE_CHAT_MODEL_URL` under Connect studio, and the harness dev smoke of the new default.

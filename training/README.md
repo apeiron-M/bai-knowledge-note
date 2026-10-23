@@ -555,11 +555,12 @@ $P training/py/r10_report.py --groups training/data/round10/sibling-groups.json 
 3. **The user** reviews pilot 2 (above) and approves the full run. `run` refuses more than 200 requests unless `--max-requests` is raised. Ref ops are supported. The teacher's output schemas come from `export-teacher-context.ts`, which carries the canonical vocabularies as enums (for example `taskType: "claim" | "enrichment"`). Before the full run:
    - Per-call state seeding: done (round 8).
    - Two-sided op-word quota, the question form axis and `--batch-size`: done and measured ("Teacher batch-size comparison"). The recommendation is generation batch 10 and label batch 8.
-   - Decide the runtime's ref labels for non-note models.
+   - Runtime ref labels for non-note models: done ("v1 default" in the results doc; `chat/core/ref-candidates.ts` mirrors the recipes, with a parity test).
    - Decide `requireOneOf` with an optional ref (UPDATE_DELIVERABLE).
-4. **Round 10's targeted retrain did not beat Round 8** (results doc). More teacher rows of the same kind are not the lever; the doc's verdict lists the next options (wording from other writers, op descriptions in the step-1 prompt, a larger base).
-5. **The first real training run is done (round 8).** Before scaling the data, the results doc's verdict lists cheaper steps: no G3 gate in front of a LoRA step 1, step 1 over all ops of the model (removing the top-5 retrieval ceiling), and relaxing the safe gate for meant-but-unnamed person fields.
-6. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
+4. **The Chat tab runs R2c by default** ("v1 default" in the results doc). To use the Round 8 fine-tune in `ph connect studio`, set the tab's model URL to `/training/artifacts/round8/gguf/LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf` (Vite serves it from the repo). Hosting the GGUF publicly is still open.
+5. **Round 10's targeted retrain did not beat Round 8** (results doc). More teacher rows of the same kind are not the lever; the doc's verdict lists the next options (wording from other writers, op descriptions in the step-1 prompt, a larger base).
+6. **The first real training run is done (round 8).** Before scaling the data, the results doc's verdict lists cheaper steps: no G3 gate in front of a LoRA step 1, step 1 over all ops of the model (removing the top-5 retrieval ceiling), and relaxing the safe gate for meant-but-unnamed person fields.
+7. **Open format question:** the safe gate drops meant-but-unnamed optional fields (see Re-render). Rows that hit it are not trainable as the format stands.
 
 **Not done here:**
 - The in-browser wllama parity check (`createCompletion(prompt, grammar)` against `createChatCompletion`), because Chrome was off-limits.
