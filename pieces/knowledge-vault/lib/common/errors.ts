@@ -111,6 +111,29 @@ export function readErrorBody(body: unknown): { message?: string; code?: string 
   return { message: message?.trim(), code };
 }
 
+/**
+ * How to bring back a token whose Renown login lapsed. The login, not the
+ * token, is what expires first: `ph login` binds the directory's key
+ * (.ph/.keypair.json) to the wallet for 7 days, and the Switchboard checks that
+ * binding on every request, so a token minted with `--expiry 90d` stops after
+ * 7 days too. Renewing the login renews the binding for the same key, and every
+ * token that key signed works again with nothing to re-paste.
+ */
+export const RENEW_LOGIN =
+  "A `ph login` lasts 7 days, whatever the token's own expiry. Run `ph login` again in the directory that minted the token and the same token works again; if that key is gone, mint a new one with `ph access-token --expiry 90d` and paste it into the connection.";
+
+/** The run error for that 401, which on its own reads like a bad token. */
+export const LAPSED_LOGIN_MESSAGE = `Credentials no longer valid: the Renown login that signed this token has lapsed. ${RENEW_LOGIN}`;
+
+/**
+ * The Switchboard's 401 when Renown no longer vouches for the token's key
+ * (reactor-api AuthService). An unverifiable token answers "Authentication
+ * failed" instead.
+ */
+export function isLapsedLogin(message: string | undefined): boolean {
+  return message !== undefined && /credentials no longer valid/i.test(message);
+}
+
 /** The text of anything thrown, for placeholders and messages. */
 export function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
