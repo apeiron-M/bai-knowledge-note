@@ -74,3 +74,12 @@ Scoring: STRICT is primary and NORMALISED (trailing punctuation) is secondary. T
   - argument pipeline fixes.
 
   Every later comparison on held-out-5 counts as a further reuse of that set. Keep held-out-6 for the final run.
+
+## UPDATE: X5 stopped on an expired login
+
+The labelling pass stopped when `claude -p` lost its login. The user has since re-logged in.
+
+- **Generation:** finished, 584 requests, with 0 prompt leaks against held-out-5/6.
+- **Labelling:** 504 of 584 rows done, in `training/artifacts/round11-para/full/chain/label-results.jsonl.partial.jsonl`.
+- **To resume:** re-run the label step; it is resumable. Then run the validation chain, merge with the Round 10 kept rows, and train on Constantine.
+- **Uncommitted code:** `training/round11-para/` is untracked. Review it, then commit.
