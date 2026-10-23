@@ -1,0 +1,980 @@
+diff -ruN a/editors/knowledge-vault/chat/core/args-step.ts b/editors/knowledge-vault/chat/core/args-step.ts
+--- a/editors/knowledge-vault/chat/core/args-step.ts	2026-10-23 14:08:27
++++ b/editors/knowledge-vault/chat/core/args-step.ts	2026-10-23 14:08:27
+@@ -21,7 +21,9 @@
+   type GateMode,
+   type RefCandidate,
+ } from "./args-grammar.js";
++import { resolveDate } from "./date-resolve.js";
+ import { argsSignature } from "./generator.js";
++import { completeLists, type CurrentList } from "./list-completion.js";
+ import type { CompleteJson, ScoreText } from "./llm-client.js";
+ import {
+   buildModelSchema,
+@@ -202,6 +204,13 @@
+    */
+   requireNamed?: boolean;
+   fixNamedEnums?: boolean;
++  /**
++   * X9: today's date (`YYYY-MM-DD`). When the op has one date field and the
++   * request names one date (`resolveDate`), the field is fixed to it.
++   */
++  today?: string;
++  /** X9: the document's current lists for fields the op replaces whole. */
++  currentLists?: Record<string, CurrentList>;
+ }
+ 
+ export interface ArgsStepResult {
+@@ -219,6 +228,10 @@
+   refCfMs: number;
+   genMs: number;
+   refRequests: ScoredRequest[];
++  /** X9: the resolved date the date field was fixed to. */
++  dateFixed?: string | null;
++  /** X9: list paths completed from `currentLists`. */
++  listsCompleted?: string[];
+ }
+ 
+ /** Ref labels for a path (unique, in order) from labeled candidates. */
+@@ -371,19 +384,32 @@
+   return { ...schema, properties: out };
+ }
+ 
++/** Root date and date-time fields of a model schema. */
++export function dateFields(schema: JsonSchema): string[] {
++  const props = isRecord(schema.properties) ? schema.properties : {};
++  return Object.keys(props).filter((k) => {
++    const v = nonNull(props[k]);
++    return (
++      isRecord(v) &&
++      v.type === "string" &&
++      (v.format === "date-time" || v.format === "date")
++    );
++  });
++}
++
+ export async function fillArgsStep(
+   utterance: string,
+   entry: CatalogEntry,
+   refCandidates: Record<string, { id: string; label?: string | null }[]>,
+   opts: ArgsStepOptions,
+ ): Promise<ArgsStepResult> {
+-  const p = prepareArgsStep(
+-    utterance,
+-    entry,
+-    refCandidates,
+-    opts.gate,
+-    opts.alwaysOffer,
+-  );
++  const resolved = opts.today ? resolveDate(utterance, opts.today) : null;
++  const dates = resolved ? dateFields(buildModelSchema(entry)) : [];
++  const dateField = dates.length === 1 ? dates[0] : null;
++  const p = prepareArgsStep(utterance, entry, refCandidates, opts.gate, [
++    ...(opts.alwaysOffer ?? []),
++    ...(dateField ? [dateField] : []),
++  ]);
+   const { labeled, choices, schema, ordered, order, rootRefs } = p;
+   const base: ArgsStepResult = {
+     args: null,
+@@ -475,6 +501,18 @@
+       ...rootRefs,
+       ...(field ? [field] : []),
+     ]);
++  const fixedProps = isRecord(fixed.properties) ? fixed.properties : {};
++  if (resolved && dateField && dateField in fixedProps) {
++    fixed = {
++      ...fixed,
++      properties: {
++        ...fixedProps,
++        [dateField]: { type: "string", enum: [`${resolved}T00:00:00Z`] },
++      },
++    };
++    if (!mustHave.includes(dateField)) mustHave.push(dateField);
++    out.dateFixed = resolved;
++  }
+   const grammar = argsGrammar(fixed, utterance, {
+     spans: true,
+     first: p.first,
+@@ -490,7 +528,13 @@
+   out.genMs = r.wallMs;
+   out.grammar = grammar;
+   out.raw = r.text;
+-  if (isRecord(r.parsed)) out.args = mapRefLabels(r.parsed, labeled);
+-  else out.error = r.parseError ?? "not an object";
++  if (isRecord(r.parsed)) {
++    out.args = mapRefLabels(r.parsed, labeled);
++    if (opts.currentLists) {
++      const done = completeLists(out.args, opts.currentLists, utterance);
++      out.args = done.args;
++      out.listsCompleted = done.changed;
++    }
++  } else out.error = r.parseError ?? "not an object";
+   return out;
+ }
+diff -ruN a/editors/knowledge-vault/chat/core/date-resolve.ts b/editors/knowledge-vault/chat/core/date-resolve.ts
+--- a/editors/knowledge-vault/chat/core/date-resolve.ts	1969-12-31 18:00:00
++++ b/editors/knowledge-vault/chat/core/date-resolve.ts	2026-10-23 14:08:27
+@@ -0,0 +1,299 @@
++/**
++ * Deterministic dates for step 2 (X9): the LoRA saw no date in its step-2
++ * rows, so the request's date is resolved against `today` in code and the
++ * field's grammar narrowed to it; no date, or two different ones, resolve
++ * to nothing. A day and month without a year is the next one on or after
++ * today; `next <weekday>` is in next week (weeks start Monday), a bare
++ * weekday the first after today; `end of week` is its Friday; `end of …`
++ * is a period's last day, `next month|year` its first.
++ */
++
++const MONTHS = [
++  "january",
++  "february",
++  "march",
++  "april",
++  "may",
++  "june",
++  "july",
++  "august",
++  "september",
++  "october",
++  "november",
++  "december",
++];
++const MONTH_ABBR: Record<string, number> = {
++  jan: 0,
++  feb: 1,
++  mar: 2,
++  apr: 3,
++  jun: 5,
++  jul: 6,
++  aug: 7,
++  sep: 8,
++  sept: 8,
++  oct: 9,
++  nov: 10,
++  dec: 11,
++};
++const WEEKDAYS = [
++  "sunday",
++  "monday",
++  "tuesday",
++  "wednesday",
++  "thursday",
++  "friday",
++  "saturday",
++];
++const ORDINALS = [
++  "first",
++  "second",
++  "third",
++  "fourth",
++  "fifth",
++  "sixth",
++  "seventh",
++  "eighth",
++  "ninth",
++  "tenth",
++  "eleventh",
++  "twelfth",
++  "thirteenth",
++  "fourteenth",
++  "fifteenth",
++  "sixteenth",
++  "seventeenth",
++  "eighteenth",
++  "nineteenth",
++  "twentieth",
++];
++const COUNTS: Record<string, number> = {
++  a: 1,
++  an: 1,
++  one: 1,
++  two: 2,
++  three: 3,
++  four: 4,
++  five: 5,
++  six: 6,
++  seven: 7,
++  eight: 8,
++  nine: 9,
++  ten: 10,
++  eleven: 11,
++  twelve: 12,
++};
++
++interface Ymd {
++  y: number;
++  m: number; // 0-based
++  d: number;
++}
++
++const utc = (y: number, m: number, d: number) => new Date(Date.UTC(y, m, d));
++const ymd = (t: Date): Ymd => ({
++  y: t.getUTCFullYear(),
++  m: t.getUTCMonth(),
++  d: t.getUTCDate(),
++});
++const addDays = (t: Ymd, n: number) => ymd(utc(t.y, t.m, t.d + n));
++const lastOfMonth = (y: number, m: number): Ymd => ymd(utc(y, m + 1, 0));
++const cmp = (a: Ymd, b: Ymd) =>
++  utc(a.y, a.m, a.d).getTime() - utc(b.y, b.m, b.d).getTime();
++const iso = (t: Ymd) =>
++  `${String(t.y).padStart(4, "0")}-${String(t.m + 1).padStart(2, "0")}-${String(t.d).padStart(2, "0")}`;
++const weekday = (t: Ymd) => utc(t.y, t.m, t.d).getUTCDay();
++
++function addMonths(t: Ymd, n: number): Ymd {
++  const m = t.m + n;
++  const y = t.y + Math.floor(m / 12);
++  const mm = ((m % 12) + 12) % 12;
++  return { y, m: mm, d: Math.min(t.d, lastOfMonth(y, mm).d) };
++}
++
++/** Monday of the week containing `t`. */
++const mondayOf = (t: Ymd) => addDays(t, -((weekday(t) + 6) % 7));
++
++function validDay(y: number, m: number, d: number): boolean {
++  return d >= 1 && d <= lastOfMonth(y, m).d;
++}
++
++/** The next `m`/`d` on or after today, or in `year` when given. */
++function dayMonth(today: Ymd, m: number, d: number, year?: number): Ymd | null {
++  if (year !== undefined)
++    return validDay(year, m, d) ? { y: year, m, d } : null;
++  for (const y of [
++    today.y,
++    today.y + 1,
++    today.y + 2,
++    today.y + 3,
++    today.y + 4,
++  ]) {
++    if (!validDay(y, m, d)) continue;
++    const c = { y, m, d };
++    if (cmp(c, today) >= 0) return c;
++  }
++  return null;
++}
++
++function monthIndex(word: string): number | null {
++  const w = word.toLowerCase().replace(/\.$/, "");
++  const full = MONTHS.indexOf(w);
++  if (full >= 0) return full;
++  return w in MONTH_ABBR ? MONTH_ABBR[w] : null;
++}
++
++function dayNumber(word: string): number | null {
++  const w = word.toLowerCase();
++  const n = /^(\d{1,2})(st|nd|rd|th)?$/.exec(w);
++  if (n) return Number(n[1]);
++  const o = ORDINALS.indexOf(w);
++  if (o >= 0) return o + 1;
++  const tw =
++    /^(twenty|thirty)-?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)?$/.exec(
++      w,
++    );
++  if (tw && (tw[1] === "twenty" ? true : !tw[2] || tw[2] === "first"))
++    return (
++      (tw[1] === "twenty" ? 20 : 30) + (tw[2] ? ORDINALS.indexOf(tw[2]) + 1 : 0)
++    );
++  return null;
++}
++
++function parseToday(today: string): Ymd {
++  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(today);
++  if (!m) throw new Error(`today must be YYYY-MM-DD, got ${today}`);
++  return { y: Number(m[1]), m: Number(m[2]) - 1, d: Number(m[3]) };
++}
++
++/** Every date expression in `utterance`, resolved (distinct, ISO dates). */
++export function resolveDates(utterance: string, today: string): string[] {
++  const t = parseToday(today);
++  const text = utterance.toLowerCase().replace(/[’']/g, "'");
++  const found: Ymd[] = [];
++  const push = (x: Ymd | null) => {
++    if (x) found.push(x);
++  };
++  const MON = `(${MONTHS.join("|")}|${Object.keys(MONTH_ABBR).join("|")})\\.?(?![a-z])`;
++  const DAY = `(\\d{1,2}(?:st|nd|rd|th)?|${ORDINALS.join("|")}|(?:twenty|thirty)-?(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)?)`;
++  const YEAR = `(?:,?\\s+(\\d{4}))?`;
++  // Spans already consumed, so "end of March" is not also "March …".
++  const used: [number, number][] = [];
++  const free = (a: number, b: number) =>
++    used.every(([x, y]) => b <= x || a >= y);
++  const scan = (re: RegExp, f: (m: RegExpExecArray) => Ymd | null) => {
++    for (const m of text.matchAll(re)) {
++      const a = m.index ?? 0;
++      const b = a + m[0].length;
++      if (!free(a, b)) continue;
++      const r = f(m);
++      if (r) {
++        used.push([a, b]);
++        push(r);
++      }
++    }
++  };
++
++  // ISO dates.
++  scan(/\b(\d{4})-(\d{2})-(\d{2})\b/g, (m) => {
++    const y = Number(m[1]);
++    const mo = Number(m[2]) - 1;
++    const d = Number(m[3]);
++    return mo >= 0 && mo < 12 && validDay(y, mo, d) ? { y, m: mo, d } : null;
++  });
++  // end of …
++  scan(
++    /\bend of (?:the )?(this |next |the next )?(week|month|year|quarter)\b/g,
++    (m) => {
++      const next = Boolean(m[1]?.includes("next"));
++      switch (m[2]) {
++        case "week":
++          return addDays(mondayOf(t), (next ? 7 : 0) + 4);
++        case "month": {
++          const b = addMonths({ ...t, d: 1 }, next ? 1 : 0);
++          return lastOfMonth(b.y, b.m);
++        }
++        case "year":
++          return { y: t.y + (next ? 1 : 0), m: 11, d: 31 };
++        default: {
++          const q = Math.floor(t.m / 3) + (next ? 1 : 0);
++          const y = t.y + Math.floor(q / 4);
++          return lastOfMonth(y, (q % 4) * 3 + 2);
++        }
++      }
++    },
++  );
++  scan(
++    /\bend of (?:q([1-4])|the (first|second|third|fourth) quarter)\b/g,
++    (m) => {
++      const q = m[1]
++        ? Number(m[1]) - 1
++        : ["first", "second", "third", "fourth"].indexOf(m[2]);
++      const cand = lastOfMonth(t.y, q * 3 + 2);
++      return cmp(cand, t) >= 0 ? cand : lastOfMonth(t.y + 1, q * 3 + 2);
++    },
++  );
++  scan(new RegExp(`\\bend of ${MON}${YEAR}`, "g"), (m) => {
++    const mo = monthIndex(m[1]);
++    if (mo === null) return null;
++    const y = m[2] ? Number(m[2]) : undefined;
++    const last = (yy: number) => lastOfMonth(yy, mo);
++    if (y !== undefined) return last(y);
++    return cmp(last(t.y), t) >= 0 ? last(t.y) : last(t.y + 1);
++  });
++  // "<day> of <Month>", "<day> <Month>", "<Month> <day>".
++  scan(
++    new RegExp(`\\b(?:the )?${DAY} (?:of )?${MON}${YEAR}(?![a-z])`, "g"),
++    (m) => {
++      const d = dayNumber(m[1]);
++      const mo = monthIndex(m[2]);
++      if (d === null || mo === null) return null;
++      return dayMonth(t, mo, d, m[3] ? Number(m[3]) : undefined);
++    },
++  );
++  scan(new RegExp(`\\b${MON} (?:the )?${DAY}${YEAR}(?![a-z0-9])`, "g"), (m) => {
++    const mo = monthIndex(m[1]);
++    const d = dayNumber(m[2]);
++    if (d === null || mo === null) return null;
++    // "may" is also a verb: only with a numeric day ("may 3"), not "may third".
++    if (m[1] === "may" && !/^\d/.test(m[2])) return null;
++    return dayMonth(t, mo, d, m[3] ? Number(m[3]) : undefined);
++  });
++  // Relative days.
++  scan(/\b(?:the )?day after tomorrow\b/g, () => addDays(t, 2));
++  scan(/\btomorrow\b/g, () => addDays(t, 1));
++  scan(/\b(today|tonight)\b/g, () => t);
++  scan(/\bnext week\b/g, () => addDays(mondayOf(t), 7));
++  scan(/\bnext month\b/g, () => addMonths({ ...t, d: 1 }, 1));
++  scan(/\bnext year\b/g, () => ({ y: t.y + 1, m: 0, d: 1 }));
++  scan(
++    /\b(?:in (\d+|a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve) (day|week|month|year)s?|(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve) (day|week|month|year)s? from (?:now|today))\b/g,
++    (m) => {
++      const w = m[1] ?? m[3];
++      const unit = m[2] ?? m[4];
++      const n = /^\d+$/.test(w) ? Number(w) : COUNTS[w];
++      if (!n) return null;
++      if (unit === "day") return addDays(t, n);
++      if (unit === "week") return addDays(t, 7 * n);
++      if (unit === "month") return addMonths(t, n);
++      return addMonths(t, 12 * n);
++    },
++  );
++  scan(
++    new RegExp(`\\b(next |this |coming |by )?(${WEEKDAYS.join("|")})\\b`, "g"),
++    (m) => {
++      const wd = WEEKDAYS.indexOf(m[2]);
++      if (m[1] === "next ") return addDays(mondayOf(t), 7 + ((wd + 6) % 7));
++      const ahead = (wd - weekday(t) + 7) % 7 || 7;
++      return addDays(t, ahead);
++    },
++  );
++
++  return [...new Set(found.map(iso))];
++}
++
++/** The one date the request names, as `YYYY-MM-DD`, else null. */
++export function resolveDate(utterance: string, today: string): string | null {
++  const all = resolveDates(utterance, today);
++  return all.length === 1 ? all[0] : null;
++}
+diff -ruN a/editors/knowledge-vault/chat/core/list-completion.ts b/editors/knowledge-vault/chat/core/list-completion.ts
+--- a/editors/knowledge-vault/chat/core/list-completion.ts	1969-12-31 18:00:00
++++ b/editors/knowledge-vault/chat/core/list-completion.ts	2026-10-23 14:08:27
+@@ -0,0 +1,111 @@
++/**
++ * Whole-list fields completed from the document's current list (X9). Some
++ * ops replace a list with their input, so a partial list from the model
++ * silently deletes what it left out: REORDER_CORE_IDEAS keeps only the ids
++ * it is given, SET_REFERENCES only the URLs.
++ */
++
++/**
++ * `order`: the input is a new order of the current items; ones the model
++ * left out keep their relative order after the ones it placed.
++ * `keep`: the input is a new list; when the request adds to it ("also",
++ * "too", "don't lose") rather than replacing it, the current entries stay.
++ */
++export type ListMode = "order" | "keep";
++
++export interface CurrentList {
++  mode: ListMode;
++  values: string[];
++}
++
++const ADD_CUES = [
++  "also",
++  "too",
++  "alongside",
++  "add",
++  "adding",
++  "append",
++  "plus",
++  "keep",
++  "additionally",
++  "another",
++  "as well",
++  "in addition",
++  "along with",
++  "together with",
++  "don't lose",
++  "don't drop",
++  "do not lose",
++  "do not drop",
++];
++const REPLACE_CUES = [
++  "only",
++  "just",
++  "replace",
++  "replacing",
++  "swap",
++  "instead",
++  "remove",
++  "drop",
++  "clear",
++  "no longer",
++  "rather than",
++];
++
++function hasCue(text: string, cue: string): boolean {
++  const re = new RegExp(
++    `(^|[^a-z'])${cue.replace(/ /g, "\\s+")}(?![a-z])`,
++    "g",
++  );
++  for (const m of text.matchAll(re)) {
++    const before = text.slice(0, (m.index ?? 0) + m[1].length);
++    if (!/\b(don't|do not|never|not)\s+$/.test(before)) return true;
++  }
++  return false;
++}
++
++/** The request adds to the list rather than replacing it. */
++export function addsToList(utterance: string): boolean {
++  // URLs out first: a path like `/add/` or `/only/` is not a cue.
++  const text = utterance
++    .toLowerCase()
++    .replace(/[’]/g, "'")
++    .replace(/\bhttps?:\/\/\S+|\bwww\.\S+/g, " ");
++  const adds = ADD_CUES.some((c) =>
++    /^(don't|do not)/.test(c) ? text.includes(c) : hasCue(text, c),
++  );
++  return adds && !REPLACE_CUES.some((c) => hasCue(text, c));
++}
++
++/**
++ * `args` with each root list in `lists` completed; `changed` names the
++ * paths that differ from the model's output.
++ */
++export function completeLists(
++  args: Record<string, unknown>,
++  lists: Record<string, CurrentList>,
++  utterance: string,
++): { args: Record<string, unknown>; changed: string[] } {
++  const out = { ...args };
++  const changed: string[] = [];
++  for (const [path, { mode, values }] of Object.entries(lists)) {
++    const got = out[path];
++    if (!Array.isArray(got) || values.length === 0) continue;
++    const given = [
++      ...new Set(got.filter((v): v is string => typeof v === "string")),
++    ];
++    let next: string[];
++    if (mode === "order") {
++      const placed = given.filter((v) => values.includes(v));
++      next = [...placed, ...values.filter((v) => !placed.includes(v))];
++    } else {
++      if (!addsToList(utterance)) continue;
++      next = [...values, ...given.filter((v) => !values.includes(v))];
++    }
++    if (JSON.stringify(next) !== JSON.stringify(got)) {
++      out[path] = next;
++      changed.push(path);
++    }
++  }
++  return { args: out, changed };
++}
+diff -ruN a/editors/knowledge-vault/chat/core/op-catalog.ts b/editors/knowledge-vault/chat/core/op-catalog.ts
+--- a/editors/knowledge-vault/chat/core/op-catalog.ts	2026-10-23 14:08:27
++++ b/editors/knowledge-vault/chat/core/op-catalog.ts	2026-10-23 14:08:27
+@@ -228,7 +228,10 @@
+ /* ------------------------------------------------------------------ */
+ 
+ export interface ModelSchemaOptions {
+-  /** Candidate ids per ref-id field, keyed by dotted path. */
++  /**
++   * Candidate ids per ref-id field (and per semantic field chosen from
++   * state), keyed by dotted path.
++   */
+   refCandidates?: Record<string, string[]>;
+   collapseNullable?: boolean;
+   /** Closed values per semantic String field, keyed by dotted path. */
+@@ -290,7 +293,10 @@
+     if (field.fieldClass === "semantic") {
+       const base = opts.collapseNullable ? collapseNull(sub) : sub;
+       const vocab = opts.vocabulary?.[key];
+-      outProps[field.name] = vocab ? withVocabulary(base, vocab) : base;
++      // X9: a semantic field with candidates from state (`STATE_CHOICES`).
++      const ids = opts.refCandidates?.[key];
++      if (ids && ids.length > 0) outProps[field.name] = enumSchema(field, ids);
++      else outProps[field.name] = vocab ? withVocabulary(base, vocab) : base;
+     } else if (field.fieldClass === "ref-id") {
+       const ids = opts.refCandidates?.[key];
+       if (ids && ids.length > 0) outProps[field.name] = enumSchema(field, ids);
+diff -ruN a/editors/knowledge-vault/chat/core/ref-candidates.ts b/editors/knowledge-vault/chat/core/ref-candidates.ts
+--- a/editors/knowledge-vault/chat/core/ref-candidates.ts	2026-10-23 14:08:27
++++ b/editors/knowledge-vault/chat/core/ref-candidates.ts	2026-10-23 14:08:27
+@@ -6,6 +6,7 @@
+  * task target, topic name, link target title, the drive's document titles.
+  * `tests/unit/chat-ref-candidates.test.ts` checks every recipe against this.
+  */
++import type { CurrentList, ListMode } from "./list-completion.js";
+ import type { RefCandidates } from "./v1-pipeline.js";
+ 
+ type Rec = Record<string, unknown>;
+@@ -18,7 +19,7 @@
+ /**
+  * An item listed from outside the document (other documents in the drive,
+  * goals of a linked plan), by kind: `note`, `knowledge`, `wbs`, `project`,
+- * `wbs-goal`, `topic`, `session`.
++ * `wbs-goal`, `topic`, `session`, `moc`.
+  */
+ export interface RefContextItem {
+   id: string;
+@@ -38,7 +39,9 @@
+ const ctxOf =
+   (kind: string): Extract =>
+   (_s, ctx) =>
+-    ctx.filter((c) => c.kind === kind).map((c) => ({ id: c.id, label: c.title }));
++    ctx
++      .filter((c) => c.kind === kind)
++      .map((c) => ({ id: c.id, label: c.title }));
+ 
+ const noteTopics: Extract = (s) =>
+   recs(s.topics).map((x) => ({ id: str(x.id), label: str(x.name) }));
+@@ -80,9 +83,13 @@
+ const tasks: Extract = (s) =>
+   recs(s.tasks).map((x) => ({ id: str(x.id), label: str(x.target) }));
+ const batchIds: Extract = (s) =>
+-  [...new Set(recs(s.tasks).map((x) => str(x.batchId)).filter(Boolean))].map(
+-    (b) => ({ id: b, label: b }),
+-  );
++  [
++    ...new Set(
++      recs(s.tasks)
++        .map((x) => str(x.batchId))
++        .filter(Boolean),
++    ),
++  ].map((b) => ({ id: b, label: b }));
+ 
+ /** Ref paths per op key, as in the training recipes. */
+ export const REF_EXTRACTORS: Record<string, Record<string, Extract>> = {
+@@ -107,7 +114,10 @@
+   "project:UPDATE_MEMBER": { id: team },
+   "project:REMOVE_MEMBER": { id: team },
+   "project:ADD_DELIVERABLE": { goalRef: ctxOf("wbs-goal") },
+-  "project:UPDATE_DELIVERABLE": { id: deliverables, goalRef: ctxOf("wbs-goal") },
++  "project:UPDATE_DELIVERABLE": {
++    id: deliverables,
++    goalRef: ctxOf("wbs-goal"),
++  },
+   "project:SET_DELIVERABLE_STATUS": { id: deliverables },
+   "project:REMOVE_DELIVERABLE": { id: deliverables },
+   "project:ADD_KNOWLEDGE_REF": { ref: unlinkedKnowledge },
+@@ -140,6 +150,24 @@
+   "wbs:SET_PROJECT_REF": { projectRef: ctxOf("project") },
+ };
+ 
++const strs = (v: unknown): string[] =>
++  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
++
++/**
++ * X9: semantic fields that name an existing list item by its value (the
++ * reducer removes the exact string), offered as choices from state. A path
++ * with no items is left out, so the field stays a free span.
++ */
++export const STATE_CHOICES: Record<string, Record<string, Extract>> = {
++  "moc:REMOVE_OPEN_QUESTION": {
++    question: (s) => strs(s.openQuestions).map((q) => ({ id: q, label: q })),
++  },
++  "moc:REMOVE_CHILD_MOC": {
++    childRef: (s, ctx) =>
++      strs(s.childRefs).map((r) => ({ id: r, label: titleOf(ctx, r) })),
++  },
++};
++
+ /** Labeled candidates for every ref path of `opKey` (none for other ops). */
+ export function refCandidatesFor(
+   opKey: string,
+@@ -147,11 +175,50 @@
+   ctx: RefContextItem[],
+ ): RefCandidates {
+   const paths = REF_EXTRACTORS[opKey] ?? {};
+-  return Object.fromEntries(
++  const out: RefCandidates = Object.fromEntries(
+     Object.entries(paths).map(([p, f]) => [p, f(state, ctx)]),
+   );
++  for (const [p, f] of Object.entries(STATE_CHOICES[opKey] ?? {})) {
++    const cands = f(state, ctx);
++    if (cands.length > 0) out[p] = cands;
++  }
++  return out;
+ }
+ 
++/** X9: list fields an op replaces whole, with the current list (state order). */
++export const CURRENT_LISTS: Record<
++  string,
++  Record<string, { mode: ListMode; from: (s: Rec) => string[] }>
++> = {
++  "moc:REORDER_CORE_IDEAS": {
++    ids: {
++      mode: "order",
++      from: (s) => recs(s.coreIdeas).map((c) => str(c.id)),
++    },
++  },
++  "project:SET_REFERENCES": {
++    references: { mode: "keep", from: (s) => strs(s.references) },
++  },
++  "wbs:SET_REFERENCES": {
++    references: { mode: "keep", from: (s) => strs(s.references) },
++  },
++};
++
++/** The current lists `opKey` replaces whole (empty ones left out). */
++export function currentListsFor(
++  opKey: string,
++  state: Rec,
++): Record<string, CurrentList> {
++  const out: Record<string, CurrentList> = {};
++  for (const [p, { mode, from }] of Object.entries(
++    CURRENT_LISTS[opKey] ?? {},
++  )) {
++    const values = from(state).filter(Boolean);
++    if (values.length > 0) out[p] = { mode, values };
++  }
++  return out;
++}
++
+ /** A drive document as the chat sees it: id, type, title and global state. */
+ export interface ChatDocument {
+   id: string;
+@@ -164,6 +231,7 @@
+   "bai/knowledge-note": ["note", "knowledge"],
+   "bai/wbs": ["wbs"],
+   "bai/project": ["project"],
++  "bai/moc": ["moc"],
+ };
+ 
+ /**
+diff -ruN a/editors/knowledge-vault/chat/core/v1-pipeline.ts b/editors/knowledge-vault/chat/core/v1-pipeline.ts
+--- a/editors/knowledge-vault/chat/core/v1-pipeline.ts	2026-10-23 14:08:27
++++ b/editors/knowledge-vault/chat/core/v1-pipeline.ts	2026-10-23 14:08:27
+@@ -17,6 +17,7 @@
+ import { buildRuntimeCatalog } from "./catalog-models.js";
+ import { buildAction, type EnvelopeContext } from "./envelope.js";
+ import { loadGteEmbedder, type GteEmbedderOptions } from "./gte-embedder.js";
++import type { CurrentList } from "./list-completion.js";
+ import type { CompleteJson, ScoreText } from "./llm-client.js";
+ import {
+   combinedNoAction,
+@@ -132,6 +133,10 @@
+   step1?: V1Step1;
+   /** Step-2 optional fields the safe gate never drops (round 9 R5). */
+   alwaysOffer?: readonly string[];
++  /** X9: today's local date (`YYYY-MM-DD`) for date fields. */
++  today?: string;
++  /** X9: the target document's current lists for the chosen op. */
++  currentLists?: (entry: CatalogEntry) => Record<string, CurrentList>;
+ }
+ 
+ /** A short name for results and the UI, e.g. "model:scoped-all-catalog". */
+@@ -280,6 +285,8 @@
+     cache: deps.cache,
+     ...V1_ARGS,
+     alwaysOffer: options.alwaysOffer ?? [],
++    today: options.today,
++    currentLists: options.currentLists?.(entry),
+   });
+   return { ...common, step1, kind: "action", entry, step2 };
+ }
+diff -ruN a/editors/knowledge-vault/hooks/use-chat-llm.ts b/editors/knowledge-vault/hooks/use-chat-llm.ts
+--- a/editors/knowledge-vault/hooks/use-chat-llm.ts	2026-10-23 14:08:27
++++ b/editors/knowledge-vault/hooks/use-chat-llm.ts	2026-10-23 14:08:27
+@@ -8,6 +8,7 @@
+ } from "../chat/core/model-source.js";
+ import type { ScoreCache } from "../chat/core/op-scorer.js";
+ import {
++  currentListsFor,
+   driveRefContext,
+   refCandidatesFor,
+   type ChatDocument,
+@@ -22,6 +23,12 @@
+ 
+ export type ChatLlmStatus = "idle" | "loading" | "ready" | "error";
+ 
++/** The user's local calendar date, `YYYY-MM-DD`. */
++function localDate(d: Date): string {
++  const pad = (n: number) => String(n).padStart(2, "0");
++  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
++}
++
+ export interface ProposedAction {
+   result: Extract<V1Result, { kind: "action" }>;
+   /** The document the action targets. */
+@@ -161,7 +168,11 @@
+   const ask = useCallback(
+     async (utterance: string): Promise<ChatReply> => {
+       const { client } = await ensureLoaded();
+-      return { kind: "answer", text: await answer(client, utterance), result: null };
++      return {
++        kind: "answer",
++        text: await answer(client, utterance),
++        result: null,
++      };
+     },
+     [answer, ensureLoaded],
+   );
+@@ -188,6 +199,10 @@
+           completeJson: client.completeJson,
+           scoreText: client.scoreText,
+           cache,
++        },
++        {
++          today: localDate(new Date()),
++          currentLists: (entry) => currentListsFor(entry.key, doc.state),
+         },
+       );
+       if (result.kind === "no-action")
+diff -ruN a/tests/unit/chat-date-resolve.test.ts b/tests/unit/chat-date-resolve.test.ts
+--- a/tests/unit/chat-date-resolve.test.ts	1969-12-31 18:00:00
++++ b/tests/unit/chat-date-resolve.test.ts	2026-10-23 14:08:27
+@@ -0,0 +1,60 @@
++import { describe, expect, it } from "vitest";
++import {
++  resolveDate,
++  resolveDates,
++} from "../../editors/knowledge-vault/chat/core/date-resolve.js";
++
++// 2026-10-22 is a Thursday.
++const T = "2026-10-22";
++
++describe("resolveDate", () => {
++  const cases: [string, string | null][] = [
++    ["we need this wrapped by the end of next month", "2026-11-30"],
++    [
++      "wrap up by the third of March, put that in as the deadline",
++      "2027-03-03",
++    ],
++    ["move the target date to January 15", "2027-01-15"],
++    ["deadline is December 1st", "2026-12-01"],
++    ["due 22 October", "2026-10-22"],
++    ["the 15th of january 2028", "2028-01-15"],
++    ["set it to 2027-01-15", "2027-01-15"],
++    ["tomorrow", "2026-10-23"],
++    ["the day after tomorrow", "2026-10-24"],
++    ["by friday", "2026-10-23"],
++    ["next friday", "2026-10-30"],
++    ["thursday", "2026-10-29"],
++    ["end of this week", "2026-10-23"],
++    ["end of next week", "2026-10-30"],
++    ["sometime next week", "2026-10-26"],
++    ["in two weeks", "2026-11-05"],
++    ["10 days from now", "2026-11-01"],
++    ["in a month", "2026-11-22"],
++    ["end of the month", "2026-10-31"],
++    ["end of the year", "2026-12-31"],
++    ["end of Q1", "2027-03-31"],
++    ["end of the quarter", "2026-12-31"],
++    ["by end of march", "2027-03-31"],
++    ["next month", "2026-11-01"],
++    ["clear the target date", null],
++    ["march on with the plan", null],
++    ["the second item", null],
++    ["a decade of data", null],
++  ];
++  for (const [u, want] of cases)
++    it(`${u} -> ${want}`, () => expect(resolveDate(u, T)).toBe(want));
++
++  it("leaves two different dates unresolved", () => {
++    expect(resolveDates("today, not tomorrow", T)).toHaveLength(2);
++    expect(resolveDate("today, not tomorrow", T)).toBeNull();
++  });
++
++  it("rolls a past day of this year into next year", () => {
++    expect(resolveDate("by March 3", "2026-03-04")).toBe("2027-03-03");
++    expect(resolveDate("by March 3", "2026-03-03")).toBe("2026-03-03");
++  });
++
++  it("rejects a malformed today", () => {
++    expect(() => resolveDate("tomorrow", "22/10/2026")).toThrow();
++  });
++});
+diff -ruN a/tests/unit/chat-list-completion.test.ts b/tests/unit/chat-list-completion.test.ts
+--- a/tests/unit/chat-list-completion.test.ts	1969-12-31 18:00:00
++++ b/tests/unit/chat-list-completion.test.ts	2026-10-23 14:08:27
+@@ -0,0 +1,130 @@
++import { describe, expect, it } from "vitest";
++import { prepareArgsStep } from "../../editors/knowledge-vault/chat/core/args-step.js";
++import { buildRuntimeCatalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
++import {
++  addsToList,
++  completeLists,
++} from "../../editors/knowledge-vault/chat/core/list-completion.js";
++import {
++  currentListsFor,
++  refCandidatesFor,
++} from "../../editors/knowledge-vault/chat/core/ref-candidates.js";
++
++describe("completeLists", () => {
++  const order = { mode: "order" as const, values: ["a", "b", "c", "d"] };
++
++  it("appends the items a reorder left out, in their current order", () => {
++    const r = completeLists(
++      { ids: ["b", "a", "b"] },
++      { ids: order },
++      "b first",
++    );
++    expect(r.args.ids).toEqual(["b", "a", "c", "d"]);
++    expect(r.changed).toEqual(["ids"]);
++  });
++
++  it("leaves a full reorder alone", () => {
++    const r = completeLists({ ids: ["d", "c", "b", "a"] }, { ids: order }, "x");
++    expect(r.args.ids).toEqual(["d", "c", "b", "a"]);
++    expect(r.changed).toEqual([]);
++  });
++
++  const keep = { mode: "keep" as const, values: ["https://a.example"] };
++  it("keeps the current entries when the request adds to the list", () => {
++    const r = completeLists(
++      { references: ["https://b.example"] },
++      { references: keep },
++      "also cite https://b.example alongside the plan",
++    );
++    expect(r.args.references).toEqual([
++      "https://a.example",
++      "https://b.example",
++    ]);
++  });
++
++  it("replaces the list when the request swaps it", () => {
++    const r = completeLists(
++      { references: ["https://b.example"] },
++      { references: keep },
++      "swap the brief's address for https://b.example",
++    );
++    expect(r.args.references).toEqual(["https://b.example"]);
++    expect(r.changed).toEqual([]);
++  });
++});
++
++describe("addsToList", () => {
++  it("reads additive and replacing cues", () => {
++    expect(
++      addsToList("belongs in the web sources too; don't lose the plan"),
++    ).toBe(true);
++    expect(addsToList("update the references to just https://x.example")).toBe(
++      false,
++    );
++    expect(addsToList("set the references to https://x.example")).toBe(false);
++    expect(addsToList("also add it, don't drop the old one")).toBe(true);
++    expect(addsToList("set it to https://x.example/add/also-this")).toBe(false);
++  });
++});
++
++describe("state-derived candidates and lists", () => {
++  it("offers a map's open questions and child maps as choices", () => {
++    const state = {
++      openQuestions: ["Is a 48h retard worth it?"],
++      childRefs: ["moc/rye"],
++    };
++    const ctx = [{ id: "moc/rye", title: "Rye baking", kind: "moc" }];
++    expect(refCandidatesFor("moc:REMOVE_OPEN_QUESTION", state, ctx)).toEqual({
++      question: [
++        { id: "Is a 48h retard worth it?", label: "Is a 48h retard worth it?" },
++      ],
++    });
++    expect(refCandidatesFor("moc:REMOVE_CHILD_MOC", state, ctx)).toEqual({
++      childRef: [{ id: "moc/rye", label: "Rye baking" }],
++    });
++  });
++
++  it("offers nothing for an empty list (the field stays a free span)", () => {
++    expect(refCandidatesFor("moc:REMOVE_OPEN_QUESTION", {}, [])).toEqual({});
++  });
++
++  it("lists the current order and references", () => {
++    expect(
++      currentListsFor("moc:REORDER_CORE_IDEAS", {
++        coreIdeas: [{ id: "ci-1" }, { id: "ci-2" }],
++      }),
++    ).toEqual({ ids: { mode: "order", values: ["ci-1", "ci-2"] } });
++    expect(
++      currentListsFor("project:SET_REFERENCES", { references: [] }),
++    ).toEqual({});
++  });
++});
++
++describe("step 2 with state choices", () => {
++  const entry = buildRuntimeCatalog().find(
++    (e) => e.key === "moc:REMOVE_OPEN_QUESTION",
++  );
++  it("renders a semantic field with candidates as a choice", () => {
++    if (!entry) throw new Error("no entry");
++    const q = "Is a 48h retard worth it?";
++    const p = prepareArgsStep(
++      "drop the cold retard question",
++      entry,
++      {
++        question: [{ id: q, label: q }],
++      },
++      "safe",
++    );
++    expect(p.messages?.[1].content).toContain(`Choices for question: "${q}"`);
++    expect(p.ordered.properties).toEqual({
++      question: { type: "string", enum: [q] },
++    });
++    const free = prepareArgsStep(
++      "drop the cold retard question",
++      entry,
++      {},
++      "safe",
++    );
++    expect(free.ordered.properties).toEqual({ question: { type: "string" } });
++  });
++});

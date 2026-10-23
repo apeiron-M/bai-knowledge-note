@@ -83,3 +83,20 @@ The labelling pass stopped when `claude -p` lost its login. The user has since r
 - **Labelling:** 504 of 584 rows done, in `training/artifacts/round11-para/full/chain/label-results.jsonl.partial.jsonl`.
 - **To resume:** re-run the label step; it is resumable. Then run the validation chain, merge with the Round 10 kept rows, and train on Constantine.
 - **Uncommitted code:** `training/round11-para/` is untracked. Review it, then commit.
+
+## UPDATE 2 (session resumed, 2026-10-23 afternoon)
+
+- **X1 done.** The 1.2B LoRA is at `training/artifacts/x1-1p2b/gguf/…x1a-20261023-Q4_K_M.gguf` (731 MB, sha 7dd843a0). On training val it gets 95.2% op and 93.3% args.
+- **X5 done.** There are 3,615 new human-style rows. The merged training set (7,808 rows) is on Constantine at `round11-para/`, and the code is committed in 8ec83770.
+- **X9 done.** `x9-args2.patch` sits on top of x6. Dev args on the gold op go 165→173; fully correct with LoRA picks goes 142→147. Adopt this convention from now on: free text drops its final punctuation, and NORMALISED becomes the primary args metric.
+- **Eval rig done** (`exp/rig/rig.sh`). It reproduces X7 and X9 exactly. Dev results with x9 args:
+
+  | Setup | Op | Fully correct |
+  |---|---|---|
+  | 350M R8 × Kev Q4 | 177 | 159 |
+  | 1.2B X1 alone | 173 | 156 |
+  | X1 × Kev | 176 | – (Kev adds little on top of X1) |
+- **Constantine queue:**
+  - Now: the X5 350M LoRA (screen x5-train, about 1.7 h).
+  - Then: the Kev-0.8B fine-tune (about 8.3 h; there are no MPS kernels and no checkpoints).
+  - Consider training the 1.2B on X5 data before Kev, if X5 helps the 350M.
