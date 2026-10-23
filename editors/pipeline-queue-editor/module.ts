@@ -3,10 +3,17 @@
  * This file is auto-generated and updated by codegen
  */
 import type { EditorModule } from "document-model";
+import type {
+  PipelineQueueAction,
+  PipelineQueueDocument,
+} from "document-models/pipeline-queue";
 import { lazy } from "react";
 
 /** Document editor module for the "bai/pipeline-queue" document type */
-export const PipelineQueueEditor: EditorModule = {
+export const PipelineQueueEditor: EditorModule<
+  PipelineQueueDocument,
+  PipelineQueueAction
+> = {
   Component: lazy(() => import("./editor.js")),
   documentTypes: ["bai/pipeline-queue"],
   config: {

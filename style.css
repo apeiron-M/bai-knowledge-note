@@ -1,18 +1,8 @@
-@import "@powerhousedao/design-system/theme.css";
-@custom-variant dark (&:where(.dark, .dark *));
+/* Package CSS goes in external-packages, between Connect's components and utilities. */
+@layer properties, theme, base, components, external-packages, utilities;
 @import "tailwindcss";
-@import "@powerhousedao/connect/style.css";
-
-@theme {
-  /* You can customize the theme by overriding the theme variables here */
-  /* See https://tailwindcss.com/docs/theme#using-a-custom-theme for details */
-
-  /* If you would prefer to use plain css, add your styles below this @theme tag as you normally would */
-
-  /* A sensible CSS reset is applied by default. If you would prefer to use a different reset or none at all, uncomment the following line */
-
-  /* --*: initial; */
-}
+/* Connect's tokens, rules and classes, generated in this one build. */
+@import "@powerhousedao/connect/tailwind.css";
 
 /*
  * BAI Theme — CSS custom properties
@@ -163,76 +153,85 @@ html[data-bai-toast-theme="light"] {
  * than bouncing in from the right.
  *
  * react-toastify paints from its own --toastify-* custom properties, declared
- * on :root. Redeclaring them on html[data-bai-toast-theme] outranks :root on
- * the same element. The per-type colours still feed Connect's own toasts (our
- * bodies hide the library icon and draw their own).
+ * on :root. We redeclare them on html[data-bai-toast-theme]. The per-type
+ * colours still feed Connect's own toasts (our bodies hide the library icon
+ * and draw their own).
+ *
+ * Every declaration from here through the reduced-motion block is
+ * !important, on purpose (the @keyframes aside: !important is invalid there).
+ * `ph build` wraps this whole stylesheet in Connect's `external-packages`
+ * cascade layer, and Connect serves react-toastify's CSS (and its own
+ * .Toastify__* tweaks) unlayered. Unlayered CSS beats layered CSS whatever the
+ * specificity, so without !important these rules lose wherever the vault loads
+ * as a package: cloud Connect and the desktop app. Vetra Studio compiles this
+ * file into the page unlayered, so it would hide the problem.
  */
 html[data-bai-toast-theme] {
-  --toastify-font-family: inherit;
-  --toastify-toast-width: 360px;
-  --toastify-toast-bd-radius: 10px;
-  --toastify-toast-min-height: 0px;
-  --toastify-color-error: var(--bai-danger);
-  --toastify-color-warning: var(--bai-warn);
-  --toastify-color-success: var(--bai-ok);
-  --toastify-color-info: var(--bai-accent);
-  --toastify-color-light: var(--bai-overlay);
-  --toastify-text-color-light: var(--bai-text);
-  --toastify-color-dark: var(--bai-overlay);
-  --toastify-text-color-dark: var(--bai-text);
+  --toastify-font-family: inherit !important;
+  --toastify-toast-width: 360px !important;
+  --toastify-toast-bd-radius: 10px !important;
+  --toastify-toast-min-height: 0px !important;
+  --toastify-color-error: var(--bai-danger) !important;
+  --toastify-color-warning: var(--bai-warn) !important;
+  --toastify-color-success: var(--bai-ok) !important;
+  --toastify-color-info: var(--bai-accent) !important;
+  --toastify-color-light: var(--bai-overlay) !important;
+  --toastify-text-color-light: var(--bai-text) !important;
+  --toastify-color-dark: var(--bai-overlay) !important;
+  --toastify-text-color-dark: var(--bai-text) !important;
 }
 
 html[data-bai-toast-theme] .Toastify__toast {
-  align-items: flex-start;
-  padding: 12px 12px 12px 14px;
-  border: 1px solid var(--bai-border);
+  align-items: flex-start !important;
+  padding: 12px 12px 12px 14px !important;
+  border: 1px solid var(--bai-border) !important;
   /* An edge-lit top hairline plus a soft, tight-then-diffuse shadow: how a
      dark surface reads as lifted without getting lighter overall. */
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
     0 2px 6px rgba(0, 0, 0, 0.28),
-    0 14px 36px -10px rgba(0, 0, 0, 0.6);
+    0 14px 36px -10px rgba(0, 0, 0, 0.6) !important;
 }
 html[data-bai-toast-theme="light"] .Toastify__toast {
   box-shadow:
     0 1px 3px rgba(15, 23, 42, 0.07),
-    0 14px 36px -12px rgba(15, 23, 42, 0.2);
+    0 14px 36px -12px rgba(15, 23, 42, 0.2) !important;
 }
 
 html[data-bai-toast-theme] .Toastify__toast-body {
-  padding: 0;
-  margin: 0;
-  align-items: flex-start;
-  color: var(--bai-text);
+  padding: 0 !important;
+  margin: 0 !important;
+  align-items: flex-start !important;
+  color: var(--bai-text) !important;
   /* Connect's own toasts inherit the page's 16px otherwise, and sit next to
      ours at a different scale. */
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
 }
 /* Connect's own toasts keep the library icon; give it the same breathing room. */
 html[data-bai-toast-theme] .Toastify__toast-icon {
-  margin-top: 1px;
+  margin-top: 1px !important;
 }
 html[data-bai-toast-theme] .Toastify__progress-bar--wrp {
-  display: none;
+  display: none !important;
 }
 
 /* The design-system close button (a bare <button> with Connect's token). */
 html[data-bai-toast-theme] .Toastify__toast > button {
-  align-self: flex-start;
-  margin: -3px -4px 0 8px;
-  padding: 4px;
-  border-radius: 6px;
-  color: var(--bai-text-muted);
-  transition: color 120ms ease, background-color 120ms ease;
+  align-self: flex-start !important;
+  margin: -3px -4px 0 8px !important;
+  padding: 4px !important;
+  border-radius: 6px !important;
+  color: var(--bai-text-muted) !important;
+  transition: color 120ms ease, background-color 120ms ease !important;
 }
 html[data-bai-toast-theme] .Toastify__toast > button:hover {
-  color: var(--bai-text);
-  background: var(--bai-overlay-hover);
+  color: var(--bai-text) !important;
+  background: var(--bai-overlay-hover) !important;
 }
 html[data-bai-toast-theme] .Toastify__toast > button:focus-visible {
-  outline: 2px solid var(--bai-accent);
-  outline-offset: 1px;
+  outline: 2px solid var(--bai-accent) !important;
+  outline-offset: 1px !important;
 }
 
 /* Arrive from the edge the toast lives on; leave the way it came. */
@@ -255,16 +254,16 @@ html[data-bai-toast-theme] .Toastify__toast > button:focus-visible {
 html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-right,
 html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-left,
 html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-center {
-  animation-name: bai-toast-in;
-  animation-duration: 220ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation-name: bai-toast-in !important;
+  animation-duration: 220ms !important;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1) !important;
 }
 html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-right,
 html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-left,
 html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
-  animation-name: bai-toast-out;
-  animation-duration: 160ms;
-  animation-timing-function: ease-in;
+  animation-name: bai-toast-out !important;
+  animation-duration: 160ms !important;
+  animation-timing-function: ease-in !important;
 }
 @media (prefers-reduced-motion: reduce) {
   /* Not `none`: react-toastify removes the node on animationend. */
@@ -274,7 +273,7 @@ html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
   html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-right,
   html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-left,
   html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
-    animation-duration: 1ms;
+    animation-duration: 1ms !important;
   }
 }
 
@@ -388,6 +387,14 @@ html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
 .bai-theme * {
   scrollbar-width: thin;
   scrollbar-color: var(--bai-hover) transparent;
+  /* tailwind-scrollbar's variables. Its scrollbar-thin class sits in
+     Connect's utilities layer, above this stylesheet's layer, so on an element
+     that carries it the class's ::-webkit-scrollbar-* colours and radius win
+     (WebKit: Safari, and the desktop app's webview). With these set it draws
+     our thumb rather than an unset, invisible one. */
+  --scrollbar-thumb: var(--bai-hover);
+  --scrollbar-track: transparent;
+  --scrollbar-thumb-radius: 999px;
 }
 .bai-theme ::-webkit-scrollbar {
   width: 10px;

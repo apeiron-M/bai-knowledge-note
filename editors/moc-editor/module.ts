@@ -3,10 +3,11 @@
  * This file is auto-generated and updated by codegen
  */
 import type { EditorModule } from "document-model";
+import type { MocAction, MocDocument } from "document-models/moc";
 import { lazy } from "react";
 
 /** Document editor module for the "bai/moc" document type */
-export const MocEditor: EditorModule = {
+export const MocEditor: EditorModule<MocDocument, MocAction> = {
   Component: lazy(() => import("./editor.js")),
   documentTypes: ["bai/moc"],
   config: {

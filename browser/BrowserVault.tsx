@@ -8,6 +8,7 @@ import {
   setRevisionHistoryVisible,
   setSelectedNode,
   useAppModuleById,
+  useDispatch,
   useDocumentById,
   useDocumentOperations,
   useEditorModuleById,
@@ -237,19 +238,20 @@ function DocumentEditor() {
   );
   const byType = useEditorModulesForDocumentType(document.header.documentType);
   const editor = preferred ?? byType?.[0];
+  const [, dispatch] = useDispatch(document);
   if (historyOpen) return <DocumentHistory key={documentId} document={document} />;
   if (!editor) return <p role="alert">No editor is installed for {document.header.documentType}.</p>;
   const Editor = editor.Component;
   return (
     <Suspense fallback={<Screen title="Opening…" />}>
-      <Editor key={document.header.id} document={document} />
+      <Editor key={document.header.id} document={document} dispatch={dispatch} />
     </Suspense>
   );
 }
 
 /** The drive app (the vault), with the open document's editor inside it. */
 function VaultApp() {
-  const [drive] = useSelectedDriveSafe();
+  const [drive, dispatch] = useSelectedDriveSafe();
   const selectedId = useSelectedDocumentId();
   const app = useAppModuleById(
     (drive?.header.meta as { preferredEditor?: string } | undefined)?.preferredEditor,
@@ -259,7 +261,7 @@ function VaultApp() {
   const App = app.Component;
   return (
     <Suspense fallback={<Screen title="Opening your vault…" />}>
-      <App>{selectedId ? <DocumentEditor /> : null}</App>
+      <App document={drive} dispatch={dispatch}>{selectedId ? <DocumentEditor /> : null}</App>
     </Suspense>
   );
 }
