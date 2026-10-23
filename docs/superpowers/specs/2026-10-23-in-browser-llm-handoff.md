@@ -100,3 +100,27 @@ The labelling pass stopped when `claude -p` lost its login. The user has since r
   - Now: the X5 350M LoRA (screen x5-train, about 1.7 h).
   - Then: the Kev-0.8B fine-tune (about 8.3 h; there are no MPS kernels and no checkpoints).
   - Consider training the 1.2B on X5 data before Kev, if X5 helps the 350M.
+
+## UPDATE 3 (2026-10-23 evening)
+
+- **X5 is the best single model.** It's the 350M trained on Round 10 + 3,428 human-style rows: `training/artifacts/x5-350m/gguf/LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf`, 229 MB, sha 06279654.
+  - Dev results, x9 args:
+
+    | Setup | Op | Fully NORM |
+    |---|---|---|
+    | X5 alone | 175 (89.3%) | 159 |
+    | X5 × Kev | 180 | 163 |
+
+  - Against R8 alone it fixes 17 items and breaks 6 (p=0.017).
+- **Gate calibration.** The val refit was too sharp, because 140 of the 168 R8-val ids are in the X1/X5 training data. The new rule fits per-expert temperatures on dev by gold NLL, keeps τ=0.5 and equal weights. For X5 that gives T_L 1.63 and T_K 0.75.
+  - X5×Kev dev: gold-in-choices 188/216, ask 34, wrong 10, effective fully NORM 169.
+  - With these temperatures, X5×Kev vs X5 alone is only +10/−6 (p 0.23).
+- **Rig v2** adds `--temps explicit|dev-cv`, `--exclude-match`, and `--prereg <file>` (sha-verified).
+  - Leak row to exclude: Round 10 `gen-observation--IMPLEMENT_OBSERVATION-1-3`.
+- **Draft pre-registration:** `PREREGISTRATION-2-DRAFT.md`.
+  - Arms: A X5, B X5×Kev, C B+gate, D X1, E best×Kev-FT (TBD), F 1.2B on X5 data (TBD).
+  - Finalise once E and F land, then run held-out-5 once (its 2nd use).
+- **Running:**
+  - Kev-0.8B fine-tune on Constantine, screen kev-ft, ETA about 00:25 Oct 24. Export with `x4-kev/finetune/kev-ft-export.sh`.
+  - X11, more human-style data plus no-action rows plus contrastive pairs, goes to `training/round12-para/`.
+- **Constantine queue after Kev:** F (the 1.2B on round11 data), then the 350M on round11+round12.
