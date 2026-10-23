@@ -14,14 +14,14 @@
   - Median latency per request in the test harness: 443–459 ms warm on WebGPU.
 - **Natural vs paraphrased requests:** natural phrasing is near or at the bar (92.3–97.8% op); paraphrased requests are not (69.2–74.5%).
 - **The pre-registered bars were never met.** The bars were op accuracy ≥ 90% and exact args ≥ 80%. A targeted retrain (Round 10) did not improve on Round 8.
-- **Where the errors are:** the model usually gets the verb right (add, remove, set: 91–96% of items) and the target wrong (which entity or field: 81–85%). Most misses are near-misses between sibling operations of one model.
+- **Where the errors are:** pooled over held-out-3 and -4, the verb (add, remove, set) is right on 91–96% of items and the target (which entity or field) on only 81–85%. Most misses are near-misses between sibling operations of one model.
 - **Recommendation:** keep v1 as it is (Round 8 LoRA + R2c + Confirm, document required). The cheapest next step is a top-3 confirm experiment, which needs no training. Unscoped requests ("do X somewhere in my vault") are not usable with this model.
 
 ## 2. What works today (v1)
 
 v1 landed in four commits: `b97299cc` (R2c is the pipeline default), `5698ad45` (reference candidates from document state), `b4c1889a` (a target document is required) and `fa7ea95a` (the tab). Details: "v1 default (2026-10-22)" in the results doc.
 
-**The Chat tab on any drive document.** The document picker lists every drive document whose type has operations, labelled with its type. Reference candidates (goal descriptions, member names, deliverable titles, topic names, link targets) come from the document's state for all 44 operations that reference existing items. A parity test checks them against the training recipes.
+**The Chat tab on any drive document.** The document picker lists every drive document whose type has operations, labelled with its type. Reference candidates (goal descriptions, member names, deliverable titles, topic names, link targets) come from the document's state for all 44 reference ops in the training recipes. A parity test checks them against the training recipes.
 
 **A document is required for a change.**
 
@@ -148,7 +148,7 @@ Args exact, given the right op: R2c on held-out-3 68.4%; E8 on held-out-4 76.4%,
 
 ## 7. The training pipeline
 
-**Teacher:** `claude-sonnet-5` through headless Claude Code (`claude -p` with no tools, MCP, settings or project context, an empty cwd and a replaced system prompt; no API key). `--json-schema` is a tool call, not constrained decoding, so every response is re-checked. Each item gets a wording spec (register, length, an invented name, a two-sided op-word quota of about 60% avoid). The 40 ops that reference existing items get a document state built by replaying real creation actions.
+**Teacher:** `claude-sonnet-5` through headless Claude Code (`claude -p` with no tools, MCP, settings or project context, an empty cwd and a replaced system prompt; no API key). `--json-schema` is a tool call, not constrained decoding, so every response is re-checked. Each item gets a wording spec (register, length, an invented name, a two-sided op-word quota of about 60% avoid). The ops that reference existing items (40 in the Round 8 teacher run; the training recipes now cover 44) get a document state built by replaying real creation actions.
 
 **Validation chain** (`training/py/teacher.py`, `training/gen/*.ts`): grounding (arg values must appear in the utterance) → wording spec, ref echo and account-context leak filter → dedup and eval leak (normalized match, trigram Jaccard ≥ 0.5, or containment) → canonical vocabularies, zod, reducer replay and ref post-conditions → a **blind second teacher pass** that labels each utterance without seeing the intended op (only agreeing rows kept) → the r6.1 grammar gate.
 
