@@ -2,7 +2,7 @@ import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage } from "../common/errors.js";
 import { madeBySource } from "./connect.js";
 import { checkProposal } from "./extract.js";
-import { completeJson, type LlmClient } from "./llm.js";
+import { completeJson, modelCalls, type LlmClient } from "./llm.js";
 
 /**
  * Verify: the pipeline's fourth phase for one source's notes. Deterministic
@@ -105,7 +105,8 @@ export type NoteVerdict = { id: string; verdict: "pass" | "flag"; problems: stri
 export async function judgeStage(llm: LlmClient, model: string, notes: VerifyNote[], candidates: Record<string, DuplicateCandidate[]>, fetchImpl?: typeof fetch) {
   const batches: VerifyNote[][] = [];
   for (let i = 0; i < notes.length; i += 3) batches.push(notes.slice(i, i + 3));
-  const replies = await Promise.all(batches.map((batch) => completeJson(llm, {
+  // All at once on a hosted provider, one after another on a local model (modelCalls).
+  const replies = await modelCalls(llm, batches, (batch) => completeJson(llm, {
     model,
     system: VERIFY_SYSTEM,
     user: batch.map((n) => [
@@ -118,7 +119,7 @@ export async function judgeStage(llm: LlmClient, model: string, notes: VerifyNot
     ].join("\n")).join("\n\n"),
     maxTokens: 16_000,
     reasoningEffort: "low",
-  }, fetchImpl)));
+  }, fetchImpl), fetchImpl);
   const ids = new Set(notes.map((n) => n.id));
   const verdicts = new Map<string, NoteVerdict>();
   let cost = 0;

@@ -78,6 +78,9 @@ export class LlmClient {
   constructor(
     readonly credentials: LlmCredentials,
     private readonly fetchImpl: typeof fetch = fetch,
+    /** How a call reaches a model on this computer or the local network: the piece's runner passes one with no
+     * five-minute limit (patient-fetch.ts); without it, fetch. */
+    readonly localFetch?: typeof fetch,
   ) {}
 
   private headers(): Record<string, string> {
@@ -238,9 +241,11 @@ export async function completeJson(
       attempt--;
       return true;
     };
+    // A local model may take longer than fetch's own five-minute limits allow; the client says how to reach it.
+    const post = sentWith.locality === "local" && client.localFetch && fetchImpl === fetch ? client.localFetch : fetchImpl;
     let response: Response;
     try {
-      response = await fetchImpl(`${baseUrl}/chat/completions`, {
+      response = await post(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "HTTP-Referer": "https://powerhouse.inc", "X-Title": "Powerhouse Knowledge Vault" },
         body: JSON.stringify({
@@ -250,6 +255,11 @@ export async function completeJson(
           temperature: 0.2,
           max_tokens: budget,
           ...(request.reasoningEffort ? { reasoning: { effort: request.reasoningEffort } } : {}),
+          // OpenRouter reads `reasoning`; a model server here (llama.cpp, LM Studio, Ollama) reads OpenAI's
+          // `reasoning_effort` and ignores the other. Without it gpt-oss on llama.cpp reasoned at its default
+          // level (2.5x the tokens on a small call) and on a Connect batch spent 48,000 tokens without answering.
+          // Hosted providers are not sent it: OpenAI refuses it for a model that does not reason.
+          ...(request.reasoningEffort && sentWith.locality === "local" ? { reasoning_effort: request.reasoningEffort } : {}),
           usage: { include: true },
         }),
         signal: AbortSignal.timeout(timeoutMs),
@@ -324,6 +334,19 @@ export function isDroppedConnection(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
   const text = `${error.message} ${error.cause instanceof Error ? error.cause.message : ""}`;
   return /terminated|fetch failed|socket hang up|ECONNRESET|other side closed|UND_ERR/i.test(text);
+}
+
+/**
+ * One staged call per item. A model on this computer or the local network answers one request at a time: sent
+ * together, the later calls only wait their turn, each spending its own timeout waiting (a vault's Connect step,
+ * twelve calls for 34 notes, failed that way). There they go one after another; a hosted provider takes them at once.
+ */
+export async function modelCalls<T, R>(llm: LlmClient, items: readonly T[], call: (item: T) => Promise<R>, fetchImpl?: typeof fetch): Promise<R[]> {
+  const { locality } = await llm.active(fetchImpl);
+  if (locality !== "local") return Promise.all(items.map(call));
+  const out: R[] = [];
+  for (const item of items) out.push(await call(item));
+  return out;
 }
 
 /** Models wrap JSON in fences or prose now and then; take the outermost object. */

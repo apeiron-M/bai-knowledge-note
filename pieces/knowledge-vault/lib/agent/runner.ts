@@ -1,6 +1,7 @@
 import { readAuth } from "../common/auth-value.js";
 import { errorMessage, KnowledgeVaultApiError } from "../common/errors.js";
 import { LlmClient } from "./llm.js";
+import { patientFetch } from "./patient-fetch.js";
 
 /**
  * What every model-backed action shares: the LLM from the connection, and
@@ -17,7 +18,7 @@ export function llmFor(context: { auth?: unknown }, model: unknown): { llm: LlmC
   }
   const chosen = (typeof model === "string" && model.trim()) || credentials.llm.defaultModel;
   if (!chosen) throw new KnowledgeVaultApiError("Choose a model, or set a default model on the connection.", { category: "validation" });
-  return { llm: new LlmClient(credentials.llm), model: chosen };
+  return { llm: new LlmClient(credentials.llm, fetch, patientFetch as unknown as typeof fetch), model: chosen };
 }
 
 async function pushLive(context: unknown, stages: StageLine[], running: string | null): Promise<void> {

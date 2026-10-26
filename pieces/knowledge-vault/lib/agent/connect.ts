@@ -1,7 +1,7 @@
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage, KnowledgeVaultApiError } from "../common/errors.js";
 import { CONVERGENCE_REASON_PREFIX } from "./write.js";
-import { completeJson, type LlmClient } from "./llm.js";
+import { completeJson, modelCalls, type LlmClient } from "./llm.js";
 
 /**
  * Connect: typed links between the notes a source produced and the rest of
@@ -172,9 +172,13 @@ function promptFor(notes: NoteSummary[], candidates: Record<string, (NoteSummary
 export async function proposeLinksStage(llm: LlmClient, model: string, notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>, fetchImpl?: typeof fetch) {
   const batches: NoteSummary[][] = [];
   for (let i = 0; i < notes.length; i += NOTES_PER_CALL) batches.push(notes.slice(i, i + NOTES_PER_CALL));
-  // In parallel: each batch still sees every sibling as a candidate, so links across batches are found.
-  const replies = await Promise.all(
-    batches.map((batch) => completeJson(llm, { model, system: CONNECT_SYSTEM, user: promptFor(batch, candidates), maxTokens: 24_000, reasoningEffort: "low" }, fetchImpl)),
+  // Each batch still sees every sibling as a candidate, so links across batches are found. All at once on a hosted
+  // provider, one after another on a local model (modelCalls).
+  const replies = await modelCalls(
+    llm,
+    batches,
+    (batch) => completeJson(llm, { model, system: CONNECT_SYSTEM, user: promptFor(batch, candidates), maxTokens: 24_000, reasoningEffort: "low" }, fetchImpl),
+    fetchImpl,
   );
   const allowed = new Map(notes.map((n) => [n.id, new Set((candidates[n.id] ?? []).map((c) => c.id))]));
   const newNotes = notes.map((n) => ({ id: n.id, title: n.title }));
