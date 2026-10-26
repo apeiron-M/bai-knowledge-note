@@ -322,6 +322,42 @@ describe("QueueManagement scenarios", () => {
     }
   });
 
+  it("refuses a second task with the same id, and ends a task early with COMPLETE_TASK, counted once", () => {
+    let document = utils.createDocument();
+    document = reducer(document, addTask({ id: "task-1", taskType: "claim", target: "inbox/a.md", createdAt: T1 }));
+    document = reducer(document, addTask({ id: "task-2", taskType: "enrichment", target: "inbox/b.md", createdAt: T1 }));
+    expect(document.state.global.activeCount).toBe(2);
+
+    // A reused id would leave a task no operation can reach (they all resolve the first match)
+    document = reducer(document, addTask({ id: "task-1", taskType: "claim", target: "inbox/c.md", createdAt: T2 }));
+    expect(document.operations.global[2].error).toBe("Task task-1 already exists");
+    expect(document.state.global.tasks.map((t) => t.target)).toEqual(["inbox/a.md", "inbox/b.md"]);
+    expect(document.state.global.activeCount).toBe(2);
+
+    // A task still waiting can be ended early
+    document = reducer(document, completeTask({ taskId: "task-2", updatedAt: T3 }));
+    const ended = document.state.global.tasks[1];
+    expect(ended.status).toBe("DONE");
+    expect(ended.currentPhase).toBeNull();
+    expect(ended.updatedAt).toBe(T3);
+    expect(document.state.global.completedCount).toBe(1);
+    expect(document.state.global.activeCount).toBe(1);
+    expect(document.state.global.lastProcessedAt).toBe(T3);
+
+    // So can one in progress; the last active task brings the count to zero, not below
+    document = reducer(document, assignTask({ taskId: "task-1", assignedTo: "agent-a", updatedAt: T4 }));
+    document = reducer(document, completeTask({ taskId: "task-1", updatedAt: T5 }));
+    expect(document.state.global.tasks[0].status).toBe("DONE");
+    expect(document.state.global.completedCount).toBe(2);
+    expect(document.state.global.activeCount).toBe(0);
+    expect(document.state.global.lastProcessedAt).toBe(T5);
+
+    for (const [i, operation] of document.operations.global.entries()) {
+      if (i === 2) continue;
+      expect(operation.error).toBeUndefined();
+    }
+  });
+
   it("should record TaskNotFoundError when operating on a missing task", () => {
     const document = utils.createDocument();
 
