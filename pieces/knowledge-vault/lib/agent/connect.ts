@@ -76,6 +76,7 @@ export async function gatherCandidates(client: KnowledgeVaultClient, drive: stri
 export const CONNECT_SYSTEM = `You link atomic notes in a knowledge vault. Answer with JSON only.
 
 For each NEW note you get a list of candidate notes. Propose a link only when you can complete, specifically: "[from] connects to [to] because ...". A reason that restates the two titles, names the link type, or could fit any pair is not a reason.
+A link runs between a NEW note and one of its candidates, in the direction its meaning has: "from" is the note that extends, applies, challenges or replaces, "to" the note it acts on. When a candidate builds on the new note, the link goes from the candidate to the new note.
 The reason is stored on the link and read on its own, so name each note by its subject in words ("the legacy-drag note", "the claim that capital is not the constraint"). Never refer to notes by letters (A, B, C) or ids.
 "from" and "to" are ids, copied exactly as listed; words go only in "reason".
 
@@ -86,9 +87,9 @@ Types (from → to):
 - SUPERSEDES: from replaces to (to is outdated). Rare.
 Confidence: grounded (the notes' evidence shows it), established (well accepted), speculative (a plausible lead).
 
-Aim for 2-4 links per new note, including links among the new notes where one builds on another. Zero links for a note is allowed when nothing holds; never invent one to reach a count.
+Aim for 2-4 links per new note, including links among the new notes where one builds on another. A new note marked "nothing links to it yet" needs a link INTO it: look for candidates that build on it, apply it or relate to it. Zero links for a note is allowed when nothing holds; never invent one to reach a count.
 
-Answer: {"links":[{"from":"<new note id>","to":"<candidate id>","type":"BUILDS_ON","reason":"...","confidence":"grounded"}]}`;
+Answer: {"links":[{"from":"<id>","to":"<id>","type":"BUILDS_ON","reason":"...","confidence":"grounded"}]} (one of the two is a NEW note, the other one of its candidates)`;
 
 /** Lower case, punctuation collapsed, a leading "the", "a" or "new note" and a trailing "note" dropped. */
 export function normaliseName(text: string): string {
@@ -145,8 +146,12 @@ export function checkLink(link: Record<string, unknown>, allowed: Map<string, Se
   const from = str(link.from);
   const to = str(link.to);
   const reason = str(link.reason).trim();
-  if (!allowed.has(from)) return `from "${from}" is not one of the new notes`;
-  if (!allowed.get(from)?.has(to)) return `to "${to}" was not a candidate for ${from}`;
+  // Either way round: a new note to one of its candidates, or one of its candidates to it.
+  if (!allowed.get(from)?.has(to) && !allowed.get(to)?.has(from)) {
+    if (allowed.has(from)) return `to "${to}" was not a candidate for ${from}`;
+    if (allowed.has(to)) return `from "${from}" was not a candidate for ${to}`;
+    return `from "${from}" is not one of the new notes`;
+  }
   if (!(LINK_TYPES as readonly string[]).includes(str(link.type))) return `type must be one of ${LINK_TYPES.join(", ")}`;
   if (reason.length < 20) return "the reason is too short to say why the link holds";
   if (/^(relates to|builds on|contradicts|supersedes|because)\b/i.test(reason) && reason.split(/\s+/).length < 6) return "the reason names the link instead of explaining it";
@@ -158,18 +163,24 @@ export function checkLink(link: Record<string, unknown>, allowed: Map<string, Se
 /** Notes per model call: all at once took 158 s for six notes, close to the 180 s per-call limit. */
 export const NOTES_PER_CALL = 3;
 
-function promptFor(notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>): string {
+function promptFor(notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>, inbound: ReadonlySet<string>): string {
   return notes
     .map((n) => [
       `NEW ${n.id}: ${n.title}`,
       `  ${n.description}`,
+      ...(inbound.has(n.id) ? ["  nothing links to it yet"] : []),
       "  candidates:",
       ...(candidates[n.id] ?? []).map((c) => `  - ${c.id}${c.similarity !== null ? ` (${c.similarity})` : " (same source)"}: ${c.title} — ${c.description}`),
     ].join("\n"))
     .join("\n\n");
 }
 
-export async function proposeLinksStage(llm: LlmClient, model: string, notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>, fetchImpl?: typeof fetch) {
+/**
+ * `inbound`: notes nothing links to yet (the health report's orphans). The prompt asks for a link into each, from a
+ * candidate that builds on it or relates to it; a link may run either way between a new note and its candidates.
+ */
+export async function proposeLinksStage(llm: LlmClient, model: string, notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>, fetchImpl?: typeof fetch, options: { inbound?: ReadonlySet<string> } = {}) {
+  const inbound = options.inbound ?? new Set<string>();
   const batches: NoteSummary[][] = [];
   for (let i = 0; i < notes.length; i += NOTES_PER_CALL) batches.push(notes.slice(i, i + NOTES_PER_CALL));
   // Each batch still sees every sibling as a candidate, so links across batches are found. All at once on a hosted
@@ -177,7 +188,7 @@ export async function proposeLinksStage(llm: LlmClient, model: string, notes: No
   const replies = await modelCalls(
     llm,
     batches,
-    (batch) => completeJson(llm, { model, system: CONNECT_SYSTEM, user: promptFor(batch, candidates), maxTokens: 24_000, reasoningEffort: "low" }, fetchImpl),
+    (batch) => completeJson(llm, { model, system: CONNECT_SYSTEM, user: promptFor(batch, candidates, inbound), maxTokens: 24_000, reasoningEffort: "low" }, fetchImpl),
     fetchImpl,
   );
   const allowed = new Map(notes.map((n) => [n.id, new Set((candidates[n.id] ?? []).map((c) => c.id))]));
@@ -190,16 +201,30 @@ export async function proposeLinksStage(llm: LlmClient, model: string, notes: No
     cost += usage.cost;
     for (const raw of arr(rec(value).links).map(rec)) {
       const label = `${str(raw.from)} → ${str(raw.to)}`;
-      // A note named in words, or as "the new note <id>", is resolved within what each end may name.
-      const from = resolveNoteRef(str(raw.from), newNotes);
-      if (!("id" in from)) {
-        dropped.push({ link: label, why: from.matches ? `from "${str(raw.from)}" could be ${from.matches} of the new notes` : `from "${str(raw.from)}" is not one of the new notes` });
-        continue;
-      }
-      const to = resolveNoteRef(str(raw.to), (candidates[from.id] ?? []).map((c) => ({ id: c.id, title: c.title })));
-      if (!("id" in to)) {
-        dropped.push({ link: label, why: to.matches ? `to "${str(raw.to)}" could be ${to.matches} of the candidates for ${from.id}` : `to "${str(raw.to)}" was not a candidate for ${from.id}` });
-        continue;
+      // A note named in words, or as "the new note <id>", is resolved within what each end may name. One end is a
+      // new note; the other one of its candidates, on either side of the link.
+      const candidatesOf = (id: string) => (candidates[id] ?? []).map((c) => ({ id: c.id, title: c.title }));
+      let from: { id: string } | { matches: number } = resolveNoteRef(str(raw.from), newNotes);
+      let to: { id: string } | { matches: number };
+      if ("id" in from) {
+        to = resolveNoteRef(str(raw.to), candidatesOf(from.id));
+        if (!("id" in to)) {
+          dropped.push({ link: label, why: to.matches ? `to "${str(raw.to)}" could be ${to.matches} of the candidates for ${from.id}` : `to "${str(raw.to)}" was not a candidate for ${from.id}` });
+          continue;
+        }
+      } else {
+        // A candidate pointing at a new note: the new note is "to".
+        const fromMatches = from.matches;
+        to = resolveNoteRef(str(raw.to), newNotes);
+        if (!("id" in to)) {
+          dropped.push({ link: label, why: fromMatches ? `from "${str(raw.from)}" could be ${fromMatches} of the new notes` : `from "${str(raw.from)}" is not one of the new notes` });
+          continue;
+        }
+        from = resolveNoteRef(str(raw.from), candidatesOf(to.id));
+        if (!("id" in from)) {
+          dropped.push({ link: label, why: from.matches ? `from "${str(raw.from)}" could be ${from.matches} of the candidates for ${to.id}` : `from "${str(raw.from)}" was not a candidate for ${to.id}` });
+          continue;
+        }
       }
       const why = checkLink({ ...raw, from: from.id, to: to.id }, allowed);
       const key = `${from.id}>${to.id}`;

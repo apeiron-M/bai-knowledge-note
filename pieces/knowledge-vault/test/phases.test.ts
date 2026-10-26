@@ -273,7 +273,8 @@ describe("connect", () => {
     ] }));
     const out = await proposeLinksStage(m.llm, "m", NOTES, cands, m.fetchImpl);
     expect(out.links.map((l) => [l.from, l.to])).toEqual([["n1", "n2"], ["n1", "x1"]]);
-    expect(out.dropped.map((d) => d.why)).toEqual(['from "a note about something else entirely" is not one of the new notes']);
+    // "to" is a new note, so the other end is looked for among its candidates: a link may run either way.
+    expect(out.dropped.map((d) => d.why)).toEqual(['from "a note about something else entirely" was not a candidate for n2']);
     expect(CONNECT_SYSTEM).toMatch(/"from" and "to" are ids, copied exactly as listed; words go only in "reason"\./);
   });
   it("splits the notes across parallel calls and removes duplicates between them", async () => {

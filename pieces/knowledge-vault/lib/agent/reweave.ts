@@ -11,16 +11,21 @@ import { planStage, readMocs, writePlacementsStage } from "./synthesize.js";
  * vault as it is now. The pipeline runs each source once, so a note
  * extracted before its neighbours existed (the first section of a long
  * report, connected while the vault held nothing like it) or one left by a
- * run cut off between its steps stays alone for good. Here a note with fewer
- * than 2 links gets the Connect treatment again, a note no MoC holds gets
- * placed, and a pipeline task the notes' source left open is caught up from
- * what the vault now holds.
+ * run cut off between its steps stays alone for good. Here a note the health
+ * report flags gets the Connect treatment again: one nothing links to (an
+ * orphan, which needs a link into it), or one with fewer than 2 links of its
+ * own; a note no MoC holds gets placed; and a pipeline task the notes' source
+ * left open is caught up from what the vault now holds.
  */
 
 /** Edge types that connect a note to other notes: the knowledge links, not provenance or MoC structure. */
 export const KNOWLEDGE_LINKS = new Set(["RELATES_TO", "BUILDS_ON", "CONTRADICTS", "SUPERSEDES"]);
 
-export type ReweaveNote = NoteSummary & { links: number; placed: boolean; sourceId: string | null };
+/** `links` is every knowledge link the note has; `incoming` and `outgoing` count them the way the health report does. */
+export type ReweaveNote = NoteSummary & { links: number; incoming: number; outgoing: number; placed: boolean; sourceId: string | null };
+
+/** What the health report flags in a note's links: nothing links to it, or it has fewer than 2 of its own. */
+export const needsLinks = (n: Pick<ReweaveNote, "incoming" | "outgoing">) => n.incoming === 0 || n.outgoing < 2;
 type Edge = { direction?: string; documentId?: string; linkType?: string };
 type NoteDoc = { name?: string; documentType?: string; state?: { global?: { title?: string; description?: string; status?: string } }; edges?: Edge[] };
 
@@ -64,12 +69,15 @@ export async function readReweaveNotes(client: KnowledgeVaultClient, drive: stri
     else if (g.status === "ARCHIVED") skipped.push({ id, why: "is archived" });
     else {
       const edges = doc.edges ?? [];
+      const knowledge = edges.filter((e) => KNOWLEDGE_LINKS.has(e.linkType ?? ""));
       notes.push({
         id,
         title: g.title ?? doc.name ?? id,
         description: g.description ?? "",
         status: g.status ?? null,
-        links: edges.filter((e) => KNOWLEDGE_LINKS.has(e.linkType ?? "")).length,
+        links: knowledge.length,
+        incoming: knowledge.filter((e) => e.direction === "in").length,
+        outgoing: knowledge.filter((e) => e.direction === "out").length,
         placed: edges.some((e) => e.direction === "in" && e.linkType === "CORE_IDEA"),
         sourceId: edges.find((e) => e.direction === "out" && e.linkType === "DERIVED_FROM")?.documentId ?? null,
       });
@@ -124,14 +132,16 @@ export async function reweave(
   const pause = args.pause ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
   const read = await stage("read", async () => {
     const r = await readReweaveNotes(client, drive, args.noteIds);
-    const thin = r.notes.filter((n) => n.links < 2).length;
+    const orphans = r.notes.filter((n) => n.incoming === 0).length;
+    const thin = r.notes.filter((n) => n.outgoing < 2).length;
     const loose = r.notes.filter((n) => !n.placed).length;
     return {
       ...r,
-      summary: `${plural(r.notes.length, "note")} to reweave: ${thin} with fewer than 2 links, ${loose} in no MoC${r.skipped.length ? `; ${r.skipped.length} left out (${r.skipped.map((s) => `${s.id} ${s.why}`).join("; ")})` : ""}.`,
+      summary: `${plural(r.notes.length, "note")} to reweave: ${orphans} nothing links to, ${thin} with fewer than 2 links of their own, ${loose} in no MoC${r.skipped.length ? `; ${r.skipped.length} left out (${r.skipped.map((s) => `${s.id} ${s.why}`).join("; ")})` : ""}.`,
     };
   });
-  const toConnect = read.notes.filter((n) => n.links < 2);
+  const toConnect = read.notes.filter(needsLinks);
+  const inbound = new Set(toConnect.filter((n) => n.incoming === 0).map((n) => n.id));
   const titles = new Map(read.notes.map((n) => [n.id, n.title] as const));
   let cost = 0;
 
@@ -149,7 +159,7 @@ export async function reweave(
       const total = Object.values(all).reduce((n, list) => n + list.length, 0);
       return { candidates: all, summary: `${plural(total, "candidate")} from the vault's semantic neighbours.` };
     });
-    const proposed = await stage("propose links", () => proposeLinksStage(llm, model, toConnect, candidates.candidates, fetchImpl));
+    const proposed = await stage("propose links", () => proposeLinksStage(llm, model, toConnect, candidates.candidates, fetchImpl, { inbound }));
     cost += proposed.cost_usd;
     links = proposed.links.map((l) => ({ ...l, from_title: titles.get(l.from) ?? l.from, to_title: titles.get(l.to) ?? l.to }));
     dropped = proposed.dropped;

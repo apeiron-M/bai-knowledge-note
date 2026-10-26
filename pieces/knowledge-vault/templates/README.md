@@ -37,7 +37,8 @@ The script refuses to write a template in which a concrete value survived. Impor
 # Reweave template
 
 `reweave.json` is the *Reweave notes* workflow, written by hand in the same replayable format (no live
-workflow to export it from): the **Unwoven notes** trigger, polling every 5 minutes, into one **Reweave
+workflow to export it from): the **Unwoven notes** trigger (*Which notes: what the health report flags*, the
+notes its orphan and link checks name and notes in no MoC), polling every 5 minutes, into one **Reweave
 notes** step, then **Check vault health** (when the queue is idle, and only when the vault's health changed),
 since reweaving rewrites older notes. It has no connection of its own — the desktop app instantiates it per vault with the vault
 pipeline's connection (`{{CONNECTION_ID}}`), so it runs on the same model and key.

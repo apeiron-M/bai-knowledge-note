@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { LlmClient } from "../lib/agent/llm.js";
-import { parseNoteIds, reweave } from "../lib/agent/reweave.js";
+import { proposeLinksStage } from "../lib/agent/connect.js";
+import { needsLinks, parseNoteIds, readReweaveNotes, reweave } from "../lib/agent/reweave.js";
 import { stageRunner } from "../lib/agent/runner.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
-import { MAX_TRIES, PIPELINE_QUIET_MS, pollUnwoven, RETRY_AFTER_MS, RETRY_GROWTH, SETTLE_MS } from "../lib/triggers/unwoven-notes.js";
+import { MAX_TRIES, PIPELINE_QUIET_MS, pollUnwoven, RETRY_AFTER_MS, RETRY_GROWTH, selectionOf, SETTLE_MS } from "../lib/triggers/unwoven-notes.js";
 
 const json = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
 function modelSays(...answers: unknown[]) {
@@ -48,7 +49,7 @@ describe("the unwoven-notes trigger", () => {
     ];
     const v = vault({ "notes/d": { state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } }, "notes/q1": () => ({ state: { global: { tasks } } }), orphans: () => orphans.map((o) => (o.documentId === "n-new" ? { ...o, createdAt: new Date(clock - SETTLE_MS / 2).toISOString() } : o)), stats: () => ({ noteCount }) });
     const store = memoryStore();
-    const poll = () => pollUnwoven(v.client, store, { drive: "d", batch: 6, include_unlinked: false }, now);
+    const poll = () => pollUnwoven(v.client, store, { drive: "d", batch: 6, select: "orphans" }, now);
 
     // A source is being processed: nothing starts, nothing is read beyond the queue.
     expect(await poll()).toEqual([]);
@@ -130,5 +131,68 @@ describe("the reweave job", () => {
     const dry = await run(false);
     expect(dry.summary).toMatch(/^Dry run: Reweaved 2 notes: 2 links proposed; 1 note would go to "Training data"\.$/);
     expect(v.requests.slice(before).some((r) => r.method === "POST")).toBe(false);
+  });
+});
+
+/** The loop the health report closes: it flags notes, the Reweave notes workflow takes exactly those, links them, and the report moves. */
+describe("keeping the vault healthy: Reweave takes what the health report flags", () => {
+  const created = "2026-10-10T10:00:00Z";
+  const note = (id: string) => ({ documentId: id, title: `Note ${id}`, status: "IN_REVIEW", documentType: "bai/knowledge-note", createdAt: created });
+  const link = (from: string, to: string, linkType = "BUILDS_ON") => ({ sourceDocumentId: from, targetDocumentId: to, linkType });
+
+  it("selects the notes the report's orphan and link checks name, counted as it counts them, and notes in no MoC", async () => {
+    const graph = {
+      nodes: [note("a"), note("b"), note("c"), note("d"), note("e"), { documentId: "m", title: "Map", status: "MOC", documentType: "bai/moc", createdAt: created }],
+      edges: [
+        link("a", "b"), link("a", "c"), link("b", "a"), link("b", "c"), link("c", "a"), link("c", "b"),
+        // d links out twice but nothing links to d: an orphan, though a MoC holds it.
+        link("d", "a"), link("d", "b", "RELATES_TO"),
+        // e has one link of its own.
+        link("e", "a"), link("a", "e"),
+        ...["a", "b", "d", "e"].map((id) => link("m", id, "CORE_IDEA")),
+      ],
+    };
+    const v = vault({ "notes/d": { state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } }, "notes/q1": { state: { global: { tasks: [{ status: "DONE", updatedAt: created }] } } }, "graph.json": graph });
+    const [run] = await pollUnwoven(v.client, memoryStore(), { drive: "d", batch: 6, select: "health" }, () => Date.parse("2026-10-11T10:00:00Z"));
+    expect(run.notes).toEqual([
+      { id: "c", title: "Note c", why: "in no MoC" },
+      { id: "d", title: "Note d", why: "nothing links to it" },
+      { id: "e", title: "Note e", why: "fewer than 2 links of its own" },
+    ]);
+  });
+
+  it("a workflow set up before the choice keeps what its checkbox said", () => {
+    expect(selectionOf({})).toBe("orphans");
+    expect(selectionOf({ include_unlinked: true })).toBe("unlinked");
+    expect(selectionOf({ select: "health", include_unlinked: true })).toBe("health");
+  });
+
+  it("counts a note's links as the report does: an orphan with links of its own still needs one into it", async () => {
+    const edges = (spec: string) => spec.split(" ").filter(Boolean).map((d) => ({ direction: d, documentId: "x", linkType: "RELATES_TO" }));
+    const v = vault({
+      "notes/out-only": { documentType: "bai/knowledge-note", state: { global: { title: "Out only" } }, edges: edges("out out") },
+      "notes/fine": { documentType: "bai/knowledge-note", state: { global: { title: "Fine" } }, edges: edges("out out in") },
+      "notes/in-only": { documentType: "bai/knowledge-note", state: { global: { title: "In only" } }, edges: edges("out in in in") },
+    });
+    const { notes } = await readReweaveNotes(v.client, "d", ["out-only", "fine", "in-only"]);
+    expect(notes.map((n) => [n.id, n.incoming, n.outgoing, needsLinks(n)])).toEqual([["out-only", 0, 2, true], ["fine", 1, 2, false], ["in-only", 3, 1, true]]);
+  });
+
+  it("asks for a link into a note nothing links to, and takes a candidate's link pointing at it", async () => {
+    const reason = "The budget note applies the capital claim to how technology money is spent.";
+    const m = modelSays({ links: [
+      { from: "x1", to: "n1", type: "BUILDS_ON", reason, confidence: "grounded" },
+      { from: "zz", to: "n1", type: "RELATES_TO", reason },
+    ] });
+    let prompt = "";
+    const spy = (async (url: string, init: { body?: string }) => {
+      if (String(url).endsWith("/chat/completions")) prompt = String((JSON.parse(init.body ?? "{}") as { messages: { content: string }[] }).messages[1].content);
+      return m.fetchImpl(url, init as never);
+    }) as unknown as typeof fetch;
+    const llm = new LlmClient({ baseUrl: "https://llm.test/v1", apiKey: "k" }, spy);
+    const out = await proposeLinksStage(llm, "m", [{ id: "n1", title: "Capital is not the constraint", description: "d", status: null }], { n1: [{ id: "x1", title: "Budgets follow capital", description: "dx", status: null, similarity: 0.9 }] }, spy, { inbound: new Set(["n1"]) });
+    expect(prompt).toMatch(/NEW n1: Capital is not the constraint\n {2}d\n {2}nothing links to it yet/);
+    expect(out.links.map((l) => [l.from, l.to, l.type])).toEqual([["x1", "n1", "BUILDS_ON"]]);
+    expect(out.dropped.map((d) => d.why)).toEqual(['from "zz" was not a candidate for n1']);
   });
 });

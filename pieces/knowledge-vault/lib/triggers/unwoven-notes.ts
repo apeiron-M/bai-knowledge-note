@@ -9,10 +9,12 @@ import { HELD_TOO_LONG_MS } from "./new-pipeline-task.js";
 
 /**
  * Polls the vault for notes the pipeline left unwoven and starts one run per
- * check for a few of them, oldest first, while the pipeline is idle. By
- * default those are the graph's orphans: notes in no Map of Content that
- * nothing links to. Asked to, it also takes notes with no links of their own
- * and notes in no MoC that something else links to.
+ * check for a few of them, oldest first, while the pipeline is idle. Which
+ * notes: what the vault's health report flags, counted as it counts them
+ * (notes nothing links to, notes with fewer than 2 links of their own) plus
+ * notes no MoC holds, which is how the Reweave notes workflow keeps the vault
+ * healthy; or the graph's orphans (in no MoC, nothing links to them); or those
+ * and also notes with no links of their own.
  *
  * The pipeline runs each source once. A note extracted before its neighbours
  * existed — the first section of a long report, connected while the vault
@@ -86,9 +88,48 @@ async function unwovenFromGraph(client: KnowledgeVaultClient, drive: string): Pr
   return { notes: out, size: notes.length };
 }
 
+/**
+ * What the vault's health report flags, counted as health-checks.ts counts it: a note no other note links to (an
+ * orphan; a MoC holding it does not count), a note with fewer than 2 links to other notes, and a note no MoC holds,
+ * which Reweave places. Repairing exactly these is what moves the report.
+ */
+async function healthFlagged(client: KnowledgeVaultClient, drive: string): Promise<{ notes: UnwovenNote[]; size: number }> {
+  const graph = await client.request<{ nodes: Row[]; edges: Edge[] }>({ path: "graph.json", query: { drive }, timeoutMs: 60_000 });
+  const notes = graph.nodes.filter((n) => n.documentId && n.documentType === "bai/knowledge-note" && isNote(n));
+  const ids = new Set(notes.map((n) => n.documentId as string));
+  const held = new Set(graph.edges.filter((e) => e.linkType === "CORE_IDEA").map((e) => e.targetDocumentId));
+  const incoming = new Map<string, number>();
+  const outgoing = new Map<string, number>();
+  for (const e of graph.edges) {
+    if (!KNOWLEDGE_LINKS.has(e.linkType) || !ids.has(e.sourceDocumentId) || !ids.has(e.targetDocumentId)) continue;
+    outgoing.set(e.sourceDocumentId, (outgoing.get(e.sourceDocumentId) ?? 0) + 1);
+    incoming.set(e.targetDocumentId, (incoming.get(e.targetDocumentId) ?? 0) + 1);
+  }
+  const out: UnwovenNote[] = [];
+  for (const n of notes) {
+    const id = n.documentId as string;
+    const why = [
+      ...(incoming.get(id) ? [] : ["nothing links to it"]),
+      ...((outgoing.get(id) ?? 0) < 2 ? ["fewer than 2 links of its own"] : []),
+      ...(held.has(id) ? [] : ["in no MoC"]),
+    ];
+    if (why.length) out.push({ id, title: n.title ?? id, why: why.join("; "), createdAt: n.createdAt ?? null });
+  }
+  return { notes: out, size: notes.length };
+}
+
+/** Which notes a check takes: what the health report flags, the graph's orphans, or those and notes with no links. */
+export type Selection = "health" | "orphans" | "unlinked";
+export function selectionOf(p: { select?: unknown; include_unlinked?: unknown }): Selection {
+  if (p.select === "health" || p.select === "orphans" || p.select === "unlinked") return p.select;
+  // A workflow set up before the choice keeps what its checkbox said.
+  return p.include_unlinked === true ? "unlinked" : "orphans";
+}
+
 /** The notes a check would pick up now, oldest first, before the tries are counted. */
-export async function findUnwoven(client: KnowledgeVaultClient, props: { drive: string; include_unlinked: boolean }, t0: number) {
-  const found = props.include_unlinked ? await unwovenFromGraph(client, props.drive) : await orphanNotes(client, props.drive);
+export async function findUnwoven(client: KnowledgeVaultClient, props: { drive: string; select: Selection }, t0: number) {
+  const found =
+    props.select === "health" ? await healthFlagged(client, props.drive) : props.select === "unlinked" ? await unwovenFromGraph(client, props.drive) : await orphanNotes(client, props.drive);
   const settled = found.notes.filter((n) => !(t0 - Date.parse(n.createdAt ?? "") < SETTLE_MS));
   settled.sort((a, b) => (Date.parse(a.createdAt ?? "") || 0) - (Date.parse(b.createdAt ?? "") || 0));
   return { notes: settled, size: found.size };
@@ -108,7 +149,7 @@ async function readTried(store: StoreLike): Promise<Tried> {
 export async function pollUnwoven(
   client: KnowledgeVaultClient,
   store: StoreLike,
-  props: { drive: string; batch: number; include_unlinked: boolean },
+  props: { drive: string; batch: number; select: Selection },
   now: () => number = Date.now,
 ): Promise<UnwovenItem[]> {
   const t0 = now();
@@ -144,7 +185,7 @@ export const unwovenNotesTrigger = createTrigger({
   name: "unwoven-notes",
   displayName: "Unwoven notes",
   description:
-    "Starts a run for a few notes the pipeline left unwoven — orphans in no Map of Content, or, if asked, notes with no links — while the pipeline is idle. Map {{trigger.payload.note_ids}} into Reweave notes.",
+    "Starts a run for a few notes the pipeline left unwoven while the pipeline is idle: what the vault's health report flags (notes nothing links to, notes with fewer than 2 links, notes in no MoC), or only orphans in no Map of Content. Map {{trigger.payload.note_ids}} into Reweave notes.",
   type: TriggerStrategy.POLLING,
   props: {
     drive: driveProp,
@@ -154,9 +195,23 @@ export const unwovenNotesTrigger = createTrigger({
       required: false,
       defaultValue: 6,
     }),
+    select: Property.StaticDropdown({
+      displayName: "Which notes",
+      description: "What the health report flags: the notes its orphan and link checks name, and notes in no MoC; repairing them is what moves the report. Orphans: notes in no MoC that nothing links to.",
+      required: false,
+      defaultValue: "health",
+      options: {
+        disabled: false,
+        options: [
+          { label: "What the health report flags", value: "health" },
+          { label: "Orphans in no MoC", value: "orphans" },
+          { label: "Orphans, and notes with no links", value: "unlinked" },
+        ],
+      },
+    }),
     include_unlinked: Property.Checkbox({
-      displayName: "Also notes with no links",
-      description: "Off: only orphans (in no MoC, nothing links to them). On: also notes in a MoC with no links to other notes, and notes in no MoC that something links to",
+      displayName: "Also notes with no links (older workflows)",
+      description: "Read only when Which notes is not set: off, orphans in no MoC; on, also notes with no links to other notes",
       required: false,
       defaultValue: false,
     }),
@@ -177,13 +232,13 @@ export const unwovenNotesTrigger = createTrigger({
     await context.store.put(TRIED_KEY, null);
   },
   async run(context) {
-    const p = context.propsValue as { drive: string; batch?: unknown; include_unlinked?: boolean };
-    return pollUnwoven(clientFor(context.auth), context.store as StoreLike, { drive: p.drive, batch: batchOf(p.batch), include_unlinked: p.include_unlinked === true });
+    const p = context.propsValue as { drive: string; batch?: unknown; select?: unknown; include_unlinked?: boolean };
+    return pollUnwoven(clientFor(context.auth), context.store as StoreLike, { drive: p.drive, batch: batchOf(p.batch), select: selectionOf(p) });
   },
   async test(context) {
-    const p = context.propsValue as { drive: string; batch?: unknown; include_unlinked?: boolean };
+    const p = context.propsValue as { drive: string; batch?: unknown; select?: unknown; include_unlinked?: boolean };
     const t0 = Date.now();
-    const { notes } = await findUnwoven(clientFor(context.auth), { drive: p.drive, include_unlinked: p.include_unlinked === true }, t0);
+    const { notes } = await findUnwoven(clientFor(context.auth), { drive: p.drive, select: selectionOf(p) }, t0);
     const picked = notes.slice(0, batchOf(p.batch));
     return picked.length ? [{ note_ids: picked.map((n) => n.id).join(","), count: picked.length, notes: picked.map((n) => ({ id: n.id, title: n.title, why: n.why })), _dedupe_key: `reweave:test:${t0}` }] : [];
   },
