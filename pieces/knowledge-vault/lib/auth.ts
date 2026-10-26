@@ -2,13 +2,15 @@ import { PieceAuth, Property } from "@powerhousedao/pieces-framework";
 import { LlmClient } from "./agent/llm.js";
 import { readAuth, type LlmCredentials } from "./common/auth-value.js";
 import { KnowledgeVaultClient } from "./common/client.js";
-import { KnowledgeVaultApiError } from "./common/errors.js";
+import { isLapsedLogin, KnowledgeVaultApiError, RENEW_LOGIN } from "./common/errors.js";
 
 const AUTH_DESCRIPTION = `A Switchboard that hosts a knowledge vault, and a bearer for an identity that may use it.
 
 **Switchboard URL** — the origin only, e.g. \`https://vault.example.com\` or \`http://localhost:4001\`: no \`/graphql\`, no \`/api\`.
 
 **Access token** — a Renown bearer. After \`ph login\`, mint one with \`ph access-token --expiry 90d\`. Use a dedicated workflow identity with **WRITE** on the vault drive, not a person's: every write is recorded against this address, and a workflow must never approve its own notes.
+
+**Keep the login alive.** The token works only while the \`ph login\` that signed it does, and a login lasts **7 days** whatever the token's own expiry. When it lapses, every step fails with *Credentials no longer valid*. Run \`ph login\` again in the same directory at least once a week: the same token keeps working, nothing to re-paste. The connection label shows when the login expires.
 
 **LLM (optional)** — only the model-backed actions (\`Extract claims\`, …) use it. An API key from an OpenAI-compatible provider; the default is OpenRouter (https://openrouter.ai/keys). Give workflows their own key **with a spending limit**: the connection label says when a key has none.
 
@@ -27,7 +29,7 @@ export const knowledgeVaultAuth = PieceAuth.CustomAuth({
     token: PieceAuth.SecretText({
       displayName: "Access token",
       required: true,
-      description: "A Renown bearer: `ph access-token --expiry 90d`",
+      description: "A Renown bearer: `ph access-token --expiry 90d`. It stops when its `ph login` lapses (7 days): renew with `ph login`",
     }),
     llm_api_key: PieceAuth.SecretText({
       displayName: "LLM API key (optional)",
@@ -62,12 +64,16 @@ export const knowledgeVaultAuth = PieceAuth.CustomAuth({
   // Called only after validate passes; best-effort.
   getConnectionIdentifier: async ({ auth }) => {
     const credentials = readAuth(auth);
-    const { address, vaults, llm } = await checkConnection(new KnowledgeVaultClient(credentials));
+    const [{ address, vaults, llm }, login] = await Promise.all([
+      checkConnection(new KnowledgeVaultClient(credentials)),
+      loginExpiry(credentials.token),
+    ]);
     const expiry = tokenExpiry(credentials.token);
     return [
       `${shortAddress(address)} @ ${new URL(credentials.baseUrl).host}`,
       `${vaults} vault${vaults === 1 ? "" : "s"}`,
       expiry ? `token expires ${expiry}` : undefined,
+      login ? `login expires ${login}` : undefined,
       llm,
     ]
       .filter(Boolean)
@@ -131,9 +137,12 @@ export function describeAuthFailure(error: unknown): string {
       case "credential":
         // Only a 401 from the Switchboard is about the vault token; the LLM
         // key check and an empty field are credential errors too, with their own words.
-        return error.status === 401
-          ? "The Switchboard rejected the token: it has expired, was revoked, or was not copied whole. Paste only the token (eyJ…) from `ph access-token --expiry 90d`."
-          : error.message;
+        if (error.status !== 401) return error.message;
+        // A lapsed login is not a bad token: a new token from the same lapsed
+        // login fails the same way.
+        return isLapsedLogin(error.message)
+          ? `The Switchboard rejected the token because the Renown login that signed it has lapsed. ${RENEW_LOGIN}`
+          : "The Switchboard rejected the token: it has expired, was revoked, or was not copied whole. Paste only the token (eyJ…) from `ph access-token --expiry 90d`.";
       case "not_found":
         return "That address answered, but not with a knowledge vault. Check the Switchboard URL, and that the knowledge-note package is installed there.";
       case "network":
@@ -154,15 +163,60 @@ function isPrivate(error: KnowledgeVaultApiError): boolean {
   );
 }
 
-/** The JWT's `exp` as a date, read without verifying: it only labels the connection. */
-export function tokenExpiry(token: string): string | undefined {
+type TokenClaims = {
+  exp?: unknown;
+  iss?: unknown;
+  vc?: { credentialSubject?: { address?: unknown; chainId?: unknown } };
+};
+
+/** A JWT's payload, read without verifying: it only labels the connection. */
+function tokenClaims(token: string): TokenClaims | undefined {
   try {
     const payload = token.split(".")[1];
     if (!payload) return undefined;
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as {
-      exp?: unknown;
+    const json: unknown = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return typeof json === "object" && json !== null ? (json as TokenClaims) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** The JWT's `exp` as a date. */
+export function tokenExpiry(token: string): string | undefined {
+  const exp = tokenClaims(token)?.exp;
+  return typeof exp === "number" ? new Date(exp * 1000).toISOString().slice(0, 10) : undefined;
+}
+
+export const DEFAULT_RENOWN_URL = "https://www.renown.id";
+
+/**
+ * When the `ph login` behind the token lapses, as a date: Renown's delegation
+ * credential for the token's key (its `iss`) acting for its wallet. This, not
+ * `exp`, is what stops a long-lived token after 7 days. Best-effort: a token
+ * that is not a Renown JWT, a Switchboard on another Renown, or an
+ * unreachable one leave it out of the label.
+ */
+export async function loginExpiry(
+  token: string,
+  fetchImpl: typeof fetch = fetch,
+  renownUrl: string = DEFAULT_RENOWN_URL,
+): Promise<string | undefined> {
+  const claims = tokenClaims(token);
+  const did = claims?.iss;
+  const address = claims?.vc?.credentialSubject?.address;
+  const chainId = claims?.vc?.credentialSubject?.chainId ?? 1;
+  if (typeof did !== "string" || typeof address !== "string" || typeof chainId !== "number") return undefined;
+  const url = new URL("/api/auth/credential", renownUrl);
+  url.search = new URLSearchParams({ address, chainId: String(chainId), connectId: did, appId: did }).toString();
+  try {
+    const response = await fetchImpl(url, { signal: AbortSignal.timeout(10_000) });
+    if (!response.ok) return undefined;
+    const { credential } = (await response.json()) as {
+      credential?: { credentialSubject?: { id?: unknown }; expirationDate?: unknown };
     };
-    return typeof json.exp === "number" ? new Date(json.exp * 1000).toISOString().slice(0, 10) : undefined;
+    if (credential?.credentialSubject?.id !== did || typeof credential.expirationDate !== "string") return undefined;
+    const at = Date.parse(credential.expirationDate);
+    return Number.isNaN(at) ? undefined : new Date(at).toISOString().slice(0, 10);
   } catch {
     return undefined;
   }

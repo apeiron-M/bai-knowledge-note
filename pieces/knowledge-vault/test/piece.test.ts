@@ -1,12 +1,12 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { knowledgeVault } from "../index.js";
 import type { shapeSearch } from "../lib/actions/search.js";
 import { searchAction } from "../lib/actions/search.js";
-import { checkConnection, describeAuthFailure, knowledgeVaultAuth, tokenExpiry } from "../lib/auth.js";
+import { checkConnection, DEFAULT_RENOWN_URL, describeAuthFailure, knowledgeVaultAuth, loginExpiry, tokenExpiry } from "../lib/auth.js";
 import { AUTH_PROP_ORDER, normalizeBaseUrl, readAuth } from "../lib/common/auth-value.js";
 import { KnowledgeVaultClient } from "../lib/common/client.js";
 import { classify, KnowledgeVaultApiError } from "../lib/common/errors.js";
-import { ADDRESS, DRIVE, GOOD_TOKEN, startVaultServer, type VaultServer } from "./vault-server.js";
+import { ADDRESS, DRIVE, GOOD_TOKEN, LAPSED_TOKEN, startVaultServer, type VaultServer } from "./vault-server.js";
 
 let server: VaultServer | undefined;
 afterEach(async () => {
@@ -181,5 +181,74 @@ describe("a connection made in Studio on dev.28", () => {
   });
   it("leaves named props alone", () => {
     expect(readAuth({ base_url: "https://v.test", token: "t", "0": "https://other.test" }).baseUrl).toBe("https://v.test");
+  });
+});
+
+describe("a lapsed Renown login", () => {
+  const DID = "did:key:zDnaeTest";
+  // exp 2027-01-12: the token itself is good for months.
+  const JWT = `h.${btoa(JSON.stringify({ exp: 1799769600, iss: DID, vc: { credentialSubject: { address: ADDRESS, chainId: 1 } } })).replace(/=+$/, "")}.s`;
+  const credential = (over: Record<string, unknown> = {}) => ({
+    credential: { credentialSubject: { id: DID }, expirationDate: "2026-10-28T16:28:30.964Z", ...over },
+  });
+  const href = (input: string | URL | Request | undefined) => (input === undefined ? "" : typeof input === "string" ? input : input instanceof URL ? input.href : input.url);
+  const renown = (answer: Response | Error) => vi.fn<typeof fetch>(() => (answer instanceof Error ? Promise.reject(answer) : Promise.resolve(answer)));
+
+  it("fails a step with what to do, not just the Switchboard's words", async () => {
+    server = await startVaultServer();
+    const error: unknown = await clientOf(server.baseUrl, LAPSED_TOKEN).ping().catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(KnowledgeVaultApiError);
+    expect(error).toMatchObject({ status: 401, category: "credential" });
+    expect((error as Error).message).toMatch(/^Credentials no longer valid: the Renown login that signed this token has lapsed\. A `ph login` lasts 7 days/);
+    expect((error as Error).message).toContain("Run `ph login` again in the directory that minted the token");
+  });
+
+  it("tells the connection form to renew the login, and a bad token to be re-pasted", async () => {
+    server = await startVaultServer();
+    const lapsed = await knowledgeVaultAuth.validate!({ auth: { base_url: server.baseUrl, token: LAPSED_TOKEN } } as never);
+    expect((lapsed as { error?: string }).error).toMatch(/^The Switchboard rejected the token because the Renown login that signed it has lapsed\. A `ph login` lasts 7 days/);
+    const bad = await knowledgeVaultAuth.validate!({ auth: { base_url: server.baseUrl, token: "stale" } } as never);
+    expect((bad as { error?: string }).error).toMatch(/Paste only the token/);
+    expect((bad as { error?: string }).error).not.toMatch(/lapsed/);
+  });
+
+  it("asks Renown when the token's login expires", async () => {
+    const fetchImpl = renown(Response.json(credential()));
+    await expect(loginExpiry(JWT, fetchImpl)).resolves.toBe("2026-10-28");
+    const url = new URL(href(fetchImpl.mock.calls[0]?.[0]));
+    expect(url.origin + url.pathname).toBe(`${DEFAULT_RENOWN_URL}/api/auth/credential`);
+    expect(Object.fromEntries(url.searchParams)).toEqual({ address: ADDRESS, chainId: "1", connectId: DID, appId: DID });
+  });
+
+  it.each([
+    ["a credential for another key", Response.json(credential({ credentialSubject: { id: "did:key:other" } }))],
+    ["no credential (lapsed or revoked)", Response.json({})],
+    ["a credential without an expiry", Response.json(credential({ expirationDate: undefined }))],
+    ["an unreadable expiry", Response.json(credential({ expirationDate: "soon" }))],
+    ["an error answer", new Response("down", { status: 503 })],
+    ["an unreachable Renown", new Error("ENOTFOUND")],
+  ])("leaves the login out on %s", async (_, answer) => {
+    await expect(loginExpiry(JWT, renown(answer))).resolves.toBeUndefined();
+  });
+
+  it("asks nothing for a token that is not a Renown JWT", async () => {
+    const fetchImpl = renown(Response.json(credential()));
+    await expect(loginExpiry(GOOD_TOKEN, fetchImpl)).resolves.toBeUndefined();
+    await expect(loginExpiry(`h.${btoa(JSON.stringify({ iss: DID }))}.s`, fetchImpl)).resolves.toBeUndefined();
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("puts the login's expiry beside the token's in the connection label", async () => {
+    server = await startVaultServer({ token: JWT });
+    const realFetch = globalThis.fetch;
+    vi.stubGlobal("fetch", (input: string | URL | Request, init?: RequestInit) =>
+      href(input).startsWith(DEFAULT_RENOWN_URL) ? Promise.resolve(Response.json(credential())) : realFetch(input, init),
+    );
+    try {
+      const label = await knowledgeVaultAuth.getConnectionIdentifier!({ auth: { base_url: server.baseUrl, token: JWT } } as never);
+      expect(label).toMatch(/ · 1 vault · token expires 2027-01-12 · login expires 2026-10-28$/);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

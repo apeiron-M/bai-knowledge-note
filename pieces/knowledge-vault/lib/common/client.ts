@@ -1,5 +1,5 @@
 import type { KnowledgeVaultCredentials } from "./auth-value.js";
-import { classify, KnowledgeVaultApiError, readErrorBody } from "./errors.js";
+import { classify, isLapsedLogin, KnowledgeVaultApiError, LAPSED_LOGIN_MESSAGE, readErrorBody } from "./errors.js";
 
 export type HttpVerb = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export type QueryValue = string | number | boolean | null | undefined;
@@ -73,7 +73,8 @@ export class KnowledgeVaultClient {
     if (!response.ok) {
       const { message, code } = readErrorBody(body);
       const { category, retryable } = classify(response.status, code);
-      throw new KnowledgeVaultApiError(message ?? `The vault answered ${response.status}`, {
+      const said = response.status === 401 && isLapsedLogin(message) ? LAPSED_LOGIN_MESSAGE : message;
+      throw new KnowledgeVaultApiError(said ?? `The vault answered ${response.status}`, {
         status: response.status,
         code,
         category,

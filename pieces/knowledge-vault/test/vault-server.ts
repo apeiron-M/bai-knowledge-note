@@ -14,6 +14,8 @@ import { createDrivesRoute } from "../../../subgraphs/http/routes/drives.js";
 import { createSearchRoute, type SearchRouteDeps } from "../../../subgraphs/http/routes/search.js";
 
 export const GOOD_TOKEN = "good-token";
+/** A token whose Renown login has lapsed: verified, but no longer vouched for. */
+export const LAPSED_TOKEN = "lapsed-token";
 export const ADDRESS = "0xadba7c2f82139031d7564d18ac22d09b12a0bca4";
 export const DRIVE = { id: "drive-1", name: "My Personal Vault", slug: "my-personal-vault" };
 const PREFIX = "/api/@powerhousedao/knowledge-note/";
@@ -24,6 +26,8 @@ export type VaultServerOptions = {
   /** The vault drives the identity may read. */
   drives?: (typeof DRIVE)[];
   hits?: { node: Record<string, unknown>; similarity: number }[];
+  /** The bearer the server accepts. Default GOOD_TOKEN. */
+  token?: string;
 };
 
 export type VaultServer = {
@@ -35,6 +39,7 @@ export type VaultServer = {
 export async function startVaultServer(options: VaultServerOptions = {}): Promise<VaultServer> {
   const identity = options.identity ?? true;
   const drives = options.drives ?? [DRIVE];
+  const goodToken = options.token ?? GOOD_TOKEN;
   const requests: VaultServer["requests"] = [];
 
   const deps: HttpRouteDeps = {
@@ -80,10 +85,12 @@ export async function startVaultServer(options: VaultServerOptions = {}): Promis
     }
     const path = url.pathname.slice(PREFIX.length);
     requests.push({ path, query: Object.fromEntries(url.searchParams), accept: req.headers.accept ?? null });
-    // What REQUIRE_AUTHENTICATED_CALLER does in front of every route.
+    // What REQUIRE_AUTHENTICATED_CALLER does in front of every route, in the
+    // Switchboard's words (reactor-api AuthService.verifyBearer).
     const bearer = req.headers.authorization?.replace(/^Bearer /, "");
-    if (bearer !== GOOD_TOKEN) {
-      res.writeHead(401, { "content-type": "application/json" }).end(JSON.stringify({ error: bearer ? "Credentials no longer valid" : "Authentication required" }));
+    if (bearer !== goodToken) {
+      const error = !bearer ? "Authentication required" : bearer === LAPSED_TOKEN ? "Credentials no longer valid" : "Authentication failed";
+      res.writeHead(401, { "content-type": "application/json" }).end(JSON.stringify({ error }));
       return;
     }
     const handler = routes[path];
