@@ -124,3 +124,23 @@ The labelling pass stopped when `claude -p` lost its login. The user has since r
   - Kev-0.8B fine-tune on Constantine, screen kev-ft, ETA about 00:25 Oct 24. Export with `x4-kev/finetune/kev-ft-export.sh`.
   - X11, more human-style data plus no-action rows plus contrastive pairs, goes to `training/round12-para/`.
 - **Constantine queue after Kev:** F (the 1.2B on round11 data), then the 350M on round11+round12.
+
+## UPDATE 4 (2026-10-26)
+
+- **Both machines slept over the weekend.** Kev-FT had finished on 10-24 at 03:36 anyway. Constantine still has `pmset sleep 1` on AC; the user needs to run `sudo pmset -c sleep 0` there.
+- **Kev-FT is exported:** `training/artifacts/kev-ft/gguf/Kev-0.8B-vault-ft1-20261024-Q4_K_M.gguf`, 530 MB, sha 30b5796e. Its dev-fit T_K is 4.0.
+- **Dev results** (x9 args, dev-cv temps):
+
+  | Setup | Op | Fully NORM | Gate (gold-in-choices / ask / wrong / effective) |
+  |---|---|---|---|
+  | Kev-FT alone | 177 (vs 161 zero-shot; p 0.0004) | – | – |
+  | **X5 × Kev-FT** | **183/196 (93.4%)** | 165 | 189 / 30 / 10 / 170 |
+
+  - X5 × Kev-FT vs X5 alone: +10/−2, p 0.019.
+- **Running:**
+  - F (1.2B on round11 data) on Constantine in screen f-train, ETA about 13:00 CDT 10-26.
+  - X11 (round12 data) generation on this Mac.
+- **Next:**
+  1. Finalise PREREGISTRATION-2: E = X5 × Kev-FT, plus F.
+  2. Run held-out-5 once.
+  3. Then the 350M on round11 + round12 data.
