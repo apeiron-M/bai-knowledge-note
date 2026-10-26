@@ -5,6 +5,7 @@ import { ingestSourceAction } from "./lib/actions/ingest-source.js";
 import { placeInMocsAction } from "./lib/actions/place-in-mocs.js";
 import { reweaveNotesAction } from "./lib/actions/reweave-notes.js";
 import { verifyNotesAction } from "./lib/actions/verify-notes.js";
+import { checkHealthAction } from "./lib/actions/check-health.js";
 import { searchAction } from "./lib/actions/search.js";
 import { knowledgeVaultAuth } from "./lib/auth.js";
 import { newPipelineTaskTrigger } from "./lib/triggers/new-pipeline-task.js";
@@ -27,7 +28,7 @@ export const knowledgeVault = createPiece({
   categories: [PieceCategory.PRODUCTIVITY],
   minimumSupportedRelease: "0.30.0",
   auth: knowledgeVaultAuth,
-  actions: [searchAction, ingestSourceAction, extractClaimsAction, connectNotesAction, placeInMocsAction, verifyNotesAction, reweaveNotesAction],
+  actions: [searchAction, ingestSourceAction, extractClaimsAction, connectNotesAction, placeInMocsAction, verifyNotesAction, checkHealthAction, reweaveNotesAction],
   triggers: [newPipelineTaskTrigger, unwovenNotesTrigger],
 });
 

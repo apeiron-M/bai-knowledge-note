@@ -70,11 +70,41 @@
         }
       },
       {
+        "type": "ADD_STEP",
+        "input": {
+          "id": "5e8b1c2d-7f3a-4b96-a0d4-6c1e9f2b8a37",
+          "key": "health",
+          "name": "Check vault health",
+          "config": {
+            "drive": "{{DRIVE_ID}}",
+            "when": "idle"
+          },
+          "position": {
+            "x": 640,
+            "y": 0
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "actionName": "check-health",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}",
+          "timeoutSeconds": 300
+        }
+      },
+      {
         "type": "ADD_EDGE",
         "input": {
           "id": "e1a2b3c4-d5e6-4f70-8a9b-0c1d2e3f4a5b",
           "to": "9c4e7a1d-6b2f-4e58-8a3c-2d9f1e6b7a40",
           "from": "5b0f3c3e-2a8e-4c1f-9d6e-1f0a7b2c4d91",
+          "port": "next"
+        }
+      },
+      {
+        "type": "ADD_EDGE",
+        "input": {
+          "id": "b7d2e4f6-1a3c-4e58-9b0d-2f4a6c8e0b13",
+          "to": "5e8b1c2d-7f3a-4b96-a0d4-6c1e9f2b8a37",
+          "from": "9c4e7a1d-6b2f-4e58-8a3c-2d9f1e6b7a40",
           "port": "next"
         }
       },

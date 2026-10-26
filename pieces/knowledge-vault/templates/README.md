@@ -26,6 +26,10 @@ node scripts/export-workflow-template.mjs --profile remote-powerhouse-knowledge 
   --workflow D08x67E0Nsojko6uUQlqszFjyiBwaUKdUbSTczDT1Jk --connection w7URVnjZgl-msYAd3DgQxJDf8dpCy_Iah3XlwoJGZrQ
 ```
 
+One step was added by hand after the last export: **Check vault health** (`check-health`, *When: after the
+last queued source*), after *Verify notes*, which rewrites the vault's health report once a batch is through.
+A re-export from a live workflow must include it: add the step to that workflow first.
+
 The script refuses to write a template in which a concrete value survived. Importable from the package as
 `@powerhousedao/knowledge-note/pieces/knowledge-vault/templates/pipeline.json` (copied into `dist/` by
 `scripts/copy-runtime-assets.mjs`).
@@ -34,7 +38,8 @@ The script refuses to write a template in which a concrete value survived. Impor
 
 `reweave.json` is the *Reweave notes* workflow, written by hand in the same replayable format (no live
 workflow to export it from): the **Unwoven notes** trigger, polling every 5 minutes, into one **Reweave
-notes** step. It has no connection of its own — the desktop app instantiates it per vault with the vault
+notes** step, then **Check vault health** (when the queue is idle, and only when the vault's health changed),
+since reweaving rewrites older notes. It has no connection of its own — the desktop app instantiates it per vault with the vault
 pipeline's connection (`{{CONNECTION_ID}}`), so it runs on the same model and key.
 
 The pipeline runs each source once. A note extracted before its neighbours existed (the first section of a

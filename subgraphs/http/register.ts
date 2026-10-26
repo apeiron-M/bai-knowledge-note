@@ -16,7 +16,7 @@ import { buildNeighbourhood } from "../knowledge-graph/helpers/neighbourhood.js"
 import { buildHttpRouteDeps, buildStructureRouteDeps } from "./live-deps.js";
 import { createActionsRoute } from "./routes/actions.js";
 import { createDrivesRoute } from "./routes/drives.js";
-import { createBadgeRoute, createHealthRoute } from "./routes/health.js";
+import { createBadgeRoute, createHealthRoute, createHealthWriteRoute } from "./routes/health.js";
 import { createLlmsRoute } from "./routes/llms.js";
 import { createNotesRoute } from "./routes/notes.js";
 import { createRelationshipRoute } from "./routes/relationships.js";
@@ -197,5 +197,11 @@ export function registerHttpRoutes(http: IHttpScope, subgraph: BaseSubgraph): vo
     createLlmsRoute(llmsDeps, true),
   );
   http.get("health.json", { auth: "renown" }, createHealthRoute(deps));
+  // Grade the vault and rewrite its health report: the pipeline's last step, or anyone with WRITE on the report.
+  http.post(
+    "health",
+    { auth: "renown", body: "parsed" },
+    timedRoute("POST health", createHealthWriteRoute({ ...deps, getQuery: (driveId: string) => getQuery(subgraph, driveId) })),
+  );
   http.get("badge.svg", { auth: "public" }, createBadgeRoute(deps));
 }
