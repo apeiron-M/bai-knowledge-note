@@ -1,6 +1,6 @@
 # ph-drive as a target for the in-browser NL → document-action chat
 
-Source read: local checkout `/Users/benjaminjordan/projects/thegoldenmule/ph-drive` (read-only). No clone was made: local HEAD `f18c98d` equals `origin` HEAD (`git ls-remote`). The repo is PUBLIC, with 4 commits, all dated 2026-06-24. Latest upstream `@powerhousedao/reactor-drive` (6.2.3-dev.78) was unpacked to `scratchpad/rd/` for comparison.
+Source read: local checkout `<local ph-drive checkout>` (read-only). No clone was made: local HEAD `f18c98d` equals `origin` HEAD (`git ls-remote`). The repo is PUBLIC, with 4 commits, all dated 2026-06-24. Latest upstream `@powerhousedao/reactor-drive` (6.2.3-dev.78) was unpacked to `scratchpad/rd/` for comparison.
 
 ## 1. What it is
 
