@@ -297,3 +297,26 @@ export function resolveDate(utterance: string, today: string): string | null {
   const all = resolveDates(utterance, today);
   return all.length === 1 ? all[0] : null;
 }
+
+/**
+ * A one-line hint for the proposal card: the date step 2 fixed and, when
+ * the request says `next <weekday>`, this resolver's reading of it (that
+ * weekday in next week, weeks start Monday). English is split on it (said
+ * on a Tuesday, "next Friday" is the coming Friday to some and the one a
+ * week later to others); the card shows the date before anything is
+ * dispatched.
+ */
+export function dateRuleNote(utterance: string, iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  const day = m
+    ? WEEKDAYS[utc(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getUTCDay()]
+    : null;
+  const cap = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
+  const base = `Date read from your words: ${iso}${day ? ` (${cap(day)})` : ""}.`;
+  const next = new RegExp(`\\bnext (${WEEKDAYS.join("|")})\\b`).exec(
+    utterance.toLowerCase(),
+  );
+  if (!next) return base;
+  const wd = cap(next[1]);
+  return `${base} "Next ${wd}" means ${wd} of next week (weeks start Monday); say "this ${wd}" for the coming one.`;
+}

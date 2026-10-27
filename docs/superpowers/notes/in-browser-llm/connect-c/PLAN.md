@@ -418,7 +418,7 @@ fillArgs(utterance, entry, doc, documents, backends, {today}) → ArgsStepResult
 | E6 | Scripted, gated | One h3/h4 dev utterance the rig gated, chosen from `expected-decisions.json` with `asked: true` on a doc type present in the demo drive. Recreate its state, or pick one whose state does not matter | `chat-choice` shows the same 3 ops in the same order as the rig; choosing gold gives the proposal card; Confirm dispatches |
 | E7 | "None of these" | Same gated utterance | Nothing dispatched; history unchanged; system message shown |
 | E8 | No-action | A question on a note ("what is this note about?") | LoRA picks none and answers; **no Kev call** (verify with the timings object); no dispatch |
-| E9 | Date / today | On a project: "set the target date to next Friday" | `targetDate` resolves against today's local date (2026-10-27 gives 2026-10-30, per the date-resolve convention); shown on the card |
+| E9 | Date / today | On a project: "set the target date to next Friday" | `targetDate` resolves against today's local date (2026-10-27, a Tuesday, gives 2026-11-06: date-resolve reads "next <weekday>" as that day of next week, weeks start Monday; "this Friday" gives 2026-10-30); shown on the card with the rule |
 | E10 | Kev failure fallback | Set the Kev URL to a 404 path and send | Label switches to "LoRA alone (decision model failed to load: 404)"; proposal still appears; no ask |
 | E11 | Cancel | Any proposal, Cancel | "Cancelled …; nothing dispatched"; history unchanged |
 | E12 | In-browser parity | `evaluate_script`: `await window.__baiChatParityC()` | §3.4 criteria |

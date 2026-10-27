@@ -67,6 +67,8 @@ export type Provenance =
   | { kind: "lora-alone"; reason: string };
 
 export interface ProposedAction {
+  /** The request step 2 read. */
+  utterance: string;
   entry: CatalogEntry;
   step2: ArgsStepResult;
   /** The document the action targets. */
@@ -379,7 +381,7 @@ export function useChatLlm() {
       });
       const fillMs = performance.now() - t0;
       recordTiming({ at: Date.now(), kind: "fill", fillMs });
-      const base = { entry, step2, doc, refs, decision, provenance, fillMs };
+      const base = { utterance, entry, step2, doc, refs, decision, provenance, fillMs };
       if (!step2.args) return { ...base, error: step2.error ?? "no arguments" };
       const built = buildAction(entry, step2.args, {
         generateId,

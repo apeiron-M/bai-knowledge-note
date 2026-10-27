@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  dateRuleNote,
   resolveDate,
   resolveDates,
 } from "../../editors/knowledge-vault/chat/core/date-resolve.js";
@@ -56,5 +57,22 @@ describe("resolveDate", () => {
 
   it("rejects a malformed today", () => {
     expect(() => resolveDate("tomorrow", "22/10/2026")).toThrow();
+  });
+});
+
+describe("dateRuleNote", () => {
+  // 2026-10-27 is a Tuesday: "next friday" is Friday of next week.
+  it("explains the next <weekday> rule with the resolved date", () => {
+    expect(resolveDate("by next friday", "2026-10-27")).toBe("2026-11-06");
+    expect(resolveDate("by this friday", "2026-10-27")).toBe("2026-10-30");
+    expect(dateRuleNote("wrap this up by next friday", "2026-11-06")).toBe(
+      'Date read from your words: 2026-11-06 (Friday). "Next Friday" means Friday of next week (weeks start Monday); say "this Friday" for the coming one.',
+    );
+  });
+
+  it("names only the date otherwise", () => {
+    expect(dateRuleNote("due December 1st", "2026-12-01")).toBe(
+      "Date read from your words: 2026-12-01 (Tuesday).",
+    );
   });
 });

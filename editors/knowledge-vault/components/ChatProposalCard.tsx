@@ -1,3 +1,4 @@
+import { dateRuleNote } from "../chat/core/date-resolve.js";
 import { readableOpName } from "../chat/core/op-scorer.js";
 import { documentTypeName } from "../chat/core/target-document.js";
 import type { ProposedAction, Provenance } from "../hooks/use-chat-llm.js";
@@ -113,6 +114,15 @@ export function ChatProposalCard({
       ) : (
         <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
           No arguments to fill.
+        </div>
+      )}
+      {step2.dateFixed && (
+        <div
+          data-testid="chat-proposal-date-note"
+          className="mb-2"
+          style={{ color: "var(--bai-text-muted)" }}
+        >
+          {dateRuleNote(proposal.utterance, step2.dateFixed)}
         </div>
       )}
       <details className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
