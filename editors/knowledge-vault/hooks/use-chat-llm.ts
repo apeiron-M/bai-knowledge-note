@@ -8,6 +8,7 @@ import {
 } from "../chat/core/model-source.js";
 import type { ScoreCache } from "../chat/core/op-scorer.js";
 import {
+  currentListsFor,
   driveRefContext,
   refCandidatesFor,
   type ChatDocument,
@@ -21,6 +22,12 @@ import {
 } from "../chat/core/v1-pipeline.js";
 
 export type ChatLlmStatus = "idle" | "loading" | "ready" | "error";
+
+/** The user's local calendar date, `YYYY-MM-DD`. */
+function localDate(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
 export interface ProposedAction {
   result: Extract<V1Result, { kind: "action" }>;
@@ -161,7 +168,11 @@ export function useChatLlm() {
   const ask = useCallback(
     async (utterance: string): Promise<ChatReply> => {
       const { client } = await ensureLoaded();
-      return { kind: "answer", text: await answer(client, utterance), result: null };
+      return {
+        kind: "answer",
+        text: await answer(client, utterance),
+        result: null,
+      };
     },
     [answer, ensureLoaded],
   );
@@ -188,6 +199,10 @@ export function useChatLlm() {
           completeJson: client.completeJson,
           scoreText: client.scoreText,
           cache,
+        },
+        {
+          today: localDate(new Date()),
+          currentLists: (entry) => currentListsFor(entry.key, doc.state),
         },
       );
       if (result.kind === "no-action")

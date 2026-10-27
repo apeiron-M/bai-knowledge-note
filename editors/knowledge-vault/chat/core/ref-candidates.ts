@@ -6,6 +6,7 @@
  * task target, topic name, link target title, the drive's document titles.
  * `tests/unit/chat-ref-candidates.test.ts` checks every recipe against this.
  */
+import type { CurrentList, ListMode } from "./list-completion.js";
 import type { RefCandidates } from "./v1-pipeline.js";
 
 type Rec = Record<string, unknown>;
@@ -18,7 +19,7 @@ export interface RefCandidate {
 /**
  * An item listed from outside the document (other documents in the drive,
  * goals of a linked plan), by kind: `note`, `knowledge`, `wbs`, `project`,
- * `wbs-goal`, `topic`, `session`.
+ * `wbs-goal`, `topic`, `session`, `moc`.
  */
 export interface RefContextItem {
   id: string;
@@ -38,7 +39,9 @@ const titleOf = (ctx: RefContextItem[], id: unknown) =>
 const ctxOf =
   (kind: string): Extract =>
   (_s, ctx) =>
-    ctx.filter((c) => c.kind === kind).map((c) => ({ id: c.id, label: c.title }));
+    ctx
+      .filter((c) => c.kind === kind)
+      .map((c) => ({ id: c.id, label: c.title }));
 
 const noteTopics: Extract = (s) =>
   recs(s.topics).map((x) => ({ id: str(x.id), label: str(x.name) }));
@@ -80,9 +83,13 @@ const mocTensions: Extract = (s) =>
 const tasks: Extract = (s) =>
   recs(s.tasks).map((x) => ({ id: str(x.id), label: str(x.target) }));
 const batchIds: Extract = (s) =>
-  [...new Set(recs(s.tasks).map((x) => str(x.batchId)).filter(Boolean))].map(
-    (b) => ({ id: b, label: b }),
-  );
+  [
+    ...new Set(
+      recs(s.tasks)
+        .map((x) => str(x.batchId))
+        .filter(Boolean),
+    ),
+  ].map((b) => ({ id: b, label: b }));
 
 /** Ref paths per op key, as in the training recipes. */
 export const REF_EXTRACTORS: Record<string, Record<string, Extract>> = {
@@ -107,7 +114,10 @@ export const REF_EXTRACTORS: Record<string, Record<string, Extract>> = {
   "project:UPDATE_MEMBER": { id: team },
   "project:REMOVE_MEMBER": { id: team },
   "project:ADD_DELIVERABLE": { goalRef: ctxOf("wbs-goal") },
-  "project:UPDATE_DELIVERABLE": { id: deliverables, goalRef: ctxOf("wbs-goal") },
+  "project:UPDATE_DELIVERABLE": {
+    id: deliverables,
+    goalRef: ctxOf("wbs-goal"),
+  },
   "project:SET_DELIVERABLE_STATUS": { id: deliverables },
   "project:REMOVE_DELIVERABLE": { id: deliverables },
   "project:ADD_KNOWLEDGE_REF": { ref: unlinkedKnowledge },
@@ -140,6 +150,24 @@ export const REF_EXTRACTORS: Record<string, Record<string, Extract>> = {
   "wbs:SET_PROJECT_REF": { projectRef: ctxOf("project") },
 };
 
+const strs = (v: unknown): string[] =>
+  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+
+/**
+ * X9: semantic fields that name an existing list item by its value (the
+ * reducer removes the exact string), offered as choices from state. A path
+ * with no items is left out, so the field stays a free span.
+ */
+export const STATE_CHOICES: Record<string, Record<string, Extract>> = {
+  "moc:REMOVE_OPEN_QUESTION": {
+    question: (s) => strs(s.openQuestions).map((q) => ({ id: q, label: q })),
+  },
+  "moc:REMOVE_CHILD_MOC": {
+    childRef: (s, ctx) =>
+      strs(s.childRefs).map((r) => ({ id: r, label: titleOf(ctx, r) })),
+  },
+};
+
 /** Labeled candidates for every ref path of `opKey` (none for other ops). */
 export function refCandidatesFor(
   opKey: string,
@@ -147,9 +175,48 @@ export function refCandidatesFor(
   ctx: RefContextItem[],
 ): RefCandidates {
   const paths = REF_EXTRACTORS[opKey] ?? {};
-  return Object.fromEntries(
+  const out: RefCandidates = Object.fromEntries(
     Object.entries(paths).map(([p, f]) => [p, f(state, ctx)]),
   );
+  for (const [p, f] of Object.entries(STATE_CHOICES[opKey] ?? {})) {
+    const cands = f(state, ctx);
+    if (cands.length > 0) out[p] = cands;
+  }
+  return out;
+}
+
+/** X9: list fields an op replaces whole, with the current list (state order). */
+export const CURRENT_LISTS: Record<
+  string,
+  Record<string, { mode: ListMode; from: (s: Rec) => string[] }>
+> = {
+  "moc:REORDER_CORE_IDEAS": {
+    ids: {
+      mode: "order",
+      from: (s) => recs(s.coreIdeas).map((c) => str(c.id)),
+    },
+  },
+  "project:SET_REFERENCES": {
+    references: { mode: "keep", from: (s) => strs(s.references) },
+  },
+  "wbs:SET_REFERENCES": {
+    references: { mode: "keep", from: (s) => strs(s.references) },
+  },
+};
+
+/** The current lists `opKey` replaces whole (empty ones left out). */
+export function currentListsFor(
+  opKey: string,
+  state: Rec,
+): Record<string, CurrentList> {
+  const out: Record<string, CurrentList> = {};
+  for (const [p, { mode, from }] of Object.entries(
+    CURRENT_LISTS[opKey] ?? {},
+  )) {
+    const values = from(state).filter(Boolean);
+    if (values.length > 0) out[p] = { mode, values };
+  }
+  return out;
 }
 
 /** A drive document as the chat sees it: id, type, title and global state. */
@@ -164,6 +231,7 @@ const CTX_KIND_BY_TYPE: Record<string, string[]> = {
   "bai/knowledge-note": ["note", "knowledge"],
   "bai/wbs": ["wbs"],
   "bai/project": ["project"],
+  "bai/moc": ["moc"],
 };
 
 /**

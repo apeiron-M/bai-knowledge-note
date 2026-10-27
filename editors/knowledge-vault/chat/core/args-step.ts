@@ -21,7 +21,9 @@ import {
   type GateMode,
   type RefCandidate,
 } from "./args-grammar.js";
+import { resolveDate } from "./date-resolve.js";
 import { argsSignature } from "./generator.js";
+import { completeLists, type CurrentList } from "./list-completion.js";
 import type { CompleteJson, ScoreText } from "./llm-client.js";
 import {
   buildModelSchema,
@@ -202,6 +204,13 @@ export interface ArgsStepOptions {
    */
   requireNamed?: boolean;
   fixNamedEnums?: boolean;
+  /**
+   * X9: today's date (`YYYY-MM-DD`). When the op has one date field and the
+   * request names one date (`resolveDate`), the field is fixed to it.
+   */
+  today?: string;
+  /** X9: the document's current lists for fields the op replaces whole. */
+  currentLists?: Record<string, CurrentList>;
 }
 
 export interface ArgsStepResult {
@@ -219,6 +228,10 @@ export interface ArgsStepResult {
   refCfMs: number;
   genMs: number;
   refRequests: ScoredRequest[];
+  /** X9: the resolved date the date field was fixed to. */
+  dateFixed?: string | null;
+  /** X9: list paths completed from `currentLists`. */
+  listsCompleted?: string[];
 }
 
 /** Ref labels for a path (unique, in order) from labeled candidates. */
@@ -371,19 +384,32 @@ export function fixNamed(
   return { ...schema, properties: out };
 }
 
+/** Root date and date-time fields of a model schema. */
+export function dateFields(schema: JsonSchema): string[] {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  return Object.keys(props).filter((k) => {
+    const v = nonNull(props[k]);
+    return (
+      isRecord(v) &&
+      v.type === "string" &&
+      (v.format === "date-time" || v.format === "date")
+    );
+  });
+}
+
 export async function fillArgsStep(
   utterance: string,
   entry: CatalogEntry,
   refCandidates: Record<string, { id: string; label?: string | null }[]>,
   opts: ArgsStepOptions,
 ): Promise<ArgsStepResult> {
-  const p = prepareArgsStep(
-    utterance,
-    entry,
-    refCandidates,
-    opts.gate,
-    opts.alwaysOffer,
-  );
+  const resolved = opts.today ? resolveDate(utterance, opts.today) : null;
+  const dates = resolved ? dateFields(buildModelSchema(entry)) : [];
+  const dateField = dates.length === 1 ? dates[0] : null;
+  const p = prepareArgsStep(utterance, entry, refCandidates, opts.gate, [
+    ...(opts.alwaysOffer ?? []),
+    ...(dateField ? [dateField] : []),
+  ]);
   const { labeled, choices, schema, ordered, order, rootRefs } = p;
   const base: ArgsStepResult = {
     args: null,
@@ -475,6 +501,18 @@ export async function fillArgsStep(
       ...rootRefs,
       ...(field ? [field] : []),
     ]);
+  const fixedProps = isRecord(fixed.properties) ? fixed.properties : {};
+  if (resolved && dateField && dateField in fixedProps) {
+    fixed = {
+      ...fixed,
+      properties: {
+        ...fixedProps,
+        [dateField]: { type: "string", enum: [`${resolved}T00:00:00Z`] },
+      },
+    };
+    if (!mustHave.includes(dateField)) mustHave.push(dateField);
+    out.dateFixed = resolved;
+  }
   const grammar = argsGrammar(fixed, utterance, {
     spans: true,
     first: p.first,
@@ -490,7 +528,13 @@ export async function fillArgsStep(
   out.genMs = r.wallMs;
   out.grammar = grammar;
   out.raw = r.text;
-  if (isRecord(r.parsed)) out.args = mapRefLabels(r.parsed, labeled);
-  else out.error = r.parseError ?? "not an object";
+  if (isRecord(r.parsed)) {
+    out.args = mapRefLabels(r.parsed, labeled);
+    if (opts.currentLists) {
+      const done = completeLists(out.args, opts.currentLists, utterance);
+      out.args = done.args;
+      out.listsCompleted = done.changed;
+    }
+  } else out.error = r.parseError ?? "not an object";
   return out;
 }

@@ -17,6 +17,7 @@ import { fillArgsStep, type ArgsStepResult } from "./args-step.js";
 import { buildRuntimeCatalog } from "./catalog-models.js";
 import { buildAction, type EnvelopeContext } from "./envelope.js";
 import { loadGteEmbedder, type GteEmbedderOptions } from "./gte-embedder.js";
+import type { CurrentList } from "./list-completion.js";
 import type { CompleteJson, ScoreText } from "./llm-client.js";
 import {
   combinedNoAction,
@@ -132,6 +133,10 @@ export interface V1Options {
   step1?: V1Step1;
   /** Step-2 optional fields the safe gate never drops (round 9 R5). */
   alwaysOffer?: readonly string[];
+  /** X9: today's local date (`YYYY-MM-DD`) for date fields. */
+  today?: string;
+  /** X9: the target document's current lists for the chosen op. */
+  currentLists?: (entry: CatalogEntry) => Record<string, CurrentList>;
 }
 
 /** A short name for results and the UI, e.g. "model:scoped-all-catalog". */
@@ -280,6 +285,8 @@ export async function runV1(
     cache: deps.cache,
     ...V1_ARGS,
     alwaysOffer: options.alwaysOffer ?? [],
+    today: options.today,
+    currentLists: options.currentLists?.(entry),
   });
   return { ...common, step1, kind: "action", entry, step2 };
 }

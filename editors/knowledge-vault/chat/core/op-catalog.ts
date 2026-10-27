@@ -228,7 +228,10 @@ export function leafFields(fields: CatalogField[]): CatalogField[] {
 /* ------------------------------------------------------------------ */
 
 export interface ModelSchemaOptions {
-  /** Candidate ids per ref-id field, keyed by dotted path. */
+  /**
+   * Candidate ids per ref-id field (and per semantic field chosen from
+   * state), keyed by dotted path.
+   */
   refCandidates?: Record<string, string[]>;
   collapseNullable?: boolean;
   /** Closed values per semantic String field, keyed by dotted path. */
@@ -290,7 +293,10 @@ function projectObject(
     if (field.fieldClass === "semantic") {
       const base = opts.collapseNullable ? collapseNull(sub) : sub;
       const vocab = opts.vocabulary?.[key];
-      outProps[field.name] = vocab ? withVocabulary(base, vocab) : base;
+      // X9: a semantic field with candidates from state (`STATE_CHOICES`).
+      const ids = opts.refCandidates?.[key];
+      if (ids && ids.length > 0) outProps[field.name] = enumSchema(field, ids);
+      else outProps[field.name] = vocab ? withVocabulary(base, vocab) : base;
     } else if (field.fieldClass === "ref-id") {
       const ids = opts.refCandidates?.[key];
       if (ids && ids.length > 0) outProps[field.name] = enumSchema(field, ids);
