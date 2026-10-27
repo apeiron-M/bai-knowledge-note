@@ -2,7 +2,7 @@
 
 Date: 2026-10-27. Branch `explore/in-browser-llm`.
 
-**Status.** M0 is implemented as a spike: commits `9dbbdefb`, `e3b337e0`, `abe5ad89`, and the retarget fix `2a2f967b`. Notes, QA and the Connect check are in `docs/superpowers/notes/in-browser-llm/connect-c/M0.md`. §3 ticks what landed; what did not land is in §3.9. M1 onward is plan only.
+**Status.** M0 is implemented as a spike: commits `9dbbdefb`, `e3b337e0`, `abe5ad89`, the retarget fix `2a2f967b`, and `68b7c000`, which turns that fix into an ask. Notes, QA and the Connect check are in `docs/superpowers/notes/in-browser-llm/connect-c/M0.md`. §3 ticks what landed; what did not land is in §3.9. M1 onward is plan only.
 
 Tags: **[src]** read in code, **[inf]** inferred, **[unverified]** needs a test.
 
@@ -21,7 +21,7 @@ This file holds the vault's own task list: M0 in full, and what the vault does i
 | Topic | Decision |
 |---|---|
 | Target tag (the user's, binding) | Always visible in the sheet. With a document open: "Acting on: *title* (*type*)". With no document open: the drive name. It updates live as the viewed document changes, including while the sheet is open. A pending proposal card keeps, and shows, the target it was created for. **The tag shows the context target; the card shows the action target.** |
-| Retargeting | Switch without asking only when exactly one other supported document's title appears verbatim; the card names both documents and highlights the switch, and the tag stays on the viewed document. **A pointer at the open document blocks the switch**: when the request also says "this", "this note" (doc, one, MOC, …), "it" or "here", the open document stays the target and the named document is a ref candidate ("link this note to *X*"). Otherwise ask with the top 3 (not built in M0, §3.9). Nothing dispatches without Confirm. |
+| Retargeting | Switch without asking only when exactly one other supported document's title appears verbatim; the card names both documents and highlights the switch, and the tag stays on the viewed document. **A pointer at the open document turns the switch into an ask**: when the request also says "this", "this note" (doc, one, MOC, …), "it" or "here", the chat asks which document to change before the models run, with two options, "Change *open title*" and "Change *named title*", each with its type. Which one is right depends on the intent ("link this note to *X*" changes the open note, "add this to *X*" changes *X*), and target resolution runs before the models. The models run on the chosen document, and the other one stays a ref candidate. Several names, or no verbatim name: the open document. Otherwise ask with the top 3 (not built in M0, §3.9). Nothing dispatches without Confirm. |
 | Pinning | Not in M0 (the tag follows the viewed document). |
 | Shortcut | ⌘J on macOS, Ctrl+Shift+Space on Windows and Linux, rebindable. Capture-phase `window` listener. |
 | History | One thread per drive, per browser, in IndexedDB, capped, with Clear. Each turn stores its context frame. A ring of about 20 recent documents. The model gets no history. |
@@ -63,10 +63,10 @@ M0 landed as a spike (Status, top). A ticked box landed as written or with the d
 - [x] Proposal and choice cards store a `target` at creation and render "On: *title* (*type*)". A retarget adds an amber "Switched target" box naming the viewed document; after navigation the card says "You are now viewing *X*. Confirm still changes *A*." Confirm dispatches to `card.target.id`.
 - [ ] `resolveTargetDocument` takes the context frame's target, not a `<select>` id. What landed (`chat/core/target-document.ts`):
   1. exactly one other supported document named verbatim → retarget, flagged for the card (at drive level: target it). A name found only inside a longer mentioned name, the viewed document's own title included, does not count;
-  2. **except** when the request also points at the open document ("this", "this note/doc/one/MOC/…", "it", "here"; document names are masked first, and "this *item*" such as "this goal" does not count): the open document stays the target and the named document stays a ref candidate (`2a2f967b`). With nothing open, a pointer has no referent and does not block step 1;
+  2. **except** when the request also points at the open document ("this", "this note/doc/one/MOC/…", "it", "here"; document names are masked first, and "this *item*" such as "this goal" does not count) and the open document's type has ops: **ask** which of the two to change, on the choice card ("Change *open title* (*type*)", "Change *named title* (*type*)", "Neither"), before the models run. The models then run on the chosen document; the other one stays a ref candidate (the open one is pinned with `driveRefContext`'s `keepIds`). `2a2f967b` kept the open document here instead, which is wrong for "add this to *X*"; `68b7c000` made it an ask. With nothing open, a pointer has no referent and step 1 targets the named document; with an open document that has no ops, only the named one can change, so step 1 retargets;
   3. otherwise → the frame's target, or "no operations for this type" on an unsupported document, or the drive-level path with nothing open.
 
-  **Missing:** ordinal resolution (needs §3.4), and "ask with the top 3" for a non-verbatim mention or several named documents: today those act on the viewed document (§3.9). Deixis exists only as the step-2 guard, not as a resolution step of its own.
+  **Missing:** ordinal resolution (needs §3.4), and "ask with the top 3" for a non-verbatim mention or several named documents: today those act on the viewed document (§3.9). Deixis exists only as the step-2 ask, not as a resolution step of its own.
 - [x] With no document open: questions are answered; a create request gets "drive-level changes are not supported yet" and a "New *type*" button that opens `CreateDocumentDialog`. Drive ops arrive with M2b.
 
 ### 3.3 Removals and the scale fix
@@ -107,7 +107,7 @@ Results are in `M0.md` ("QA" and "Connect verification").
 - [x] **Tag on navigation:** with the sheet open, navigating to another document updates the tag without reopening the sheet.
 - [x] **Tag at drive level:** with no document open, the tag shows the drive name.
 - [x] **Card keeps its target:** a proposal on note A, then navigation to project B; the tag shows B and the card still shows A. Confirm: A's global revision +1 (5 → 6), B unchanged.
-- [ ] **Retarget:** a verbatim single-title mention of another document gives a card naming both, and the tag stays on the viewed document: passed in Connect (viewing a project, naming a note). A non-verbatim mention asking with the top 3: not built.
+- [ ] **Retarget:** a verbatim single-title mention of another document gives a card naming both, and the tag stays on the viewed document: passed in Connect (viewing a project, naming a note). With a pointer at the open document as well, the chat asks which of the two to change: unit-tested, not yet checked in Connect. A non-verbatim mention asking with the top 3: not built.
 - [ ] **Shortcut:** ⌘J on macOS while typing in a field, and Esc, passed. Ctrl+Shift+Space was checked on macOS through rebinding only; the Windows/Linux default is unit-tested, not run on those systems.
 - [ ] **History:** survives navigation and reload, and Clear empties it, in Connect. Separation per drive is unit-tested only.
 - [x] **Removals:** no Chat tab, no target `<select>`; no chat code calls `useDocumentsInSelectedDrive()`.
@@ -121,7 +121,7 @@ What M0 left open. M1-UI extracts the sheet as it is; these can land before or a
 
 - **Vault context store** (§3.4): graph focus, search results and visible ids, and with them ordinal resolution ("the second result") and `focusedItem`.
 - **Ask with the top 3** when a mention is not verbatim, or when several documents are named (§3.2). Today the chat acts on the tag.
-- **Retarget edge cases the rule cannot settle**, for the M2b retarget dev set and rows: "add this to *X*", meant as "put the open note into *X*", now stays on the open document, because "this" points at it; an anaphoric "it" after a name ("add a question to *X* and tag it") also stays; with nothing open, a pointer does not block a title match.
+- **Retarget edge cases the rule leaves to the user or cannot settle**, for the M2b retarget dev set and rows: every pointer-plus-name request asks, also when the intent is clear ("link this note to *X*" always changes the open note), so the ask costs a click there; an anaphoric "it" after a name ("add a question to *X* and tag it") also asks; with nothing open, a pointer does not block a title match.
 - **Server semantic candidates** (`knowledgeGraphSemanticSearch` at `resolveDriveSwitchboard(driveId)`, with a deadline).
 - **The ~60-item retarget and deictic dev set** (§3.7).
 - **Connect E2E rerun** of E1–E11 through the sheet (§3.8).
@@ -153,8 +153,8 @@ The file disposition is the framework's `02-m1-runtime-extraction.md`; this list
 
 ### M2b and M3: training data
 
-- [ ] Retarget rows (another document named as the one to change), deictic and ordinal rows, and ref lists of up to 10 with near misses. Include the cases M0's rule cannot settle (§3.9): "add this to *X*" meant as putting the open note into *X*, and a pronoun after a name.
-- [ ] Grow M0's retarget and deictic dev set (§3.7) and report verbatim-switch precision on it. The switch rule stands only at about 95% or better; below that the user decides whether it becomes "always ask".
+- [ ] Retarget rows (another document named as the one to change), deictic and ordinal rows, and ref lists of up to 10 with near misses. Include the cases M0's rule asks on (§3.9): "add this to *X*" (change *X*, the open note as the ref) next to "link this note to *X*" (change the open note), and a pronoun after a name.
+- [ ] Grow M0's retarget and deictic dev set (§3.7) and report two numbers on it: verbatim-switch precision, and how often the pointer-plus-name ask fires (with how often its intent was clear). The switch rule stands only at about 95% precision or better; below that the user decides whether it becomes "always ask".
 - [ ] Fix `moc:ADD_CORE_IDEA.noteRef` (a free `String!` with no extractor) and add the `ADD_CORE_IDEA` / `ADD_CHILD_MOC` extractors.
 - [ ] The vault's `training/` becomes an `nl` config plus its recipes, pools, fixtures and eval sets.
 
