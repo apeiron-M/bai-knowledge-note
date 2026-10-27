@@ -185,6 +185,19 @@ describe("documentMentions", () => {
     expect(documentMentions("call the constructor")).toEqual([]);
   });
 
+  it("knows every type the chat has ops for, and the X one", () => {
+    expect(documentMentions("resolve the sediment tension").map((m) => m.types)).toEqual([
+      ["bai/tension"],
+    ]);
+    expect(documentMentions("the e-scooter observation is done").map((m) => m.name)).toEqual([
+      "e-scooter",
+    ]);
+    expect(documentMentions("the koji humidity one is a pattern")).toEqual([
+      { name: "koji humidity", types: null, phrase: "koji humidity one" },
+    ]);
+    expect(documentMentions("tag the other one")).toEqual([]);
+  });
+
   it("stops at prepositions and the pointer", () => {
     expect(documentMentions("add the topic gossip to this note")).toEqual([]);
     expect(documentMentions("move the idea into the note")).toEqual([]);
