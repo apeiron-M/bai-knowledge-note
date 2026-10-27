@@ -33,12 +33,14 @@ async function graphqlFetch<T>(
   endpoint: string,
   query: string,
   variables: Record<string, unknown>,
+  signal?: AbortSignal,
 ): Promise<T | null> {
   try {
     const res = await fetch(endpoint, {
       method: "POST",
       headers: await authHeaders(),
       body: JSON.stringify({ query, variables }),
+      ...(signal ? { signal } : {}),
     });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: T; errors?: unknown[] };
@@ -47,7 +49,7 @@ async function graphqlFetch<T>(
     }
     return json.data ?? null;
   } catch (err) {
-    console.warn("[useGraphSearch] Fetch failed:", err);
+    if (!signal?.aborted) console.warn("[useGraphSearch] Fetch failed:", err);
     return null;
   }
 }
@@ -69,6 +71,30 @@ const SEMANTIC_SEARCH_QUERY = `
     }
   }
 `;
+
+/**
+ * One server search, ranked by meaning (the resolver falls back to keyword
+ * itself): null when the request fails or the deployment predates the field.
+ */
+export async function fetchSemanticSearch(
+  endpoint: string,
+  driveId: string,
+  query: string,
+  limit: number,
+  signal?: AbortSignal,
+): Promise<SearchResult[] | null> {
+  const data = await graphqlFetch<{
+    knowledgeGraphSemanticSearch: Array<{
+      node: Omit<SearchResult, "similarity" | "matchedBy">;
+      similarity: number;
+      matchedBy: string[];
+    }>;
+  }>(endpoint, SEMANTIC_SEARCH_QUERY, { driveId, query, limit }, signal);
+  if (!data?.knowledgeGraphSemanticSearch) return null;
+  // Already a 0..1 relevance for every mode — the server rescales its fused
+  // rank score before returning it.
+  return data.knowledgeGraphSemanticSearch.map((r) => ({ ...r.node, similarity: r.similarity, matchedBy: r.matchedBy }));
+}
 
 const KEYWORD_SEARCH_QUERY = `
   query FullSearch($driveId: ID!, $query: String!, $limit: Int) {
@@ -163,24 +189,9 @@ export function useGraphSearch() {
       setLoading(true);
       setError(null);
 
-      const data = await graphqlFetch<{
-        knowledgeGraphSemanticSearch: Array<{
-          node: Omit<SearchResult, "similarity" | "matchedBy">;
-          similarity: number;
-          matchedBy: string[];
-        }>;
-      }>(endpoint, SEMANTIC_SEARCH_QUERY, { driveId, query: q, limit: 20 });
-
-      if (data?.knowledgeGraphSemanticSearch) {
-        setResults(
-          data.knowledgeGraphSemanticSearch.map((r) => ({
-            ...r.node,
-            // Already a 0..1 relevance for every mode — the server rescales
-            // its fused rank score before returning it.
-            similarity: r.similarity,
-            matchedBy: r.matchedBy,
-          })),
-        );
+      const semantic = await fetchSemanticSearch(endpoint, driveId, q, 20);
+      if (semantic) {
+        setResults(semantic);
         setLoading(false);
         return;
       }

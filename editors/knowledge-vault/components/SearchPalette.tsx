@@ -8,6 +8,7 @@ import {
   type PaletteData,
   type PaletteRow,
   type PaletteScope,
+  type PaletteSemantic,
 } from "../lib/palette-search.js";
 import { VaultIcon, type VaultIconName } from "./vault-icons.js";
 
@@ -21,6 +22,7 @@ export function SearchPalette({
   data,
   scope = "all",
   query,
+  semantic = null,
   onQueryChange,
   onSelect,
   onClose,
@@ -31,13 +33,15 @@ export function SearchPalette({
   scope?: PaletteScope;
   /** Kept by the vault, so the box opens on the last search. */
   query: string;
+  /** The server's closest notes and maps for `query`, once it answers (usePaletteSemantic). */
+  semantic?: PaletteSemantic | null;
   onQueryChange: (query: string) => void;
   onSelect: (row: PaletteRow) => void;
   onClose: () => void;
 }) {
   const listId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
-  const groups = useMemo(() => paletteGroups(query, data, scope), [query, data, scope]);
+  const groups = useMemo(() => paletteGroups(query, data, scope, semantic), [query, data, scope, semantic]);
   const placeholder = scope === "chats" ? "Search your chats" : "Search notes, topics, sources and chats";
   const rows = useMemo(() => paletteRows(groups), [groups]);
   const [selected, setSelected] = useState(0);

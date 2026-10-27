@@ -6,8 +6,10 @@ import { kindLabel, noteSourceDocument, plural, topicSize, type SourceDocument }
  * The Ctrl K palette's search (design: docs/design/vault-view, "Ctrl K"):
  * notes and topics from the graph index, sources from the drive tree, chats
  * from the browser's store, and the places to go. Pure and local — every
- * keystroke answers at once; "Search all notes" hands the question to the
- * server's semantic search for the rest.
+ * keystroke answers at once. A moment later the server's semantic search
+ * answers too (`PaletteSemantic`), and its closest notes and maps, in its
+ * order, become the "Best matches" — what the search page lists first;
+ * "Search all notes" opens the full list.
  */
 
 export type GotoKey =
@@ -59,6 +61,37 @@ export type PaletteData = {
   /** "12m ago", for a chat's right side. */
   ago?: (iso: string) => string;
 };
+
+/** A note or map the server's semantic search ranked for a query, closest first. */
+export type PaletteSemanticHit = { id: string; title: string; kind: "note" | "moc" };
+
+/** The server's answer to one query; the palette uses it only while that query is still the one typed. */
+export type PaletteSemantic = { query: string; hits: readonly PaletteSemanticHit[] };
+
+/** What the palette needs from one server search result. */
+export type SemanticResult = {
+  documentId: string;
+  title: string | null;
+  status: string | null;
+  matchedBy?: readonly string[];
+};
+
+/**
+ * The server's results as the palette uses them, or null when they rank by
+ * words alone: where the server has no embeddings (the browser vault, an
+ * older deployment) it falls back to keyword search, and the palette's own
+ * word matching already does that, instantly. Scopes of work and work
+ * breakdowns are left to the search page.
+ */
+export function paletteSemanticFrom(query: string, results: readonly SemanticResult[] | null): PaletteSemantic | null {
+  if (!results || !results.some((r) => r.matchedBy?.includes("semantic"))) return null;
+  const hits: PaletteSemanticHit[] = [];
+  for (const r of results) {
+    if (r.status === "SCOPE" || r.status === "WBS") continue;
+    hits.push({ id: r.documentId, title: r.title ?? r.documentId, kind: r.status === "MOC" ? "moc" : "note" });
+  }
+  return { query: query.trim(), hits };
+}
 
 /** How many rows each group shows (design: Notes 4, Topics 2, Sources 2). */
 export const PALETTE_LIMITS = { notes: 4, topics: 2, sources: 2, chats: 2, recentChats: 3 } as const;
@@ -128,10 +161,17 @@ const noteTime = (n: KnowledgeNoteInfo) => n.provenance?.createdAt ?? n.provenan
 export type PaletteScope = "all" | "chats";
 
 /** The palette's groups for a query; an empty query shows what is newest and largest, and where to go. */
-export function paletteGroups(query: string, data: PaletteData, scope: PaletteScope = "all"): PaletteGroup[] {
+export function paletteGroups(
+  query: string,
+  data: PaletteData,
+  scope: PaletteScope = "all",
+  semantic: PaletteSemantic | null = null,
+): PaletteGroup[] {
   const terms = queryTerms(query);
   const phrase = terms.join(" ");
   const typed = terms.length > 0;
+  // An answer for what was typed before is not an answer for this.
+  const meaning = semantic && semantic.query === query.trim() ? semantic.hits : [];
   const groups: PaletteGroup[] = [];
   const add = (key: string, heading: string | null, rows: PaletteRow[]) => {
     if (rows.length > 0) groups.push({ key, heading, rows });
@@ -152,6 +192,22 @@ export function paletteGroups(query: string, data: PaletteData, scope: PaletteSc
 
   if (typed) add("ask", null, [{ kind: "ask", key: "ask", query: query.trim() }]);
 
+  // Maps as the palette lists them: every map by its title, the overview as "<name> overview".
+  const topicRow = (m: MocInfo, title = m.title): PaletteRow => ({
+    kind: "topic",
+    key: `topic:${m.id}`,
+    id: m.id,
+    title,
+    detail: topicSize(m),
+  });
+  const candidates: { moc: MocInfo; title: string }[] = [
+    ...data.topics.map((m) => ({ moc: m, title: m.title })),
+    ...(data.hub ? [{ moc: data.hub, title: `${data.hub.title} overview` }] : []),
+  ];
+  const known = new Map(candidates.map((c) => [c.moc.id, c]));
+  /** Maps already shown among the best matches, so Topics does not repeat them. */
+  const shown = new Set<string>();
+
   // Notes: newest first, then by how well they answer.
   const newest = [...data.notes].sort((a, b) => noteTime(b).localeCompare(noteTime(a)));
   const noteRow = (n: KnowledgeNoteInfo): PaletteRow => ({
@@ -162,7 +218,24 @@ export function paletteGroups(query: string, data: PaletteData, scope: PaletteSc
     detail:
       noteSourceDocument(n, data.sourceOf)?.name ?? data.topicOf.get(n.id)?.title ?? kindLabel(n.noteType),
   });
-  if (typed) {
+  // The server's answer, in its order, notes and maps together — what the
+  // search page lists first. Maps the palette does not list are left out.
+  const byId = new Map(data.notes.map((n) => [n.id, n]));
+  const best = meaning.flatMap((h): PaletteRow[] => {
+    if (h.kind === "note") {
+      const n = byId.get(h.id);
+      return [n ? noteRow(n) : { kind: "note", key: `note:${h.id}`, id: h.id, title: h.title, detail: null }];
+    }
+    const c = known.get(h.id);
+    return c ? [topicRow(c.moc, c.title)] : [];
+  });
+  if (typed && best.length > 0) {
+    const rows = best.slice(0, PALETTE_LIMITS.notes);
+    for (const r of rows) if (r.kind === "topic") shown.add(r.id);
+    rows.push({ kind: "more", key: "more", query: query.trim() });
+    add("notes", "Best matches", rows);
+  } else if (typed) {
+    // Until the server answers (or where it ranks by words alone): the palette's own word matches.
     const hits: Ranked<KnowledgeNoteInfo>[] = [];
     newest.forEach((n, order) => {
       const rest = [n.description ?? "", data.topicOf.get(n.id)?.title ?? "", ...n.topics.map((t) => t.name)].join(" ");
@@ -180,25 +253,15 @@ export function paletteGroups(query: string, data: PaletteData, scope: PaletteSc
   }
 
   // Topics: the largest first; the overview only when asked for.
-  const topicRow = (m: MocInfo, title = m.title): PaletteRow => ({
-    kind: "topic",
-    key: `topic:${m.id}`,
-    id: m.id,
-    title,
-    detail: topicSize(m),
-  });
   if (typed) {
-    const candidates: { moc: MocInfo; title: string }[] = [
-      ...data.topics.map((m) => ({ moc: m, title: m.title })),
-      ...(data.hub ? [{ moc: data.hub, title: `${data.hub.title} overview` }] : []),
-    ];
     const hits: Ranked<{ moc: MocInfo; title: string }>[] = [];
     candidates.forEach((c, order) => {
       const score = rank(foldText(c.title), foldText(c.moc.description ?? ""), terms, phrase);
       if (score !== null) hits.push({ item: c, score, order });
     });
     hits.sort(byRank);
-    add("topics", "Topics", hits.slice(0, PALETTE_LIMITS.topics).map((h) => topicRow(h.item.moc, h.item.title)));
+    const rest = hits.filter((h) => !shown.has(h.item.moc.id));
+    add("topics", "Topics", rest.slice(0, PALETTE_LIMITS.topics).map((h) => topicRow(h.item.moc, h.item.title)));
   } else {
     add("topics", "Topics", data.topics.slice(0, PALETTE_LIMITS.topics).map((m) => topicRow(m)));
   }

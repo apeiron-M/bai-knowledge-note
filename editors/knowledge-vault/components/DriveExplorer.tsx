@@ -44,6 +44,7 @@ import { readSourcesTab, writeOpenFolder, writeSourcesTab } from "../lib/source-
 import { SourceTimelineView } from "./timeline/SourceTimelineView.js";
 import type { TimelineGraphData } from "../hooks/use-source-timeline.js";
 import { saveSearchQuery } from "../hooks/use-graph-search.js";
+import { usePaletteSemantic } from "../hooks/use-palette-semantic.js";
 import {
   clearTensionClose,
   requestTensionClose,
@@ -765,6 +766,8 @@ export function DriveExplorer({ children }: EditorProps) {
   // The conversation on screen, for the sidebar to mark.
   const activeChatId =
     viewMode === "chat" && !showDocumentEditor && driveId ? readCurrentThreadId(driveId) : null;
+  // The server's closest notes for what is typed, a moment after the palette's own word matches.
+  const paletteSemantic = usePaletteSemantic(paletteQuery, paletteOpen && paletteScope === "all");
   const paletteData = useMemo<PaletteData>(
     () => ({
       notes,
@@ -1010,6 +1013,7 @@ export function DriveExplorer({ children }: EditorProps) {
             data={paletteData}
             scope={paletteScope}
             query={paletteQuery}
+            semantic={paletteSemantic}
             onQueryChange={setPaletteQuery}
             onSelect={handlePaletteSelect}
             onClose={() => setPaletteOpen(false)}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
-import { foldText, paletteGroups, paletteRows, stepRow, type PaletteData } from "./palette-search.js";
+import { foldText, paletteGroups, paletteRows, paletteSemanticFrom, stepRow, type PaletteData } from "./palette-search.js";
 import type { SourceDocument } from "./vault-lookups.js";
 
 function note(id: string, title: string, description = "", createdAt = "2026-10-01T00:00:00Z"): KnowledgeNoteInfo {
@@ -65,6 +65,50 @@ describe("the Ctrl K palette", () => {
     expect(groups[4].rows).toHaveLength(6);
     const goto = paletteGroups("queue", data()).find((g) => g.key === "goto");
     expect(goto?.rows).toEqual([expect.objectContaining({ goto: "processing-queue" })]);
+  });
+
+  it("lists the server's semantic answer first as Best matches, notes and maps in its order, like the search page", () => {
+    const question = "who makes the turbines for AI power?";
+    const semantic = paletteSemanticFrom(question, [
+      { documentId: "t1", title: "AI data center power", status: "MOC", matchedBy: ["semantic"] },
+      { documentId: "n3", title: "Robots build data centers", status: "DRAFT", matchedBy: ["semantic"] },
+      { documentId: "s1", title: "A scope of work", status: "SCOPE", matchedBy: ["semantic"] },
+      { documentId: "x1", title: null, status: "MOC", matchedBy: ["semantic"] },
+      { documentId: "n1", title: "Gas turbine orders exceed annual build capacity", status: "CANONICAL", matchedBy: ["semantic", "keyword"] },
+      { documentId: "n9", title: "A note the palette has not loaded", status: "DRAFT", matchedBy: ["semantic"] },
+      { documentId: "n2", title: "Large-frame turbines are sold out", status: "DRAFT", matchedBy: ["semantic"] },
+    ]);
+    expect(semantic?.hits.map((h) => h.id)).toEqual(["t1", "n3", "x1", "n1", "n9", "n2"]);
+    const groups = paletteGroups(question, data(), "all", semantic);
+    expect(groups.map((g) => g.heading)).toEqual([null, "Best matches"]);
+    const best = groups[1];
+    // The server's order, maps included (a scope, and a map the palette does not list, are left out); four, then the full search.
+    expect(best.rows.map((r) => `${r.kind}:${"id" in r ? r.id : ""}`)).toEqual(["topic:t1", "note:n3", "note:n1", "note:n9", "more:"]);
+    expect(best.rows[0]).toMatchObject({ title: "AI data center power", detail: "15 notes" });
+    expect(best.rows[1]).toMatchObject({ detail: "State of AI Report 2026" });
+    expect(best.rows[3]).toMatchObject({ title: "A note the palette has not loaded", detail: null });
+    // A map among the best matches is not listed again under Topics; the overview keeps its name.
+    const power = paletteGroups("power", data(), "all", paletteSemanticFrom("power", [
+      { documentId: "t1", title: "AI data center power", status: "MOC", matchedBy: ["semantic"] },
+      { documentId: "h", title: "Liberuum", status: "MOC", matchedBy: ["semantic"] },
+    ]));
+    expect(power.find((g) => g.key === "notes")?.rows.map((r) => ("title" in r ? r.title : r.kind))).toEqual(["AI data center power", "Liberuum overview", "more"]);
+    expect(power.find((g) => g.key === "topics")).toBeUndefined();
+  });
+
+  it("keeps its own word matches until the answer is for what is typed, and where the server ranks by words alone", () => {
+    const answer = paletteSemanticFrom("turbin", [{ documentId: "n3", title: "Robots", status: "DRAFT", matchedBy: ["semantic"] }]);
+    // Still typing: the answer to "turbin" does not replace the matches for "turbines".
+    const typing = paletteGroups("turbines", data(), "all", answer);
+    expect(typing.find((g) => g.key === "notes")).toMatchObject({ heading: "Notes" });
+    expect(typing.find((g) => g.key === "notes")?.rows.map((r) => (r.kind === "note" ? r.id : r.kind))).toEqual(["n2", "n1", "more"]);
+    // A keyword-only answer (no embeddings on that server) is not used at all.
+    expect(paletteSemanticFrom("turbines", [{ documentId: "n3", title: "Robots", status: "DRAFT", matchedBy: ["keyword"] }])).toBeNull();
+    expect(paletteSemanticFrom("turbines", [{ documentId: "n3", title: "Robots", status: "DRAFT" }])).toBeNull();
+    expect(paletteSemanticFrom("turbines", null)).toBeNull();
+    // An answer holding nothing the palette can show leaves the words in charge.
+    const nothing = paletteSemanticFrom("turbines", [{ documentId: "x1", title: "Unknown map", status: "MOC", matchedBy: ["semantic"] }]);
+    expect(paletteGroups("turbines", data(), "all", nothing).find((g) => g.key === "notes")?.heading).toBe("Notes");
   });
 
   it("moves through the rows with ↑ and ↓, wrapping at both ends", () => {
