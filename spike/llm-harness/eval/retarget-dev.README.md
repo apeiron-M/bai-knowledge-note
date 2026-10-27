@@ -91,7 +91,7 @@ The format is the held-out format (`--set file:<path>`), with three additions. E
 - With nothing open, a pointer has no referent, so the name is the target.
 - Otherwise: ask with the top 3.
 
-The vault plan §3.2 and §3.9 instead want **ask with the top 3 when several documents are named**. To keep both readable, `documentId` records the intent separately from the rule. Of the 9 several-name and shared-name items, **4 have `q1Mistarget: true`**: rt-mn-02, rt-mn-03, rt-sn-01 and rt-sn-02. There, keeping the open document changes the wrong document, or a document with no matching op. Those 4 are the evidence for the open choice between the two rules.
+**The overview's Q1 rule ("several names, or two documents sharing the name: the open document") is binding, and it is what the gold `resolution` follows.** The vault plan §3.2 and §3.9 instead want **ask with the top 3 when several documents are named**. To keep both readable, `documentId` records the intent separately from the rule. Of the 9 several-name and shared-name items, **4 have `q1Mistarget: true`**: rt-mn-02, rt-mn-03, rt-sn-01 and rt-sn-02. There, keeping the open document changes the wrong document, or a document with no matching op. Those 4 are the evidence for the open choice between the two rules.
 
 Edge cases the rule text settles, each with an item:
 - The open document's own title mentioned: not another document.
@@ -147,11 +147,11 @@ The multiAction entry has two `project:ADD_KNOWLEDGE_REF` steps.
 
 ## Validation
 
-Helper scripts, kept outside the repo:
-- a builder, which is the source of truth for the JSON;
-- a validator;
-- a zod check;
-- an overlap script.
+The helper scripts are in `retarget-dev-tools/`. Every path defaults relative to the script.
+- `build.py` is the source of truth for the JSON: `python3 build.py` rewrites `../retarget-dev.json`.
+- `validate.py` is the validator.
+- `fullinputs.py` then `zodcheck.mts` is the zod check. Run the second from the repo root with `npx --no-install tsx`.
+- `overlap.py` is the overlap script. It skips `results-*.json` unless given `--include-results`.
 
 **Validator: 0 errors.** It checks that:
 - every op exists, and every item is scoped;
