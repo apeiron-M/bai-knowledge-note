@@ -165,3 +165,21 @@ Held-out-5 had 164 action items and 15 no-action items after excluding obs5-05. 
 - **H5 (descriptive), D vs C:** op +7/−1, effective +10/−1.
 - **Decision:** the §9 rule picks C. D is descriptively stronger on blind data, although it tied on dev (182 vs 183). D costs 731 + 530 MB.
 - **Next:** pre-register held-out-6, its single confirmatory run, with C and/or D, then run it once.
+
+## UPDATE 6 (2026-10-27): held-out-6 confirmatory run DONE (PREREGISTRATION-3, sha e9733fe2)
+
+There were 200 action items and 20 no-action items, with 0 excluded. Date: 2026-10-23.
+
+| Arm | Op one-shot | Fully one-shot | Gate: gold-in-choices / ask / wrong / effective fully |
+|---|---|---|---|
+| A: X5 alone | 84.5% | 76.5% | – |
+| B / C: X5 × Kev-FT (760 MB) | **93.5%** (CI 89.2–96.2) | 83.5% | 98.0% / 15.9% / 2.7% / **87.5%** |
+| D: F 1.2B × Kev-FT (1.26 GB) | **96.0%** (CI 92.3–98.0) | 87.0% | 98.5% / 13.6% / 1.4% / **89.5%** |
+
+- **Hypotheses:** P1 and P2 both pass (point estimate ≥ 90%).
+- **D vs C:** effective +2.0 pts, p 0.42. Under the pre-committed rule, **C ships**.
+- **Remaining errors** are mostly args: 14 wrong without an ask, 7 wrong after an ask. There are also 3 wrong dispatches and 3 no-action mistakes.
+- **Next (not started):**
+  1. Port C into the browser chat: two wllama instances, the X6+X9 patches, the gate UI.
+  2. Measure WebGPU latency.
+  3. Decide where the GGUFs are hosted.
