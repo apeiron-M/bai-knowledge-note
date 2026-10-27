@@ -32,6 +32,7 @@ import { r8Qa, r8Run } from "./r8.js";
 import { r9Run } from "./r9.js";
 import { v1EmbedParity, v1Pipeline } from "./v1.js";
 import "./phase0.js";
+import "./cparity.js";
 
 type Json = Record<string, unknown>;
 
