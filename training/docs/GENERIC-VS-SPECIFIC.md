@@ -41,7 +41,7 @@ This updates `docs/superpowers/notes/in-browser-llm/reuse-across-apps.md` (class
 | Model list | `catalog-models.ts` `CATALOG_MODELS` | H (trivial) → D-possible | One import per model. Codegen can emit it. |
 | Canonical vocabularies | `vocabularies.ts` | H → D-possible | Closed lists the spec types as `String`. If they were declared as GraphQL enums, zod would carry them for free. |
 | Op descriptions in the catalog | each model's `<model>.json` `description` | D-auto, but 30/99 empty | Fill them with `SET_OPERATION_DESCRIPTION` via MCP (project CLAUDE.md). The LoRA's step-1 prompt shows op keys, so it barely uses descriptions. Kev uses them as its option text. |
-| Hand-written op descriptions | `op-descriptions.ts` `OP_DESCRIPTIONS` (all 99) | H | Off for the LoRA at runtime; **Kev's option text and training criteria** (`x4-kev/data/catalog.json` via `dump-catalog.ts`). Descriptions gave Kev +8–20 items over bare names. This becomes D once the spec descriptions are good enough. |
+| Hand-written op descriptions | `op-descriptions.ts` `OP_DESCRIPTIONS` (all 99) | H | Off for the LoRA at runtime; **Kev's option text and training criteria** (`training/kev/data/catalog.json` via `training/kev/dump-catalog.ts`). Descriptions gave Kev +8–20 items over bare names. This becomes D once the spec descriptions are good enough. |
 | Ref fields | `op-catalog.ts` ref-id rule | D-auto | The OID/PHID/`/Id$/` rule flags all 40 ref ops. `sessionId`, `batchId` and `topicDocumentId` are flagged too, but have no runtime candidates. |
 | Ref targets and labels | `ref-candidates.ts` `REF_EXTRACTORS` (40 keys) | H; targets D-possible for 32/40 | Labels follow the training convention (goal description, member name, …). A parity test pins them to `ref-scenarios.ts`. |
 | Cross-document ref kinds | `ref-candidates.ts` `CTX_KIND_BY_TYPE`, `driveRefContext` | H | PHID carries no target type, so it needs a manifest hint. |
@@ -93,29 +93,29 @@ This updates `docs/superpowers/notes/in-browser-llm/reuse-across-apps.md` (class
 | GGUF export | `training/scripts/export-gguf.sh` | B | Carries Liquid's published chat template over (`TEMPLATE_GGUF`). Uses macOS `stat -f` and `/usr/bin/time -l`. |
 | Toolchain setup | `training/scripts/setup.sh` | B | Pins llama.cpp b11364 and downloads LFM2.5 weights. Never re-run from a clean machine. |
 | Memory watchdog | `training/scripts/watchdog.sh` | G (macOS) | |
-| Remote launcher | Constantine `~/bai-training/launch.sh` | G | **Not in the repo.** |
+| Remote launcher | `training/scripts/launch.sh` (deployed as Constantine `~/bai-training/launch.sh`) | G | |
 | Round reports | `training/py/r8_report.py`, `r8_errors.py`, `r10_report.py`, `batchcmp.py` | G\* | Tied to the browser harness's result format and file names. |
 
 ## 4. Kev (second step-1 expert)
 
 | Piece | Path | Class | Notes |
 |---|---|---|---|
-| Kev training data converter | `x4-kev/code/to_kev_jsonl.py` (backup) | G | Needs `catalog.json` and the val ids. Its wording template ("Which operation should be applied to this <model> document…") is generic. |
-| Kev option catalog | `x4-kev/code/dump-catalog.ts` → `x4-kev/data/catalog.json` (`b257573b…`) | G\* + H data | Imports the vault catalog. The option text is `OP_DESCRIPTIONS` (H). |
-| Fine-tune recipe | `x4-kev/finetune/constantine-recipe.sh`; Constantine `~/x4/launch-kev-ft.sh`, `~/x4/watchdog-kev.sh` | G / B | Pins Kev 2074cc44, `kev-0.8b@bf75a6a8` and `Qwen3.5-0.8B-Base@dc7cdfe2`. **Not in the repo.** |
-| Calibrate + export | `kev.benchmark`, Kev's `scripts/calibrate_checkpoint.py`, `x4-kev/finetune/kev-ft-export.sh`, `x4-kev/export/convert-kev08.sh` | G / B | `kev-ft-export.sh` hardcodes the session scratchpad path. |
-| Kev decider (scoring) | `x4-kev/node/decide.mjs` (frozen copy in `rig/kev/`) | G | |
+| Kev training data converter | `training/kev/to_kev_jsonl.py` | G | Needs `catalog.json` and the val ids. Its wording template ("Which operation should be applied to this <model> document…") is generic. |
+| Kev option catalog | `training/kev/dump-catalog.ts` → `training/kev/data/catalog.json` (`b257573b…`) | G\* + H data | Imports the vault catalog. The option text is `OP_DESCRIPTIONS` (H). |
+| Fine-tune recipe | `training/kev/constantine-recipe.sh`, `launch-kev-ft.sh`, `watchdog-kev.sh` (deployed to Constantine `~/x4/`) | G / B | Pins Kev 2074cc44, `kev-0.8b@bf75a6a8` and `Qwen3.5-0.8B-Base@dc7cdfe2`. |
+| Calibrate + export | `kev.benchmark`, Kev's `scripts/calibrate_checkpoint.py`, `training/kev/kev-ft-calibrate.sh`, `kev-ft-export.sh`, `convert-kev-base.sh` | G / B | |
+| Kev decider (scoring) | `training/kev/node/decide.mjs` (frozen; the rig runs this copy) | G | |
 
 ## 5. Evaluation and calibration
 
 | Piece | Path | Class | Notes |
 |---|---|---|---|
-| Eval rig | `exp/rig/rig.sh`, `src/*.py|ts`, `lib/lib.ts` (backup; README committed as `rig-README.md`) | G | Takes any set in the held-out schema (`--set file:<path>`). It builds patched trees from `git archive` of this repo. **Not in the repo.** |
-| Rig Kev catalog | `rig/kev/catalog.json` | H data | Per app. Derived from `OP_DESCRIPTIONS`. |
-| Exclusion (training-row leaks vs eval items) | `rig/src/exclude.py` | G | Reuses `dedup.leak_hit`. |
-| Pre-registration runner | `rig/src/prereg.py` | G | Checks the sha sidecar and the `rig-run` blocks. |
-| Temperature fit (G2) and gate (τ 0.5, k 3, equal weights, none rule) | `rig/src/evaluate.py` (`--temps dev-cv`), `rig/validation/gate-calibration/calib.py` | G procedure, per-model values | Fit again for every new LoRA or Kev, on that app's dev set. |
-| Analysis for a given pre-registration | `exp/x7-fusion/code/prereg{2,3}_analysis.py` | G\* | Written for specific arms. |
+| Eval rig | `training/eval-rig/rig.sh`, `src/*.py|ts`, `lib/lib.ts` (README there; design notes in `rig-README.md`) | G | Takes any set in the held-out schema (`--set file:<path>`). It builds patched trees from `git archive` of this repo. |
+| Rig Kev catalog | `training/kev/data/catalog.json` | H data | Per app. Derived from `OP_DESCRIPTIONS`. |
+| Exclusion (training-row leaks vs eval items) | `training/eval-rig/src/exclude.py` | G | Reuses `dedup.leak_hit`. |
+| Pre-registration runner | `training/eval-rig/src/prereg.py` | G | Checks the sha sidecar and the `rig-run` blocks. |
+| Temperature fit (G2) and gate (τ 0.5, k 3, equal weights, none rule) | `training/eval-rig/src/evaluate.py` (`--temps dev-cv`), `training/eval-rig/analysis/calib.py` | G procedure, per-model values | Fit again for every new LoRA or Kev, on that app's dev set. |
+| Analysis for a given pre-registration | `training/eval-rig/analysis/prereg{2,3}_analysis.py` | G\* | Written for specific arms. |
 | Browser harness | `spike/llm-harness/` (`r8.ts`, `r9.ts`, `v1.ts`, …) | G\* | Runs the real chat core in the browser. It is tied to this app's catalog. |
 | Dev sets | `spike/llm-harness/eval/heldout{,2,3,4}-eval.json`, `dev-extra.json`; READMEs in `docs/superpowers/notes/in-browser-llm/heldout*-eval.README.md` | **H** | Written blind by an isolated agent from spec files only. |
 | Blind sets | `exp/blind/heldout{5,6}/` (also `BAI_BLIND_DIR`) | **H** | Never opened by experiment agents. |

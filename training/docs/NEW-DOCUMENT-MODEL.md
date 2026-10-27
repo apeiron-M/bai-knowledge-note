@@ -18,7 +18,7 @@ Tags: **[est]** is an estimate, **[inf]** is inferred, **[spec]** is speculative
 - **Operation descriptions.**
   - 30 of the 99 vault ops have an empty spec description: **every** `bai/project` op (16) and every `bai/wbs` op (14). The other 69 come from the specs.
   - `OP_DESCRIPTIONS` (`editors/knowledge-vault/chat/core/op-descriptions.ts`) hand-writes all 99. It is Kev's option text and training criteria.
-  - For a new model, write a one- or two-sentence description per op ("Sets …. Use when …"; see `x4-kev/finetune/data/train.jsonl` for the style) and dispatch it with `SET_OPERATION_DESCRIPTION`. Until the runtime reads spec descriptions for Kev, also add the same text to `OP_DESCRIPTIONS`.
+  - For a new model, write a one- or two-sentence description per op ("Sets …. Use when …"; see `training/kev/data/catalog.json` (`override`) for the style) and dispatch it with `SET_OPERATION_DESCRIPTION`. Until the runtime reads spec descriptions for Kev, also add the same text to `OP_DESCRIPTIONS`.
 - **Closed vocabularies.** Declare a closed list as a GraphQL `enum` when you can, so zod enforces it for free. Otherwise add it to `chat/core/vocabularies.ts` (`VOCABULARY_TABLE`).
 - **Errors.** Declare an error for every reducer precondition (`ADD_OPERATION_ERROR`). The validator's replay relies on reducers throwing; future fixture derivation would read these errors [spec].
 - **Reducers must be pure and deterministic.** Ids and timestamps come from the input. `training/gen/replay.ts` names new ids per fixture step.
@@ -94,27 +94,27 @@ Skip Round 12 for now: it did not help on dev (X12).
 
 **Step 5: LoRA** (Constantine; at least 64 GB tested).
 1. rsync the split, checking sha256 on both sides.
-2. `~/bai-training/launch.sh <name> <train-split> --val <val> --out <run> --epochs 2 --batch 8 --grad-accum 4 --save-steps 50 --save-limit 2`.
+2. `~/bai-training/launch.sh <name> <train-split> --val <val> --out <run> --epochs 2 --batch 8 --grad-accum 4 --save-steps 50 --save-limit 2` (the script is `training/scripts/launch.sh`).
 3. Poll the log.
 4. Pull the adapter back, then run `merge.py --check <val> --check-rows 16` and `export-gguf.sh`.
 5. Run the native val check: `py/smoke_infer.py`, or the X5 report's llama-server check.
 
-**Step 6: Kev-FT** (Constantine; recipe in the backup `training/artifacts/exp-2026-10-23/x4-kev/finetune/` [gap]).
-1. `dump-catalog.ts` → `catalog.json`.
-2. `to_kev_jsonl.py <final/rows-kept.jsonl> <split/val.jsonl> <catalog.json> <out>`. Use the **post-dedup** rows.
-3. `constantine-recipe.sh`: the 20-step timing probe first, then 2 epochs.
+**Step 6: Kev-FT** (Constantine; recipe and commands in `training/kev/README.md`).
+1. `training/kev/dump-catalog.ts` → `catalog.json`.
+2. `training/kev/to_kev_jsonl.py <final/rows-kept.jsonl> <split/val.jsonl> <catalog.json> <out>`. Use the **post-dedup** rows.
+3. `training/kev/constantine-recipe.sh probe` (20-step timing probe) first, then `launch-kev-ft.sh` (2 epochs).
 4. `kev.benchmark` + `calibrate_checkpoint.py --allow-in-distribution`.
-5. `kev-ft-export.sh`, after fixing its hardcoded path.
+5. `training/kev/kev-ft-export.sh`.
 
-**Step 7: dev evaluation and calibration** (rig, from the backup `training/artifacts/exp-2026-10-23/rig/` [gap]).
-- `rig.sh --lora <new.gguf> --kev <kevft.gguf> --set dev --args x9 --temps dev-cv --out validation/<name>`.
+**Step 7: dev evaluation and calibration** (rig: `training/eval-rig/README.md`).
+- `training/eval-rig/rig.sh --lora <new.gguf> --kev <kevft.gguf> --set dev --args x9 --temps dev-cv --out training/artifacts/eval-rig/runs/<name>`.
 - The `dev-cv` block gives the frozen T_L and T_K for the pre-registration. Keep τ 0.5, k 3 and equal weights.
-- `compare.py` against the current C on the **old** dev set too, so you see regressions on existing models.
+- `training/eval-rig/src/compare.py` against the current C on the **old** dev set too, so you see regressions on existing models.
 
 **Step 8: blind runs.**
 1. Write a pre-registration in the `PREREGISTRATION-3.md` format: arms, frozen temperatures, artifact shas, exclusion specs over every arm's training utterances, metrics, hypotheses, a pre-committed decision rule, and `rig-run` blocks.
 2. Write its `.sha256` sidecar.
-3. Run `rig.sh --prereg <file> --prereg-run <block>` once per block on the selection set, then once on the confirmatory set.
+3. Run `training/eval-rig/rig.sh --prereg <file> --prereg-run <block>` once per block on the selection set, then once on the confirmatory set.
 4. Never retune after a blind run.
 
 ## 3. Writing the eval sets
@@ -215,11 +215,11 @@ None of these exist yet. Each one names what to build, its scope and a rough eff
    - **Scope:** a per-app config (seed, counts, artifact root, blind dir, remote host); resumable stages; an artifact manifest with every input and output sha; and the stages plan → run → rows → render → label → agree → contrast/stress → paraphrase → merge/split → push → launch → poll → pull → merge → export → Kev data/train/calibrate/export → rig dev.
    - It replaces the hardcoded round paths in `round11-para/chain.sh` / `merge.sh` and `round12-para/*.sh`, and adds a per-model op filter to `plan`.
    - **Effort:** 3–5 days.
-5. **Move the Kev recipe into the repo** (for example `training/kev/`).
+5. **Move the Kev recipe into the repo.** **Done 2026-10-27:** `training/kev/` (plus `training/scripts/launch.sh`); provenance confirmed by regeneration, see its README.
    - **Files:** `constantine-recipe.sh`; `kev-ft-export.sh` (it hardcodes the session scratchpad path, which needs an env var); `x4-kev/code/to_kev_jsonl.py` and `dump-catalog.ts`; `x4-kev/node/decide.mjs` + `package.json`; `x4-kev/export/convert-kev08.sh`. Also the Constantine-only `~/x4/launch-kev-ft.sh`, `~/x4/watchdog-kev.sh` and `~/bai-training/launch.sh`.
    - **Provenance:** build Kev data from `final/rows-kept.jsonl`, not the pre-dedup `final-in/rows.jsonl` (the counts suggest the shipped Kev-FT used the latter [inf]), and record the input sha in the output.
    - **Effort:** half a day to 1 day.
-6. **Move the eval rig into the repo** (`exp/rig`: `rig.sh`, `src/`, `lib/lib.ts`, frozen `kev/`).
+6. **Move the eval rig into the repo.** **Done 2026-10-27** (`training/eval-rig/`, re-validated; see its README). Still open from this item: building trees from applied code, and generalising the `analysis/` helpers from fixed arm names.
    - Once the patches are applied, build its trees from the applied code instead of from patches.
    - Re-run its validation (it must reproduce the stored X7/X9 rows exactly).
    - Move `gate-calibration/calib.py` and the `prereg*_analysis.py` helpers too, generalised from fixed arm names.

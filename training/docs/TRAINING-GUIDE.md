@@ -49,8 +49,8 @@ Companion docs:
 **Constantine setup** (`remote-run-log.md`):
 - A venv in `~/bai-training/training/.venv`, installed from `requirements.lock --no-deps`.
 - A mirror of `training/py/`, `training/scripts/` and the base weights, pushed with rsync and checked by sha256 on both sides.
-- `~/bai-training/launch.sh <name> <train_lora.py args…>`. It starts `train_lora.py` in a detached `screen` session under `caffeinate -dimsu`, with `PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.5` and `PYTORCH_MPS_LOW_WATERMARK_RATIO=0.45`. It logs to `~/bai-training/<name>.log`, and it starts `training/scripts/watchdog.sh` with a 32 GiB limit and a 15 s interval if the watchdog is not already running. **This script exists only on Constantine [gap].**
-- Kev uses `~/kev` (a clone of `jaredpalmer/kev` at `2074cc44`, set up with `uv sync`) and `~/x4/` (data, `launch-kev-ft.sh`, `watchdog-kev.sh`). These are also Constantine-only [gap].
+- `~/bai-training/launch.sh <name> <train_lora.py args…>` (committed as `training/scripts/launch.sh`). It starts `train_lora.py` in a detached `screen` session under `caffeinate -dimsu`, with `PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.5` and `PYTORCH_MPS_LOW_WATERMARK_RATIO=0.45`. It logs to `~/bai-training/<name>.log`, and it starts `training/scripts/watchdog.sh` with a 32 GiB limit and a 15 s interval if the watchdog is not already running.
+- Kev uses `~/kev` (a clone of `jaredpalmer/kev` at `2074cc44`, set up with `uv sync`) and `~/x4/` (data, `launch-kev-ft.sh`, `watchdog-kev.sh`; committed in `training/kev/`).
 - Constantine sleeps on AC unless `sudo pmset -c sleep 0` is set (handoff update 4). caffeinate holds it awake only while a job runs.
 
 ## 2. Inputs
@@ -201,7 +201,7 @@ Agreement under the blind relabel is the main quality gate. Typical exact agreem
 - **Contamination found the hard way:**
   - Round 10's fresh split put 140 of Round 8's 168 val ids into train. That made the "teacher val" in-sample for X1 and X5, which broke temperature refits (section 8).
   - One Round 10 row near-copied a held-out-5 item. Round 10 never checked it against the blind sets, so it had to be excluded at eval time.
-  - Kev-FT's data has 4,382 + 228 = 4,610 records, which equals `round10/final-in/rows.jsonl` (before dedup), not the 4,609 in `final/rows-kept.jsonl`. Pre-registration 3 §4 names one Kev-FT row outside `rows-kept.jsonl` that was never screened. **[inf]** So the Kev data was most likely built from the pre-dedup file. Build it from `final/rows-kept.jsonl` next time.
+  - Kev-FT's data has 4,382 + 228 = 4,610 records, which equals `round10/final-in/rows.jsonl` (before dedup), not the 4,609 in `final/rows-kept.jsonl`. Pre-registration 3 §4 names one Kev-FT row outside `rows-kept.jsonl` that was never screened. Regenerating the data confirms it was built from the pre-dedup file (`training/kev/README.md`, "Data provenance"). Build it from `final/rows-kept.jsonl` next time.
 
 ## 6. LoRA training (Constantine, MPS)
 
@@ -262,28 +262,28 @@ training/scripts/export-gguf.sh training/artifacts/x5-350m/merged training/artif
 
 ## 8. Kev-0.8B fine-tune (Constantine)
 
-The recipe files are `x4-kev/finetune/constantine-recipe.sh` and `kev-ft-export.sh`. They live in the gitignored backup `training/artifacts/exp-2026-10-23/x4-kev/finetune/`, which is byte-identical to the session copy. **They are not in the repo [gap].**
+The recipe is committed in `training/kev/` (README: commands, pins, data provenance). It was `x4-kev/finetune/constantine-recipe.sh` and `kev-ft-export.sh` in the session tree (backup `training/artifacts/exp-2026-10-23/x4-kev/`).
 
-1. **Data:** `x4-kev/code/to_kev_jsonl.py <rows> <round10 split/val.jsonl> <catalog.json> <outdir>`. It writes one Kev record per row:
+1. **Data:** `training/kev/to_kev_jsonl.py <rows> <round10 split/val.jsonl> <catalog.json> <outdir>`. It writes one Kev record per row:
    - `state = "Request: <utterance>"`;
    - a `choice` question over the docType's ops, with criteria `human(opName): OP_DESCRIPTIONS[key]` plus "answer a question";
    - a `noul` "change?" question.
 
-   Rows in Round 10 val go to `calibration.jsonl` (228), and the rest to `train.jsonl` (4,382; sha256 `ed3d9aac…6e65`). `catalog.json` (`b257573b…`) comes from `x4-kev/code/dump-catalog.ts`.
-2. **Train** (`~/x4/launch-kev-ft.sh`, recipe step 2): `kev.train` with these settings:
+   Rows in Round 10 val go to `calibration.jsonl` (228), and the rest to `train.jsonl` (4,382; sha256 `ed3d9aac…6e65`). `catalog.json` (`b257573b…`) comes from `training/kev/dump-catalog.ts` (frozen copy `training/kev/data/catalog.json`).
+2. **Train** (`training/kev/launch-kev-ft.sh`, run on Constantine from `~/x4/`): `kev.train` with these settings:
    - base `Qwen/Qwen3.5-0.8B-Base@dc7cdfe2`, initialised from `jaredpalmer/kev-0.8b@bf75a6a8`;
    - LoRA 16 on all targets, fp32 on MPS, lr 2e-5, batch 4 × accum 2, 2 epochs, seed 0, all distractor augmentations off;
    - run under the same MPS caps and caffeinate, with its own watchdog.
 
    The run took 1,096 steps at about 4.8 s per record, from 16:09 on 10-23 to 03:36 on 10-24, i.e. **about 11.4 h of wall** (the plan estimated 8.3 h). Footprint was about 15 GB. **There are no checkpoints in LoRA mode**, so a crash or sleep restarts from step 0.
-3. **Calibrate:** `kev.benchmark` on `calibration.jsonl`, then `scripts/calibrate_checkpoint.py --allow-in-distribution`. This took 14 min and fitted T = 2.7007 into `head.pt`. Kev warns that this T is in-distribution, which is expected.
-4. **Export (this Mac):** `kev-ft-export.sh` copies the run back, checks SHA256SUMS, runs `convert_hf_to_gguf.py` (llama.cpp 46ca246 detects the Kev checkpoint) to BF16, then `llama-quantize Q4_K_M`. Conversion took 12 s and quantising 3 s. The GGUF carries `qwen35.decision.temperature.*` = 2.7007. **The script hardcodes the session scratchpad path** (`X=…/scratchpad/exp/x4-kev`), so it needs an env var before it can be committed.
+3. **Calibrate** (`training/kev/kev-ft-calibrate.sh`)**:** `kev.benchmark` on `calibration.jsonl`, then `scripts/calibrate_checkpoint.py --allow-in-distribution`. This took 14 min and fitted T = 2.7007 into `head.pt`. Kev warns that this T is in-distribution, which is expected.
+4. **Export (this Mac):** `training/kev/kev-ft-export.sh` copies the run back, checks SHA256SUMS, runs `convert_hf_to_gguf.py` (llama.cpp 46ca246 detects the Kev checkpoint) to BF16, then `llama-quantize Q4_K_M`. Conversion took 12 s and quantising 3 s. The GGUF carries `qwen35.decision.temperature.*` = 2.7007.
 
 ## 9. Calibration and evaluation
 
 ### The rig
 
-`exp/rig/rig.sh` (the README is committed as `docs/…/exp-2026-10-23/rig-README.md`; the code is only in the backup `training/artifacts/exp-2026-10-23/rig/` [gap]) runs everything on native llama-server and never writes to the repo.
+`training/eval-rig/rig.sh` (README in the same directory; the original design notes are `docs/…/exp-2026-10-23/rig-README.md`; session copy `exp/rig/`) runs everything on native llama-server and never writes to the repo.
 
 **Step 1:**
 - Uses the base repo tree at rev `5e9c3904`.
@@ -297,9 +297,8 @@ The recipe files are `x4-kev/finetune/constantine-recipe.sh` and `kev-ft-export.
 So in the rig, **fully correct = (op right) ∧ (args right on the gold op)**.
 
 ```bash
-cd <exp>/rig
-./rig.sh --lora <lora.gguf> --kev <kev.gguf> --set dev --args x9 --temps dev-cv --out validation/<name>
-python3 src/compare.py --level x9 --block dev-cv "A=validation/<a>" "B=validation/<b>"
+training/eval-rig/rig.sh --lora <lora.gguf> --kev <kev.gguf> --set dev --args x9 --temps dev-cv --out training/artifacts/eval-rig/runs/<name>
+python3 training/eval-rig/src/compare.py --level x9 --block dev-cv "A=training/artifacts/eval-rig/runs/<a>" "B=training/artifacts/eval-rig/runs/<b>"
 ```
 
 **Wall time:** about 2.5 min for X5 × Kev on dev with x9 only; 8–9 min with val and three args levels. All four held-out-6 blocks took 18 min.
@@ -343,7 +342,7 @@ python3 src/compare.py --level x9 --block dev-cv "A=validation/<a>" "B=validatio
 | Kev-FT BF16 | same dir, `…-BF16.gguf` | 1,517,796,032 B | `cb9c2867f37072b46f40afa7c542fdb3a695c4c22c26d9855e335736a2695db5` |
 | Kev-FT head (T 2.70) | `training/artifacts/kev-ft/remote/x4-kev08-r1/head.pt` | | `19537efe…fbfb` |
 | X5 train split / val | `training/artifacts/round11-para/merged/split/` | 13,547 / 377 sequences | `1c4718d3…7f7d` / `1aa6b1c5…2e39` |
-| Kev train / calibration | `x4-kev/finetune/data/` (backup) | 4,382 / 228 records | `ed3d9aac…6e65` / `6abffad7…5248` |
+| Kev train / calibration | `x4-kev/finetune/data/` (backup; regenerate with `training/kev/to_kev_jsonl.py`) | 4,382 / 228 records | `ed3d9aac…6e65` / `6abffad7…5248` |
 | X6 args patch (committed) | `docs/superpowers/notes/in-browser-llm/exp-2026-10-23/x6-args-ship.patch` | | `8d29e48af703df3ac7a024d6d2df05ef8328c242c5abd491434fc1f03b84877f` |
 | X9 args patch, on top of X6 (committed) | `…/exp-2026-10-23/x9-args2.patch` | | `1173738261b17bb135db8b5c2517bad50653a339b44415c299960d8bfbc00529` |
 | Fusion and gate parameters | prereg-3 §1–2 | | T_L 1.63, T_K 4.0, w 0.5 / 0.5, τ 0.5, k 3, none rule |
