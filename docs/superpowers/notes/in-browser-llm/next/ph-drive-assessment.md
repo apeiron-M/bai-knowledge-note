@@ -27,7 +27,7 @@ Source read: local checkout `<local ph-drive checkout>` (read-only). No clone wa
   - `powerhouse.manifest.json` lists the editor for `["phdrive/file"]`, which contradicts `module.ts` (`["powerhouse/reactor-drive"]`). `apps: []`.
 - **Stack.**
   - ph-cli, connect, reactor, reactor-browser and document-model are 6.2.0-dev.32; reactor-api, attachments and drive are 6.2.0-dev.29.
-  - `pnpm-workspace.yaml` links Connect and reactor-browser from `/Users/benjaminjordan/projects/powerhouse/powerhouse-feature-0` (6.2.0-dev.37), a patched checkout for reactor-drive support.
+  - `pnpm-workspace.yaml` links Connect and reactor-browser from `<local powerhouse-feature-0 checkout>` (6.2.0-dev.37), a patched checkout for reactor-drive support.
 - **How it runs.** Four processes: `pnpm reactor` (:4001), `pnpm create-drive`, `pnpm connect --default-drives-url …` (:3000) and `pnpm watch` (:4111). It is Chrome-only. There is no Vetra flow.
 - **Build and test.** I did not run `ph-cli build`.
   - `tsc --noEmit` gives **1 error** in `processors/factory.ts`. It is the type-only clash between two copies of `@powerhousedao/shared`, and the README already mentions it.
