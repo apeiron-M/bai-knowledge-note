@@ -7,11 +7,15 @@
  * that label fixed, and the app maps labels back to ids.
  */
 import {
+  ANNOTATION_FIELDS,
   argsGrammar,
   gateOptional,
   labelRefCandidates,
   mapRefLabels,
   mentionsField,
+  namedEnumValue,
+  namesField,
+  nonNull,
   refEnumValues,
   requireOneOf,
   type GateMode,
@@ -191,6 +195,13 @@ export interface ArgsStepOptions {
    * them. Default none (the r6.1 / v1 behaviour).
    */
   alwaysOffer?: readonly string[];
+  /**
+   * X6: grammar-only (the prompt is unchanged). Optional root fields the
+   * utterance names (`namesField`) must be filled, and enum fields whose
+   * value the utterance names (`namedEnumValue`) are fixed to it.
+   */
+  requireNamed?: boolean;
+  fixNamedEnums?: boolean;
 }
 
 export interface ArgsStepResult {
@@ -314,6 +325,52 @@ export function preparedGrammar(
   });
 }
 
+/** Optional root, non-object, non-annotation fields the utterance names. */
+export function namedOptional(
+  schema: JsonSchema,
+  rootRefs: string[],
+  utterance: string,
+): string[] {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  const required = Array.isArray(schema.required) ? schema.required : [];
+  return Object.entries(props)
+    .filter(([k, v]) => {
+      if (required.includes(k) || rootRefs.includes(k)) return false;
+      if (ANNOTATION_FIELDS.includes(k)) return false;
+      const inner = nonNull(v);
+      if (isRecord(inner) && inner.type === "object") return false;
+      return namesField(k, v, utterance);
+    })
+    .map(([k]) => k);
+}
+
+/** Enum fields (any depth) narrowed to the one value the utterance names. */
+export function fixNamed(
+  schema: JsonSchema,
+  utterance: string,
+  skip: string[] = [],
+): JsonSchema {
+  const props = isRecord(schema.properties) ? schema.properties : {};
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(props)) {
+    const inner = nonNull(v);
+    if (isRecord(inner) && inner.type === "object") {
+      out[k] = fixNamed(inner, utterance);
+      continue;
+    }
+    const named =
+      !skip.includes(k) &&
+      isRecord(inner) &&
+      Array.isArray(inner.enum) &&
+      inner.enum.length > 1
+        ? namedEnumValue(inner.enum, utterance)
+        : null;
+    out[k] =
+      named !== null && isRecord(inner) ? { ...inner, enum: [named] } : v;
+  }
+  return { ...schema, properties: out };
+}
+
 export async function fillArgsStep(
   utterance: string,
   entry: CatalogEntry,
@@ -410,7 +467,21 @@ export async function fillArgsStep(
       },
     };
   }
-  const grammar = preparedGrammar(p, utterance, fixed);
+  const mustHave = opts.requireNamed
+    ? namedOptional(fixed, rootRefs, utterance)
+    : [];
+  if (opts.fixNamedEnums)
+    fixed = fixNamed(fixed, utterance, [
+      ...rootRefs,
+      ...(field ? [field] : []),
+    ]);
+  const grammar = argsGrammar(fixed, utterance, {
+    spans: true,
+    first: p.first,
+    requireOneOf: p.oneOf,
+    exactlyOne: p.exactlyOne && mustHave.length === 0,
+    mustHave,
+  });
   const r = await opts.completeJson(
     messages,
     { kind: "grammar", grammar },

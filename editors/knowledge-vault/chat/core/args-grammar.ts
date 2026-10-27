@@ -18,19 +18,18 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 /* Copy-span grammar                                                    */
 /* ------------------------------------------------------------------ */
 
-const LEAD = /^["'“‘([]+/;
-const TRAIL = /["'”’)\].,;:!?]+$/;
-const TRAIL_QUOTE = /["'”’)\]]+$/;
-
 export function utteranceWords(utterance: string): string[] {
   return utterance.split(/\s+/).filter((w) => w.length > 0);
 }
 
 /**
- * Forms a word may take at a span edge. A span's first word may drop
- * leading quotes/brackets, its last word may drop trailing quotes (keeping
- * a final period) or all trailing punctuation; interior words are copied as
- * they are.
+ * Forms a word may take at a span edge. A span's first word may drop any
+ * prefix of its leading punctuation run, its last word any suffix of its
+ * trailing run (so `(Mostly)".` offers `(Mostly)".`, `(Mostly)"`,
+ * `(Mostly)` and `(Mostly`); interior words are copied as they are.
+ * (Before X6 the trailing quote and bracket were stripped as one block, so
+ * a title ending in `)"` could only be copied with its quote or without
+ * its bracket.)
  */
 export function wordForms(word: string): {
   full: string;
@@ -39,17 +38,17 @@ export function wordForms(word: string): {
   single: string[];
 } {
   const uniq = (xs: string[]) => [...new Set(xs.filter((x) => x.length > 0))];
-  const ends = (w: string) => [
-    w,
-    w.replace(TRAIL_QUOTE, ""),
-    w.replace(TRAIL, ""),
-  ];
-  const noLead = word.replace(LEAD, "");
+  const ends = (w: string) => {
+    const run = /\p{P}+$/u.exec(w)?.[0].length ?? 0;
+    return Array.from({ length: run + 1 }, (_, i) => w.slice(0, w.length - i));
+  };
+  const lead = /^\p{P}+/u.exec(word)?.[0].length ?? 0;
+  const starts = Array.from({ length: lead + 1 }, (_, i) => word.slice(i));
   return {
     full: word,
-    start: uniq([word, noLead]),
+    start: uniq(starts),
     end: uniq(ends(word)),
-    single: uniq([...ends(word), ...ends(noLead)]),
+    single: uniq(starts.flatMap(ends)),
   };
 }
 
@@ -147,6 +146,71 @@ export function mentionsField(
 }
 
 /**
+ * A strict mention: every token of the field name is said, or one of its
+ * enum values is. (`mentionsField` accepts any one name token, which is
+ * right for keeping a field but too loose for requiring it:
+ * "extraction setup" names `extractionSelectivity`.)
+ */
+export function namesField(
+  name: string,
+  schema: unknown,
+  utterance: string,
+): boolean {
+  const said = new Set(tokenize(utterance));
+  const toks = tokenize(name);
+  if (toks.length > 0 && toks.every((t) => said.has(t))) return true;
+  return (enumValues(schema) ?? []).some((v) => {
+    if (typeof v !== "string") return false;
+    const vt = tokenize(v.toLowerCase());
+    return vt.length > 0 && vt.every((t) => said.has(t));
+  });
+}
+
+const CONTRAST = new Set([
+  "not",
+  "no",
+  "never",
+  "rather",
+  "than",
+  "instead",
+  "without",
+  "nor",
+  "isn't",
+  "wasn't",
+  "don't",
+  "didn't",
+]);
+
+/**
+ * The one enum value the utterance names, or null when it names none or
+ * several, or when the named value follows a negation / contrast cue
+ * within three words ("the thorough depth rather than standard").
+ */
+export function namedEnumValue(
+  values: unknown[],
+  utterance: string,
+): string | null {
+  const said = new Set(tokenize(utterance));
+  const hits = values.filter((v): v is string => {
+    if (typeof v !== "string") return false;
+    const vt = tokenize(v.toLowerCase());
+    return vt.length > 0 && vt.every((t) => said.has(t));
+  });
+  if (hits.length !== 1) return null;
+  const first = tokenize(hits[0].toLowerCase())[0];
+  const words = utterance
+    .toLowerCase()
+    .split(/[^a-z0-9']+/)
+    .filter(Boolean);
+  for (let i = 0; i < words.length; i++) {
+    if (tokenize(words[i])[0] !== first) continue;
+    if (words.slice(Math.max(0, i - 3), i).some((w) => CONTRAST.has(w)))
+      return null;
+  }
+  return hits[0];
+}
+
+/**
  * Drop optional properties the utterance does not mention. `closed` only
  * considers enum and boolean fields (where round 1 saw invented values);
  * `all` considers every optional field. Paths in `keep` are never dropped.
@@ -184,6 +248,26 @@ export function gateOptional(
       continue;
     out[name] = sub;
   }
+  if (mode === "safe" && !prefix && isSelectorOp(props, required, keep)) {
+    // A selector op (every required field picks from a closed list, as
+    // SET_METADATA_FIELD's `field` does) is pointless without its `value`,
+    // which users rarely name ("put my certainty down as medium"), so the
+    // gate keeps it. Narrowed to `value`: restoring every free field of a
+    // selector op (blockReason/outcome on SET_GOAL_STATUS, targetTitle on
+    // ADD_LINK) filled them unasked in X6.
+    if (!("value" in out) && "value" in props && !required.includes("value"))
+      out.value = props.value;
+    const ordered = Object.fromEntries(
+      Object.keys(props)
+        .filter((k) => k in out)
+        .map((k) => [k, out[k]]),
+    );
+    return {
+      ...schema,
+      properties: ordered,
+      required: required.filter((r) => r in ordered),
+    };
+  }
   if (mode === "safe") {
     const free = semanticOptional(props, required, keep, prefix);
     const anyRequired = Object.keys(props).some(
@@ -209,6 +293,24 @@ export function gateOptional(
  * lifecycle `comment`): the safe gate never restores or requires them.
  */
 export const ANNOTATION_FIELDS = ["comment"];
+
+/** Every required, non-kept root field is an enum (and there is one). */
+function isSelectorOp(
+  props: Record<string, unknown>,
+  required: string[],
+  keep: Set<string>,
+): boolean {
+  const req = Object.keys(props).filter(
+    (k) => required.includes(k) && !keep.has(k),
+  );
+  return (
+    req.length > 0 &&
+    req.every((k) => {
+      const v = nonNull(props[k]);
+      return isRecord(v) && Array.isArray(v.enum);
+    })
+  );
+}
 
 /** Optional, non-object properties that are not kept (ref) paths. */
 function semanticOptional(
@@ -275,6 +377,11 @@ export interface ArgsGrammarOptions {
   requireOneOf?: string[];
   /** With `requireOneOf`: exactly one of them, not at least one. */
   exactlyOne?: boolean;
+  /**
+   * Root optional fields that must be present, keeping their place in the
+   * order (the prompt signature still shows them as optional).
+   */
+  mustHave?: string[];
 }
 
 /**
@@ -392,7 +499,8 @@ export function argsGrammar(
     const body = sequence(
       ordered.map((k) => ({
         lit: `${gbnfLiteral(JSON.stringify(k) + ": ")} ${value(props[k])}`,
-        req: reqList.includes(k),
+        req:
+          reqList.includes(k) || (isRoot && (opts.mustHave ?? []).includes(k)),
         inSet: set.includes(k),
       })),
       set.length > 0,

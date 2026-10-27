@@ -49,9 +49,15 @@ import {
 /** Step-2 settings of the v1 pipeline (round 6 A2). */
 export const V1_ARGS = {
   gate: "safe",
-  scoreRefs: true,
+  // X6: with the LoRA, ref labels scored by calibrated likelihood lose to
+  // plain constrained generation (dev+val refs 123/130 vs 129/130; the
+  // uncalibrated score picks exactly what generation picks), and scoring
+  // costs ~2 requests per label.
+  scoreRefs: false,
   scoreEnums: false,
   refAggregate: "mean",
+  requireNamed: true,
+  fixNamedEnums: true,
 } as const;
 
 export type RefCandidates = Record<

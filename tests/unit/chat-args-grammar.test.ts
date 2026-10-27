@@ -64,7 +64,20 @@ describe("copy-span grammar", () => {
       end: ['"'],
       single: ['"'],
     });
-    expect(wordForms("(x).").single).toEqual(["(x).", "(x", "x).", "x"]);
+    expect(wordForms("(x).").single).toEqual([
+      "(x).",
+      "(x)",
+      "(x",
+      "x).",
+      "x)",
+      "x",
+    ]);
+    // X6: a closing bracket before a quote survives the quote's removal.
+    expect(wordForms('(Mostly)"').end).toEqual([
+      '(Mostly)"',
+      "(Mostly)",
+      "(Mostly",
+    ]);
     expect(wordForms('ok."').end).toEqual(['ok."', "ok.", "ok"]);
   });
 });
