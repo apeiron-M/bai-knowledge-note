@@ -103,3 +103,72 @@ Wrong outputs seen, all model quality rather than pipeline faults:
 - Drive changes made by the confirmed actions:
   - note: ADD_TOPIC "vector clocks";
   - project: SET_TARGET_DATE 2026-11-06, and SET_DELIVERABLE_STATUS checklist IN_PROGRESS.
+
+## After follow-ups
+
+Branch `explore/in-browser-llm`, 2026-10-27, four fix commits after `164b26ca` (never pushed). Measured in the spike harness on :5199 (`window.__cParity`, shipped wllama clients, Chrome 156 from the MCP profile, WebGPU, not cross-origin isolated), one fresh tab per configuration, memory with `ps` + `footprint` (phys_footprint) on the tab's renderer and the GPU process (script in the session scratchpad, `fu/mem.sh`). Late in the run another session opened Connect in the same Chrome; every number below was taken before that, with the GPU process back at its ~100 MB idle level before each configuration.
+
+### 1. Kev memory (E13)
+
+Cause, from the llama.cpp source at the wllama pin (46ca246): a decision model runs in embedding mode (`common.cpp`: `cparams.embeddings = true`, `n_outputs_max = n_batch`). In that mode `llama_context::decode` marks **every prompt token as an output** and the qwen35 graph always builds the LM head, so each token gets full-vocabulary logits (248,320 × 4 B ≈ 1 MB) that System One never reads (it reads the embeddings). Consequences:
+- GPU compute buffer ≈ n_ubatch × 1 MB (default 512 → ~0.5 GB), plus the readback of the same size on every ubatch (GPU process and renderer).
+- Host logits buffer ≈ prompt tokens × 1 MB (~0.7 GB for a 700-token request) in the wasm heap, which never shrinks.
+- KV at n_ctx 8192 is only ~96 MB; n_parallel was already 1; DECISION tasks use neither the prompt cache nor context checkpoints.
+
+Longest Kev request (native llama-server, `usage.input_tokens`, request text empty):
+
+| model | options | tokens |
+|---|---|---|
+| knowledge-note | 19 | **675** |
+| moc | 15 | 509 |
+| project | 17 | 504 |
+| wbs | 15 | 464 |
+| vault-config | 9 | 303 |
+| pipeline-queue | 8 | 271 |
+| derivation | 5 | 197 |
+| source | 5 | 185 |
+| tension | 5 | 175 |
+| observation | 5 | 173 |
+| research-claim | 5 | 154 |
+| health-report | 3 | 142 |
+
+Dev max with the request: 710 (kn4-04, 164 chars). Shipped: Kev `n_ctx = n_batch = 1024`, `n_ubatch 128` (`C_LOAD` in `model-manifest.ts`). That leaves ~350 tokens for the request; requests over 1,000 characters skip Kev for the turn (LoRA alone, "request too long for the decision model"), and a llama-server over-length error no longer counts toward the two-failure disable. In the browser an over-length body gives `request (1358 tokens) exceeds the available context size (1024 tokens)` and Kev keeps working afterwards.
+
+Memory above the page's own (both models loaded, after one harness parity run = 2 decideOp turns + 20 dev items):
+
+| Kev n_ctx / n_batch / n_ubatch | renderer | GPU process | total | Kev median ms (parity items) |
+|---|---|---|---|---|
+| 8192 / 2048 / 512 (before) | +3.09 GB | +2.71 GB | **+5.8 GB** | 455 |
+| 1024 / 1024 / 256 | +2.57 GB | +1.89 GB | +4.5 GB | 474 |
+| **1024 / 1024 / 128 (shipped)** | +2.24 GB | +1.40 GB | **+3.65 GB** | 559–578 |
+| 1024 / 1024 / 64 | +2.16 GB | +1.30 GB | +3.5 GB | 749 |
+| 128, plus LoRA n_ctx 2048 / n_ubatch 256 | +2.21 GB | +1.37 GB | +3.6 GB | 627 |
+
+- Split (shipped, after unloading Kev): LoRA +0.38 GB renderer + 0.38 GB GPU ≈ 0.76 GB; **Kev ≈ 1.86 + 1.02 ≈ 2.9 GB** (was ~5 GB).
+- The LoRA was left at n_ctx 4096 / default ubatch: its longest dev prompt is 568 tokens, and the smaller settings saved nothing measurable while moving its trie numbers slightly.
+- **≤ 2.5 GB is not reachable with load parameters.** What remains for Kev is the wasm heap after load (~1 GB with both models) and the host logits buffer (~0.7 GB per 700-token request). Removing those needs a llama.cpp/wllama change: skip the LM head for decision models, or mark only the marker and pointer tokens as outputs.
+- Parity on every configuration: picks 20/20, gate 20/20, args 18/18, Kev max |Δp| 0.039 (the same value as before: n_ctx and n_ubatch did not move Kev's probabilities), trie median 0.055 / max 0.39 nat, PASS. Node `npm run chat:parity-c`: PARITY OK (it runs native servers, so it does not depend on the browser load parameters).
+
+### 2. No Kev call on no-action (E8)
+
+`decideOp` now waits for step 1 before calling Kev. On `{"ops": []}` there is no System One call (`kevCalled: false` in `__baiChatTimings`). Kev's lazy load still starts at send time. On an op turn the Kev call runs in parallel with the trie, so the critical path is step 1 + max(trie, Kev). Without GPU contention step 1 is ~190 ms, compared with ~580 ms when Kev ran beside it.
+
+Latency (harness, shipped settings, warm medians over the 20 parity items, stages measured one at a time): step 1 192 ms, trie 73 ms, Kev 578 ms, step 2 212 ms. Before: 183 / 65 / 455 / 183. On one decideOp turn ("tag this note with eventual consistency", the first Kev call after load): step 1 266, trie 263, Kev 880, decide total 1,146 ms. A no-action turn ("what is this note about?") decides in 184 ms. Estimated warm send→card: ~190 + 580 + ~210 ≈ 1.0 s, against 834 ms median before, still within the 1.5 s budget. Send→card was **not** re-measured in Connect: another session was using the browser.
+
+### 3. v1 saved model URL (issue 1)
+
+`bai.chat.modelUrl` is now always removed and never migrated, so a v1 user gets C's manifest models. A round 8 URL (`LFM2.5-350M-vault-r8a-20261022*`) is dropped silently. Any other URL, when no LoRA URL is set, produces a one-time notice in the tab ("…is no longer used…enter its URL as the command model under Model settings", with a Dismiss button).
+
+### 4. "next Friday" (E9)
+
+Kept: "next <weekday>" means that weekday of next week (weeks start Monday). On Tuesday 2026-10-27, "next Friday" is 2026-11-06, and "this Friday", "by Friday" or "Friday" is 2026-10-30. Reasons:
+- English is split on the phrase.
+- The rule never reads "next Friday" as tomorrow.
+- The resolver functions are unchanged from the rig tree that produced the held-out numbers.
+
+No dev item, parity item or training item contains "next <weekday>", so a change would not have shown in dev parity. The proposal card now shows "Date read from your words: 2026-11-06 (Friday). "Next Friday" means Friday of next week (weeks start Monday); say "this Friday" for the coming one." PLAN E9's expected date is corrected.
+
+### Not changed
+
+- Issue 6, the duplicate singleton documents from the `hooks/use-drive-init.ts` race, is untouched and still needs its own fix.
+- Issues 2, 4, 5 and 7 are unchanged.
