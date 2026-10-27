@@ -183,3 +183,22 @@ There were 200 action items and 20 no-action items, with 0 excluded. Date: 2026-
   1. Port C into the browser chat: two wllama instances, the X6+X9 patches, the gate UI.
   2. Measure WebGPU latency.
   3. Decide where the GGUFs are hosted.
+
+## UPDATE 7 (2026-10-27): configuration C is in the Connect Chat tab
+
+Plan, Phase 0, implementation and E2E notes are in `docs/superpowers/notes/in-browser-llm/connect-c/`.
+
+- **Commits:** 14, from 1035d3ef to 3a8c99dc.
+- **Parity:**
+  - node: 216/216 gate decisions, 196/196 args;
+  - browser and Connect: 20/20 gate decisions, 18/18 args.
+- **Connect E2E passes:** CSP, lazy load, OPFS cache, gate picker, Confirm/Cancel, and the fallbacks.
+  - Warm send→card: median 834 ms, p90 1,016 ms.
+  - Cold load: LoRA 1.1 s, Kev 2.8 s.
+- **Memory is over the 3 GB flag:** Kev adds about 5 GB, about 5.6 GB in total. Unloading Kev frees it.
+- **Open follow-ups:**
+  - Kev memory;
+  - skip Kev on no-action;
+  - a v1 saved-URL migration labels the setup "Custom models";
+  - the pre-existing duplicate-document race in `use-drive-init.ts`;
+  - production model hosting.
