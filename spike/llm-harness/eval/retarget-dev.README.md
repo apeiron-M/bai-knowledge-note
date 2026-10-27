@@ -11,7 +11,7 @@ An isolated writer wrote it under the eval-set rules (`training/docs/NEW-DOCUMEN
 - the reducers under `v1/src/reducers/`, for preconditions;
 - the field classes in `op-catalog.ts`;
 - `vocabularies.ts`;
-- the generated `gen/schema/zod.ts`, only through the zod check.
+- the generated `gen/schema/zod.ts`, grepped for a few field types and otherwise read only through the zod check.
 
 The rules it tests come from:
 - the powerhouse-nl overview plan §5.1, rows T and Q1;
@@ -22,7 +22,7 @@ The rules it tests come from:
 **Not opened:**
 - anything under `training/` other than that procedure doc;
 - any other file in this directory, except through the overlap script;
-- results docs and `op-descriptions.ts`;
+- results docs and `op-descriptions.ts`. One exception: the overlap script's first run also walked the `results-*.json` files here. For a few matches it printed their run names and run settings. No scores and no utterances were shown. Later runs skip those files;
 - git history;
 - any blind set;
 - the chat's resolver code (`target-document.ts`, `context-frame.ts`). The frame's shape comes from the plan text, not from the code.
@@ -66,7 +66,7 @@ The format is the held-out format (`--set file:<path>`), with three additions. E
 - For `ask-two`:
   - `options` is `[open id, named id]`;
   - `intentChanges` is `open` or `named`;
-  - `intentClear` is false when either answer is a fair reading. Those items list the other answer under `acceptable`, as `{documentId, op, ambiguousArgs, refArgs}`.
+  - `intentClear` is false when either answer is a fair reading. Those items list the other answer under `acceptable`, as `{documentId, op, ambiguousArgs, refArgs}`. One keep item, rt-mn-04, lists one too.
 - For `ask-top3`, `mustInclude` holds the gold id. The ranking is not prescribed.
 
 **noAction** entries carry `ruleResolution`, so the cost of an ask on a question can be counted. There is also one multiAction entry.
@@ -168,7 +168,7 @@ Helper scripts, kept outside the repo:
 
 The validator also **re-derives each item's resolution from the Q1 text** and asserts that it equals the gold. The re-derivation uses verbatim titles, longest first, case-insensitive. The open document's own title is not counted, and same-named documents count as shared. A pointer is "this", "it" or "here", but not "this goal" and the like.
 
-**Zod: 69 of 69 inputs parse.** Each one goes through the model's `<Op>InputSchema().strict()`, with `args`, `refArgs` and non-null `ambiguousArgs` merged and app-filled placeholders added. That is 64 items, the 3 `acceptable` alternatives and 2 multiAction steps.
+**Zod: 70 of 70 inputs parse.** Each one goes through the model's `<Op>InputSchema().strict()`, with `args`, `refArgs` and non-null `ambiguousArgs` merged and app-filled placeholders added. That is 64 items, the 4 `acceptable` alternatives and 2 multiAction steps.
 
 **Overlap:** checked against every eval-set file in this directory except the results files, 535 strings in all. The script printed only ids and scores. The final set has a maximum Jaccard of 0.38 and **no shared 4-gram**; 28 pairs share a 3-gram. The first pass found 8 utterances that shared a 4-gram, plus one pair at Jaccard 0.44. All were rewritten without looking at the other text.
 
