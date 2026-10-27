@@ -56,10 +56,27 @@ export function targetChoiceOptions(open: DocumentTarget, named: DocumentTarget)
   }));
 }
 
+/** A mention that is not a document's exact title: its top matches, then
+ * the open document. */
+export function pickChoiceOptions(
+  candidates: DocumentTarget[],
+  open?: DocumentTarget,
+): ChoiceOption[] {
+  return [
+    ...candidates.map((target) => ({ target, detail: "Matches the request's wording." })),
+    ...(open ? [{ target: open, detail: "The document you are viewing." }] : []),
+  ].map(({ target, detail }) => ({
+    key: target.id,
+    label: `Change ${target.title}`,
+    meta: documentTypeName(target.docType),
+    detail,
+  }));
+}
+
 /**
  * A choice before anything is proposed: which change (the margin gate's
  * top 3) or which document (the request points at the open document and
- * names another). Choosing an option goes on to the proposal; "none"
+ * names another, or names one inexactly). Choosing an option goes on to the proposal; "none"
  * dispatches nothing.
  */
 export function ChatChoiceCard({

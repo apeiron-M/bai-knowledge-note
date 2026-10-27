@@ -5,7 +5,10 @@
  * also points at the open document, either one may be the one to change
  * ("link this note to X" changes the open note, "add this to X" changes X),
  * which only the intent settles, so the chat asks which document to change
- * before running the models. Nothing dispatches without Confirm. The pipeline needs a document type (without one, op
+ * before running the models. A request that refers to another document
+ * without its exact title ("the CRDT MOC" for a MOC titled "CRDTs") asks
+ * with the top 3 matches, plus the open document. Nothing dispatches
+ * without Confirm. The pipeline needs a document type (without one, op
  * accuracy falls to 37–39%, round 9 R3/R4), so with nothing open and
  * nothing named the chat only answers questions.
  */
@@ -14,6 +17,7 @@ import type {
   ContextTarget,
   DocumentTarget,
 } from "../context/context-frame.js";
+import { lexicalScore, STOPWORDS } from "../context/candidates.js";
 import { looksLikeQuestion } from "./no-action-gate.js";
 
 export type TargetResolution =
@@ -33,6 +37,16 @@ export type TargetResolution =
       open: DocumentTarget;
       named: DocumentTarget;
     }
+  | {
+      /** The request refers to another document, but not by its exact
+       * title ("the CRDT MOC" for a MOC titled "CRDTs"): ask with the top 3
+       * matches, plus the open document when its type has ops. */
+      kind: "pick";
+      open?: DocumentTarget;
+      candidates: DocumentTarget[];
+      /** The words that referred to a document ("CRDT MOC"). */
+      phrase: string;
+    }
   | { kind: "unsupported"; target: DocumentTarget }
   | { kind: "drive"; target: Extract<ContextTarget, { kind: "drive" }> };
 
@@ -44,6 +58,8 @@ export interface ResolveTargetInput {
   /** Document types the chat has ops for. */
   supportedTypes: ReadonlySet<string>;
   utterance: string;
+  /** Most recent first; breaks ties among the top-3 matches. */
+  recentIds?: string[];
 }
 
 function escapeRegExp(s: string): string {
@@ -130,6 +146,163 @@ export function mentionsCurrentDocument(utterance: string, names: string[] = [])
   return DEICTIC.test(masked);
 }
 
+/** How many documents the picker offers for a non-verbatim mention. */
+export const PICK_COUNT = 3;
+
+/** Type nouns that make a phrase refer to a document, with the document
+ * types each one can mean (`null`: any). "map of content" is matched as
+ * three words. */
+const TYPE_NOUNS: Record<string, readonly string[] | null> = {
+  note: ["bai/knowledge-note"],
+  notes: ["bai/knowledge-note"],
+  moc: ["bai/moc"],
+  mocs: ["bai/moc"],
+  map: ["bai/moc"],
+  project: ["bai/project"],
+  projects: ["bai/project"],
+  plan: ["bai/wbs"],
+  plans: ["bai/wbs"],
+  wbs: ["bai/wbs"],
+  doc: null,
+  docs: null,
+  document: null,
+  documents: null,
+  page: null,
+  file: null,
+};
+/** Own keys only: "constructor" is not a type noun. */
+const isTypeNoun = (w: string) => Object.hasOwn(TYPE_NOUNS, w);
+
+/** Words that open a reference to a document. Not "a"/"an" ("this one is
+ * basically a permanent note now"), and not "this" (the pointer at the
+ * open document). */
+const DETERMINERS = new Set(["the", "my", "our", "that"]);
+/** Words after "the <noun>" that introduce its name ("the MOC on CRDTs"). */
+const NAME_LINKS = new Set(["called", "named", "titled", "about", "on"]);
+/** Words that end a name: prepositions, conjunctions, pointers. */
+const PHRASE_BREAKS = new Set([
+  ...DETERMINERS,
+  ..."a an this these those it to into onto with in on".split(" "),
+  ..."from for about of and or by as at is so".split(" "),
+]);
+/** Words in a phrase that say which one, not what it is called. */
+const NOT_NAMES = new Set(
+  [
+    "same other current open last first second third next previous",
+    "new old whole entire above below latest linked related parent main",
+  ]
+    .join(" ")
+    .split(" "),
+);
+
+/** A phrase that refers to a document by type and not-quite name. */
+export interface DocumentMention {
+  /** The name words, type noun and qualifiers removed ("crdt"). */
+  name: string;
+  /** The document types the noun can mean; `null`: any. */
+  types: readonly string[] | null;
+  /** The phrase as written ("CRDT MOC"). */
+  phrase: string;
+}
+
+/** The type noun at `words[i]` ("map of content" spans three words). */
+function typeNounAt(
+  words: string[],
+  i: number,
+): { len: number; types: readonly string[] | null } | null {
+  const w = words.at(i) ?? "";
+  if (w === "map" && words.at(i + 1) === "of" && words.at(i + 2) === "content")
+    return { len: 3, types: ["bai/moc"] };
+  return isTypeNoun(w) ? { len: 1, types: TYPE_NOUNS[w] } : null;
+}
+
+const nameWords = (ws: string[]) =>
+  ws.filter((w) => !STOPWORDS.has(w) && !NOT_NAMES.has(w) && !isTypeNoun(w));
+
+/**
+ * Phrases that refer to a document by type and name: "the CRDT MOC",
+ * "my beehive project", "the note about gossip", "the MOC called sync".
+ * Only after "the", "my", "our" or "that"; "this note" is the pointer at
+ * the open document, and "a note" is not a reference.
+ */
+export function documentMentions(utterance: string): DocumentMention[] {
+  const raw = [...utterance.matchAll(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu)].map((m) => m[0]);
+  const words = raw.map((w) => w.toLowerCase());
+  const out: DocumentMention[] = [];
+  for (let i = 0; i < words.length; i++) {
+    if (!DETERMINERS.has(words[i])) continue;
+    // "the <name words> <noun>": up to four words before the noun
+    for (let j = i + 1; j <= i + 5 && j < words.length; j++) {
+      const noun = typeNounAt(words, j);
+      if (noun) {
+        const name = nameWords(words.slice(i + 1, j));
+        if (name.length > 0)
+          out.push({
+            name: name.join(" "),
+            types: noun.types,
+            phrase: raw.slice(i + 1, j + noun.len).join(" "),
+          });
+        // "the <noun> called|about|on <name words>"
+        if (j === i + 1 && NAME_LINKS.has(words[j + noun.len] ?? "")) {
+          const start = j + noun.len + 1;
+          let end = start;
+          while (end < words.length && end < start + 4 && !PHRASE_BREAKS.has(words[end])) end++;
+          const after = nameWords(words.slice(start, end));
+          if (after.length > 0)
+            out.push({
+              name: after.join(" "),
+              types: noun.types,
+              phrase: raw.slice(j, end).join(" "),
+            });
+        }
+        break;
+      }
+      if (PHRASE_BREAKS.has(words[j])) break;
+    }
+  }
+  return out;
+}
+
+/**
+ * The documents a non-verbatim mention may mean, best first (lexical
+ * score, then recency, then title), and the mention that found them.
+ * Empty when no mention matches another document, or when the open
+ * document matches a mention at least as well as any other (then the
+ * phrase is about the open one: "tag the CRDT note" on "CRDT merge
+ * semantics").
+ */
+export function mentionedCandidates(
+  utterance: string,
+  documents: CandidateDoc[],
+  opts: { openId?: string; recentIds?: string[] } = {},
+): { candidates: CandidateDoc[]; phrase: string } {
+  const recent = opts.recentIds ?? [];
+  const rank = (id: string) => {
+    const r = recent.indexOf(id);
+    return r === -1 ? Number.POSITIVE_INFINITY : r;
+  };
+  const best = new Map<string, { d: CandidateDoc; s: number }>();
+  let phrase = "";
+  let top = 0;
+  for (const m of documentMentions(utterance)) {
+    const fits = documents.filter((d) => m.types === null || m.types.includes(d.docType));
+    const scored = fits.map((d) => ({ d, s: lexicalScore(m.name, d) })).filter((x) => x.s >= 1);
+    const open = scored.find((x) => x.d.id === opts.openId);
+    const others = scored.filter((x) => x.d.id !== opts.openId);
+    const max = Math.max(0, ...others.map((x) => x.s));
+    if (others.length === 0 || (open && open.s >= max)) continue;
+    if (max > top) {
+      top = max;
+      phrase = m.phrase;
+    }
+    for (const x of others) if ((best.get(x.d.id)?.s ?? 0) < x.s) best.set(x.d.id, x);
+  }
+  const candidates = [...best.values()]
+    .sort((a, b) => b.s - a.s || rank(a.d.id) - rank(b.d.id) || a.d.title.localeCompare(b.d.title))
+    .map((x) => x.d);
+  return { candidates, phrase };
+}
+
 function asTarget(d: CandidateDoc, driveId: string): DocumentTarget {
   return { kind: "document", id: d.id, driveId, title: d.title, docType: d.docType };
 }
@@ -143,8 +316,12 @@ function asTarget(d: CandidateDoc, driveId: string): DocumentTarget {
  *    - otherwise → retarget (at drive level: target it). With nothing open
  *      a pointer has no referent, and with an open document that has no
  *      ops only the named one can change;
- * 2. the viewed document, when its type has ops;
- * 3. else unsupported (a document is open) or drive-level (nothing open).
+ *    Several documents named, or two sharing the named title: step 3;
+ * 2. no document named verbatim, but a phrase refers to another one by
+ *    type and an inexact name ("the CRDT MOC" for "CRDTs") → ask with the
+ *    top 3 matches, plus the open document when its type has ops;
+ * 3. the viewed document, when its type has ops;
+ * 4. else unsupported (a document is open) or drive-level (nothing open).
  */
 export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
   const { context } = i;
@@ -172,6 +349,24 @@ export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
       return { kind: "ask", open: context, named: target };
     return { kind: "document", target, via: "retarget", from: context };
   }
+  if (named.length === 0) {
+    const openId = context.kind === "document" ? context.id : undefined;
+    const { candidates, phrase } = mentionedCandidates(
+      i.utterance,
+      [...supported, ...viewed],
+      { openId, recentIds: i.recentIds },
+    );
+    if (candidates.length > 0) {
+      const open =
+        context.kind === "document" && i.supportedTypes.has(context.docType) ? context : undefined;
+      return {
+        kind: "pick",
+        ...(open ? { open } : {}),
+        candidates: candidates.slice(0, PICK_COUNT).map((d) => asTarget(d, driveId)),
+        phrase,
+      };
+    }
+  }
   if (context.kind === "drive") return { kind: "drive", target: context };
   return i.supportedTypes.has(context.docType)
     ? { kind: "document", target: context, via: "context" }
@@ -180,13 +375,14 @@ export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
 
 /**
  * What a turn does: run the pipeline on a document, ask which of two
- * documents to change, answer a question that
+ * documents to change (or which of the top 3 a mention means), answer a
+ * question that
  * has no runnable document, or explain why it cannot change anything. With
  * a document there is no question rule in front: R2c's model decides
  * no-action itself.
  */
 export type ChatRoute =
-  | Extract<TargetResolution, { kind: "document" | "ask" }>
+  | Extract<TargetResolution, { kind: "document" | "ask" | "pick" }>
   | { kind: "answer"; because: "drive" | "unsupported" }
   | { kind: "explain"; text: string; create: CreateIntent | null };
 
@@ -213,7 +409,8 @@ export function routeChatTurn(
   utterance: string,
   target: TargetResolution,
 ): ChatRoute {
-  if (target.kind === "document" || target.kind === "ask") return target;
+  if (target.kind === "document" || target.kind === "ask" || target.kind === "pick")
+    return target;
   if (looksLikeQuestion(utterance))
     return { kind: "answer", because: target.kind };
   if (target.kind === "unsupported")

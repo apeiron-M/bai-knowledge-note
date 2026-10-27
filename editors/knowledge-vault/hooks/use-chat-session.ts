@@ -17,7 +17,16 @@ export type CardPayload =
   | { kind: "choice"; choice: PendingChoice }
   /** Which document to change, asked before the models run: the open one
    * (the card's target) or the one the request names. */
-  | { kind: "target"; utterance: string; open: DocumentTarget; named: DocumentTarget };
+  | { kind: "target"; utterance: string; open: DocumentTarget; named: DocumentTarget }
+  /** Which document a non-verbatim mention means, asked before the models
+   * run: the top 3 matches, plus the open document when it has ops. */
+  | {
+      kind: "pick";
+      utterance: string;
+      phrase: string;
+      candidates: DocumentTarget[];
+      open?: DocumentTarget;
+    };
 
 export type ChatCard = PendingCard<CardPayload>;
 

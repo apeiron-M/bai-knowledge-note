@@ -20,7 +20,12 @@ import {
   type ModelState,
 } from "../hooks/use-chat-llm.js";
 import type { ChatCard, ChatSession } from "../hooks/use-chat-session.js";
-import { ChatChoiceCard, opChoiceOptions, targetChoiceOptions } from "./ChatChoiceCard.js";
+import {
+  ChatChoiceCard,
+  opChoiceOptions,
+  pickChoiceOptions,
+  targetChoiceOptions,
+} from "./ChatChoiceCard.js";
 import { ChatModelSettings } from "./ChatModelSettings.js";
 import { ChatProposalCard } from "./ChatProposalCard.js";
 import { targetLabel } from "./ChatTargetTag.js";
@@ -57,8 +62,9 @@ interface CardMeta {
  * not sure; a request the LoRA maps to no change is answered. The target is
  * the viewed document (the tag) unless the request names exactly one other
  * document; when it also points at the open document ("this", "it"), the
- * chat first asks which of the two to change. A card keeps its own target
- * after the tag moves on.
+ * chat first asks which of the two to change. A mention that is not a
+ * document's exact title ("the CRDT MOC") asks with its top 3 matches plus
+ * the open document. A card keeps its own target after the tag moves on.
  */
 export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelProps) {
   const llm = useChatLlm();
@@ -123,7 +129,7 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
         "system",
         from
           ? `Target: "${target.title}" (${opts.chosen ? "chosen" : "named in the request"}), not the viewed "${from.title}".`
-          : `Target: "${target.title}" (named in the request).`,
+          : `Target: "${target.title}" (${opts.chosen ? "chosen" : "named in the request"}).`,
         { turnId, target },
       );
     const wbsRef = typeof doc.state.wbsRef === "string" ? doc.state.wbsRef : "";
@@ -151,7 +157,13 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
     session.append("user", text, { turnId, context: viewing, target: viewing });
     const route = routeChatTurn(
       text,
-      resolveTargetDocument({ context: viewing, documents, supportedTypes, utterance: text }),
+      resolveTargetDocument({
+        context: viewing,
+        documents,
+        supportedTypes,
+        utterance: text,
+        recentIds: frame.recentIds,
+      }),
     );
     if (route.kind === "explain") {
       session.append("system", route.text, { turnId, target: viewing });
@@ -187,6 +199,23 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
         );
         return;
       }
+      if (route.kind === "pick") {
+        const { candidates, open, phrase } = route;
+        session.setPending({
+          // nothing dispatches from this card; with nothing open it has no
+          // document of its own, so it carries the best match
+          target: open ?? candidates[0],
+          context: viewing,
+          payload: { kind: "pick", utterance: text, phrase, candidates, open },
+        });
+        const names = candidates.map((c) => `"${c.title}"`).join(", ");
+        session.append(
+          "system",
+          `Asked which document "${phrase}" means: ${names}${open ? `, or "${open.title}" (open)` : ""}.`,
+          { turnId, target: viewing },
+        );
+        return;
+      }
       await runOnDocument(text, route.target, viewing, turnId, { from: route.from });
     } catch (err) {
       session.append("error", errText(err), { turnId, target: viewing });
@@ -212,6 +241,34 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
         from: chosen.id === open.id ? undefined : open,
         chosen: true,
         keepIds: [other.id],
+      });
+    } catch (err) {
+      session.append("error", errText(err), { turnId, target: chosen });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /** A non-verbatim mention: run the models on the chosen document. A
+   * match chosen keeps the open document as a ref candidate; the open one
+   * chosen keeps the matches, so "link this note to the CRDT MOC" can
+   * still point at the MOC. */
+  async function handleChoosePick(index: number) {
+    if (!card || card.payload.kind !== "pick" || busy) return;
+    const { utterance, candidates, open } = card.payload;
+    const chosen = [...candidates, ...(open ? [open] : [])].at(index);
+    if (!chosen) return;
+    const keepIds = (chosen.id === open?.id ? candidates : open ? [open] : []).map((d) => d.id);
+    const turnId = generateId();
+    const viewed = card.context;
+    session.settle();
+    setBusy(true);
+    try {
+      await runOnDocument(utterance, chosen, viewed, turnId, {
+        // the switch box whenever the choice leaves the viewed document
+        from: viewed.kind === "document" && chosen.id !== viewed.id ? viewed : undefined,
+        chosen: true,
+        keepIds,
       });
     } catch (err) {
       session.append("error", errText(err), { turnId, target: chosen });
@@ -375,6 +432,20 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
             showTarget={false}
             busy={busy}
             onChoose={(i) => void handleChooseTarget(i)}
+            onNone={handleNone}
+          />
+        )}
+        {card?.payload.kind === "pick" && (
+          <ChatChoiceCard
+            heading="Which document did you mean?"
+            hint={`"${card.payload.phrase}" is not the exact title of a document. These match best.`}
+            options={pickChoiceOptions(card.payload.candidates, card.payload.open)}
+            noneLabel="None of these"
+            card={card}
+            viewing={frame.target}
+            showTarget={false}
+            busy={busy}
+            onChoose={(i) => void handleChoosePick(i)}
             onNone={handleNone}
           />
         )}

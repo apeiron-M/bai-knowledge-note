@@ -8,7 +8,7 @@ import type { CandidateDoc } from "./context-frame.js";
 
 export const CANDIDATE_CAP = 10;
 
-const STOPWORDS = new Set(
+export const STOPWORDS = new Set(
   "a an and are as at be by for from in into is it its of on or the this that to with my me our".split(
     " ",
   ),
