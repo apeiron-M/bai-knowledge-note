@@ -240,7 +240,8 @@ export interface ChatTurnTiming {
   decide?: OpDecision["timings"];
   trie?: OpDecision["trie"];
   fillMs?: number;
-  kevStarted?: boolean;
+  /** kind "none": whether Kev was called (no: none skips it). */
+  kevCalled?: boolean;
 }
 
 declare global {
@@ -405,7 +406,7 @@ export function useChatLlm() {
           config: decision.kind === "op" ? decision.config : undefined,
           decide: decision.timings,
           trie: decision.kind === "op" ? decision.trie : undefined,
-          kevStarted: decision.kind === "none" ? decision.kevStarted : undefined,
+          kevCalled: decision.kind === "none" ? decision.kevCalled : undefined,
         });
         if (decision.kind === "none")
           return { kind: "answer", text: await answer(client, utterance), decision };

@@ -74,8 +74,8 @@ export type DecideResult =
       kind: "none";
       step1: V1Step1Result;
       timings: DecideTimings;
-      /** Whether a Kev request was started (it is discarded). */
-      kevStarted: boolean;
+      /** Whether Kev's System One call was made (never: none skips it). */
+      kevCalled: false;
     }
   | {
       kind: "op";
@@ -119,9 +119,10 @@ export function scopedCandidates(
 }
 
 /**
- * Choose the op for `utterance` on a `docType` document. Kev starts at once,
- * in parallel with step 1; a step-1 `{"ops": []}` decides no-action and
- * Kev's result is dropped (rig `decide`).
+ * Choose the op for `utterance` on a `docType` document. Kev's load starts
+ * at once (first need), but its call waits for step 1: a step-1
+ * `{"ops": []}` decides no-action without Kev (rig `decide`), otherwise
+ * the call runs in parallel with the trie.
  */
 export async function decideOp(
   utterance: string,
@@ -135,26 +136,16 @@ export async function decideOp(
   const keys = cands.map((c) => c.key);
   const servedT = opts.servedT ?? C_ARTIFACTS.kev.servedT ?? 1;
 
-  let kevP: Promise<KevOutcome> | null = null;
-  if (deps.kev) {
-    const req = kevRequest(utterance, cands);
-    const load = deps.kev;
-    kevP = (async (): Promise<KevOutcome> => {
-      let backend: KevBackend;
-      try {
-        backend = await load();
-      } catch (err) {
-        return { ok: false, fallback: { reason: "unavailable", detail: errText(err) } };
-      }
-      try {
-        const tk = performance.now();
-        const res = await backend.systemOne(req.body);
-        return { ok: true, probs: kevOptionProbs(req, res), ms: performance.now() - tk };
-      } catch (err) {
-        return { ok: false, fallback: { reason: "failed", detail: errText(err) } };
-      }
-    })();
-  }
+  type Loaded = { ok: true; backend: KevBackend } | { ok: false; fallback: KevFallback };
+  const kevLoad: Promise<Loaded> | null = deps.kev
+    ? deps.kev().then(
+        (backend): Loaded => ({ ok: true, backend }),
+        (err: unknown): Loaded => ({
+          ok: false,
+          fallback: { reason: "unavailable", detail: errText(err) },
+        }),
+      )
+    : null;
 
   opts.onStage?.("choose");
   const step1 = await runStep1(utterance, cands, deps.lora.completeJson);
@@ -162,9 +153,23 @@ export async function decideOp(
     return {
       kind: "none",
       step1,
-      kevStarted: kevP !== null,
+      kevCalled: false,
       timings: { step1Ms: step1.ms, kevMs: null, trieMs: null, totalMs: performance.now() - t0 },
     };
+  const kevP: Promise<KevOutcome> | null = kevLoad
+    ? (async (): Promise<KevOutcome> => {
+        const loaded = await kevLoad;
+        if (!loaded.ok) return loaded;
+        const req = kevRequest(utterance, cands);
+        try {
+          const tk = performance.now();
+          const res = await loaded.backend.systemOne(req.body);
+          return { ok: true, probs: kevOptionProbs(req, res), ms: performance.now() - tk };
+        } catch (err) {
+          return { ok: false, fallback: { reason: "failed", detail: errText(err) } };
+        }
+      })()
+    : null;
   const loraPick = cands.find((c) => c.key === step1.pick);
   if (!loraPick) throw new Error(`unknown step-1 pick ${step1.pick}`);
 

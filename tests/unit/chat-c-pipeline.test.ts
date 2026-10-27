@@ -110,14 +110,30 @@ function deps(lora: LoraBackend, kev: KevBackend | null | Error): CDeps {
 }
 
 describe("decideOp", () => {
-  it("decides no-action on a step-1 none: no trie, Kev discarded", async () => {
+  it("decides no-action on a step-1 none: no trie, no Kev call", async () => {
     const lora = mockLora(null);
     const kev = mockKev({});
-    const r = await decideOp("what is this note about?", DOC, deps(lora, kev));
+    let loads = 0;
+    const r = await decideOp("what is this note about?", DOC, {
+      catalog,
+      lora,
+      kev: () => {
+        loads++;
+        return Promise.resolve(kev);
+      },
+    });
     expect(r.kind).toBe("none");
     if (r.kind !== "none") return;
-    expect(r.kevStarted).toBe(true);
+    expect(r.kevCalled).toBe(false);
+    expect(kev.bodies).toHaveLength(0);
+    // the load still starts at send time (first need)
+    expect(loads).toBe(1);
     expect(lora.calls.nextDist).toBe(0);
+  });
+
+  it("does not surface a Kev load failure on a no-action turn", async () => {
+    const r = await decideOp("what is this note about?", DOC, deps(mockLora(null), new Error("404")));
+    expect(r.kind).toBe("none");
   });
 
   it("runs arm A with no Kev: the LoRA pick, never asks, no trie", async () => {
