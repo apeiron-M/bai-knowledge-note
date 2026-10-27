@@ -1,71 +1,110 @@
 import { describe, expect, it } from "vitest";
-import type { ChatDocument } from "../../editors/knowledge-vault/chat/core/ref-candidates.js";
+import type {
+  CandidateDoc,
+  ContextTarget,
+  DocumentTarget,
+} from "../../editors/knowledge-vault/chat/context/context-frame.js";
 import {
-  askForDocumentText,
+  createIntent,
   documentTypeName,
   mentionsTitle,
+  namedDocuments,
   resolveTargetDocument,
   routeChatTurn,
 } from "../../editors/knowledge-vault/chat/core/target-document.js";
 
-const doc = (id: string, docType: string, title: string): ChatDocument => ({
-  id,
-  docType,
-  title,
-  state: {},
+const D = "drive-1";
+const cand = (id: string, docType: string, title: string, aliases?: string[]): CandidateDoc =>
+  aliases ? { id, docType, title, aliases } : { id, docType, title };
+const tag = (c: CandidateDoc): DocumentTarget => ({
+  kind: "document",
+  id: c.id,
+  driveId: D,
+  title: c.title,
+  docType: c.docType,
 });
-const note = doc("n1", "bai/knowledge-note", "CRDT merge semantics");
-const plan = doc("w1", "bai/wbs", "Hive plan");
-const other = doc("x1", "powerhouse/document-drive", "Drive");
-const documents = [note, plan, other];
-const supportedTypes = new Set(["bai/knowledge-note", "bai/wbs"]);
-const resolve = (selectedId: string | null, utterance: string) =>
-  resolveTargetDocument({ selectedId, documents, supportedTypes, utterance });
+const drive: ContextTarget = { kind: "drive", id: D, name: "Chat E2E Vault" };
 
-describe("resolveTargetDocument", () => {
-  it("uses the picked document", () => {
-    expect(resolve("w1", "mark the suits goal done")).toEqual({
+const note = cand("n1", "bai/knowledge-note", "CRDT merge semantics");
+const moc = cand("m1", "bai/moc", "CRDTs");
+const plan = cand("w1", "bai/wbs", "Hive plan");
+const source = cand("s1", "bai/source", "A source");
+const documents = [note, moc, plan, source];
+const supportedTypes = new Set(["bai/knowledge-note", "bai/wbs", "bai/moc"]);
+const resolve = (context: ContextTarget, utterance: string, docs = documents) =>
+  resolveTargetDocument({ context, documents: docs, supportedTypes, utterance });
+
+describe("resolveTargetDocument (M0, from the tag)", () => {
+  it("acts on the viewed document", () => {
+    expect(resolve(tag(plan), "mark the suits goal done")).toEqual({
       kind: "document",
-      doc: plan,
-      via: "selected",
+      target: tag(plan),
+      via: "context",
     });
   });
 
-  it("asks when the picked document has no ops", () => {
-    expect(resolve("x1", "rename it")).toEqual({
-      kind: "ask",
-      reason: "unsupported",
-      options: [note, plan],
-    });
-  });
-
-  it("asks when nothing is picked and no title is named", () => {
-    expect(resolve(null, "mark the suits goal done")).toEqual({
-      kind: "ask",
-      reason: "none",
-      options: [note, plan],
-    });
-    expect(resolve("", "x").kind).toBe("ask");
-    expect(resolve("gone", "x").kind).toBe("ask");
-  });
-
-  it("ties the request to the one document it names", () => {
-    expect(resolve(null, "in hive plan, mark the suits goal done")).toEqual({
+  it("retargets when exactly one other document is named verbatim", () => {
+    expect(resolve(tag(note), "add an open question to CRDTs: what about tombstones?")).toEqual({
       kind: "document",
-      doc: plan,
+      target: tag(moc),
+      via: "retarget",
+      from: tag(note),
+    });
+  });
+
+  it("does not count the viewed document's own title, or names inside it", () => {
+    // "CRDTs" is not inside "CRDT merge semantics", but the own title is ignored
+    expect(resolve(tag(note), "tag CRDT merge semantics with sync")).toMatchObject({ via: "context" });
+    const crdt = cand("n2", "bai/knowledge-note", "CRDT");
+    // "CRDT" only appears inside the viewed note's title
+    expect(
+      resolve(tag(note), "tag CRDT merge semantics with sync", [note, crdt]),
+    ).toMatchObject({ via: "context", target: { id: "n1" } });
+  });
+
+  it("acts on the viewed document when several others are named", () => {
+    expect(resolve(tag(note), "link CRDTs and Hive plan")).toMatchObject({ via: "context" });
+  });
+
+  it("ignores names of unsupported documents", () => {
+    expect(resolve(tag(note), "summarise A source")).toMatchObject({ via: "context" });
+  });
+
+  it("is drive-level with nothing open and nothing named", () => {
+    expect(resolve(drive, "tag it with crdt")).toEqual({ kind: "drive", target: drive });
+  });
+
+  it("targets a named document at drive level", () => {
+    expect(resolve(drive, "in Hive plan, mark the suits goal done")).toEqual({
+      kind: "document",
+      target: tag(plan),
       via: "title",
     });
   });
 
-  it("asks among the named documents when several match", () => {
-    const docs = [plan, doc("w2", "bai/wbs", "Hive plan B")];
-    const r = resolveTargetDocument({
-      selectedId: null,
-      documents: docs,
-      supportedTypes,
-      utterance: "compare hive plan and hive plan b",
+  it("is unsupported on a document without ops, unless another is named", () => {
+    expect(resolve(tag(source), "rename it")).toEqual({
+      kind: "unsupported",
+      target: tag(source),
     });
-    expect(r).toEqual({ kind: "ask", reason: "ambiguous", options: docs });
+    expect(resolve(tag(source), "add a core idea to CRDTs")).toMatchObject({ via: "retarget" });
+  });
+
+  it("matches a stale node name kept as an alias", () => {
+    const renamed = cand("m1", "bai/moc", "CRDT map", ["CRDTs"]);
+    expect(resolve(tag(note), "add a question to CRDTs", [note, renamed])).toMatchObject({
+      via: "retarget",
+      target: { id: "m1", title: "CRDT map" },
+    });
+  });
+});
+
+describe("namedDocuments", () => {
+  it("drops a name that only appears inside a longer mentioned name", () => {
+    const long = cand("m2", "bai/moc", "CRDTs in practice");
+    expect(namedDocuments("open CRDTs in practice", [moc, long]).map((d) => d.id)).toEqual([
+      "m2",
+    ]);
   });
 });
 
@@ -79,38 +118,54 @@ describe("mentionsTitle", () => {
 
 describe("routeChatTurn", () => {
   it("runs the pipeline on a document, even for a question", () => {
-    expect(
-      routeChatTurn("what is this?", {
-        kind: "document",
-        doc: note,
-        via: "selected",
-      }),
-    ).toEqual({ kind: "run", doc: note, via: "selected" });
-  });
-
-  it("answers a question without a document", () => {
-    expect(routeChatTurn("what is a CRDT?", resolve(null, "what is a CRDT?"))).toEqual({
-      kind: "answer",
+    expect(routeChatTurn("what is this?", resolve(tag(note), "what is this?"))).toMatchObject({
+      kind: "document",
+      via: "context",
     });
   });
 
-  it("asks for a document for a request without one", () => {
-    const r = routeChatTurn("tag it with crdt", resolve(null, "tag it with crdt"));
-    expect(r.kind).toBe("ask");
-    // A polite command is not a question.
-    expect(
-      routeChatTurn("can you tag it?", resolve(null, "can you tag it?")).kind,
-    ).toBe("ask");
+  it("answers a question with no runnable document", () => {
+    expect(routeChatTurn("what is a CRDT?", resolve(drive, "what is a CRDT?"))).toEqual({
+      kind: "answer",
+      because: "drive",
+    });
+    expect(routeChatTurn("what is this?", resolve(tag(source), "what is this?"))).toEqual({
+      kind: "answer",
+      because: "unsupported",
+    });
+  });
+
+  it("explains drive-level and unsupported requests", () => {
+    const r = routeChatTurn("tag it with crdt", resolve(drive, "tag it with crdt"));
+    expect(r).toMatchObject({ kind: "explain", create: null });
+    if (r.kind === "explain") expect(r.text).toContain("drive-level changes are not supported");
+    // a polite command is not a question
+    expect(routeChatTurn("can you tag it?", resolve(drive, "can you tag it?")).kind).toBe(
+      "explain",
+    );
+    const u = routeChatTurn("rename it", resolve(tag(source), "rename it"));
+    if (u.kind === "explain") expect(u.text).toContain("no operations for Source");
+  });
+
+  it("offers the New dialog for a drive-level create", () => {
+    expect(routeChatTurn("create a new note", resolve(drive, "create a new note"))).toMatchObject({
+      kind: "explain",
+      create: { docType: "bai/knowledge-note" },
+    });
   });
 });
 
-describe("ask text", () => {
-  it("lists the documents with their type", () => {
-    expect(askForDocumentText("none", [note, plan])).toBe(
-      "Which document should this change? Pick one in the Target menu:\n" +
-        "• CRDT merge semantics (Knowledge note)\n• Hive plan (WBS)",
-    );
-    expect(askForDocumentText("none", [])).toContain("no supported documents");
+describe("helpers", () => {
+  it("reads create intents", () => {
+    expect(createIntent("make a map of content for sync")?.docType).toBe("bai/moc");
+    expect(createIntent("start a project")?.docType).toBe("bai/project");
+    expect(createIntent("tag this note")).toBeNull();
+  });
+
+  it("names document types", () => {
     expect(documentTypeName("bai/pipeline-queue")).toBe("Pipeline queue");
+    expect(documentTypeName("bai/moc")).toBe("MOC");
+    expect(documentTypeName("bai/wbs")).toBe("WBS");
+    expect(documentTypeName("")).toBe("Document");
   });
 });

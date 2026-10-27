@@ -29,9 +29,9 @@ import {
 import type { CatalogEntry } from "../chat/core/op-catalog.js";
 import {
   currentListsFor,
-  driveRefContext,
   refCandidatesFor,
   type ChatDocument,
+  type RefContextItem,
 } from "../chat/core/ref-candidates.js";
 import { v1Catalog, type RefCandidates } from "../chat/core/v1-pipeline.js";
 import {
@@ -88,7 +88,8 @@ export interface ProposedAction {
 export interface PendingChoice {
   utterance: string;
   doc: ChatDocument;
-  documents: ChatDocument[];
+  /** The bounded cross-document ref context built for this request. */
+  refContext: RefContextItem[];
   decision: OpDecision;
   options: { entry: CatalogEntry; p: number }[];
 }
@@ -365,13 +366,13 @@ export function useChatLlm() {
       utterance: string,
       entry: CatalogEntry,
       doc: ChatDocument,
-      documents: ChatDocument[],
+      refContext: RefContextItem[],
       decision: OpDecision,
       provenance: Provenance,
     ): Promise<ProposedAction> => {
       const { client, cache } = await ensureLora(sources.lora);
       setChatStage("fill");
-      const refs = refCandidatesFor(entry.key, doc.state, driveRefContext(doc, documents));
+      const refs = refCandidatesFor(entry.key, doc.state, refContext);
       const t0 = performance.now();
       const step2 = await fillArgs(utterance, entry, client, {
         refCandidates: refs,
@@ -402,7 +403,7 @@ export function useChatLlm() {
     async (
       utterance: string,
       doc: ChatDocument,
-      documents: ChatDocument[],
+      refContext: RefContextItem[],
     ): Promise<ChatReply> => {
       try {
         const { client } = await ensureLora(sources.lora);
@@ -447,7 +448,7 @@ export function useChatLlm() {
             choice: {
               utterance,
               doc,
-              documents,
+              refContext,
               decision,
               options: decision.offered.map((entry) => ({
                 entry,
@@ -464,7 +465,7 @@ export function useChatLlm() {
               };
         return {
           kind: "proposal",
-          proposal: await fill(utterance, decision.pick, doc, documents, decision, provenance),
+          proposal: await fill(utterance, decision.pick, doc, refContext, decision, provenance),
         };
       } finally {
         skipRef.current = null;
@@ -484,7 +485,7 @@ export function useChatLlm() {
             choice.utterance,
             entry,
             choice.doc,
-            choice.documents,
+            choice.refContext,
             choice.decision,
             { kind: "chosen", from: choice.options.length },
           ),

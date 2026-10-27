@@ -6,6 +6,12 @@
  * task target, topic name, link target title, the drive's document titles.
  * `tests/unit/chat-ref-candidates.test.ts` checks every recipe against this.
  */
+import {
+  CANDIDATE_CAP,
+  rankCandidates,
+  referencedIds,
+} from "../context/candidates.js";
+import type { CandidateDoc } from "../context/context-frame.js";
 import type { CurrentList, ListMode } from "./list-completion.js";
 import type { RefCandidates } from "./v1-pipeline.js";
 
@@ -234,27 +240,60 @@ const CTX_KIND_BY_TYPE: Record<string, string[]> = {
   "bai/moc": ["moc"],
 };
 
+export interface DriveRefOptions {
+  /** A project target's linked plan, loaded by id (its goals). */
+  linkedWbs?: ChatDocument;
+  /** The request, for ranking; without it the recent ring orders. */
+  utterance?: string;
+  recentIds?: string[];
+  /** Per kind; items the target already refers to are always kept. */
+  cap?: number;
+}
+
 /**
  * The drive's items a ref field may point at, from the target document's
  * point of view: other notes (`note`, `knowledge`), plans (`wbs`), projects
  * (`project`) and, for a project with a linked plan, that plan's goals
  * (`wbs-goal`). Topic pages and capture sessions have no drive source yet.
+ * M0: built from names (nodes, known titles), at most `cap` per kind plus
+ * the items the target's state already refers to (their labels).
  */
 export function driveRefContext(
   target: ChatDocument,
-  documents: ChatDocument[],
+  documents: CandidateDoc[],
+  opts: DriveRefOptions = {},
 ): RefContextItem[] {
-  const out: RefContextItem[] = [];
+  const utterance = opts.utterance ?? "";
+  const cap = opts.cap ?? CANDIDATE_CAP;
+  const referenced = referencedIds(target.state);
+  const bounded = (kind: string, items: CandidateDoc[]): RefContextItem[] => {
+    const kept = items.filter((d) => referenced.has(d.id));
+    const rest = rankCandidates(
+      utterance,
+      items.filter((d) => !referenced.has(d.id)),
+      { recentIds: opts.recentIds, cap },
+    );
+    return [...kept, ...rest].map((d) => ({ id: d.id, title: d.title, kind }));
+  };
+  const byKind = new Map<string, CandidateDoc[]>();
   for (const d of documents) {
     if (d.id === target.id) continue;
     for (const kind of CTX_KIND_BY_TYPE[d.docType] ?? [])
-      out.push({ id: d.id, title: d.title, kind });
+      byKind.set(kind, [...(byKind.get(kind) ?? []), d]);
   }
-  const wbsRef = str(target.state.wbsRef);
-  const wbs = wbsRef ? documents.find((d) => d.id === wbsRef) : undefined;
-  if (target.docType === "bai/project" && wbs)
-    for (const g of recs(wbs.state.goals))
-      out.push({ id: str(g.id), title: str(g.description), kind: "wbs-goal" });
+  const out = [...byKind].flatMap(([kind, items]) => bounded(kind, items));
+  const wbs = opts.linkedWbs;
+  if (target.docType === "bai/project" && wbs && wbs.id === str(target.state.wbsRef))
+    out.push(
+      ...bounded(
+        "wbs-goal",
+        recs(wbs.state.goals).map((g) => ({
+          id: str(g.id),
+          docType: "wbs-goal",
+          title: str(g.description),
+        })),
+      ),
+    );
   return out;
 }
 

@@ -83,26 +83,36 @@ describe("drive ref context", () => {
     state: Record<string, unknown> = {},
   ): ChatDocument => ({ id, docType, title, state });
 
+  const names = (docs: ChatDocument[]) =>
+    docs.map(({ id, docType, title }) => ({ id, docType, title }));
+
   it("lists the other documents by kind and a linked plan's goals", () => {
     const project = doc("p1", "bai/project", "Hive project", {
       wbsRef: "w1",
     });
+    const wbs = doc("w1", "bai/wbs", "Hive plan", {
+      goals: [{ id: "g1", description: "Order suits" }],
+    });
     const docs = [
       project,
       doc("n1", "bai/knowledge-note", "Mite counts"),
-      doc("w1", "bai/wbs", "Hive plan", {
-        goals: [{ id: "g1", description: "Order suits" }],
-      }),
+      wbs,
       doc("p2", "bai/project", "Other project"),
       doc("s1", "bai/source", "A source"),
     ];
-    expect(driveRefContext(project, docs)).toEqual([
+    expect(driveRefContext(project, names(docs), { linkedWbs: wbs })).toEqual([
       { id: "n1", title: "Mite counts", kind: "note" },
       { id: "n1", title: "Mite counts", kind: "knowledge" },
       { id: "w1", title: "Hive plan", kind: "wbs" },
       { id: "p2", title: "Other project", kind: "project" },
       { id: "g1", title: "Order suits", kind: "wbs-goal" },
     ]);
+    // a plan that is not the linked one adds no goals
+    expect(
+      driveRefContext({ ...project, state: {} }, names(docs), { linkedWbs: wbs }).some(
+        (c) => c.kind === "wbs-goal",
+      ),
+    ).toBe(false);
   });
 
   it("feeds unlinked notes to ADD_LINK and skips the target itself", () => {
@@ -114,10 +124,40 @@ describe("drive ref context", () => {
       doc("n2", "bai/knowledge-note", "Old"),
       doc("n3", "bai/knowledge-note", "New"),
     ];
-    const ctx = driveRefContext(note, docs);
+    const ctx = driveRefContext(note, names(docs));
     expect(
       refCandidatesFor("knowledge-note:ADD_LINK", note.state, ctx),
     ).toEqual({ targetDocumentId: [{ id: "n3", label: "New" }] });
+  });
+
+  it("caps each kind at 10, ranked by the request, keeping referenced items", () => {
+    const notes = Array.from({ length: 30 }, (_, i) =>
+      doc(`n${i}`, "bai/knowledge-note", `Note ${i} filler`),
+    );
+    const plans = Array.from({ length: 3 }, (_, i) => doc(`w${i}`, "bai/wbs", `Plan ${i}`));
+    const project = doc("p1", "bai/project", "Hive project", {
+      knowledgeRefs: ["n29"],
+    });
+    const hives = doc("nh", "bai/knowledge-note", "Rooftop beehives");
+    const all = [project, ...notes, hives, ...plans];
+    const ctx = driveRefContext(project, names(all), {
+      utterance: "link the rooftop beehives note",
+      recentIds: ["n7"],
+    });
+    const knowledge = ctx.filter((c) => c.kind === "knowledge");
+    // the linked n29 (for its label) plus 10 ranked; the match first, then recent
+    expect(knowledge).toHaveLength(11);
+    expect(knowledge[0].id).toBe("n29");
+    expect(knowledge[1].id).toBe("nh");
+    expect(knowledge[2].id).toBe("n7");
+    expect(ctx.filter((c) => c.kind === "wbs")).toHaveLength(3);
+    // step 2 sees at most 10 choices on a ref path
+    const refs = refCandidatesFor("project:ADD_KNOWLEDGE_REF", project.state, ctx);
+    expect(refs.ref).toHaveLength(10);
+    expect(refs.ref[0]).toEqual({ id: "nh", label: "Rooftop beehives" });
+    expect(
+      refCandidatesFor("project:REMOVE_KNOWLEDGE_REF", project.state, ctx).ref,
+    ).toEqual([{ id: "n29", label: "Note 29 filler" }]);
   });
 
   it("titles a document from its state, else the fallback", () => {

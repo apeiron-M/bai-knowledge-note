@@ -1,26 +1,36 @@
 /**
- * Which document a chat request acts on. The v1 pipeline (R2c) needs one:
- * its step-1 list is that document's model's ops, and with no document type
- * it falls to 37–39% op (round 9 R3/R4). So the chat never guesses across
- * models; without a target it asks the user to pick a document. Questions
- * need no document and go to the answer path.
+ * Which document a chat request acts on (M0): the viewed document from the
+ * context frame, except that a request naming exactly one *other* supported
+ * document verbatim retargets to it (the card says so). Nothing dispatches
+ * without Confirm. The pipeline needs a document type (without one, op
+ * accuracy falls to 37–39%, round 9 R3/R4), so with nothing open and
+ * nothing named the chat only answers questions.
  */
+import type {
+  CandidateDoc,
+  ContextTarget,
+  DocumentTarget,
+} from "../context/context-frame.js";
 import { looksLikeQuestion } from "./no-action-gate.js";
-import type { ChatDocument } from "./ref-candidates.js";
 
 export type TargetResolution =
-  | { kind: "document"; doc: ChatDocument; via: "selected" | "title" }
   | {
-      kind: "ask";
-      reason: "none" | "unsupported" | "ambiguous";
-      /** The documents the user can pick from (supported types only). */
-      options: ChatDocument[];
-    };
+      kind: "document";
+      target: DocumentTarget;
+      /** `context`: the viewed document; `retarget`: named in the request
+       * while viewing another document; `title`: named at drive level. */
+      via: "context" | "retarget" | "title";
+      /** The viewed document a retarget switched away from. */
+      from?: DocumentTarget;
+    }
+  | { kind: "unsupported"; target: DocumentTarget }
+  | { kind: "drive"; target: Extract<ContextTarget, { kind: "drive" }> };
 
 export interface ResolveTargetInput {
-  /** The picked document's id, or null / "" when none is picked. */
-  selectedId: string | null;
-  documents: ChatDocument[];
+  /** The context frame's target (the tag). */
+  context: ContextTarget;
+  /** The drive's documents (node names and known titles, no state). */
+  documents: CandidateDoc[];
   /** Document types the chat has ops for. */
   supportedTypes: ReadonlySet<string>;
   utterance: string;
@@ -39,74 +49,134 @@ export function mentionsTitle(utterance: string, title: string): boolean {
   );
 }
 
+/** The longest of a document's names that the request mentions. */
+function mentionedName(utterance: string, d: CandidateDoc): string | null {
+  let best: string | null = null;
+  for (const n of [d.title, ...(d.aliases ?? [])])
+    if (mentionsTitle(utterance, n) && (!best || n.length > best.length)) best = n;
+  return best;
+}
+
 /**
- * The picked document when it has a supported type; with none picked, the
- * one supported document whose title the request names; otherwise ask.
+ * The documents a request names verbatim. A name that only appears inside
+ * a longer mentioned name ("CRDTs" inside "CRDTs in practice", or inside
+ * the viewed document's own title) does not count on its own.
+ */
+export function namedDocuments(
+  utterance: string,
+  documents: CandidateDoc[],
+): CandidateDoc[] {
+  const hits = documents
+    .map((d) => ({ d, name: mentionedName(utterance, d) }))
+    .filter((h): h is { d: CandidateDoc; name: string } => h.name !== null);
+  return hits
+    .filter(
+      (h) =>
+        !hits.some(
+          (o) =>
+            o.d.id !== h.d.id &&
+            o.name.length > h.name.length &&
+            o.name.toLowerCase().includes(h.name.toLowerCase()),
+        ),
+    )
+    .map((h) => h.d);
+}
+
+function asTarget(d: CandidateDoc, driveId: string): DocumentTarget {
+  return { kind: "document", id: d.id, driveId, title: d.title, docType: d.docType };
+}
+
+/**
+ * 1. exactly one other supported document named verbatim → retarget (or,
+ *    at drive level, target it);
+ * 2. the viewed document, when its type has ops;
+ * 3. else unsupported (a document is open) or drive-level (nothing open).
  */
 export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
-  const options = i.documents.filter((d) => i.supportedTypes.has(d.docType));
-  const selected = i.selectedId
-    ? i.documents.find((d) => d.id === i.selectedId)
-    : undefined;
-  if (selected)
-    return i.supportedTypes.has(selected.docType)
-      ? { kind: "document", doc: selected, via: "selected" }
-      : { kind: "ask", reason: "unsupported", options };
-  const named = options.filter((d) => mentionsTitle(i.utterance, d.title));
-  if (named.length === 1)
-    return { kind: "document", doc: named[0], via: "title" };
-  return named.length > 1
-    ? { kind: "ask", reason: "ambiguous", options: named }
-    : { kind: "ask", reason: "none", options };
+  const { context } = i;
+  const supported = i.documents.filter((d) => i.supportedTypes.has(d.docType));
+  // The viewed document takes part in the containment rule even when its
+  // type is unsupported, so its own title never counts as "another" one.
+  const viewed =
+    context.kind === "document" && !supported.some((d) => d.id === context.id)
+      ? [{ id: context.id, docType: context.docType, title: context.title }]
+      : [];
+  const named = namedDocuments(i.utterance, [...supported, ...viewed]).filter(
+    (d) => !(context.kind === "document" && d.id === context.id),
+  );
+  const driveId = context.kind === "drive" ? context.id : context.driveId;
+  if (named.length === 1) {
+    const target = asTarget(named[0], driveId);
+    return context.kind === "document"
+      ? { kind: "document", target, via: "retarget", from: context }
+      : { kind: "document", target, via: "title" };
+  }
+  if (context.kind === "drive") return { kind: "drive", target: context };
+  return i.supportedTypes.has(context.docType)
+    ? { kind: "document", target: context, via: "context" }
+    : { kind: "unsupported", target: context };
 }
 
 /**
  * What a turn does: run the pipeline on a document, answer a question that
- * has no document, or ask for a document. With a document there is no
- * question rule in front: R2c's model decides no-action itself.
+ * has no runnable document, or explain why it cannot change anything. With
+ * a document there is no question rule in front: R2c's model decides
+ * no-action itself.
  */
 export type ChatRoute =
-  | { kind: "run"; doc: ChatDocument; via: "selected" | "title" }
-  | { kind: "answer" }
-  | {
-      kind: "ask";
-      reason: "none" | "unsupported" | "ambiguous";
-      options: ChatDocument[];
-    };
+  | Extract<TargetResolution, { kind: "document" }>
+  | { kind: "answer"; because: "drive" | "unsupported" }
+  | { kind: "explain"; text: string; create: CreateIntent | null };
+
+export interface CreateIntent {
+  docType: string;
+  /** The New menu's label, which the dialog shows. */
+  label: string;
+}
+
+const CREATE_TYPES: [RegExp, CreateIntent][] = [
+  [/\b(map of content|moc)\b/i, { docType: "bai/moc", label: "Map of Content" }],
+  [/\bproject\b/i, { docType: "bai/project", label: "Project" }],
+  [/\bsource\b/i, { docType: "bai/source", label: "Add Source" }],
+  [/\bnote\b/i, { docType: "bai/knowledge-note", label: "Knowledge Note" }],
+];
+
+/** "create a new note about X" → the New dialog for knowledge notes. */
+export function createIntent(utterance: string): CreateIntent | null {
+  if (!/\b(create|new|make|start|add)\b/i.test(utterance)) return null;
+  return CREATE_TYPES.find(([re]) => re.test(utterance))?.[1] ?? null;
+}
 
 export function routeChatTurn(
   utterance: string,
   target: TargetResolution,
 ): ChatRoute {
-  if (target.kind === "document")
-    return { kind: "run", doc: target.doc, via: target.via };
-  if (looksLikeQuestion(utterance)) return { kind: "answer" };
-  return target;
+  if (target.kind === "document") return target;
+  if (looksLikeQuestion(utterance))
+    return { kind: "answer", because: target.kind };
+  if (target.kind === "unsupported")
+    return {
+      kind: "explain",
+      text: `The chat has no operations for ${documentTypeName(target.target.docType)} documents ("${target.target.title}"). Open a note, MOC, project or plan, or name one in the request.`,
+      create: null,
+    };
+  const create = createIntent(utterance);
+  return {
+    kind: "explain",
+    text: create
+      ? `Drive-level changes are not supported in the chat yet. You can create it with the New dialog:`
+      : `Nothing is open, so there is no document to change: "${target.target.name}" is the drive, and drive-level changes are not supported yet. Open a document, or name one in the request.`,
+    create,
+  };
 }
 
 /** `bai/knowledge-note` → `Knowledge note`, `bai/wbs` → `WBS`. */
 export function documentTypeName(docType: string): string {
+  if (!docType) return "Document";
   const short = docType.slice(docType.indexOf("/") + 1);
   if (short === "wbs") return "WBS";
+  if (short === "moc") return "MOC";
+  if (short === "document-drive") return "Drive";
   const words = short.replace(/-/g, " ");
   return words.charAt(0).toUpperCase() + words.slice(1);
-}
-
-/** The chat's reply when it needs a document, listing the choices. */
-export function askForDocumentText(
-  reason: "none" | "unsupported" | "ambiguous",
-  options: ChatDocument[],
-): string {
-  const head =
-    reason === "unsupported"
-      ? "The chat has no operations for the selected document's type. Pick one of these documents:"
-      : reason === "ambiguous"
-        ? "The request names more than one document. Pick the one to change:"
-        : "Which document should this change? Pick one in the Target menu:";
-  if (options.length === 0)
-    return `${head}\n(no supported documents in this drive)`;
-  return [
-    head,
-    ...options.map((d) => `• ${d.title} (${documentTypeName(d.docType)})`),
-  ].join("\n");
 }
