@@ -6,7 +6,8 @@
  *   npm run chat:parity-c            # starts both servers on free ports
  *   LORA_URL=... KEV_URL=... npm run chat:parity-c   # or uses running ones
  *
- * Bars: step-1 pick identical; |d loraExact|, |d loraBranch| <= 1e-3 nat;
+ * Bars: step-1 pick identical; |d loraExact|, |d loraBranch| <= 1e-3 nat
+ * (full run on fresh servers; 0.05 nat otherwise, see TRIE_TOL);
  * Kev |dp| <= 0.05 (reported, expected ~0 natively); gate decisions
  * identical in both trie modes, and decideOp (the shipped branch path)
  * identical to them; fillArgs on the gold op identical to args-x9 (args,
@@ -42,7 +43,12 @@ const FX = `${REPO}/tests/fixtures/chat-c`;
 const OUT = process.env.PARITY_OUT ?? `${tmpdir()}/parity-c`;
 const BIN = process.env.LLAMA_SERVER ?? `${process.env.HOME}/.cache/bai-training/llama.cpp/build/bin/llama-server`;
 const ONLY = process.env.PARITY_ONLY ? new Set(process.env.PARITY_ONLY.split(",")) : null;
-const TRIE_TOL = 1e-3;
+// The rig's values depend on llama-server's prompt-cache history (cache_prompt
+// re-evaluates a different suffix batch): a fresh server replaying the rig's
+// item order matches to ~1e-5 nat, any other history to ~0.015 nat (seen on
+// moc3-08). The tight bar applies only to the full fresh-server run.
+const FRESH_FULL = !ONLY && !process.env.LORA_URL;
+const TRIE_TOL = Number(process.env.PARITY_TRIE_TOL ?? (FRESH_FULL ? 1e-3 : 0.05));
 const KEV_TOL = 0.05;
 
 type Rec = Record<string, unknown>;
