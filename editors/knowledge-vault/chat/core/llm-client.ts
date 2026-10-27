@@ -1,3 +1,13 @@
+import type { LoraBackend } from "./decision-backend.js";
+import type { SystemOneBody, SystemOneResponse } from "./kev-request.js";
+import {
+  asSystemOneResponse,
+  gpuOffload,
+  NativeLog,
+  withNativeLog,
+  wllamaForcedLogprob,
+  wllamaNextDist,
+} from "./wllama-backend.js";
 import type {
   WllamaChatMessage,
   WllamaChatParams,
@@ -30,16 +40,21 @@ export type LlmBackend = "webgpu" | "cpu";
 export interface LoadLlmOptions {
   backend: LlmBackend;
   onProgress?: (loaded: number, total: number) => void;
-  /** Use the GGUF's jinja chat template via llama.cpp's minja. */
+  /**
+   * Use the GGUF's jinja chat template via llama.cpp's minja. Default
+   * false: the legacy template, as every measured run (`--no-jinja`).
+   */
   jinja?: boolean;
   nCtx?: number;
   model?: { repo: string; file: string };
-  /**
-   * Load this GGUF URL instead of `model` (dev/eval only, e.g. a locally
-   * served fine-tune). Bypasses the OPFS cache, so a re-exported file under
-   * the same URL is never served stale.
-   */
+  /** Load this GGUF URL instead of `model`. */
   modelUrl?: string;
+  /**
+   * Keep a URL model in the OPFS cache (default false, so a re-exported
+   * file under the same URL is never served stale). Only for versioned,
+   * immutable file names (the configuration C manifest).
+   */
+  useCache?: boolean;
   /** Collect native llama.cpp log lines (for debugging load failures). */
   onLog?: (level: string, line: string) => void;
 }
@@ -119,15 +134,28 @@ export interface LlmInfo {
   jinja: boolean;
   model: { repo: string; file: string };
   hasChatTemplate: boolean;
+  /** GGUF metadata (string values). */
+  meta: Record<string, string | undefined>;
+  nVocab: number;
+  bos: number;
+  eos: number;
+  /** From llama.cpp's load log; null if not logged. */
+  gpuLayers: { offloaded: number; total: number } | null;
+  useCache: boolean;
 }
 
-export interface LlmClient {
+export interface LlmClient extends LoraBackend {
   chatStream(
     messages: WllamaChatMessage[],
     opts?: ChatOptions,
   ): Promise<ChatResult>;
-  completeJson: CompleteJson;
-  scoreText: ScoreText;
+  info: LlmInfo;
+  exit(): Promise<void>;
+}
+
+/** Kev-FT (a System One decision model) in its own wllama instance. */
+export interface DecisionClient {
+  systemOne(body: SystemOneBody): Promise<SystemOneResponse>;
   info: LlmInfo;
   exit(): Promise<void>;
 }
@@ -219,40 +247,47 @@ async function runChat(
   };
 }
 
-export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
+interface LoadedWllama {
+  wllama: WllamaInstance;
+  info: LlmInfo;
+  log: NativeLog;
+}
+
+async function loadWllama(opts: LoadLlmOptions): Promise<LoadedWllama> {
   const { Wllama } = await importWllama();
   const model = opts.model ?? DEFAULT_MODEL;
   const nCtx = opts.nCtx ?? 4096;
-  const log = opts.onLog;
-  const wllama = new Wllama(
-    { default: wllamaWasmUrl() },
-    log
-      ? {
-          logger: {
-            debug: (...a: unknown[]) => log("debug", a.map(String).join(" ")),
-            log: (...a: unknown[]) => log("log", a.map(String).join(" ")),
-            warn: (...a: unknown[]) => log("warn", a.map(String).join(" ")),
-            error: (...a: unknown[]) => log("error", a.map(String).join(" ")),
-          },
-        }
-      : { suppressNativeLog: true },
-  );
+  const jinja = opts.jinja ?? false;
+  const useCache = opts.modelUrl ? (opts.useCache ?? false) : true;
+  // Always captured (wllama errors carry no cause), forwarded on request.
+  const log = new NativeLog(60, opts.onLog);
+  const wllama = new Wllama({ default: wllamaWasmUrl() }, { logger: log.logger() });
   let downloadBytes = 0;
   const t0 = performance.now();
   const params = {
     n_ctx: nCtx,
     n_parallel: 1,
     n_gpu_layers: opts.backend === "webgpu" ? 99999 : 0,
-    jinja: opts.jinja,
+    jinja,
     progressCallback: ({ loaded, total }: { loaded: number; total: number }) => {
       downloadBytes = total;
       opts.onProgress?.(loaded, total);
     },
   };
-  if (opts.modelUrl)
-    await wllama.loadModelFromUrl(opts.modelUrl, { ...params, useCache: false });
-  else await wllama.loadModelFromHF(model, params);
+  const what = `load ${opts.modelUrl ?? `${model.repo}/${model.file}`}`;
+  try {
+    await withNativeLog(log, what, async () => {
+      if (opts.modelUrl)
+        await wllama.loadModelFromUrl(opts.modelUrl, { ...params, useCache });
+      else await wllama.loadModelFromHF(model, params);
+    });
+  } catch (err) {
+    await wllama.exit().catch(() => undefined);
+    throw err;
+  }
   const loadMs = performance.now() - t0;
+  const meta = wllama.getModelMetadata();
+  const ctx = wllama.getLoadedContextInfo();
   const info: LlmInfo = {
     libllamaVersion: Wllama.getLibllamaVersion(),
     wllamaVersion: WLLAMA_VERSION,
@@ -263,10 +298,21 @@ export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
     loadMs,
     downloadBytes,
     nCtx,
-    jinja: opts.jinja ?? false,
+    jinja,
     model: opts.modelUrl ? { repo: "url", file: opts.modelUrl } : model,
     hasChatTemplate: wllama.getChatTemplate() !== null,
+    meta: meta.meta,
+    nVocab: meta.hparams.nVocab,
+    bos: ctx.token_bos,
+    eos: ctx.token_eos,
+    gpuLayers: gpuOffload(log.offloadLine),
+    useCache,
   };
+  return { wllama, info, log };
+}
+
+export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
+  const { wllama, info, log } = await loadWllama(opts);
 
   const completeJson: CompleteJson = async (messages, constraint, o = {}) => {
     const result = await runChat(wllama, messages, {
@@ -322,7 +368,41 @@ export async function loadLlm(opts: LoadLlmOptions): Promise<LlmClient> {
     chatStream: (messages, o = {}) => runChat(wllama, messages, o),
     completeJson,
     scoreText,
+    nextDist: (prompt, nProbs) =>
+      withNativeLog(log, "next-token logprobs", () =>
+        wllamaNextDist(wllama, prompt, nProbs),
+      ),
+    forcedLogprob: (prompt, id) =>
+      withNativeLog(log, "forced logprob", () =>
+        wllamaForcedLogprob(wllama, prompt, id),
+      ),
     info,
     exit: () => wllama.exit(),
   };
+}
+
+/**
+ * Load a System One decision model (Kev-FT) from a URL. Callers check
+ * `info.gpuLayers`: Kev on CPU/WASM takes seconds per call.
+ */
+export async function loadDecisionModel(
+  opts: Omit<LoadLlmOptions, "model" | "jinja"> & { modelUrl: string },
+): Promise<DecisionClient> {
+  const { wllama, info, log } = await loadWllama({ ...opts, jinja: false });
+  return {
+    systemOne: async (body) =>
+      asSystemOneResponse(
+        await withNativeLog(log, "decision model", () =>
+          wllama.createSystemOne(body),
+        ),
+      ),
+    info,
+    exit: () => wllama.exit(),
+  };
+}
+
+/** Remove every model wllama cached in this origin's OPFS. */
+export async function clearModelCache(): Promise<void> {
+  const { Wllama } = await importWllama();
+  await new Wllama({ default: wllamaWasmUrl() }).cacheManager.clear();
 }

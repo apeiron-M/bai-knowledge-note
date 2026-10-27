@@ -95,6 +95,62 @@ export interface WllamaChatResponse {
   timings?: WllamaTimings;
 }
 
+/**
+ * Raw (non-chat) completion. wllama 3.8.1 accepts only a string prompt:
+ * token arrays throw `type_error.302` (Phase 0). The server tokenizes it with
+ * BOS added and special tokens parsed.
+ */
+export interface WllamaCompletionParams {
+  prompt: string;
+  stream: false;
+  n_predict?: number;
+  temperature?: number;
+  /** Top-n alternatives per generated token (full-vocabulary softmax). */
+  n_probs?: number;
+  cache_prompt?: boolean;
+  /** `[tokenId, bias]` pairs. */
+  logit_bias?: [number, number][];
+}
+
+export interface WllamaTokenLogprob {
+  id: number;
+  token: string;
+  bytes: number[] | null;
+  logprob: number;
+}
+
+export interface WllamaCompletionTokenLogprob extends WllamaTokenLogprob {
+  top_logprobs?: WllamaTokenLogprob[];
+}
+
+/** `stream: false` response (OAI text_completion plus llama.cpp timings). */
+export interface WllamaCompletionResponse {
+  choices: {
+    text: string;
+    finish_reason: string | null;
+    logprobs?: { content: WllamaCompletionTokenLogprob[] | null } | null;
+  }[];
+  usage?: { prompt_tokens?: number; completion_tokens?: number };
+  timings?: WllamaTimings;
+}
+
+export interface WllamaModelMetadata {
+  hparams: { nVocab: number; nCtxTrain: number; nEmbd: number; nLayer: number };
+  /** GGUF key/value metadata, values as strings. */
+  meta: Record<string, string | undefined>;
+}
+
+export interface WllamaContextInfo {
+  n_ctx: number;
+  n_batch: number;
+  n_ubatch: number;
+  n_vocab: number;
+  token_bos: number;
+  token_eos: number;
+  token_eot: number;
+  add_bos_token: boolean;
+}
+
 export interface WllamaCacheManager {
   clear(): Promise<void>;
   list(): Promise<{ name: string; size: number }[]>;
@@ -116,6 +172,19 @@ export interface WllamaInstance {
   createChatCompletion(
     params: WllamaChatParamsNoStream,
   ): Promise<WllamaChatResponse>;
+  createCompletion(
+    params: WllamaCompletionParams,
+  ): Promise<WllamaCompletionResponse>;
+  /**
+   * A decision model's System One call (TypeSafe-compatible): the server's
+   * JSON response, unvalidated.
+   */
+  createSystemOne(options: {
+    state: string;
+    questions: Record<string, unknown>;
+  }): Promise<unknown>;
+  getModelMetadata(): WllamaModelMetadata;
+  getLoadedContextInfo(): WllamaContextInfo;
   isSupportWebGPU(): boolean;
   isMultithread(): boolean;
   getNumThreads(): number;
