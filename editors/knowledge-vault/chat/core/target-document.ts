@@ -1,7 +1,9 @@
 /**
  * Which document a chat request acts on (M0): the viewed document from the
  * context frame, except that a request naming exactly one *other* supported
- * document verbatim retargets to it (the card says so). Nothing dispatches
+ * document verbatim retargets to it (the card says so), unless the request
+ * also points at the open document ("link this note to X": X is a
+ * reference, not the target). Nothing dispatches
  * without Confirm. The pipeline needs a document type (without one, op
  * accuracy falls to 37–39%, round 9 R3/R4), so with nothing open and
  * nothing named the chat only answers questions.
@@ -82,13 +84,54 @@ export function namedDocuments(
     .map((h) => h.d);
 }
 
+/** Nouns that make "this <noun>" mean the open document. */
+const DOC_NOUNS =
+  "note|notes|doc|docs|document|one|page|file|moc|map|project|plan|wbs|source";
+/** Words after a bare "this" that leave it pointing at the open document
+ * ("link this to X", "tag this with Y"), unlike "this goal" or "this idea",
+ * which name an item. */
+const AFTER_BARE_THIS =
+  "to|into|with|in|on|under|onto|from|for|about|as|at|by|and|or|is|so|up|over|please";
+const DEICTIC = new RegExp(
+  [
+    `\\bthis(?=\\s+(?:${DOC_NOUNS})\\b)`,
+    `\\bthis(?=\\s+(?:${AFTER_BARE_THIS})\\b)`,
+    `\\bthis(?=\\s*(?:$|[^\\p{L}\\p{N}\\s]))`,
+    `\\bit\\b(?!['’]s\\b)`,
+    `\\bhere\\b`,
+  ].join("|"),
+  "iu",
+);
+
+/**
+ * Whether a request points at the open document ("this", "this note",
+ * "it", "here"). Document names are masked first, so a title such as
+ * "Make it work" is not a pointer. "this goal" names an item, not the
+ * document, and does not count.
+ */
+export function mentionsCurrentDocument(utterance: string, names: string[] = []): boolean {
+  let masked = utterance;
+  for (const n of [...names].sort((a, b) => b.length - a.length)) {
+    const t = n.trim();
+    if (t.length < 3) continue;
+    masked = masked.replace(
+      new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRegExp(t)}(?=$|[^\\p{L}\\p{N}])`, "giu"),
+      "$1 ",
+    );
+  }
+  return DEICTIC.test(masked);
+}
+
 function asTarget(d: CandidateDoc, driveId: string): DocumentTarget {
   return { kind: "document", id: d.id, driveId, title: d.title, docType: d.docType };
 }
 
 /**
  * 1. exactly one other supported document named verbatim → retarget (or,
- *    at drive level, target it);
+ *    at drive level, target it), unless the request also points at the
+ *    open document ("this", "this note", "it", "here"): then the open
+ *    document stays the target and the named one is only a ref candidate.
+ *    With nothing open a pointer has no referent, so it does not block;
  * 2. the viewed document, when its type has ops;
  * 3. else unsupported (a document is open) or drive-level (nothing open).
  */
@@ -97,7 +140,7 @@ export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
   const supported = i.documents.filter((d) => i.supportedTypes.has(d.docType));
   // The viewed document takes part in the containment rule even when its
   // type is unsupported, so its own title never counts as "another" one.
-  const viewed =
+  const viewed: CandidateDoc[] =
     context.kind === "document" && !supported.some((d) => d.id === context.id)
       ? [{ id: context.id, docType: context.docType, title: context.title }]
       : [];
@@ -105,7 +148,13 @@ export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
     (d) => !(context.kind === "document" && d.id === context.id),
   );
   const driveId = context.kind === "drive" ? context.id : context.driveId;
-  if (named.length === 1) {
+  const pointsHere =
+    context.kind === "document" &&
+    mentionsCurrentDocument(
+      i.utterance,
+      [...i.documents, ...viewed].flatMap((d) => [d.title, ...(d.aliases ?? [])]),
+    );
+  if (named.length === 1 && !pointsHere) {
     const target = asTarget(named[0], driveId);
     return context.kind === "document"
       ? { kind: "document", target, via: "retarget", from: context }

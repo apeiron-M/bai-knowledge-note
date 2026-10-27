@@ -4,9 +4,11 @@ import type {
   ContextTarget,
   DocumentTarget,
 } from "../../editors/knowledge-vault/chat/context/context-frame.js";
+import { driveRefContext } from "../../editors/knowledge-vault/chat/core/ref-candidates.js";
 import {
   createIntent,
   documentTypeName,
+  mentionsCurrentDocument,
   mentionsTitle,
   namedDocuments,
   resolveTargetDocument,
@@ -96,6 +98,116 @@ describe("resolveTargetDocument (M0, from the tag)", () => {
       via: "retarget",
       target: { id: "m1", title: "CRDT map" },
     });
+  });
+});
+
+describe("resolveTargetDocument: a pointer at the open document blocks a retarget", () => {
+  const other = cand("n3", "bai/knowledge-note", "Gossip protocols");
+  const docs = [...documents, other];
+
+  it("keeps the open document when the request says this note, this, it or here", () => {
+    for (const u of [
+      "link this note to Gossip protocols",
+      "link this to Gossip protocols",
+      "link this one to Gossip protocols",
+      "add a link from this doc to Gossip protocols",
+      "link it to Gossip protocols",
+      "add Gossip protocols as a related note here",
+    ])
+      expect(resolve(tag(note), u, docs), u).toEqual({
+        kind: "document",
+        target: tag(note),
+        via: "context",
+      });
+  });
+
+  it("still retargets when only the other document is named", () => {
+    expect(resolve(tag(note), "add the topic sync to Gossip protocols", docs)).toEqual({
+      kind: "document",
+      target: tag(other),
+      via: "retarget",
+      from: tag(note),
+    });
+  });
+
+  it("does not retarget when the request is ambiguous", () => {
+    // a name, then a pronoun that may point back at it: the open document stays
+    expect(
+      resolve(tag(note), "add a question to Gossip protocols and tag it", docs),
+    ).toMatchObject({ via: "context", target: { id: "n1" } });
+    // two documents share the named title
+    const twin = cand("n4", "bai/knowledge-note", "Gossip protocols");
+    expect(
+      resolve(tag(note), "add the topic sync to Gossip protocols", [...docs, twin]),
+    ).toMatchObject({ via: "context", target: { id: "n1" } });
+    // two different documents named
+    expect(resolve(tag(note), "link Gossip protocols and CRDTs", docs)).toMatchObject({
+      via: "context",
+    });
+  });
+
+  it("keeps the open document's type rule: a pointer at a source is unsupported", () => {
+    expect(resolve(tag(source), "link this to CRDTs", docs)).toEqual({
+      kind: "unsupported",
+      target: tag(source),
+    });
+  });
+
+  it("treats this <item> as an item, not the document", () => {
+    expect(resolve(tag(note), "in Hive plan, mark this goal done", docs)).toMatchObject({
+      via: "retarget",
+      target: { id: "w1" },
+    });
+  });
+
+  it("ignores pointer words inside a document's title", () => {
+    const titled = cand("m3", "bai/moc", "Make it work");
+    expect(
+      resolve(tag(note), "add a core idea to Make it work", [...docs, titled]),
+    ).toMatchObject({ via: "retarget", target: { id: "m3" } });
+  });
+
+  it("does not block a drive-level match: nothing is open to point at", () => {
+    expect(resolve(drive, "link it to Gossip protocols", docs)).toMatchObject({
+      via: "title",
+      target: { id: "n3" },
+    });
+  });
+
+  it("keeps the named document as a ref candidate on that turn", () => {
+    const viewed = { id: note.id, docType: note.docType, title: note.title, state: {} };
+    const u = "link this note to Gossip protocols";
+    expect(resolve(tag(note), u, docs)).toMatchObject({ via: "context" });
+    const ctx = driveRefContext(viewed, docs, { utterance: u });
+    expect(ctx.find((c) => c.kind === "note")).toEqual({
+      id: "n3",
+      title: "Gossip protocols",
+      kind: "note",
+    });
+  });
+});
+
+describe("mentionsCurrentDocument", () => {
+  it("reads this, this <doc noun>, it and here", () => {
+    for (const u of ["tag this", "what is this?", "tag this note", "tag this MOC", "rename it", "add one here"])
+      expect(mentionsCurrentDocument(u), u).toBe(true);
+  });
+
+  it("skips items, it's, its and other words", () => {
+    for (const u of [
+      "mark this goal done",
+      "it's about sync",
+      "fix its title",
+      "add a topic to CRDTs",
+      "there is history",
+      "edit item 3",
+    ])
+      expect(mentionsCurrentDocument(u), u).toBe(false);
+  });
+
+  it("masks document names first", () => {
+    expect(mentionsCurrentDocument("open Start here", ["Start here"])).toBe(false);
+    expect(mentionsCurrentDocument("link Start here to this", ["Start here"])).toBe(true);
   });
 });
 
