@@ -38,6 +38,7 @@ import {
   type ScoreCache,
 } from "./op-scorer.js";
 import { PROMPT_FORMAT_VERSION } from "./prompt-format.js";
+import type { WllamaChatMessage } from "./wllama-types.js";
 import {
   step1Candidates,
   step1CandidatesLabel,
@@ -205,6 +206,36 @@ export type V1Result =
       step2: ArgsStepResult;
     });
 
+/** The r6.1 step-1 messages over `cands` (`{"ops": [...]}` answers). */
+export function step1Messages(
+  utterance: string,
+  cands: CatalogEntry[],
+): WllamaChatMessage[] {
+  return scoringMessages(utterance, toOptions(cands, "key"), "ops");
+}
+
+/**
+ * Step 1: greedy generation under the alternation grammar of `cands`'
+ * answers. Throws when the answer is not one of them.
+ */
+export async function runStep1(
+  utterance: string,
+  cands: CatalogEntry[],
+  completeJson: CompleteJson,
+): Promise<V1Step1Result> {
+  const keys = cands.map((c) => c.key);
+  const t1 = performance.now();
+  const r = await completeJson(
+    step1Messages(utterance, cands),
+    { kind: "grammar", grammar: step1Grammar(cands) },
+    { temperature: 0, maxTokens: 64 },
+  );
+  const pick = step1Pick(r.parsed, keys);
+  if (pick === null)
+    throw new Error(`step 1 gave no listed op: ${JSON.stringify(r.text)}`);
+  return { candidates: keys, raw: r.text, pick, ms: performance.now() - t1 };
+}
+
 /**
  * Utterance → no-action, or one op of `docType`'s model with its args
  * (labels already mapped to ids). `refCandidates` gives the document's
@@ -262,17 +293,8 @@ export async function runV1(
     });
     if (cands.length === 0)
       return { ...common, step1: null, kind: "no-action", reason: "no-ops" };
-    const keys = cands.map((c) => c.key);
-    const t1 = performance.now();
-    const r = await deps.completeJson(
-      scoringMessages(utterance, toOptions(cands, "key"), "ops"),
-      { kind: "grammar", grammar: step1Grammar(cands) },
-      { temperature: 0, maxTokens: 64 },
-    );
-    const pick = step1Pick(r.parsed, keys);
-    if (pick === null)
-      throw new Error(`step 1 gave no listed op: ${JSON.stringify(r.text)}`);
-    step1 = { candidates: keys, raw: r.text, pick, ms: performance.now() - t1 };
+    step1 = await runStep1(utterance, cands, deps.completeJson);
+    const pick = step1.pick;
     if (pick === NONE_KEY)
       return { ...common, step1, kind: "no-action", reason: "model" };
     const picked = cands.find((c) => c.key === pick);
