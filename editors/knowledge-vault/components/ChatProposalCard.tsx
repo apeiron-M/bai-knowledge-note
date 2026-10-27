@@ -1,6 +1,6 @@
 import { readableOpName } from "../chat/core/op-scorer.js";
 import { documentTypeName } from "../chat/core/target-document.js";
-import type { ProposedAction } from "../hooks/use-chat-llm.js";
+import type { ProposedAction, Provenance } from "../hooks/use-chat-llm.js";
 
 interface ChatProposalCardProps {
   proposal: ProposedAction;
@@ -21,7 +21,7 @@ function show(v: unknown): string {
 
 /** The args the model filled, with ref ids shown with their labels. */
 function argRows(p: ProposedAction): [string, string][] {
-  const args = p.result.step2.args ?? {};
+  const args = p.step2.args ?? {};
   return Object.entries(args).map(([k, v]) => {
     const cands = Object.entries(p.refs).find(([path]) => path === k)?.[1];
     if (!cands) return [k, show(v)];
@@ -33,14 +33,28 @@ function argRows(p: ProposedAction): [string, string][] {
   });
 }
 
+function provenanceText(p: Provenance): string {
+  switch (p.kind) {
+    case "fused":
+      return `Chosen by X5 × Kev-FT (p ${p.p.toFixed(2)})`;
+    case "chosen":
+      return `You chose this from ${p.from} options`;
+    case "lora-alone":
+      return `Chosen by the LoRA alone (decision model ${p.reason})`;
+  }
+}
+
+const ms = (x: number | null | undefined) =>
+  x === null || x === undefined ? "–" : `${Math.round(x)} ms`;
+
 export function ChatProposalCard({
   proposal,
   dispatching,
   onConfirm,
   onCancel,
 }: ChatProposalCardProps) {
-  const { result, action, error, doc } = proposal;
-  const { entry, step1 } = result;
+  const { entry, step2, decision, action, error, doc } = proposal;
+  const { step1, timings, trie } = decision;
   const rows = argRows(proposal);
   return (
     <div
@@ -61,7 +75,14 @@ export function ChatProposalCard({
         on <strong>{doc.title}</strong> ({documentTypeName(doc.docType)})
         {" · "}
         <code>{entry.opName}</code>
-        {step1 && ` · picked from ${step1.candidates.length} operations`}
+        {` · picked from ${step1.candidates.length} operations`}
+      </div>
+      <div
+        data-testid="chat-proposal-provenance"
+        className="mb-2"
+        style={{ color: "var(--bai-text-muted)" }}
+      >
+        {provenanceText(proposal.provenance)}
       </div>
       {entry.description && (
         <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
@@ -103,8 +124,18 @@ export function ChatProposalCard({
             color: "var(--bai-text-secondary)",
           }}
         >
-          {JSON.stringify(action?.input ?? result.step2.args, null, 2)}
+          {JSON.stringify(action?.input ?? step2.args, null, 2)}
         </pre>
+      </details>
+      <details className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
+        <summary className="cursor-pointer">Details</summary>
+        <div className="mt-1" data-testid="chat-proposal-timings">
+          Choosing {ms(timings.step1Ms)} · decision model {ms(timings.kevMs)} · scoring{" "}
+          {ms(timings.trieMs)}
+          {trie && ` (${trie.requests} requests)`} · arguments {ms(proposal.fillMs)}
+          {decision.config === "C" && decision.margin !== null &&
+            ` · fused margin ${decision.margin.toFixed(2)}`}
+        </div>
       </details>
       {error && (
         <div className="mb-2" style={{ color: "#ef4444" }}>

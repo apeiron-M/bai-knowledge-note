@@ -12,7 +12,17 @@ import {
   routeChatTurn,
 } from "../chat/core/target-document.js";
 import { v1Catalog } from "../chat/core/v1-pipeline.js";
-import { useChatLlm, type ProposedAction } from "../hooks/use-chat-llm.js";
+import {
+  useChatLlm,
+  type ChatLlm,
+  type ChatReply,
+  type ChatStage,
+  type ModelState,
+  type PendingChoice,
+  type ProposedAction,
+} from "../hooks/use-chat-llm.js";
+import { ChatChoiceCard } from "./ChatChoiceCard.js";
+import { ChatModelSettings } from "./ChatModelSettings.js";
 import { ChatProposalCard } from "./ChatProposalCard.js";
 
 interface ChatMessage {
@@ -36,17 +46,20 @@ export function toChatDocument(d: PHDocument): ChatDocument {
   };
 }
 
-const NO_ACTION_TEXT: Record<string, string> = {
-  model: "the model chose no document change",
-  gate: "the no-action gate",
-  "no-ops": "this document type has no operations",
+const STAGE_TEXT: Record<ChatStage, string> = {
+  choose: "Choosing the operation...",
+  score: "Scoring alternatives...",
+  "wait-kev": "Waiting for the decision model...",
+  fill: "Filling arguments...",
+  answer: "Answering...",
 };
 
 /**
- * Chat tab, v1 pipeline (R2c, prompt format r6.1): a request on the target
- * document becomes one proposed action (confirm before dispatch); a request
- * the model maps to no change is answered. Without a target document the
- * tab answers questions and asks for a document for anything else.
+ * Chat tab, configuration C (X5 LoRA x Kev-FT, margin gate): a request on
+ * the target document becomes one proposed action (confirm before
+ * dispatch), or a choice among the fused top 3 when the models are not sure;
+ * a request the LoRA maps to no change is answered. Without a target
+ * document the tab answers questions and asks for a document otherwise.
  */
 export function ChatView({ documents }: { documents: PHDocument[] }) {
   const llm = useChatLlm();
@@ -56,6 +69,7 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
   const [dispatching, setDispatching] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [proposal, setProposal] = useState<ProposedAction | null>(null);
+  const [choice, setChoice] = useState<PendingChoice | null>(null);
 
   const supportedTypes = useMemo(
     () => new Set(v1Catalog().map((e) => e.docType)),
@@ -68,11 +82,31 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
     setMessages((m) => [...m, msg]);
   }
 
+  function showReply(reply: ChatReply) {
+    if (reply.kind === "answer") {
+      push({
+        role: "system",
+        text: "No document change (the model chose no document change); answering.",
+      });
+      push({ role: "assistant", text: reply.text });
+    } else if (reply.kind === "choose") setChoice(reply.choice);
+    else {
+      const pr = reply.proposal.provenance;
+      if (pr.kind === "lora-alone" && pr.reason.startsWith("failed"))
+        push({
+          role: "system",
+          text: "Decision model failed on this message; LoRA alone.",
+        });
+      setProposal(reply.proposal);
+    }
+  }
+
   async function handleSend() {
     const text = input.trim();
     if (!text || busy) return;
     setInput("");
     setProposal(null);
+    setChoice(null);
     push({ role: "user", text });
     const route = routeChatTurn(
       text,
@@ -108,15 +142,7 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
           text: `Target: "${route.doc.title}" (named in the request).`,
         });
       }
-      const reply = await llm.send(text, route.doc, docs);
-      if (reply.kind === "answer") {
-        const why =
-          reply.result?.kind === "no-action"
-            ? NO_ACTION_TEXT[reply.result.reason]
-            : "no change";
-        push({ role: "system", text: `No document change (${why}); answering.` });
-        push({ role: "assistant", text: reply.text });
-      } else setProposal(reply.proposal);
+      showReply(await llm.send(text, route.doc, docs));
     } catch (err) {
       push({
         role: "error",
@@ -127,9 +153,35 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
     }
   }
 
+  async function handleChoose(index: number) {
+    const opt = choice?.options[index];
+    if (!choice || !opt || busy) return;
+    setBusy(true);
+    try {
+      const reply = await llm.choose(choice, opt.entry);
+      setChoice(null);
+      showReply(reply);
+    } catch (err) {
+      push({
+        role: "error",
+        text: err instanceof Error ? err.message : String(err),
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleNone() {
+    setChoice(null);
+    push({
+      role: "system",
+      text: "Nothing changed. Try rephrasing, or name the change more directly.",
+    });
+  }
+
   async function handleConfirm() {
     if (!proposal?.action) return;
-    const { doc, result } = proposal;
+    const { doc, entry } = proposal;
     setDispatching(true);
     const errors: string[] = [];
     try {
@@ -139,7 +191,7 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
       if (ok && errors.length === 0)
         push({
           role: "system",
-          text: `Dispatched ${result.entry.opName} to "${doc.title}".`,
+          text: `Dispatched ${entry.opName} to "${doc.title}".`,
         });
       else
         push({
@@ -161,7 +213,7 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
     if (proposal)
       push({
         role: "system",
-        text: `Cancelled ${proposal.result.entry.opName}; nothing dispatched.`,
+        text: `Cancelled ${proposal.entry.opName}; nothing dispatched.`,
       });
     setProposal(null);
   }
@@ -187,9 +239,9 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
             </option>
           ))}
         </select>
-        <LlmStatus llm={llm} />
+        <ModelStatusRows llm={llm} />
       </div>
-      <ModelSetting llm={llm} />
+      <ChatModelSettings llm={llm} />
 
       <div className="flex-1 space-y-2 overflow-auto">
         {messages.map((m, i) => (
@@ -210,6 +262,37 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
             {m.text}
           </div>
         ))}
+        {busy && llm.stage && (
+          <div
+            data-testid="chat-stage"
+            className="px-3 text-xs"
+            style={{ color: "var(--bai-text-muted)" }}
+          >
+            {STAGE_TEXT[llm.stage]}
+            {llm.stage === "wait-kev" && llm.kev.phase !== "ready" && (
+              <>
+                {" "}
+                <button
+                  type="button"
+                  data-testid="chat-skip-kev"
+                  onClick={llm.skipKev}
+                  className="underline"
+                  style={{ color: "var(--bai-accent)" }}
+                >
+                  Use LoRA alone for this message
+                </button>
+              </>
+            )}
+          </div>
+        )}
+        {choice && (
+          <ChatChoiceCard
+            choice={choice}
+            busy={busy}
+            onChoose={(i) => void handleChoose(i)}
+            onNone={handleNone}
+          />
+        )}
         {proposal && (
           <ChatProposalCard
             proposal={proposal}
@@ -256,78 +339,79 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
   );
 }
 
-function LlmStatus({ llm }: { llm: ReturnType<typeof useChatLlm> }) {
-  const label =
-    llm.status === "loading"
-      ? `Loading model ${Math.round(llm.progress * 100)}%`
-      : llm.status === "ready"
-        ? `Model ready${llm.load ? ` (${llm.load.llm.backend}, load ${Math.round(llm.load.llm.loadMs)} ms)` : ""}`
-        : llm.status === "error"
-          ? `Model error: ${llm.error ?? ""}`
-          : "Model loads on first message";
+function statusText(m: ModelState, idle: string): string {
+  switch (m.phase) {
+    case "idle":
+      return idle;
+    case "off":
+      return "off";
+    case "downloading":
+      return `downloading ${Math.round(m.progress * 100)}%`;
+    case "loading":
+      return "loading";
+    case "ready": {
+      const i = m.info;
+      if (!i) return "ready";
+      const gpu = i.gpuLayers ? `, ${i.gpuLayers.offloaded}/${i.gpuLayers.total} layers on GPU` : "";
+      return `ready (${i.backend}${gpu}, load ${Math.round(i.loadMs)} ms${i.useCache ? ", cached" : ""})`;
+    }
+    case "error":
+      return `error: ${m.error ?? ""}`;
+  }
+}
+
+function StatusRow({
+  testId,
+  name,
+  state,
+  idle,
+}: {
+  testId: string;
+  name: string;
+  state: ModelState;
+  idle: string;
+}) {
   return (
-    <span className="ml-auto flex items-center gap-2 text-xs">
-      {llm.status === "loading" && (
-        <progress max={1} value={llm.progress} className="h-1 w-24" />
+    <span className="flex items-center gap-2">
+      {(state.phase === "downloading" || state.phase === "loading") && (
+        <progress max={1} value={state.progress} className="h-1 w-20" />
       )}
-      <span
-        data-testid="chat-llm-status"
-        style={{ color: "var(--bai-text-muted)" }}
-      >
-        {label}
+      <span data-testid={testId} style={{ color: "var(--bai-text-muted)" }}>
+        {name}: {statusText(state, idle)}
+        {state.mismatch && (
+          <span style={{ color: "#d97706" }}>
+            {" "}
+            · file differs from the measured C artifact ({state.mismatch})
+          </span>
+        )}
       </span>
     </span>
   );
 }
 
-/** Which model is loaded, and a field to point the tab at another GGUF. */
-function ModelSetting({ llm }: { llm: ReturnType<typeof useChatLlm> }) {
-  const [draft, setDraft] = useState(
-    llm.model.source.kind === "url" ? llm.model.source.url : "",
-  );
+/** The two models' status and the configuration the next turn runs. */
+function ModelStatusRows({ llm }: { llm: ChatLlm }) {
+  const { lora, kev } = llm.sources;
   return (
-    <details className="text-xs" style={{ color: "var(--bai-text-muted)" }}>
-      <summary className="cursor-pointer">
-        <span data-testid="chat-model-label">{llm.model.label}</span>
-        {!llm.model.measured && (
-          <span style={{ color: "#d97706" }}>
-            {" "}
-            · not measured with this pipeline; expect more wrong proposals
-          </span>
-        )}
-      </summary>
-      <form
-        className="mt-2 flex gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          llm.setModelUrl(draft);
-        }}
+    <div className="ml-auto flex flex-col items-end gap-0.5 text-xs">
+      <StatusRow
+        testId="chat-lora-status"
+        name={`Command model (${lora.matchesManifest ? "X5 LoRA 350M, 229 MB" : lora.fileName})`}
+        state={llm.lora}
+        idle="loads on first message"
+      />
+      <StatusRow
+        testId="chat-kev-status"
+        name={`Decision model (${kev.matchesManifest ? "Kev-FT 0.8B, 530 MB" : kev.fileName})`}
+        state={llm.kev}
+        idle={llm.settings.useKev ? "loads on first request to a document" : "off"}
+      />
+      <span
+        data-testid="chat-config-label"
+        style={{ color: llm.config.kind === "C" ? "var(--bai-text-muted)" : "#d97706" }}
       >
-        <input
-          aria-label="Model GGUF URL"
-          name="chat-model-url"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder="GGUF URL (empty = base model from Hugging Face)"
-          className="flex-1 rounded-md px-2 py-1"
-          style={{
-            border: "1px solid var(--bai-border)",
-            backgroundColor: "var(--bai-surface)",
-            color: "var(--bai-text)",
-          }}
-        />
-        <button
-          type="submit"
-          className="rounded-md px-3 py-1"
-          style={{ border: "1px solid var(--bai-border)" }}
-        >
-          Use
-        </button>
-      </form>
-      <div className="mt-1">
-        Saved in this browser; the model loads on the next message.
-        {llm.model.from === "env" && " Currently from VITE_CHAT_MODEL_URL."}
-      </div>
-    </details>
+        {llm.config.text}
+      </span>
+    </div>
   );
 }

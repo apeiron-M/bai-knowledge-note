@@ -1,27 +1,54 @@
-import { useCallback, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { generateId } from "document-model/core";
 import type { Action } from "document-model";
-import { loadLlm, type LlmClient, type LlmInfo } from "../chat/core/index.js";
+import type { ArgsStepResult } from "../chat/core/args-step.js";
 import {
-  resolveModelSource,
-  type ResolvedModel,
+  decideOp,
+  fillArgs,
+  type DecideResult,
+  type KevFallback,
+} from "../chat/core/c-pipeline.js";
+import { buildAction } from "../chat/core/envelope.js";
+import type { LlmClient } from "../chat/core/llm-client.js";
+import type { TrieMode } from "../chat/core/lora-trie.js";
+import { C_FUSION, C_HELDOUT6 } from "../chat/core/model-manifest.js";
+import {
+  resolveCSources,
+  type ModelSettings,
+  type ResolvedSources,
 } from "../chat/core/model-source.js";
-import type { ScoreCache } from "../chat/core/op-scorer.js";
+import type { CatalogEntry } from "../chat/core/op-catalog.js";
 import {
   currentListsFor,
   driveRefContext,
   refCandidatesFor,
   type ChatDocument,
 } from "../chat/core/ref-candidates.js";
+import { v1Catalog, type RefCandidates } from "../chat/core/v1-pipeline.js";
 import {
-  runV1,
-  v1Action,
-  v1Catalog,
-  type RefCandidates,
-  type V1Result,
-} from "../chat/core/v1-pipeline.js";
+  chatModelsState,
+  clearModelCache,
+  ensureKev,
+  ensureLora,
+  kevBackendFor,
+  kevBlocker,
+  kevServedT,
+  loraTrieBlocker,
+  markKevOff,
+  resetKevError,
+  setChatStage,
+  subscribeChatModels,
+  unloadKev,
+} from "./chat-models.js";
 
-export type ChatLlmStatus = "idle" | "loading" | "ready" | "error";
+export type { ChatStage, ModelPhase, ModelState } from "./chat-models.js";
 
 /** The user's local calendar date, `YYYY-MM-DD`. */
 function localDate(d: Date): string {
@@ -29,133 +56,241 @@ function localDate(d: Date): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+type OpDecision = Extract<DecideResult, { kind: "op" }>;
+
+/** How the proposed op was chosen (shown on the card). */
+export type Provenance =
+  | { kind: "fused"; p: number }
+  | { kind: "chosen"; from: number }
+  | { kind: "lora-alone"; reason: string };
+
 export interface ProposedAction {
-  result: Extract<V1Result, { kind: "action" }>;
+  entry: CatalogEntry;
+  step2: ArgsStepResult;
   /** The document the action targets. */
   doc: ChatDocument;
   /** The labeled ref candidates step 2 saw, by dotted path. */
   refs: RefCandidates;
+  decision: OpDecision;
+  provenance: Provenance;
+  /** Step 2 wall time, ms. */
+  fillMs: number;
   /** Present when the args built a zod-valid action. */
   action?: Action;
   error?: string;
 }
 
-export type ChatReply =
-  | { kind: "answer"; text: string; result: V1Result | null }
-  | { kind: "proposal"; proposal: ProposedAction };
-
-export interface ChatLoadInfo {
-  llm: LlmInfo;
-  /** Wall time of this `ensureLoaded` call, ms. */
-  wallMs: number;
+/** A gated turn: the user picks one of `options` or none of them. */
+export interface PendingChoice {
+  utterance: string;
+  doc: ChatDocument;
+  documents: ChatDocument[];
+  decision: OpDecision;
+  options: { entry: CatalogEntry; p: number }[];
 }
 
-/** localStorage key of the tab's model URL setting. */
-export const MODEL_URL_KEY = "bai.chat.modelUrl";
+export type ChatReply =
+  | { kind: "answer"; text: string; decision: DecideResult | null }
+  | { kind: "proposal"; proposal: ProposedAction }
+  | { kind: "choose"; choice: PendingChoice };
 
-function readSetting(): string | null {
+/* ------------------------------ settings ------------------------------ */
+
+export const SETTING_KEYS = {
+  loraUrl: "bai.chat.loraUrl",
+  kevUrl: "bai.chat.kevUrl",
+  baseUrl: "bai.chat.modelBaseUrl",
+  useKev: "bai.chat.useKev",
+  trieMode: "bai.chat.trieMode",
+  debug: "bai.chat.debug",
+  /** Pre-C single-model URL, migrated to `loraUrl`. */
+  legacyModelUrl: "bai.chat.modelUrl",
+} as const;
+
+export interface ChatSettings extends ModelSettings {
+  /** The decision model toggle (default on). */
+  useKev: boolean;
+  trieMode: TrieMode;
+}
+
+function storage(): Storage | null {
   try {
-    return globalThis.localStorage.getItem(MODEL_URL_KEY);
+    return globalThis.localStorage;
   } catch {
     return null;
   }
 }
 
-export function saveModelUrlSetting(url: string): void {
+function read(key: string): string | null {
   try {
-    if (url.trim()) globalThis.localStorage.setItem(MODEL_URL_KEY, url.trim());
-    else globalThis.localStorage.removeItem(MODEL_URL_KEY);
+    return storage()?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function write(key: string, value: string | null): void {
+  try {
+    if (value === null || value === "") storage()?.removeItem(key);
+    else storage()?.setItem(key, value);
   } catch {
     // Storage blocked: the setting lasts for this page only.
   }
 }
 
-/** `VITE_CHAT_MODEL_URL`, when the host's Vite exposes it to this package. */
-function envModelUrl(): string | undefined {
-  const meta = import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
+export function readChatSettings(): ChatSettings {
+  const legacy = read(SETTING_KEYS.legacyModelUrl);
+  if (legacy && !read(SETTING_KEYS.loraUrl)) {
+    write(SETTING_KEYS.loraUrl, legacy);
+    write(SETTING_KEYS.legacyModelUrl, null);
+  }
+  return {
+    loraUrl: read(SETTING_KEYS.loraUrl),
+    kevUrl: read(SETTING_KEYS.kevUrl),
+    baseUrl: read(SETTING_KEYS.baseUrl),
+    useKev: read(SETTING_KEYS.useKev) !== "0",
+    trieMode: read(SETTING_KEYS.trieMode) === "exact" ? "exact" : "branch",
   };
-  return meta.env?.VITE_CHAT_MODEL_URL;
 }
 
-// One model per page: switching tabs must not reload 229 MB. Content-free
-// ref-scoring requests depend on the model, so the cache goes with it.
-let loaded: {
-  key: string;
-  client: Promise<LlmClient>;
-  cache: ScoreCache;
-} | null = null;
-
-function hasWebGpu(): boolean {
-  return typeof navigator !== "undefined" && "gpu" in navigator;
+function saveChatSettings(s: ChatSettings): void {
+  write(SETTING_KEYS.loraUrl, s.loraUrl?.trim() || null);
+  write(SETTING_KEYS.kevUrl, s.kevUrl?.trim() || null);
+  write(SETTING_KEYS.baseUrl, s.baseUrl?.trim() || null);
+  write(SETTING_KEYS.useKev, s.useKev ? null : "0");
+  write(SETTING_KEYS.trieMode, s.trieMode === "exact" ? "exact" : null);
 }
+
+function viteEnv(): Record<string, string | boolean | undefined> {
+  const meta = import.meta as ImportMeta & {
+    env?: Record<string, string | boolean | undefined>;
+  };
+  return meta.env ?? {};
+}
+
+function envString(v: string | boolean | undefined): string | undefined {
+  return typeof v === "string" ? v : undefined;
+}
+
+/** Dev build, or the `bai.chat.debug=1` flag: parity check, timings. */
+export function chatDebugEnabled(): boolean {
+  return viteEnv().DEV === true || read(SETTING_KEYS.debug) === "1";
+}
+
+/** `navigator.deviceMemory` (GB, Chrome only), when exposed. */
+export function deviceMemoryGb(): number | null {
+  if (typeof navigator === "undefined") return null;
+  const v: unknown = Reflect.get(navigator, "deviceMemory");
+  return typeof v === "number" ? v : null;
+}
+
+/* ------------------------------- labels ------------------------------- */
+
+export interface ConfigLabel {
+  kind: "C" | "A" | "custom";
+  text: string;
+}
+
+const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
+
+export function kevReasonText(f: KevFallback): string {
+  switch (f.reason) {
+    case "off":
+      return "turned off";
+    case "skipped":
+      return "skipped for this message";
+    case "unavailable":
+      return `unavailable: ${f.detail}`;
+    case "failed":
+      return `failed: ${f.detail}`;
+  }
+}
+
+export function loraAloneText(reason: string): string {
+  return `LoRA alone (decision model ${reason}): held-out-6 ${pct(C_HELDOUT6.loraAloneOp)} op, no ask step`;
+}
+
+function configLabel(
+  sources: ResolvedSources,
+  kevReason: string | null,
+): ConfigLabel {
+  if (sources.config === "custom")
+    return {
+      kind: "custom",
+      text: "Custom models, not measured with this pipeline; expect more wrong proposals",
+    };
+  if (kevReason) return { kind: "A", text: loraAloneText(kevReason) };
+  return {
+    kind: "C",
+    text: `Configuration C: X5 × Kev-FT, gate τ ${C_FUSION.tau} (held-out-6: ${pct(C_HELDOUT6.opOneShot)} op one-shot, ${pct(C_HELDOUT6.asked)} asked)`,
+  };
+}
+
+/* ------------------------------- timings ------------------------------ */
+
+export interface ChatTurnTiming {
+  at: number;
+  kind: "none" | "op" | "fill";
+  config?: "C" | "A";
+  decide?: OpDecision["timings"];
+  trie?: OpDecision["trie"];
+  fillMs?: number;
+  kevStarted?: boolean;
+}
+
+declare global {
+  interface Window {
+    __baiChatTimings?: ChatTurnTiming[];
+  }
+}
+
+function recordTiming(t: ChatTurnTiming): void {
+  if (typeof window === "undefined" || !chatDebugEnabled()) return;
+  (window.__baiChatTimings ??= []).push(t);
+}
+
+/* -------------------------------- hook -------------------------------- */
 
 export function useChatLlm() {
-  const [setting, setSetting] = useState<string | null>(readSetting);
-  const model: ResolvedModel = useMemo(
-    () => resolveModelSource(setting, envModelUrl()),
-    [setting],
-  );
-  const [status, setStatus] = useState<ChatLlmStatus>(
-    loaded?.key === model.key ? "ready" : "idle",
-  );
-  const [progress, setProgress] = useState(0);
-  const [load, setLoad] = useState<ChatLoadInfo | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [settings, setSettingsState] = useState<ChatSettings>(readChatSettings);
+  const models = useSyncExternalStore(subscribeChatModels, chatModelsState);
+  const sources = useMemo(() => {
+    const env = viteEnv();
+    return resolveCSources(settings, {
+      loraUrl: envString(env.VITE_CHAT_LORA_URL),
+      kevUrl: envString(env.VITE_CHAT_KEV_URL),
+      modelUrl: envString(env.VITE_CHAT_MODEL_URL),
+      baseUrl: envString(env.VITE_CHAT_MODEL_BASE_URL),
+    });
+  }, [settings]);
+  const skipRef = useRef<(() => void) | null>(null);
 
-  const setModelUrl = useCallback((url: string) => {
-    saveModelUrlSetting(url);
-    setSetting(url.trim() || null);
-    setStatus("idle");
-    setLoad(null);
+  const blocker =
+    kevBlocker(settings.useKev) ??
+    loraTrieBlocker(models.lora.info) ??
+    (models.kev.phase === "error" ? `failed to load: ${models.kev.error ?? ""}` : null);
+  const label = configLabel(sources, blocker);
+
+  const setSettings = useCallback((patch: Partial<ChatSettings>) => {
+    setSettingsState((s) => {
+      const next = { ...s, ...patch };
+      saveChatSettings(next);
+      if (patch.useKev === false) void unloadKev(true);
+      if (patch.useKev === true || patch.kevUrl !== undefined || patch.baseUrl !== undefined)
+        resetKevError();
+      return next;
+    });
   }, []);
-
-  /** wllama + the chosen GGUF (the R2c default needs no embedder). */
-  const ensureLoaded = useCallback(async () => {
-    const t0 = performance.now();
-    if (loaded?.key !== model.key) {
-      const old = loaded;
-      setStatus("loading");
-      setError(null);
-      const src = model.source;
-      loaded = {
-        key: model.key,
-        cache: new Map(),
-        client: (async () => {
-          if (old) await (await old.client.catch(() => null))?.exit();
-          return loadLlm({
-            backend: hasWebGpu() ? "webgpu" : "cpu",
-            onProgress: (l, t) => setProgress(t ? l / t : 0),
-            ...(src.kind === "url"
-              ? { modelUrl: src.url }
-              : { model: { repo: src.repo, file: src.file } }),
-          });
-        })(),
-      };
-    }
-    const mine = loaded;
-    try {
-      const client = await mine.client;
-      setLoad({ llm: client.info, wallMs: performance.now() - t0 });
-      setStatus("ready");
-      return { client, cache: mine.cache };
-    } catch (err) {
-      if (loaded === mine) loaded = null;
-      setError(err instanceof Error ? err.message : String(err));
-      setStatus("error");
-      throw err;
-    }
-  }, [model]);
 
   /** Plain answer for a request that changes nothing (Q&A stub). */
   const answer = useCallback(async (client: LlmClient, question: string) => {
     // TODO(spike): ground answers in `useGraphSearch` results (Scope A).
+    setChatStage("answer");
     const r = await client.chatStream(
       [
         {
           role: "system",
-          content:
-            "You are a concise assistant inside a personal knowledge vault.",
+          content: "You are a concise assistant inside a personal knowledge vault.",
         },
         { role: "user", content: question },
       ],
@@ -167,19 +302,54 @@ export function useChatLlm() {
   /** A question with no target document: answered, nothing dispatched. */
   const ask = useCallback(
     async (utterance: string): Promise<ChatReply> => {
-      const { client } = await ensureLoaded();
-      return {
-        kind: "answer",
-        text: await answer(client, utterance),
-        result: null,
-      };
+      try {
+        const { client } = await ensureLora(sources.lora);
+        return { kind: "answer", text: await answer(client, utterance), decision: null };
+      } finally {
+        setChatStage(null);
+      }
     },
-    [answer, ensureLoaded],
+    [answer, sources],
+  );
+
+  /** Step 2 on the chosen op, then the dispatchable action. */
+  const fill = useCallback(
+    async (
+      utterance: string,
+      entry: CatalogEntry,
+      doc: ChatDocument,
+      documents: ChatDocument[],
+      decision: OpDecision,
+      provenance: Provenance,
+    ): Promise<ProposedAction> => {
+      const { client, cache } = await ensureLora(sources.lora);
+      setChatStage("fill");
+      const refs = refCandidatesFor(entry.key, doc.state, driveRefContext(doc, documents));
+      const t0 = performance.now();
+      const step2 = await fillArgs(utterance, entry, client, {
+        refCandidates: refs,
+        today: localDate(new Date()),
+        currentLists: currentListsFor(entry.key, doc.state),
+        cache,
+      });
+      const fillMs = performance.now() - t0;
+      recordTiming({ at: Date.now(), kind: "fill", fillMs });
+      const base = { entry, step2, doc, refs, decision, provenance, fillMs };
+      if (!step2.args) return { ...base, error: step2.error ?? "no arguments" };
+      const built = buildAction(entry, step2.args, {
+        generateId,
+        now: () => new Date().toISOString(),
+        // TODO(spike): use the signed-in user's identity.
+        actor: "chat",
+      });
+      return built.ok ? { ...base, action: built.action } : { ...base, error: built.error };
+    },
+    [sources],
   );
 
   /**
-   * The v1 pipeline (R2c) on `doc`: the model's no-action is answered,
-   * anything else becomes one proposed action (confirm before dispatch).
+   * Configuration C on `doc`: no-action is answered; a confident op becomes
+   * a proposal; a small fused margin asks the user to choose among 3.
    */
   const send = useCallback(
     async (
@@ -187,55 +357,138 @@ export function useChatLlm() {
       doc: ChatDocument,
       documents: ChatDocument[],
     ): Promise<ChatReply> => {
-      const { client, cache } = await ensureLoaded();
-      const ctx = driveRefContext(doc, documents);
-      let refs: RefCandidates = {};
-      const result = await runV1(
-        utterance,
-        doc.docType,
-        (entry) => (refs = refCandidatesFor(entry.key, doc.state, ctx)),
-        {
-          runtime: { catalog: v1Catalog() },
-          completeJson: client.completeJson,
-          scoreText: client.scoreText,
-          cache,
-        },
-        {
-          today: localDate(new Date()),
-          currentLists: (entry) => currentListsFor(entry.key, doc.state),
-        },
-      );
-      if (result.kind === "no-action")
+      try {
+        const { client } = await ensureLora(sources.lora);
+        const block =
+          kevBlocker(settings.useKev) ?? loraTrieBlocker(chatModelsState().lora.info);
+        if (block === "off") markKevOff();
+        const skip = new Promise<void>((resolve) => (skipRef.current = resolve));
+        const decision = await decideOp(
+          utterance,
+          doc.docType,
+          {
+            catalog: v1Catalog(),
+            lora: client,
+            kev: block ? null : kevBackendFor(sources.kev),
+            kevOff: block
+              ? block === "off"
+                ? { reason: "off" }
+                : { reason: "unavailable", detail: block }
+              : undefined,
+          },
+          {
+            trieMode: settings.trieMode,
+            skipKev: skip,
+            servedT: kevServedT(),
+            onStage: setChatStage,
+          },
+        );
+        skipRef.current = null;
+        recordTiming({
+          at: Date.now(),
+          kind: decision.kind,
+          config: decision.kind === "op" ? decision.config : undefined,
+          decide: decision.timings,
+          trie: decision.kind === "op" ? decision.trie : undefined,
+          kevStarted: decision.kind === "none" ? decision.kevStarted : undefined,
+        });
+        if (decision.kind === "none")
+          return { kind: "answer", text: await answer(client, utterance), decision };
+        if (decision.asked)
+          return {
+            kind: "choose",
+            choice: {
+              utterance,
+              doc,
+              documents,
+              decision,
+              options: decision.offered.map((entry) => ({
+                entry,
+                p: decision.p?.[entry.key] ?? 0,
+              })),
+            },
+          };
+        const provenance: Provenance =
+          decision.config === "C"
+            ? { kind: "fused", p: decision.p?.[decision.pick.key] ?? 0 }
+            : {
+                kind: "lora-alone",
+                reason: kevReasonText(decision.fallback ?? { reason: "off" }),
+              };
         return {
-          kind: "answer",
-          text: await answer(client, utterance),
-          result,
+          kind: "proposal",
+          proposal: await fill(utterance, decision.pick, doc, documents, decision, provenance),
         };
-      const built = v1Action(result, {
-        generateId,
-        now: () => new Date().toISOString(),
-        // TODO(spike): use the signed-in user's identity.
-        actor: "chat",
-      });
-      return {
-        kind: "proposal",
-        proposal: built.ok
-          ? { result, doc, refs, action: built.action }
-          : { result, doc, refs, error: built.error },
-      };
+      } finally {
+        skipRef.current = null;
+        setChatStage(null);
+      }
     },
-    [answer, ensureLoaded],
+    [answer, fill, settings, sources],
   );
 
+  /** The user picked `entry` from a gated choice. */
+  const choose = useCallback(
+    async (choice: PendingChoice, entry: CatalogEntry): Promise<ChatReply> => {
+      try {
+        return {
+          kind: "proposal",
+          proposal: await fill(
+            choice.utterance,
+            entry,
+            choice.doc,
+            choice.documents,
+            choice.decision,
+            { kind: "chosen", from: choice.options.length },
+          ),
+        };
+      } finally {
+        setChatStage(null);
+      }
+    },
+    [fill],
+  );
+
+  /** While waiting for Kev: run this message with the LoRA alone. */
+  const skipKev = useCallback(() => skipRef.current?.(), []);
+
+  /** Dev: `window.__baiChatParityC()` on the configured models. */
+  const installParity = useCallback(async () => {
+    const { installParityC } = await import("../chat/dev/parity-c.js");
+    installParityC(async () => ({
+      lora: (await ensureLora(sources.lora)).client,
+      kev: await ensureKev(sources.kev),
+    }));
+  }, [sources]);
+  useEffect(() => {
+    if (chatDebugEnabled()) void installParity();
+  }, [installParity]);
+
+  const runParity = useCallback(async () => {
+    await installParity();
+    if (!window.__baiChatParityC) throw new Error("parity check not installed");
+    return window.__baiChatParityC(settings.trieMode);
+  }, [installParity, settings]);
+
   return {
-    status,
-    progress,
-    load,
-    error,
-    model,
-    setModelUrl,
-    ensureLoaded,
+    settings,
+    setSettings,
+    sources,
+    lora: models.lora,
+    kev: models.kev,
+    stage: models.stage,
+    config: label,
+    kevBlocker: blocker,
+    deviceMemoryGb: deviceMemoryGb(),
+    debug: chatDebugEnabled(),
     send,
+    choose,
     ask,
+    skipKev,
+    unloadKev: () => unloadKev(!settings.useKev),
+    clearCache: clearModelCache,
+    runParity,
   };
 }
+
+export type ChatLlm = ReturnType<typeof useChatLlm>;
