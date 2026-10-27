@@ -1,0 +1,1295 @@
+[
+ {
+  "key": "derivation:INITIALIZE_DERIVATION",
+  "model": "derivation",
+  "docType": "bai/derivation",
+  "opName": "INITIALIZE_DERIVATION",
+  "module": "derivation-management",
+  "specDescription": "Initialize derivation record",
+  "override": "Starts a derivation record by setting the engine version and the time the vault configuration was derived. Use once, when a new derivation is first created.",
+  "fields": [
+   "engineVersion"
+  ]
+ },
+ {
+  "key": "derivation:ADD_SIGNAL",
+  "model": "derivation",
+  "docType": "bai/derivation",
+  "opName": "ADD_SIGNAL",
+  "module": "derivation-management",
+  "specDescription": "Record a user signal that influenced derivation",
+  "override": "Records something the user said that influenced the derivation, with the dimensions it affected and how it was interpreted. Use to log the evidence behind a configuration choice.",
+  "fields": [
+   "utterance",
+   "influencedDimensions",
+   "interpretation"
+  ]
+ },
+ {
+  "key": "derivation:ADD_RESEED_ENTRY",
+  "model": "derivation",
+  "docType": "bai/derivation",
+  "opName": "ADD_RESEED_ENTRY",
+  "module": "derivation-management",
+  "specDescription": "Record a re-derivation event",
+  "override": "Appends an entry to the re-derivation history with the reason and the list of changes made. Use when the configuration is derived again from scratch.",
+  "fields": [
+   "reason",
+   "changes"
+  ]
+ },
+ {
+  "key": "derivation:UPDATE_DIMENSION_RATIONALE",
+  "model": "derivation",
+  "docType": "bai/derivation",
+  "opName": "UPDATE_DIMENSION_RATIONALE",
+  "module": "derivation-management",
+  "specDescription": "Update rationale for a dimension position",
+  "override": "Sets the position, confidence and rationale for one configuration dimension, with supporting claims and failure modes, replacing any earlier rationale for that dimension. Use to explain why a dimension sits where it does.",
+  "fields": [
+   "dimension",
+   "position",
+   "confidence",
+   "rationale",
+   "supportingClaims",
+   "failureModes"
+  ]
+ },
+ {
+  "key": "health-report:GENERATE_REPORT",
+  "model": "health-report",
+  "docType": "bai/health-report",
+  "opName": "GENERATE_REPORT",
+  "module": "report-management",
+  "specDescription": "Generate a health report",
+  "override": "Starts a fresh vault health report with an overall status, graph metrics (note count, orphans, dangling links, density) and recommendations, clearing any earlier checks. Use when running a new health audit of the knowledge graph.",
+  "fields": [
+   "mode",
+   "overallStatus",
+   "graphMetrics",
+   "recommendations"
+  ]
+ },
+ {
+  "key": "health-report:ADD_CHECK",
+  "model": "health-report",
+  "docType": "bai/health-report",
+  "opName": "ADD_CHECK",
+  "module": "report-management",
+  "specDescription": "Add a health check result",
+  "override": "Appends one health check result (category, pass/warn/fail status, message, affected items) to the current report. Use to record the outcome of a single check after the report is generated.",
+  "fields": [
+   "category",
+   "status",
+   "message",
+   "affectedItems"
+  ]
+ },
+ {
+  "key": "knowledge-note:SET_TITLE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SET_TITLE",
+  "module": "content",
+  "specDescription": "Set the note title",
+  "override": "Renames the note by replacing its title. Use when the user wants the note called something else.",
+  "fields": [
+   "title"
+  ]
+ },
+ {
+  "key": "knowledge-note:SET_DESCRIPTION",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SET_DESCRIPTION",
+  "module": "content",
+  "specDescription": "Set the note description (max 200 chars)",
+  "override": "Replaces the note's short description, a single sentence of at most 200 characters stating what the note says. Use to write or change the one-line synopsis, not the body.",
+  "fields": [
+   "description"
+  ]
+ },
+ {
+  "key": "knowledge-note:SET_NOTE_TYPE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SET_NOTE_TYPE",
+  "module": "content",
+  "specDescription": "Set or change the note type",
+  "override": "Sets the note type, a free-text label for what kind of note this is. Use to change the note's type.",
+  "fields": [
+   "noteType"
+  ]
+ },
+ {
+  "key": "knowledge-note:SET_CONTENT",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SET_CONTENT",
+  "module": "content",
+  "specDescription": "Replace the markdown content body",
+  "override": "Replaces the whole markdown body of the note with new text. Use to rewrite the full content at once.",
+  "fields": [
+   "content"
+  ]
+ },
+ {
+  "key": "knowledge-note:PATCH_CONTENT",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "PATCH_CONTENT",
+  "module": "content",
+  "specDescription": "Surgical edit to content",
+  "override": "Edits part of the markdown body by removing some characters at an offset and inserting new text there. Use for a small in-place change without replacing the whole body.",
+  "fields": [
+   "offset",
+   "removeCount",
+   "insert"
+  ]
+ },
+ {
+  "key": "knowledge-note:SET_METADATA_FIELD",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SET_METADATA_FIELD",
+  "module": "content",
+  "specDescription": "Set any string metadata field by name",
+  "override": "Sets one named single-value metadata field on the note, such as scope, confidence, severity, version, context, rootCause or decisionStatus. Use for structured attributes that are not the title, description, type or body.",
+  "fields": [
+   "field",
+   "value"
+  ]
+ },
+ {
+  "key": "knowledge-note:SET_METADATA_LIST_FIELD",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SET_METADATA_LIST_FIELD",
+  "module": "content",
+  "specDescription": "Set any string-array metadata field by name",
+  "override": "Replaces one named list metadata field on the note, such as models, modules, inputs, outputs, alternatives or consequences. Use to set a whole list of values for a structured attribute.",
+  "fields": [
+   "field",
+   "values"
+  ]
+ },
+ {
+  "key": "knowledge-note:SET_PROVENANCE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SET_PROVENANCE",
+  "module": "provenance",
+  "specDescription": "Record author, source origin, session ID, and creation timestamp",
+  "override": "Records where the note came from: its author, how it originated (manual, session mining, import, derived), an optional session id and the creation time. Use to set authorship and origin.",
+  "fields": [
+   "author",
+   "sourceOrigin",
+   "sessionId"
+  ]
+ },
+ {
+  "key": "knowledge-note:ADD_LINK",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "ADD_LINK",
+  "module": "linking",
+  "specDescription": "Create a typed link to another note",
+  "override": "Creates a typed link from this note to another note (relates to, builds on, contradicts, supersedes, derived from). Use to connect two notes.",
+  "fields": [
+   "targetDocumentId",
+   "targetTitle",
+   "linkType"
+  ]
+ },
+ {
+  "key": "knowledge-note:REMOVE_LINK",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "REMOVE_LINK",
+  "module": "linking",
+  "specDescription": "Remove a link by ID",
+  "override": "Deletes one existing link from this note to another note. Use to disconnect the notes.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "knowledge-note:UPDATE_LINK_TYPE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "UPDATE_LINK_TYPE",
+  "module": "linking",
+  "specDescription": "Change a link's type",
+  "override": "Changes the relationship type of an existing link between notes, for example from relates to into contradicts. Use when a connection already exists but its kind is wrong.",
+  "fields": [
+   "id",
+   "linkType"
+  ]
+ },
+ {
+  "key": "knowledge-note:ADD_TOPIC",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "ADD_TOPIC",
+  "module": "linking",
+  "specDescription": "Tag the note with a topic",
+  "override": "Tags the note with a topic name. Use to categorize the note by subject; a topic name can only appear once per note.",
+  "fields": [
+   "name",
+   "topicDocumentId"
+  ]
+ },
+ {
+  "key": "knowledge-note:REMOVE_TOPIC",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "REMOVE_TOPIC",
+  "module": "linking",
+  "specDescription": "Remove a topic tag by ID",
+  "override": "Removes one topic tag from the note. Use when the note no longer belongs to that subject.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "knowledge-note:SUBMIT_FOR_REVIEW",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "SUBMIT_FOR_REVIEW",
+  "module": "lifecycle",
+  "specDescription": "Transition DRAFT → IN_REVIEW",
+  "override": "Moves a draft note into review, with an optional comment, so a reviewer can approve or reject it. Use to start the review of a draft.",
+  "fields": [
+   "comment"
+  ]
+ },
+ {
+  "key": "knowledge-note:APPROVE_NOTE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "APPROVE_NOTE",
+  "module": "lifecycle",
+  "specDescription": "Transition IN_REVIEW → CANONICAL (actor ≠ author)",
+  "override": "Accepts a note that is in review and makes it canonical, with an optional comment. Use when a reviewer other than the author signs off on the note.",
+  "fields": [
+   "comment"
+  ]
+ },
+ {
+  "key": "knowledge-note:REJECT_NOTE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "REJECT_NOTE",
+  "module": "lifecycle",
+  "specDescription": "Transition IN_REVIEW → DRAFT with feedback",
+  "override": "Sends a note that is in review back to draft with required feedback. Use when a reviewer turns the note down and asks for changes.",
+  "fields": [
+   "comment"
+  ]
+ },
+ {
+  "key": "knowledge-note:ARCHIVE_NOTE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "ARCHIVE_NOTE",
+  "module": "lifecycle",
+  "specDescription": "Transition CANONICAL → ARCHIVED",
+  "override": "Retires a canonical note into the archive, with a required reason. Use when an accepted note is obsolete and should no longer be current.",
+  "fields": [
+   "comment"
+  ]
+ },
+ {
+  "key": "knowledge-note:RESTORE_NOTE",
+  "model": "knowledge-note",
+  "docType": "bai/knowledge-note",
+  "opName": "RESTORE_NOTE",
+  "module": "lifecycle",
+  "specDescription": "Transition ARCHIVED → DRAFT",
+  "override": "Brings an archived note back as a draft, with an optional comment. Use to revive a note that was archived.",
+  "fields": [
+   "comment"
+  ]
+ },
+ {
+  "key": "moc:CREATE_MOC",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "CREATE_MOC",
+  "module": "moc-management",
+  "specDescription": "Initialize a new Map of Content",
+  "override": "Initializes a map of content with its title, summary, synthesis paragraph, tier (hub, domain or topic) and optional parent map. Use once when creating a new map.",
+  "fields": [
+   "title",
+   "description",
+   "orientation",
+   "tier",
+   "parentRef"
+  ]
+ },
+ {
+  "key": "moc:UPDATE_ORIENTATION",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "UPDATE_ORIENTATION",
+  "module": "moc-management",
+  "specDescription": "Update the synthesis paragraph",
+  "override": "Replaces the map's orientation, the synthesis paragraph that explains how its ideas fit together. Use to rewrite that overview prose.",
+  "fields": [
+   "orientation"
+  ]
+ },
+ {
+  "key": "moc:UPDATE_DESCRIPTION",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "UPDATE_DESCRIPTION",
+  "module": "moc-management",
+  "specDescription": "Update the progressive disclosure summary",
+  "override": "Replaces the map's short summary used for progressive disclosure. Use to change the brief one-line description of what the map covers.",
+  "fields": [
+   "description"
+  ]
+ },
+ {
+  "key": "moc:ADD_CORE_IDEA",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "ADD_CORE_IDEA",
+  "module": "moc-management",
+  "specDescription": "Add a note to Core Ideas with context phrase",
+  "override": "Adds a note to the map's core ideas, with a context phrase explaining why it matters and a sort position. Use to feature a note on the map; each note can be added only once.",
+  "fields": [
+   "noteRef",
+   "contextPhrase",
+   "sortOrder"
+  ]
+ },
+ {
+  "key": "moc:UPDATE_CORE_IDEA",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "UPDATE_CORE_IDEA",
+  "module": "moc-management",
+  "specDescription": "Update a core idea's context phrase or order",
+  "override": "Changes the context phrase or sort position of a note already listed in the map's core ideas. Use to reword why a featured note matters.",
+  "fields": [
+   "id",
+   "contextPhrase",
+   "sortOrder"
+  ]
+ },
+ {
+  "key": "moc:REMOVE_CORE_IDEA",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "REMOVE_CORE_IDEA",
+  "module": "moc-management",
+  "specDescription": "Remove a note from Core Ideas",
+  "override": "Removes a note from the map's core ideas. Use to stop featuring that note on the map.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "moc:REORDER_CORE_IDEAS",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "REORDER_CORE_IDEAS",
+  "module": "moc-management",
+  "specDescription": "Reorder core ideas by providing ordered IDs",
+  "override": "Rearranges the map's core ideas into a new order given as a list of their ids. Use to change the sequence of featured notes.",
+  "fields": [
+   "ids"
+  ]
+ },
+ {
+  "key": "moc:ADD_TENSION",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "ADD_TENSION",
+  "module": "moc-management",
+  "specDescription": "Add an unresolved tension",
+  "override": "Records an unresolved tension or contradiction on the map, with a description and the notes involved. Use to flag ideas on the map that conflict.",
+  "fields": [
+   "description",
+   "involvedRefs"
+  ]
+ },
+ {
+  "key": "moc:REMOVE_TENSION",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "REMOVE_TENSION",
+  "module": "moc-management",
+  "specDescription": "Remove a resolved or dissolved tension",
+  "override": "Removes a tension from the map, typically once it is resolved or dissolved. Use to clear a conflict that no longer applies.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "moc:ADD_OPEN_QUESTION",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "ADD_OPEN_QUESTION",
+  "module": "moc-management",
+  "specDescription": "Add an unexplored direction",
+  "override": "Adds an open question, an unexplored direction worth investigating, to the map. Use to capture something the map does not yet answer.",
+  "fields": [
+   "question"
+  ]
+ },
+ {
+  "key": "moc:REMOVE_OPEN_QUESTION",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "REMOVE_OPEN_QUESTION",
+  "module": "moc-management",
+  "specDescription": "Remove an open question",
+  "override": "Removes an open question from the map by its exact text. Use once the question is answered or dropped.",
+  "fields": [
+   "question"
+  ]
+ },
+ {
+  "key": "moc:ADD_CHILD_MOC",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "ADD_CHILD_MOC",
+  "module": "moc-management",
+  "specDescription": "Add a child MOC reference",
+  "override": "Links a narrower map of content as a child of this map. Use to nest a sub-map under this one.",
+  "fields": [
+   "childRef"
+  ]
+ },
+ {
+  "key": "moc:REMOVE_CHILD_MOC",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "REMOVE_CHILD_MOC",
+  "module": "moc-management",
+  "specDescription": "Remove a child MOC reference",
+  "override": "Unlinks a child map of content from this map. Use when a sub-map no longer belongs under it.",
+  "fields": [
+   "childRef"
+  ]
+ },
+ {
+  "key": "moc:SET_METADATA_FIELD",
+  "model": "moc",
+  "docType": "bai/moc",
+  "opName": "SET_METADATA_FIELD",
+  "module": "moc-management",
+  "specDescription": "Set a whitelisted string metadata field on the MoC. Currently only `version`, which records the Powerhouse stack release the MoC's knowledge is registered against.",
+  "override": "Sets a whitelisted metadata field on the map; currently only version, the Powerhouse stack release the map's knowledge is registered against. Use to record that version.",
+  "fields": [
+   "field",
+   "value"
+  ]
+ },
+ {
+  "key": "observation:CREATE_OBSERVATION",
+  "model": "observation",
+  "docType": "bai/observation",
+  "opName": "CREATE_OBSERVATION",
+  "module": "observation-management",
+  "specDescription": "Capture a new friction signal",
+  "override": "Captures a new observation, a friction, surprise, process, methodology or quality signal noticed while working, with title, description and category. Use to log something worth learning from.",
+  "fields": [
+   "title",
+   "description",
+   "content",
+   "category"
+  ]
+ },
+ {
+  "key": "observation:PROMOTE_OBSERVATION",
+  "model": "observation",
+  "docType": "bai/observation",
+  "opName": "PROMOTE_OBSERVATION",
+  "module": "observation-management",
+  "specDescription": "Promote to a permanent note",
+  "override": "Marks the observation as promoted into a permanent note and records which note it became. Use when the observation is turned into lasting knowledge.",
+  "fields": [
+   "promotedTo"
+  ]
+ },
+ {
+  "key": "observation:IMPLEMENT_OBSERVATION",
+  "model": "observation",
+  "docType": "bai/observation",
+  "opName": "IMPLEMENT_OBSERVATION",
+  "module": "observation-management",
+  "specDescription": "Mark as implemented in system",
+  "override": "Marks the observation as implemented, meaning the system was changed to act on it. Use when the friction or idea has been addressed.",
+  "fields": []
+ },
+ {
+  "key": "observation:ARCHIVE_OBSERVATION",
+  "model": "observation",
+  "docType": "bai/observation",
+  "opName": "ARCHIVE_OBSERVATION",
+  "module": "observation-management",
+  "specDescription": "Archive observation",
+  "override": "Archives the observation without acting on it. Use to dismiss an observation that is no longer relevant.",
+  "fields": []
+ },
+ {
+  "key": "pipeline-queue:ADD_TASK",
+  "model": "pipeline-queue",
+  "docType": "bai/pipeline-queue",
+  "opName": "ADD_TASK",
+  "module": "queue-management",
+  "specDescription": "Add a new task to the pipeline",
+  "override": "Queues a new pending processing task of a given task type for a target, optionally tied to a batch or document. Use to schedule new work in the pipeline.",
+  "fields": [
+   "taskType",
+   "target",
+   "batchId",
+   "documentRef",
+   "currentPhase"
+  ]
+ },
+ {
+  "key": "pipeline-queue:ASSIGN_TASK",
+  "model": "pipeline-queue",
+  "docType": "bai/pipeline-queue",
+  "opName": "ASSIGN_TASK",
+  "module": "queue-management",
+  "specDescription": "Assign task to a processor or user",
+  "override": "Assigns an existing task to a processor or person and marks it in progress. Use when someone picks up the task.",
+  "fields": [
+   "taskId",
+   "assignedTo"
+  ]
+ },
+ {
+  "key": "pipeline-queue:ADVANCE_PHASE",
+  "model": "pipeline-queue",
+  "docType": "bai/pipeline-queue",
+  "opName": "ADVANCE_PHASE",
+  "module": "queue-management",
+  "specDescription": "Complete current phase, advance to next",
+  "override": "Completes the task's current phase with a handoff (work done, files modified) and moves it to the next phase, or to done after the last phase. Use to hand off finished phase work.",
+  "fields": [
+   "taskId",
+   "handoff"
+  ]
+ },
+ {
+  "key": "pipeline-queue:COMPLETE_TASK",
+  "model": "pipeline-queue",
+  "docType": "bai/pipeline-queue",
+  "opName": "COMPLETE_TASK",
+  "module": "queue-management",
+  "specDescription": "Mark task as done",
+  "override": "Marks the whole task as done, regardless of remaining phases. Use when the task is finished.",
+  "fields": [
+   "taskId"
+  ]
+ },
+ {
+  "key": "pipeline-queue:FAIL_TASK",
+  "model": "pipeline-queue",
+  "docType": "bai/pipeline-queue",
+  "opName": "FAIL_TASK",
+  "module": "queue-management",
+  "specDescription": "Mark task as failed",
+  "override": "Marks the task as failed with a reason and removes it from active work. Use when the task cannot be completed.",
+  "fields": [
+   "taskId",
+   "reason"
+  ]
+ },
+ {
+  "key": "pipeline-queue:BLOCK_TASK",
+  "model": "pipeline-queue",
+  "docType": "bai/pipeline-queue",
+  "opName": "BLOCK_TASK",
+  "module": "queue-management",
+  "specDescription": "Mark task as blocked",
+  "override": "Marks the task as blocked, with a reason. Use when work on the task cannot continue until something else happens.",
+  "fields": [
+   "taskId",
+   "reason"
+  ]
+ },
+ {
+  "key": "pipeline-queue:UNBLOCK_TASK",
+  "model": "pipeline-queue",
+  "docType": "bai/pipeline-queue",
+  "opName": "UNBLOCK_TASK",
+  "module": "queue-management",
+  "specDescription": "Unblock a task",
+  "override": "Returns a blocked task to pending so work can resume. Use only when the task is currently blocked and the obstacle is gone.",
+  "fields": [
+   "taskId"
+  ]
+ },
+ {
+  "key": "project:CREATE_PROJECT",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "CREATE_PROJECT",
+  "module": "lifecycle",
+  "specDescription": "",
+  "override": "Initializes the project with its name and optional description, owner and starting status. Use once when setting up a new project.",
+  "fields": [
+   "name",
+   "description",
+   "owner",
+   "status"
+  ]
+ },
+ {
+  "key": "project:UPDATE_PROJECT_INFO",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "UPDATE_PROJECT_INFO",
+  "module": "lifecycle",
+  "specDescription": "",
+  "override": "Changes the project's name or description. Use to rename the project or rewrite what it is about.",
+  "fields": [
+   "name",
+   "description"
+  ]
+ },
+ {
+  "key": "project:SET_PROJECT_STATUS",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "SET_PROJECT_STATUS",
+  "module": "lifecycle",
+  "specDescription": "",
+  "override": "Sets the project's lifecycle status: planning, active, on hold, completed or archived. Use to pause, start, finish or archive the project.",
+  "fields": [
+   "status"
+  ]
+ },
+ {
+  "key": "project:SET_OWNER",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "SET_OWNER",
+  "module": "lifecycle",
+  "specDescription": "",
+  "override": "Sets or clears the person who owns the project. Use to hand the project to a new owner.",
+  "fields": [
+   "owner"
+  ]
+ },
+ {
+  "key": "project:SET_TARGET_DATE",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "SET_TARGET_DATE",
+  "module": "lifecycle",
+  "specDescription": "",
+  "override": "Sets or clears the project's target completion date. Use to schedule a deadline for the project.",
+  "fields": [
+   "targetDate"
+  ]
+ },
+ {
+  "key": "project:LINK_WBS",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "LINK_WBS",
+  "module": "lifecycle",
+  "specDescription": "",
+  "override": "Links the project to its work breakdown structure document, or clears the link. Use to attach the goal plan to the project.",
+  "fields": [
+   "wbsRef"
+  ]
+ },
+ {
+  "key": "project:ADD_MEMBER",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "ADD_MEMBER",
+  "module": "team",
+  "specDescription": "",
+  "override": "Adds a person or agent to the project team with a name and optional role. Use to bring someone onto the team.",
+  "fields": [
+   "name",
+   "role",
+   "kind"
+  ]
+ },
+ {
+  "key": "project:UPDATE_MEMBER",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "UPDATE_MEMBER",
+  "module": "team",
+  "specDescription": "",
+  "override": "Changes an existing team member's name, role or kind (human or agent). Use to correct or update someone already on the team.",
+  "fields": [
+   "id",
+   "name",
+   "role",
+   "kind"
+  ]
+ },
+ {
+  "key": "project:REMOVE_MEMBER",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "REMOVE_MEMBER",
+  "module": "team",
+  "specDescription": "",
+  "override": "Removes a member from the project team. Use when someone leaves the team.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "project:ADD_DELIVERABLE",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "ADD_DELIVERABLE",
+  "module": "deliverables",
+  "specDescription": "",
+  "override": "Adds a planned deliverable to the project with a title and optional description, linked goal and URL. Use to record something the project will produce.",
+  "fields": [
+   "title",
+   "description",
+   "goalRef",
+   "url"
+  ]
+ },
+ {
+  "key": "project:UPDATE_DELIVERABLE",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "UPDATE_DELIVERABLE",
+  "module": "deliverables",
+  "specDescription": "",
+  "override": "Changes an existing deliverable's title, description, linked goal or URL. Use to edit the details of a deliverable.",
+  "fields": [
+   "id",
+   "title",
+   "description",
+   "goalRef",
+   "url"
+  ]
+ },
+ {
+  "key": "project:SET_DELIVERABLE_STATUS",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "SET_DELIVERABLE_STATUS",
+  "module": "deliverables",
+  "specDescription": "",
+  "override": "Sets a deliverable's status: planned, in progress, delivered or cancelled, recording the delivery time when delivered. Use to track a deliverable's progress.",
+  "fields": [
+   "id",
+   "status"
+  ]
+ },
+ {
+  "key": "project:REMOVE_DELIVERABLE",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "REMOVE_DELIVERABLE",
+  "module": "deliverables",
+  "specDescription": "",
+  "override": "Deletes a deliverable from the project. Use when it is no longer part of the plan.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "project:ADD_KNOWLEDGE_REF",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "ADD_KNOWLEDGE_REF",
+  "module": "knowledge",
+  "specDescription": "",
+  "override": "Links a knowledge document from the vault to the project. Use to attach a relevant note or source.",
+  "fields": [
+   "ref"
+  ]
+ },
+ {
+  "key": "project:REMOVE_KNOWLEDGE_REF",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "REMOVE_KNOWLEDGE_REF",
+  "module": "knowledge",
+  "specDescription": "",
+  "override": "Unlinks a knowledge document from the project. Use when it is no longer relevant.",
+  "fields": [
+   "ref"
+  ]
+ },
+ {
+  "key": "project:SET_REFERENCES",
+  "model": "project",
+  "docType": "bai/project",
+  "opName": "SET_REFERENCES",
+  "module": "knowledge",
+  "specDescription": "",
+  "override": "Replaces the project's list of external reference URLs. Use to set the web links the project points to.",
+  "fields": [
+   "references"
+  ]
+ },
+ {
+  "key": "research-claim:CREATE_CLAIM",
+  "model": "research-claim",
+  "docType": "bai/research-claim",
+  "opName": "CREATE_CLAIM",
+  "module": "claim-management",
+  "specDescription": "Create a research claim",
+  "override": "Initializes a research claim with its title, summary, content, kind, methodology, sources and topics. Use once when recording a new claim.",
+  "fields": [
+   "title",
+   "description",
+   "content",
+   "kind",
+   "methodology",
+   "sources",
+   "topics"
+  ]
+ },
+ {
+  "key": "research-claim:ADD_RESEARCH_CONNECTION",
+  "model": "research-claim",
+  "docType": "bai/research-claim",
+  "opName": "ADD_RESEARCH_CONNECTION",
+  "module": "claim-management",
+  "specDescription": "Add a connection to another research claim",
+  "override": "Connects this claim to another research claim with a context phrase explaining the relation. Use to link related claims.",
+  "fields": [
+   "targetRef",
+   "contextPhrase"
+  ]
+ },
+ {
+  "key": "research-claim:REMOVE_RESEARCH_CONNECTION",
+  "model": "research-claim",
+  "docType": "bai/research-claim",
+  "opName": "REMOVE_RESEARCH_CONNECTION",
+  "module": "claim-management",
+  "specDescription": "Remove a connection",
+  "override": "Removes a connection from this claim to another claim. Use to drop a link between claims.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "research-claim:UPDATE_CLAIM_CONTENT",
+  "model": "research-claim",
+  "docType": "bai/research-claim",
+  "opName": "UPDATE_CLAIM_CONTENT",
+  "module": "claim-management",
+  "specDescription": "Update claim content",
+  "override": "Replaces the body text of the claim. Use to rewrite what the claim says.",
+  "fields": [
+   "content"
+  ]
+ },
+ {
+  "key": "source:INGEST_SOURCE",
+  "model": "source",
+  "docType": "bai/source",
+  "opName": "INGEST_SOURCE",
+  "module": "source-management",
+  "specDescription": "Add new source material",
+  "override": "Adds new source material (article, paper, book chapter, transcript, web page and so on) to the inbox with its title, content and optional author and URL. Use to bring a new source into the vault.",
+  "fields": [
+   "title",
+   "content",
+   "sourceType",
+   "description",
+   "url",
+   "author",
+   "method",
+   "tool"
+  ]
+ },
+ {
+  "key": "source:SET_SOURCE_STATUS",
+  "model": "source",
+  "docType": "bai/source",
+  "opName": "SET_SOURCE_STATUS",
+  "module": "source-management",
+  "specDescription": "Transition source status",
+  "override": "Moves the source through processing: inbox, extracting, extracted or archived. Use to mark where the source is in extraction.",
+  "fields": [
+   "status"
+  ]
+ },
+ {
+  "key": "source:ADD_EXTRACTED_CLAIM",
+  "model": "source",
+  "docType": "bai/source",
+  "opName": "ADD_EXTRACTED_CLAIM",
+  "module": "source-management",
+  "specDescription": "Link an extracted claim to this source",
+  "override": "Records that a claim was extracted from this source by adding a reference to it. Use after creating a claim from the source.",
+  "fields": [
+   "claimRef"
+  ]
+ },
+ {
+  "key": "source:RECORD_EXTRACTION_STATS",
+  "model": "source",
+  "docType": "bai/source",
+  "opName": "RECORD_EXTRACTION_STATS",
+  "module": "source-management",
+  "specDescription": "Record extraction statistics",
+  "override": "Records extraction statistics for the source: claims extracted, items skipped and skip rate. Use when an extraction pass finishes.",
+  "fields": [
+   "claimCount",
+   "skippedCount",
+   "skipRate"
+  ]
+ },
+ {
+  "key": "tension:CREATE_TENSION",
+  "model": "tension",
+  "docType": "bai/tension",
+  "opName": "CREATE_TENSION",
+  "module": "tension-management",
+  "specDescription": "Identify a new contradiction",
+  "override": "Records a new tension, a contradiction between notes, with title, description and the notes involved. Use to flag ideas that conflict.",
+  "fields": [
+   "title",
+   "description",
+   "content",
+   "involvedRefs"
+  ]
+ },
+ {
+  "key": "tension:RESOLVE_TENSION",
+  "model": "tension",
+  "docType": "bai/tension",
+  "opName": "RESOLVE_TENSION",
+  "module": "tension-management",
+  "specDescription": "Mark as resolved with explanation",
+  "override": "Closes an open tension as resolved, with an explanation of how the contradiction was settled. Use when the conflict was real and has been worked out.",
+  "fields": [
+   "resolution"
+  ]
+ },
+ {
+  "key": "tension:DISSOLVE_TENSION",
+  "model": "tension",
+  "docType": "bai/tension",
+  "opName": "DISSOLVE_TENSION",
+  "module": "tension-management",
+  "specDescription": "Mark as dissolved (apparent, not real)",
+  "override": "Closes an open tension as dissolved, explaining why the contradiction was only apparent. Use when the conflict turns out not to be real.",
+  "fields": [
+   "resolution"
+  ]
+ },
+ {
+  "key": "tension:ADD_INVOLVED_REF",
+  "model": "tension",
+  "docType": "bai/tension",
+  "opName": "ADD_INVOLVED_REF",
+  "module": "tension-management",
+  "specDescription": "Add a note to the tension",
+  "override": "Adds another note to the set of notes involved in this tension. Use to widen the tension to include a further note.",
+  "fields": [
+   "ref"
+  ]
+ },
+ {
+  "key": "vault-config:INITIALIZE_CONFIG",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "INITIALIZE_CONFIG",
+  "module": "config-management",
+  "specDescription": "Initialize vault configuration with name and domain",
+  "override": "Sets the vault's name and domain when the configuration is first created. Use once to set up the vault.",
+  "fields": [
+   "name",
+   "domain"
+  ]
+ },
+ {
+  "key": "vault-config:UPDATE_DIMENSION",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "UPDATE_DIMENSION",
+  "module": "config-management",
+  "specDescription": "Update a dimension position",
+  "override": "Sets the value, confidence and optional rationale of one configuration dimension (granularity, organization, linking, processing, navigation, maintenance, schema or automation). Use to tune how the vault behaves.",
+  "fields": [
+   "dimension",
+   "value",
+   "confidence",
+   "rationale"
+  ]
+ },
+ {
+  "key": "vault-config:UPDATE_VOCABULARY",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "UPDATE_VOCABULARY",
+  "module": "config-management",
+  "specDescription": "Update a vocabulary term",
+  "override": "Renames one vocabulary term the vault uses, such as notes, inbox, reduce, reflect or topic map. Use to customize the words shown to the user.",
+  "fields": [
+   "key",
+   "value"
+  ]
+ },
+ {
+  "key": "vault-config:UPDATE_PIPELINE_CONFIG",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "UPDATE_PIPELINE_CONFIG",
+  "module": "config-management",
+  "specDescription": "Update pipeline settings",
+  "override": "Changes pipeline settings: processing depth, whether phases chain automatically, and extraction selectivity. Use to tune the processing pipeline.",
+  "fields": [
+   "depth",
+   "autoChain",
+   "extractionSelectivity"
+  ]
+ },
+ {
+  "key": "vault-config:UPDATE_MAINTENANCE_THRESHOLD",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "UPDATE_MAINTENANCE_THRESHOLD",
+  "module": "config-management",
+  "specDescription": "Update a maintenance threshold",
+  "override": "Sets the numeric threshold for one maintenance condition, such as orphan count, inbox pressure, oversized maps or stale-note days. Use to change when maintenance warnings fire.",
+  "fields": [
+   "condition",
+   "threshold"
+  ]
+ },
+ {
+  "key": "vault-config:ADD_EXTRACTION_CATEGORY",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "ADD_EXTRACTION_CATEGORY",
+  "module": "config-management",
+  "specDescription": "Add an extraction category",
+  "override": "Adds a new extraction category with a name, description and active flag. Use to define a new kind of thing to extract from sources.",
+  "fields": [
+   "name",
+   "description",
+   "active"
+  ]
+ },
+ {
+  "key": "vault-config:TOGGLE_EXTRACTION_CATEGORY",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "TOGGLE_EXTRACTION_CATEGORY",
+  "module": "config-management",
+  "specDescription": "Enable/disable an extraction category",
+  "override": "Turns an existing extraction category on or off. Use to enable or disable extracting that category.",
+  "fields": [
+   "id",
+   "active"
+  ]
+ },
+ {
+  "key": "vault-config:TOGGLE_FEATURE",
+  "model": "vault-config",
+  "docType": "bai/vault-config",
+  "opName": "TOGGLE_FEATURE",
+  "module": "config-management",
+  "specDescription": "Enable/disable a feature block",
+  "override": "Enables or disables a named feature block of the vault. Use to switch a feature on or off.",
+  "fields": [
+   "feature",
+   "enabled"
+  ]
+ },
+ {
+  "key": "wbs:CREATE_GOAL",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "CREATE_GOAL",
+  "module": "goals",
+  "specDescription": "",
+  "override": "Adds a new goal to the work breakdown, optionally under a parent goal, assigned to someone, or placed before another goal. Use to create a goal or sub-goal.",
+  "fields": [
+   "description",
+   "parentId",
+   "assignee",
+   "insertBefore"
+  ]
+ },
+ {
+  "key": "wbs:UPDATE_GOAL_DESCRIPTION",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "UPDATE_GOAL_DESCRIPTION",
+  "module": "goals",
+  "specDescription": "",
+  "override": "Rewrites the description of an existing goal. Use to rename or reword a goal.",
+  "fields": [
+   "id",
+   "description"
+  ]
+ },
+ {
+  "key": "wbs:DELETE_GOAL",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "DELETE_GOAL",
+  "module": "goals",
+  "specDescription": "",
+  "override": "Deletes a goal together with all of its sub-goals and removes any dependencies on them. Use to drop a goal from the plan.",
+  "fields": [
+   "id"
+  ]
+ },
+ {
+  "key": "wbs:REORDER",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "REORDER",
+  "module": "goals",
+  "specDescription": "",
+  "override": "Moves a goal to a new position or under a different parent goal. Use to restructure the goal tree.",
+  "fields": [
+   "id",
+   "parentId",
+   "insertBefore"
+  ]
+ },
+ {
+  "key": "wbs:SET_GOAL_STATUS",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "SET_GOAL_STATUS",
+  "module": "workflow",
+  "specDescription": "",
+  "override": "Sets a goal's status: to do, in progress, blocked (with a reason), in review, completed or won't do, optionally recording its outcome. Use to track progress on a goal.",
+  "fields": [
+   "id",
+   "status",
+   "blockReason",
+   "outcome"
+  ]
+ },
+ {
+  "key": "wbs:ASSIGN_GOAL",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "ASSIGN_GOAL",
+  "module": "workflow",
+  "specDescription": "",
+  "override": "Assigns a goal to a person, or clears the assignee. Use to say who is responsible for a goal.",
+  "fields": [
+   "id",
+   "assignee"
+  ]
+ },
+ {
+  "key": "wbs:SET_OUTCOME",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "SET_OUTCOME",
+  "module": "workflow",
+  "specDescription": "",
+  "override": "Sets or clears the recorded outcome of a goal, what it actually achieved. Use to write down the result of a goal.",
+  "fields": [
+   "id",
+   "outcome"
+  ]
+ },
+ {
+  "key": "wbs:ADD_DEPENDENCIES",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "ADD_DEPENDENCIES",
+  "module": "workflow",
+  "specDescription": "",
+  "override": "Makes a goal depend on one or more other goals that must finish first. Use to record prerequisites between goals.",
+  "fields": [
+   "id",
+   "dependencies"
+  ]
+ },
+ {
+  "key": "wbs:REMOVE_DEPENDENCIES",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "REMOVE_DEPENDENCIES",
+  "module": "workflow",
+  "specDescription": "",
+  "override": "Removes one or more prerequisite goals from a goal's dependencies. Use when a goal no longer waits on them.",
+  "fields": [
+   "id",
+   "dependencies"
+  ]
+ },
+ {
+  "key": "wbs:ADD_NOTE",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "ADD_NOTE",
+  "module": "documentation",
+  "specDescription": "",
+  "override": "Attaches a written note, with optional author and time, to a goal. Use to comment on or document progress for a goal.",
+  "fields": [
+   "goalId",
+   "note",
+   "author"
+  ]
+ },
+ {
+  "key": "wbs:REMOVE_NOTE",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "REMOVE_NOTE",
+  "module": "documentation",
+  "specDescription": "",
+  "override": "Deletes a note attached to a goal. Use to remove a comment from a goal.",
+  "fields": [
+   "goalId",
+   "noteId"
+  ]
+ },
+ {
+  "key": "wbs:SET_OWNER",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "SET_OWNER",
+  "module": "documentation",
+  "specDescription": "",
+  "override": "Sets or clears the owner of the whole work breakdown structure. Use to change who owns the plan.",
+  "fields": [
+   "owner"
+  ]
+ },
+ {
+  "key": "wbs:SET_REFERENCES",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "SET_REFERENCES",
+  "module": "documentation",
+  "specDescription": "",
+  "override": "Replaces the work breakdown's list of external reference URLs. Use to set the web links the plan points to.",
+  "fields": [
+   "references"
+  ]
+ },
+ {
+  "key": "wbs:SET_PROJECT_REF",
+  "model": "wbs",
+  "docType": "bai/wbs",
+  "opName": "SET_PROJECT_REF",
+  "module": "documentation",
+  "specDescription": "",
+  "override": "Links the work breakdown structure to its project document, or clears the link. Use to attach the plan to a project.",
+  "fields": [
+   "projectRef"
+  ]
+ }
+]
