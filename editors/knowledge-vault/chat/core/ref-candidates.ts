@@ -248,6 +248,9 @@ export interface DriveRefOptions {
   recentIds?: string[];
   /** Per kind; items the target already refers to are always kept. */
   cap?: number;
+  /** Documents always kept as candidates, like referenced items (the open
+   * document when the user chose to change another one). */
+  keepIds?: string[];
 }
 
 /**
@@ -266,6 +269,7 @@ export function driveRefContext(
   const utterance = opts.utterance ?? "";
   const cap = opts.cap ?? CANDIDATE_CAP;
   const referenced = referencedIds(target.state);
+  for (const id of opts.keepIds ?? []) referenced.add(id);
   const bounded = (kind: string, items: CandidateDoc[]): RefContextItem[] => {
     const kept = items.filter((d) => referenced.has(d.id));
     const rest = rankCandidates(

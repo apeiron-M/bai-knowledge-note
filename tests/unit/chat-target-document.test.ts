@@ -101,11 +101,11 @@ describe("resolveTargetDocument (M0, from the tag)", () => {
   });
 });
 
-describe("resolveTargetDocument: a pointer at the open document blocks a retarget", () => {
+describe("resolveTargetDocument: a pointer at the open document plus a name asks", () => {
   const other = cand("n3", "bai/knowledge-note", "Gossip protocols");
   const docs = [...documents, other];
 
-  it("keeps the open document when the request says this note, this, it or here", () => {
+  it("asks which document to change when the request says this note, this, it or here", () => {
     for (const u of [
       "link this note to Gossip protocols",
       "link this to Gossip protocols",
@@ -115,10 +115,19 @@ describe("resolveTargetDocument: a pointer at the open document blocks a retarge
       "add Gossip protocols as a related note here",
     ])
       expect(resolve(tag(note), u, docs), u).toEqual({
-        kind: "document",
-        target: tag(note),
-        via: "context",
+        kind: "ask",
+        open: tag(note),
+        named: tag(other),
       });
+  });
+
+  it("asks for add this to X too: the intent decides which document changes", () => {
+    // "add this to CRDTs" puts the open note into the MOC; the rule cannot tell
+    expect(resolve(tag(note), "add this to CRDTs", docs)).toEqual({
+      kind: "ask",
+      open: tag(note),
+      named: tag(moc),
+    });
   });
 
   it("still retargets when only the other document is named", () => {
@@ -130,11 +139,11 @@ describe("resolveTargetDocument: a pointer at the open document blocks a retarge
     });
   });
 
-  it("does not retarget when the request is ambiguous", () => {
-    // a name, then a pronoun that may point back at it: the open document stays
+  it("asks on a pronoun after a name, and stays put when the name is ambiguous", () => {
+    // a name, then a pronoun that may point back at it: ask
     expect(
       resolve(tag(note), "add a question to Gossip protocols and tag it", docs),
-    ).toMatchObject({ via: "context", target: { id: "n1" } });
+    ).toMatchObject({ kind: "ask", open: { id: "n1" }, named: { id: "n3" } });
     // two documents share the named title
     const twin = cand("n4", "bai/knowledge-note", "Gossip protocols");
     expect(
@@ -146,8 +155,14 @@ describe("resolveTargetDocument: a pointer at the open document blocks a retarge
     });
   });
 
-  it("keeps the open document's type rule: a pointer at a source is unsupported", () => {
+  it("retargets from an open document without ops: only the named one can change", () => {
     expect(resolve(tag(source), "link this to CRDTs", docs)).toEqual({
+      kind: "document",
+      target: tag(moc),
+      via: "retarget",
+      from: tag(source),
+    });
+    expect(resolve(tag(source), "rename this", docs)).toEqual({
       kind: "unsupported",
       target: tag(source),
     });
@@ -167,23 +182,30 @@ describe("resolveTargetDocument: a pointer at the open document blocks a retarge
     ).toMatchObject({ via: "retarget", target: { id: "m3" } });
   });
 
-  it("does not block a drive-level match: nothing is open to point at", () => {
+  it("does not ask at drive level: nothing is open to point at", () => {
     expect(resolve(drive, "link it to Gossip protocols", docs)).toMatchObject({
       via: "title",
       target: { id: "n3" },
     });
   });
 
-  it("keeps the named document as a ref candidate on that turn", () => {
-    const viewed = { id: note.id, docType: note.docType, title: note.title, state: {} };
+  it("keeps the other document as a ref candidate whichever one is chosen", () => {
     const u = "link this note to Gossip protocols";
-    expect(resolve(tag(note), u, docs)).toMatchObject({ via: "context" });
-    const ctx = driveRefContext(viewed, docs, { utterance: u });
-    expect(ctx.find((c) => c.kind === "note")).toEqual({
+    expect(resolve(tag(note), u, docs)).toMatchObject({ kind: "ask" });
+    // the open note chosen: the named one ranks by its name
+    const viewed = { id: note.id, docType: note.docType, title: note.title, state: {} };
+    expect(driveRefContext(viewed, docs, { utterance: u }).find((c) => c.kind === "note")).toEqual({
       id: "n3",
       title: "Gossip protocols",
       kind: "note",
     });
+    // the named one chosen: the open note is kept even where the cap would drop it
+    const named = { id: other.id, docType: other.docType, title: other.title, state: {} };
+    const v = "add this to Gossip protocols";
+    expect(driveRefContext(named, docs, { utterance: v, cap: 0 })).toEqual([]);
+    const kept = driveRefContext(named, docs, { utterance: v, cap: 0, keepIds: [note.id] });
+    expect(kept.length).toBeGreaterThan(0);
+    expect(kept.every((c) => c.id === note.id)).toBe(true);
   });
 });
 
@@ -229,6 +251,15 @@ describe("mentionsTitle", () => {
 });
 
 describe("routeChatTurn", () => {
+  it("passes a target question through, even for a question", () => {
+    const u = "is this note linked to CRDTs?";
+    expect(routeChatTurn(u, resolve(tag(note), u))).toMatchObject({
+      kind: "ask",
+      open: { id: "n1" },
+      named: { id: "m1" },
+    });
+  });
+
   it("runs the pipeline on a document, even for a question", () => {
     expect(routeChatTurn("what is this?", resolve(tag(note), "what is this?"))).toMatchObject({
       kind: "document",

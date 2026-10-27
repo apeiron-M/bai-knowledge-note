@@ -1,10 +1,11 @@
 /**
  * Which document a chat request acts on (M0): the viewed document from the
  * context frame, except that a request naming exactly one *other* supported
- * document verbatim retargets to it (the card says so), unless the request
- * also points at the open document ("link this note to X": X is a
- * reference, not the target). Nothing dispatches
- * without Confirm. The pipeline needs a document type (without one, op
+ * document verbatim retargets to it (the card says so). When the request
+ * also points at the open document, either one may be the one to change
+ * ("link this note to X" changes the open note, "add this to X" changes X),
+ * which only the intent settles, so the chat asks which document to change
+ * before running the models. Nothing dispatches without Confirm. The pipeline needs a document type (without one, op
  * accuracy falls to 37–39%, round 9 R3/R4), so with nothing open and
  * nothing named the chat only answers questions.
  */
@@ -24,6 +25,13 @@ export type TargetResolution =
       via: "context" | "retarget" | "title";
       /** The viewed document a retarget switched away from. */
       from?: DocumentTarget;
+    }
+  | {
+      /** The request points at the open document and names one other:
+       * ask which of the two to change. The other stays a ref candidate. */
+      kind: "ask";
+      open: DocumentTarget;
+      named: DocumentTarget;
     }
   | { kind: "unsupported"; target: DocumentTarget }
   | { kind: "drive"; target: Extract<ContextTarget, { kind: "drive" }> };
@@ -127,11 +135,14 @@ function asTarget(d: CandidateDoc, driveId: string): DocumentTarget {
 }
 
 /**
- * 1. exactly one other supported document named verbatim → retarget (or,
- *    at drive level, target it), unless the request also points at the
- *    open document ("this", "this note", "it", "here"): then the open
- *    document stays the target and the named one is only a ref candidate.
- *    With nothing open a pointer has no referent, so it does not block;
+ * 1. exactly one other supported document named verbatim:
+ *    - the request also points at the open document ("this", "this note",
+ *      "it", "here") and the open document's type has ops → ask which of
+ *      the two to change ("link this note to X" changes the open note,
+ *      "add this to X" changes X); the other one stays a ref candidate;
+ *    - otherwise → retarget (at drive level: target it). With nothing open
+ *      a pointer has no referent, and with an open document that has no
+ *      ops only the named one can change;
  * 2. the viewed document, when its type has ops;
  * 3. else unsupported (a document is open) or drive-level (nothing open).
  */
@@ -154,11 +165,12 @@ export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
       i.utterance,
       [...i.documents, ...viewed].flatMap((d) => [d.title, ...(d.aliases ?? [])]),
     );
-  if (named.length === 1 && !pointsHere) {
+  if (named.length === 1) {
     const target = asTarget(named[0], driveId);
-    return context.kind === "document"
-      ? { kind: "document", target, via: "retarget", from: context }
-      : { kind: "document", target, via: "title" };
+    if (context.kind === "drive") return { kind: "document", target, via: "title" };
+    if (pointsHere && i.supportedTypes.has(context.docType))
+      return { kind: "ask", open: context, named: target };
+    return { kind: "document", target, via: "retarget", from: context };
   }
   if (context.kind === "drive") return { kind: "drive", target: context };
   return i.supportedTypes.has(context.docType)
@@ -167,13 +179,14 @@ export function resolveTargetDocument(i: ResolveTargetInput): TargetResolution {
 }
 
 /**
- * What a turn does: run the pipeline on a document, answer a question that
+ * What a turn does: run the pipeline on a document, ask which of two
+ * documents to change, answer a question that
  * has no runnable document, or explain why it cannot change anything. With
  * a document there is no question rule in front: R2c's model decides
  * no-action itself.
  */
 export type ChatRoute =
-  | Extract<TargetResolution, { kind: "document" }>
+  | Extract<TargetResolution, { kind: "document" | "ask" }>
   | { kind: "answer"; because: "drive" | "unsupported" }
   | { kind: "explain"; text: string; create: CreateIntent | null };
 
@@ -200,7 +213,7 @@ export function routeChatTurn(
   utterance: string,
   target: TargetResolution,
 ): ChatRoute {
-  if (target.kind === "document") return target;
+  if (target.kind === "document" || target.kind === "ask") return target;
   if (looksLikeQuestion(utterance))
     return { kind: "answer", because: target.kind };
   if (target.kind === "unsupported")

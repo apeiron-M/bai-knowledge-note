@@ -20,7 +20,7 @@ import {
   type ModelState,
 } from "../hooks/use-chat-llm.js";
 import type { ChatCard, ChatSession } from "../hooks/use-chat-session.js";
-import { ChatChoiceCard } from "./ChatChoiceCard.js";
+import { ChatChoiceCard, opChoiceOptions, targetChoiceOptions } from "./ChatChoiceCard.js";
 import { ChatModelSettings } from "./ChatModelSettings.js";
 import { ChatProposalCard } from "./ChatProposalCard.js";
 import { targetLabel } from "./ChatTargetTag.js";
@@ -56,7 +56,9 @@ interface CardMeta {
  * before dispatch), or a choice among the fused top 3 when the models are
  * not sure; a request the LoRA maps to no change is answered. The target is
  * the viewed document (the tag) unless the request names exactly one other
- * document; a card keeps its own target after the tag moves on.
+ * document; when it also points at the open document ("this", "it"), the
+ * chat first asks which of the two to change. A card keeps its own target
+ * after the tag moves on.
  */
 export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelProps) {
   const llm = useChatLlm();
@@ -104,6 +106,41 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
     }
   }
 
+  /** Runs the pipeline on `chosen` and shows its card. `from`: the viewed
+   * document a retarget or a target choice switched away from. */
+  async function runOnDocument(
+    text: string,
+    chosen: DocumentTarget,
+    viewing: ContextTarget,
+    turnId: string,
+    opts: { from?: DocumentTarget; chosen?: boolean; keepIds?: string[] } = {},
+  ) {
+    const { from } = opts;
+    const doc = await loadDoc(chosen.id);
+    const target: DocumentTarget = { ...chosen, title: doc.title, docType: doc.docType };
+    if (chosen.id !== viewing.id)
+      session.append(
+        "system",
+        from
+          ? `Target: "${target.title}" (${opts.chosen ? "chosen" : "named in the request"}), not the viewed "${from.title}".`
+          : `Target: "${target.title}" (named in the request).`,
+        { turnId, target },
+      );
+    const wbsRef = typeof doc.state.wbsRef === "string" ? doc.state.wbsRef : "";
+    const linkedWbs =
+      doc.docType === "bai/project" && wbsRef
+        ? await loadDoc(wbsRef).catch(() => undefined)
+        : undefined;
+    const refContext = driveRefContext(doc, documents, {
+      linkedWbs,
+      utterance: text,
+      recentIds: frame.recentIds,
+      keepIds: opts.keepIds,
+    });
+    const reply = await llm.send(text, doc, refContext);
+    showReply(reply, { target, context: viewing, retargetedFrom: from }, turnId);
+  }
+
   async function handleSend() {
     const text = input.trim();
     if (!text || busy) return;
@@ -137,30 +174,47 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
           session.append("assistant", reply.text, { turnId, target: viewing });
         return;
       }
-      const doc = await loadDoc(route.target.id);
-      const target: DocumentTarget = { ...route.target, title: doc.title, docType: doc.docType };
-      if (route.via !== "context")
+      if (route.kind === "ask") {
+        session.setPending({
+          target: route.open,
+          context: viewing,
+          payload: { kind: "target", utterance: text, open: route.open, named: route.named },
+        });
         session.append(
           "system",
-          route.from
-            ? `Target: "${target.title}" (named in the request), not the viewed "${route.from.title}".`
-            : `Target: "${target.title}" (named in the request).`,
-          { turnId, target },
+          `Asked which document to change: "${route.open.title}" (open) or "${route.named.title}" (named in the request).`,
+          { turnId, target: viewing },
         );
-      const wbsRef = typeof doc.state.wbsRef === "string" ? doc.state.wbsRef : "";
-      const linkedWbs =
-        doc.docType === "bai/project" && wbsRef
-          ? await loadDoc(wbsRef).catch(() => undefined)
-          : undefined;
-      const refContext = driveRefContext(doc, documents, {
-        linkedWbs,
-        utterance: text,
-        recentIds: frame.recentIds,
-      });
-      const reply = await llm.send(text, doc, refContext);
-      showReply(reply, { target, context: viewing, retargetedFrom: route.from }, turnId);
+        return;
+      }
+      await runOnDocument(text, route.target, viewing, turnId, { from: route.from });
     } catch (err) {
       session.append("error", errText(err), { turnId, target: viewing });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /** The target choice: run the models on the chosen document; the other
+   * one stays a ref candidate. */
+  async function handleChooseTarget(index: number) {
+    if (!card || card.payload.kind !== "target" || busy) return;
+    const { utterance, open, named } = card.payload;
+    const chosen = [open, named].at(index);
+    if (!chosen) return;
+    const other = chosen.id === open.id ? named : open;
+    const turnId = generateId();
+    const viewed = card.context;
+    session.settle();
+    setBusy(true);
+    try {
+      await runOnDocument(utterance, chosen, viewed, turnId, {
+        from: chosen.id === open.id ? undefined : open,
+        chosen: true,
+        keepIds: [other.id],
+      });
+    } catch (err) {
+      session.append("error", errText(err), { turnId, target: chosen });
     } finally {
       setBusy(false);
     }
@@ -299,11 +353,28 @@ export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelPro
         )}
         {card?.payload.kind === "choice" && (
           <ChatChoiceCard
-            choice={card.payload.choice}
+            heading="Which change did you mean?"
+            hint="The models were not sure enough to pick one."
+            options={opChoiceOptions(card.payload.choice)}
+            noneLabel="None of these"
             card={card}
             viewing={frame.target}
             busy={busy}
             onChoose={(i) => void handleChoose(i)}
+            onNone={handleNone}
+          />
+        )}
+        {card?.payload.kind === "target" && (
+          <ChatChoiceCard
+            heading="Which document should change?"
+            hint="The request points at the open document and names another. Either could be the one to change."
+            options={targetChoiceOptions(card.payload.open, card.payload.named)}
+            noneLabel="Neither"
+            card={card}
+            viewing={frame.target}
+            showTarget={false}
+            busy={busy}
+            onChoose={(i) => void handleChooseTarget(i)}
             onNone={handleNone}
           />
         )}

@@ -14,7 +14,10 @@ import type { PendingChoice, ProposedAction } from "./use-chat-llm.js";
 
 export type CardPayload =
   | { kind: "proposal"; proposal: ProposedAction }
-  | { kind: "choice"; choice: PendingChoice };
+  | { kind: "choice"; choice: PendingChoice }
+  /** Which document to change, asked before the models run: the open one
+   * (the card's target) or the one the request names. */
+  | { kind: "target"; utterance: string; open: DocumentTarget; named: DocumentTarget };
 
 export type ChatCard = PendingCard<CardPayload>;
 

@@ -1,14 +1,29 @@
 import { OP_DESCRIPTIONS } from "../chat/core/op-descriptions.js";
 import { readableOpName } from "../chat/core/op-scorer.js";
-import type { ContextTarget } from "../chat/context/context-frame.js";
+import type { ContextTarget, DocumentTarget } from "../chat/context/context-frame.js";
+import { documentTypeName } from "../chat/core/target-document.js";
 import type { PendingChoice } from "../hooks/use-chat-llm.js";
 import type { ChatCard } from "../hooks/use-chat-session.js";
 import { CardTarget } from "./ChatTargetTag.js";
 
+/** One button on a choice card. */
+export interface ChoiceOption {
+  key: string;
+  label: string;
+  /** After the label, muted: "47%", "MOC". */
+  meta?: string;
+  detail?: string;
+}
+
 interface ChatChoiceCardProps {
-  choice: PendingChoice;
+  heading: string;
+  hint: string;
+  options: ChoiceOption[];
+  noneLabel: string;
   card: ChatCard;
   viewing: ContextTarget;
+  /** Show the card's own target ("On: ..."); off when the choice is the target. */
+  showTarget?: boolean;
   busy: boolean;
   onChoose: (index: number) => void;
   onNone: () => void;
@@ -18,15 +33,43 @@ function sentenceCase(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/** The margin gate asked (fused p1 - p2 < tau): the fused top 3. */
+export function opChoiceOptions(choice: PendingChoice): ChoiceOption[] {
+  return choice.options.map(({ entry, p }) => ({
+    key: entry.key,
+    label: sentenceCase(readableOpName(entry.opName)),
+    meta: `${Math.round(p * 100)}%`,
+    detail: OP_DESCRIPTIONS[entry.key] ?? entry.description,
+  }));
+}
+
+/** The request points at the open document and names another: which to change. */
+export function targetChoiceOptions(open: DocumentTarget, named: DocumentTarget): ChoiceOption[] {
+  return [
+    { target: open, detail: "The document you are viewing." },
+    { target: named, detail: "Named in the request." },
+  ].map(({ target, detail }) => ({
+    key: target.id,
+    label: `Change ${target.title}`,
+    meta: documentTypeName(target.docType),
+    detail,
+  }));
+}
+
 /**
- * The margin gate asked (fused p1 - p2 < tau): the fused top 3 and "None of
- * these". Choosing an option fills its arguments and shows the proposal;
- * "None of these" dispatches nothing.
+ * A choice before anything is proposed: which change (the margin gate's
+ * top 3) or which document (the request points at the open document and
+ * names another). Choosing an option goes on to the proposal; "none"
+ * dispatches nothing.
  */
 export function ChatChoiceCard({
-  choice,
+  heading,
+  hint,
+  options,
+  noneLabel,
   card,
   viewing,
+  showTarget = true,
   busy,
   onChoose,
   onNone,
@@ -47,16 +90,16 @@ export function ChatChoiceCard({
         className="mb-1 text-sm font-semibold"
         style={{ color: "var(--bai-accent)" }}
       >
-        Which change did you mean?
+        {heading}
       </div>
-      <CardTarget card={card} viewing={viewing} />
+      {showTarget && <CardTarget card={card} viewing={viewing} />}
       <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
-        The models were not sure enough to pick one.
+        {hint}
       </div>
       <div className="flex flex-col gap-2">
-        {choice.options.map(({ entry, p }, i) => (
+        {options.map(({ key, label, meta, detail }, i) => (
           <button
-            key={entry.key}
+            key={key}
             type="button"
             data-testid={`chat-choice-option-${i}`}
             disabled={busy}
@@ -68,12 +111,14 @@ export function ChatChoiceCard({
             }}
           >
             <span className="font-medium" style={{ color: "var(--bai-text)" }}>
-              {sentenceCase(readableOpName(entry.opName))}
+              {label}
             </span>
-            <span style={{ color: "var(--bai-text-muted)" }}> · {Math.round(p * 100)}%</span>
-            <span className="mt-0.5 block" style={{ color: "var(--bai-text-muted)" }}>
-              {OP_DESCRIPTIONS[entry.key] ?? entry.description}
-            </span>
+            {meta && <span style={{ color: "var(--bai-text-muted)" }}> · {meta}</span>}
+            {detail && (
+              <span className="mt-0.5 block" style={{ color: "var(--bai-text-muted)" }}>
+                {detail}
+              </span>
+            )}
           </button>
         ))}
         <button
@@ -87,7 +132,7 @@ export function ChatChoiceCard({
             color: "var(--bai-text-tertiary)",
           }}
         >
-          None of these
+          {noneLabel}
         </button>
       </div>
     </div>
