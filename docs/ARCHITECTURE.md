@@ -145,7 +145,7 @@ Indexes on `source_document_id`, `target_document_id`, `status`, `document_type`
 
 Embeddings are JSON-encoded float arrays with cosine computed in JS — exact, and no pgvector dependency (measured ~2.1 ms at 521 notes, ~25 ms at 100k). `model` and `dims` are stored per row so a model swap re-embeds incrementally rather than wholesale.
 
-**Semantic search:** the processor computes a 384-dim embedding per note server-side (gte-small via Transformers.js) on every content change, plus a boot-time backfill for documents the embedder has not reached. `knowledgeGraphMissingEmbeddings` is the check for a degraded index.
+**Semantic search:** the processor computes a 384-dim embedding per note server-side (gte-small via Transformers.js) on every content change, plus a boot-time backfill for documents the embedder has not reached. `knowledgeGraphMissingEmbeddings` is the check for a degraded index. The model and its runtime are a separate package, `@powerhousedao/knowledge-vault-assets` (`packages/knowledge-vault-assets/`, an optional peer pinned exactly): the embedder loads it from disk where it is installed (desktop) or checked out (`ph vetra`), and from the registry CDN everywhere else (a Switchboard running the vault from its registry cache) — never from Hugging Face. See `processors/graph-indexer/assets.ts`.
 
 **Knowledge vs meta vs execution.** `document_type` on the row lets every consumer draw the line itself. `knowledgeGraphOrphans` and the "every note has ≥ 2 connections" standard count only `KNOWLEDGE_NODE_TYPES` (`knowledge-note`, `moc`, `research-claim`) — a tension, observation, scope or work breakdown has, by design, nothing pointing at it. MoCs, scopes and WBS trees take a sentinel `status` (`MOC`, `SCOPE`, `WBS`) so a DRAFT scope cannot surface as a draft note; their real lifecycle lives in `note_type`.
 
@@ -511,7 +511,8 @@ The folder *rule* lives in `subgraphs/http/lib/vault-folders.ts`; the folder **i
 | `editors/` | The drive-app, eleven document editors, `shared/` building blocks |
 | `processors/graph-indexer/` | Projection, migrations, embedder, query helpers, automation |
 | `subgraphs/` | `knowledge-graph`, `access`, `http` |
-| `scripts/` | `atlas-sync/`, `drive-sync/`, `lead-import/`, `reactor-repair/`, plus `check-index-drift.mjs`, `fetch-model.mjs`, `copy-runtime-assets.mjs`, `cors-proxy.mjs`, `sync-opencode-agent.mjs` |
+| `scripts/` | `atlas-sync/`, `drive-sync/`, `lead-import/`, `reactor-repair/`, plus `check-index-drift.mjs`, `copy-runtime-assets.mjs`, `cors-proxy.mjs`, `sync-opencode-agent.mjs` |
+| `packages/knowledge-vault-assets/` | The embedder's model, ONNX runtime wasm and transformers web bundle, published as `@powerhousedao/knowledge-vault-assets` (rarely; its README says how) |
 | `tests/` | `unit/`, `processor/`, `integration/`, `helpers/` |
 | `docs/` | `http-api.md`, `plans/`, `superpowers/` (specs and plans), `upstream-bugs-*.md` |
 | `docker/` | Switchboard and Connect container entrypoints |

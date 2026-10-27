@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * Pre-fetch the embedding model files so they can be shipped in dist/ and
- * served alongside our JS bundles. The deployed switchboard's HTTP CDN
- * loader can reach the same origin that delivered our package, so the
- * embedder fetches model files from there instead of huggingface.co.
+ * Fetch the embedding model into this package's models/ (committed). Run it
+ * only to restore or replace the model: build.mjs copies models/ into dist/,
+ * and the vault's embedder loads it from there — from disk where the package
+ * is installed, from the registry CDN everywhere else — never from
+ * huggingface.co at run time.
  *
  * Files for `Supabase/gte-small` (used by the embedder with `dtype: "q8"`):
  *   - config.json
@@ -18,6 +19,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HF_BASE = "https://huggingface.co/Supabase/gte-small/resolve/main";
+// This package's models/ (scripts/ -> package root).
 const MODEL_DIR = path.resolve(
   fileURLToPath(import.meta.url),
   "../../models/Supabase/gte-small",

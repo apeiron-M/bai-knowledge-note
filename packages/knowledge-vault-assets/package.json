@@ -1,0 +1,19 @@
+{
+  "name": "@powerhousedao/knowledge-vault-assets",
+  "version": "1.0.0",
+  "description": "Runtime assets for the server-side embedder of @powerhousedao/knowledge-note: the gte-small embedding model, the ONNX runtime wasm and a self-contained transformers.js web bundle.",
+  "license": "MIT AND Apache-2.0",
+  "type": "module",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "node scripts/build.mjs",
+    "fetch-model": "node scripts/fetch-model.mjs"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.vetra.io/"
+  }
+}

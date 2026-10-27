@@ -1,8 +1,30 @@
 import type { FeatureExtractionPipeline } from "@huggingface/transformers";
 import type * as TransformersModule from "@huggingface/transformers";
+import {
+  ASSETS_PACKAGE,
+  LOCAL_MODEL_DIRS,
+  LOCAL_ORT_DIR,
+  MODEL_PROBE,
+  assetsCdnBase,
+  registryCandidates,
+} from "./assets.js";
 
 /**
- * Server-side embedding with two loading strategies, tried in order:
+ * Server-side embedding. The model and the runtime come from the assets
+ * package (see ./assets.ts), tried in this order:
+ *
+ *  1. EMBEDDER_CDN_BASE, when set: that folder, over HTTP. For tests and
+ *     emergencies.
+ *  2. A copy of the model on disk — the installed assets package (desktop,
+ *     `ph install`) or this repository's packages/knowledge-vault-assets
+ *     (`ph vetra`, tests) — loaded NATIVE, then WASM (below).
+ *  3. The assets package on the registry CDN. This is the deployed
+ *     Switchboard: it runs this module from its registry cache (file://) or
+ *     over HTTP, with neither the model nor node_modules beside it.
+ *
+ * Hugging Face is never contacted at run time.
+ *
+ * The two on-disk strategies:
  *
  * 1. NATIVE — plain `import("@huggingface/transformers")`. Its exports map
  *    routes Node to `transformers.node.mjs`, which hard-requires the
@@ -150,24 +172,36 @@ async function findUp(
   return existsSync(fromCwd) ? fromCwd : null;
 }
 
-/** Locate the shipped/committed model directory. */
+/** Locate a copy of the model on disk: the installed assets package, or this repository's. */
 async function findModelPath(moduleDir: string): Promise<string | null> {
   const { existsSync } = await import("node:fs");
   const path = await import("node:path");
-  const probe = "Supabase/gte-small/onnx/model_quantized.onnx";
-  const candidates = [
-    path.join(moduleDir, "models"), // dist/node/models (published package)
-    path.join(moduleDir, "..", "..", "models"), // repo root when running from source
-    path.join(moduleDir, "..", "..", "..", "models"),
-  ];
-  return candidates.find((p) => existsSync(path.join(p, probe))) ?? null;
+  for (const dir of LOCAL_MODEL_DIRS) {
+    const found = await findUp(moduleDir, dir);
+    if (found && existsSync(path.join(found, MODEL_PROBE))) return found;
+  }
+  return null;
+}
+
+/** The Switchboard's configured registry (powerhouse.config.json in its working directory), if any. */
+async function configuredRegistry(): Promise<string | null> {
+  try {
+    const { readFile } = await import("node:fs/promises");
+    const path = await import("node:path");
+    const config = JSON.parse(await readFile(path.join(process.cwd(), "powerhouse.config.json"), "utf8")) as {
+      packageRegistryUrl?: unknown;
+    };
+    return typeof config.packageRegistryUrl === "string" ? config.packageRegistryUrl : null;
+  } catch {
+    return null;
+  }
 }
 
 /** The native-backed transformers package, loaded by name at run time (see loadNative). */
 const TRANSFORMERS_PACKAGE = "@huggingface/transformers";
 
 async function loadNative(
-  modelPath: string | null,
+  modelPath: string,
 ): Promise<FeatureExtractionPipeline> {
   // A variable specifier on purpose. Built with ph-cli >= 6.2.3-dev.51, a literal import of this
   // native-backed package is listed in the manifest's externalDependencies, and a Switchboard >= dev.51
@@ -176,25 +210,23 @@ async function loadNative(
   // throws), so it must not become a hard dependency; at run time it resolves like any import.
   const specifier = TRANSFORMERS_PACKAGE;
   const transformers = (await import(/* @vite-ignore */ specifier)) as typeof TransformersModule;
-  if (modelPath) {
-    transformers.env.allowLocalModels = true;
-    transformers.env.localModelPath = modelPath;
-    transformers.env.allowRemoteModels = false;
-  }
+  transformers.env.allowLocalModels = true;
+  transformers.env.localModelPath = modelPath;
+  transformers.env.allowRemoteModels = false;
   const ext = await transformers.pipeline(
     "feature-extraction",
     "Supabase/gte-small",
     { dtype: "q8" },
   );
   console.log(
-    `[Embedder] Model loaded (native onnxruntime): ${modelPath ?? "HF hub"}`,
+    `[Embedder] Model loaded (native onnxruntime): ${modelPath}`,
   );
   return ext;
 }
 
 async function loadWasm(
   moduleDir: string,
-  modelPath: string | null,
+  modelPath: string,
 ): Promise<FeatureExtractionPipeline> {
   const { pathToFileURL } = await import("node:url");
 
@@ -217,7 +249,7 @@ async function loadWasm(
       moduleDir,
       "node_modules/@huggingface/transformers/node_modules/onnxruntime-web/dist",
     )) ??
-    (await findUp(moduleDir, "wasm"));
+    (await findUp(moduleDir, LOCAL_ORT_DIR));
   if (!ortDist) {
     throw new Error("cannot locate onnxruntime-web WASM assets");
   }
@@ -226,12 +258,10 @@ async function loadWasm(
 
   const transformers = await spoofedImport(pathToFileURL(webBuild).href);
 
-  if (modelPath) {
-    transformers.env.allowLocalModels = true;
-    transformers.env.localModelPath = pathToFileURL(modelPath).href;
-    // Hard guarantee: with local files present we never touch the network.
-    transformers.env.allowRemoteModels = false;
-  }
+  transformers.env.allowLocalModels = true;
+  transformers.env.localModelPath = pathToFileURL(modelPath).href;
+  // Hard guarantee: with local files present we never touch the network.
+  transformers.env.allowRemoteModels = false;
   transformers.env.useBrowserCache = false;
   configureOrtWasm(transformers, `${pathToFileURL(ortDist).href}/`);
 
@@ -241,24 +271,23 @@ async function loadWasm(
     { dtype: "q8" },
   );
   console.log(
-    `[Embedder] Model loaded (wasm onnxruntime): ${modelPath ?? "HF hub"}`,
+    `[Embedder] Model loaded (wasm onnxruntime): ${modelPath}`,
   );
   return ext;
 }
 
 /**
- * CDN branch: deployed Switchboards (Vetra Cloud) import package chunks
- * over HTTP(S) from the registry — import.meta.url is not file:// and no
- * node_modules exists to resolve from. The runtime-assets script ships a
- * SELF-CONTAINED transformers web bundle (bare imports inlined) plus the
- * ort helper pair next to the chunks, so everything is fetchable relative
- * to this module's URL:
+ * CDN branch: deployed Switchboards (Vetra Cloud) run this package from
+ * their registry cache, with no node_modules and no model beside it. The
+ * assets package ships a SELF-CONTAINED transformers web bundle (bare
+ * imports inlined), the ort helper pair and the model, all fetchable from
+ * its CDN folder `base`:
  *  - the web bundle and ort helper are imported via data: URLs (Node
  *    natively imports data:, avoiding any question of https import
  *    support and any filesystem writes — readOnlyRootFilesystem-safe);
  *  - the ort WASM binary is passed inline via wasmBinary;
  *  - the model weights are fetched by transformers itself from
- *    `<moduleDir>/models/` via remoteHost.
+ *    `<base>models/` via remoteHost.
  */
 async function loadFromCdn(base: string): Promise<FeatureExtractionPipeline> {
   const fetchText = async (url: string): Promise<string> => {
@@ -319,43 +348,53 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
   // Prevent concurrent loads — share the same promise
   if (!loading) {
     loading = (async () => {
-      const moduleUrl = import.meta.url;
-      // Test override: point the CDN branch at any static server
-      // (EMBEDDER_CDN_BASE=http://localhost:8000/dist/node/) to exercise
-      // the deployed-Switchboard path without a deployment.
-      const cdnBase =
-        process.env.EMBEDDER_CDN_BASE ??
-        (moduleUrl.startsWith("http")
-          ? moduleUrl.slice(0, moduleUrl.lastIndexOf("/") + 1)
-          : null);
-      if (cdnBase) {
-        extractor = await loadFromCdn(cdnBase);
-        loading = null;
-        return extractor;
-      }
-      if (!moduleUrl.startsWith("file:")) {
-        throw new Error(
-          `[Embedder] unsupported module URL scheme: ${moduleUrl.slice(0, 120)}`,
-        );
-      }
-      const { fileURLToPath } = await import("node:url");
-      const path = await import("node:path");
-      const moduleDir = path.dirname(fileURLToPath(moduleUrl));
-      const modelPath = await findModelPath(moduleDir);
+      const override = process.env.EMBEDDER_CDN_BASE;
+      if (override) return loadFromCdn(override);
 
-      try {
-        extractor = await loadNative(modelPath);
-      } catch (nativeErr) {
-        console.log(
-          `[Embedder] native onnxruntime unavailable (${
-            nativeErr instanceof Error ? nativeErr.message : String(nativeErr)
-          }), falling back to wasm`,
-        );
-        extractor = await loadWasm(moduleDir, modelPath);
+      const moduleUrl = import.meta.url;
+      const failed: string[] = [];
+      const reason = (e: unknown) => (e instanceof Error ? e.message : String(e)).slice(0, 200);
+
+      if (moduleUrl.startsWith("file:")) {
+        const { fileURLToPath } = await import("node:url");
+        const path = await import("node:path");
+        const moduleDir = path.dirname(fileURLToPath(moduleUrl));
+        const modelPath = await findModelPath(moduleDir);
+        if (modelPath) {
+          try {
+            return await loadNative(modelPath);
+          } catch (e) {
+            console.log(`[Embedder] native onnxruntime unavailable (${reason(e)}), falling back to wasm`);
+          }
+          try {
+            return await loadWasm(moduleDir, modelPath);
+          } catch (e) {
+            failed.push(`wasm: ${reason(e)}`);
+          }
+        } else {
+          failed.push(`no ${ASSETS_PACKAGE} on disk`);
+        }
       }
+
+      const registries = registryCandidates({
+        moduleUrl,
+        env: process.env.PH_REGISTRY_URL,
+        configured: await configuredRegistry(),
+      });
+      for (const registry of registries) {
+        const base = assetsCdnBase(registry);
+        try {
+          return await loadFromCdn(base);
+        } catch (e) {
+          failed.push(`${base}: ${reason(e)}`);
+        }
+      }
+      throw new Error(`[Embedder] no embedding runtime could load: ${failed.join("; ")}`);
+    })().then((ext) => {
+      extractor = ext;
       loading = null;
-      return extractor;
-    })();
+      return ext;
+    });
     // A failed load must not poison every future call with the same
     // rejected promise-chain: allow the next caller to retry.
     loading.catch(() => {
