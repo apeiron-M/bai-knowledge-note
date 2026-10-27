@@ -1,10 +1,15 @@
 import { dateRuleNote } from "../chat/core/date-resolve.js";
 import { readableOpName } from "../chat/core/op-scorer.js";
-import { documentTypeName } from "../chat/core/target-document.js";
+import type { ContextTarget } from "../chat/context/context-frame.js";
 import type { ProposedAction, Provenance } from "../hooks/use-chat-llm.js";
+import type { ChatCard } from "../hooks/use-chat-session.js";
+import { CardTarget } from "./ChatTargetTag.js";
 
 interface ChatProposalCardProps {
   proposal: ProposedAction;
+  /** The card's own target (fixed at creation) and the tag's current one. */
+  card: ChatCard;
+  viewing: ContextTarget;
   dispatching: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -50,11 +55,13 @@ const ms = (x: number | null | undefined) =>
 
 export function ChatProposalCard({
   proposal,
+  card,
+  viewing,
   dispatching,
   onConfirm,
   onCancel,
 }: ChatProposalCardProps) {
-  const { entry, step2, decision, action, error, doc } = proposal;
+  const { entry, step2, decision, action, error } = proposal;
   const { step1, timings, trie } = decision;
   const rows = argRows(proposal);
   return (
@@ -72,9 +79,8 @@ export function ChatProposalCard({
       >
         {sentenceCase(readableOpName(entry.opName))}
       </div>
+      <CardTarget card={card} viewing={viewing} />
       <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
-        on <strong>{doc.title}</strong> ({documentTypeName(doc.docType)})
-        {" · "}
         <code>{entry.opName}</code>
         {` · picked from ${step1.candidates.length} operations`}
       </div>

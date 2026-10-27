@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
-  useDocumentsInSelectedDrive,
+  useDocumentsByIds,
   useFileNodesInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
 import type { ProjectStatus } from "document-models/project";
@@ -15,7 +15,7 @@ import { ProjectsView } from "./ProjectsView.js";
 import { HealthDashboard } from "./HealthDashboard.js";
 import { SearchView } from "./SearchView.js";
 import { ActivityView } from "./ActivityView.js";
-import { ChatView } from "./ChatView.js";
+import { ChatSheet } from "./ChatSheet.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
@@ -31,8 +31,7 @@ type ViewMode =
   | "activity"
   | "pipeline"
   | "health"
-  | "config"
-  | "chat";
+  | "config";
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
@@ -78,11 +77,18 @@ export function DriveExplorer({ children }: EditorProps) {
   );
 
   // Project badge counts non-ARCHIVED projects. Unlike sourceCount, this
-  // can't be derived from file nodes alone (FileNode only carries
-  // documentType, not the document's state), so it reads the full
-  // documents here instead.
-  const documents = useDocumentsInSelectedDrive();
-  const projectCount = (documents ?? []).filter((d) => {
+  // needs each project's state (a FileNode carries only documentType), so
+  // it loads the bai/project documents by id, never the whole drive.
+  const projectIdsKey = allFiles
+    .filter((n) => n.documentType === "bai/project")
+    .map((n) => n.id)
+    .join(",");
+  const projectIds = useMemo(
+    () => (projectIdsKey ? projectIdsKey.split(",") : []),
+    [projectIdsKey],
+  );
+  const projectDocs = useDocumentsByIds(projectIds);
+  const projectCount = projectDocs.filter((d) => {
     if (d.header.documentType !== "bai/project") return false;
     const status = (
       d.state as unknown as { global: { status?: ProjectStatus } }
@@ -215,21 +221,6 @@ export function DriveExplorer({ children }: EditorProps) {
       ),
     },
     {
-      key: "chat",
-      label: "Chat",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
-      ),
-    },
-    {
       key: "activity",
       label: "Activity",
       icon: (
@@ -302,7 +293,7 @@ export function DriveExplorer({ children }: EditorProps) {
         onClearGraphFocus={handleClearGraphFocus}
       />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="relative flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
         <div
           className="flex items-center justify-between px-4 py-2"
@@ -401,12 +392,12 @@ export function DriveExplorer({ children }: EditorProps) {
             <ProjectsView />
           ) : viewMode === "health" ? (
             <HealthDashboard />
-          ) : viewMode === "chat" ? (
-            <ChatView documents={documents ?? []} />
           ) : (
             <NoteList notes={notes} />
           )}
         </div>
+        {/* The chat: a bottom sheet that persists while an editor is open. */}
+        <ChatSheet />
       </div>
     </div>
   );

@@ -1,10 +1,14 @@
 import { OP_DESCRIPTIONS } from "../chat/core/op-descriptions.js";
 import { readableOpName } from "../chat/core/op-scorer.js";
-import { documentTypeName } from "../chat/core/target-document.js";
+import type { ContextTarget } from "../chat/context/context-frame.js";
 import type { PendingChoice } from "../hooks/use-chat-llm.js";
+import type { ChatCard } from "../hooks/use-chat-session.js";
+import { CardTarget } from "./ChatTargetTag.js";
 
 interface ChatChoiceCardProps {
   choice: PendingChoice;
+  card: ChatCard;
+  viewing: ContextTarget;
   busy: boolean;
   onChoose: (index: number) => void;
   onNone: () => void;
@@ -19,7 +23,14 @@ function sentenceCase(s: string): string {
  * these". Choosing an option fills its arguments and shows the proposal;
  * "None of these" dispatches nothing.
  */
-export function ChatChoiceCard({ choice, busy, onChoose, onNone }: ChatChoiceCardProps) {
+export function ChatChoiceCard({
+  choice,
+  card,
+  viewing,
+  busy,
+  onChoose,
+  onNone,
+}: ChatChoiceCardProps) {
   return (
     <div
       data-testid="chat-choice"
@@ -38,9 +49,9 @@ export function ChatChoiceCard({ choice, busy, onChoose, onNone }: ChatChoiceCar
       >
         Which change did you mean?
       </div>
+      <CardTarget card={card} viewing={viewing} />
       <div className="mb-2" style={{ color: "var(--bai-text-muted)" }}>
-        on <strong>{choice.doc.title}</strong> ({documentTypeName(choice.doc.docType)}) · the
-        models were not sure enough to pick one
+        The models were not sure enough to pick one.
       </div>
       <div className="flex flex-col gap-2">
         {choice.options.map(({ entry, p }, i) => (

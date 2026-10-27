@@ -1,50 +1,29 @@
-import { useMemo, useState } from "react";
-import type { PHDocument } from "document-model";
-import { dispatchActions } from "@powerhousedao/reactor-browser";
+import { useMemo, useState, type RefObject } from "react";
+import { generateId } from "document-model";
+import { dispatchActions, useGetDocument } from "@powerhousedao/reactor-browser";
+import { toChatDocument } from "../chat/context/chat-document.js";
+import type { ContextTarget, DocumentTarget } from "../chat/context/context-frame.js";
+import type { HistoryEntry } from "../chat/context/history-store.js";
+import { driveRefContext, type ChatDocument } from "../chat/core/ref-candidates.js";
 import {
-  documentTitle,
-  type ChatDocument,
-} from "../chat/core/ref-candidates.js";
-import {
-  askForDocumentText,
-  documentTypeName,
   resolveTargetDocument,
   routeChatTurn,
+  type CreateIntent,
 } from "../chat/core/target-document.js";
 import { v1Catalog } from "../chat/core/v1-pipeline.js";
+import type { ChatContextValue } from "../hooks/use-chat-context.js";
 import {
   useChatLlm,
   type ChatLlm,
   type ChatReply,
   type ChatStage,
   type ModelState,
-  type PendingChoice,
-  type ProposedAction,
 } from "../hooks/use-chat-llm.js";
+import type { ChatCard, ChatSession } from "../hooks/use-chat-session.js";
 import { ChatChoiceCard } from "./ChatChoiceCard.js";
 import { ChatModelSettings } from "./ChatModelSettings.js";
 import { ChatProposalCard } from "./ChatProposalCard.js";
-
-interface ChatMessage {
-  role: "user" | "assistant" | "system" | "error";
-  text: string;
-}
-
-function isRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === "object" && v !== null && !Array.isArray(v);
-}
-
-/** A drive document as the chat sees it (global state only). */
-export function toChatDocument(d: PHDocument): ChatDocument {
-  const state: unknown = d.state;
-  const global = isRecord(state) && isRecord(state.global) ? state.global : {};
-  return {
-    id: d.header.id,
-    docType: d.header.documentType,
-    title: documentTitle(global, d.header.name || d.header.id),
-    state: global,
-  };
-}
+import { targetLabel } from "./ChatTargetTag.js";
 
 const STAGE_TEXT: Record<ChatStage, string> = {
   choose: "Choosing the operation...",
@@ -54,191 +33,210 @@ const STAGE_TEXT: Record<ChatStage, string> = {
   answer: "Answering...",
 };
 
+const errText = (err: unknown) => (err instanceof Error ? err.message : String(err));
+
+interface ChatPanelProps {
+  context: ChatContextValue;
+  session: ChatSession;
+  inputRef: RefObject<HTMLInputElement | null>;
+  /** Opens the New dialog for a drive-level create request. */
+  onCreate: (intent: CreateIntent) => void;
+}
+
+/** What the card for a turn acts on, fixed when the turn is sent. */
+interface CardMeta {
+  target: DocumentTarget;
+  context: ContextTarget;
+  retargetedFrom?: DocumentTarget;
+}
+
 /**
- * Chat tab, configuration C (X5 LoRA x Kev-FT, margin gate): a request on
- * the target document becomes one proposed action (confirm before
- * dispatch), or a choice among the fused top 3 when the models are not sure;
- * a request the LoRA maps to no change is answered. Without a target
- * document the tab answers questions and asks for a document otherwise.
+ * The sheet's chat, configuration C (X5 LoRA x Kev-FT, margin gate): a
+ * request on the target document becomes one proposed action (confirm
+ * before dispatch), or a choice among the fused top 3 when the models are
+ * not sure; a request the LoRA maps to no change is answered. The target is
+ * the viewed document (the tag) unless the request names exactly one other
+ * document; a card keeps its own target after the tag moves on.
  */
-export function ChatView({ documents }: { documents: PHDocument[] }) {
+export function ChatPanel({ context, session, inputRef, onCreate }: ChatPanelProps) {
   const llm = useChatLlm();
-  const [docId, setDocId] = useState<string>("");
+  const getDocument = useGetDocument();
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [dispatching, setDispatching] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [proposal, setProposal] = useState<ProposedAction | null>(null);
-  const [choice, setChoice] = useState<PendingChoice | null>(null);
+  const [createOffers, setCreateOffers] = useState<Record<string, CreateIntent>>({});
+  const { frame, documents } = context;
+  const { state } = session;
+  const card = state.pending;
 
-  const supportedTypes = useMemo(
-    () => new Set(v1Catalog().map((e) => e.docType)),
-    [],
-  );
-  const docs = useMemo(() => documents.map(toChatDocument), [documents]);
-  const pickable = docs.filter((d) => supportedTypes.has(d.docType));
+  const supportedTypes = useMemo(() => new Set(v1Catalog().map((e) => e.docType)), []);
 
-  function push(msg: ChatMessage) {
-    setMessages((m) => [...m, msg]);
+  async function loadDoc(id: string): Promise<ChatDocument> {
+    return toChatDocument(await getDocument(id));
   }
 
-  function showReply(reply: ChatReply) {
+  function showReply(reply: ChatReply, meta: CardMeta, turnId: string) {
+    const about = { turnId, target: meta.target };
     if (reply.kind === "answer") {
-      push({
-        role: "system",
-        text: "No document change (the model chose no document change); answering.",
-      });
-      push({ role: "assistant", text: reply.text });
-    } else if (reply.kind === "choose") setChoice(reply.choice);
-    else {
+      session.append(
+        "system",
+        "No document change (the model chose no document change); answering.",
+        about,
+      );
+      session.append("assistant", reply.text, about);
+    } else if (reply.kind === "choose") {
+      session.setPending({ ...meta, payload: { kind: "choice", choice: reply.choice } });
+      session.append(
+        "system",
+        `Asked which change to make on "${meta.target.title}" (${reply.choice.options.length} options).`,
+        about,
+      );
+    } else {
       const pr = reply.proposal.provenance;
       if (pr.kind === "lora-alone" && pr.reason.startsWith("failed"))
-        push({
-          role: "system",
-          text: "Decision model failed on this message; LoRA alone.",
-        });
-      setProposal(reply.proposal);
+        session.append("system", "Decision model failed on this message; LoRA alone.", about);
+      session.setPending({ ...meta, payload: { kind: "proposal", proposal: reply.proposal } });
+      session.append(
+        "system",
+        `Proposed ${reply.proposal.entry.opName} on "${meta.target.title}" (waiting for Confirm).`,
+        about,
+      );
     }
   }
 
   async function handleSend() {
     const text = input.trim();
     if (!text || busy) return;
+    const turnId = generateId();
+    const viewing = frame.target;
     setInput("");
-    setProposal(null);
-    setChoice(null);
-    push({ role: "user", text });
+    session.settle();
+    session.append("user", text, { turnId, context: viewing, target: viewing });
     const route = routeChatTurn(
       text,
-      resolveTargetDocument({
-        selectedId: docId,
-        documents: docs,
-        supportedTypes,
-        utterance: text,
-      }),
+      resolveTargetDocument({ context: viewing, documents, supportedTypes, utterance: text }),
     );
-    if (route.kind === "ask") {
-      push({
-        role: "system",
-        text: askForDocumentText(route.reason, route.options),
-      });
+    if (route.kind === "explain") {
+      session.append("system", route.text, { turnId, target: viewing });
+      const intent = route.create;
+      if (intent) setCreateOffers((o) => ({ ...o, [turnId]: intent }));
       return;
     }
     setBusy(true);
     try {
       if (route.kind === "answer") {
         const reply = await llm.ask(text);
-        push({
-          role: "system",
-          text: "No target document; answering the question.",
-        });
-        if (reply.kind === "answer") push({ role: "assistant", text: reply.text });
+        session.append(
+          "system",
+          route.because === "drive"
+            ? "No document open; answering the question."
+            : "No operations for this document's type; answering the question.",
+          { turnId, target: viewing },
+        );
+        if (reply.kind === "answer")
+          session.append("assistant", reply.text, { turnId, target: viewing });
         return;
       }
-      if (route.via === "title") {
-        setDocId(route.doc.id);
-        push({
-          role: "system",
-          text: `Target: "${route.doc.title}" (named in the request).`,
-        });
-      }
-      showReply(await llm.send(text, route.doc, docs));
-    } catch (err) {
-      push({
-        role: "error",
-        text: err instanceof Error ? err.message : String(err),
+      const doc = await loadDoc(route.target.id);
+      const target: DocumentTarget = { ...route.target, title: doc.title, docType: doc.docType };
+      if (route.via !== "context")
+        session.append(
+          "system",
+          route.from
+            ? `Target: "${target.title}" (named in the request), not the viewed "${route.from.title}".`
+            : `Target: "${target.title}" (named in the request).`,
+          { turnId, target },
+        );
+      const wbsRef = typeof doc.state.wbsRef === "string" ? doc.state.wbsRef : "";
+      const linkedWbs =
+        doc.docType === "bai/project" && wbsRef
+          ? await loadDoc(wbsRef).catch(() => undefined)
+          : undefined;
+      const refContext = driveRefContext(doc, documents, {
+        linkedWbs,
+        utterance: text,
+        recentIds: frame.recentIds,
       });
+      const reply = await llm.send(text, doc, refContext);
+      showReply(reply, { target, context: viewing, retargetedFrom: route.from }, turnId);
+    } catch (err) {
+      session.append("error", errText(err), { turnId, target: viewing });
     } finally {
       setBusy(false);
     }
   }
 
   async function handleChoose(index: number) {
-    const opt = choice?.options[index];
-    if (!choice || !opt || busy) return;
+    if (!card || card.payload.kind !== "choice" || busy) return;
+    const { choice } = card.payload;
+    const opt = choice.options.at(index);
+    if (!opt) return;
+    const turnId = generateId();
     setBusy(true);
     try {
       const reply = await llm.choose(choice, opt.entry);
-      setChoice(null);
-      showReply(reply);
+      session.settle();
+      const { target, context: viewed, retargetedFrom } = card;
+      showReply(reply, { target, context: viewed, retargetedFrom }, turnId);
     } catch (err) {
-      push({
-        role: "error",
-        text: err instanceof Error ? err.message : String(err),
-      });
+      session.append("error", errText(err), { turnId, target: card.target });
     } finally {
       setBusy(false);
     }
   }
 
   function handleNone() {
-    setChoice(null);
-    push({
-      role: "system",
-      text: "Nothing changed. Try rephrasing, or name the change more directly.",
-    });
+    if (!card) return;
+    session.settle();
+    session.append(
+      "system",
+      "Nothing changed. Try rephrasing, or name the change more directly.",
+      { turnId: generateId(), target: card.target },
+    );
   }
 
-  async function handleConfirm() {
-    if (!proposal?.action) return;
-    const { doc, entry } = proposal;
+  async function handleConfirm(c: ChatCard) {
+    if (c.payload.kind !== "proposal" || !c.payload.proposal.action) return;
+    const { entry, action } = c.payload.proposal;
+    const meta = { turnId: generateId(), target: c.target };
     setDispatching(true);
     const errors: string[] = [];
     try {
-      const ok = await dispatchActions(proposal.action, doc.id, (errs) =>
+      // the card's own target, never the tag's current value
+      const ok = await dispatchActions(action, c.target.id, (errs) =>
         errors.push(...errs.map((e) => e.message)),
       );
-      if (ok && errors.length === 0)
-        push({
-          role: "system",
-          text: `Dispatched ${entry.opName} to "${doc.title}".`,
-        });
-      else
-        push({
-          role: "error",
-          text: `Dispatch failed: ${errors.join("; ") || "the reactor returned no result"}. Nothing was changed.`,
-        });
+      if (ok && errors.length === 0) {
+        session.append("system", `Dispatched ${entry.opName} to "${c.target.title}".`, meta);
+        session.touchRecent(c.target);
+      } else
+        session.append(
+          "error",
+          `Dispatch failed: ${errors.join("; ") || "the reactor returned no result"}. Nothing was changed.`,
+          meta,
+        );
     } catch (err) {
-      push({
-        role: "error",
-        text: `Dispatch failed: ${err instanceof Error ? err.message : String(err)}. Nothing was changed.`,
-      });
+      session.append("error", `Dispatch failed: ${errText(err)}. Nothing was changed.`, meta);
     } finally {
       setDispatching(false);
-      setProposal(null);
+      session.settle();
     }
   }
 
-  function handleCancel() {
-    if (proposal)
-      push({
-        role: "system",
-        text: `Cancelled ${proposal.entry.opName}; nothing dispatched.`,
-      });
-    setProposal(null);
+  function handleCancel(c: ChatCard) {
+    if (c.payload.kind === "proposal")
+      session.append(
+        "system",
+        `Cancelled ${c.payload.proposal.entry.opName}; nothing dispatched.`,
+        { turnId: generateId(), target: c.target },
+      );
+    session.settle();
   }
 
   return (
-    <div className="flex h-full flex-col gap-3 p-4 text-sm">
-      <div className="flex flex-wrap items-center gap-2">
-        <select
-          aria-label="Target document"
-          value={docId}
-          onChange={(e) => setDocId(e.target.value)}
-          className="rounded-md px-2 py-1 text-xs"
-          style={{
-            border: "1px solid var(--bai-border)",
-            backgroundColor: "var(--bai-surface)",
-            color: "var(--bai-text-secondary)",
-          }}
-        >
-          <option value="">Target document...</option>
-          {pickable.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.title} ({documentTypeName(d.docType)})
-            </option>
-          ))}
-        </select>
+    <div className="flex h-full min-h-0 flex-col gap-2 text-sm">
+      <div className="flex flex-wrap items-start gap-2">
+        <ChatModelSettings llm={llm} />
         <ModelStatusRows llm={llm} />
       </div>
       {llm.legacyModelFile && (
@@ -252,7 +250,7 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
         >
           <span className="flex-1">
             The model URL saved by the previous chat version (
-            <code>{llm.legacyModelFile}</code>) is no longer used: the tab now runs
+            <code>{llm.legacyModelFile}</code>) is no longer used: the chat now runs
             configuration C&apos;s models. To try that file anyway, enter its URL as the
             command model under Model settings.
           </span>
@@ -266,26 +264,15 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
           </button>
         </div>
       )}
-      <ChatModelSettings llm={llm} />
 
-      <div className="flex-1 space-y-2 overflow-auto">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className="whitespace-pre-wrap rounded-md px-3 py-2"
-            style={{
-              backgroundColor:
-                m.role === "user" ? "var(--bai-hover)" : "transparent",
-              color:
-                m.role === "error"
-                  ? "#ef4444"
-                  : m.role === "system"
-                    ? "var(--bai-text-muted)"
-                    : "var(--bai-text-secondary)",
-            }}
-          >
-            {m.text}
-          </div>
+      <div className="min-h-0 flex-1 space-y-2 overflow-auto" data-testid="chat-thread">
+        {state.entries.map((m) => (
+          <ThreadEntry
+            key={m.id}
+            entry={m}
+            create={m.role === "system" ? createOffers[m.turnId] : undefined}
+            onCreate={onCreate}
+          />
         ))}
         {busy && llm.stage && (
           <div
@@ -310,20 +297,24 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
             )}
           </div>
         )}
-        {choice && (
+        {card?.payload.kind === "choice" && (
           <ChatChoiceCard
-            choice={choice}
+            choice={card.payload.choice}
+            card={card}
+            viewing={frame.target}
             busy={busy}
             onChoose={(i) => void handleChoose(i)}
             onNone={handleNone}
           />
         )}
-        {proposal && (
+        {card?.payload.kind === "proposal" && (
           <ChatProposalCard
-            proposal={proposal}
+            proposal={card.payload.proposal}
+            card={card}
+            viewing={frame.target}
             dispatching={dispatching}
-            onConfirm={() => void handleConfirm()}
-            onCancel={handleCancel}
+            onConfirm={() => void handleConfirm(card)}
+            onCancel={() => handleCancel(card)}
           />
         )}
       </div>
@@ -336,6 +327,7 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
         }}
       >
         <input
+          ref={inputRef}
           aria-label="Chat input"
           name="chat-input"
           value={input}
@@ -360,6 +352,56 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
           {busy ? "Thinking..." : "Send"}
         </button>
       </form>
+    </div>
+  );
+}
+
+function ThreadEntry({
+  entry: m,
+  create,
+  onCreate,
+}: {
+  entry: HistoryEntry;
+  create?: CreateIntent;
+  onCreate: (intent: CreateIntent) => void;
+}) {
+  return (
+    <div
+      data-testid={`chat-entry-${m.role}`}
+      className="whitespace-pre-wrap rounded-md px-3 py-2"
+      style={{
+        backgroundColor: m.role === "user" ? "var(--bai-hover)" : "transparent",
+        color:
+          m.role === "error"
+            ? "#ef4444"
+            : m.role === "system"
+              ? "var(--bai-text-muted)"
+              : "var(--bai-text-secondary)",
+      }}
+    >
+      {m.text}
+      {m.role === "user" && m.context && (
+        <span
+          className="mt-0.5 block text-[10px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
+          on {targetLabel(m.context)}
+        </span>
+      )}
+      {create && (
+        <button
+          type="button"
+          data-testid="chat-create-offer"
+          onClick={() => onCreate(create)}
+          className="mt-1 block rounded-md px-3 py-1 text-xs font-medium"
+          style={{
+            backgroundColor: "var(--bai-accent)",
+            color: "var(--bai-accent-text)",
+          }}
+        >
+          New {create.label}
+        </button>
+      )}
     </div>
   );
 }
