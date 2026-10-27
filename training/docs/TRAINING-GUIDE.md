@@ -135,7 +135,7 @@ The teacher rewrites a kept Round 10 utterance in one of 10 styles: terse, lower
 
 ```bash
 A=training/artifacts/round11-para; C=training/artifacts/round10/context.json; X=training/round11-para/para.py
-$P $X sources --rows training/artifacts/round10/final/rows-valid.jsonl --context $C --out $A/sources.jsonl   # blind prefilter, per-op budget
+$P $X sources --rows training/artifacts/round10/final/rows-valid.jsonl --context $C --out $A/sources.jsonl   # [inf] input file; blind prefilter, per-op budget
 $P $X plan --sources $A/sources.jsonl --context $C --out $A/full/requests.jsonl                             # batch 10, prompt leak check
 $P $X promptcheck $A/full/requests.jsonl
 $P training/py/teacher.py run $A/full/requests.jsonl --out $A/full/gen-results.jsonl --timeout 600 --concurrency 5 --max-requests 1000 --cli-cwd <empty dir>
@@ -200,7 +200,7 @@ Agreement under the blind relabel is the main quality gate. Typical exact agreem
   - Experiment agents never open `blind/`.
 - **Contamination found the hard way:**
   - Round 10's fresh split put 140 of Round 8's 168 val ids into train. That made the "teacher val" in-sample for X1 and X5, which broke temperature refits (section 8).
-  - One Round 10 row near-copied a held-out-5 item. It was never checked against the blind sets, which did not exist yet, and later had to be excluded at eval time.
+  - One Round 10 row near-copied a held-out-5 item. Round 10 never checked it against the blind sets, so it had to be excluded at eval time.
   - Kev-FT's data has 4,382 + 228 = 4,610 records, which equals `round10/final-in/rows.jsonl` (before dedup), not the 4,609 in `final/rows-kept.jsonl`. Pre-registration 3 §4 names one Kev-FT row outside `rows-kept.jsonl` that was never screened. **[inf]** So the Kev data was most likely built from the pre-dedup file. Build it from `final/rows-kept.jsonl` next time.
 
 ## 6. LoRA training (Constantine, MPS)
@@ -234,7 +234,7 @@ ssh trainbox "tail -c 600 ~/bai-training/x5-train.log | tr '\r' '\n' | tail -3" 
 - A 36 GB machine has not been re-tested since the fix [est: probably enough].
 - The watchdog sends TERM and then KILL above 32 GiB. It has never fired.
 
-**Checkpoints:** `--save-steps 50 --save-limit 2`, and `--resume auto|<dir>`. Resume was tested: from checkpoint 50 to step 60, the loss matched to 4 decimal places.
+**Checkpoints:** `--save-steps 50 --save-limit 2`, and `--resume auto|<dir>`. Resume was tested: from checkpoint 50 to step 60, the train and eval losses landed within about 1e-3 of the uninterrupted run.
 
 **Observed runs:**
 
