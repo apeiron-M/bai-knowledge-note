@@ -1,0 +1,182 @@
+[
+ {
+  "id": "kn3-01",
+  "docType": "bai/knowledge-note",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- knowledge-note:SET_TITLE: Set the note title (fields: title)\n- knowledge-note:SET_DESCRIPTION: Set the note description (max 200 chars) (fields: description)\n- knowledge-note:SET_NOTE_TYPE: Set or change the note type (fields: noteType)\n- knowledge-note:SET_CONTENT: Replace the markdown content body (fields: content)\n- knowledge-note:PATCH_CONTENT: Surgical edit to content (fields: offset, removeCount, insert)\n- knowledge-note:SET_METADATA_FIELD: Set any string metadata field by name (fields: field, value)\n- knowledge-note:SET_METADATA_LIST_FIELD: Set any string-array metadata field by name (fields: field, values)\n- knowledge-note:SET_PROVENANCE: Record author, source origin, session ID, and creation timestamp (fields: author, sourceOrigin)\n- knowledge-note:ADD_LINK: Create a typed link to another note (fields: targetTitle, linkType)\n- knowledge-note:REMOVE_LINK: Remove a link by ID (fields: none)\n- knowledge-note:UPDATE_LINK_TYPE: Change a link's type (fields: linkType)\n- knowledge-note:ADD_TOPIC: Tag the note with a topic (fields: name)\n- knowledge-note:REMOVE_TOPIC: Remove a topic tag by ID (fields: none)\n- knowledge-note:SUBMIT_FOR_REVIEW: Transition DRAFT → IN_REVIEW (fields: comment)\n- knowledge-note:APPROVE_NOTE: Transition IN_REVIEW → CANONICAL (actor ≠ author) (fields: comment)\n- knowledge-note:REJECT_NOTE: Transition IN_REVIEW → DRAFT with feedback (fields: comment)\n- knowledge-note:ARCHIVE_NOTE: Transition CANONICAL → ARCHIVED (fields: comment)\n- knowledge-note:RESTORE_NOTE: Transition ARCHIVED → DRAFT (fields: comment)\n\nRequest: what kind of entry is this really? it records a choice we made and the reasons behind it, so file it as that kind"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- knowledge-note:SET_TITLE: Set the note title (fields: title)\n- knowledge-note:SET_DESCRIPTION: Set the note description (max 200 chars) (fields: description)\n- knowledge-note:SET_NOTE_TYPE: Set or change the note type (fields: noteType)\n- knowledge-note:SET_CONTENT: Replace the markdown content body (fields: content)\n- knowledge-note:PATCH_CONTENT: Surgical edit to content (fields: offset, removeCount, insert)\n- knowledge-note:SET_METADATA_FIELD: Set any string metadata field by name (fields: field, value)\n- knowledge-note:SET_METADATA_LIST_FIELD: Set any string-array metadata field by name (fields: field, values)\n- knowledge-note:SET_PROVENANCE: Record author, source origin, session ID, and creation timestamp (fields: author, sourceOrigin)\n- knowledge-note:ADD_LINK: Create a typed link to another note (fields: targetTitle, linkType)\n- knowledge-note:REMOVE_LINK: Remove a link by ID (fields: none)\n- knowledge-note:UPDATE_LINK_TYPE: Change a link's type (fields: linkType)\n- knowledge-note:ADD_TOPIC: Tag the note with a topic (fields: name)\n- knowledge-note:REMOVE_TOPIC: Remove a topic tag by ID (fields: none)\n- knowledge-note:SUBMIT_FOR_REVIEW: Transition DRAFT → IN_REVIEW (fields: comment)\n- knowledge-note:APPROVE_NOTE: Transition IN_REVIEW → CANONICAL (actor ≠ author) (fields: comment)\n- knowledge-note:REJECT_NOTE: Transition IN_REVIEW → DRAFT with feedback (fields: comment)\n- knowledge-note:ARCHIVE_NOTE: Transition CANONICAL → ARCHIVED (fields: comment)\n- knowledge-note:RESTORE_NOTE: Transition ARCHIVED → DRAFT (fields: comment)\n\nRequest: what kind of entry is this really? it records a choice we made and the reasons behind it, so file it as that kind<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "moc3-01",
+  "docType": "bai/moc",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- moc:CREATE_MOC: Initialize a new Map of Content (fields: title, description, orientation, tier, parentRef)\n- moc:UPDATE_ORIENTATION: Update the synthesis paragraph (fields: orientation)\n- moc:UPDATE_DESCRIPTION: Update the progressive disclosure summary (fields: description)\n- moc:ADD_CORE_IDEA: Add a note to Core Ideas with context phrase (fields: noteRef, contextPhrase, sortOrder)\n- moc:UPDATE_CORE_IDEA: Update a core idea's context phrase or order (fields: contextPhrase, sortOrder)\n- moc:REMOVE_CORE_IDEA: Remove a note from Core Ideas (fields: none)\n- moc:REORDER_CORE_IDEAS: Reorder core ideas by providing ordered IDs (fields: none)\n- moc:ADD_TENSION: Add an unresolved tension (fields: description, involvedRefs)\n- moc:REMOVE_TENSION: Remove a resolved or dissolved tension (fields: none)\n- moc:ADD_OPEN_QUESTION: Add an unexplored direction (fields: question)\n- moc:REMOVE_OPEN_QUESTION: Remove an open question (fields: question)\n- moc:ADD_CHILD_MOC: Add a child MOC reference (fields: childRef)\n- moc:REMOVE_CHILD_MOC: Remove a child MOC reference (fields: childRef)\n- moc:SET_METADATA_FIELD: Set a whitelisted string metadata field on the MoC. Currently only `version`, which records the Powerhouse stack release the MoC's knowledge is registered against. (fields: field, value)\n\nRequest: new topic map \"Wild yeast ecology\": it's about how starter microbes compete and cooperate, and readers should begin with the LAB-to-yeast balance notes"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- moc:CREATE_MOC: Initialize a new Map of Content (fields: title, description, orientation, tier, parentRef)\n- moc:UPDATE_ORIENTATION: Update the synthesis paragraph (fields: orientation)\n- moc:UPDATE_DESCRIPTION: Update the progressive disclosure summary (fields: description)\n- moc:ADD_CORE_IDEA: Add a note to Core Ideas with context phrase (fields: noteRef, contextPhrase, sortOrder)\n- moc:UPDATE_CORE_IDEA: Update a core idea's context phrase or order (fields: contextPhrase, sortOrder)\n- moc:REMOVE_CORE_IDEA: Remove a note from Core Ideas (fields: none)\n- moc:REORDER_CORE_IDEAS: Reorder core ideas by providing ordered IDs (fields: none)\n- moc:ADD_TENSION: Add an unresolved tension (fields: description, involvedRefs)\n- moc:REMOVE_TENSION: Remove a resolved or dissolved tension (fields: none)\n- moc:ADD_OPEN_QUESTION: Add an unexplored direction (fields: question)\n- moc:REMOVE_OPEN_QUESTION: Remove an open question (fields: question)\n- moc:ADD_CHILD_MOC: Add a child MOC reference (fields: childRef)\n- moc:REMOVE_CHILD_MOC: Remove a child MOC reference (fields: childRef)\n- moc:SET_METADATA_FIELD: Set a whitelisted string metadata field on the MoC. Currently only `version`, which records the Powerhouse stack release the MoC's knowledge is registered against. (fields: field, value)\n\nRequest: new topic map \"Wild yeast ecology\": it's about how starter microbes compete and cooperate, and readers should begin with the LAB-to-yeast balance notes<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "prj3-01",
+  "docType": "bai/project",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- project:CREATE_PROJECT: create project (fields: name, description, owner, status)\n- project:UPDATE_PROJECT_INFO: update project info (fields: name, description)\n- project:SET_PROJECT_STATUS: set project status (fields: status)\n- project:SET_OWNER: set owner (fields: owner)\n- project:SET_TARGET_DATE: set target date (fields: targetDate)\n- project:LINK_WBS: link wbs (fields: none)\n- project:ADD_MEMBER: add member (fields: name, role, kind)\n- project:UPDATE_MEMBER: update member (fields: name, role, kind)\n- project:REMOVE_MEMBER: remove member (fields: none)\n- project:ADD_DELIVERABLE: add deliverable (fields: title, description, url)\n- project:UPDATE_DELIVERABLE: update deliverable (fields: title, description, url)\n- project:SET_DELIVERABLE_STATUS: set deliverable status (fields: status)\n- project:REMOVE_DELIVERABLE: remove deliverable (fields: none)\n- project:ADD_KNOWLEDGE_REF: add knowledge ref (fields: none)\n- project:REMOVE_KNOWLEDGE_REF: remove knowledge ref (fields: none)\n- project:SET_REFERENCES: set references (fields: references)\n\nRequest: start a project called \"Riverside greenway study\", Hana owns it, and it's still in planning"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- project:CREATE_PROJECT: create project (fields: name, description, owner, status)\n- project:UPDATE_PROJECT_INFO: update project info (fields: name, description)\n- project:SET_PROJECT_STATUS: set project status (fields: status)\n- project:SET_OWNER: set owner (fields: owner)\n- project:SET_TARGET_DATE: set target date (fields: targetDate)\n- project:LINK_WBS: link wbs (fields: none)\n- project:ADD_MEMBER: add member (fields: name, role, kind)\n- project:UPDATE_MEMBER: update member (fields: name, role, kind)\n- project:REMOVE_MEMBER: remove member (fields: none)\n- project:ADD_DELIVERABLE: add deliverable (fields: title, description, url)\n- project:UPDATE_DELIVERABLE: update deliverable (fields: title, description, url)\n- project:SET_DELIVERABLE_STATUS: set deliverable status (fields: status)\n- project:REMOVE_DELIVERABLE: remove deliverable (fields: none)\n- project:ADD_KNOWLEDGE_REF: add knowledge ref (fields: none)\n- project:REMOVE_KNOWLEDGE_REF: remove knowledge ref (fields: none)\n- project:SET_REFERENCES: set references (fields: references)\n\nRequest: start a project called \"Riverside greenway study\", Hana owns it, and it's still in planning<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "wbs3-01",
+  "docType": "bai/wbs",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- wbs:CREATE_GOAL: create goal (fields: description, assignee)\n- wbs:UPDATE_GOAL_DESCRIPTION: update goal description (fields: description)\n- wbs:DELETE_GOAL: delete goal (fields: none)\n- wbs:REORDER: reorder (fields: none)\n- wbs:SET_GOAL_STATUS: set goal status (fields: status, blockReason, outcome)\n- wbs:ASSIGN_GOAL: assign goal (fields: assignee)\n- wbs:SET_OUTCOME: set outcome (fields: outcome)\n- wbs:ADD_DEPENDENCIES: add dependencies (fields: none)\n- wbs:REMOVE_DEPENDENCIES: remove dependencies (fields: none)\n- wbs:ADD_NOTE: add note (fields: note, author)\n- wbs:REMOVE_NOTE: remove note (fields: none)\n- wbs:SET_OWNER: set owner (fields: owner)\n- wbs:SET_REFERENCES: set references (fields: references)\n- wbs:SET_PROJECT_REF: set project ref (fields: none)\n\nRequest: add a goal \"Order paint\" under procurement"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- wbs:CREATE_GOAL: create goal (fields: description, assignee)\n- wbs:UPDATE_GOAL_DESCRIPTION: update goal description (fields: description)\n- wbs:DELETE_GOAL: delete goal (fields: none)\n- wbs:REORDER: reorder (fields: none)\n- wbs:SET_GOAL_STATUS: set goal status (fields: status, blockReason, outcome)\n- wbs:ASSIGN_GOAL: assign goal (fields: assignee)\n- wbs:SET_OUTCOME: set outcome (fields: outcome)\n- wbs:ADD_DEPENDENCIES: add dependencies (fields: none)\n- wbs:REMOVE_DEPENDENCIES: remove dependencies (fields: none)\n- wbs:ADD_NOTE: add note (fields: note, author)\n- wbs:REMOVE_NOTE: remove note (fields: none)\n- wbs:SET_OWNER: set owner (fields: owner)\n- wbs:SET_REFERENCES: set references (fields: references)\n- wbs:SET_PROJECT_REF: set project ref (fields: none)\n\nRequest: add a goal \"Order paint\" under procurement<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "pq3-01",
+  "docType": "bai/pipeline-queue",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- pipeline-queue:ADD_TASK: Add a new task to the pipeline (fields: taskType, target, documentRef, currentPhase)\n- pipeline-queue:ASSIGN_TASK: Assign task to a processor or user (fields: assignedTo)\n- pipeline-queue:ADVANCE_PHASE: Complete current phase, advance to next (fields: handoff)\n- pipeline-queue:COMPLETE_TASK: Mark task as done (fields: none)\n- pipeline-queue:FAIL_TASK: Mark task as failed (fields: reason)\n- pipeline-queue:BLOCK_TASK: Mark task as blocked (fields: reason)\n- pipeline-queue:UNBLOCK_TASK: Unblock a task (fields: none)\n\nRequest: line up an enrichment pass on \"Cloze deletion cards\" as part of the October batch"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- pipeline-queue:ADD_TASK: Add a new task to the pipeline (fields: taskType, target, documentRef, currentPhase)\n- pipeline-queue:ASSIGN_TASK: Assign task to a processor or user (fields: assignedTo)\n- pipeline-queue:ADVANCE_PHASE: Complete current phase, advance to next (fields: handoff)\n- pipeline-queue:COMPLETE_TASK: Mark task as done (fields: none)\n- pipeline-queue:FAIL_TASK: Mark task as failed (fields: reason)\n- pipeline-queue:BLOCK_TASK: Mark task as blocked (fields: reason)\n- pipeline-queue:UNBLOCK_TASK: Unblock a task (fields: none)\n\nRequest: line up an enrichment pass on \"Cloze deletion cards\" as part of the October batch<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "src3-01",
+  "docType": "bai/source",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- source:INGEST_SOURCE: Add new source material (fields: title, content, sourceType, description, url, author, method, tool)\n- source:SET_SOURCE_STATUS: Transition source status (fields: status)\n- source:ADD_EXTRACTED_CLAIM: Link an extracted claim to this source (fields: claimRef)\n- source:RECORD_EXTRACTION_STATS: Record extraction statistics (fields: claimCount, skippedCount, skipRate)\n\nRequest: ingest this article: \"Why spacing works\" by Rosa Lim, https://example.edu/spacing, text: Distributed practice beats massed practice across ages and subjects."
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- source:INGEST_SOURCE: Add new source material (fields: title, content, sourceType, description, url, author, method, tool)\n- source:SET_SOURCE_STATUS: Transition source status (fields: status)\n- source:ADD_EXTRACTED_CLAIM: Link an extracted claim to this source (fields: claimRef)\n- source:RECORD_EXTRACTION_STATS: Record extraction statistics (fields: claimCount, skippedCount, skipRate)\n\nRequest: ingest this article: \"Why spacing works\" by Rosa Lim, https://example.edu/spacing, text: Distributed practice beats massed practice across ages and subjects.<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "rc3-01",
+  "docType": "bai/research-claim",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- research-claim:CREATE_CLAIM: Create a research claim (fields: title, description, content, kind, methodology, sources, topics)\n- research-claim:ADD_RESEARCH_CONNECTION: Add a connection to another research claim (fields: targetRef, contextPhrase)\n- research-claim:REMOVE_RESEARCH_CONNECTION: Remove a connection (fields: none)\n- research-claim:UPDATE_CLAIM_CONTENT: Update claim content (fields: content)\n\nRequest: create a research claim \"Retrieval practice beats rereading\", kind research, source Roediger & Karpicke 2006, topics memory and testing"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- research-claim:CREATE_CLAIM: Create a research claim (fields: title, description, content, kind, methodology, sources, topics)\n- research-claim:ADD_RESEARCH_CONNECTION: Add a connection to another research claim (fields: targetRef, contextPhrase)\n- research-claim:REMOVE_RESEARCH_CONNECTION: Remove a connection (fields: none)\n- research-claim:UPDATE_CLAIM_CONTENT: Update claim content (fields: content)\n\nRequest: create a research claim \"Retrieval practice beats rereading\", kind research, source Roediger & Karpicke 2006, topics memory and testing<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "obs3-01",
+  "docType": "bai/observation",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- observation:CREATE_OBSERVATION: Capture a new friction signal (fields: title, description, content, category)\n- observation:PROMOTE_OBSERVATION: Promote to a permanent note (fields: promotedTo)\n- observation:IMPLEMENT_OBSERVATION: Mark as implemented in system (fields: none)\n- observation:ARCHIVE_OBSERVATION: Archive observation (fields: none)\n\nRequest: log an observation, friction: the inbox keeps clogging with half-processed sources"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- observation:CREATE_OBSERVATION: Capture a new friction signal (fields: title, description, content, category)\n- observation:PROMOTE_OBSERVATION: Promote to a permanent note (fields: promotedTo)\n- observation:IMPLEMENT_OBSERVATION: Mark as implemented in system (fields: none)\n- observation:ARCHIVE_OBSERVATION: Archive observation (fields: none)\n\nRequest: log an observation, friction: the inbox keeps clogging with half-processed sources<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "ten3-01",
+  "docType": "bai/tension",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- tension:CREATE_TENSION: Identify a new contradiction (fields: title, description, content, involvedRefs)\n- tension:RESOLVE_TENSION: Mark as resolved with explanation (fields: resolution)\n- tension:DISSOLVE_TENSION: Mark as dissolved (apparent, not real) (fields: resolution)\n- tension:ADD_INVOLVED_REF: Add a note to the tension (fields: ref)\n\nRequest: create a tension \"Spacing vs cramming before exams\": spacing wins long-term but cramming wins next-day scores; it involves the spacing and the cramming notes"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- tension:CREATE_TENSION: Identify a new contradiction (fields: title, description, content, involvedRefs)\n- tension:RESOLVE_TENSION: Mark as resolved with explanation (fields: resolution)\n- tension:DISSOLVE_TENSION: Mark as dissolved (apparent, not real) (fields: resolution)\n- tension:ADD_INVOLVED_REF: Add a note to the tension (fields: ref)\n\nRequest: create a tension \"Spacing vs cramming before exams\": spacing wins long-term but cramming wins next-day scores; it involves the spacing and the cramming notes<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "vc3-01",
+  "docType": "bai/vault-config",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- vault-config:INITIALIZE_CONFIG: Initialize vault configuration with name and domain (fields: name, domain)\n- vault-config:UPDATE_DIMENSION: Update a dimension position (fields: dimension, value, confidence, rationale)\n- vault-config:UPDATE_VOCABULARY: Update a vocabulary term (fields: key, value)\n- vault-config:UPDATE_PIPELINE_CONFIG: Update pipeline settings (fields: depth, autoChain, extractionSelectivity)\n- vault-config:UPDATE_MAINTENANCE_THRESHOLD: Update a maintenance threshold (fields: condition, threshold)\n- vault-config:ADD_EXTRACTION_CATEGORY: Add an extraction category (fields: name, description, active)\n- vault-config:TOGGLE_EXTRACTION_CATEGORY: Enable/disable an extraction category (fields: active)\n- vault-config:TOGGLE_FEATURE: Enable/disable a feature block (fields: feature, enabled)\n\nRequest: set linking to 4 with 0.8 confidence"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- vault-config:INITIALIZE_CONFIG: Initialize vault configuration with name and domain (fields: name, domain)\n- vault-config:UPDATE_DIMENSION: Update a dimension position (fields: dimension, value, confidence, rationale)\n- vault-config:UPDATE_VOCABULARY: Update a vocabulary term (fields: key, value)\n- vault-config:UPDATE_PIPELINE_CONFIG: Update pipeline settings (fields: depth, autoChain, extractionSelectivity)\n- vault-config:UPDATE_MAINTENANCE_THRESHOLD: Update a maintenance threshold (fields: condition, threshold)\n- vault-config:ADD_EXTRACTION_CATEGORY: Add an extraction category (fields: name, description, active)\n- vault-config:TOGGLE_EXTRACTION_CATEGORY: Enable/disable an extraction category (fields: active)\n- vault-config:TOGGLE_FEATURE: Enable/disable a feature block (fields: feature, enabled)\n\nRequest: set linking to 4 with 0.8 confidence<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "hr3-01",
+  "docType": "bai/health-report",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- health-report:GENERATE_REPORT: Generate a health report (fields: mode, overallStatus, graphMetrics, recommendations)\n- health-report:ADD_CHECK: Add a health check result (fields: category, status, message, affectedItems)\n\nRequest: add a failing link health check: 4 links point to deleted notes"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- health-report:GENERATE_REPORT: Generate a health report (fields: mode, overallStatus, graphMetrics, recommendations)\n- health-report:ADD_CHECK: Add a health check result (fields: category, status, message, affectedItems)\n\nRequest: add a failing link health check: 4 links point to deleted notes<|im_end|>\n<|im_start|>assistant\n"
+ },
+ {
+  "id": "der3-01",
+  "docType": "bai/derivation",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change."
+   },
+   {
+    "role": "user",
+    "content": "Operations:\n- derivation:INITIALIZE_DERIVATION: Initialize derivation record (fields: engineVersion)\n- derivation:ADD_SIGNAL: Record a user signal that influenced derivation (fields: utterance, influencedDimensions, interpretation)\n- derivation:ADD_RESEED_ENTRY: Record a re-derivation event (fields: reason, changes)\n- derivation:UPDATE_DIMENSION_RATIONALE: Update rationale for a dimension position (fields: dimension, position, confidence, rationale, supportingClaims, failureModes)\n\nRequest: add a signal: I said \"I mostly capture quotes from papers\", which points to processing and granularity"
+   }
+  ],
+  "prompt": "<|im_start|>system\nYou choose the document operations that carry out the user's request. Answer with JSON: {\"ops\": [...]} lists the operations in the order they run, and {\"ops\": []} means the request needs no document change.<|im_end|>\n<|im_start|>user\nOperations:\n- derivation:INITIALIZE_DERIVATION: Initialize derivation record (fields: engineVersion)\n- derivation:ADD_SIGNAL: Record a user signal that influenced derivation (fields: utterance, influencedDimensions, interpretation)\n- derivation:ADD_RESEED_ENTRY: Record a re-derivation event (fields: reason, changes)\n- derivation:UPDATE_DIMENSION_RATIONALE: Update rationale for a dimension position (fields: dimension, position, confidence, rationale, supportingClaims, failureModes)\n\nRequest: add a signal: I said \"I mostly capture quotes from papers\", which points to processing and granularity<|im_end|>\n<|im_start|>assistant\n"
+ }
+]

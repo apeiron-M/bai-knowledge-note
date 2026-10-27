@@ -1,0 +1,71 @@
+{
+ "set": "dev",
+ "args": [
+  "x9"
+ ],
+ "temps": "dev-cv",
+ "repoRev": "5e9c39046dcd8f08951a308e66c610dbd4c55c73",
+ "lora": {
+  "path": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/artifacts/x5-350m/gguf/LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf",
+  "sha256": "062796543208889530edfd70cecd0cb6912d3d3b832ed671894d89307000aaba"
+ },
+ "kev": {
+  "path": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/artifacts/kev-ft/gguf/Kev-0.8B-vault-ft1-20261024-Q4_K_M.gguf",
+  "sha256": "30b5796e4fac6765d5df8f4867857280dd46ec9f8397d39095a914a02f627b23"
+ },
+ "valDir": null,
+ "llamaServer": {
+  "bin": "/Users/benjaminjordan/.cache/bai-training/llama.cpp/build/bin/llama-server",
+  "llamaCppCommit": "46ca246"
+ },
+ "frozen": {
+  "lib/lib.ts": "b48ff64f60d8e783039fc94646782e2a711011838e47fa180cb8273c217bd8de",
+  "kev/node/decide.mjs": "feed74fe27548db6ab10b5fd5bc98f1b5fe6319d6edd1fa600696bb5e3df6004",
+  "kev/data/catalog.json": "b257573b739778d14b3fabf1f7eb037164dc0390cd26abb272feba1e79135b70",
+  "patches/x6-args-ship.patch": "8d29e48af703df3ac7a024d6d2df05ef8328c242c5abd491434fc1f03b84877f",
+  "patches/x9-args2.patch": "1173738261b17bb135db8b5c2517bad50653a339b44415c299960d8bfbc00529",
+  "src/prereg_eval.py": "f981613b16001a1d080489b0f1feb78b55fa61092c164d567c49fb466ff61e3f"
+ },
+ "node": "v24.13.0",
+ "tsx": "tsx v4.21.0",
+ "tempsValues": {
+  "devCV": {
+   "devDir": "/private/tmp/claude-501/-Users-benjaminjordan-projects-powerhouse-bai-knowledge-note/244dfd73-afea-4295-86de-08a64fc34f82/scratchpad/exp/rig/validation/kevft-x5-dev",
+   "groups": [
+    "h3",
+    "h4"
+   ],
+   "nDevSingle": 216,
+   "T_lora": 1.63,
+   "T_kev": 4.0,
+   "folds": {
+    "h3": {
+     "T_lora": 1.711,
+     "T_kev": 3.75,
+     "nTestSingle": 102
+    },
+    "h4": {
+     "T_lora": 1.63,
+     "T_kev": 4.25,
+     "nTestSingle": 114
+    }
+   }
+  }
+ },
+ "devDir": "/private/tmp/claude-501/-Users-benjaminjordan-projects-powerhouse-bai-knowledge-note/244dfd73-afea-4295-86de-08a64fc34f82/scratchpad/exp/rig/validation/kevft-x5-dev",
+ "rigFiles": {
+  "rig.sh": "4faea56c4865c9f050dcb5ad023c88879efddc2bba59d46648672dffb199e672",
+  "src/build-trees.sh": "183efd66617858d18e2c835b03193df5791482b320008fc77022148c4d7af296",
+  "src/compare.py": "2a4d15daca39e0a58c83ef3da593806a9b94e09c92cd31497defb4cc4573021d",
+  "src/evaluate.py": "69223b6a76bc18b38a703f7544b1ca710010341dc8e523f946a4f1cf3abd3c50",
+  "src/exclude.py": "9059152e18990286534df418271d12ade66dc57ac8c9abad8e458a901d9257e8",
+  "src/gguf_meta.py": "6e353eaa8eb6d4f7d4ecd13a8aa3e112721e4ca9ae5b52db9e149030c4685703",
+  "src/items.py": "e6de02685796be5a27b6ef2ccb4835267a9ce4f4eeaa34a197fbfd9fdc91d6db",
+  "src/kev_items.py": "5665ba55ac98e574667d87b37628658d476cbbf2b050902fdae4d60ce044f13c",
+  "src/prereg.py": "61a0a156dff0c7ef841c8b9f5741b097948073847ab5e700479d0c86ab07d9ed",
+  "src/prereg_eval.py": "f981613b16001a1d080489b0f1feb78b55fa61092c164d567c49fb466ff61e3f",
+  "src/step1.ts": "8c5253b7978fc05f50853df0a84c6fcb43b72f857296578cea34b8f8a4fabe16",
+  "src/step2.ts": "aece6fc0b4c5d75399b781d4365069919117960e81f4f2e51f8c3ed7d1197048",
+  "src/validate.py": "5028a0c6b0486f001b5a7f31b833226e9af0c290ca6704c0d9c22269ca69d178"
+ }
+}
