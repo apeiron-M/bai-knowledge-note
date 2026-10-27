@@ -144,3 +144,24 @@ The labelling pass stopped when `claude -p` lost its login. The user has since r
   1. Finalise PREREGISTRATION-2: E = X5 × Kev-FT, plus F.
   2. Run held-out-5 once.
   3. Then the 350M on round11 + round12 data.
+
+## UPDATE 5 (2026-10-26): held-out-5 run 2 done (PREREGISTRATION-2, sha 798b289e)
+
+Held-out-5 had 164 action items and 15 no-action items after excluding obs5-05. Date: 2026-10-23.
+
+| Arm | Op one-shot | Fully NORM | Gate (gold-in-choices / ask / wrong / effective NORM) |
+|---|---|---|---|
+| A: X5 alone (229 MB) | 139 (84.8%) | 125 | – |
+| B: X5 × Kev-FT | 146 (89.0%, CI 83.3–92.9) | 131 | – |
+| C: B + gate | – | – | 98.8% / 19% / 3 / 142 (86.6%) |
+| **D: F (1.2B, round11) × Kev-FT + gate** | **152 (92.7%, CI 87.7–95.8)** | **142 (86.6%)** | 163 / 31 / 2 / 151 (92.1%) |
+| K: R8 alone (control) | 134 (81.7%) | 113 | – |
+
+- **Pre-registered hypotheses:**
+  - H1 (B > A): p 0.033.
+  - H2 (B > K): p 0.011.
+  - H3 (B ≥ 90%): not met.
+  - H4 (gate bars): met.
+- **H5 (descriptive), D vs C:** op +7/−1, effective +10/−1.
+- **Decision:** the §9 rule picks C. D is descriptively stronger on blind data, although it tied on dev (182 vs 183). D costs 731 + 530 MB.
+- **Next:** pre-register held-out-6, its single confirmatory run, with C and/or D, then run it once.
