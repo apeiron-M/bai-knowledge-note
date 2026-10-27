@@ -1,0 +1,260 @@
+# Training the chat for a new document model (or a new app)
+
+This is the procedure as it can be run **today** with the tools in this repo, followed by the tools that should exist and do not. For the step-by-step commands of the run that shipped, see `TRAINING-GUIDE.md`. For the per-piece classification, see `GENERIC-VS-SPECIFIC.md`.
+
+Tags: **[est]** is an estimate, **[inf]** is inferred, **[spec]** is speculative or untested, and **[gap]** means no committed tool exists (see "Tooling gaps").
+
+## 0. Read first: what has and has not been shown
+
+- **Every result so far is for the 12 vault document models, trained together.** Nothing has measured how a LoRA or Kev-FT does on a document model it never saw. The leave-one-model-out test planned in `docs/superpowers/notes/in-browser-llm/reuse-across-apps.md` §3 has not run.
+- **So the supported procedure is to retrain both experts on mixed data.** You add the new model to the catalog, generate teacher data for it, and train the LoRA and Kev-FT again on the old rows plus the new rows. A per-app adapter, or a generalist that needs no retraining, is a hypothesis [spec].
+- **A new app in another repo** follows the same procedure, after the G\* cleanups in `GENERIC-VS-SPECIFIC.md`: app wording in the teacher prompts, import paths into `editors/knowledge-vault/chat/core/`, and hardcoded round paths.
+- **The shipped configuration C is not in the browser yet** (`TRAINING-GUIDE.md` §0). A model trained by this procedure can be evaluated with the rig, but the Chat tab cannot run it until the runtime port lands (gap 7).
+
+## 1. What someone must provide
+
+### 1a. Spec quality (in the document model, via MCP, per the project CLAUDE.md)
+
+- **Operation descriptions.**
+  - 30 of the 99 vault ops have an empty spec description: **every** `bai/project` op (16) and every `bai/wbs` op (14). The other 69 come from the specs.
+  - `OP_DESCRIPTIONS` (`editors/knowledge-vault/chat/core/op-descriptions.ts`) hand-writes all 99. It is Kev's option text and training criteria.
+  - For a new model, write a one- or two-sentence description per op ("Sets …. Use when …"; see `x4-kev/finetune/data/train.jsonl` for the style) and dispatch it with `SET_OPERATION_DESCRIPTION`. Until the runtime reads spec descriptions for Kev, also add the same text to `OP_DESCRIPTIONS`.
+- **Closed vocabularies.** Declare a closed list as a GraphQL `enum` when you can, so zod enforces it for free. Otherwise add it to `chat/core/vocabularies.ts` (`VOCABULARY_TABLE`).
+- **Errors.** Declare an error for every reducer precondition (`ADD_OPERATION_ERROR`). The validator's replay relies on reducers throwing; future fixture derivation would read these errors [spec].
+- **Reducers must be pure and deterministic.** Ids and timestamps come from the input. `training/gen/replay.ts` names new ids per fixture step.
+
+### 1b. Chat-core registration (hand-written today, under `editors/knowledge-vault/chat/core/`)
+
+| What | Where | How to check |
+|---|---|---|
+| The model module plus its barrel | `catalog-models.ts` `CATALOG_MODELS` | `tests/unit/chat-catalog.test.ts` |
+| Field-class exceptions (new-id, ref-id) the prefix rules get wrong | `op-catalog.ts` `DEFAULT_FIELD_OVERRIDES` | Read the reducers |
+| Closed `String` lists | `vocabularies.ts` | `tests/unit/chat-vocabularies.test.ts` |
+| Ref candidates per ref op: path → extractor, label convention | `ref-candidates.ts` `REF_EXTRACTORS` | `tests/unit/chat-ref-candidates.test.ts` (parity with the training recipes) |
+| Cross-document ref kinds (PHID fields) | `ref-candidates.ts` `CTX_KIND_BY_TYPE` | |
+| Free-text fields whose value must be an item in state; list fields the reducer replaces wholesale | `STATE_CHOICES`, `CURRENT_LISTS` (X9 patch, not yet in the repo) | |
+| Op embeddings | `npx --no-install tsx scripts/gen-op-embeddings.ts` (then `--check`) | |
+| A `PROMPT_FORMAT_VERSION` bump, only if a builder or the op-description source changes | `chat/core/prompt-format.ts` | `tests/unit/training-prompt-format.test.ts`, `chat-prompt-format.test.ts` |
+
+### 1c. Training-side inputs (hand-written today)
+
+| What | Where | Size, for the vault |
+|---|---|---|
+| A seeded-state recipe for each ref op: `build` (replay creation actions), `paths` (candidates), `assign` (targets at random positions), `check` (post-condition) | `training/gen/ref-scenarios.ts` `RECIPES` | 40 recipes, about 25 lines each |
+| Entity label lists per theme for the new model's entity kinds; people pool | `training/gen/ref-pools.ts` | 12 themes |
+| Replay fixtures for ops whose reducer needs a prior state | `training/py/teacher.py` `FIXTURES` | 6 ops |
+| Which fields name a person | `teacher.py` `PERSON_FIELDS`, `PERSON_OPS` | 5 fields, 2 ops |
+| The app's one-line description in the teacher system prompts | `teacher.py` `SYSTEM`, `NO_ACTION_SYSTEM`; `round11-para/para.py` `REWRITE_SYSTEM`; `round12-para/para12.py` `NOACTION_SYSTEM` | 4 constants (gap 2) |
+
+Check every recipe with `npx --no-install tsx training/gen/ref-scenarios.ts --list` before planning.
+
+### 1d. Eval sets (see §3)
+
+You need a dev set and two blind sets, written by someone or some agent who has seen no training data and no results.
+
+## 2. Scripts to run, in order
+
+Every command exists today. Run from the repo root with `P=training/.venv/bin/python`. Use a fresh artifact dir per round (`A=training/artifacts/<round>`) and an empty directory for every `--cli-cwd`. For flags and observed funnels, see `TRAINING-GUIDE.md` §3–§9.
+
+**Step 0: sanity**
+
+```bash
+npx --no-install tsx training/gen/export-teacher-context.ts $A/context.json   # "missingReducer" must be []
+npx --no-install tsx training/gen/ref-scenarios.ts --list                      # every new ref op has a recipe
+npm run tsc && npx vitest run tests/unit/chat-*.test.ts tests/unit/training-prompt-format.test.ts
+training/.venv/bin/python -m unittest training/py/test_teacher.py
+```
+
+**Step 1: broad teacher round** (as Round 8). Run it for the new model's ops, plus no-action items for the new model. Extending `plan`'s op filter to one model is a small change [gap]; `--ops all` regenerates everything.
+
+```bash
+$P training/py/teacher.py plan --context $A/context.json --ops all --batch-size 10 --items-per-op 25 \
+    --ref-items-per-op 55 --noaction-items 30 --seed <seed> --out $A/gen-requests.jsonl
+$P training/py/teacher.py run $A/gen-requests.jsonl --out $A/gen-results.jsonl --timeout 600 --max-requests 500 --cli-cwd <empty>
+$P training/py/teacher.py rows $A/gen-results.jsonl --context $A/context.json --meta $A/gen-requests.jsonl.meta.json --out $A/rows.jsonl
+training/scripts/render.sh $A/rows.jsonl $A/r1
+$P training/py/teacher.py label $A/r1/rendered.jsonl --context $A/context.json --rows $A/r1/rows-valid.jsonl --batch 8 --out $A/label-requests.jsonl
+$P training/py/teacher.py run $A/label-requests.jsonl --out $A/label-results.jsonl --timeout 600 --cli-cwd <empty>
+$P training/py/teacher.py agree $A/label-results.jsonl --keys $A/label-requests.jsonl.keys.json --rows $A/r1/rows-valid.jsonl \
+    --manifest $A/r1/rendered.manifest.json --context $A/context.json --max-free 0.7 --name-cap 0 --step1-only --out $A/agreed-s1.jsonl
+```
+
+**Step 2: contrast and stress round** (as Round 10). First `sibling_groups.py`, then `plan --ops contrast` and `plan --ops stress`, each followed by the same run → rows → render → label → agree chain.
+
+**Step 3: human-style paraphrase round** (as Round 11; this is what moved blind accuracy).
+- `para.py sources`, `plan`, `promptcheck`, then `teacher.py run`, then `round11-para/chain.sh`.
+- **Edit the hardcoded inputs in `chain.sh` and `merge.sh` first** (`round10/context.json`, `round10/final/rows-valid.jsonl`, `round10/split`) [gap].
+- Set `BAI_BLIND_DIR` so every blind set is filtered.
+
+Skip Round 12 for now: it did not help on dev (X12).
+
+**Step 4: merge and split.**
+- Concatenate the agreed rows and run `render.sh`, then `split.py` (as Round 10).
+- Or keep the existing split with `para.py mirror` (as Round 11), so the old val stays comparable.
+
+**Step 5: LoRA** (Constantine; at least 64 GB tested).
+1. rsync the split, checking sha256 on both sides.
+2. `~/bai-training/launch.sh <name> <train-split> --val <val> --out <run> --epochs 2 --batch 8 --grad-accum 4 --save-steps 50 --save-limit 2`.
+3. Poll the log.
+4. Pull the adapter back, then run `merge.py --check <val> --check-rows 16` and `export-gguf.sh`.
+5. Run the native val check: `py/smoke_infer.py`, or the X5 report's llama-server check.
+
+**Step 6: Kev-FT** (Constantine; recipe in the backup `training/artifacts/exp-2026-10-23/x4-kev/finetune/` [gap]).
+1. `dump-catalog.ts` → `catalog.json`.
+2. `to_kev_jsonl.py <final/rows-kept.jsonl> <split/val.jsonl> <catalog.json> <out>`. Use the **post-dedup** rows.
+3. `constantine-recipe.sh`: the 20-step timing probe first, then 2 epochs.
+4. `kev.benchmark` + `calibrate_checkpoint.py --allow-in-distribution`.
+5. `kev-ft-export.sh`, after fixing its hardcoded path.
+
+**Step 7: dev evaluation and calibration** (rig, from the backup `training/artifacts/exp-2026-10-23/rig/` [gap]).
+- `rig.sh --lora <new.gguf> --kev <kevft.gguf> --set dev --args x9 --temps dev-cv --out validation/<name>`.
+- The `dev-cv` block gives the frozen T_L and T_K for the pre-registration. Keep τ 0.5, k 3 and equal weights.
+- `compare.py` against the current C on the **old** dev set too, so you see regressions on existing models.
+
+**Step 8: blind runs.**
+1. Write a pre-registration in the `PREREGISTRATION-3.md` format: arms, frozen temperatures, artifact shas, exclusion specs over every arm's training utterances, metrics, hypotheses, a pre-committed decision rule, and `rig-run` blocks.
+2. Write its `.sha256` sidecar.
+3. Run `rig.sh --prereg <file> --prereg-run <block>` once per block on the selection set, then once on the confirmatory set.
+4. Never retune after a blind run.
+
+## 3. Writing the eval sets
+
+The held-out-4 README (`docs/superpowers/notes/in-browser-llm/heldout4-eval.README.md`) is the template. The writer is an isolated agent or person.
+
+**Allowed inputs.** The writer may read only:
+- `document-models/<m>/v1/schema.graphql` and `<m>.json`;
+- the reducers under `v1/src/reducers/`;
+- the field classes in `op-catalog.ts`;
+- `vocabularies.ts`;
+- the generated zod schema, to see how URL, Date and PHID fields validate.
+
+**Forbidden inputs:** `training/`, `spike/llm-harness/eval/`, results docs, `op-descriptions.ts`, git history, and earlier sets' utterances (except through an overlap script).
+
+**Format.** Use the held-out schema, which the rig reads with `--set file:<path>`:
+- each item has `id`, `style`, `utterance`, `context.{docType, model, state, refCandidates[{id, label}]}`, `expected.{op, args, ambiguousArgs, refArgs, argMatch, requiredPresent}`, `difficulty`, `tags`, `hardCase.{confusableWith, why}` and `notes`;
+- add `noAction[]` and `multiAction[]` lists;
+- `conventions` must include `today` (YYYY-MM-DD), because the x9 date resolver and the rig need it.
+
+**Field-class rules:**
+- App-filled fields never appear.
+- Ref ids appear only in `refArgs`, and their values come from `context.refCandidates`.
+- `context.state` must satisfy each reducer's preconditions.
+
+**Validator assertions** (generalise `validate_heldout4.py` [gap]):
+- the style split and the minimum number of distinct ops;
+- hard items ≥ 25%, each with a `hardCase` whose `confusableWith` keys are real ops other than the item's own;
+- the first candidate is correct ≤ 25% of the time;
+- every model appears, and every item is scoped;
+- the paraphrase stem rule: paraphrase items must not use the op's own words;
+- zod passes on every `expected.args`;
+- an overlap check against all earlier sets.
+
+**Sets to write:**
+
+| Set | Size, for the vault | For a single new model [est] | Use |
+|---|---|---|---|
+| Dev (like held-out-3/4) | about 100 action + 10 no-action + 6 multi, 50/50 natural/paraphrase | At least 3 items per op, at least 40 action items, at least 5 no-action | Design decisions and G2 temperature fits. Stored in `spike/llm-harness/eval/` so `dedup.py` filters training against it automatically. |
+| Blind selection (like held-out-5) | 180 items, 165 action / 15 none, `plain`/`messy` | At least 60 action items | Choosing among arms. Each use is logged in the next pre-registration's §0. |
+| Blind confirmatory (like held-out-6) | 200 action + 20 none over 94 ops, 70 plain / 130 messy, easy/medium/hard 12/129/59 | At least 60 action items, the majority messy | **Run once**, on the final arm only. |
+
+**Blind-set handling:**
+- Store blind sets outside git, under `$BAI_BLIND_DIR/<set>/<set>-eval.json`, with a `.sha256` sidecar and a README (counts, styles, domains; no utterances).
+- Use new domains, away from `ref-pools.ts` and the earlier sets.
+- Code may read them: `para.py`'s leak filter, the rig. Agents never read them.
+- For a combined new-model + old-models run, cover both: the new model's items **and** regression items for the old ones.
+
+**Statistics.** At n = 60, a 90% point estimate has a Wilson half-width of about ±8 points. Plan n ≥ 150 whenever a decision hinges on a few points.
+
+## 4. Acceptance bars
+
+These are the bars used for the vault, from the pre-registrations:
+
+| Measure | Bar |
+|---|---|
+| Op one-shot (fused, no ask) | ≥ 90% point estimate on the confirmatory set, Wilson 95% CI reported |
+| Gate: gold op among choices | ≥ 92% of action items |
+| Gate: ask rate | ≤ 30% of action + no-action items |
+| Args given the right op | ≥ 80% (original bar; NORMALISED primary) |
+| Native val check (teacher val, sanity only) | Step 1 ≥ 90% and step 2 ≥ 90% (X5: 93.9% / 91.3%) |
+| No regression on existing models | Paired McNemar on the old dev and old confirmatory items is not significantly worse (descriptive bar [est]) |
+
+Also report effective fully-correct and wrong dispatches, with CIs. Held-out-6 got 87.5% effective and a 2.7% wrong-dispatch rate.
+
+## 5. Expected cost, time and hardware
+
+| Stage | Observed for the vault | For one new model of about 10 ops, 4 of them ref ops [est] |
+|---|---|---|
+| Teacher broad round | 4,035 items, $38.30, about 2 h | About 400 items (6×25 + 4×55 + 30), about $4, about 15 min |
+| Contrast + stress | 1,800 items, $21.22 | About $3–5 if the new ops form sibling groups |
+| Paraphrase round | 5,078 items, $34.79 incl. pilots, about 55 min at concurrency 5 | About 500 items, about $3.50 |
+| LoRA, 350M, 2 epochs | 13,547 sequences → 848 steps, 99 min (about 7.0 s per step at effective batch 32), 19 GiB peak | Old + new rows: about 1.8 h |
+| Kev-FT, 2 epochs | 4,382 records → 1,096 steps, 11.4 h (about 4.7 s per record), about 15 GB | Old + new: about 12 h. Note: no checkpoints. |
+| Merge, export, calibration | Under 1 min each for the LoRA; 14 min for Kev calibration | Same |
+| Rig dev run | 2.5–9 min | Same |
+| Blind runs | About 20 min for four blocks | Same |
+| Hand-written inputs (§1) | – | 1–3 days, dominated by ref recipes and two blind eval sets |
+
+- **Hardware.** Training needs an Apple-Silicon Mac with 64 GB (tested), or CUDA (untested here). A 36 GB Mac failed before the padding fix and has not been re-tested since. Inference and evaluation run on any Apple-Silicon Mac with llama.cpp b11364.
+- **Teacher.** Teacher calls need a logged-in Claude Code account. Expect usage-limit stops; `run` resumes from its journal.
+- **Costs** are CLI `total_cost_usd`, the API list-price equivalent, not subscription usage.
+- **Wall time end to end** is about 1.5 days, mostly Kev-FT and the waits between teacher usage windows [est].
+
+## 6. Tooling gaps
+
+None of these exist yet. Each one names what to build, its scope and a rough effort [est].
+
+1. **Chat-manifest codegen** (`ph generate chat-manifest`, or a `training/gen/manifest.ts`).
+   - **Emits:** `CATALOG_MODELS`; new-id overrides read from reducers that push `action.input.id`; ref targets for the reducer-derivable cases (32 of 40 here); vocabularies from enums; `STATE_CHOICES` / `CURRENT_LISTS` candidates from reducers that remove an exact state string or replace a whole list; the op-embedding asset; model URL + sha.
+   - **Leaves to a small hand-written `chat.overrides.ts`:** cross-document ref hints, label conventions, person fields and fixtures.
+   - **Effort:** 3–5 days, plus parity tests against the current hand-written tables.
+2. **Remove the hardcoded app wording.**
+   - "personal knowledge vault app" appears in `teacher.py` `SYSTEM` and `NO_ACTION_SYSTEM`, `para.py` `REWRITE_SYSTEM` and `para12.py` `NOACTION_SYSTEM`, and `PERSONAS` is vault-flavoured. Replace them with an `--app-description` / personas input from the manifest.
+   - **Effort:** half a day, plus a 100-item pilot to confirm label agreement does not move.
+3. **Decouple `training/gen/*` from `editors/knowledge-vault/chat/core/` import paths.** Import the catalog through the manifest or a `chat-core` package. `export-teacher-context.ts` should take the model dirs from the manifest instead of grepping. **Effort:** 1 day.
+4. **A `train` CLI** wrapping the whole pipeline.
+   - **Scope:** a per-app config (seed, counts, artifact root, blind dir, remote host); resumable stages; an artifact manifest with every input and output sha; and the stages plan → run → rows → render → label → agree → contrast/stress → paraphrase → merge/split → push → launch → poll → pull → merge → export → Kev data/train/calibrate/export → rig dev.
+   - It replaces the hardcoded round paths in `round11-para/chain.sh` / `merge.sh` and `round12-para/*.sh`, and adds a per-model op filter to `plan`.
+   - **Effort:** 3–5 days.
+5. **Move the Kev recipe into the repo** (for example `training/kev/`).
+   - **Files:** `constantine-recipe.sh`; `kev-ft-export.sh` (it hardcodes the session scratchpad path, which needs an env var); `x4-kev/code/to_kev_jsonl.py` and `dump-catalog.ts`; `x4-kev/node/decide.mjs` + `package.json`; `x4-kev/export/convert-kev08.sh`. Also the Constantine-only `~/x4/launch-kev-ft.sh`, `~/x4/watchdog-kev.sh` and `~/bai-training/launch.sh`.
+   - **Provenance:** build Kev data from `final/rows-kept.jsonl`, not the pre-dedup `final-in/rows.jsonl` (the counts suggest the shipped Kev-FT used the latter [inf]), and record the input sha in the output.
+   - **Effort:** half a day to 1 day.
+6. **Move the eval rig into the repo** (`exp/rig`: `rig.sh`, `src/`, `lib/lib.ts`, frozen `kev/`).
+   - Once the patches are applied, build its trees from the applied code instead of from patches.
+   - Re-run its validation (it must reproduce the stored X7/X9 rows exactly).
+   - Move `gate-calibration/calib.py` and the `prereg*_analysis.py` helpers too, generalised from fixed arm names.
+   - **Effort:** 1–2 days.
+7. **Runtime port of C** (handoff "Next").
+   - Apply `x6-args-ship.patch` + `x9-args2.patch` to the chat core.
+   - Implement the fusion and the margin gate.
+   - Run a second wllama instance for Kev, and add the ask UI.
+   - Point `model-source.ts` at C's two GGUFs, measure WebGPU latency, and decide hosting and licence.
+   - Without this, a newly trained model can only be measured, not used.
+   - **Effort:** 3–5 days.
+8. **Fixture and seed-state generator.**
+   - Derive `FIXTURES` from reducer status checks and declared errors.
+   - Derive most of `ref-scenarios.ts` (build = replay creation ops with pool labels; check = diff state before and after against the reducer's target collection) from the spec plus the manifest.
+   - That leaves only cross-document refs and label conventions by hand.
+   - **Effort:** 3–5 days [spec]. This is the largest per-model saving: 1,048 hand-written lines today.
+9. **Eval-set writer kit.**
+   - Commit a writer prompt (allowed and forbidden inputs, format, field-class rules, style and difficulty mix, new-domain rule).
+   - Generalise `build/validate/zodcheck/overlap_heldout4` scripts (named in the held-out-4 README; not in the repo).
+   - Add a sha-sidecar writer, a `BAI_BLIND_DIR` layout and a README template.
+   - **Effort:** about 2 days.
+10. **Fill the 30 empty spec descriptions** (all of `bai/project` and `bai/wbs`) with `SET_OPERATION_DESCRIPTION`, reconciled with `OP_DESCRIPTIONS`. Then make Kev's catalog read spec descriptions, so it becomes D.
+    - This changes Kev's option text, so measure zero-shot Kev on dev before and after, and retrain Kev-FT if it moves.
+    - **Effort:** half a day of writing, plus one Kev-FT run (12 h).
+11. **Training-data convention fixes** carried over from X6/X9:
+    - a mechanical trailing-period normalisation pass over teacher rows;
+    - fixtures with `openQuestions` / `childRefs`, so `REMOVE_OPEN_QUESTION` / `REMOVE_CHILD_MOC` render with state choices as they now do at runtime;
+    - `project:SET_TARGET_DATE` step-2 rows (0 today; Round 11 also had no source rows for `knowledge-note:PATCH_CONTENT` and `moc:SET_METADATA_FIELD`).
+    - **Effort:** 1 day, plus a retrain.
+12. **The leave-one-model-out generalisation test** (reuse-across-apps §3).
+    - It decides whether a new model needs a retrain at all, or whether descriptions plus Kev zero-shot suffice.
+    - **Effort:** about 1 day, plus half a day for a Kev zero-shot arm.
+13. **Portability and robustness.**
+    - `setup.sh` has never been re-run from clean.
+    - `export-gguf.sh` and `setup.sh` are macOS-only (`stat -f`, `/usr/bin/time -l`).
+    - Constantine needs `sudo pmset -c sleep 0`.
+    - `kev.train` has no checkpoints in LoRA mode, so 11 h restarts from 0 on a crash: raise it upstream or wrap it.
+    - **Effort:** about 1 day.

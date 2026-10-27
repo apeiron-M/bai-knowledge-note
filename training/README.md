@@ -11,6 +11,8 @@ This directory builds training data for the chat's two steps (op choice, then ar
 - **Round 10 (2026-10-22): targeted retrain.** 1,800 targeted teacher items (contrastive sibling sets, argument stress) gave 1,324 kept rows; with Round 8's rows (no top-5 rows) the LoRA trained 2 epochs from base on Constantine and ships as `LFM2.5-350M-vault-r10a-20261022-Q4_K_M.gguf` (local, gitignored, sha256 `f56deeb1…`). It does not beat Round 8 on held-out-4 (op 78.8% vs 80.8%, args 78.2% vs 76.4%); see "Round 10" below.
 - **Round 8 (2026-10-21/22): the first real LoRA.** 4,035 teacher items gave 3,286 kept rows; the LoRA trained 3 epochs (on the user's second laptop) and ships as `LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf` (local, gitignored). It does not meet the bars, but it doubles end-to-end accuracy on both held-out sets (see "Round 8" below and the results doc).
 
+**See `training/docs/`** for the end-to-end process as run (`TRAINING-GUIDE.md`), what is generic vs document-model specific (`GENERIC-VS-SPECIFIC.md`), and how to train for a new document model, with the tooling gaps (`NEW-DOCUMENT-MODEL.md`).
+
 The plan is the scratchpad `lora-plan.md` from the spike session. Spike results are in `docs/superpowers/specs/2026-10-20-in-browser-llm-spike-results.md`.
 
 ## Stack
