@@ -2,7 +2,7 @@
 
 Date: 2026-10-27. Branch `explore/in-browser-llm`.
 
-**Status.** M0 is implemented as a spike: commits `9dbbdefb`, `e3b337e0`, `abe5ad89`, the retarget fix `2a2f967b`, and `68b7c000`, which turns that fix into an ask. Notes, QA and the Connect check are in `docs/superpowers/notes/in-browser-llm/connect-c/M0.md`. §3 ticks what landed; what did not land is in §3.9. M1 onward is plan only.
+**Status.** M0 is implemented as a spike: commits `9dbbdefb`, `e3b337e0`, `abe5ad89`, the retarget fix `2a2f967b`, `68b7c000`, which turns that fix into an ask, and the final pass (`071eb3a1` to `89d6201e`: the top-3 ask for a non-verbatim mention, the Connect checks and the E2E rerun). Notes, QA and the Connect check are in `docs/superpowers/notes/in-browser-llm/connect-c/M0.md`. §3 ticks what landed; what did not land is in §3.9. M1 onward is plan only.
 
 Tags: **[src]** read in code, **[inf]** inferred, **[unverified]** needs a test.
 
@@ -21,7 +21,7 @@ This file holds the vault's own task list: M0 in full, and what the vault does i
 | Topic | Decision |
 |---|---|
 | Target tag (the user's, binding) | Always visible in the sheet. With a document open: "Acting on: *title* (*type*)". With no document open: the drive name. It updates live as the viewed document changes, including while the sheet is open. A pending proposal card keeps, and shows, the target it was created for. **The tag shows the context target; the card shows the action target.** |
-| Retargeting | Switch without asking only when exactly one other supported document's title appears verbatim; the card names both documents and highlights the switch, and the tag stays on the viewed document. **A pointer at the open document turns the switch into an ask**: when the request also says "this", "this note" (doc, one, MOC, …), "it" or "here", the chat asks which document to change before the models run, with two options, "Change *open title*" and "Change *named title*", each with its type. Which one is right depends on the intent ("link this note to *X*" changes the open note, "add this to *X*" changes *X*), and target resolution runs before the models. The models run on the chosen document, and the other one stays a ref candidate. Several names, or no verbatim name: the open document. Otherwise ask with the top 3 (not built in M0, §3.9). Nothing dispatches without Confirm. |
+| Retargeting | Switch without asking only when exactly one other supported document's title appears verbatim; the card names both documents and highlights the switch, and the tag stays on the viewed document. **A pointer at the open document turns the switch into an ask**: when the request also says "this", "this note" (doc, one, MOC, …), "it" or "here", the chat asks which document to change before the models run, with two options, "Change *open title*" and "Change *named title*", each with its type. Which one is right depends on the intent ("link this note to *X*" changes the open note, "add this to *X*" changes *X*), and target resolution runs before the models. The models run on the chosen document, and the other one stays a ref candidate. Several names, or two documents sharing the name: the open document. A request that names no other document: the open document. A non-verbatim mention ("the CRDT MOC" for a MOC titled "CRDTs"): ask with the top 3, plus the open document. Nothing dispatches without Confirm. (This follows the overview's Q1; an earlier version of this plan also asked with the top 3 when several documents are named, see `M0.md`.) |
 | Pinning | Not in M0 (the tag follows the viewed document). |
 | Shortcut | ⌘J on macOS, Ctrl+Shift+Space on Windows and Linux, rebindable. Capture-phase `window` listener. |
 | History | One thread per drive, per browser, in IndexedDB, capped, with Clear. Each turn stores its context frame. A ring of about 20 recent documents. The model gets no history. |
@@ -64,9 +64,10 @@ M0 landed as a spike (Status, top). A ticked box landed as written or with the d
 - [ ] `resolveTargetDocument` takes the context frame's target, not a `<select>` id. What landed (`chat/core/target-document.ts`):
   1. exactly one other supported document named verbatim → retarget, flagged for the card (at drive level: target it). A name found only inside a longer mentioned name, the viewed document's own title included, does not count;
   2. **except** when the request also points at the open document ("this", "this note/doc/one/MOC/…", "it", "here"; document names are masked first, and "this *item*" such as "this goal" does not count) and the open document's type has ops: **ask** which of the two to change, on the choice card ("Change *open title* (*type*)", "Change *named title* (*type*)", "Neither"), before the models run. The models then run on the chosen document; the other one stays a ref candidate (the open one is pinned with `driveRefContext`'s `keepIds`). `2a2f967b` kept the open document here instead, which is wrong for "add this to *X*"; `68b7c000` made it an ask. With nothing open, a pointer has no referent and step 1 targets the named document; with an open document that has no ops, only the named one can change, so step 1 retargets;
-  3. otherwise → the frame's target, or "no operations for this type" on an unsupported document, or the drive-level path with nothing open.
+  3. no document named verbatim, but a phrase refers to another one by type and an inexact name ("the CRDT MOC", "my beehive project", "the note about gossip") → **ask with the top 3** matches (lexical score, recency, title), plus the open document when its type has ops, plus "None of these", before the models run (`071eb3a1`, `4c6bec78`). The chosen one becomes the target; the others stay pinned ref candidates. A phrase that fits the open document at least as well stays on it. Several names, or two documents sharing the named title, stay on the open document (overview Q1);
+  4. otherwise → the frame's target, or "no operations for this type" on an unsupported document, or the drive-level path with nothing open.
 
-  **Missing:** ordinal resolution (needs §3.4), and "ask with the top 3" for a non-verbatim mention or several named documents: today those act on the viewed document (§3.9). Deixis exists only as the step-2 ask, not as a resolution step of its own.
+  **Missing:** ordinal resolution (needs §3.4). Deixis exists only as the step-2 ask, not as a resolution step of its own.
 - [x] With no document open: questions are answered; a create request gets "drive-level changes are not supported yet" and a "New *type*" button that opens `CreateDocumentDialog`. Drive ops arrive with M2b.
 
 ### 3.3 Removals and the scale fix
@@ -96,7 +97,7 @@ M0 landed as a spike (Status, top). A ticked box landed as written or with the d
 
 ### 3.7 Tests and eval
 
-- [x] Unit tests: `chat-context` (the frame, candidate ranking and the cap, card-target retention, sessions per drive), `chat-history-store` (fake IndexedDB), `chat-hotkey`, the rewritten `chat-target-document` (resolution order, the pointer guard, ambiguity) and the extended `chat-ref-candidates` (the cap per kind).
+- [x] Unit tests: `chat-context` (the frame, candidate ranking and the cap, card-target retention, sessions per drive), `chat-history-store` (fake IndexedDB), `chat-hotkey`, the rewritten `chat-target-document` (resolution order, the pointer guard, ambiguity), `chat-target-document-pick` (the top-3 ask: matching, ordering and cap, drive level, the verbatim rules first, the Connect E2E utterances, ref pinning) and the extended `chat-ref-candidates` (the cap per kind).
 - [ ] A retarget and deictic dev set, about 60 items, at `spike/llm-harness/eval/retarget-dev.json` (the framework's M2b path), written by an isolated writer under the eval-set rules (`training/docs/NEW-DOCUMENT-MODEL.md` §3). Items carry a context frame and score the target and the op. Not written (§3.9).
 
 ### 3.8 M0 acceptance
@@ -107,28 +108,28 @@ Results are in `M0.md` ("QA" and "Connect verification").
 - [x] **Tag on navigation:** with the sheet open, navigating to another document updates the tag without reopening the sheet.
 - [x] **Tag at drive level:** with no document open, the tag shows the drive name.
 - [x] **Card keeps its target:** a proposal on note A, then navigation to project B; the tag shows B and the card still shows A. Confirm: A's global revision +1 (5 → 6), B unchanged.
-- [ ] **Retarget:** a verbatim single-title mention of another document gives a card naming both, and the tag stays on the viewed document: passed in Connect (viewing a project, naming a note). With a pointer at the open document as well, the chat asks which of the two to change: unit-tested, not yet checked in Connect. A non-verbatim mention asking with the top 3: not built.
-- [ ] **Shortcut:** ⌘J on macOS while typing in a field, and Esc, passed. Ctrl+Shift+Space was checked on macOS through rebinding only; the Windows/Linux default is unit-tested, not run on those systems.
-- [ ] **History:** survives navigation and reload, and Clear empties it, in Connect. Separation per drive is unit-tested only.
+- [x] **Retarget:** a verbatim single-title mention of another document gives a card naming both, and the tag stays on the viewed document: passed in Connect (viewing a project, naming a note). With a pointer at the open document as well, the chat asks which of the two to change, and the other one is offered as a ref: passed in Connect (ADD_LINK to the named note; ADD_KNOWLEDGE_REF with the open note). A non-verbatim mention asks with the top 3: passed in Connect ("the CRDT MOC": CRDTs, CRDT basics, CRDT pitfalls, the open note, None).
+- [x] **Shortcut:** ⌘J on macOS while typing in a field, and Esc, passed. Ctrl+Shift+Space passed on macOS through rebinding, and as the default with the platform reported as Windows. **Not runnable here:** the default on a real Windows or Linux machine, and Firefox ⌘J (§3.9).
+- [x] **History:** survives navigation and reload, and Clear empties it, in Connect. Separation per drive passed in Connect with two drives (47 and 3 entries, one IndexedDB record each, after a reload).
 - [x] **Removals:** no Chat tab, no target `<select>`; no chat code calls `useDocumentsInSelectedDrive()`.
-- [x] **Regression bars:** `npm run chat:parity-c` PARITY OK (template 228/228, gate 216/216, decideOp 216/216, fillArgs 196/196); in-browser `__baiChatParityC()` picks 20/20, gate 20/20, args 18/18; `tests/unit/chat-*` and `tests/unit/training-prompt-format.test.ts` green.
-- [ ] Connect E2E rerun of E1, E2, E3, E5, E6, E7, E8, E10 and E11 from `docs/superpowers/notes/in-browser-llm/connect-c/E2E.md`, through the sheet. Not run (§3.9).
-- [x] `npm run tsc` and lint add no new errors over the baseline (lint run with the cached oxlint binary, because `oxlint` is not on `PATH` for `npm run lint:fix`).
+- [x] **Regression bars:** `npm run chat:parity-c` PARITY OK (template 228/228, loraPick 228/228, gate 216/216, decideOp 216/216, fillArgs 196/196, Kev Δp 0; fresh full run on the pnpm install); in-browser `__baiChatParityC()` in Connect picks 20/20, gate 20/20, args 18/18; `npx vitest run --dir tests/unit` green (427 tests).
+- [x] Connect E2E rerun of E1, E2, E3, E5, E6, E7, E8, E10 and E11 from `docs/superpowers/notes/in-browser-llm/connect-c/E2E.md`, through the sheet: all pass (`M0.md`, "Final pass"). They ran on the Studio started before the pnpm reinstall, because a fresh Studio on the pnpm install does not start (§3.9).
+- [x] `npm run tsc` and lint add no new errors over the baseline: after the pnpm switch, tsc 1022 → 1022, `chat/` lint errors 0 → 0. Total lint errors went 1720 → 1742, all 22 in the retarget dev-set writer's `spike/llm-harness/eval/retarget-dev-tools/zodcheck.mts` (`dcbbdd6f`).
 
 ### 3.9 M0 follow-ups
 
 What M0 left open. M1-UI extracts the sheet as it is; these can land before or after that, in the vault or in `nl-runtime`.
 
 - **Vault context store** (§3.4): graph focus, search results and visible ids, and with them ordinal resolution ("the second result") and `focusedItem`.
-- **Ask with the top 3** when a mention is not verbatim, or when several documents are named (§3.2). Today the chat acts on the tag.
+- **Studio on the pnpm install does not start** (M1 blocker for any Connect check): Vite cannot resolve `@electric-sql/pglite-tools/pg_dump`, which pnpm does not hoist to the root `node_modules`. And `npx ph` now falls through to a global `ph`, which turned `connect studio` into a `git push` call (rejected by git); use `npx ph-cli` (`M0.md`, "Final pass").
+- **Q1 rule differences the retarget dev set shows**, in rules M0 kept: a sentence-initial "This *verb*" ("This contradicts *X*.") is not read as a pointer; an open document that shares its title with another document lets the other one count as named; a name that also occurs inside the open document's title is dropped even where it stands on its own; a non-verbatim mention without a determiner or type noun ("corridor study is done") does not ask (`M0.md`, "Not done").
 - **Retarget edge cases the rule leaves to the user or cannot settle**, for the M2b retarget dev set and rows: every pointer-plus-name request asks, also when the intent is clear ("link this note to *X*" always changes the open note), so the ask costs a click there; an anaphoric "it" after a name ("add a question to *X* and tag it") also asks; with nothing open, a pointer does not block a title match.
 - **Server semantic candidates** (`knowledgeGraphSemanticSearch` at `resolveDriveSwitchboard(driveId)`, with a deadline).
 - **The ~60-item retarget and deictic dev set** (§3.7).
-- **Connect E2E rerun** of E1–E11 through the sheet (§3.8).
 - **Pending cards after a reload** (§3.5): restore them, which needs a serialisable card (op id and input, catalog looked up again on load).
 - **Drag-resize** of the panel on narrow screens.
-- **Firefox ⌘J** `preventDefault` check, and the Ctrl+Shift+Space default on a Windows or Linux machine.
-- **Version drift:** `package.json` pins 6.2.2-dev.47, but `node_modules/@powerhousedao/*` links a local monorepo build at 6.2.3-dev.78. The hooks M0 uses (`useDocumentSafe`, `useDocumentsByIds`, `useGetDocument`) were checked only in that build; recheck them at 6.2.2-dev.47 or after the M1 reinstall.
+- **Firefox ⌘J** `preventDefault` check, and the Ctrl+Shift+Space default on a Windows or Linux machine (not runnable on this Mac; the default was checked on macOS with the platform reported as Windows).
+- **Version drift:** `package.json` pins 6.2.2-dev.47, but `node_modules/@powerhousedao/*` links a local monorepo build at 6.2.3-dev.78. The hooks M0 uses (`useDocumentSafe`, `useDocumentsByIds`, `useGetDocument`) were checked only in that build; recheck them at 6.2.2-dev.47 or after the M1 reinstall. The reinstall has happened (`d2950ef4`), but Studio does not start on it yet (above).
 
 ## 4. Later milestones, vault side
 
