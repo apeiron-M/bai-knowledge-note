@@ -241,6 +241,31 @@ export function ChatView({ documents }: { documents: PHDocument[] }) {
         </select>
         <ModelStatusRows llm={llm} />
       </div>
+      {llm.legacyModelFile && (
+        <div
+          data-testid="chat-legacy-notice"
+          className="flex items-start gap-2 rounded-md px-3 py-2 text-xs"
+          style={{
+            border: "1px solid var(--bai-border)",
+            color: "var(--bai-text-muted)",
+          }}
+        >
+          <span className="flex-1">
+            The model URL saved by the previous chat version (
+            <code>{llm.legacyModelFile}</code>) is no longer used: the tab now runs
+            configuration C&apos;s models. To try that file anyway, enter its URL as the
+            command model under Model settings.
+          </span>
+          <button
+            type="button"
+            onClick={llm.dismissLegacyNotice}
+            className="underline"
+            style={{ color: "var(--bai-accent)" }}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <ChatModelSettings llm={llm} />
 
       <div className="flex-1 space-y-2 overflow-auto">

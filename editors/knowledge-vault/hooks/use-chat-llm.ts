@@ -20,6 +20,8 @@ import type { LlmClient } from "../chat/core/llm-client.js";
 import type { TrieMode } from "../chat/core/lora-trie.js";
 import { C_FUSION, C_HELDOUT6 } from "../chat/core/model-manifest.js";
 import {
+  fileNameOf,
+  isRound8Url,
   resolveCSources,
   type ModelSettings,
   type ResolvedSources,
@@ -103,8 +105,10 @@ export const SETTING_KEYS = {
   useKev: "bai.chat.useKev",
   trieMode: "bai.chat.trieMode",
   debug: "bai.chat.debug",
-  /** Pre-C single-model URL, migrated to `loraUrl`. */
+  /** Pre-C single-model URL: removed, never migrated to `loraUrl`. */
   legacyModelUrl: "bai.chat.modelUrl",
+  /** A dropped custom pre-C URL, shown once in the tab. */
+  legacyDropped: "bai.chat.legacyModelUrlDropped",
 } as const;
 
 export interface ChatSettings extends ModelSettings {
@@ -138,12 +142,31 @@ function write(key: string, value: string | null): void {
   }
 }
 
-export function readChatSettings(): ChatSettings {
+/**
+ * Drop the pre-C `bai.chat.modelUrl`. It was v1's single model (usually
+ * the round 8 export), not configuration C's LoRA, so migrating it made the
+ * tab run "Custom models"; C's manifest is the default instead. A custom
+ * (non round 8) URL is kept for a one-time notice when no LoRA URL is set.
+ */
+function dropLegacyModelUrl(): void {
   const legacy = read(SETTING_KEYS.legacyModelUrl);
-  if (legacy && !read(SETTING_KEYS.loraUrl)) {
-    write(SETTING_KEYS.loraUrl, legacy);
-    write(SETTING_KEYS.legacyModelUrl, null);
-  }
+  if (!legacy) return;
+  write(SETTING_KEYS.legacyModelUrl, null);
+  if (!isRound8Url(legacy) && !read(SETTING_KEYS.loraUrl))
+    write(SETTING_KEYS.legacyDropped, legacy);
+}
+
+/** The dropped custom pre-C model URL to tell the user about, else null. */
+export function legacyModelNotice(): string | null {
+  return read(SETTING_KEYS.legacyDropped);
+}
+
+export function dismissLegacyModelNotice(): void {
+  write(SETTING_KEYS.legacyDropped, null);
+}
+
+export function readChatSettings(): ChatSettings {
+  dropLegacyModelUrl();
   return {
     loraUrl: read(SETTING_KEYS.loraUrl),
     kevUrl: read(SETTING_KEYS.kevUrl),
@@ -259,6 +282,12 @@ function recordTiming(t: ChatTurnTiming): void {
 
 export function useChatLlm() {
   const [settings, setSettingsState] = useState<ChatSettings>(readChatSettings);
+  // after readChatSettings, which records the dropped URL
+  const [legacyUrl, setLegacyUrl] = useState<string | null>(legacyModelNotice);
+  const dismissLegacyNotice = useCallback(() => {
+    dismissLegacyModelNotice();
+    setLegacyUrl(null);
+  }, []);
   const models = useSyncExternalStore(subscribeChatModels, chatModelsState);
   const sources = useMemo(() => {
     const env = viteEnv();
@@ -489,6 +518,9 @@ export function useChatLlm() {
   return {
     settings,
     setSettings,
+    /** File name of a dropped custom pre-C model URL (one-time notice). */
+    legacyModelFile: legacyUrl ? fileNameOf(legacyUrl) : null,
+    dismissLegacyNotice,
     sources,
     lora: models.lora,
     kev: models.kev,
