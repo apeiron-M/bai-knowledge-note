@@ -7,7 +7,7 @@ import {
   readChatSettings,
   SETTING_KEYS,
 } from "../../editors/knowledge-vault/hooks/use-chat-llm.js";
-import { kevBlocker } from "../../editors/knowledge-vault/hooks/chat-models.js";
+import { isKevTooLong, kevBlocker } from "../../editors/knowledge-vault/hooks/chat-models.js";
 
 function memoryStorage(init: Record<string, string>) {
   const m = new Map(Object.entries(init));
@@ -82,6 +82,18 @@ describe("fallback labels", () => {
       "LoRA alone (decision model unavailable: 404): held-out-6 84.5% op, no ask step",
     );
     expect(kevReasonText({ reason: "off" })).toBe("turned off");
+  });
+
+  it("tells an over-length Kev request from a broken Kev", () => {
+    expect(
+      isKevTooLong(
+        new Error(
+          "decision model: Invalid typed array length (native: the question and its options (1100 tokens) are too large to process. increase the batch size (current batch size: 1024))",
+        ),
+      ),
+    ).toBe(true);
+    expect(isKevTooLong(new Error("request (1300 tokens) exceeds the available context size (1024 tokens)"))).toBe(true);
+    expect(isKevTooLong(new Error("GLUE"))).toBe(false);
   });
 
   it("blocks Kev when off or without WebGPU (no CPU fallback)", () => {

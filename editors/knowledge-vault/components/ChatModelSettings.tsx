@@ -89,8 +89,8 @@ export function ChatModelSettings({ llm }: { llm: ChatLlm }) {
             checked={settings.useKev}
             onChange={(e) => llm.setSettings({ useKev: e.target.checked })}
           />
-          Use decision model (Kev-FT). Both models take about 4.5–5 GB of memory
-          (Phase 0); without it the tab runs the LoRA alone and never asks.
+          Use decision model (Kev-FT). Both models take about 3.5–4 GB of memory
+          (the decision model about 3 GB); without it the tab runs the LoRA alone and never asks.
         </label>
         {lowMemory && settings.useKev && (
           <div style={{ color: "#d97706" }}>

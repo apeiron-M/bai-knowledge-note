@@ -34,6 +34,10 @@ export interface WllamaProgress {
 
 export interface WllamaLoadParams {
   n_ctx?: number;
+  /** Logical batch (llama-server default 2048). */
+  n_batch?: number;
+  /** Physical batch (default 512): sizes the compute buffer. */
+  n_ubatch?: number;
   n_parallel?: number;
   n_gpu_layers?: number;
   n_threads?: number;

@@ -80,11 +80,27 @@ export const C_ARTIFACTS: Record<ModelRole, ModelArtifact> = {
   },
 };
 
-/** Load parameters the rig and Phase 0 ran with. */
+/**
+ * wllama load parameters. The LoRA keeps the rig's n_ctx 4096 (its longest
+ * dev prompt is 568 tokens; a smaller context or ubatch saved nothing
+ * measurable). Kev is sized for memory: as a decision model llama.cpp runs
+ * it in embedding mode, which makes every prompt token an output and
+ * computes full-vocabulary logits for each (248,320 x 4 B per token), so
+ * the GPU compute buffer and its readback scale with n_ubatch (default
+ * 512: ~0.5 GB each). The longest Kev request without the utterance is 675
+ * tokens (knowledge-note, 19 options; dev max 710 with one), so
+ * n_ctx = n_batch = 1024 leaves ~350 tokens for the request, and
+ * n_ubatch 128 cut C's memory from ~5.8 to ~3.6 GB in Chrome (Kev +~100 ms
+ * per call; decisions and Kev probabilities unchanged, browser parity).
+ */
 export const C_LOAD = {
   lora: { nCtx: 4096 },
-  /** n_batch stays at the default 2048: Kev questions reach ~700 tokens. */
-  kev: { nCtx: 8192 },
+  kev: { nCtx: 1024, nBatch: 1024, nUbatch: 128 },
+  /**
+   * Longer requests skip Kev for the turn (LoRA alone) instead of failing:
+   * 1,000 characters stay under ~350 tokens for English text.
+   */
+  kevMaxRequestChars: 1000,
 } as const;
 
 /** Held-out-6 headline numbers shown in the configuration label. */

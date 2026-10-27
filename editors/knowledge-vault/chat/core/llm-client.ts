@@ -46,6 +46,9 @@ export interface LoadLlmOptions {
    */
   jinja?: boolean;
   nCtx?: number;
+  /** llama.cpp `n_batch` / `n_ubatch` (server defaults 2048 / 512). */
+  nBatch?: number;
+  nUbatch?: number;
   model?: { repo: string; file: string };
   /** Load this GGUF URL instead of `model`. */
   modelUrl?: string;
@@ -266,6 +269,8 @@ async function loadWllama(opts: LoadLlmOptions): Promise<LoadedWllama> {
   const t0 = performance.now();
   const params = {
     n_ctx: nCtx,
+    ...(opts.nBatch ? { n_batch: opts.nBatch } : {}),
+    ...(opts.nUbatch ? { n_ubatch: opts.nUbatch } : {}),
     n_parallel: 1,
     n_gpu_layers: opts.backend === "webgpu" ? 99999 : 0,
     jinja,

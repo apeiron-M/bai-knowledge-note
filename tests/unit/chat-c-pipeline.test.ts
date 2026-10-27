@@ -131,6 +131,17 @@ describe("decideOp", () => {
     expect(lora.calls.nextDist).toBe(0);
   });
 
+  it("skips Kev for a request longer than its context allows", async () => {
+    const kev = mockKev({});
+    const r = await decideOp("x".repeat(1001), DOC, deps(mockLora(ADD_TOPIC), kev));
+    expect(r).toMatchObject({
+      kind: "op",
+      config: "A",
+      fallback: { reason: "unavailable", detail: "request too long for the decision model" },
+    });
+    expect(kev.bodies).toHaveLength(0);
+  });
+
   it("does not surface a Kev load failure on a no-action turn", async () => {
     const r = await decideOp("what is this note about?", DOC, deps(mockLora(null), new Error("404")));
     expect(r.kind).toBe("none");

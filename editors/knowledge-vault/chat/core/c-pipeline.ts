@@ -11,7 +11,7 @@ import { kevOptionProbs, kevRequest } from "./kev-request.js";
 import { renderLfm2Legacy } from "./lfm2-template.js";
 import type { CurrentList } from "./list-completion.js";
 import { answersFor, trieScore, type TrieMode } from "./lora-trie.js";
-import { C_ARTIFACTS, C_FUSION, type FusionParams } from "./model-manifest.js";
+import { C_ARTIFACTS, C_FUSION, C_LOAD, type FusionParams } from "./model-manifest.js";
 import type { CatalogEntry } from "./op-catalog.js";
 import { NONE_KEY, type ScoreCache } from "./op-scorer.js";
 import {
@@ -160,6 +160,11 @@ export async function decideOp(
     ? (async (): Promise<KevOutcome> => {
         const loaded = await kevLoad;
         if (!loaded.ok) return loaded;
+        if (utterance.length > C_LOAD.kevMaxRequestChars)
+          return {
+            ok: false,
+            fallback: { reason: "unavailable", detail: "request too long for the decision model" },
+          };
         const req = kevRequest(utterance, cands);
         try {
           const tk = performance.now();

@@ -15,7 +15,7 @@ import {
 } from "../chat/core/llm-client.js";
 import type { KevBackend } from "../chat/core/decision-backend.js";
 import { answerTableMismatch } from "../chat/core/lora-trie.js";
-import { artifactMismatch, C_ARTIFACTS } from "../chat/core/model-manifest.js";
+import { artifactMismatch, C_ARTIFACTS, C_LOAD } from "../chat/core/model-manifest.js";
 import type { ResolvedModel } from "../chat/core/model-source.js";
 import type { ScoreCache } from "../chat/core/op-scorer.js";
 
@@ -153,7 +153,7 @@ export async function ensureLora(
           modelUrl: src.url,
           useCache: src.matchesManifest,
           jinja: false,
-          nCtx: 4096,
+          ...C_LOAD.lora,
           onProgress: progressFor("lora"),
         });
       })(),
@@ -210,7 +210,7 @@ export function ensureKev(src: ResolvedModel): Promise<DecisionClient> {
           backend: "webgpu",
           modelUrl: src.url,
           useCache: src.matchesManifest,
-          nCtx: 8192,
+          ...C_LOAD.kev,
           onProgress: progressFor("kev"),
         });
         const off = c.info.gpuLayers;
@@ -246,6 +246,12 @@ export function ensureKev(src: ResolvedModel): Promise<DecisionClient> {
   return kev.client;
 }
 
+/** llama-server's errors for a request over Kev's n_batch / n_ctx. */
+export function isKevTooLong(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return /too large to process|exceeds the available context size/i.test(msg);
+}
+
 /** The KevBackend for one turn (tracks consecutive failures). */
 export function kevBackendFor(src: ResolvedModel): () => Promise<KevBackend> {
   return async () => {
@@ -257,7 +263,8 @@ export function kevBackendFor(src: ResolvedModel): () => Promise<KevBackend> {
           if (state.kevFailures) update({ kevFailures: 0 });
           return r;
         } catch (err) {
-          update({ kevFailures: state.kevFailures + 1 });
+          // a request too long for Kev's context is not a broken Kev
+          if (!isKevTooLong(err)) update({ kevFailures: state.kevFailures + 1 });
           throw err;
         }
       },

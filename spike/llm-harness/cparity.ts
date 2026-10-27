@@ -12,7 +12,7 @@ import {
   type LlmClient,
 } from "../../editors/knowledge-vault/chat/core/llm-client.js";
 import { answerTableMismatch, type TrieMode } from "../../editors/knowledge-vault/chat/core/lora-trie.js";
-import { artifactMismatch, C_ARTIFACTS } from "../../editors/knowledge-vault/chat/core/model-manifest.js";
+import { artifactMismatch, C_ARTIFACTS, C_LOAD } from "../../editors/knowledge-vault/chat/core/model-manifest.js";
 import { v1Catalog } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
 import { runParityC, type ParityReport } from "../../editors/knowledge-vault/chat/dev/parity-c.js";
 
@@ -26,12 +26,17 @@ const state: {
 let lora: LlmClient | null = null;
 let kev: DecisionClient | null = null;
 
+/** Load settings; default: the shipped ones (C_LOAD). Override before the first load. */
+interface LoadOpts { nCtx?: number; nBatch?: number; nUbatch?: number }
+const loadOpts: { lora: LoadOpts; kev: LoadOpts } = { lora: { ...C_LOAD.lora }, kev: { ...C_LOAD.kev } };
+
 async function ensure(): Promise<{ lora: LlmClient; kev: DecisionClient }> {
-  if (!lora) lora = await loadLlm({ backend: "webgpu", modelUrl: `/x5/${C_ARTIFACTS.lora.fileName}`, jinja: false, nCtx: 4096 });
-  if (!kev) kev = await loadDecisionModel({ backend: "webgpu", modelUrl: `/kevft/${C_ARTIFACTS.kev.fileName}`, nCtx: 8192 });
+  if (!lora) lora = await loadLlm({ backend: "webgpu", modelUrl: `/x5/${C_ARTIFACTS.lora.fileName}`, jinja: false, ...loadOpts.lora });
+  if (!kev) kev = await loadDecisionModel({ backend: "webgpu", modelUrl: `/kevft/${C_ARTIFACTS.kev.fileName}`, ...loadOpts.kev });
   const li = lora.info;
   const ki = kev.info;
   state.load = {
+    opts: loadOpts,
     lora: { loadMs: Math.round(li.loadMs), gpuLayers: li.gpuLayers, multithread: li.multithread, bytes: li.downloadBytes,
       mismatch: artifactMismatch(C_ARTIFACTS.lora, { bytes: li.downloadBytes, meta: li.meta, nVocab: li.nVocab }),
       table: answerTableMismatch({ pre: li.meta["tokenizer.ggml.pre"], nVocab: li.nVocab, bos: li.bos, eos: li.eos }) },
@@ -71,7 +76,14 @@ function start(mode: TrieMode = "branch"): string {
 
 declare global {
   interface Window {
-    __cParity: { start: typeof start; state: typeof state };
+    __cParity: {
+      start: typeof start;
+      state: typeof state;
+      loadOpts: typeof loadOpts;
+      load: () => Promise<unknown>;
+      clients: () => { lora: LlmClient | null; kev: DecisionClient | null };
+    };
   }
 }
-window.__cParity = { start, state };
+/** Memory checks: set loadOpts, then load() (models only) or start(). */
+window.__cParity = { start, state, loadOpts, load: async () => (await ensure(), state.load), clients: () => ({ lora, kev }) };
