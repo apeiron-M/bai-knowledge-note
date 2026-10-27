@@ -103,6 +103,18 @@ function progressFor(role: "lora" | "kev") {
   };
 }
 
+/** Ask once that cached GGUFs (OPFS) are not evicted under pressure. */
+let persistAsked = false;
+async function requestPersistentStorage(): Promise<void> {
+  if (persistAsked || typeof navigator === "undefined") return;
+  persistAsked = true;
+  try {
+    await navigator.storage.persist();
+  } catch {
+    // not supported or denied: the cache may be evicted
+  }
+}
+
 /* ------------------------------- LoRA -------------------------------- */
 
 interface LoadedLora {
@@ -135,6 +147,7 @@ export async function ensureLora(
       cache: new Map(),
       client: (async () => {
         if (old) await (await old.client.catch(() => null))?.exit();
+        if (src.matchesManifest) await requestPersistentStorage();
         return loadLlm({
           backend: hasWebGpu() ? "webgpu" : "cpu",
           modelUrl: src.url,

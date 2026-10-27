@@ -230,7 +230,12 @@ function configLabel(
 
 export interface ChatTurnTiming {
   at: number;
-  kind: "none" | "op" | "fill";
+  kind: "none" | "op" | "fill" | "load";
+  /** kind "load": which model, its load time and GPU offload. */
+  role?: "lora" | "kev";
+  loadMs?: number;
+  downloadBytes?: number;
+  gpuLayers?: { offloaded: number; total: number } | null;
   config?: "C" | "A";
   decide?: OpDecision["timings"];
   trie?: OpDecision["trie"];
@@ -264,6 +269,16 @@ export function useChatLlm() {
     });
   }, [settings]);
   const skipRef = useRef<(() => void) | null>(null);
+  const loraInfo = models.lora.info;
+  const kevInfo = models.kev.info;
+  useEffect(() => {
+    if (loraInfo)
+      recordTiming({ at: Date.now(), kind: "load", role: "lora", loadMs: loraInfo.loadMs, downloadBytes: loraInfo.downloadBytes, gpuLayers: loraInfo.gpuLayers });
+  }, [loraInfo]);
+  useEffect(() => {
+    if (kevInfo)
+      recordTiming({ at: Date.now(), kind: "load", role: "kev", loadMs: kevInfo.loadMs, downloadBytes: kevInfo.downloadBytes, gpuLayers: kevInfo.gpuLayers });
+  }, [kevInfo]);
 
   const blocker =
     kevBlocker(settings.useKev) ??
