@@ -74,8 +74,8 @@ export function CardTarget<P>({
             color: "var(--bai-text-secondary)",
           }}
         >
-          Switched target: the request names <strong>{card.target.title}</strong>, so this
-          changes it, not the document you were viewing, {targetLabel(notice.switchedFrom)}.
+          Switched target: this changes <strong>{card.target.title}</strong>, not the
+          document you were viewing, {targetLabel(notice.switchedFrom)}.
         </div>
       )}
       {notice.nowViewing && (
