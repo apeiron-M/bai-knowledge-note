@@ -2,6 +2,8 @@
 
 This directory builds training data for the chat's two steps (op choice, then arguments) and fine-tunes `LiquidAI/LFM2.5-350M` with LoRA. It then ships the result as a merged Q4_K_M GGUF that wllama 3.8.1 loads like today's file.
 
+**Since M3 (2026-10-28) the scripts live in `powerhouse-nl`** (the `nl` CLI in `packages/nl`, the Python stages in `python/nl_train`, the rig in `packages/nl-eval`). This directory keeps the vault's recipe (`nl.config.ts`), its ref recipes and pools (`gen/ref-scenarios.ts`, `gen/ref-pools.ts`), data (`data/`), results, docs, the old eval rig (`eval-rig/`, until M5) and the files that rig still reads from the working tree (`gen/replay.ts`, `py/dedup.py`, `kev/node/`, `kev/data/`). The commands below name the old script paths; `nl --help` lists their replacements, and `powerhouse-nl`'s `docs/notes/m3/acceptance-runbook.md` has the current ones.
+
 **Status (2026-10-22, round 10):**
 - The pipeline is built and smoke-tested end to end on this Mac.
 - Rows render in the runtime prompt format **r6.1**, through the chat core's own builders, so training and runtime prompts are byte-identical (`tests/unit/training-prompt-format.test.ts`). The render and token-parity step was re-run on the smoke rows in r6.1 (see "Re-render in r6.1" below). The model was not retrained.

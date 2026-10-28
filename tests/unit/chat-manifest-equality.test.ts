@@ -20,7 +20,7 @@ import { describe, expect, it } from "vitest";
 import { chatManifest } from "../../chat-manifest/index.js";
 import { buildRuntimeCatalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
 import { VAULT_MANIFEST } from "../../editors/knowledge-vault/chat/vault-manifest.js";
-import { kevCatalogJson } from "../../training/kev/dump-catalog.js";
+import { kevCatalog } from "nl/gen";
 import {
   plainEntry,
   probeDigest,
@@ -139,7 +139,8 @@ describe("Kev option text vs the frozen catalog.json", () => {
     expect(ops).toBe(99);
   });
 
-  it("dump-catalog.ts, reading the manifest, reproduces catalog.json byte for byte", () => {
-    expect(kevCatalogJson(gen)).toBe(frozenText);
+  it("nl's Kev catalog (`nl gen kev-catalog`), reading the manifest, reproduces catalog.json byte for byte", () => {
+    const app = { catalog: gen.catalog, manifest: gen } as unknown as Parameters<typeof kevCatalog>[0];
+    expect(JSON.stringify(kevCatalog(app), null, 1)).toBe(frozenText);
   });
 });

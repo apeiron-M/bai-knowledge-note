@@ -25,10 +25,7 @@ import {
   type V1Deps,
 } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
 import type { WllamaChatMessage } from "../../editors/knowledge-vault/chat/core/wllama-types.js";
-import {
-  scopedCandidates,
-  step1Prompt,
-} from "../../training/gen/prompt-format.js";
+import { scopedCandidates, step1Prompt } from "nl/gen";
 
 const catalog = buildRuntimeCatalog();
 const NOTE = "bai/knowledge-note";

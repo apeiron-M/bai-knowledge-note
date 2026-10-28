@@ -7,23 +7,33 @@ import {
   refCandidatesFor,
   type ChatDocument,
 } from "../../editors/knowledge-vault/chat/core/ref-candidates.js";
-import { buildTrainingCatalog } from "../../training/gen/prompt-format.js";
-import { THEMES } from "../../training/gen/ref-pools.js";
 import {
+  buildTrainingCatalog,
   candidatesFor,
-  mulberry32,
-  RECIPES,
-  stateOf,
-} from "../../training/gen/ref-scenarios.js";
-import {
   IdSource,
-  replayers,
+  mulberry32,
   replayFixture,
-} from "../../training/gen/replay.js";
+  stateOf,
+  type Replayer,
+} from "nl/gen";
+import { chatManifest } from "../../chat-manifest/index.js";
+import { documentModels } from "../../document-models/document-models.js";
+import { THEMES } from "../../training/gen/ref-pools.js";
+import * as recipes from "../../training/gen/ref-scenarios.js";
 
-const catalog = buildTrainingCatalog();
+const { RECIPES } = recipes;
+const catalog = buildTrainingCatalog(chatManifest);
 const byKey = new Map(catalog.map((e) => [e.key, e]));
-const reps = replayers();
+// What `nl gen scenarios` replays with: the app's document models by docType.
+const reps = new Map<string, Replayer>(
+  documentModels.map((m) => [
+    m.documentModel.global.id,
+    {
+      reducer: m.reducer as unknown as Replayer["reducer"],
+      createDocument: m.utils.createDocument as unknown as Replayer["createDocument"],
+    },
+  ]),
+);
 
 describe("runtime ref candidates vs the training recipes", () => {
   it("covers exactly the recipes' ops and paths", () => {
@@ -66,7 +76,7 @@ describe("runtime ref candidates vs the training recipes", () => {
         expect(rep.error, op).toBeUndefined();
         const state = stateOf(rep.doc);
         const ours = refCandidatesFor(op, state, built.ctx);
-        expect(ours).toEqual(candidatesFor(op, state, built.ctx));
+        expect(ours).toEqual(candidatesFor(recipes, op, state, built.ctx));
       }
     });
 

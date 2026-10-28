@@ -1,10 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { fillArgsStep } from "../../editors/knowledge-vault/chat/core/args-step.js";
-import type { CompleteJson } from "../../editors/knowledge-vault/chat/core/llm-client.js";
-import { V1_ARGS } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
-import type { WllamaChatMessage } from "../../editors/knowledge-vault/chat/core/wllama-types.js";
-import { accepts } from "../../training/gen/gbnf-check.js";
 import {
+  accepts,
   buildTrainingCatalog,
   PROMPT_FORMAT_VERSION,
   scopedCandidates,
@@ -12,9 +7,12 @@ import {
   step1Target,
   step2Prompt,
   step2Target,
-} from "../../training/gen/prompt-format.js";
+} from "nl/gen";
+import { fillArgsStep, V1_ARGS, type CompleteJson, type WllamaChatMessage } from "nl-runtime";
+import { describe, expect, it } from "vitest";
+import { chatManifest } from "../../chat-manifest/index.js";
 
-const catalog = buildTrainingCatalog();
+const catalog = buildTrainingCatalog(chatManifest);
 const entry = (key: string) => {
   const e = catalog.find((c) => c.key === key);
   if (!e) throw new Error(`missing ${key}`);
