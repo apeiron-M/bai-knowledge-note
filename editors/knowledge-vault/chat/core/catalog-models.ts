@@ -17,6 +17,7 @@ import {
   type CatalogModelInput,
 } from "./op-catalog.js";
 import { VOCABULARIES } from "./vocabularies.js";
+import { chatManifest } from "../../../../chat-manifest/index.js";
 
 export const CATALOG_MODELS: CatalogModelInput[] = [
   { module: Derivation.Derivation, schemas: Derivation },
@@ -49,20 +50,23 @@ export function buildVaultCatalog(
 
 /**
  * The catalog the chat runtime, the harness's v1 entry and the training
- * renderer share: canonical vocabularies as enums, models' own descriptions.
+ * renderer share, rebuilt from the barrels' spec objects: canonical
+ * vocabularies as enums, models' own descriptions. M2: the field overrides
+ * and vocabularies are the generated manifest's, and
+ * `tests/unit/chat-manifest-equality.test.ts` pins this to
+ * `chatManifest.catalog` entry for entry. A shim for the training importers
+ * until M3.
  */
 export function buildRuntimeCatalog(): CatalogEntry[] {
   return buildVaultCatalog({ vocabularies: VOCABULARIES });
 }
 
-let catalogMemo: CatalogEntry[] | null = null;
-
 /**
- * The runtime catalog, built once per page (all the R2c default needs).
- * Moved here from v1-pipeline.ts in M1 so the editor reaches it without
- * the v1 pipeline (and its gte-small embedder); v1-pipeline re-exports it.
+ * The runtime catalog: the generated manifest's (`chat-manifest/`, built
+ * once per page from the specs and barrels). Moved here from
+ * v1-pipeline.ts in M1 so the editor reaches it without the v1 pipeline
+ * (and its gte-small embedder); v1-pipeline re-exports it.
  */
 export function v1Catalog(): CatalogEntry[] {
-  catalogMemo ??= buildRuntimeCatalog();
-  return catalogMemo;
+  return chatManifest.catalog;
 }

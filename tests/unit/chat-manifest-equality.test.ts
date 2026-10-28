@@ -1,8 +1,17 @@
 /**
  * M2 vault equality: the manifest `nl-generate` writes to chat-manifest/
  * (from the specs, reducers, barrels and chat.overrides.ts) equals the
- * vault's hand-written tables, and Kev's option text equals the frozen
- * training/kev/data/catalog.json.
+ * vault's hand-written tables it replaced, and Kev's option text equals the
+ * frozen training/kev/data/catalog.json.
+ *
+ * The hand tables (DEFAULT_FIELD_OVERRIDES, REF_EXTRACTORS, STATE_CHOICES,
+ * CURRENT_LISTS, VOCABULARIES, OP_DESCRIPTIONS and the hand-assembled
+ * VAULT_MANIFEST) were compared directly, function outputs included, until
+ * they were deleted (vault a9f25fb8). What remains of them is
+ * tests/fixtures/chat-manifest/hand-tables.sha256.json: the sha256 of each
+ * section of `probeManifest(hand VAULT_MANIFEST)`, the function tables as
+ * their outputs on the probe states. The catalog is also rebuilt from the
+ * barrels' own spec objects (`buildRuntimeCatalog`).
  */
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -10,14 +19,6 @@ import { kevRequest, type CatalogEntry } from "nl-runtime";
 import { describe, expect, it } from "vitest";
 import { chatManifest } from "../../chat-manifest/index.js";
 import { buildRuntimeCatalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
-import { DEFAULT_FIELD_OVERRIDES } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
-import { OP_DESCRIPTIONS } from "../../editors/knowledge-vault/chat/core/op-descriptions.js";
-import {
-  CURRENT_LISTS,
-  REF_EXTRACTORS,
-  STATE_CHOICES,
-} from "../../editors/knowledge-vault/chat/core/ref-candidates.js";
-import { VOCABULARIES } from "../../editors/knowledge-vault/chat/core/vocabularies.js";
 import { VAULT_MANIFEST } from "../../editors/knowledge-vault/chat/vault-manifest.js";
 import { kevCatalogJson } from "../../training/kev/dump-catalog.js";
 import {
@@ -29,95 +30,74 @@ import {
 
 const gen = chatManifest;
 const states = probeStates();
-const asManifest = (
-  t: Pick<typeof gen, "refExtractors" | "stateChoices" | "currentLists">,
-) => ({ ...gen, ...t, crossDocument: undefined });
+const frozen = JSON.parse(
+  readFileSync(
+    new URL(
+      "../fixtures/chat-manifest/hand-tables.sha256.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+) as Record<string, string>;
+const digest = probeDigest(gen);
+const probe = probeManifest(gen, { catalog: false, states });
+const count = (t: object) =>
+  Object.values(t).flatMap((p) => Object.keys(p as object)).length;
 
 describe("generated chat manifest vs the hand tables", () => {
-  it("catalog equals buildRuntimeCatalog(), entry for entry", () => {
-    const hand = buildRuntimeCatalog();
-    expect(gen.catalog.map((e) => e.key)).toEqual(hand.map((e) => e.key));
+  it("catalog equals buildRuntimeCatalog() (the barrels' specs), entry for entry", () => {
+    const rebuilt = buildRuntimeCatalog();
+    expect(gen.catalog.map((e) => e.key)).toEqual(rebuilt.map((e) => e.key));
     expect(gen.catalog).toHaveLength(100);
-    expect(gen.catalog.map(plainEntry)).toEqual(hand.map(plainEntry));
+    expect(gen.catalog.map(plainEntry)).toEqual(rebuilt.map(plainEntry));
     // The same barrel module: the very same action creators.
-    expect(gen.catalog.every((e, i) => e.creator === hand[i].creator)).toBe(
+    expect(gen.catalog.every((e, i) => e.creator === rebuilt[i].creator)).toBe(
       true,
     );
+    expect(digest.catalog).toBe(frozen.catalog);
   });
 
   it("field overrides equal DEFAULT_FIELD_OVERRIDES (all 7 derived)", () => {
-    expect(gen.fieldOverrides).toEqual(DEFAULT_FIELD_OVERRIDES);
     expect(Object.keys(gen.fieldOverrides)).toHaveLength(7);
+    expect(digest.fieldOverrides).toBe(frozen.fieldOverrides);
   });
 
-  it("ref extractors return what REF_EXTRACTORS returns, on every probe state", () => {
-    expect(Object.keys(gen.refExtractors).sort()).toEqual(
-      Object.keys(REF_EXTRACTORS).sort(),
-    );
-    const paths = Object.values(gen.refExtractors).flatMap((p) =>
-      Object.keys(p),
-    );
-    expect(paths).toHaveLength(47);
-    const g = probeManifest(asManifest(gen), { catalog: false, states });
-    const h = probeManifest(
-      asManifest({ ...gen, refExtractors: REF_EXTRACTORS }),
-      { catalog: false, states },
-    );
-    expect(g.refExtractors).toEqual(h.refExtractors);
-    // The probe is not vacuous: the rich state yields candidates for every path.
+  it("ref extractors return what REF_EXTRACTORS returned, on every probe state", () => {
+    expect(Object.keys(gen.refExtractors)).toHaveLength(40);
+    expect(count(gen.refExtractors)).toBe(47);
+    // Not vacuous: the rich state yields candidates for every path.
     const rich = Object.values(
-      g.refExtractors as Record<string, Record<string, { rich: unknown[] }>>,
+      probe.refExtractors as Record<
+        string,
+        Record<string, { rich: unknown[] }>
+      >,
     )
       .flatMap((p) => Object.values(p))
       .filter((r) => r.rich.length > 0);
     expect(rich).toHaveLength(47);
+    expect(digest.refExtractors).toBe(frozen.refExtractors);
   });
 
   it("state choices and current lists equal STATE_CHOICES and CURRENT_LISTS", () => {
-    const g = probeManifest(asManifest(gen), { catalog: false, states });
-    const h = probeManifest(
-      asManifest({
-        ...gen,
-        stateChoices: STATE_CHOICES,
-        currentLists: CURRENT_LISTS,
-      }),
-      { catalog: false, states },
-    );
-    expect(Object.keys(g.stateChoices as object)).toHaveLength(2);
-    expect(Object.keys(g.currentLists as object)).toHaveLength(3);
-    expect(g.stateChoices).toEqual(h.stateChoices);
-    expect(g.currentLists).toEqual(h.currentLists);
+    expect(count(gen.stateChoices)).toBe(2);
+    expect(count(gen.currentLists)).toBe(3);
+    expect(digest.stateChoices).toBe(frozen.stateChoices);
+    expect(digest.currentLists).toBe(frozen.currentLists);
   });
 
   it("vocabularies equal VOCABULARIES, values in order", () => {
-    expect(gen.vocabularies).toEqual(VOCABULARIES);
     expect(Object.keys(gen.vocabularies)).toHaveLength(13);
+    expect(digest.vocabularies).toBe(frozen.vocabularies);
   });
 
   it("descriptions equal OP_DESCRIPTIONS (99 global + 1 local)", () => {
-    expect(gen.opDescriptions).toEqual(OP_DESCRIPTIONS);
     expect(Object.keys(gen.opDescriptions)).toHaveLength(100);
+    expect(digest.opDescriptions).toBe(frozen.opDescriptions);
   });
 
-  it("the whole manifest equals chat/vault-manifest.ts VAULT_MANIFEST", () => {
-    expect(probeManifest(gen, { states })).toEqual(
-      probeManifest(VAULT_MANIFEST, { states }),
-    );
-  });
-
-  it("every probed section hashes as the hand tables did (frozen digest)", () => {
-    // tests/fixtures/chat-manifest/hand-tables.sha256.json: probeDigest of the
-    // hand-written VAULT_MANIFEST, taken before the hand tables were deleted.
-    const frozen = JSON.parse(
-      readFileSync(
-        new URL(
-          "../fixtures/chat-manifest/hand-tables.sha256.json",
-          import.meta.url,
-        ),
-        "utf8",
-      ),
-    ) as Record<string, string>;
-    expect(probeDigest(gen)).toEqual(frozen);
+  it("the whole manifest equals the hand-assembled VAULT_MANIFEST", () => {
+    expect(digest).toEqual(frozen);
+    expect(VAULT_MANIFEST).toBe(gen);
   });
 });
 

@@ -10,6 +10,7 @@ import {
   type CatalogModelInput,
   type FieldClass,
 } from "nl-runtime";
+import { chatManifest } from "../../../../chat-manifest/index.js";
 
 export {
   type ActionCreator,
@@ -31,20 +32,15 @@ export {
 } from "nl-runtime";
 
 /**
- * Exceptions to the prefix rules, verified against the reducers:
+ * Exceptions to the prefix rules, verified against the reducers. M2: all 7
+ * derive from the reducers (`nl-generate`); this is the generated manifest's
+ * table (`chat-manifest/`).
  * - knowledge-note lifecycle transitions push `id` as a new lifecycle event.
  * - wbs ADD_NOTE creates a note with `noteId`.
  * - wbs ADD_DEPENDENCIES' `id` is the existing goal being modified.
  */
-export const DEFAULT_FIELD_OVERRIDES: Record<string, FieldClass> = {
-  "knowledge-note:SUBMIT_FOR_REVIEW:id": "new-id",
-  "knowledge-note:APPROVE_NOTE:id": "new-id",
-  "knowledge-note:REJECT_NOTE:id": "new-id",
-  "knowledge-note:ARCHIVE_NOTE:id": "new-id",
-  "knowledge-note:RESTORE_NOTE:id": "new-id",
-  "wbs:ADD_NOTE:noteId": "new-id",
-  "wbs:ADD_DEPENDENCIES:id": "ref-id",
-};
+export const DEFAULT_FIELD_OVERRIDES: Readonly<Record<string, FieldClass>> =
+  chatManifest.fieldOverrides;
 
 /** The core catalog with the vault's overrides under `options.overrides`. */
 export function buildCatalog(

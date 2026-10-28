@@ -13,8 +13,9 @@
  * nothing named the chat only answers questions.
  *
  * The resolver moved to nl-runtime (core/target-document) in M1, where the
- * create rules, type labels and type nouns are inputs. The vault's tables
- * stay here, and the old functions bind them.
+ * create rules, type labels and type nouns are inputs. M2: the tables are
+ * the generated manifest's (`chat-manifest/`, from `chat.overrides.ts`), and
+ * the old functions bind them.
  */
 import {
   type CandidateDoc,
@@ -33,6 +34,7 @@ import {
   type TypeLabels,
   type TypeNouns,
 } from "nl-runtime";
+import { chatManifest } from "../../../../chat-manifest/index.js";
 
 export {
   type ChatRoute,
@@ -49,48 +51,13 @@ export {
 /** Type nouns that make a phrase refer to a document, with the document
  * types each one can mean (`null`: any). Keys with spaces match word by
  * word, longest first ("map of content"). */
-export const TYPE_NOUNS: TypeNouns = {
-  note: ["bai/knowledge-note"],
-  notes: ["bai/knowledge-note"],
-  moc: ["bai/moc"],
-  mocs: ["bai/moc"],
-  map: ["bai/moc"],
-  "map of content": ["bai/moc"],
-  project: ["bai/project"],
-  projects: ["bai/project"],
-  plan: ["bai/wbs"],
-  plans: ["bai/wbs"],
-  wbs: ["bai/wbs"],
-  observation: ["bai/observation"],
-  observations: ["bai/observation"],
-  tension: ["bai/tension"],
-  tensions: ["bai/tension"],
-  claim: ["bai/research-claim"],
-  claims: ["bai/research-claim"],
-  derivation: ["bai/derivation"],
-  derivations: ["bai/derivation"],
-  source: ["bai/source"],
-  sources: ["bai/source"],
-  // "the koji humidity one"; "the other one" has no name words left
-  one: null,
-  doc: null,
-  docs: null,
-  document: null,
-  documents: null,
-  page: null,
-  file: null,
-};
+export const TYPE_NOUNS: TypeNouns = chatManifest.typeNouns ?? {};
 
 /** "create a new note about X" → the New dialog for that type. */
-export const CREATE_TYPES: CreateTypes = [
-  [/\b(map of content|moc)\b/i, { docType: "bai/moc", label: "Map of Content" }],
-  [/\bproject\b/i, { docType: "bai/project", label: "Project" }],
-  [/\bsource\b/i, { docType: "bai/source", label: "Add Source" }],
-  [/\bnote\b/i, { docType: "bai/knowledge-note", label: "Knowledge Note" }],
-];
+export const CREATE_TYPES: CreateTypes = chatManifest.createTypes ?? [];
 
 /** Display names by unprefixed type name. */
-export const TYPE_LABELS: TypeLabels = { wbs: "WBS", moc: "MOC" };
+export const TYPE_LABELS: TypeLabels = chatManifest.typeLabels;
 
 export function createIntent(utterance: string): CreateIntent | null {
   return coreCreateIntent(utterance, CREATE_TYPES);

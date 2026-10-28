@@ -57,7 +57,7 @@ Companion docs:
 
 Everything below is read from the repo. Nothing is read from an eval set.
 - **The catalog:** `editors/knowledge-vault/chat/core/catalog-models.ts`, which lists the 12 vault document models. `buildCatalog` (`op-catalog.ts`) turns each model's spec, zod `<Op>InputSchema()` creators and field overrides into catalog entries: 99 global ops, of which 40 are ref ops.
-- **Canonical vocabularies:** `chat/core/vocabularies.ts` has 13 closed `String` lists that become enums in the catalog.
+- **Canonical vocabularies:** `chat.overrides.ts` (`vocabularies`) has 13 closed `String` lists that become enums in the catalog (the generated manifest's `vocabularies`; `chat/core/vocabularies.ts` re-exports them).
 - **Teacher context:** `npx --no-install tsx training/gen/export-teacher-context.ts <context.json>`. It writes each op's description, input SDL, semantic schema, reducer source, siblings and empty state.
 - **Seeded states for ref ops:** `training/gen/ref-scenarios.ts` (one recipe per ref op: build, candidate paths, assign, check) and `training/gen/ref-pools.ts` (invented themes, people, batches and sessions, kept away from the eval domains).
 - **Replay fixtures:** `FIXTURES` in `training/py/teacher.py`, for ops whose reducer needs a prior state (for example SUBMIT_FOR_REVIEW before APPROVE or REJECT).

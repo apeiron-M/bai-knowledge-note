@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   argsGrammar,
@@ -52,10 +53,7 @@ import {
   toOptions,
   type ScoreCache,
 } from "../../editors/knowledge-vault/chat/core/op-scorer.js";
-import {
-  VOCABULARIES,
-  VOCABULARY_TABLE,
-} from "../../editors/knowledge-vault/chat/core/vocabularies.js";
+import { VOCABULARIES } from "../../editors/knowledge-vault/chat/core/vocabularies.js";
 import { accepts } from "./gbnf-recognizer.js";
 
 const catalog = buildVaultCatalog({ vocabularies: VOCABULARIES });
@@ -177,8 +175,15 @@ describe("vocabularies", () => {
   });
 
   it("names a source for every vocabulary and each key resolves to a field", () => {
-    for (const [k, v] of Object.entries(VOCABULARY_TABLE)) {
-      expect(v.source.length).toBeGreaterThan(10);
+    // The sources are the comment line above each entry in chat.overrides.ts.
+    const overrides = readFileSync(
+      new URL("../../chat.overrides.ts", import.meta.url),
+      "utf8",
+    ).split("\n");
+    for (const k of Object.keys(VOCABULARIES)) {
+      const at = overrides.findIndex((l) => l.trim().startsWith(`"${k}":`));
+      expect(at, k).toBeGreaterThan(0);
+      expect(overrides[at - 1].trim(), k).toMatch(/^\/\/ .{10,}/);
       const [model, op] = k.split(":");
       expect(catalog.some((c) => c.key === `${model}:${op}`)).toBe(true);
     }
