@@ -1,14 +1,18 @@
-import { semanticFieldNames, type CatalogEntry } from "./op-catalog.js";
+// v1 only (leaves the graph in M1; deleted in M3). `tokenize`,
+// `retrievalText` and `RetrievedOp` moved to nl-runtime (core/op-retriever).
+import {
+  type CatalogEntry,
+  retrievalText,
+  type RetrievedOp,
+  tokenize,
+} from "nl-runtime";
+
+export { retrievalText, type RetrievedOp, tokenize } from "nl-runtime";
 
 export interface RetrieveOptions {
   k?: number;
   /** Restrict candidates to one document type (the selected document's). */
   docType?: string;
-}
-
-export interface RetrievedOp {
-  entry: CatalogEntry;
-  score: number;
 }
 
 export interface OpRetriever {
@@ -22,43 +26,6 @@ export interface RetrieverOptions {
   extraText?: Record<string, string>;
   k1?: number;
   b?: number;
-}
-
-const STOPWORDS = new Set(
-  "a an the this that these those to of for in on at by with and or is are be it its as from into my me i please can you could would should".split(
-    " ",
-  ),
-);
-
-/** Light suffix stripping so "tagging"/"tags"/"tagged" meet "tag". */
-function stem(token: string): string {
-  if (token.length > 5 && token.endsWith("ing")) return token.slice(0, -3);
-  if (token.length > 4 && token.endsWith("ed")) return token.slice(0, -2);
-  if (token.length > 3 && token.endsWith("s") && !token.endsWith("ss"))
-    return token.slice(0, -1);
-  return token;
-}
-
-export function tokenize(text: string): string[] {
-  return text
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((t) => t.length > 1 && !STOPWORDS.has(t))
-    .map(stem);
-}
-
-export function retrievalText(
-  entry: CatalogEntry,
-  extra?: Record<string, string>,
-): string {
-  return [
-    entry.opName.replace(/_/g, " "),
-    entry.description,
-    entry.module.replace(/-/g, " "),
-    semanticFieldNames(entry).join(" "),
-    extra?.[entry.key] ?? "",
-  ].join(" ");
 }
 
 /** In-memory BM25 over the op catalog. Local-scope ops are excluded. */

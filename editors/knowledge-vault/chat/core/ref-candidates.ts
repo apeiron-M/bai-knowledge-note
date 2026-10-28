@@ -5,35 +5,37 @@
  * `RECIPES[op].paths`): goal description, member name, deliverable title,
  * task target, topic name, link target title, the drive's document titles.
  * `tests/unit/chat-ref-candidates.test.ts` checks every recipe against this.
+ *
+ * The machinery moved to nl-runtime (core/ref-candidates) in M1, where the
+ * tables are inputs. The vault's tables stay here, and the old functions
+ * bind them.
  */
 import {
-  CANDIDATE_CAP,
-  rankCandidates,
-  referencedIds,
-} from "../context/candidates.js";
-import type { CandidateDoc } from "../context/context-frame.js";
-import type { CurrentList, ListMode } from "./list-completion.js";
-import type { RefCandidates } from "./v1-pipeline.js";
+  type CandidateDoc,
+  type ChatDocument,
+  type ContextKinds,
+  type CrossDocumentHook,
+  currentListsFor as coreCurrentListsFor,
+  type CurrentList,
+  driveRefContext as coreDriveRefContext,
+  type DriveRefOptions as CoreDriveRefOptions,
+  type ListMode,
+  type RefCandidates,
+  refCandidatesFor as coreRefCandidatesFor,
+  type RefContextItem,
+  type RefExtractor,
+} from "nl-runtime";
+
+export {
+  type ChatDocument,
+  documentTitle,
+  type RefCandidate,
+  type RefContextItem,
+} from "nl-runtime";
 
 type Rec = Record<string, unknown>;
 
-export interface RefCandidate {
-  id: string;
-  label: string;
-}
-
-/**
- * An item listed from outside the document (other documents in the drive,
- * goals of a linked plan), by kind: `note`, `knowledge`, `wbs`, `project`,
- * `wbs-goal`, `topic`, `session`, `moc`.
- */
-export interface RefContextItem {
-  id: string;
-  title: string;
-  kind: string;
-}
-
-type Extract = (state: Rec, ctx: RefContextItem[]) => RefCandidate[];
+type Extract = RefExtractor;
 
 function isRec(v: unknown): v is Rec {
   return typeof v === "object" && v !== null && !Array.isArray(v);
@@ -180,15 +182,10 @@ export function refCandidatesFor(
   state: Rec,
   ctx: RefContextItem[],
 ): RefCandidates {
-  const paths = REF_EXTRACTORS[opKey] ?? {};
-  const out: RefCandidates = Object.fromEntries(
-    Object.entries(paths).map(([p, f]) => [p, f(state, ctx)]),
-  );
-  for (const [p, f] of Object.entries(STATE_CHOICES[opKey] ?? {})) {
-    const cands = f(state, ctx);
-    if (cands.length > 0) out[p] = cands;
-  }
-  return out;
+  return coreRefCandidatesFor(opKey, state, ctx, {
+    refExtractors: REF_EXTRACTORS,
+    stateChoices: STATE_CHOICES,
+  });
 }
 
 /** X9: list fields an op replaces whole, with the current list (state order). */
@@ -215,93 +212,54 @@ export function currentListsFor(
   opKey: string,
   state: Rec,
 ): Record<string, CurrentList> {
-  const out: Record<string, CurrentList> = {};
-  for (const [p, { mode, from }] of Object.entries(
-    CURRENT_LISTS[opKey] ?? {},
-  )) {
-    const values = from(state).filter(Boolean);
-    if (values.length > 0) out[p] = { mode, values };
-  }
-  return out;
+  return coreCurrentListsFor(opKey, state, CURRENT_LISTS);
 }
 
-/** A drive document as the chat sees it: id, type, title and global state. */
-export interface ChatDocument {
-  id: string;
-  docType: string;
-  title: string;
-  state: Rec;
-}
-
-const CTX_KIND_BY_TYPE: Record<string, string[]> = {
+/** Drive document kinds per document type (`driveRefContext`). */
+export const CTX_KIND_BY_TYPE: ContextKinds = {
   "bai/knowledge-note": ["note", "knowledge"],
   "bai/wbs": ["wbs"],
   "bai/project": ["project"],
   "bai/moc": ["moc"],
 };
 
-export interface DriveRefOptions {
+/** The `bai/project` branch: a project's linked plan's goals (`wbs-goal`). */
+export const linkedPlanGoals: CrossDocumentHook = (target, opts, bounded) => {
+  const wbs = opts.linked;
+  if (target.docType === "bai/project" && wbs && wbs.id === str(target.state.wbsRef))
+    return bounded(
+      "wbs-goal",
+      recs(wbs.state.goals).map((g) => ({
+        id: str(g.id),
+        docType: "wbs-goal",
+        title: str(g.description),
+      })),
+    );
+  return [];
+};
+
+export type DriveRefOptions = Omit<CoreDriveRefOptions, "linked"> & {
   /** A project target's linked plan, loaded by id (its goals). */
   linkedWbs?: ChatDocument;
-  /** The request, for ranking; without it the recent ring orders. */
-  utterance?: string;
-  recentIds?: string[];
-  /** Per kind; items the target already refers to are always kept. */
-  cap?: number;
-  /** Documents always kept as candidates, like referenced items (the open
-   * document when the user chose to change another one). */
-  keepIds?: string[];
-}
+};
 
 /**
  * The drive's items a ref field may point at, from the target document's
  * point of view: other notes (`note`, `knowledge`), plans (`wbs`), projects
  * (`project`) and, for a project with a linked plan, that plan's goals
- * (`wbs-goal`). Topic pages and capture sessions have no drive source yet.
- * M0: built from names (nodes, known titles), at most `cap` per kind plus
- * the items the target's state already refers to (their labels).
+ * (`wbs-goal`). At most `cap` per kind plus the items the target's state
+ * already refers to.
  */
 export function driveRefContext(
   target: ChatDocument,
   documents: CandidateDoc[],
   opts: DriveRefOptions = {},
 ): RefContextItem[] {
-  const utterance = opts.utterance ?? "";
-  const cap = opts.cap ?? CANDIDATE_CAP;
-  const referenced = referencedIds(target.state);
-  for (const id of opts.keepIds ?? []) referenced.add(id);
-  const bounded = (kind: string, items: CandidateDoc[]): RefContextItem[] => {
-    const kept = items.filter((d) => referenced.has(d.id));
-    const rest = rankCandidates(
-      utterance,
-      items.filter((d) => !referenced.has(d.id)),
-      { recentIds: opts.recentIds, cap },
-    );
-    return [...kept, ...rest].map((d) => ({ id: d.id, title: d.title, kind }));
-  };
-  const byKind = new Map<string, CandidateDoc[]>();
-  for (const d of documents) {
-    if (d.id === target.id) continue;
-    for (const kind of CTX_KIND_BY_TYPE[d.docType] ?? [])
-      byKind.set(kind, [...(byKind.get(kind) ?? []), d]);
-  }
-  const out = [...byKind].flatMap(([kind, items]) => bounded(kind, items));
-  const wbs = opts.linkedWbs;
-  if (target.docType === "bai/project" && wbs && wbs.id === str(target.state.wbsRef))
-    out.push(
-      ...bounded(
-        "wbs-goal",
-        recs(wbs.state.goals).map((g) => ({
-          id: str(g.id),
-          docType: "wbs-goal",
-          title: str(g.description),
-        })),
-      ),
-    );
-  return out;
-}
-
-/** A document's display title: its state's title or name, else `fallback`. */
-export function documentTitle(state: Rec, fallback: string): string {
-  return str(state.title) || str(state.name) || fallback;
+  const { linkedWbs, ...rest } = opts;
+  return coreDriveRefContext(
+    target,
+    documents,
+    { contextKinds: CTX_KIND_BY_TYPE, crossDocument: linkedPlanGoals },
+    { ...rest, linked: linkedWbs },
+  );
 }

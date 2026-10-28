@@ -4,6 +4,18 @@
  * LoRA (step 1, trie scores, step 2, answers) and Kev-FT (System One option
  * probabilities); `fusion.ts` combines them.
  */
+import type { ModelArtifact, ModelRole } from "nl-runtime";
+
+// The types and artifactMismatch moved to nl-runtime (core/artifact-manifest)
+// in M1; the values stay here. chat/vault-artifacts.ts builds the vault's
+// ArtifactManifest from them.
+export {
+  artifactMismatch,
+  type FusionParams,
+  type GgufMeta,
+  type ModelArtifact,
+  type ModelRole,
+} from "nl-runtime";
 
 /** Equal-weight product of tempered log-softmaxes, margin gate (X7 C3). */
 export const C_FUSION = {
@@ -19,40 +31,8 @@ export const C_FUSION = {
   kOffer: 3,
 } as const;
 
-export type FusionParams = {
-  readonly [K in keyof typeof C_FUSION]: number;
-};
-
-export type ModelRole = "lora" | "kev";
-
-export interface ModelArtifact {
-  role: ModelRole;
-  /** Versioned, immutable by convention: also the OPFS cache key. */
-  fileName: string;
-  bytes: number;
-  sha256: string;
-  /** `general.architecture`. */
-  arch: string;
-  /** Short name for the status line. */
-  label: string;
-  /** Same-origin dev path (Studio's Vite serves the repo root). */
-  devPath: string;
-  /** `general.name`, when it identifies the file (X5's is "Merged"). */
-  generalName?: string;
-  /** Kev only: `<arch>.decision.type`. */
-  decisionType?: string;
-  /**
-   * Kev only: `<arch>.decision.temperature.choice` as f32, which the rig's
-   * decide.mjs used to undo the served temperature (logT1). The GGUF
-   * metadata string is rounded to 6 dp; it must agree to 1e-6.
-   */
-  servedT?: number;
-  /** LoRA only: the trie's answer table is keyed by this tokenizer. */
-  tokenizerPre?: string;
-  nVocab?: number;
-}
-
-export const C_ARTIFACTS: Record<ModelRole, ModelArtifact> = {
+/** `devPath` is optional in nl-runtime (a hosted manifest has a base URL); the vault's are set. */
+export const C_ARTIFACTS: Record<ModelRole, ModelArtifact & { devPath: string }> = {
   lora: {
     role: "lora",
     fileName: "LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf",
@@ -109,35 +89,3 @@ export const C_HELDOUT6 = {
   asked: 0.159,
   loraAloneOp: 0.845,
 } as const;
-
-/** Model GGUF metadata the identity check reads. */
-export type GgufMeta = Record<string, string | undefined>;
-
-/**
- * Why a loaded file is not the measured artifact (null when it is). Cheap
- * checks only: a full-file sha256 cannot stream through crypto.subtle.
- */
-export function artifactMismatch(
-  a: ModelArtifact,
-  loaded: { bytes: number; meta: GgufMeta; nVocab?: number },
-): string | null {
-  const m = loaded.meta;
-  if (loaded.bytes && loaded.bytes !== a.bytes)
-    return `size ${loaded.bytes} B, expected ${a.bytes} B`;
-  if (m["general.architecture"] !== a.arch)
-    return `architecture ${m["general.architecture"] ?? "?"}, expected ${a.arch}`;
-  if (a.generalName && m["general.name"] !== a.generalName)
-    return `name ${m["general.name"] ?? "?"}, expected ${a.generalName}`;
-  if (a.decisionType && m[`${a.arch}.decision.type`] !== a.decisionType)
-    return `decision type ${m[`${a.arch}.decision.type`] ?? "?"}, expected ${a.decisionType}`;
-  if (a.servedT !== undefined) {
-    const t = Number(m[`${a.arch}.decision.temperature.choice`]);
-    if (!(Math.abs(t - a.servedT) <= 1e-6))
-      return `decision temperature ${String(t)}, expected ${a.servedT}`;
-  }
-  if (a.tokenizerPre && m["tokenizer.ggml.pre"] !== a.tokenizerPre)
-    return `tokenizer ${m["tokenizer.ggml.pre"] ?? "?"}, expected ${a.tokenizerPre}`;
-  if (a.nVocab && loaded.nVocab !== undefined && loaded.nVocab !== a.nVocab)
-    return `vocabulary ${loaded.nVocab}, expected ${a.nVocab}`;
-  return null;
-}

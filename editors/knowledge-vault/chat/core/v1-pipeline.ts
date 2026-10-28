@@ -12,18 +12,27 @@
  *
  * The round 6/7 pipeline (G3 gate, then gte-small's top op with no step-1
  * model call) and round 9's other candidate lists stay behind `step1`.
+ *
+ * M1: what configuration C uses (`runStep1`, `step1Messages`, `V1_ARGS`,
+ * `RefCandidates`, `V1Step1Result`) moved to nl-runtime (core/step1), and
+ * `v1Catalog` to catalog-models.ts; both are re-exported here. The rest
+ * (`runV1`, `loadV1Runtime`, the embedding step 1) leaves the graph: no
+ * editor file imports this file. Deleted in M3.
  */
+import {
+  looksLikeQuestion,
+  type RefCandidates,
+  runStep1,
+  V1_ARGS,
+  type V1Step1Result,
+} from "nl-runtime";
 import { fillArgsStep, type ArgsStepResult } from "./args-step.js";
-import { buildRuntimeCatalog } from "./catalog-models.js";
+import { v1Catalog } from "./catalog-models.js";
 import { buildAction, type EnvelopeContext } from "./envelope.js";
 import { loadGteEmbedder, type GteEmbedderOptions } from "./gte-embedder.js";
 import type { CurrentList } from "./list-completion.js";
 import type { CompleteJson, ScoreText } from "./llm-client.js";
-import {
-  combinedNoAction,
-  embeddingGateScore,
-  looksLikeQuestion,
-} from "./no-action-gate.js";
+import { combinedNoAction, embeddingGateScore } from "./no-action-gate.js";
 import type { CatalogEntry } from "./op-catalog.js";
 import {
   createOpEmbeddingIndex,
@@ -31,41 +40,23 @@ import {
   type OpEmbeddingIndex,
 } from "./op-embedding-index.js";
 import type { RetrievedOp } from "./op-retriever.js";
-import {
-  NONE_KEY,
-  scoringMessages,
-  toOptions,
-  type ScoreCache,
-} from "./op-scorer.js";
+import { NONE_KEY, type ScoreCache } from "./op-scorer.js";
 import { PROMPT_FORMAT_VERSION } from "./prompt-format.js";
-import type { WllamaChatMessage } from "./wllama-types.js";
 import {
   step1Candidates,
   step1CandidatesLabel,
-  step1Grammar,
-  step1Pick,
   V1_STEP1,
   type Step1Candidates,
 } from "./step1-candidates.js";
 
-/** Step-2 settings of the v1 pipeline (round 6 A2). */
-export const V1_ARGS = {
-  gate: "safe",
-  // X6: with the LoRA, ref labels scored by calibrated likelihood lose to
-  // plain constrained generation (dev+val refs 123/130 vs 129/130; the
-  // uncalibrated score picks exactly what generation picks), and scoring
-  // costs ~2 requests per label.
-  scoreRefs: false,
-  scoreEnums: false,
-  refAggregate: "mean",
-  requireNamed: true,
-  fixNamedEnums: true,
-} as const;
-
-export type RefCandidates = Record<
-  string,
-  { id: string; label?: string | null }[]
->;
+export {
+  type RefCandidates,
+  runStep1,
+  step1Messages,
+  V1_ARGS,
+  type V1Step1Result,
+} from "nl-runtime";
+export { v1Catalog } from "./catalog-models.js";
 
 export interface V1Runtime {
   catalog: CatalogEntry[];
@@ -77,14 +68,6 @@ export interface V1Runtime {
 }
 
 let runtime: Promise<V1Runtime> | null = null;
-let catalogMemo: CatalogEntry[] | null = null;
-
-/** The runtime catalog, built once per page (all the R2c default needs). */
-export function v1Catalog(): CatalogEntry[] {
-  catalogMemo ??= buildRuntimeCatalog();
-  return catalogMemo;
-}
-
 /**
  * Catalog, precomputed op index and gte-small embedder, once per page.
  * Only the utterance is embedded at run time.
@@ -175,15 +158,6 @@ export interface V1Gate {
   noAction: boolean;
 }
 
-export interface V1Step1Result {
-  /** The keys the model chose among, in prompt order. */
-  candidates: string[];
-  raw: string;
-  /** An op key, or `NONE_KEY` for `{"ops": []}`. */
-  pick: string;
-  ms: number;
-}
-
 interface V1Common {
   promptFormat: typeof PROMPT_FORMAT_VERSION;
   pipeline: string;
@@ -205,36 +179,6 @@ export type V1Result =
       entry: CatalogEntry;
       step2: ArgsStepResult;
     });
-
-/** The r6.1 step-1 messages over `cands` (`{"ops": [...]}` answers). */
-export function step1Messages(
-  utterance: string,
-  cands: CatalogEntry[],
-): WllamaChatMessage[] {
-  return scoringMessages(utterance, toOptions(cands, "key"), "ops");
-}
-
-/**
- * Step 1: greedy generation under the alternation grammar of `cands`'
- * answers. Throws when the answer is not one of them.
- */
-export async function runStep1(
-  utterance: string,
-  cands: CatalogEntry[],
-  completeJson: CompleteJson,
-): Promise<V1Step1Result> {
-  const keys = cands.map((c) => c.key);
-  const t1 = performance.now();
-  const r = await completeJson(
-    step1Messages(utterance, cands),
-    { kind: "grammar", grammar: step1Grammar(cands) },
-    { temperature: 0, maxTokens: 64 },
-  );
-  const pick = step1Pick(r.parsed, keys);
-  if (pick === null)
-    throw new Error(`step 1 gave no listed op: ${JSON.stringify(r.text)}`);
-  return { candidates: keys, raw: r.text, pick, ms: performance.now() - t1 };
-}
 
 /**
  * Utterance → no-action, or one op of `docType`'s model with its args

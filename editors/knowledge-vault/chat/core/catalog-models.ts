@@ -54,3 +54,15 @@ export function buildVaultCatalog(
 export function buildRuntimeCatalog(): CatalogEntry[] {
   return buildVaultCatalog({ vocabularies: VOCABULARIES });
 }
+
+let catalogMemo: CatalogEntry[] | null = null;
+
+/**
+ * The runtime catalog, built once per page (all the R2c default needs).
+ * Moved here from v1-pipeline.ts in M1 so the editor reaches it without
+ * the v1 pipeline (and its gte-small embedder); v1-pipeline re-exports it.
+ */
+export function v1Catalog(): CatalogEntry[] {
+  catalogMemo ??= buildRuntimeCatalog();
+  return catalogMemo;
+}

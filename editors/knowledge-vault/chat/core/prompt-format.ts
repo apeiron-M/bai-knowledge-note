@@ -1,7 +1,5 @@
-/**
- * Version of the step-1 / step-2 prompt bytes a fine-tune is trained on.
- * Bump it whenever `STEP1_SYSTEM`, `scoringMessages`, `STEP2_SYSTEM`,
- * `argsMessages`, `step2Order`, the op descriptions or the vocabularies
- * change. Pinned by tests/unit/chat-prompt-format.test.ts.
- */
-export const PROMPT_FORMAT_VERSION = "r6.1";
+// Moved to nl-runtime in M1. This shim keeps the old path for the training,
+// script and test importers; M3 retargets them and deletes it.
+export {
+  PROMPT_FORMAT_VERSION,
+} from "nl-runtime";

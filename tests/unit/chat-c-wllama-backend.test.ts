@@ -37,6 +37,8 @@ function fakeWllama(
     isMultithread: () => false,
     getNumThreads: () => 1,
     getChatTemplate: () => null,
+    setCompat: unused,
+    getWorkerResources: unused,
     exit: () => Promise.resolve(),
   };
   return { w, seen };

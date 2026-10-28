@@ -16,6 +16,9 @@ import {
   type ScoredRequest,
 } from "./op-scorer.js";
 import type { WllamaChatMessage } from "./wllama-types.js";
+import { looksLikeQuestion } from "nl-runtime";
+
+export { looksLikeQuestion } from "nl-runtime";
 
 export const GATE_SYSTEM =
   "You decide whether the user's request asks to change the current document. Questions, thanks and comments do not change it. Answer with JSON.";
@@ -156,12 +159,6 @@ export function embeddingGateScore(
 }
 
 /** Ends with "?" and is not a polite command ("can you tag it …?"). */
-export function looksLikeQuestion(utterance: string): boolean {
-  const u = utterance.trim().toLowerCase();
-  if (!u.endsWith("?")) return false;
-  return !/^(please\b|(can|could|would|will) you\b)/.test(u);
-}
-
 /** Round-6 combined gate: a question, or the embedding score above 0.04. */
 export const EMBEDDING_GATE_THRESHOLD = 0.04;
 
