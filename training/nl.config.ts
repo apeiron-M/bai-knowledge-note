@@ -104,8 +104,14 @@ export default defineConfig({
         "jaredpalmer/kev-0.8b@bf75a6a8848ea6960ff2ed108d9ed44c2941174f",
         "Qwen/Qwen3.5-0.8B-Base@dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
       ],
-      // license: TODO the Kev weights' licence (Kev repo LICENSE; Qwen3.5 base terms), to be
-      // confirmed by the user before `nl export` (every exported GGUF carries general.license).
+      // Kev-0.8B and Qwen3.5-0.8B-Base are Apache-2.0 (powerhouse-nl overview §5.3): a licence
+      // copy (the stock Apache-2.0 text, sha256 cfc7749b…) and a change notice beside the GGUF.
+      license: {
+        id: "apache-2.0",
+        file: "kev/LICENSE-Apache-2.0",
+        upstream: "jaredpalmer/kev-0.8b (itself from Qwen/Qwen3.5-0.8B-Base)",
+        upstreamUrl: "https://huggingface.co/jaredpalmer/kev-0.8b",
+      },
     },
   },
   train: { lora: { epochs: 2, batch: 8, gradAccum: 4, saveSteps: 50, saveLimit: 2 } },
