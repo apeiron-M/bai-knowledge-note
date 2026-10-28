@@ -18,6 +18,22 @@ import { answerTableMismatch } from "../chat/core/lora-trie.js";
 import { artifactMismatch, C_ARTIFACTS, C_LOAD } from "../chat/core/model-manifest.js";
 import type { ResolvedModel } from "../chat/core/model-source.js";
 import type { ScoreCache } from "../chat/core/op-scorer.js";
+import type { WllamaAssetOptions } from "nl-runtime";
+
+/**
+ * Dev toggle: `localStorage["bai.chat.forceCompat"] = "1"` runs wllama's
+ * compat build (no JSPI / memory64) even where the browser has both, to
+ * exercise that path (E1: its wasm must come from this origin, not a CDN).
+ */
+function wllamaAssets(): WllamaAssetOptions {
+  try {
+    return globalThis.localStorage.getItem("bai.chat.forceCompat") === "1"
+      ? { forceCompat: true }
+      : {};
+  } catch {
+    return {};
+  }
+}
 
 export type ModelPhase =
   | "idle"
@@ -154,6 +170,7 @@ export async function ensureLora(
           useCache: src.matchesManifest,
           jinja: false,
           ...C_LOAD.lora,
+          ...wllamaAssets(),
           onProgress: progressFor("lora"),
         });
       })(),
@@ -211,6 +228,7 @@ export function ensureKev(src: ResolvedModel): Promise<DecisionClient> {
           modelUrl: src.url,
           useCache: src.matchesManifest,
           ...C_LOAD.kev,
+          ...wllamaAssets(),
           onProgress: progressFor("kev"),
         });
         const off = c.info.gpuLayers;
