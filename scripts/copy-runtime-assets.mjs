@@ -28,10 +28,13 @@ import {
   globSync,
   mkdirSync,
   readFileSync,
+  realpathSync,
   rmSync,
   statSync,
 } from "node:fs";
+import { createRequire } from "node:module";
 import { basename, join } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const distRoot = "dist";
 
@@ -75,7 +78,15 @@ console.log(
 // Both onnxruntime-web and @huggingface/transformers restrict their exports
 // maps, so require.resolve on their package.json throws
 // ERR_PACKAGE_PATH_NOT_EXPORTED. Locate by plain path: hoisted first, then
-// nested under transformers.
+// nested under transformers, then (pnpm's strict layout) next to
+// transformers' real path in the store.
+const transformersReal = (() => {
+  try {
+    return realpathSync(join("node_modules", "@huggingface", "transformers"));
+  } catch {
+    return null;
+  }
+})();
 const ortCandidates = [
   join("node_modules", "onnxruntime-web", "dist"),
   join(
@@ -86,6 +97,9 @@ const ortCandidates = [
     "onnxruntime-web",
     "dist",
   ),
+  ...(transformersReal
+    ? [join(transformersReal, "..", "..", "onnxruntime-web", "dist")]
+    : []),
 ];
 const ortDist = ortCandidates.find((p) => existsSync(p));
 if (!ortDist) {
@@ -107,14 +121,13 @@ for (const f of ortFiles) {
 }
 console.log(`[runtime-assets] ort wasm helpers → ${wasmDest}`);
 
-// 3. Strip unreferenced ort WASM assets from the browser build. The chat
-//    embedder (chat/core/gte-embedder.ts) runs onnxruntime-web in the
-//    browser from the vendored `ort-wasm-simd-threaded.asyncify.{mjs,wasm}`
-//    (vendor/onnxruntime-web/), which the bundler emits as
-//    `assets/ort-wasm-*`, so those must ship. It is byte-identical to the
-//    wasm onnxruntime-web's own bundle references, so both resolve to one
-//    hashed file. Only an `ort-wasm-*` asset that no browser chunk names is
-//    dead weight; the server path (step 2) is unaffected.
+// 3. Strip unreferenced ort WASM assets from the browser build. Since M1 the
+//    chat runs no ORT (its v1 embedder, chat/core/gte-embedder.ts, left the
+//    editor's graph); the graph-indexer's browser embedder
+//    (processors/graph-indexer/embedder.ts, through transformers' web build)
+//    still references `ort-wasm-simd-threaded.asyncify.wasm`, so that asset
+//    ships. Only an `ort-wasm-*` asset that no browser chunk names is dead
+//    weight; the server path (step 2) is unaffected.
 const browserJs = globSync(join(distRoot, "browser", "**", "*.js")).map((f) =>
   readFileSync(f, "utf8"),
 );
@@ -123,7 +136,7 @@ for (const asset of globSync(
 )) {
   const name = basename(asset);
   if (browserJs.some((src) => src.includes(name))) {
-    console.log(`[runtime-assets] kept chat browser asset ${asset}`);
+    console.log(`[runtime-assets] kept referenced browser asset ${asset}`);
     continue;
   }
   rmSync(asset);
@@ -148,7 +161,21 @@ const webBuildSrc = join(
 if (!existsSync(webBuildSrc)) {
   fail(`missing ${webBuildSrc} — check the @huggingface/transformers install`);
 }
-const { rolldown } = await import("rolldown");
+// rolldown is ph-cli's (tsdown's) dependency, not the vault's: under pnpm's
+// strict layout a bare import from here does not resolve, so fall back to
+// resolving it from ph-cli's real path.
+async function importRolldown() {
+  try {
+    return await import("rolldown");
+  } catch {
+    const phCli = realpathSync(
+      join("node_modules", "@powerhousedao", "ph-cli", "package.json"),
+    );
+    const entry = createRequire(phCli).resolve("rolldown");
+    return import(pathToFileURL(entry).href);
+  }
+}
+const { rolldown } = await importRolldown();
 const webBundleDest = join(distRoot, "node", "transformers.web.bundle.mjs");
 const bundle = await rolldown({
   input: webBuildSrc,

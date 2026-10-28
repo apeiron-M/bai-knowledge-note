@@ -33,7 +33,8 @@ import {
   type ChatDocument,
   type RefContextItem,
 } from "../chat/core/ref-candidates.js";
-import { v1Catalog, type RefCandidates } from "../chat/core/v1-pipeline.js";
+import type { RefCandidates } from "nl-runtime";
+import { v1Catalog } from "../chat/core/catalog-models.js";
 import {
   chatModelsState,
   clearModelCache,

@@ -10,7 +10,7 @@ import {
   routeChatTurn,
   type CreateIntent,
 } from "../chat/core/target-document.js";
-import { v1Catalog } from "../chat/core/v1-pipeline.js";
+import { v1Catalog } from "../chat/core/catalog-models.js";
 import type { ChatContextValue } from "../hooks/use-chat-context.js";
 import {
   useChatLlm,
