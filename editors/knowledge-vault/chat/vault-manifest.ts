@@ -1,7 +1,7 @@
 /**
  * The vault's chat manifest (nl-runtime `ChatManifest`), assembled by hand
- * from today's tables for M1. M2 generates it. Nothing in M1-core reads it
- * yet; the extracted ChatPanel (M1-UI) takes it.
+ * from today's tables for M1. M2 generates it. The mount
+ * (components/ChatSheet.tsx) passes it to nl-runtime's sheet.
  */
 import { CHAT_MANIFEST_SCHEMA_VERSION, type ChatManifest } from "nl-runtime";
 import { v1Catalog } from "./core/catalog-models.js";
