@@ -21,7 +21,7 @@ This project creates document models, editors, processors and subgraphs for the 
 ## CRITICAL: MCP Tool Usage Rules
 
 **MANDATORY**: The `reactor-mcp` MUST BE USED when handling documents or document-models for the Powerhouse/Vetra ecosystem.
-If the `reactor-mcp` server is unavailable, ask the user to run `ph vetra` on a separate terminal to start the server and try to reconnect to the MCP server, DO NOT run it yourself.
+If the `reactor-mcp` server is unavailable, start it yourself: run `pnpm vetra` (the `ph-cli vetra` script) from the repo root in the background, wait for the Switchboard on port 4001, then reconnect to the MCP server (`http://localhost:4001/mcp`). Never use bare `ph` here: it can resolve to a global binary that runs git commands. Stop the processes you started when you are done.
 
 ### Key Requirements:
 
@@ -363,8 +363,8 @@ The source documents are committed under `backup-documents/`, one per model:
   `KnowledgeGraph.phd`, `VaultConfig.phd`
 
 If `getDocuments({ parentId: "vetra-{hash}" })` returns an empty list, the model is not loaded.
-**Ask the user to import the relevant `backup-documents/<Model>.phd` into the `vetra-{hash}` drive**
-(drag & drop in Connect) and to provide its document id. Do **not** work around an empty drive by
+**Import the relevant `backup-documents/<Model>.phd` into the `vetra-{hash}` drive yourself**
+(drag & drop in Vetra Connect, through a browser you drive), then find its document id with `getDocuments`. Do **not** work around an empty drive by
 editing `<name>.json` directly.
 
 #### Dispatching the change
