@@ -33,8 +33,19 @@ const plan = cand("w1", "bai/wbs", "Hive plan");
 const source = cand("s1", "bai/source", "A source");
 const documents = [note, moc, plan, source];
 const supportedTypes = new Set(["bai/knowledge-note", "bai/wbs", "bai/moc"]);
-const resolve = (context: ContextTarget, utterance: string, docs = documents) =>
-  resolveTargetDocument({ context, documents: docs, supportedTypes, utterance });
+const resolve = (
+  context: ContextTarget,
+  utterance: string,
+  docs = documents,
+  retarget?: "ask" | "switch",
+) =>
+  resolveTargetDocument({
+    context,
+    documents: docs,
+    supportedTypes,
+    utterance,
+    ...(retarget ? { retarget } : {}),
+  });
 
 describe("resolveTargetDocument (M0, from the tag)", () => {
   it("acts on the viewed document", () => {
@@ -45,8 +56,21 @@ describe("resolveTargetDocument (M0, from the tag)", () => {
     });
   });
 
-  it("retargets when exactly one other document is named verbatim", () => {
-    expect(resolve(tag(note), "add an open question to CRDTs: what about tombstones?")).toEqual({
+  it("asks which of the two to change when exactly one other document is named verbatim", () => {
+    // the retarget blind set put the silent switch at 51/57, below the 95% bar: always ask
+    const u = "add an open question to CRDTs: what about tombstones?";
+    expect(resolve(tag(note), u)).toEqual({ kind: "ask", open: tag(note), named: tag(moc) });
+    expect(resolve(tag(note), u, documents, "ask")).toEqual({
+      kind: "ask",
+      open: tag(note),
+      named: tag(moc),
+    });
+  });
+
+  it("retargets under retarget: switch, the old tier", () => {
+    expect(
+      resolve(tag(note), "add an open question to CRDTs: what about tombstones?", documents, "switch"),
+    ).toEqual({
       kind: "document",
       target: tag(moc),
       via: "retarget",
@@ -95,6 +119,10 @@ describe("resolveTargetDocument (M0, from the tag)", () => {
   it("matches a stale node name kept as an alias", () => {
     const renamed = cand("m1", "bai/moc", "CRDT map", ["CRDTs"]);
     expect(resolve(tag(note), "add a question to CRDTs", [note, renamed])).toMatchObject({
+      kind: "ask",
+      named: { id: "m1", title: "CRDT map" },
+    });
+    expect(resolve(tag(note), "add a question to CRDTs", [note, renamed], "switch")).toMatchObject({
       via: "retarget",
       target: { id: "m1", title: "CRDT map" },
     });
@@ -130,8 +158,10 @@ describe("resolveTargetDocument: a pointer at the open document plus a name asks
     });
   });
 
-  it("still retargets when only the other document is named", () => {
-    expect(resolve(tag(note), "add the topic sync to Gossip protocols", docs)).toEqual({
+  it("asks when only the other document is named; retargets under retarget: switch", () => {
+    const u = "add the topic sync to Gossip protocols";
+    expect(resolve(tag(note), u, docs)).toEqual({ kind: "ask", open: tag(note), named: tag(other) });
+    expect(resolve(tag(note), u, docs, "switch")).toEqual({
       kind: "document",
       target: tag(other),
       via: "retarget",
@@ -156,12 +186,13 @@ describe("resolveTargetDocument: a pointer at the open document plus a name asks
   });
 
   it("retargets from an open document without ops: only the named one can change", () => {
-    expect(resolve(tag(source), "link this to CRDTs", docs)).toEqual({
-      kind: "document",
-      target: tag(moc),
-      via: "retarget",
-      from: tag(source),
-    });
+    for (const mode of ["ask", "switch"] as const)
+      expect(resolve(tag(source), "link this to CRDTs", docs, mode), mode).toEqual({
+        kind: "document",
+        target: tag(moc),
+        via: "retarget",
+        from: tag(source),
+      });
     expect(resolve(tag(source), "rename this", docs)).toEqual({
       kind: "unsupported",
       target: tag(source),
@@ -169,7 +200,8 @@ describe("resolveTargetDocument: a pointer at the open document plus a name asks
   });
 
   it("treats this <item> as an item, not the document", () => {
-    expect(resolve(tag(note), "in Hive plan, mark this goal done", docs)).toMatchObject({
+    // no pointer: under the old tier, a switch
+    expect(resolve(tag(note), "in Hive plan, mark this goal done", docs, "switch")).toMatchObject({
       via: "retarget",
       target: { id: "w1" },
     });
@@ -178,7 +210,7 @@ describe("resolveTargetDocument: a pointer at the open document plus a name asks
   it("ignores pointer words inside a document's title", () => {
     const titled = cand("m3", "bai/moc", "Make it work");
     expect(
-      resolve(tag(note), "add a core idea to Make it work", [...docs, titled]),
+      resolve(tag(note), "add a core idea to Make it work", [...docs, titled], "switch"),
     ).toMatchObject({ via: "retarget", target: { id: "m3" } });
   });
 

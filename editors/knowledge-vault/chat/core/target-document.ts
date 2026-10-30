@@ -1,11 +1,13 @@
 /**
  * Which document a chat request acts on (M0): the viewed document from the
  * context frame, except that a request naming exactly one *other* supported
- * document verbatim retargets to it (the card says so). When the request
- * also points at the open document, either one may be the one to change
- * ("link this note to X" changes the open note, "add this to X" changes X),
- * which only the intent settles, so the chat asks which document to change
- * before running the models. A request that refers to another document
+ * document verbatim asks which of the two to change, before running the
+ * models: either may be the one ("link this note to X" changes the open
+ * note, "add this to X" changes X), which only the intent settles. (Q1's
+ * silent switch failed the 95% precision bar on the retarget blind set,
+ * 51/57; nl-runtime keeps it as `retarget: "switch"` for the eval.) With
+ * nothing open, or an open document without ops, the named document is
+ * the target. A request that refers to another document
  * without its exact title ("the CRDT MOC" for a MOC titled "CRDTs") asks
  * with the top 3 matches, plus the open document. Nothing dispatches
  * without Confirm. The pipeline needs a document type (without one, op

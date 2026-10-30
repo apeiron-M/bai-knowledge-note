@@ -109,12 +109,22 @@ describe("resolveTargetDocument: a non-verbatim mention asks with the top 3", ()
 
 describe("resolveTargetDocument: what a non-verbatim mention leaves alone", () => {
   it("keeps the verbatim rules first", () => {
-    // one name verbatim: retarget, even with a fuzzy phrase beside it
+    // one name verbatim: the two-way ask, even with a fuzzy phrase beside it
     expect(resolve(tag(note), "add the gossip note to CRDTs")).toMatchObject({
-      kind: "document",
-      via: "retarget",
-      target: { id: "m1" },
+      kind: "ask",
+      open: { id: "n1" },
+      named: { id: "m1" },
     });
+    // and a switch under retarget: switch, the old tier
+    expect(
+      resolveTargetDocument({
+        context: tag(note),
+        documents,
+        supportedTypes,
+        utterance: "add the gossip note to CRDTs",
+        retarget: "switch",
+      }),
+    ).toMatchObject({ kind: "document", via: "retarget", target: { id: "m1" } });
     // several names: the open document (overview §5.1 Q1)
     expect(resolve(tag(note), "link Gossip protocols and CRDTs to the hive plan")).toMatchObject({
       kind: "document",
