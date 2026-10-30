@@ -32,6 +32,17 @@ import {
   UpdateLinkTypeInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<KnowledgeNotePHState> = (
   state,
   action,
@@ -42,7 +53,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
   }
   switch (action.type) {
     case "SET_TITLE": {
-      SetTitleInputSchema().parse(action.input);
+      memoizedSchema(SetTitleInputSchema).parse(action.input);
 
       knowledgeNoteContentOperations.setTitleOperation(
         (state as any)[action.scope],
@@ -54,7 +65,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SET_DESCRIPTION": {
-      SetDescriptionInputSchema().parse(action.input);
+      memoizedSchema(SetDescriptionInputSchema).parse(action.input);
 
       knowledgeNoteContentOperations.setDescriptionOperation(
         (state as any)[action.scope],
@@ -66,7 +77,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SET_NOTE_TYPE": {
-      SetNoteTypeInputSchema().parse(action.input);
+      memoizedSchema(SetNoteTypeInputSchema).parse(action.input);
 
       knowledgeNoteContentOperations.setNoteTypeOperation(
         (state as any)[action.scope],
@@ -78,7 +89,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SET_CONTENT": {
-      SetContentInputSchema().parse(action.input);
+      memoizedSchema(SetContentInputSchema).parse(action.input);
 
       knowledgeNoteContentOperations.setContentOperation(
         (state as any)[action.scope],
@@ -90,7 +101,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "PATCH_CONTENT": {
-      PatchContentInputSchema().parse(action.input);
+      memoizedSchema(PatchContentInputSchema).parse(action.input);
 
       knowledgeNoteContentOperations.patchContentOperation(
         (state as any)[action.scope],
@@ -102,7 +113,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SET_METADATA_FIELD": {
-      SetMetadataFieldInputSchema().parse(action.input);
+      memoizedSchema(SetMetadataFieldInputSchema).parse(action.input);
 
       knowledgeNoteContentOperations.setMetadataFieldOperation(
         (state as any)[action.scope],
@@ -114,7 +125,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SET_METADATA_LIST_FIELD": {
-      SetMetadataListFieldInputSchema().parse(action.input);
+      memoizedSchema(SetMetadataListFieldInputSchema).parse(action.input);
 
       knowledgeNoteContentOperations.setMetadataListFieldOperation(
         (state as any)[action.scope],
@@ -126,7 +137,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SET_PROVENANCE": {
-      SetProvenanceInputSchema().parse(action.input);
+      memoizedSchema(SetProvenanceInputSchema).parse(action.input);
 
       knowledgeNoteProvenanceOperations.setProvenanceOperation(
         (state as any)[action.scope],
@@ -138,7 +149,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "ADD_LINK": {
-      AddLinkInputSchema().parse(action.input);
+      memoizedSchema(AddLinkInputSchema).parse(action.input);
 
       knowledgeNoteLinkingOperations.addLinkOperation(
         (state as any)[action.scope],
@@ -150,7 +161,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "REMOVE_LINK": {
-      RemoveLinkInputSchema().parse(action.input);
+      memoizedSchema(RemoveLinkInputSchema).parse(action.input);
 
       knowledgeNoteLinkingOperations.removeLinkOperation(
         (state as any)[action.scope],
@@ -162,7 +173,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "UPDATE_LINK_TYPE": {
-      UpdateLinkTypeInputSchema().parse(action.input);
+      memoizedSchema(UpdateLinkTypeInputSchema).parse(action.input);
 
       knowledgeNoteLinkingOperations.updateLinkTypeOperation(
         (state as any)[action.scope],
@@ -174,7 +185,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "ADD_TOPIC": {
-      AddTopicInputSchema().parse(action.input);
+      memoizedSchema(AddTopicInputSchema).parse(action.input);
 
       knowledgeNoteLinkingOperations.addTopicOperation(
         (state as any)[action.scope],
@@ -186,7 +197,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "REMOVE_TOPIC": {
-      RemoveTopicInputSchema().parse(action.input);
+      memoizedSchema(RemoveTopicInputSchema).parse(action.input);
 
       knowledgeNoteLinkingOperations.removeTopicOperation(
         (state as any)[action.scope],
@@ -198,7 +209,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SUBMIT_FOR_REVIEW": {
-      SubmitForReviewInputSchema().parse(action.input);
+      memoizedSchema(SubmitForReviewInputSchema).parse(action.input);
 
       knowledgeNoteLifecycleOperations.submitForReviewOperation(
         (state as any)[action.scope],
@@ -210,7 +221,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "APPROVE_NOTE": {
-      ApproveNoteInputSchema().parse(action.input);
+      memoizedSchema(ApproveNoteInputSchema).parse(action.input);
 
       knowledgeNoteLifecycleOperations.approveNoteOperation(
         (state as any)[action.scope],
@@ -222,7 +233,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "REJECT_NOTE": {
-      RejectNoteInputSchema().parse(action.input);
+      memoizedSchema(RejectNoteInputSchema).parse(action.input);
 
       knowledgeNoteLifecycleOperations.rejectNoteOperation(
         (state as any)[action.scope],
@@ -234,7 +245,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "ARCHIVE_NOTE": {
-      ArchiveNoteInputSchema().parse(action.input);
+      memoizedSchema(ArchiveNoteInputSchema).parse(action.input);
 
       knowledgeNoteLifecycleOperations.archiveNoteOperation(
         (state as any)[action.scope],
@@ -246,7 +257,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "RESTORE_NOTE": {
-      RestoreNoteInputSchema().parse(action.input);
+      memoizedSchema(RestoreNoteInputSchema).parse(action.input);
 
       knowledgeNoteLifecycleOperations.restoreNoteOperation(
         (state as any)[action.scope],
@@ -258,7 +269,7 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
     }
 
     case "SET_LAST_VIEWED": {
-      SetLastViewedInputSchema().parse(action.input);
+      memoizedSchema(SetLastViewedInputSchema).parse(action.input);
 
       knowledgeNoteLocalOperations.setLastViewedOperation(
         (state as any)[action.scope],

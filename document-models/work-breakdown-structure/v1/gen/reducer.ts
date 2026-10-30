@@ -25,6 +25,17 @@ import {
   UpdateGoalDescriptionInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
   state,
   action,
@@ -35,7 +46,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
   }
   switch (action.type) {
     case "CREATE_GOAL": {
-      CreateGoalInputSchema().parse(action.input);
+      memoizedSchema(CreateGoalInputSchema).parse(action.input);
 
       workBreakdownStructureGoalsOperations.createGoalOperation(
         (state as any)[action.scope],
@@ -47,7 +58,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "UPDATE_GOAL_DESCRIPTION": {
-      UpdateGoalDescriptionInputSchema().parse(action.input);
+      memoizedSchema(UpdateGoalDescriptionInputSchema).parse(action.input);
 
       workBreakdownStructureGoalsOperations.updateGoalDescriptionOperation(
         (state as any)[action.scope],
@@ -59,7 +70,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "DELETE_GOAL": {
-      DeleteGoalInputSchema().parse(action.input);
+      memoizedSchema(DeleteGoalInputSchema).parse(action.input);
 
       workBreakdownStructureGoalsOperations.deleteGoalOperation(
         (state as any)[action.scope],
@@ -71,7 +82,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "REORDER": {
-      ReorderInputSchema().parse(action.input);
+      memoizedSchema(ReorderInputSchema).parse(action.input);
 
       workBreakdownStructureGoalsOperations.reorderOperation(
         (state as any)[action.scope],
@@ -83,7 +94,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "SET_GOAL_STATUS": {
-      SetGoalStatusInputSchema().parse(action.input);
+      memoizedSchema(SetGoalStatusInputSchema).parse(action.input);
 
       workBreakdownStructureWorkflowOperations.setGoalStatusOperation(
         (state as any)[action.scope],
@@ -95,7 +106,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "ASSIGN_GOAL": {
-      AssignGoalInputSchema().parse(action.input);
+      memoizedSchema(AssignGoalInputSchema).parse(action.input);
 
       workBreakdownStructureWorkflowOperations.assignGoalOperation(
         (state as any)[action.scope],
@@ -107,7 +118,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "SET_OUTCOME": {
-      SetOutcomeInputSchema().parse(action.input);
+      memoizedSchema(SetOutcomeInputSchema).parse(action.input);
 
       workBreakdownStructureWorkflowOperations.setOutcomeOperation(
         (state as any)[action.scope],
@@ -119,7 +130,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "ADD_DEPENDENCIES": {
-      AddDependenciesInputSchema().parse(action.input);
+      memoizedSchema(AddDependenciesInputSchema).parse(action.input);
 
       workBreakdownStructureWorkflowOperations.addDependenciesOperation(
         (state as any)[action.scope],
@@ -131,7 +142,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "REMOVE_DEPENDENCIES": {
-      RemoveDependenciesInputSchema().parse(action.input);
+      memoizedSchema(RemoveDependenciesInputSchema).parse(action.input);
 
       workBreakdownStructureWorkflowOperations.removeDependenciesOperation(
         (state as any)[action.scope],
@@ -143,7 +154,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "ADD_NOTE": {
-      AddNoteInputSchema().parse(action.input);
+      memoizedSchema(AddNoteInputSchema).parse(action.input);
 
       workBreakdownStructureDocumentationOperations.addNoteOperation(
         (state as any)[action.scope],
@@ -155,7 +166,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "REMOVE_NOTE": {
-      RemoveNoteInputSchema().parse(action.input);
+      memoizedSchema(RemoveNoteInputSchema).parse(action.input);
 
       workBreakdownStructureDocumentationOperations.removeNoteOperation(
         (state as any)[action.scope],
@@ -167,7 +178,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "SET_OWNER": {
-      SetOwnerInputSchema().parse(action.input);
+      memoizedSchema(SetOwnerInputSchema).parse(action.input);
 
       workBreakdownStructureDocumentationOperations.setOwnerOperation(
         (state as any)[action.scope],
@@ -179,7 +190,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "SET_REFERENCES": {
-      SetReferencesInputSchema().parse(action.input);
+      memoizedSchema(SetReferencesInputSchema).parse(action.input);
 
       workBreakdownStructureDocumentationOperations.setReferencesOperation(
         (state as any)[action.scope],
@@ -191,7 +202,7 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     }
 
     case "SET_PROJECT_REF": {
-      SetProjectRefInputSchema().parse(action.input);
+      memoizedSchema(SetProjectRefInputSchema).parse(action.input);
 
       workBreakdownStructureDocumentationOperations.setProjectRefOperation(
         (state as any)[action.scope],

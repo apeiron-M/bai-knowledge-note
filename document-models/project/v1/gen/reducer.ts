@@ -28,6 +28,17 @@ import {
   UpdateProjectInfoInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<ProjectPHState> = (
   state,
   action,
@@ -38,7 +49,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
   }
   switch (action.type) {
     case "CREATE_PROJECT": {
-      CreateProjectInputSchema().parse(action.input);
+      memoizedSchema(CreateProjectInputSchema).parse(action.input);
 
       projectLifecycleOperations.createProjectOperation(
         (state as any)[action.scope],
@@ -50,7 +61,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "UPDATE_PROJECT_INFO": {
-      UpdateProjectInfoInputSchema().parse(action.input);
+      memoizedSchema(UpdateProjectInfoInputSchema).parse(action.input);
 
       projectLifecycleOperations.updateProjectInfoOperation(
         (state as any)[action.scope],
@@ -62,7 +73,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "SET_PROJECT_STATUS": {
-      SetProjectStatusInputSchema().parse(action.input);
+      memoizedSchema(SetProjectStatusInputSchema).parse(action.input);
 
       projectLifecycleOperations.setProjectStatusOperation(
         (state as any)[action.scope],
@@ -74,7 +85,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "SET_OWNER": {
-      SetOwnerInputSchema().parse(action.input);
+      memoizedSchema(SetOwnerInputSchema).parse(action.input);
 
       projectLifecycleOperations.setOwnerOperation(
         (state as any)[action.scope],
@@ -86,7 +97,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "SET_TARGET_DATE": {
-      SetTargetDateInputSchema().parse(action.input);
+      memoizedSchema(SetTargetDateInputSchema).parse(action.input);
 
       projectLifecycleOperations.setTargetDateOperation(
         (state as any)[action.scope],
@@ -98,7 +109,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "LINK_WBS": {
-      LinkWbsInputSchema().parse(action.input);
+      memoizedSchema(LinkWbsInputSchema).parse(action.input);
 
       projectLifecycleOperations.linkWbsOperation(
         (state as any)[action.scope],
@@ -110,7 +121,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "ADD_MEMBER": {
-      AddMemberInputSchema().parse(action.input);
+      memoizedSchema(AddMemberInputSchema).parse(action.input);
 
       projectTeamOperations.addMemberOperation(
         (state as any)[action.scope],
@@ -122,7 +133,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "UPDATE_MEMBER": {
-      UpdateMemberInputSchema().parse(action.input);
+      memoizedSchema(UpdateMemberInputSchema).parse(action.input);
 
       projectTeamOperations.updateMemberOperation(
         (state as any)[action.scope],
@@ -134,7 +145,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "REMOVE_MEMBER": {
-      RemoveMemberInputSchema().parse(action.input);
+      memoizedSchema(RemoveMemberInputSchema).parse(action.input);
 
       projectTeamOperations.removeMemberOperation(
         (state as any)[action.scope],
@@ -146,7 +157,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "ADD_DELIVERABLE": {
-      AddDeliverableInputSchema().parse(action.input);
+      memoizedSchema(AddDeliverableInputSchema).parse(action.input);
 
       projectDeliverablesOperations.addDeliverableOperation(
         (state as any)[action.scope],
@@ -158,7 +169,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "UPDATE_DELIVERABLE": {
-      UpdateDeliverableInputSchema().parse(action.input);
+      memoizedSchema(UpdateDeliverableInputSchema).parse(action.input);
 
       projectDeliverablesOperations.updateDeliverableOperation(
         (state as any)[action.scope],
@@ -170,7 +181,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "SET_DELIVERABLE_STATUS": {
-      SetDeliverableStatusInputSchema().parse(action.input);
+      memoizedSchema(SetDeliverableStatusInputSchema).parse(action.input);
 
       projectDeliverablesOperations.setDeliverableStatusOperation(
         (state as any)[action.scope],
@@ -182,7 +193,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "REMOVE_DELIVERABLE": {
-      RemoveDeliverableInputSchema().parse(action.input);
+      memoizedSchema(RemoveDeliverableInputSchema).parse(action.input);
 
       projectDeliverablesOperations.removeDeliverableOperation(
         (state as any)[action.scope],
@@ -194,7 +205,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "ADD_KNOWLEDGE_REF": {
-      AddKnowledgeRefInputSchema().parse(action.input);
+      memoizedSchema(AddKnowledgeRefInputSchema).parse(action.input);
 
       projectKnowledgeOperations.addKnowledgeRefOperation(
         (state as any)[action.scope],
@@ -206,7 +217,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "REMOVE_KNOWLEDGE_REF": {
-      RemoveKnowledgeRefInputSchema().parse(action.input);
+      memoizedSchema(RemoveKnowledgeRefInputSchema).parse(action.input);
 
       projectKnowledgeOperations.removeKnowledgeRefOperation(
         (state as any)[action.scope],
@@ -218,7 +229,7 @@ const stateReducer: StateReducer<ProjectPHState> = (
     }
 
     case "SET_REFERENCES": {
-      SetReferencesInputSchema().parse(action.input);
+      memoizedSchema(SetReferencesInputSchema).parse(action.input);
 
       projectKnowledgeOperations.setReferencesOperation(
         (state as any)[action.scope],
