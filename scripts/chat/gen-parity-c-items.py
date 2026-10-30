@@ -15,7 +15,8 @@ args = {r["id"]: r for r in jl("args-x9.jsonl")}
 exp = json.load(open(os.path.join(FX, "expected-decisions.json")))
 gate = {m: {d["id"]: d["gate"] for d in exp["modes"][m]["decisions"]} for m in ("exact", "branch")}
 
-GATED = ["kn3-14", "prj3-12", "wbs3-05", "src3-02", "hr4-02"]
+# M5 (m2bv): src3-02 no longer asks; der3-02 (asked under X5 and m2bv) takes its place.
+GATED = ["kn3-14", "prj3-12", "wbs3-05", "der3-02", "hr4-02"]
 NO_ACTION = [i for i in items if items[i]["gold"] == "none" and s1[i]["loraPick"] == "none"][:2]
 SPECIAL = ["prj3-05", "moc3-08", "moc4-10", "moc4-07", "prj3-15"]
 OTHERS = ["kn3-01", "kn3-02", "obs3-01", "ten3-01", "rc3-01", "pq3-01", "vc3-01", "der3-01"]

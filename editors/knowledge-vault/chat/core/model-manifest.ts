@@ -1,8 +1,9 @@
 /**
- * Configuration C (PREREGISTRATION-3, held-out-6): the two measured GGUFs
- * and the registered fusion / gate constants. The Chat tab loads the X5
- * LoRA (step 1, trie scores, step 2, answers) and Kev-FT (System One option
- * probabilities); `fusion.ts` combines them.
+ * Configuration C: the two measured GGUFs and the fusion / gate constants.
+ * The Chat tab loads the vault LoRA m2bv (step 1, trie scores, step 2,
+ * answers) and Kev-FT (System One option probabilities); `fusion.ts`
+ * combines them. Values from m2bv's export ArtifactManifest (powerhouse-nl
+ * docs/notes/m2b/vault-lora.md); Kev-FT is the file C shipped with X5.
  */
 import type { ModelArtifact, ModelRole } from "nl-runtime";
 
@@ -21,8 +22,8 @@ export {
 export const C_FUSION = {
   wLora: 0.5,
   wKev: 0.5,
-  /** LoRA trie-score temperature (dev-cv refit, PREREG-3 §1). */
-  tLora: 1.63,
+  /** LoRA trie-score temperature (m2bv x Kev-FT dev-cv fit; X5's was 1.63). */
+  tLora: 1.887,
   /** Kev log-probability temperature (dev-cv refit). */
   tKev: 4.0,
   /** Ask when p1 - p2 < tau (p over every option including none). */
@@ -35,13 +36,14 @@ export const C_FUSION = {
 export const C_ARTIFACTS: Record<ModelRole, ModelArtifact & { devPath: string }> = {
   lora: {
     role: "lora",
-    fileName: "LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf",
+    fileName: "LFM2.5-350M-vault-m2bv-20261029-Q4_K_M.gguf",
     bytes: 229_312_224,
-    sha256: "062796543208889530edfd70cecd0cb6912d3d3b832ed671894d89307000aaba",
+    sha256: "852cd58e5365ba4fcaa27d69e8e7f412c1d59459c9a62c0e42eb3b4dcf90d70d",
     arch: "lfm2",
-    label: "X5 LoRA 350M",
+    label: "vault LoRA m2bv",
     devPath:
-      "/training/artifacts/x5-350m/gguf/LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf",
+      "/training/artifacts/m2bv-350m/gguf/LFM2.5-350M-vault-m2bv-20261029-Q4_K_M.gguf",
+    generalName: "Merged",
     tokenizerPre: "lfm2",
     nVocab: 65536,
   },
@@ -83,9 +85,14 @@ export const C_LOAD = {
   kevMaxRequestChars: 1000,
 } as const;
 
-/** Held-out-6 headline numbers shown in the configuration label. */
-export const C_HELDOUT6 = {
-  opOneShot: 0.935,
-  asked: 0.159,
-  loraAloneOp: 0.845,
+/**
+ * m2bv x Kev-FT on vault dev (held-out-3 + 4; gate op 181/196, asked
+ * 32/216, LoRA alone 173/196), shown in the configuration label until the
+ * held-out-7 confirmatory run replaces them. X5's held-out-6: 0.935 / 0.159 / 0.845.
+ */
+export const C_MEASURED = {
+  set: "vault dev",
+  opOneShot: 0.923,
+  asked: 0.148,
+  loraAloneOp: 0.883,
 } as const;

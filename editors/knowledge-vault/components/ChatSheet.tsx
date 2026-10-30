@@ -47,7 +47,7 @@ const DEV = meta.env?.DEV === true;
 const LABELS: Partial<ChatLabels> = {
   placeholder: 'e.g. "tag this note with distributed systems", or ask a question',
   answerSystemPrompt: "You are a concise assistant inside a personal knowledge vault.",
-  pairName: "X5 × Kev-FT",
+  pairName: "m2bv × Kev-FT",
   useKevText:
     "Use decision model (Kev-FT). Both models take about 3.5–4 GB of memory (the decision model about 3 GB); without it the tab runs the LoRA alone and never asks.",
 };

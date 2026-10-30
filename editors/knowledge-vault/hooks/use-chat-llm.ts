@@ -9,7 +9,7 @@ import {
   readChatSettings as coreReadChatSettings,
   settingKeys,
 } from "nl-runtime";
-import { C_HELDOUT6 } from "../chat/core/model-manifest.js";
+import { C_MEASURED } from "../chat/core/model-manifest.js";
 import { isRound8Url } from "../chat/core/model-source.js";
 
 export {
@@ -31,8 +31,8 @@ export {
 /** The vault's storage prefix: localStorage `bai.chat.*`, IndexedDB `bai-chat-history`. */
 export const VAULT_STORAGE_PREFIX = "bai.chat";
 
-/** Configuration C's held-out-6 numbers, for the configuration line. */
-export const VAULT_MEASURED: ChatMeasured = { set: "held-out-6", ...C_HELDOUT6 };
+/** Configuration C's measured numbers, for the configuration line. */
+export const VAULT_MEASURED: ChatMeasured = C_MEASURED;
 
 export const SETTING_KEYS = {
   ...settingKeys(VAULT_STORAGE_PREFIX),

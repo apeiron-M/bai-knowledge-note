@@ -28,8 +28,8 @@ const REPO = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
 
 const r = await runParityC({
   fixturesDir: `${REPO}/tests/fixtures/chat-c`,
-  loraGguf: `${REPO}/training/artifacts/x5-350m/gguf/${C_ARTIFACTS.lora.fileName}`,
-  kevGguf: `${REPO}/training/artifacts/kev-ft/gguf/${C_ARTIFACTS.kev.fileName}`,
+  loraGguf: `${REPO}${C_ARTIFACTS.lora.devPath}`,
+  kevGguf: `${REPO}${C_ARTIFACTS.kev.devPath}`,
   catalog: v1Catalog(),
   manifest: VAULT_ARTIFACTS,
   tables: {

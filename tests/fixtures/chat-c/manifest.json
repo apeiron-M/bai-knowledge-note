@@ -1,71 +1,82 @@
 {
  "set": "dev",
+ "setSha256": null,
+ "devSets": [
+  {
+   "file": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/spike/llm-harness/eval/heldout3-eval.json",
+   "sha256": "cbf9883efe1125bd6b120c464337f026efaae5985d1be1961e2333e24b555f4d"
+  },
+  {
+   "file": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/spike/llm-harness/eval/heldout4-eval.json",
+   "sha256": "25c51a7bb2e44228963461d8535705d5b7dd08c45316eac39c30eca25e14c0cc"
+  }
+ ],
+ "blind": false,
  "args": [
   "x9"
  ],
  "temps": "dev-cv",
+ "repo": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note",
  "repoRev": "5e9c39046dcd8f08951a308e66c610dbd4c55c73",
  "lora": {
-  "path": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/artifacts/x5-350m/gguf/LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf",
-  "sha256": "062796543208889530edfd70cecd0cb6912d3d3b832ed671894d89307000aaba"
+  "path": "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/.artifacts/vault/runs/LFM2.5-350M-vault-m2bv-20261029/export/LFM2.5-350M-vault-m2bv-20261029-Q4_K_M.gguf",
+  "sha256": "852cd58e5365ba4fcaa27d69e8e7f412c1d59459c9a62c0e42eb3b4dcf90d70d"
  },
  "kev": {
   "path": "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/artifacts/kev-ft/gguf/Kev-0.8B-vault-ft1-20261024-Q4_K_M.gguf",
   "sha256": "30b5796e4fac6765d5df8f4867857280dd46ec9f8397d39095a914a02f627b23"
  },
  "valDir": null,
- "llamaServer": {
-  "bin": "/Users/benjaminjordan/.cache/bai-training/llama.cpp/build/bin/llama-server",
-  "llamaCppCommit": "46ca246"
+ "devDir": "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/.artifacts/vault/eval/m2bv-kevft-dev",
+ "backend": {
+  "frozen": {
+   "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/packages/nl-eval/producers/lib.ts": "975b058bcb5fa6ef0e9ee0dfedf2e201b1408cc62b8eec03713958cd10927abc",
+   "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/packages/nl-eval/producers/step1.ts": "5c3f21e49da27f2407749963649d543cf6efb22289c2eb95084fbcfef56d787e",
+   "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/packages/nl-eval/producers/step2.ts": "fa53101b211f249d1ac150b08352d94f4cb611fe31b7705040cf7eefa8725db1",
+   "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/packages/nl-eval/py/exclude.py": "de3341cf5adefeb3775348c15f20d2401cf2300cb6b04e4b1c81b372bee7beeb",
+   "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/packages/nl-eval/producers/runtime-step1.ts": "1833598daefc0534b5784f8278e7f4c0a164c64ed460cca431f5ecf2c1d7efa0",
+   "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/packages/nl-eval/producers/runtime-step2.ts": "4929bc5c15d30b35ceea3d43f218381a8c4dad7a3e2d81ac6ce8bf6c0687393c",
+   "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/kev/node/decide.mjs": "feed74fe27548db6ab10b5fd5bc98f1b5fe6319d6edd1fa600696bb5e3df6004",
+   "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/training/kev/data/catalog.json": "b257573b739778d14b3fabf1f7eb037164dc0390cd26abb272feba1e79135b70",
+   "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/docs/superpowers/notes/in-browser-llm/exp-2026-10-23/x6-args-ship.patch": "8d29e48af703df3ac7a024d6d2df05ef8328c242c5abd491434fc1f03b84877f",
+   "/Users/benjaminjordan/projects/powerhouse/bai-knowledge-note/docs/superpowers/notes/in-browser-llm/exp-2026-10-23/x9-args2.patch": "1173738261b17bb135db8b5c2517bad50653a339b44415c299960d8bfbc00529",
+   "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/training/vault/rig/spec-descriptions-5e9c3904.patch": "2a63fd6caac4a393c4bacaab06198539c8e14e596d516a37c8e6f566da4dc2a0"
+  },
+  "trees": "/Users/benjaminjordan/.cache/bai-training/nl-eval-trees-m2bv/5e9c39046dcd"
  },
- "frozen": {
-  "lib/lib.ts": "b48ff64f60d8e783039fc94646782e2a711011838e47fa180cb8273c217bd8de",
-  "kev/node/decide.mjs": "feed74fe27548db6ab10b5fd5bc98f1b5fe6319d6edd1fa600696bb5e3df6004",
-  "kev/data/catalog.json": "b257573b739778d14b3fabf1f7eb037164dc0390cd26abb272feba1e79135b70",
-  "patches/x6-args-ship.patch": "8d29e48af703df3ac7a024d6d2df05ef8328c242c5abd491434fc1f03b84877f",
-  "patches/x9-args2.patch": "1173738261b17bb135db8b5c2517bad50653a339b44415c299960d8bfbc00529",
-  "src/prereg_eval.py": "f981613b16001a1d080489b0f1feb78b55fa61092c164d567c49fb466ff61e3f"
- },
- "node": "v24.13.0",
- "tsx": "tsx v4.21.0",
  "tempsValues": {
   "devCV": {
-   "devDir": "/private/tmp/claude-501/-Users-benjaminjordan-projects-powerhouse-bai-knowledge-note/244dfd73-afea-4295-86de-08a64fc34f82/scratchpad/exp/rig/validation/kevft-x5-dev",
+   "devDir": "/Users/benjaminjordan/projects/thegoldenmule/powerhouse-nl/.artifacts/vault/eval/m2bv-kevft-dev",
    "groups": [
     "h3",
     "h4"
    ],
    "nDevSingle": 216,
-   "T_lora": 1.63,
-   "T_kev": 4.0,
+   "T_lora": 1.887,
+   "T_kev": 4,
    "folds": {
     "h3": {
-     "T_lora": 1.711,
+     "T_lora": 2.08,
      "T_kev": 3.75,
      "nTestSingle": 102
     },
     "h4": {
-     "T_lora": 1.63,
+     "T_lora": 1.552,
      "T_kev": 4.25,
      "nTestSingle": 114
     }
    }
   }
  },
- "devDir": "/private/tmp/claude-501/-Users-benjaminjordan-projects-powerhouse-bai-knowledge-note/244dfd73-afea-4295-86de-08a64fc34f82/scratchpad/exp/rig/validation/kevft-x5-dev",
+ "node": "v24.13.0",
  "rigFiles": {
-  "rig.sh": "4faea56c4865c9f050dcb5ad023c88879efddc2bba59d46648672dffb199e672",
-  "src/build-trees.sh": "183efd66617858d18e2c835b03193df5791482b320008fc77022148c4d7af296",
-  "src/compare.py": "2a4d15daca39e0a58c83ef3da593806a9b94e09c92cd31497defb4cc4573021d",
-  "src/evaluate.py": "69223b6a76bc18b38a703f7544b1ca710010341dc8e523f946a4f1cf3abd3c50",
-  "src/exclude.py": "9059152e18990286534df418271d12ade66dc57ac8c9abad8e458a901d9257e8",
-  "src/gguf_meta.py": "6e353eaa8eb6d4f7d4ecd13a8aa3e112721e4ca9ae5b52db9e149030c4685703",
-  "src/items.py": "e6de02685796be5a27b6ef2ccb4835267a9ce4f4eeaa34a197fbfd9fdc91d6db",
-  "src/kev_items.py": "5665ba55ac98e574667d87b37628658d476cbbf2b050902fdae4d60ce044f13c",
-  "src/prereg.py": "61a0a156dff0c7ef841c8b9f5741b097948073847ab5e700479d0c86ab07d9ed",
-  "src/prereg_eval.py": "f981613b16001a1d080489b0f1feb78b55fa61092c164d567c49fb466ff61e3f",
-  "src/step1.ts": "8c5253b7978fc05f50853df0a84c6fcb43b72f857296578cea34b8f8a4fabe16",
-  "src/step2.ts": "aece6fc0b4c5d75399b781d4365069919117960e81f4f2e51f8c3ed7d1197048",
-  "src/validate.py": "5028a0c6b0486f001b5a7f31b833226e9af0c290ca6704c0d9c22269ca69d178"
+  "FROZEN.sha256": "da654931782513aee86b9919b5f3b3b49d99c600d19641546770f7fee388b3d8",
+  "producers/step1.ts": "5c3f21e49da27f2407749963649d543cf6efb22289c2eb95084fbcfef56d787e",
+  "producers/step2.ts": "fa53101b211f249d1ac150b08352d94f4cb611fe31b7705040cf7eefa8725db1",
+  "producers/lib.ts": "975b058bcb5fa6ef0e9ee0dfedf2e201b1408cc62b8eec03713958cd10927abc",
+  "producers/runtime-step1.ts": "1833598daefc0534b5784f8278e7f4c0a164c64ed460cca431f5ecf2c1d7efa0",
+  "producers/runtime-step2.ts": "4929bc5c15d30b35ceea3d43f218381a8c4dad7a3e2d81ac6ce8bf6c0687393c",
+  "dist/arg-score.js": "4ca584ac054ce84356b92a1ef5f57d693df734f598ec571de7558bdce878e66d",
+  "py/exclude.py": "de3341cf5adefeb3775348c15f20d2401cf2300cb6b04e4b1c81b372bee7beeb"
  }
 }

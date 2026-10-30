@@ -16,14 +16,14 @@ describe("resolveCSources", () => {
     expect(s.kev).toMatchObject({ url: C_ARTIFACTS.kev.devPath, from: "default" });
     expect(s.config).toBe("C");
     expect(s.lora.label).toBe(
-      "X5 LoRA 350M: LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf (from this origin)",
+      "vault LoRA m2bv: LFM2.5-350M-vault-m2bv-20261029-Q4_K_M.gguf (from this origin)",
     );
   });
 
   it("resolves a base URL to <base>/<manifest file> for both models", () => {
     const s = resolveCSources({ baseUrl: "https://models.example.org/c/" });
     expect(s.lora.url).toBe(
-      "https://models.example.org/c/LFM2.5-350M-vault-x5a-20261023-Q4_K_M.gguf",
+      "https://models.example.org/c/LFM2.5-350M-vault-m2bv-20261029-Q4_K_M.gguf",
     );
     expect(s.kev.url).toBe(
       "https://models.example.org/c/Kev-0.8B-vault-ft1-20261024-Q4_K_M.gguf",

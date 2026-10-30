@@ -79,7 +79,7 @@ describe("chat settings", () => {
 describe("fallback labels", () => {
   it("names the reason and the LoRA-alone numbers", () => {
     expect(loraAloneText(kevReasonText({ reason: "unavailable", detail: "404" }))).toBe(
-      "LoRA alone (decision model unavailable: 404): held-out-6 84.5% op, no ask step",
+      "LoRA alone (decision model unavailable: 404): vault dev 88.3% op, no ask step",
     );
     expect(kevReasonText({ reason: "off" })).toBe("turned off");
   });

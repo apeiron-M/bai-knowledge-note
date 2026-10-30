@@ -162,7 +162,7 @@ describe.each(["exact", "branch"] as const)(
           worstP = Math.max(worstP, Math.abs(d.p[o] - p));
       }
       expect(worstP).toBeLessThanOrEqual(1e-9);
-      expect(asked).toBe(29);
+      expect(asked).toBe(32);
     });
   },
 );

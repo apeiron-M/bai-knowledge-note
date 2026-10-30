@@ -17,6 +17,7 @@ import {
   toOptions,
 } from "../../editors/knowledge-vault/chat/core/op-scorer.js";
 import { v1Catalog } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
+import { VAULT_ARTIFACTS } from "../../editors/knowledge-vault/chat/vault-artifacts.js";
 import type { WllamaChatMessage } from "../../editors/knowledge-vault/chat/core/wllama-types.js";
 import { trieScore as rigTrieScore } from "../../training/eval-rig/lib/lib.js";
 
@@ -44,8 +45,10 @@ describe("answer-token table", () => {
     }
   });
 
-  it("is keyed to the measured X5 tokenizer", () => {
-    expect(ANSWER_TABLE_TOKENIZER).toMatchObject({
+  it("ships m2bv's table, keyed to its GGUF, equal to the X5 table on the vault's answers", () => {
+    const shipped = VAULT_ARTIFACTS.artifacts.lora.answerTable;
+    if (!shipped) throw new Error("no answer table");
+    expect(shipped.tokenizer).toMatchObject({
       ggufFile: C_ARTIFACTS.lora.fileName,
       ggufSha256: C_ARTIFACTS.lora.sha256,
       pre: "lfm2",
@@ -53,6 +56,11 @@ describe("answer-token table", () => {
       bos: 1,
       imEnd: 7,
     });
+    // Same tokenizer, so the default (X5) table's 100 answers are m2bv's too.
+    expect(shipped.tokenizer.tokenizerSha).toBe(ANSWER_TABLE_TOKENIZER.tokenizerSha);
+    const keys = global.map((e) => e.key);
+    expect(answersFor(keys, shipped)).toEqual(answersFor(keys));
+    expect(Object.keys(shipped.answers)).toHaveLength(109);
     expect(answerTableMismatch({ pre: "lfm2", nVocab: 65536, bos: 1, eos: 7 })).toBeNull();
     expect(answerTableMismatch({ pre: "qwen35" })).toMatch(/tokenizer/);
     expect(answerTableMismatch({ eos: 2 })).toMatch(/EOS/);

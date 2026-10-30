@@ -4,7 +4,7 @@
 
 Reads tests/fixtures/chat-c/{items,step1,kev,args-x9}.jsonl (rig outputs on held-out-3 + held-out-4,
 dev only) and runs the rig's own evaluator (training/eval-rig/src/evaluate.py, imported read-only) at the
-registered temperatures T_L 1.63 / T_K 4.0, once on the exact trie scores (loraExact, as registered) and once
+shipped temperatures (m2bv x Kev-FT dev-cv fit; X5's were 1.63 / 4.0) T_L 1.887 / T_K 4.0, once on the exact trie scores (loraExact, as registered) and once
 on the branch-only trie scores (loraBranch substituted for loraExact, the shipped default).
 Writes tests/fixtures/chat-c/expected-decisions.json: per single-action/no-action row the lora pick, the
 fused pick, the gate (pick, asked, offered in order) and the fused p over opts, plus the evaluator's
@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(REPO, "training", "eval-rig", "src"))
 import evaluate as ev  # noqa: E402
 
 FX = os.path.join(REPO, "tests", "fixtures", "chat-c")
-TL, TK = 1.63, 4.0
+TL, TK = 1.887, 4.0
 
 
 def fused_p(it):
