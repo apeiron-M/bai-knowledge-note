@@ -9,10 +9,13 @@
  * The harness moved to nl-runtime/dev (`runParityC`) in M1, with the same
  * bars and env variables (LLAMA_SERVER, LORA_URL, KEV_URL, PARITY_ONLY,
  * PARITY_OUT, PARITY_TRIE_TOL). This wrapper passes the vault's fixtures,
- * GGUFs, catalog, artifact manifest and tables. Writes a summary + per-item
+ * GGUFs, catalog, artifact manifest and tables, and nl-eval's evaluator for
+ * the metrics check (until M5 the old rig's evaluate.py, which wrote the
+ * oracle's metrics; on the oracle both give the same gate block). Writes a summary + per-item
  * diffs to $PARITY_OUT (default $TMPDIR/parity-c), never into the repo.
  * Exit 0 = PARITY OK, 1 = diffs, 3 = a server returned 429.
  */
+import { assemble, evaluate } from "nl-eval";
 import { runParityC } from "nl-runtime/dev";
 import { v1Catalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
 import { C_ARTIFACTS } from "../../editors/knowledge-vault/chat/core/model-manifest.js";
@@ -38,7 +41,11 @@ const r = await runParityC({
     currentLists: CURRENT_LISTS,
     opDescriptions: OP_DESCRIPTIONS,
   },
-  evalRigSrc: `${REPO}/training/eval-rig/src`,
+  gateMetrics: (run, tLora, tKev) => {
+    const { rows, missing, levels } = assemble(run);
+    if (missing.length) throw new Error(`parity run is missing ${missing.length} rows`);
+    return evaluate(rows, tLora, tKev, levels).configs.gate;
+  },
   llamaServer: `${process.env.HOME}/.cache/bai-training/llama.cpp/build/bin/llama-server`,
 });
 process.exit(r.exitCode);

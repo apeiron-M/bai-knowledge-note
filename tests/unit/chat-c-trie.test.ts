@@ -16,10 +16,11 @@ import {
   scoringMessages,
   toOptions,
 } from "../../editors/knowledge-vault/chat/core/op-scorer.js";
-import { v1Catalog } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
+import { v1Catalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
 import { VAULT_ARTIFACTS } from "../../editors/knowledge-vault/chat/vault-artifacts.js";
 import type { WllamaChatMessage } from "../../editors/knowledge-vault/chat/core/wllama-types.js";
-import { trieScore as rigTrieScore } from "../../training/eval-rig/lib/lib.js";
+// The rig's frozen X3 trie scorer: nl-eval's producers/lib.ts (the old training/eval-rig/lib/lib.ts, same body).
+import { trieScore as rigTrieScore } from "../../node_modules/nl-eval/producers/lib.js";
 
 const FX = new URL("../fixtures/chat-c/", import.meta.url);
 const catalog = v1Catalog();

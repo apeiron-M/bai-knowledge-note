@@ -25,7 +25,7 @@ for timing fields and JSON spacing.
 | `step1.jsonl` | rig `step1.jsonl` | loraPick, loraExact, loraBranch (sums of per-token logprobs) |
 | `kev.jsonl` | rig `kev.jsonl`, slimmed | candidates (`__none__` last), servedT, `oneStage` only (the fusion input) |
 | `args-x9.jsonl` | rig `args-x9.jsonl` | step 2 on the gold op at x9 (args, raw, dateFixed, listsCompleted, ok/okN) |
-| `expected-decisions.json` | `scripts/chat/c-expected.py` | the rig's own `evaluate.decide` at T_L 1.887 / T_K 4.0 / tau 0.5, exact and branch trie scores; exact-mode metrics equal the run's `results.json` dev-cv gate block (op 181, ask 32/216, wrong 7, effective 169); exact vs branch gate decisions identical 214/216 (the other 2 ask with the same pick and differ in the third offered op) |
+| `expected-decisions.json` | `scripts/chat/c-expected.py` (M5: `scripts/chat/c-expected.mts`, over nl-eval's evaluator; it reproduces this file, p values within 1e-12) | the rig's own `evaluate.decide` at T_L 1.887 / T_K 4.0 / tau 0.5, exact and branch trie scores; exact-mode metrics equal the run's `results.json` dev-cv gate block (op 181, ask 32/216, wrong 7, effective 169); exact vs branch gate decisions identical 214/216 (the other 2 ask with the same pick and differ in the third offered op) |
 | `template-goldens.json` | `scripts/chat/gen-answer-tokens.mts` | native `/apply-template` (`--no-jinja`) of the step-1 messages, one dev item per model |
 | `retok-check.json` | `scripts/chat/gen-answer-tokens.mts` | string-prompt retokenisation: tokenize(templated + answer pieces) == tokenize(templated) ++ ids at every trie node, 1,685 / 1,685 |
 

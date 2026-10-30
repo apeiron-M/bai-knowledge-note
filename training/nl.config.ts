@@ -128,5 +128,8 @@ export default defineConfig({
     rev: "5e9c39046dcd8f08951a308e66c610dbd4c55c73",
     patches: "../docs/superpowers/notes/in-browser-llm/exp-2026-10-23",
     devSets: "../spike/llm-harness/eval", // heldout3 as h3, heldout4 as h4
+    // Step 2's scorer (rig.scorer) is left at its default, nl-eval's own
+    // producers/step2-scorer.ts: spike/llm-harness/r6.ts's scoreArgRow, moved
+    // out of the vault in M5 with the old training/eval-rig/.
   },
 });

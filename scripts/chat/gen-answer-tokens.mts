@@ -10,7 +10,8 @@
  * The generator moved to nl-runtime (`packages/nl-runtime/scripts/`) in M1:
  * the answer table is per tokenizer and nl-runtime bundles it. This wrapper
  * runs it from the sibling powerhouse-nl checkout (the injected package
- * ships `dist` and `vendor` only) with the vault's catalog and fixtures. It
+ * ships `dist` and `vendor` only) with the vault's catalog and fixtures (it
+ * reads gguf_meta.py from powerhouse-nl's python/nl_train). It
  * writes the table into nl-runtime's `src/core/answer-tokens.lfm2.json`
  * (set ANSWER_TABLE_OUT to write elsewhere), and
  * tests/fixtures/chat-c/template-goldens.json and retok-check.json here.
@@ -26,7 +27,6 @@ const env = {
     `${REPO}/training/artifacts/m2bv-350m/gguf/LFM2.5-350M-vault-m2bv-20261029-Q4_K_M.gguf`,
   CATALOG_MODULE: `${REPO}/editors/knowledge-vault/chat/core/catalog-models.ts`,
   CATALOG_EXPORT: "v1Catalog",
-  EVAL_RIG_SRC: `${REPO}/training/eval-rig/src`,
   FIXTURES_DIR: `${REPO}/tests/fixtures/chat-c`,
 };
 const r = spawnSync("npx", ["tsx", SCRIPT], { env, stdio: "inherit" });
