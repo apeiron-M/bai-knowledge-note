@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { ISubgraph } from "@powerhousedao/reactor-api";
 import {
   clearDbHandleCache,
   clearDriveIdCache,
   getDb,
   resolveCanonicalDriveId,
+  type GraphSubgraph,
 } from "./db.js";
 
-function subgraph(get: ReturnType<typeof vi.fn>): ISubgraph {
-  return { reactorClient: { get } } as unknown as ISubgraph;
+function subgraph(get: ReturnType<typeof vi.fn>): GraphSubgraph {
+  return { readClient: { get } } as unknown as GraphSubgraph;
 }
 
 describe("resolveCanonicalDriveId", () => {
@@ -83,7 +83,7 @@ describe("getDb handle identity", () => {
       selectFrom: vi.fn(),
     }));
     return {
-      subgraph: { relationalDb: { queryNamespace } } as unknown as ISubgraph,
+      subgraph: { relationalDb: { queryNamespace } } as unknown as GraphSubgraph,
       queryNamespace,
     };
   }

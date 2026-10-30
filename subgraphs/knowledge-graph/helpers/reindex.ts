@@ -4,8 +4,7 @@
  * list) and rebuilding its projection row, topics and edges.
  */
 import type { Kysely } from "kysely";
-import type { ISubgraph } from "@powerhousedao/reactor-api";
-import { getWritableDb } from "./db.js";
+import { getWritableDb, type GraphSubgraph } from "./db.js";
 import { rebuildSourceRows } from "./source-timeline.js";
 import { SOURCE_DOCUMENT_TYPE } from "../../../processors/graph-indexer/source-timeline.js";
 import type { DB } from "../../../processors/graph-indexer/schema.js";
@@ -76,7 +75,7 @@ export async function pruneNonKnowledgeEdges(db: Kysely<DB>): Promise<number> {
 }
 
 export async function reindexDrive(
-  subgraph: ISubgraph,
+  subgraph: GraphSubgraph,
   driveId: string,
 ): Promise<{ indexedNodes: number; indexedEdges: number; errors: string[] }> {
   const errors: string[] = [];
@@ -94,10 +93,10 @@ export async function reindexDrive(
   const preservedMetadata = new Map<string, string>();
   // The reactor's document indexer, when this is the in-process client.
   // It is the only place relationship metadata can be read from.
-  const indexer = documentIndexerOf(subgraph.reactorClient);
+  const indexer = documentIndexerOf(subgraph.readClient);
 
   try {
-    const drive = await subgraph.reactorClient.get(driveId);
+    const drive = await subgraph.readClient.get(driveId);
     // Resolve to the drive's canonical UUID. reactorClient.get accepts either
     // slug or UUID, but the processor's per-drive namespace was created by
     // the factory using `driveHeader.id` (always UUID). If the caller passed a
@@ -129,7 +128,7 @@ export async function reindexDrive(
 
     for (const node of noteNodes) {
       try {
-        const doc = await subgraph.reactorClient.get(node.id);
+        const doc = await subgraph.readClient.get(node.id);
         const state = doc.state as unknown as {
           global: Record<string, unknown>;
         };
@@ -261,7 +260,7 @@ export async function reindexDrive(
           try {
             const { ids, saturated, truncated, pages } =
               await collectRelationshipIds((paging) =>
-                subgraph.reactorClient.getOutgoingRelationships(
+                subgraph.readClient.getOutgoingRelationships(
                   node.id,
                   relType,
                   undefined,
@@ -352,7 +351,7 @@ export async function reindexDrive(
           try {
             const { ids, saturated } = await collectRelationshipIds(
               (paging) =>
-                subgraph.reactorClient.getIncomingRelationships(
+                subgraph.readClient.getIncomingRelationships(
                   node.id,
                   relType,
                   undefined,
@@ -519,7 +518,7 @@ export async function reindexDrive(
     // document, and none for a source the drive no longer holds.
     try {
       const sourceIds = nodes.filter((n) => n.kind === "file" && n.documentType === SOURCE_DOCUMENT_TYPE).map((n) => n.id);
-      const written = await rebuildSourceRows(db, subgraph.reactorClient, sourceIds);
+      const written = await rebuildSourceRows(db, subgraph.readClient, sourceIds);
       console.log(`[KnowledgeGraphSubgraph] Rebuilt ${written} source rows`);
     } catch (err: unknown) {
       errors.push(`source-rows: ${err instanceof Error ? err.message : String(err)}`);

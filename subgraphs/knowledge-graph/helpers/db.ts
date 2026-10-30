@@ -3,12 +3,22 @@
  * Provides typed Kysely instances scoped to the graph-indexer processor namespace.
  */
 import type { Kysely } from "kysely";
+import type { IReactorReadClient } from "@powerhousedao/reactor";
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import type { IRelationalDb } from "@powerhousedao/shared/processors";
 import { GraphIndexerProcessor } from "../../../processors/graph-indexer/index.js";
 import { up } from "../../../processors/graph-indexer/migrations.js";
 import { createGraphQuery } from "../../../processors/graph-indexer/query.js";
 import type { DB } from "../../../processors/graph-indexer/schema.js";
+
+/**
+ * What the graph helpers need from their subgraph: the relational database
+ * and the read half. Reads go through `readClient`, not the deprecated
+ * `reactorClient` facade, which the host keeps for one more release only.
+ */
+export type GraphSubgraph = Pick<ISubgraph, "relationalDb"> & {
+  readClient: IReactorReadClient;
+};
 
 /**
  * Memoized namespaced query builders, keyed on the relational db and namespace.
@@ -57,7 +67,7 @@ export type NamespacedReadDb = Pick<
  * Read-only namespaced query builder — use for all SELECT resolvers.
  */
 export function getDb(
-  subgraph: ISubgraph,
+  subgraph: GraphSubgraph,
   driveId: string,
 ): NamespacedReadDb {
   const relationalDb = subgraph.relationalDb as unknown as IRelationalDb;
@@ -88,7 +98,7 @@ export function getDb(
  * recovery path instead of failing with `relation does not exist`.
  */
 export async function getWritableDb(
-  subgraph: ISubgraph,
+  subgraph: GraphSubgraph,
   driveId: string,
 ): Promise<Kysely<DB>> {
   const namespace = GraphIndexerProcessor.getNamespace(driveId);
@@ -102,7 +112,7 @@ export async function getWritableDb(
 /**
  * Returns a high-level graph query object for the given drive.
  */
-export function getQuery(subgraph: ISubgraph, driveId: string) {
+export function getQuery(subgraph: GraphSubgraph, driveId: string) {
   return createGraphQuery(getDb(subgraph, driveId));
 }
 
@@ -146,7 +156,7 @@ export function clearDriveIdCache(): void {
 }
 
 export async function resolveCanonicalDriveId(
-  subgraph: ISubgraph,
+  subgraph: GraphSubgraph,
   driveId: string,
 ): Promise<string> {
   const now = Date.now();
@@ -154,7 +164,7 @@ export async function resolveCanonicalDriveId(
   if (hit && hit.expiresAt > now) return hit.canonical;
 
   try {
-    const drive = await subgraph.reactorClient.get(driveId);
+    const drive = await subgraph.readClient.get(driveId);
     const canonical =
       (drive as unknown as { header?: { id?: string }; id?: string }).header
         ?.id ??

@@ -21,6 +21,9 @@ export function createPageSubgraph(client: IReactorClient, relationalDb: IRelati
   const yes = () => Promise.resolve(true);
   const subgraph = {
     name: "browser-vault",
+    // The facade is a read client too, and keeps the read half (with the
+    // document indexer) as `read`; the graph helpers read through this.
+    readClient: client,
     reactorClient: client,
     relationalDb,
     assertCanRead: () => Promise.resolve(),

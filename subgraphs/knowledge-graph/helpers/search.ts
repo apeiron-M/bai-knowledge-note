@@ -1,5 +1,4 @@
-import type { ISubgraph } from "@powerhousedao/reactor-api";
-import { getDb, getQuery } from "./db.js";
+import { getDb, getQuery, type GraphSubgraph } from "./db.js";
 import { searchSimilar } from "../../../processors/graph-indexer/embedding-store.js";
 import { embedQuery } from "./query-embedder.js";
 import {
@@ -31,7 +30,7 @@ export interface VaultSearchHit {
  * `similarity > 0.7` discarded every hit.
  */
 export async function searchWithEmbedding(
-  subgraph: ISubgraph,
+  subgraph: GraphSubgraph,
   driveId: string,
   query: string,
   embedding: number[],
@@ -74,7 +73,7 @@ export async function searchWithEmbedding(
  * perfectly good keyword hit as "0%".
  */
 export async function keywordSearch(
-  subgraph: ISubgraph,
+  subgraph: GraphSubgraph,
   driveId: string,
   query: string,
   limit: number,
@@ -102,7 +101,7 @@ export async function keywordSearch(
  * instead of erroring. A search box must never be the thing that breaks.
  */
 export async function searchVault(
-  subgraph: ISubgraph,
+  subgraph: GraphSubgraph,
   driveId: string,
   query: string,
   mode: SearchMode = "SEMANTIC",

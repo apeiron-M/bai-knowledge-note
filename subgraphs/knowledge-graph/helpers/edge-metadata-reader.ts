@@ -55,16 +55,28 @@ const PAGE_LIMIT = 100;
 /**
  * The document indexer behind a reactor client, if this client is the
  * in-process one. Null for GraphQL clients and test doubles without it.
+ *
+ * Since the reactor client was split into halves (after 6.2.3-dev.73), the
+ * indexer lives on the read half (`ReactorReadClient`), and the
+ * `IReactorClient` facade only holds that half as `read`. So look on
+ * the client, then on its `read`: a read half and a facade both resolve, and
+ * reading only the facade's own field returns null, which would make every
+ * reindex drop the reason and confidence of edges it rebuilds.
  */
 export function documentIndexerOf(client: unknown): DocumentIndexerLike | null {
-  const candidate = (client as { documentIndexer?: unknown } | null | undefined)
-    ?.documentIndexer as Partial<DocumentIndexerLike> | undefined;
-  if (
-    candidate &&
-    typeof candidate.getOutgoing === "function" &&
-    typeof candidate.getIncoming === "function"
-  ) {
-    return candidate as DocumentIndexerLike;
+  const holder = client as
+    | { documentIndexer?: unknown; read?: { documentIndexer?: unknown } }
+    | null
+    | undefined;
+  for (const candidate of [holder?.documentIndexer, holder?.read?.documentIndexer]) {
+    const indexer = candidate as Partial<DocumentIndexerLike> | undefined;
+    if (
+      indexer &&
+      typeof indexer.getOutgoing === "function" &&
+      typeof indexer.getIncoming === "function"
+    ) {
+      return indexer as DocumentIndexerLike;
+    }
   }
   return null;
 }

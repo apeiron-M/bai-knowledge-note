@@ -173,9 +173,10 @@ export async function executeWrite(
   const prior = Math.min(
     ...[...writtenScopes].map((scope) => revision[scope] ?? 0),
   );
-  // The host hands routes a signal that is already aborted once the body has
-  // been consumed, which makes the reactor client's signer abort every write.
-  // Use it only while it is live.
+  // Up to 6.2.3-dev.84 the host aborted a route's signal once its body had
+  // been read, so every write saw it aborted (fixed upstream in 3936f6cd6: it
+  // now aborts when the client disconnects). Still use it only while live. A
+  // disconnect can now stop a write; the create routes roll back without it.
   const signal =
     options.ctx.signal && !options.ctx.signal.aborted
       ? options.ctx.signal
