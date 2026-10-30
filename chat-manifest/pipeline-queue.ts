@@ -8,7 +8,7 @@ export const data: ModelManifest = {
   documentType: "bai/pipeline-queue",
   model: "pipeline-queue",
   specVersion: 1,
-  powerhouseVersion: "6.2.2-dev.47",
+  powerhouseVersion: "6.2.3",
   ops: [
     {
       key: "pipeline-queue:ADD_TASK",

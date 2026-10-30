@@ -8,7 +8,7 @@ export const data: ModelManifest = {
   documentType: "bai/research-claim",
   model: "research-claim",
   specVersion: 1,
-  powerhouseVersion: "6.2.2-dev.47",
+  powerhouseVersion: "6.2.3",
   ops: [
     {
       key: "research-claim:CREATE_CLAIM",

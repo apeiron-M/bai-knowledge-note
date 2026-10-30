@@ -8,7 +8,7 @@ export const data: ModelManifest = {
   documentType: "bai/moc",
   model: "moc",
   specVersion: 1,
-  powerhouseVersion: "6.2.2-dev.47",
+  powerhouseVersion: "6.2.3",
   ops: [
     {
       key: "moc:CREATE_MOC",

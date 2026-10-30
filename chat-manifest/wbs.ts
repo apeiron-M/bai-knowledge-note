@@ -8,7 +8,7 @@ export const data: ModelManifest = {
   documentType: "bai/wbs",
   model: "wbs",
   specVersion: 1,
-  powerhouseVersion: "6.2.2-dev.47",
+  powerhouseVersion: "6.2.3",
   ops: [
     {
       key: "wbs:CREATE_GOAL",
