@@ -4,22 +4,28 @@
  * wording, theme and storage (`bai.chat`). Rendered by `DriveExplorer`, so
  * it persists while a document editor is open and the tag follows
  * navigation.
+ *
+ * M5: nl-drive's document-drive layer is mounted (`useDocumentDriveChat`):
+ * with nothing open the drive's ops are offered, and on a document they
+ * join the document's on a drive word. The ref binder runs in `override`
+ * mode (the user's choice). Node names do not cue: the vault's folder
+ * names ("notes", "research", "sources", "projects") are everyday words in
+ * document requests. ADD_FILE replaces the interim "create opens the New
+ * dialog" path, which a drive target no longer reaches.
  */
-import { useState } from "react";
 import {
   type ChatDocument,
   type ChatLabels,
   type ChatParityHooks,
   type ChatTheme,
-  type CreateIntent,
   type ModelEnv,
 } from "nl-runtime";
+import { useDocumentDriveChat } from "nl-drive/reactor-browser";
 import { ReactorBrowserChatSheet } from "nl-runtime/reactor-browser";
 import { VAULT_ARTIFACTS } from "../chat/vault-artifacts.js";
-import { VAULT_MANIFEST } from "../chat/vault-manifest.js";
+import { VAULT_DOCUMENT_TYPES, VAULT_SHEET_MANIFEST } from "../chat/vault-manifest.js";
 import { vaultChatModels } from "../hooks/chat-models.js";
 import { VAULT_MEASURED, VAULT_STORAGE_PREFIX } from "../hooks/use-chat-llm.js";
-import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 // Written as `(import.meta as …).env` so Vite sees `import.meta.env` and
 // fills it (an alias such as `const meta = import.meta` stays undefined).
@@ -78,32 +84,28 @@ const linkedPlanId = (d: ChatDocument): string | undefined =>
     : undefined;
 
 export function ChatSheet() {
-  const [createIntent, setCreateIntent] = useState<CreateIntent | null>(null);
+  const drive = useDocumentDriveChat({
+    bindRefs: "override",
+    documentTypes: VAULT_DOCUMENT_TYPES,
+    nameCue: false,
+  });
 
   return (
-    <>
-      <ReactorBrowserChatSheet
-        chatManifest={VAULT_MANIFEST}
-        artifacts={VAULT_ARTIFACTS}
-        models={vaultChatModels()}
-        storagePrefix={VAULT_STORAGE_PREFIX}
-        env={ENV}
-        dev={DEV}
-        labels={LABELS}
-        measured={VAULT_MEASURED}
-        theme={THEME}
-        parity={PARITY}
-        timingsGlobal={DEV ? "__baiChatTimings" : undefined}
-        linkedDocumentId={linkedPlanId}
-        onCreate={setCreateIntent}
-      />
-      {/* outside the sheet, so its own Esc handler gets the key */}
-      <CreateDocumentDialog
-        open={!!createIntent}
-        documentType={createIntent?.docType ?? ""}
-        documentTypeLabel={createIntent?.label ?? ""}
-        onClose={() => setCreateIntent(null)}
-      />
-    </>
+    <ReactorBrowserChatSheet
+      chatManifest={VAULT_SHEET_MANIFEST}
+      artifacts={VAULT_ARTIFACTS}
+      models={vaultChatModels()}
+      storagePrefix={VAULT_STORAGE_PREFIX}
+      env={ENV}
+      dev={DEV}
+      labels={LABELS}
+      measured={VAULT_MEASURED}
+      theme={THEME}
+      parity={PARITY}
+      timingsGlobal={DEV ? "__baiChatTimings" : undefined}
+      linkedDocumentId={linkedPlanId}
+      executors={drive.executors}
+      drive={drive.layer}
+    />
   );
 }

@@ -102,6 +102,9 @@ importers:
       nl:
         specifier: file:../powerhouse-nl/packages/nl
         version: file:../powerhouse-nl/packages/nl(6dc422120a5064bbfaaa448bc4bb61c9)
+      nl-drive:
+        specifier: file:../powerhouse-nl/packages/nl-drive
+        version: file:../powerhouse-nl/packages/nl-drive(2dfb7a833e7f93815d1d8838c1f6c09a)
       nl-eval:
         specifier: file:../powerhouse-nl/packages/nl-eval
         version: file:../powerhouse-nl/packages/nl-eval
@@ -8583,6 +8586,20 @@ packages:
   negotiator@1.1.0:
     resolution: {integrity: sha512-NMPBRMJgiQHjbd8phG3Vebdx4kZ1H121rbl5IkMqeOsahptB9BKo/d7oJ3zTXqTgagn2bWlNSXkh0QUGM31RYg==}
     engines: {node: '>=18'}
+
+  nl-drive@file:../powerhouse-nl/packages/nl-drive:
+    resolution: {directory: ../powerhouse-nl/packages/nl-drive, type: directory}
+    peerDependencies:
+      '@powerhousedao/reactor-browser': '>=6.2.2-dev.47 <6.2.3 || >=6.2.3-0 <6.3.0'
+      nl-manifest: '*'
+      nl-runtime: '*'
+      react: ^19
+      zod: ^4
+    peerDependenciesMeta:
+      '@powerhousedao/reactor-browser':
+        optional: true
+      react:
+        optional: true
 
   nl-eval@file:../powerhouse-nl/packages/nl-eval:
     resolution: {directory: ../powerhouse-nl/packages/nl-eval, type: directory}
@@ -23854,6 +23871,15 @@ snapshots:
   negotiator@1.1.0:
     dependencies:
       content-type: 2.1.0
+
+  nl-drive@file:../powerhouse-nl/packages/nl-drive(2dfb7a833e7f93815d1d8838c1f6c09a):
+    dependencies:
+      nl-manifest: file:../powerhouse-nl/packages/nl-manifest(nl-runtime@file:../powerhouse-nl/packages/nl-runtime(@powerhousedao/reactor-browser@6.2.3(f7ae9d90b74184607c8e86e9317d3742))(document-model@6.2.3(@sentry/node-core@10.75.2(@opentelemetry/api@1.10.0)(@opentelemetry/core@2.12.0(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.218.0(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.10.0)(supports-color@7.2.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0)))(rolldown@1.2.15)(supports-color@7.2.0))(react@19.2.6)(zod@4.3.6))(zod@4.3.6)
+      nl-runtime: file:../powerhouse-nl/packages/nl-runtime(@powerhousedao/reactor-browser@6.2.3(f7ae9d90b74184607c8e86e9317d3742))(document-model@6.2.3(@sentry/node-core@10.75.2(@opentelemetry/api@1.10.0)(@opentelemetry/core@2.12.0(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.218.0(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.10.0)(supports-color@7.2.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0)))(rolldown@1.2.15)(supports-color@7.2.0))(react@19.2.6)(zod@4.3.6)
+      zod: 4.3.6
+    optionalDependencies:
+      '@powerhousedao/reactor-browser': 6.2.3(f7ae9d90b74184607c8e86e9317d3742)
+      react: 19.2.6
 
   nl-eval@file:../powerhouse-nl/packages/nl-eval: {}
 
