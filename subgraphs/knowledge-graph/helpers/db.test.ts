@@ -3,6 +3,7 @@ import {
   clearDbHandleCache,
   clearDriveIdCache,
   getDb,
+  readerOf,
   resolveCanonicalDriveId,
   type GraphSubgraph,
 } from "./db.js";
@@ -112,5 +113,25 @@ describe("getDb handle identity", () => {
     const a = fakeSubgraph();
     const b = fakeSubgraph();
     expect(getDb(a.subgraph, "drive-1")).not.toBe(getDb(b.subgraph, "drive-1"));
+  });
+});
+
+describe("readerOf", () => {
+  const read = { get: vi.fn() };
+  const facade = { get: vi.fn() };
+
+  it("reads through the read half where the host has one", () => {
+    const subgraph = { readClient: read, reactorClient: facade } as unknown as GraphSubgraph;
+    expect(readerOf(subgraph)).toBe(read);
+  });
+
+  // A host older than the read/write split passes only the facade.
+  it("falls back to the facade on a host without a read half", () => {
+    const subgraph = { reactorClient: facade } as unknown as GraphSubgraph;
+    expect(readerOf(subgraph)).toBe(facade);
+  });
+
+  it("refuses a subgraph with no client at all", () => {
+    expect(() => readerOf({} as unknown as GraphSubgraph)).toThrow(/no reactor client/);
   });
 });

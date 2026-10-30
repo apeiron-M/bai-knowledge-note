@@ -13,12 +13,26 @@ import type { DB } from "../../../processors/graph-indexer/schema.js";
 
 /**
  * What the graph helpers need from their subgraph: the relational database
- * and the read half. Reads go through `readClient`, not the deprecated
- * `reactorClient` facade, which the host keeps for one more release only.
+ * and a client to read documents with (see {@link readerOf}).
  */
-export type GraphSubgraph = Pick<ISubgraph, "relationalDb"> & {
-  readClient: IReactorReadClient;
-};
+export type GraphSubgraph = Pick<
+  ISubgraph,
+  "relationalDb" | "readClient" | "reactorClient"
+>;
+
+/**
+ * The client the graph helpers read through: the read half where the host
+ * has one, else the `reactorClient` facade. The facade is deprecated and kept
+ * for one more release, so the read half comes first. The fallback is for
+ * hosts older than the split (6.2.3-dev.73 and before), which pass no
+ * `readClient`: a published build of this package can be loaded by a
+ * Switchboard older than the stack it was built on.
+ */
+export function readerOf(subgraph: GraphSubgraph): IReactorReadClient {
+  const reader = subgraph.readClient ?? subgraph.reactorClient;
+  if (!reader) throw new Error("the host gave this subgraph no reactor client");
+  return reader;
+}
 
 /**
  * Memoized namespaced query builders, keyed on the relational db and namespace.
@@ -164,7 +178,7 @@ export async function resolveCanonicalDriveId(
   if (hit && hit.expiresAt > now) return hit.canonical;
 
   try {
-    const drive = await subgraph.readClient.get(driveId);
+    const drive = await readerOf(subgraph).get(driveId);
     const canonical =
       (drive as unknown as { header?: { id?: string }; id?: string }).header
         ?.id ??
