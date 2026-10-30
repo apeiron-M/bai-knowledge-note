@@ -9,40 +9,32 @@ import { useState } from "react";
 import {
   type ChatDocument,
   type ChatLabels,
-  ChatNotice,
   type ChatParityHooks,
   type ChatTheme,
   type CreateIntent,
-  fileNameOf,
   type ModelEnv,
 } from "nl-runtime";
 import { ReactorBrowserChatSheet } from "nl-runtime/reactor-browser";
 import { VAULT_ARTIFACTS } from "../chat/vault-artifacts.js";
 import { VAULT_MANIFEST } from "../chat/vault-manifest.js";
 import { vaultChatModels } from "../hooks/chat-models.js";
-import {
-  dismissLegacyModelNotice,
-  dropLegacyModelUrl,
-  legacyModelNotice,
-  VAULT_MEASURED,
-  VAULT_STORAGE_PREFIX,
-} from "../hooks/use-chat-llm.js";
+import { VAULT_MEASURED, VAULT_STORAGE_PREFIX } from "../hooks/use-chat-llm.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
-const meta = import.meta as ImportMeta & {
-  env?: Record<string, string | boolean | undefined>;
-};
+// Written as `(import.meta as …).env` so Vite sees `import.meta.env` and
+// fills it (an alias such as `const meta = import.meta` stays undefined).
+type MetaEnv = { env?: Record<string, string | boolean | undefined> };
 const envString = (v: string | boolean | undefined) => (typeof v === "string" ? v : undefined);
 
 const ENV: ModelEnv = {
-  loraUrl: envString(meta.env?.VITE_CHAT_LORA_URL),
-  kevUrl: envString(meta.env?.VITE_CHAT_KEV_URL),
-  modelUrl: envString(meta.env?.VITE_CHAT_MODEL_URL),
-  baseUrl: envString(meta.env?.VITE_CHAT_MODEL_BASE_URL),
+  loraUrl: envString((import.meta as MetaEnv).env?.VITE_CHAT_LORA_URL),
+  kevUrl: envString((import.meta as MetaEnv).env?.VITE_CHAT_KEV_URL),
+  modelUrl: envString((import.meta as MetaEnv).env?.VITE_CHAT_MODEL_URL),
+  baseUrl: envString((import.meta as MetaEnv).env?.VITE_CHAT_MODEL_BASE_URL),
 };
 
-/** A dev build: timings and the parity check (also `bai.chat.debug=1`). */
-const DEV = meta.env?.DEV === true;
+/** A dev build (Studio): timings and the parity check, on `window.__baiChat*`. */
+const DEV = (import.meta as MetaEnv).env?.DEV === true;
 
 const LABELS: Partial<ChatLabels> = {
   placeholder: 'e.g. "tag this note with distributed systems", or ask a question',
@@ -66,15 +58,18 @@ const THEME: ChatTheme = {
   accentText: "var(--bai-accent-text)",
 };
 
-/** `window.__baiChatParityC()`, installed from chat/dev/parity-c.ts. */
-const PARITY: ChatParityHooks = {
-  install: async (getDeps) => (await import("../chat/dev/parity-c.js")).installParityC(getDeps),
-  run: async (mode) => {
-    if (!window.__baiChatParityC) throw new Error("parity check not installed");
-    return window.__baiChatParityC(mode);
-  },
-  globalName: "__baiChatParityC",
-};
+/** `window.__baiChatParityC()`, installed from chat/dev/parity-c.ts; dev builds only. */
+const PARITY: ChatParityHooks | undefined = DEV
+  ? {
+      install: async (getDeps) =>
+        (await import("../chat/dev/parity-c.js")).installParityC(getDeps),
+      run: async (mode) => {
+        if (!window.__baiChatParityC) throw new Error("parity check not installed");
+        return window.__baiChatParityC(mode);
+      },
+      globalName: "__baiChatParityC",
+    }
+  : undefined;
 
 /** A project's linked plan, for the manifest's crossDocument hook. */
 const linkedPlanId = (d: ChatDocument): string | undefined =>
@@ -84,24 +79,6 @@ const linkedPlanId = (d: ChatDocument): string | undefined =>
 
 export function ChatSheet() {
   const [createIntent, setCreateIntent] = useState<CreateIntent | null>(null);
-  // before the panel reads its settings, as the old readChatSettings did
-  const [legacyUrl, setLegacyUrl] = useState(() => {
-    dropLegacyModelUrl();
-    return legacyModelNotice();
-  });
-  const notice = legacyUrl ? (
-    <ChatNotice
-      testId="chat-legacy-notice"
-      onDismiss={() => {
-        dismissLegacyModelNotice();
-        setLegacyUrl(null);
-      }}
-    >
-      The model URL saved by the previous chat version (<code>{fileNameOf(legacyUrl)}</code>)
-      is no longer used: the chat now runs configuration C&apos;s models. To try that file
-      anyway, enter its URL as the command model under Model settings.
-    </ChatNotice>
-  ) : undefined;
 
   return (
     <>
@@ -116,10 +93,9 @@ export function ChatSheet() {
         measured={VAULT_MEASURED}
         theme={THEME}
         parity={PARITY}
-        timingsGlobal="__baiChatTimings"
+        timingsGlobal={DEV ? "__baiChatTimings" : undefined}
         linkedDocumentId={linkedPlanId}
         onCreate={setCreateIntent}
-        notice={notice}
       />
       {/* outside the sheet, so its own Esc handler gets the key */}
       <CreateDocumentDialog

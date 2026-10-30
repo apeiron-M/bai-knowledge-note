@@ -1,8 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  dismissLegacyModelNotice,
   kevReasonText,
-  legacyModelNotice,
   loraAloneText,
   readChatSettings,
   SETTING_KEYS,
@@ -31,40 +29,6 @@ describe("chat settings", () => {
       useKev: true,
       trieMode: "branch",
     });
-  });
-
-  it("drops v1's round 8 URL silently: C's manifest stays the default", () => {
-    const s = memoryStorage({
-      [SETTING_KEYS.legacyModelUrl]:
-        "/training/artifacts/r8/gguf/LFM2.5-350M-vault-r8a-20261022-Q4_K_M.gguf",
-    });
-    vi.stubGlobal("localStorage", s);
-    expect(readChatSettings().loraUrl).toBeNull();
-    expect(s.map.has(SETTING_KEYS.legacyModelUrl)).toBe(false);
-    expect(legacyModelNotice()).toBeNull();
-  });
-
-  it("drops a custom pre-C URL too, with a one-time notice", () => {
-    const s = memoryStorage({ [SETTING_KEYS.legacyModelUrl]: "https://h/mine.gguf" });
-    vi.stubGlobal("localStorage", s);
-    expect(readChatSettings().loraUrl).toBeNull();
-    expect(s.map.has(SETTING_KEYS.legacyModelUrl)).toBe(false);
-    expect(legacyModelNotice()).toBe("https://h/mine.gguf");
-    dismissLegacyModelNotice();
-    expect(legacyModelNotice()).toBeNull();
-    expect(readChatSettings().loraUrl).toBeNull();
-    expect(legacyModelNotice()).toBeNull();
-  });
-
-  it("keeps an explicit LoRA URL and skips the notice", () => {
-    const s = memoryStorage({
-      [SETTING_KEYS.legacyModelUrl]: "https://h/mine.gguf",
-      [SETTING_KEYS.loraUrl]: "/x5.gguf",
-    });
-    vi.stubGlobal("localStorage", s);
-    expect(readChatSettings().loraUrl).toBe("/x5.gguf");
-    expect(s.map.has(SETTING_KEYS.legacyModelUrl)).toBe(false);
-    expect(legacyModelNotice()).toBeNull();
   });
 
   it("reads the toggle and the dev trie mode", () => {

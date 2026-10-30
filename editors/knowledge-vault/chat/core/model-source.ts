@@ -5,10 +5,9 @@
  * (`VITE_CHAT_MODEL_URL` is the LoRA's old name), `VITE_CHAT_MODEL_BASE_URL`,
  * then the same-origin dev path. The resolver moved to nl-runtime
  * (core/model-source) in M1, over an artifact manifest; `resolveCSources`
- * binds `VAULT_ARTIFACTS`. The Round 8 helpers stay here until M5.
+ * binds `VAULT_ARTIFACTS`.
  */
 import {
-  fileNameOf,
   type ModelEnv,
   type ModelSettings,
   resolveModelSources,
@@ -24,17 +23,6 @@ export {
   type ResolvedModel,
   type ResolvedSources,
 } from "nl-runtime";
-
-/**
- * v1's measured single model (round 8 export, results doc "Export"). The
- * pre-C tab saved it as `bai.chat.modelUrl`; it is not configuration C's
- * LoRA, so it is never carried over.
- */
-export const ROUND8_GGUF_STEM = "LFM2.5-350M-vault-r8a-20261022";
-
-export function isRound8Url(url: string): boolean {
-  return fileNameOf(url).startsWith(ROUND8_GGUF_STEM);
-}
 
 export function resolveCSources(
   settings: ModelSettings,
