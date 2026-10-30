@@ -195,4 +195,19 @@ console.log(
   `[runtime-assets] transformers web bundle → ${webBundleDest} (${(bundled / 1048576).toFixed(1)}MB)`,
 );
 
+// 5. Third-party notices → dist/. The vault's own THIRD_PARTY_NOTICES, and
+//    nl-runtime's (wllama, llama.cpp and the libraries compiled into the
+//    wllama wasm assets in dist/browser) beside it.
+for (const [from, to] of [
+  ["THIRD_PARTY_NOTICES", join(distRoot, "THIRD_PARTY_NOTICES")],
+  [
+    join("node_modules", "nl-runtime", "THIRD_PARTY_NOTICES"),
+    join(distRoot, "THIRD_PARTY_NOTICES.nl-runtime"),
+  ],
+]) {
+  if (!existsSync(from)) fail(`missing ${from}`);
+  copyFileSync(from, to);
+  console.log(`[runtime-assets] ${from} → ${to}`);
+}
+
 console.log("[runtime-assets] ok");
