@@ -2,7 +2,7 @@
 
 # Chat manifest lint
 
-109 findings: 0 errors, 109 warnings, 0 info. 106 are covered by `chat.overrides.ts`.
+79 findings: 0 errors, 79 warnings, 0 info. 76 are covered by `chat.overrides.ts`.
 
 The MCP column names the reactor-MCP operation that fixes a finding in the spec; `-` means the spec has no place for it and only the override can say it.
 
@@ -62,22 +62,6 @@ The MCP column names the reactor-MCP operation that fixes a finding in the spec;
 | warning | `pipeline-queue:COMPLETE_TASK` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
 | warning | `pipeline-queue:FAIL_TASK` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
 | warning | `pipeline-queue:UNBLOCK_TASK` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
-| warning | `project:ADD_DELIVERABLE` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:ADD_KNOWLEDGE_REF` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:ADD_MEMBER` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:CREATE_PROJECT` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:LINK_WBS` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:REMOVE_DELIVERABLE` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:REMOVE_KNOWLEDGE_REF` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:REMOVE_MEMBER` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:SET_DELIVERABLE_STATUS` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:SET_OWNER` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:SET_PROJECT_STATUS` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:SET_REFERENCES` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:SET_TARGET_DATE` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:UPDATE_DELIVERABLE` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:UPDATE_MEMBER` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `project:UPDATE_PROJECT_INFO` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
 | warning | `research-claim:ADD_RESEARCH_CONNECTION` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
 | warning | `research-claim:CREATE_CLAIM` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
 | warning | `research-claim:REMOVE_RESEARCH_CONNECTION` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
@@ -103,17 +87,3 @@ The MCP column names the reactor-MCP operation that fixes a finding in the spec;
 | warning | `vault-config:UPDATE_PIPELINE_CONFIG` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
 | warning | `vault-config:UPDATE_VOCABULARY` |  | description-replaced | SET_OPERATION_DESCRIPTION | descriptions | yes | an override replaces the spec's description; make the spec say it |
 | warning | `vault-config:UPDATE_VOCABULARY` | `key` | string-looks-closed | SET_OPERATION_SCHEMA | vocabularies | yes | a `String` the reducer checks against `VOCABULARY_KEYS` ("notes", "inbox", "reduce", "reflect", "reweave", "verify", "rethink", "topicMap", "description"); make it an enum |
-| warning | `wbs:ADD_DEPENDENCIES` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:ADD_NOTE` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:ASSIGN_GOAL` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:CREATE_GOAL` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:DELETE_GOAL` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:REMOVE_DEPENDENCIES` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:REMOVE_NOTE` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:REORDER` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:SET_GOAL_STATUS` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:SET_OUTCOME` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:SET_OWNER` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:SET_PROJECT_REF` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:SET_REFERENCES` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |
-| warning | `wbs:UPDATE_GOAL_DESCRIPTION` |  | description-empty | SET_OPERATION_DESCRIPTION | descriptions | yes | the spec has no description; the override is the option text |

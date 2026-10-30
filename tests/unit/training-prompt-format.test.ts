@@ -73,7 +73,7 @@ describe("training renderer, prompt format r6.1", () => {
       {
         role: "user",
         content: [
-          "Operation: SET_GOAL_STATUS - set goal status",
+          "Operation: SET_GOAL_STATUS - Sets a goal's status: to do, in progress, blocked (with a reason), in review, completed or won't do, optionally recording its outcome. Use to track progress on a goal.",
           'Choices for id: "Ship the beta", "Set up CI"',
           // `outcome` is gated out: the request does not mention it.
           'Arguments: {"id": choice, "status": "BLOCKED" | "COMPLETED" | "IN_PROGRESS" | "IN_REVIEW" | "TODO" | "WONT_DO", "blockReason"?: string | null}',

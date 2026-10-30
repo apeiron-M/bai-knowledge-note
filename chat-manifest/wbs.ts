@@ -15,7 +15,7 @@ export const data: ModelManifest = {
       name: "CREATE_GOAL",
       module: "goals",
       scope: "global",
-      description: "",
+      description: "Adds a new goal to the work breakdown, optionally under a parent goal, assigned to someone, or placed before another goal. Use to create a goal or sub-goal.",
       schema: "input CreateGoalInput {\n  id: OID!\n  description: String!\n  parentId: OID\n  assignee: String\n  insertBefore: OID\n}",
       fields: {
         id: "new-id",
@@ -41,7 +41,7 @@ export const data: ModelManifest = {
       name: "UPDATE_GOAL_DESCRIPTION",
       module: "goals",
       scope: "global",
-      description: "",
+      description: "Rewrites the description of an existing goal. Use to rename or reword a goal.",
       schema: "input UpdateGoalDescriptionInput {\n  id: OID!\n  description: String!\n}",
       fields: { id: "ref-id", description: "semantic" },
       input: {
@@ -55,7 +55,7 @@ export const data: ModelManifest = {
       name: "DELETE_GOAL",
       module: "goals",
       scope: "global",
-      description: "",
+      description: "Deletes a goal together with all of its sub-goals and removes any dependencies on them. Use to drop a goal from the plan.",
       schema: "input DeleteGoalInput {\n  id: OID!\n}",
       fields: { id: "ref-id" },
       input: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
@@ -65,7 +65,7 @@ export const data: ModelManifest = {
       name: "REORDER",
       module: "goals",
       scope: "global",
-      description: "",
+      description: "Moves a goal to a new position or under a different parent goal. Use to restructure the goal tree.",
       schema: "input ReorderInput {\n  id: OID!\n  parentId: OID\n  insertBefore: OID\n}",
       fields: { id: "ref-id", parentId: "ref-id", insertBefore: "ref-id" },
       input: {
@@ -83,7 +83,7 @@ export const data: ModelManifest = {
       name: "SET_GOAL_STATUS",
       module: "workflow",
       scope: "global",
-      description: "",
+      description: "Sets a goal's status: to do, in progress, blocked (with a reason), in review, completed or won't do, optionally recording its outcome. Use to track progress on a goal.",
       schema: "input SetGoalStatusInput {\n  id: OID!\n  status: GoalStatus!\n  blockReason: String\n  outcome: String\n}",
       fields: { id: "ref-id", status: "semantic", blockReason: "semantic", outcome: "semantic" },
       input: {
@@ -105,7 +105,7 @@ export const data: ModelManifest = {
       name: "ASSIGN_GOAL",
       module: "workflow",
       scope: "global",
-      description: "",
+      description: "Assigns a goal to a person, or clears the assignee. Use to say who is responsible for a goal.",
       schema: "input AssignGoalInput {\n  id: OID!\n  assignee: String\n}",
       fields: { id: "ref-id", assignee: "semantic" },
       input: {
@@ -119,7 +119,7 @@ export const data: ModelManifest = {
       name: "SET_OUTCOME",
       module: "workflow",
       scope: "global",
-      description: "",
+      description: "Sets or clears the recorded outcome of a goal, what it actually achieved. Use to write down the result of a goal.",
       schema: "input SetOutcomeInput {\n  id: OID!\n  outcome: String\n}",
       fields: { id: "ref-id", outcome: "semantic" },
       input: {
@@ -133,7 +133,7 @@ export const data: ModelManifest = {
       name: "ADD_DEPENDENCIES",
       module: "workflow",
       scope: "global",
-      description: "",
+      description: "Makes a goal depend on one or more other goals that must finish first. Use to record prerequisites between goals.",
       schema: "input AddDependenciesInput {\n  id: OID!\n  dependencies: [OID!]!\n}",
       fields: { id: "ref-id", dependencies: "ref-id" },
       input: {
@@ -147,7 +147,7 @@ export const data: ModelManifest = {
       name: "REMOVE_DEPENDENCIES",
       module: "workflow",
       scope: "global",
-      description: "",
+      description: "Removes one or more prerequisite goals from a goal's dependencies. Use when a goal no longer waits on them.",
       schema: "input RemoveDependenciesInput {\n  id: OID!\n  dependencies: [OID!]!\n}",
       fields: { id: "ref-id", dependencies: "ref-id" },
       input: {
@@ -161,7 +161,7 @@ export const data: ModelManifest = {
       name: "ADD_NOTE",
       module: "documentation",
       scope: "global",
-      description: "",
+      description: "Attaches a written note, with optional author and time, to a goal. Use to comment on or document progress for a goal.",
       schema: "input AddNoteInput {\n  goalId: OID!\n  noteId: OID!\n  note: String!\n  author: String\n  timestamp: DateTime\n}",
       fields: {
         goalId: "ref-id",
@@ -196,7 +196,7 @@ export const data: ModelManifest = {
       name: "REMOVE_NOTE",
       module: "documentation",
       scope: "global",
-      description: "",
+      description: "Deletes a note attached to a goal. Use to remove a comment from a goal.",
       schema: "input RemoveNoteInput {\n  goalId: OID!\n  noteId: OID!\n}",
       fields: { goalId: "ref-id", noteId: "ref-id" },
       input: {
@@ -210,7 +210,7 @@ export const data: ModelManifest = {
       name: "SET_OWNER",
       module: "documentation",
       scope: "global",
-      description: "",
+      description: "Sets or clears the owner of the whole work breakdown structure. Use to change who owns the plan.",
       schema: "input SetOwnerInput {\n  owner: String\n}",
       fields: { owner: "semantic" },
       input: { type: "object", properties: { owner: { anyOf: [{ type: "string" }, { type: "null" }] } } },
@@ -220,7 +220,7 @@ export const data: ModelManifest = {
       name: "SET_REFERENCES",
       module: "documentation",
       scope: "global",
-      description: "",
+      description: "Replaces the work breakdown's list of external reference URLs. Use to set the web links the plan points to.",
       schema: "input SetReferencesInput {\n  references: [URL!]!\n}",
       fields: { references: "semantic" },
       input: {
@@ -234,7 +234,7 @@ export const data: ModelManifest = {
       name: "SET_PROJECT_REF",
       module: "documentation",
       scope: "global",
-      description: "",
+      description: "Links the work breakdown structure to its project document, or clears the link. Use to attach the plan to a project.",
       schema: "input SetProjectRefInput {\n  projectRef: PHID\n}",
       fields: { projectRef: "ref-id" },
       input: {

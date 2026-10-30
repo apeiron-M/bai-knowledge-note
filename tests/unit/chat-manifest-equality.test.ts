@@ -1,17 +1,12 @@
 /**
- * M2 vault equality: the manifest `nl-generate` writes to chat-manifest/
- * (from the specs, reducers, barrels and chat.overrides.ts) equals the
- * vault's hand-written tables it replaced, and Kev's option text equals the
- * frozen training/kev/data/catalog.json.
- *
- * The hand tables (DEFAULT_FIELD_OVERRIDES, REF_EXTRACTORS, STATE_CHOICES,
- * CURRENT_LISTS, VOCABULARIES, OP_DESCRIPTIONS and the hand-assembled
- * VAULT_MANIFEST) were compared directly, function outputs included, until
- * they were deleted (vault a9f25fb8). What remains of them is
- * tests/fixtures/chat-manifest/hand-tables.sha256.json: the sha256 of each
- * section of `probeManifest(hand VAULT_MANIFEST)`, the function tables as
- * their outputs on the probe states. The catalog is also rebuilt from the
- * barrels' own spec objects (`buildRuntimeCatalog`).
+ * M2 vault equality: the generated chat-manifest/ equals the deleted hand
+ * tables (vault a9f25fb8), kept as per-section sha256 digests in
+ * tests/fixtures/chat-manifest/hand-tables.sha256.json, and Kev's option
+ * text equals the frozen training/kev/data/catalog.json.
+ * M5 moved the `catalog` digest on purpose: the 30 bai/project and bai/wbs
+ * spec descriptions, filled to ship with the LoRA m2bv. Blanking those 30
+ * gives the old digest (003101889179…). catalog.json stays frozen (the eval
+ * rig pins its sha) with their empty `specDescription`.
  */
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -139,8 +134,17 @@ describe("Kev option text vs the frozen catalog.json", () => {
     expect(ops).toBe(99);
   });
 
-  it("nl's Kev catalog (`nl gen kev-catalog`), reading the manifest, reproduces catalog.json byte for byte", () => {
+  it("nl's Kev catalog (`nl gen kev-catalog`), reading the manifest, reproduces catalog.json byte for byte but the 30 filled spec descriptions", () => {
     const app = { catalog: gen.catalog, manifest: gen } as unknown as Parameters<typeof kevCatalog>[0];
-    expect(JSON.stringify(kevCatalog(app), null, 1)).toBe(frozenText);
+    const filled = new Set(["project", "wbs"]);
+    const expected = (
+      JSON.parse(frozenText) as (Record<string, unknown> & (typeof frozen)[number])[]
+    ).map((f) =>
+      filled.has(f.model) ? { ...f, specDescription: f.override } : f,
+    );
+    expect(expected.filter((f) => filled.has(f.model))).toHaveLength(30);
+    expect(JSON.stringify(kevCatalog(app), null, 1)).toBe(
+      JSON.stringify(expected, null, 1),
+    );
   });
 });
