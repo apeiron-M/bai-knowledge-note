@@ -65,7 +65,7 @@ export function buildRuntimeCatalog(): CatalogEntry[] {
  * The runtime catalog: the generated manifest's (`chat-manifest/`, built
  * once per page from the specs and barrels). Moved here from
  * v1-pipeline.ts in M1 so the editor reaches it without the v1 pipeline
- * (and its gte-small embedder); v1-pipeline re-exports it.
+ * (and its gte-small embedder); M5 removed the v1 pipeline.
  */
 export function v1Catalog(): CatalogEntry[] {
   return chatManifest.catalog;

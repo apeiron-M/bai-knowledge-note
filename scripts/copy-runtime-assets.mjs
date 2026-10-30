@@ -50,10 +50,8 @@ function fail(msg) {
 
 // 1. Embedding model → dist/node/models/ (node runtime + CDN-served node
 //    chunks resolve `<moduleDir>/models/`). This copy is for the server-side
-//    processor and subgraph only. The browser build gets its own copies from
-//    the bundler: the knowledge-vault Chat tab's query embedder references
-//    each gte-small file with `new URL(..., import.meta.url)`
-//    (chat/core/gte-embedder.ts), so they land in dist/browser/assets/.
+//    processor and subgraph only. (The chat's own gte-small query embedder,
+//    chat/core/gte-embedder.ts, was removed in M5; the chat runs no ORT.)
 const modelSrc = "models";
 const modelProbe = join(
   modelSrc,
@@ -122,8 +120,8 @@ for (const f of ortFiles) {
 console.log(`[runtime-assets] ort wasm helpers → ${wasmDest}`);
 
 // 3. Strip unreferenced ort WASM assets from the browser build. Since M1 the
-//    chat runs no ORT (its v1 embedder, chat/core/gte-embedder.ts, left the
-//    editor's graph); the graph-indexer's browser embedder
+//    chat runs no ORT (its v1 embedder left the editor's graph in M1 and the
+//    repo in M5); the graph-indexer's browser embedder
 //    (processors/graph-indexer/embedder.ts, through transformers' web build)
 //    still references `ort-wasm-simd-threaded.asyncify.wasm`, so that asset
 //    ships. Only an `ort-wasm-*` asset that no browser chunk names is dead

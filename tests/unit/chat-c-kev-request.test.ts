@@ -6,7 +6,7 @@ import {
   kevRequest,
 } from "../../editors/knowledge-vault/chat/core/kev-request.js";
 import { OP_DESCRIPTIONS } from "../../editors/knowledge-vault/chat/core/op-descriptions.js";
-import { v1Catalog } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
+import { v1Catalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
 
 interface KevCatalogRow {
   key: string;

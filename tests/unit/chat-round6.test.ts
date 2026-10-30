@@ -21,26 +21,7 @@ import type {
   CompleteJson,
   ScoreText,
 } from "../../editors/knowledge-vault/chat/core/llm-client.js";
-import {
-  combinedNoAction,
-  docTypeLabel,
-  embeddingGateScore,
-  looksLikeQuestion,
-  NO_ACTION_EXEMPLARS,
-  gateLogOdds,
-  gateMessages,
-  scoreChangeGate,
-} from "../../editors/knowledge-vault/chat/core/no-action-gate.js";
 import { buildModelSchema } from "../../editors/knowledge-vault/chat/core/op-catalog.js";
-import {
-  createEmbeddingRetriever,
-  dot,
-  minMax,
-  opEmbeddingText,
-  rankIndices,
-  rankModels,
-  reciprocalRankFusion,
-} from "../../editors/knowledge-vault/chat/core/op-embeddings.js";
 import {
   answerText,
   CONTENT_FREE,
@@ -432,107 +413,5 @@ describe("labeled refs", () => {
       },
     );
     expect(r.args).toEqual({});
-  });
-});
-
-describe("no-action gate", () => {
-  it("computes calibrated log-odds and caches the content-free pair", async () => {
-    expect(gateLogOdds(-1, -3, -2, -2)).toBe(2);
-    expect(docTypeLabel("bai/knowledge-note")).toBe("knowledge note");
-    expect(docTypeLabel("wbs")).toBe("wbs");
-    expect(gateMessages("thanks", "bai/moc")[1].content).toBe(
-      "Document: moc\nRequest: thanks\n\nDoes the request change the document?",
-    );
-    let n = 0;
-    const scoreText: ScoreText = (messages, grammar) => {
-      n++;
-      const cf = messages[1].content.includes(`Request: ${CONTENT_FREE}\n`);
-      const yes = grammar.includes("yes");
-      const v = cf ? (yes ? -1 : -2) : yes ? -3 : -1;
-      return Promise.resolve(fakeResult("x", v));
-    };
-    const cache: ScoreCache = new Map();
-    const a = await scoreChangeGate("thanks", "bai/moc", { scoreText, cache });
-    expect(a.score).toBe(-3);
-    expect(a.rawScore).toBe(-2);
-    expect(a.noAction).toBe(true);
-    expect(n).toBe(4);
-    const b = await scoreChangeGate("ok", "bai/moc", {
-      scoreText,
-      cache,
-      threshold: -5,
-    });
-    expect(n).toBe(6);
-    expect(b.noAction).toBe(false);
-    expect(b.wallMs).toBe(10);
-  });
-});
-
-describe("embedding no-action gate", () => {
-  it("compares the nearest exemplar with the nearest op", () => {
-    expect(embeddingGateScore([0.2, 0.7], [0.5, 0.6])).toBeCloseTo(0.1);
-    expect(embeddingGateScore([], [0.3])).toBeCloseTo(-1.3);
-    expect(NO_ACTION_EXEMPLARS.length).toBeGreaterThan(10);
-  });
-
-  it("treats plain questions, not polite commands, as no-action", () => {
-    expect(looksLikeQuestion("what does canonical mean?")).toBe(true);
-    expect(looksLikeQuestion("can you tag this with ML?")).toBe(false);
-    expect(looksLikeQuestion("Please archive it?")).toBe(false);
-    expect(looksLikeQuestion("tag this with ML")).toBe(false);
-    expect(combinedNoAction("tag it", 0.05)).toBe(true);
-    expect(combinedNoAction("tag it", 0.04)).toBe(false);
-    expect(combinedNoAction("is it done?", -0.5)).toBe(true);
-  });
-});
-
-describe("embedding retrieval", () => {
-  it("builds op texts from words, model and description", () => {
-    const e = entry("knowledge-note:ADD_TOPIC");
-    expect(opEmbeddingText(e, { [e.key]: "Tags it." })).toBe(
-      "add topic (knowledge note): Tags it.",
-    );
-    expect(opEmbeddingText({ ...e, description: "" })).toBe(
-      "add topic (knowledge note)",
-    );
-  });
-
-  it("ranks, fuses and normalizes", () => {
-    expect(dot(new Float32Array([1, 0]), new Float32Array([0.5, 2]))).toBe(0.5);
-    expect(rankIndices([1, 3, 3, 0])).toEqual([1, 2, 0, 3]);
-    const f = reciprocalRankFusion(
-      [
-        ["a", "b", "c"],
-        ["b", "c"],
-      ],
-      0,
-    );
-    expect(f.map((x) => x.key)).toEqual(["b", "a", "c"]);
-    expect(f[0].score).toBeCloseTo(1 / 2 + 1);
-    expect(minMax([2, 4, 3])).toEqual([0, 1, 0.5]);
-    expect(minMax([1, 1])).toEqual([0, 0]);
-    expect(minMax([])).toEqual([]);
-  });
-
-  it("embeds ops once and filters by document type", async () => {
-    let batches = 0;
-    const embed = (texts: string[]) => {
-      batches++;
-      return Promise.resolve(
-        texts.map((t) =>
-          t.includes("topic")
-            ? new Float32Array([1, 0])
-            : new Float32Array([0, 1]),
-        ),
-      );
-    };
-    const r = createEmbeddingRetriever(catalog, embed);
-    const all = await r.retrieve("tag it with topic", { k: 3 });
-    expect(all.hits).toHaveLength(3);
-    expect(all.hits[0].entry.opName).toMatch(/TOPIC/);
-    const scoped = await r.retrieve("topic", { docType: "bai/wbs" });
-    expect(scoped.hits.every((h) => h.entry.docType === "bai/wbs")).toBe(true);
-    expect(batches).toBe(3);
-    expect(rankModels(all.hits)[0]).toBe("bai/knowledge-note");
   });
 });

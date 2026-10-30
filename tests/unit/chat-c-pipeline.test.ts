@@ -18,7 +18,7 @@ import {
   forcedOpsText,
   STEP1_SYSTEM,
 } from "../../editors/knowledge-vault/chat/core/op-scorer.js";
-import { v1Catalog } from "../../editors/knowledge-vault/chat/core/v1-pipeline.js";
+import { v1Catalog } from "../../editors/knowledge-vault/chat/core/catalog-models.js";
 
 const catalog = v1Catalog();
 const DOC = "bai/knowledge-note";
