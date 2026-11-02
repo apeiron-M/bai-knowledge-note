@@ -69,6 +69,22 @@ site's **Try on web** (`../knowledge-vault-landing`). Nothing else runs it:
   import in `dist/node`, an unresolved `#browser-vault`, or a browser build that
   lost the vault.
 
+## ⚠️ PGlite stores never get planner statistics — run `ANALYZE` after big growth
+
+PGlite has no autovacuum, and the stack's store maintenance runs `VACUUM` and
+`CHECKPOINT` but never `ANALYZE` (6.2.3-dev.90), so `.ph/reactor-storage` and
+`.ph/read-storage` plan every query from Postgres defaults. On 2026-11-02 that
+made the sync outbox rebuild after each restart take ~350 s at 100% of the
+reactor store's thread — every read and write waited — where 6 s was enough
+once statistics existed. Symptom: the first write after `ph vetra` starts is
+slow for minutes, then everything is fast.
+
+With the Switchboard stopped: `node scripts/analyze-stores.mjs --apply` (under
+a second per store; statistics persist in the store). Re-run after a large
+import. Dead sync remotes feed the same rebuild:
+`node scripts/prune-sync-remotes.mjs --stale-days 7 --apply`. Details:
+`docs/upstream-bugs-6.2.3-dev.90.md`.
+
 ## Ordinal holes in the operation index — resolved upstream
 
 `operation_index_operations.ordinal` is a Postgres `serial`; a rolled-back write
