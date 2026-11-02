@@ -4,7 +4,7 @@ import { connectNotesAction } from "../lib/actions/connect-notes.js";
 import { placeInMocsAction } from "../lib/actions/place-in-mocs.js";
 import { checkLink, CONNECT_SYSTEM, gatherCandidates, normaliseName, proposeLinksStage, resolveNoteRef, sourceNotes, writeLinksStage } from "../lib/agent/connect.js";
 import { LlmClient } from "../lib/agent/llm.js";
-import { advancePipeline, catchUp, claimPhase, findQueue, gateStep, passThrough, taskPosition } from "../lib/agent/pipeline.js";
+import { advancePipeline, catchUp, CLAIM_TIMEOUT_MS, claimPhase, findQueue, gateStep, passThrough, taskPosition } from "../lib/agent/pipeline.js";
 import { llmFor, stageRunner } from "../lib/agent/runner.js";
 import { checkPlan, PLACE_SYSTEM, placeSystem, planStage, readMocs, writePlacementsStage, type MocInfo } from "../lib/agent/synthesize.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
@@ -96,6 +96,20 @@ describe("claiming a phase before the work", () => {
     await expect(claimPhase(theirs.client, a)).rejects.toThrow(/being worked by 0xother/);
     const nobody = vault({ "notes/d": drive, "notes/q1": queue([task({ status: "IN_PROGRESS" })]), ping: { user: "0xme" } });
     await expect(claimPhase(nobody.client, a)).rejects.toThrow(/being worked by someone else/);
+  });
+  it("gives the claim a write's time, and goes on when a claim that timed out landed", async () => {
+    const timedOut = () => { throw new KnowledgeVaultApiError("The request timed out", { category: "timeout", retryable: true }); };
+    // The queue as read before the claim, then after it timed out: the claim had landed.
+    let reads = 0;
+    const landed = vault({ "notes/d": drive, "notes/q1": () => queue([task(reads++ === 0 ? {} : { status: "IN_PROGRESS", assignedTo: "0xme" })]), ping: { user: "0xme" }, "tasks/t1/claim": timedOut });
+    expect((await claimPhase(landed.client, a)).summary).toBe("Claimed the pipeline task at create.");
+    expect(landed.requests.find((r) => r.path === "tasks/t1/claim")?.timeoutMs).toBe(CLAIM_TIMEOUT_MS);
+    // It did not land: the timeout stands.
+    const lost = vault({ "notes/d": drive, "notes/q1": queue([task({})]), ping: { user: "0xme" }, "tasks/t1/claim": timedOut });
+    await expect(claimPhase(lost.client, a)).rejects.toThrow(/timed out/);
+    // Any other failure is not second-guessed.
+    const refused = vault({ "notes/d": drive, "notes/q1": queue([task({})]), ping: { user: "0xme" }, "tasks/t1/claim": () => { throw new KnowledgeVaultApiError("Forbidden", { category: "permission" }); } });
+    await expect(claimPhase(refused.client, a)).rejects.toThrow(/Forbidden/);
   });
   it("leaves the step running when there is nothing to claim", async () => {
     expect((await claimPhase(vault({ "notes/d": { state: { global: { nodes: [] } } } }).client, a)).summary).toMatch(/No pipeline queue/);

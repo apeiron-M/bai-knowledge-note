@@ -34,6 +34,13 @@ export async function findQueue(client: KnowledgeVaultClient, drive: string): Pr
 const sameAddress = (a: string | null | undefined, b: string | null | undefined) => !!a && !!b && a.toLowerCase() === b.toLowerCase();
 
 /**
+ * A claim writes to the queue and waits for the reactor to apply it and read it back. At the end of a
+ * step the reactor is still busy with that step's own writes and the indexer's follow-ups, so a claim
+ * gets a write's time, not a read's 30 s: one timed out on 2026-10-10 and parked the vault's pipeline.
+ */
+export const CLAIM_TIMEOUT_MS = 120_000;
+
+/**
  * Where the source's task stands against a step's phase, read-only:
  * `at` (the step's own phase), `ahead` (the task is already past it),
  * `behind` (an earlier phase is still open), `done` (no open task, a
@@ -143,8 +150,25 @@ export async function claimPhase(client: KnowledgeVaultClient, args: { drive: st
     if (sameAddress(task.assignedTo, user)) return { task_id: task.id, summary: `The pipeline task at ${args.phase} is already held by this connection (a rerun).` };
     throw new KnowledgeVaultApiError(`The source's pipeline task at ${args.phase} is being worked by ${task.assignedTo ?? "someone else"}; this step stops so the work is not done twice.`, { category: "validation" });
   }
-  await client.request({ method: "POST", path: `tasks/${encodeURIComponent(task.id)}/claim`, query: { drive: args.drive }, json: {} });
+  await claimTask(client, { drive: args.drive, queueId, sourceId: args.sourceId, taskId: task.id, user });
   return { task_id: task.id, summary: `Claimed the pipeline task at ${args.phase}.` };
+}
+
+/**
+ * Claim one task. A claim that timed out may still have landed (the request only stopped waiting for it),
+ * so the task is read again: held by this connection means it landed and the step goes on; anything else
+ * is the timeout it was.
+ */
+async function claimTask(client: KnowledgeVaultClient, args: { drive: string; queueId: string; sourceId: string; taskId: string; user?: string | null }): Promise<void> {
+  try {
+    await client.request({ method: "POST", path: `tasks/${encodeURIComponent(args.taskId)}/claim`, query: { drive: args.drive }, json: {}, timeoutMs: CLAIM_TIMEOUT_MS });
+  } catch (error) {
+    if (!(error instanceof KnowledgeVaultApiError) || error.category !== "timeout") throw error;
+    const user = args.user !== undefined ? args.user : (await client.request<{ user: string | null }>({ path: "ping" })).user;
+    const now = await taskFor(client, args.drive, args.queueId, args.sourceId);
+    if (now?.id === args.taskId && now.status === "IN_PROGRESS" && sameAddress(now.assignedTo, user)) return;
+    throw error;
+  }
 }
 
 async function sourceTasks(client: KnowledgeVaultClient, drive: string, queueId: string, sourceId: string): Promise<Task[]> {
@@ -190,7 +214,7 @@ export async function advancePipeline(
         return { task_id: task.id, from: args.phase, to: args.phase, summary: `The pipeline task is held by ${task.assignedTo ?? "someone else"}, not this connection; left as it is.` };
       }
     } else {
-      await client.request({ method: "POST", path: `tasks/${encodeURIComponent(task.id)}/claim`, query: { drive: args.drive }, json: {} });
+      await claimTask(client, { drive: args.drive, queueId, sourceId: args.sourceId, taskId: task.id });
     }
     const at = (args.now ?? (() => new Date()))().toISOString();
     const result = await client.request<{ operations: { type: string; error?: string | null }[] }>({
