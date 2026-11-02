@@ -53,7 +53,8 @@ const stepsOf = (p: WorkProposal) => p.changes.map((c) => (c.steps ?? []).map((s
 describe("the operations the chat may propose", () => {
   it("are every operation of the two models but the base ones and the legacy SET_PROJECT_REF — so a new one is not left out unnoticed", () => {
     const listed = (t: typeof SCOPE_TYPE | typeof WBS_TYPE) => new Set(WORK_OPERATIONS[t].map(creatorName));
-    const base = ["setName", "setPreferredEditor", "undo", "redo", "noop"];
+    // The base actions every model gets from document-model (setSlug since 6.2.3-dev.90).
+    const base = ["setName", "setPreferredEditor", "setSlug", "undo", "redo", "noop"];
     expect(Object.keys(sow).filter((k) => !listed(SCOPE_TYPE).has(k)).sort()).toEqual([...base].sort());
     expect(Object.keys(wbs).filter((k) => !listed(WBS_TYPE).has(k)).sort()).toEqual([...base, "setProjectRef"].sort());
   });
