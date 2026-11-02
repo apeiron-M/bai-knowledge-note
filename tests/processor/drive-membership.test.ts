@@ -115,6 +115,63 @@ describe("DriveMembership", () => {
     expect(client.get).toHaveBeenCalledTimes(2);
   });
 
+  it("asks the relationship index about a miss instead of re-reading the drive, and remembers the answer", async () => {
+    let now = 1_000_000;
+    const getIncoming = vi.fn((id: string) =>
+      Promise.resolve({ results: [{ sourceId: id === "new" ? OURS : THEIRS, relationshipType: "child" }] }),
+    );
+    const client = { get: vi.fn(() => Promise.resolve(driveDoc(["a"]))), documentIndexer: { getIncoming } };
+    const m = new DriveMembership({ driveId: OURS, client, now: () => now });
+    expect(await m.has("a")).toBe(true); // first read of the drive
+    now += 10 * MEMBERSHIP_REFRESH_THROTTLE_MS;
+    expect(await m.has("foreign")).toBe(false); // the index says another drive holds it
+    expect(await m.has("foreign")).toBe(false); // remembered: no second lookup
+    expect(getIncoming).toHaveBeenCalledTimes(1);
+    expect(getIncoming).toHaveBeenCalledWith("foreign", ["child"]);
+    expect(await m.has("new")).toBe(true); // the index says it is ours
+    expect(await m.has("new")).toBe(true); // and now it is in the set
+    expect(getIncoming).toHaveBeenCalledTimes(2);
+    expect(client.get).toHaveBeenCalledTimes(1); // the drive was never re-read
+  });
+
+  it("finds the index behind the facade, on its read half", async () => {
+    const getIncoming = vi.fn(() => Promise.resolve({ results: [{ sourceId: THEIRS, relationshipType: "child" }] }));
+    const client = { get: vi.fn(() => Promise.resolve(driveDoc(["a"]))), read: { documentIndexer: { getIncoming } } };
+    const m = new DriveMembership({ driveId: OURS, client, now: () => 1e12 });
+    expect(await m.has("a")).toBe(true);
+    expect(await m.has("x")).toBe(false);
+    expect(getIncoming).toHaveBeenCalledTimes(1);
+    expect(client.get).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to the throttled re-read when the index has no containment edge or fails", async () => {
+    let now = 1_000_000;
+    let fail = false;
+    const getIncoming = vi.fn(() => (fail ? Promise.reject(new Error("down")) : Promise.resolve({ results: [] })));
+    const client = { get: vi.fn(() => Promise.resolve(driveDoc(["a"]))), documentIndexer: { getIncoming } };
+    const m = new DriveMembership({ driveId: OURS, client, now: () => now });
+    expect(await m.has("a")).toBe(true);
+    now += MEMBERSHIP_REFRESH_THROTTLE_MS;
+    client.get.mockImplementation(() => Promise.resolve(driveDoc(["a", "x"])));
+    expect(await m.has("x")).toBe(true); // no edge → re-read → found
+    expect(client.get).toHaveBeenCalledTimes(2);
+    fail = true;
+    now += MEMBERSHIP_REFRESH_THROTTLE_MS;
+    client.get.mockImplementation(() => Promise.resolve(driveDoc(["a", "x", "y"])));
+    expect(await m.has("y")).toBe(true); // index error → re-read → found
+    expect(client.get).toHaveBeenCalledTimes(3);
+  });
+
+  it("admits a remembered foreign document once a signal moves it into this drive", async () => {
+    const getIncoming = vi.fn(() => Promise.resolve({ results: [{ sourceId: THEIRS, relationshipType: "child" }] }));
+    const client = { get: vi.fn(() => Promise.resolve(driveDoc(["a"]))), documentIndexer: { getIncoming } };
+    const m = new DriveMembership({ driveId: OURS, client, now: () => 1e12 });
+    expect(await m.has("a")).toBe(true);
+    expect(await m.has("moved")).toBe(false);
+    m.observe({ documentId: "moved", actionType: "ADD_RELATIONSHIP", input: { sourceId: OURS, targetId: "moved", relationshipType: "child" } });
+    expect(await m.has("moved")).toBe(true);
+  });
+
   it("learns from the containment edge and the drive's node operations", async () => {
     const client = { get: vi.fn(() => Promise.resolve(driveDoc(["a"]))) };
     const m = new DriveMembership({ driveId: OURS, client });

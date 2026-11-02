@@ -44,6 +44,30 @@ export type DriveMembershipDeps = {
 /** Minimum gap between two reads of the drive document. */
 export const MEMBERSHIP_REFRESH_THROTTLE_MS = 5_000;
 
+/** How many documents known to be another drive's are remembered; past it the memory starts again. */
+export const MAX_REMEMBERED_FOREIGN = 50_000;
+
+/** The reactor's relationship index, as far as membership needs it: who points at a document. */
+type ContainmentIndex = {
+  getIncoming(
+    documentId: string,
+    types?: string[],
+  ): Promise<{ results: { sourceId: string; relationshipType?: string }[] }>;
+};
+
+/**
+ * The reactor's relationship index behind a client, when the client is the in-process one: on the
+ * client itself (a read half) or on its `read` (the facade). Null for clients without it.
+ */
+export function containmentIndexOf(client: unknown): ContainmentIndex | null {
+  const holder = client as { documentIndexer?: unknown; read?: { documentIndexer?: unknown } } | null | undefined;
+  for (const candidate of [holder?.documentIndexer, holder?.read?.documentIndexer]) {
+    const index = candidate as Partial<ContainmentIndex> | undefined;
+    if (index && typeof index.getIncoming === "function") return index as ContainmentIndex;
+  }
+  return null;
+}
+
 /** How the reactor labels its own containment relationship. */
 export const CONTAINMENT_RELATIONSHIP_TYPE = "child";
 
@@ -60,6 +84,8 @@ export class DriveMembership {
   private lastReadMs = -Infinity;
   private inflight: Promise<void> | null = null;
   private warned = false;
+  /** Documents the relationship index placed in another drive. */
+  private readonly foreign = new Set<string>();
 
   constructor(private readonly deps: DriveMembershipDeps) {}
 
@@ -138,6 +164,22 @@ export class DriveMembership {
     if (this.ids === null) await this.load();
     if (this.ids === null) return true;
     if (this.ids.has(documentId)) return true;
+    if (this.foreign.has(documentId)) return false;
+    // Every drive's operations reach every instance, so most misses are another vault's documents.
+    // Ask the relationship index which drive holds this one: one indexed lookup, where re-reading
+    // this drive costs a whole drive document per foreign operation, and since 6.2.3-dev.85 a write
+    // waits for its processors, so that read sat inside every other vault's writes.
+    const containers = await this.containersOf(documentId);
+    if (containers && containers.length > 0) {
+      if (containers.includes(this.deps.driveId)) {
+        this.add(documentId);
+        return true;
+      }
+      if (this.foreign.size >= MAX_REMEMBERED_FOREIGN) this.foreign.clear();
+      this.foreign.add(documentId);
+      return false;
+    }
+    // The index cannot tell (none reachable, or no containment edge): the throttled re-read.
     if (this.now() - this.lastReadMs >= MEMBERSHIP_REFRESH_THROTTLE_MS) {
       await this.load();
       if (this.ids.has(documentId)) return true;
@@ -145,11 +187,26 @@ export class DriveMembership {
     return false;
   }
 
+  /** The drives holding `documentId` by their containment edge; null when the index cannot be asked. */
+  private async containersOf(documentId: string): Promise<string[] | null> {
+    const index = containmentIndexOf(this.deps.client);
+    if (!index) return null;
+    try {
+      const page = await index.getIncoming(documentId, [CONTAINMENT_RELATIONSHIP_TYPE]);
+      return page.results
+        .filter((r) => (r.relationshipType ?? CONTAINMENT_RELATIONSHIP_TYPE) === CONTAINMENT_RELATIONSHIP_TYPE)
+        .map((r) => r.sourceId);
+    } catch {
+      return null;
+    }
+  }
+
   private add(id: string): void {
     // Learned signals are only trustworthy relative to a loaded set; with no
     // set we are open anyway, and a partial set built from live signals would
     // silently exclude every pre-existing document.
     this.ids?.add(id);
+    this.foreign.delete(id);
   }
 
   /** Read the drive document; on failure keep whatever we had. */
