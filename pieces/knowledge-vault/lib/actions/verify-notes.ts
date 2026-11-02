@@ -74,7 +74,7 @@ export const verifyNotesAction = createAction({
     });
     const retirements = planRetirements(read.notes, judged.verdicts, candidates.candidates);
     const titles = new Map(read.notes.map((n) => [n.id, n.title]));
-    const retired = write && retirements.length ? await stage("retire", () => retireStage(client, { retirements, titles, actor: `verify-notes · ${model}` })) : null;
+    const retired = write && retirements.length ? await stage("retire", () => retireStage(client, { retirements, titles, statuses: new Map(read.notes.map((n) => [n.id, n.status])), actor: `verify-notes · ${model}` })) : null;
     const flaggedCount = [...judged.verdicts.values()].filter((v) => v.verdict === "flag").length;
     const retiredCount = retired?.retired.length ?? 0;
     const pipeline = write

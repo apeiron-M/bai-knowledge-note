@@ -169,13 +169,26 @@ export function planRetirements(notes: VerifyNote[], verdicts: Map<string, NoteV
   return out;
 }
 
-export async function retireStage(client: KnowledgeVaultClient, args: { retirements: Retirement[]; titles: Map<string, string>; actor: string; now?: () => Date }) {
+/**
+ * Retire each duplicate: SUPERSEDES from the surviving note, then back to DRAFT with a comment. A rejection
+ * is only legal from IN_REVIEW, and a duplicate the pipeline has not submitted yet is DRAFT already (or was
+ * archived): it is where a rejection would put it, so the link is all it needs. Asking anyway failed the step
+ * and kept the source's task at verify.
+ */
+export async function retireStage(client: KnowledgeVaultClient, args: { retirements: Retirement[]; titles: Map<string, string>; statuses?: Map<string, string>; actor: string; now?: () => Date }) {
   const at = (args.now ?? (() => new Date()))().toISOString();
   const done: Retirement[] = [];
   const problems: string[] = [];
+  let leftInDraft = 0;
   for (const r of args.retirements) {
     try {
       await client.request({ method: "POST", path: "relationships", json: { source: r.survivor, target: r.duplicate, type: "SUPERSEDES", reason: `"${r.survivor_title}" already makes this claim: ${r.reason}`.slice(0, 900), confidence: "established" } });
+      const status = args.statuses?.get(r.duplicate);
+      if (status === "DRAFT" || status === "ARCHIVED") {
+        leftInDraft++;
+        done.push(r);
+        continue;
+      }
       const result = await client.request<{ operations: { type: string; error?: string | null }[] }>({
         method: "POST",
         path: "actions",
@@ -189,7 +202,7 @@ export async function retireStage(client: KnowledgeVaultClient, args: { retireme
     }
   }
   return {
-    summary: `Retired ${done.length} duplicate${done.length === 1 ? "" : "s"} (SUPERSEDES from the surviving note, rejected back to DRAFT with a comment)${problems.length ? `; ${problems.length} could not be retired` : ""}.`,
+    summary: `Retired ${done.length} duplicate${done.length === 1 ? "" : "s"} (SUPERSEDES from the surviving note, rejected back to DRAFT with a comment)${leftInDraft ? `; ${leftInDraft} already in DRAFT, left there with the link` : ""}${problems.length ? `; ${problems.length} could not be retired` : ""}.`,
     retired: done,
     problems,
   };

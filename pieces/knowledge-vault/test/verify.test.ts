@@ -136,6 +136,28 @@ describe("duplicates", () => {
   });
 });
 
+describe("retiring a duplicate that is already a draft", () => {
+  it("links it from the survivor and leaves it in DRAFT, instead of a rejection only IN_REVIEW allows", async () => {
+    const v = vault({ relationships: {}, actions: () => { throw new Error("no rejection should be sent"); } });
+    const out = await retireStage(v.client, {
+      retirements: [{ duplicate: "d1", survivor: "x1", survivor_title: "Old", reason: "same finding" }, { duplicate: "a1", survivor: "x2", survivor_title: "Older", reason: "r" }],
+      titles: new Map([["d1", "Draft claim"], ["a1", "Archived claim"]]),
+      statuses: new Map([["d1", "DRAFT"], ["a1", "ARCHIVED"]]),
+      actor: "verify-notes · m",
+    });
+    expect(v.requests.map((r) => r.path)).toEqual(["relationships", "relationships"]);
+    expect(out.retired.map((r) => r.duplicate)).toEqual(["d1", "a1"]);
+    expect(out.problems).toEqual([]);
+    expect(out.summary).toBe("Retired 2 duplicates (SUPERSEDES from the surviving note, rejected back to DRAFT with a comment); 2 already in DRAFT, left there with the link.");
+  });
+  it("still rejects one in review", async () => {
+    const v = vault({ relationships: {}, actions: { operations: [] } });
+    const out = await retireStage(v.client, { retirements: [{ duplicate: "r1", survivor: "x1", survivor_title: "Old", reason: "r" }], titles: new Map(), statuses: new Map([["r1", "IN_REVIEW"]]), actor: "a" });
+    expect(v.requests.map((r) => r.path)).toEqual(["relationships", "actions"]);
+    expect(out.retired).toHaveLength(1);
+  });
+});
+
 describe("the verify-notes action", () => {
   const auth = { props: { base_url: "http://127.0.0.1:1", token: "t", llm_api_key: "k", llm_base_url: "https://llm.test/v1", llm_default_model: "m/default" } };
   let claims = ["n1", "n2", "n3"];
