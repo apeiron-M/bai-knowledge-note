@@ -25,6 +25,8 @@ export const LIBRARY_CSS = `
 
 /* shared library chrome */
 .vault-lib .lib-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+/* The heading clears the phone's menu button (VaultShell's --vault-menu-gap; 0 elsewhere); what wraps under it takes the full width. */
+.vault-lib .lib-head > h1:first-child { margin-left: var(--vault-menu-gap, 0px); }
 .vault-lib .lib-head h1 { margin: 0; font-size: 22px; font-weight: 650; letter-spacing: -0.01em; color: var(--bai-text); }
 .vault-lib .lib-head .count { color: var(--bai-text-tertiary); font-size: 15px; font-variant-numeric: tabular-nums; }
 .vault-lib .lib-tools { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }

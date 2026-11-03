@@ -22,11 +22,14 @@ export function ChatHistoryMenu({
   currentId,
   onOpen,
   onDelete,
+  iconOnly = false,
 }: {
   threads: Thread[];
   currentId: string | null;
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
+  /** A phone's header: the clock alone, its name for screen readers. */
+  iconOnly?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   if (threads.length === 0) return null;
@@ -38,6 +41,7 @@ export function ChatHistoryMenu({
         onClick={() => setOpen((v) => !v)}
         className="vault-btn"
         title="Recent chats"
+        aria-label={iconOnly ? "Recent chats" : undefined}
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -51,7 +55,7 @@ export function ChatHistoryMenu({
           <circle cx="12" cy="12" r="10" />
           <path d="M12 6v6l4 2" />
         </svg>
-        Recent
+        {!iconOnly && "Recent"}
       </button>
 
       {open && (

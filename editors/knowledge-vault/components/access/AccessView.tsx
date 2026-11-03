@@ -256,7 +256,7 @@ export function AccessView() {
 
   return (
     <div className="flex flex-col gap-5 overflow-y-auto p-6">
-      <header className="flex items-end justify-between gap-4">
+      <header className="flex items-end justify-between gap-4" style={{ paddingLeft: "var(--vault-menu-gap, 0px)" }}>
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Access</h1>
           <p className="mt-0.5 text-xs" style={{ color: "var(--bai-text-tertiary)" }}>

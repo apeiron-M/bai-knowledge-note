@@ -1027,6 +1027,8 @@ export function DriveExplorer({ children }: EditorProps) {
     <VaultShell
       sidebarHidden={editorOwnsSidebar}
       sidebarWidth={sidebarWidth}
+      // Anything picked in the phone's drawer lands here: a view, a document, a chat, a dialog.
+      drawerKey={[viewMode, selectedNode?.id ?? "", activeChatId ?? "", paletteOpen, creating?.key ?? "", guideOpen, notesScope?.label ?? "", intake.visible].join("|")}
       fileDrop={{
         rootProps: fileDrop.rootProps,
         overlay: fileDrop.active && (
@@ -1090,7 +1092,7 @@ export function DriveExplorer({ children }: EditorProps) {
       }
     >
       {showDocumentEditor ? (
-        <div className="h-full">
+        <div className="vault-editor-pane h-full">
           {/*
             The editor pane waits and fails on its own. `children` is
             Connect's DocumentEditorContainer, whose useSelectedDocument()
@@ -1194,6 +1196,9 @@ export const CREATE_ITEMS = [
  * scopes of work — what is priced and scheduled — and the projects they fund.
  * One place in the sidebar, two tabs here.
  */
+/** A view's top row, clear of the phone's menu button (VaultShell: 0 when there is none). */
+const MENU_GAP_ROW = { paddingLeft: "calc(16px + var(--vault-menu-gap, 0px))" } as const;
+
 function WorkTabs({
   active,
   projects,
@@ -1210,7 +1215,7 @@ function WorkTabs({
     { key: "projects", label: "Projects", count: projects },
   ];
   return (
-    <div className="vault-work-tabs px-4 pt-3">
+    <div className="vault-work-tabs px-4 pt-3" style={MENU_GAP_ROW}>
       <nav className="vault-seg" aria-label="Work">
         {tabs.map((tab) => {
           const current = tab.key === active;
@@ -1247,7 +1252,7 @@ function SourcesTabs({
     { key: "timeline", label: "Timeline" },
   ];
   return (
-    <div className="vault-sources-tabs px-4 pt-3">
+    <div className="vault-sources-tabs px-4 pt-3" style={MENU_GAP_ROW}>
       <nav className="vault-seg" aria-label="Sources">
         {tabs.map((tab) => (
           <button

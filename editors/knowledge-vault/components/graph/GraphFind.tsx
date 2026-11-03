@@ -54,7 +54,7 @@ export function GraphFind(props: {
   }
 
   return (
-    <div className="absolute left-3 top-3 z-20 w-64">
+    <div className="absolute top-3 z-20 w-64" style={{ left: "calc(12px + var(--vault-menu-gap, 0px))", maxWidth: "calc(100% - 76px - var(--vault-menu-gap, 0px))" }}>
       <input
         type="text"
         value={query}

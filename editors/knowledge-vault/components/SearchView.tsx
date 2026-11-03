@@ -124,8 +124,8 @@ export function SearchView({ isLoading = false }: { isLoading?: boolean }) {
 
   return (
     <div className="flex h-full flex-col p-4">
-      {/* Search bar */}
-      <div className="mb-4 flex items-center gap-3">
+      {/* Search bar, clear of the phone's menu button */}
+      <div className="mb-4 flex items-center gap-3" style={{ paddingLeft: "var(--vault-menu-gap, 0px)" }}>
         <div
           className="relative flex-1"
           style={{ color: "var(--bai-text-muted)" }}

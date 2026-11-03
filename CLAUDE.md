@@ -93,6 +93,19 @@ nowhere.
   check the edit stayed; `?reactorClient=remote` switches back. The console
   line `[RemoteFirst] Sync channel … neutralised` confirms the mode.
 
+## ⚠️ On a phone the sidebar is a drawer: keep a view's top row clear of its button
+
+Below a 640 px frame (`DRAWER_BELOW`, `VaultShell.tsx`) there is no sidebar
+column: a floating menu button sits at the top left of the content and opens
+the sidebar as a drawer, which is only in the page while it is open (the
+landing's Try on web tour finds controls by their size). The shell sets
+`--vault-menu-gap` (40 px; 0 everywhere else), and every view's top row makes
+room with it: `padding-left: calc(16px + var(--vault-menu-gap, 0px))`, or the
+library pages' `.lib-head > h1` margin. A new view that puts something at its
+top left must do the same, or the button covers it. `useVaultLayout().drawer`
+tells a component it is on a phone (the chat compacts its header and drops the
+sheet's margins). `VaultShell.drawer.test.tsx` covers the drawer.
+
 ## ⚠️ PGlite stores never get planner statistics — run `ANALYZE` after big growth
 
 PGlite has no autovacuum, and the stack's store maintenance runs `VACUUM` and

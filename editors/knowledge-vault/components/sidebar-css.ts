@@ -21,6 +21,8 @@ export const SIDEBAR_CSS = `
   border-right: 1px solid var(--bai-border);
 }
 .vault-sidebar button { font: inherit; }
+/* A phone's drawer: no keyboard to press Ctrl K on. */
+.vault-sidebar[data-drawer] .vs-search kbd { display: none; }
 .vault-sidebar .vault-i { color: var(--bai-text-tertiary); }
 .vault-sidebar .vs-anchor { position: relative; }
 

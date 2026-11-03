@@ -23,7 +23,7 @@ import { VaultMenu, type VaultMenuItem } from "./VaultMenu.js";
 import { VaultGlyph } from "./VaultGlyph.js";
 import { VaultIcon } from "./vault-icons.js";
 import { SIDEBAR_CSS } from "./sidebar-css.js";
-import { useFrameWidth } from "./VaultShell.js";
+import { useVaultLayout } from "./VaultShell.js";
 
 type VaultSidebarProps = {
   /** Only to tell a background refresh from a first load. */
@@ -172,8 +172,9 @@ export function VaultSidebar({
   const selectedNode = useSelectedNode();
   const selectedId = selectedNode?.id;
   const [collapsed, setCollapsed] = useState(false);
-  const frameWidth = useFrameWidth();
-  const mode = sidebarMode(frameWidth, collapsed);
+  const { frameWidth, drawer, closeDrawer } = useVaultLayout();
+  // In a phone's drawer the sidebar is whole: it has the screen to itself while it is open.
+  const mode = drawer ? "full" : sidebarMode(frameWidth, collapsed);
   const forcedRail = mode === "rail" && !collapsed;
   // Null until the user drags: the shell's column (and its breakpoints) set
   // the width until then.
@@ -181,8 +182,8 @@ export function VaultSidebar({
   const rootRef = useRef<HTMLElement>(null);
   const resizing = useRef(false);
   useLayoutEffect(() => {
-    onWidthChange?.(mode === "rail" ? RAIL_WIDTH : (sidebarWidth ?? undefined));
-  }, [onWidthChange, mode, sidebarWidth]);
+    onWidthChange?.(drawer ? undefined : mode === "rail" ? RAIL_WIDTH : (sidebarWidth ?? undefined));
+  }, [onWidthChange, drawer, mode, sidebarWidth]);
   // File nodes only — no doc state fetch. `useDocumentsInSelectedDrive`
   // would suspend-and-throw on any orphan id missing from the cache,
   // freezing the whole drive editor in retry-loops.
@@ -318,10 +319,11 @@ export function VaultSidebar({
       ref={rootRef}
       className="vault-sidebar"
       data-mode={mode}
+      data-drawer={drawer ? "" : undefined}
       aria-label={vaultName ? `Vault ${vaultName}` : "Vault"}
     >
       <style aria-hidden="true">{SIDEBAR_CSS}</style>
-      {!rail && (
+      {!rail && !drawer && (
         <div
           className="sidebar-resize-handle absolute right-0 top-0 z-10 h-full w-1 cursor-col-resize"
           onMouseDown={handleMouseDown}
@@ -348,7 +350,11 @@ export function VaultSidebar({
           </button>
           {menu === "head" && vaultMenu("below")}
         </div>
-        {!forcedRail && (
+        {drawer ? (
+          <button type="button" className="vs-iconbtn" onClick={closeDrawer} title="Close the menu" aria-label="Close the menu">
+            <VaultIcon name="close" />
+          </button>
+        ) : !forcedRail && (
           <button
             type="button"
             className="vs-iconbtn"

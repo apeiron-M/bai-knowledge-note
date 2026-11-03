@@ -269,8 +269,8 @@ export function ActivityView() {
 
   return (
     <div className="flex h-full flex-col p-4">
-      {/* Header */}
-      <div className="mb-4 flex items-center justify-between">
+      {/* Header, clear of the phone's menu button */}
+      <div className="mb-4 flex items-center justify-between" style={{ paddingLeft: "var(--vault-menu-gap, 0px)" }}>
         <div>
           <h2
             className="text-sm font-semibold"

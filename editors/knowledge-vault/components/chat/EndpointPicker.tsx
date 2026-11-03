@@ -16,6 +16,8 @@ export function EndpointPicker({
   onAdd,
   thinkingDisabled,
   onToggleThinking,
+  onDisconnect,
+  iconOnly = false,
 }: {
   active: ProviderKind | null;
   label: string;
@@ -25,6 +27,10 @@ export function EndpointPicker({
   /** For a named server: whether its thinking is switched off; null when not applicable. */
   thinkingDisabled?: boolean | null;
   onToggleThinking?: (enabled: boolean) => void;
+  /** On a phone the header has no room for Disconnect: it is the menu's last entry instead. */
+  onDisconnect?: () => void;
+  /** A phone's header: the dot alone, so the model's name has the room; its name for screen readers. */
+  iconOnly?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -34,7 +40,8 @@ export function EndpointPicker({
         onClick={() => setOpen((v) => !v)}
         className="vault-btn"
         style={{ maxWidth: 240 }}
-        title="Which model endpoint answers"
+        title={iconOnly ? `Answering: ${label}` : "Which model endpoint answers"}
+        aria-label={iconOnly ? `Endpoint: ${label}` : undefined}
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -43,7 +50,7 @@ export function EndpointPicker({
           style={{ backgroundColor: "var(--bai-accent)" }}
           aria-hidden
         />
-        <span className="truncate">{label}</span>
+        {!iconOnly && <span className="truncate">{label}</span>}
         <svg
           className="h-3 w-3 shrink-0 opacity-60"
           viewBox="0 0 24 24"
@@ -134,6 +141,20 @@ export function EndpointPicker({
             >
               + Add another endpoint…
             </button>
+            {onDisconnect && (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  onDisconnect();
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--bai-hover)]"
+                style={{ color: "var(--bai-text-muted)" }}
+              >
+                Disconnect {label}
+              </button>
+            )}
           </div>
         </>
       )}

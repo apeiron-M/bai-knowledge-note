@@ -53,6 +53,7 @@ import { ChatMessage } from "./chat/ChatMessage.js";
 import { SaveAnswer } from "./chat/SaveAnswer.js";
 import { ChatHelpDialog, ChatStarters, useChatHelp } from "./chat/ChatStarters.js";
 import { VaultIcon } from "./vault-icons.js";
+import { useVaultLayout } from "./VaultShell.js";
 import { currencyLookup } from "../lib/supersession.js";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { ModelPicker } from "./chat/ModelPicker.js";
@@ -134,6 +135,8 @@ export function ChatView({
   const orientation = useOrientation(driveId, prov.isConnected);
   // What the chat can do: the panel's open state, and whether it was ever opened here.
   const help = useChatHelp();
+  // A phone: one compact header row clear of the menu button, the conversation edge to edge.
+  const { drawer: compact } = useVaultLayout();
   const topTopic = orientation.topics[0]?.name ?? null;
   // The composer's draft survives the chat view being replaced by a note
   // editor. Tab-scoped like the current-thread pointer; the OAuth return
@@ -275,7 +278,8 @@ export function ChatView({
       initialDraft={draft}
       placeholder={inConversation ? "Ask a follow-up" : `Ask ${vaultName} anything`}
       streaming={chat.isStreaming}
-      autoFocus
+      // On a phone a focused box opens the keyboard over half the screen before anything is asked.
+      autoFocus={!compact}
       onSend={(t) => void chat.send(t)}
       onStop={chat.stop}
       onDraftChange={setDraft}
@@ -284,16 +288,17 @@ export function ChatView({
 
   return (
     <div className="flex h-full flex-col">
-      {/* Header */}
+      {/* Header: one row; on a phone, compact and clear of the menu button */}
       <div
-        className="flex items-center gap-2 px-4 py-2"
-        style={{ borderBottom: "1px solid var(--bai-border)" }}
+        className={compact ? "flex flex-nowrap items-center gap-1.5 py-1.5 pr-2" : "flex items-center gap-2 px-4 py-2"}
+        style={{ borderBottom: "1px solid var(--bai-border)", paddingLeft: compact ? "calc(12px + var(--vault-menu-gap, 0px))" : undefined }}
       >
         <ChatHistoryMenu
           threads={chat.threads}
           currentId={chat.thread?.id ?? null}
           onOpen={chat.openThread}
           onDelete={chat.removeThread}
+          iconOnly={compact}
         />
         {inConversation && (
           <button
@@ -301,6 +306,7 @@ export function ChatView({
             onClick={chat.newThread}
             className="vault-btn"
             title="Start a new chat"
+            aria-label={compact ? "New chat" : undefined}
           >
             <svg
               className="h-4 w-4"
@@ -311,10 +317,11 @@ export function ChatView({
             >
               <path d="M12 5v14M5 12h14" />
             </svg>
-            New chat
+            {!compact && "New chat"}
           </button>
         )}
-        <div className="ml-auto flex items-center gap-1">
+        {/* Its pickers sit in wrappers: on a phone those shrink too, so the labels truncate instead of the row overflowing. */}
+        <div className={compact ? "ml-auto flex min-w-0 flex-1 items-center justify-end gap-1 [&>div]:min-w-0 [&>div>.vault-btn]:w-full [&_.truncate]:min-w-0" : "ml-auto flex items-center gap-1"}>
           {prov.hostManaged ? (
             <>
               <span
@@ -346,6 +353,8 @@ export function ChatView({
                 onAdd={prov.addAnother}
                 thinkingDisabled={prov.thinkingDisabled}
                 onToggleThinking={prov.setThinking}
+                onDisconnect={compact ? prov.disconnect : undefined}
+                iconOnly={compact}
               />
               <ModelPicker
                 model={prov.model}
@@ -355,20 +364,22 @@ export function ChatView({
                 onChange={prov.setModel}
                 allowCustomId={!openRouter}
               />
-              <button
-                type="button"
-                onClick={prov.disconnect}
-                className="vault-btn"
-                title={`Forget the ${prov.providerLabel} connection in this browser`}
-              >
-                Disconnect
-              </button>
+              {!compact && (
+                <button
+                  type="button"
+                  onClick={prov.disconnect}
+                  className="vault-btn"
+                  title={`Forget the ${prov.providerLabel} connection in this browser`}
+                >
+                  Disconnect
+                </button>
+              )}
             </>
           )}
           <button
             type="button"
             onClick={help.show}
-            className="vault-btn"
+            className="vault-btn shrink-0"
             aria-label="What the chat can do"
             title="What the chat can do"
           >
@@ -389,12 +400,12 @@ export function ChatView({
 
       {inConversation ? (
         <>
-          <div ref={scrollRef} className="flex-1 overflow-auto px-4 pt-5">
+          <div ref={scrollRef} className={compact ? "flex-1 overflow-auto" : "flex-1 overflow-auto px-4 pt-5"}>
             {/* The conversation is read like a document: on its own sheet, as
                 the source editor's content is (white in light, the reading
                 well in dark), so it never melts into the page. */}
             <style aria-hidden="true">{CHAT_SHEET_CSS}</style>
-            <div className="vault-chat-sheet">
+            <div className="vault-chat-sheet" data-compact={compact ? "" : undefined}>
               {/* Persisted turns carry no trail by design — tool payloads are
                   not stored — so only the live turn below renders one. */}
               {chat.messages.map((m, i) => (
@@ -446,7 +457,10 @@ export function ChatView({
               )}
             </div>
           </div>
-          <div className="px-4 pb-4 pt-2">
+          <div
+            className={compact ? "px-2 pt-1.5" : "px-4 pb-4 pt-2"}
+            style={compact ? { paddingBottom: "max(8px, env(safe-area-inset-bottom))" } : undefined}
+          >
             <div className="mx-auto w-full" style={{ maxWidth: "64rem" }}>{composer}</div>
           </div>
         </>
@@ -522,6 +536,9 @@ const CHAT_SHEET_CSS = `
   border: 1px solid color-mix(in srgb, var(--bai-border) 70%, transparent);
 }
 @media (max-width: 640px) { .vault-chat-sheet { padding: 22px 20px 28px; } }
+/* A phone: the conversation is the screen — no card, no margin around it. */
+.vault-chat-sheet[data-compact] { max-width: none; gap: 22px; padding: 16px 14px 20px; border-radius: 0; border: 0; box-shadow: none; }
+[data-bai-theme="light"] .vault-chat-sheet[data-compact] { box-shadow: none; }
 [data-bai-theme="light"] .vault-chat-sheet {
   border-color: color-mix(in srgb, var(--bai-border) 60%, transparent);
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px -14px rgba(16, 24, 40, 0.16);
