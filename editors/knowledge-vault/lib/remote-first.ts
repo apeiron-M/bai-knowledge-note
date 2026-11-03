@@ -738,6 +738,125 @@ const REROUTED_METHODS = [
 /** Write-shaped methods that must announce the mutation to the cache. */
 const ANNOUNCING_METHODS = new Set(["execute", "deleteDocument"]);
 
+/**
+ * The same reroute on the client's read and write halves (6.2.3-dev.85), which
+ * Connect's hooks call since 6.2.3-dev.90 instead of the top-level methods:
+ * every editor dispatch is `write.execute`, and the router resolves the node a
+ * URL opens through `read.drives.getNode` and `listNodes`. Left on the worker,
+ * a dispatch lands in the local replica this mode never syncs, and no vault
+ * document opens at all: the router finds no node there and drops it from the
+ * URL. Whatever is not listed (the model registry, `find`, drive writes) stays
+ * on the worker, as at the top level.
+ */
+const READ_REROUTED = ["get", "getOperations"] as const;
+const WRITE_REROUTED = ["execute", "create", "deleteDocument"] as const;
+/** Node reads that go to the Switchboard for the vault's own drive only. */
+const NODE_READS = ["getNode", "listNodes"] as const;
+
+const listed = (names: readonly string[], prop: string | symbol): boolean =>
+  typeof prop === "string" && names.includes(prop);
+
+/** `target[prop]`, bound to `target` when it is a method. */
+function member(target: AnyClient, prop: string | symbol): unknown {
+  const value = Reflect.get(target, prop);
+  return typeof value === "function"
+    ? (value as (...a: unknown[]) => unknown).bind(target)
+    : value;
+}
+
+/** Calls `holder[prop]` with `args`; throws, naming it, when the holder lacks it. */
+function call(holder: AnyClient, prop: string, args: unknown[]): unknown {
+  const fn = holder[prop] as ((...a: unknown[]) => unknown) | undefined;
+  if (typeof fn !== "function") {
+    throw new Error(`The Switchboard client has no ${prop}`);
+  }
+  return fn.apply(holder, args);
+}
+
+/** A write handle whose `document()` announces the write once it reads back. */
+function announcingHandle(handle: unknown, identifier: string): unknown {
+  if (!handle || typeof handle !== "object") return handle;
+  return new Proxy(handle as AnyClient, {
+    get(target, prop) {
+      if (prop !== "document") return member(target, prop);
+      return (...args: unknown[]) =>
+        Promise.resolve(call(target, "document", args)).then((value: unknown) => {
+          announceDocumentMutation(identifier);
+          return value;
+        });
+    },
+  });
+}
+
+/**
+ * The worker's read and write halves with the listed members rerouted to the
+ * remote client's. Undefined for a half the worker does not have (a Connect
+ * from before the split), exactly as before.
+ */
+function rerouteHalves(
+  worker: AnyClient,
+  remote: AnyClient,
+  isVaultDrive: (identifier: unknown) => boolean,
+): { read: unknown; write: unknown } {
+  const workerRead = worker.read as AnyClient | undefined;
+  const workerWrite = worker.write as AnyClient | undefined;
+  const remoteRead = remote.read as AnyClient | undefined;
+  const remoteWrite = remote.write as AnyClient | undefined;
+
+  const workerDrives = workerRead?.drives as AnyClient | undefined;
+  const remoteDrives = remoteRead?.drives as AnyClient | undefined;
+  const drives =
+    workerDrives &&
+    new Proxy(workerDrives, {
+      get(target, prop) {
+        if (remoteDrives && listed(NODE_READS, prop)) {
+          return (...args: unknown[]) =>
+            isVaultDrive(args[0])
+              ? call(remoteDrives, prop as string, args)
+              : call(target, prop as string, args);
+        }
+        return member(target, prop);
+      },
+    });
+
+  const read =
+    workerRead &&
+    new Proxy(workerRead, {
+      get(target, prop) {
+        if (prop === "drives" && drives) return drives;
+        if (remoteRead && listed(READ_REROUTED, prop)) {
+          return (...args: unknown[]) => call(remoteRead, prop as string, args);
+        }
+        return member(target, prop);
+      },
+    });
+
+  const write =
+    workerWrite &&
+    new Proxy(workerWrite, {
+      get(target, prop) {
+        if (!remoteWrite || !listed(WRITE_REROUTED, prop)) return member(target, prop);
+        return (...args: unknown[]) => {
+          const identifier = args[0];
+          const result = call(remoteWrite, prop as string, args);
+          if (typeof identifier !== "string" || !(result instanceof Promise)) return result;
+          if (prop === "execute") {
+            return (result as Promise<unknown>).then((handle: unknown) => announcingHandle(handle, identifier));
+          }
+          if (prop === "deleteDocument") {
+            return (result as Promise<unknown>).then((handle: unknown) => {
+              announceDocumentMutation(identifier);
+              return handle;
+            });
+          }
+          return result;
+        };
+      },
+    });
+
+  return { read, write };
+}
+
 /** The vault's own Switchboard client, authenticated per request with the Renown bearer. */
 function buildVaultClient(endpoint: string): GraphQLReactorClient {
   // Every read and push this client makes must carry the caller's identity.
@@ -799,9 +918,19 @@ export function enableRemoteFirst(options: {
   if (previousClient && !hostClient) {
     const worker = previousClient as unknown as AnyClient;
     const remote = remoteClient as unknown as AnyClient;
+    const halves = rerouteHalves(
+      worker,
+      remote,
+      (identifier) =>
+        identifier === options.driveId ||
+        (options.driveSlug !== undefined && identifier === options.driveSlug),
+    );
 
     const hybrid = new Proxy(worker, {
       get(target, prop, receiver) {
+        if ((prop === "read" || prop === "write") && halves[prop] !== undefined) {
+          return halves[prop];
+        }
         if (
           (REROUTED_METHODS as readonly string[]).includes(prop as string)
         ) {

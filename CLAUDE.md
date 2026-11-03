@@ -69,6 +69,30 @@ site's **Try on web** (`../knowledge-vault-landing`). Nothing else runs it:
   import in `dist/node`, an unresolved `#browser-vault`, or a browser build that
   lost the vault.
 
+## ⚠️ Test the vault in Connect's replicating mode too — Vetra Studio runs the other one
+
+Vetra Studio runs Connect as a remote client (`reactorClient: "remote"` in
+`powerhouse.config.json`), and there the vault's remote-first layer
+(`editors/knowledge-vault/lib/remote-first.ts`) stands down.
+knowledge-vault.vetra.io runs Connect replicating (`in-process`/`worker`):
+there that layer sends the vault's reads and writes to the Switchboard
+through a proxy over Connect's client. A Connect upgrade that changes which
+client methods its hooks call breaks only that mode, and Studio never shows
+it. On 6.2.3-dev.90 the router's node lookup (`read.drives`) and every editor
+dispatch (`write.execute`) fell through to the empty local replica: no vault
+document opened (its id appeared in the URL and vanished), and edits went
+nowhere.
+
+- `editors/knowledge-vault/lib/remote-first.halves.test.ts` runs the
+  reactor-browser functions Connect calls (`getDriveNode`, `loadDriveNodes`,
+  `dispatchActions`) against that proxy. It fails when a Connect release moves
+  them again: keep it green on every stack bump, and extend it when Connect
+  starts calling a new client method.
+- By hand after a stack bump: open the vault in Studio with
+  `?reactorClient=in-process`, open a source and a note, edit one, reload, and
+  check the edit stayed; `?reactorClient=remote` switches back. The console
+  line `[RemoteFirst] Sync channel … neutralised` confirms the mode.
+
 ## ⚠️ PGlite stores never get planner statistics — run `ANALYZE` after big growth
 
 PGlite has no autovacuum, and the stack's store maintenance runs `VACUUM` and
