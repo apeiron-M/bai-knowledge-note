@@ -119,6 +119,28 @@ const PATHS = {
       <path d="M14 3v5h5" />
     </>
   ),
+  // The Notes page (docs/design/notes-view): a chapter's disclosure, a note's links, a source's kind.
+  right: <path d="m9 6 6 6-6 6" />,
+  close: <path d="M18 6 6 18M6 6l12 12" />,
+  link: (
+    <>
+      <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" />
+      <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
+    </>
+  ),
+  book: (
+    <>
+      <path d="M4 19.5V5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2z" />
+      <path d="M6 18h13v3H6a2 2 0 0 1 0-4" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3.5 6.5 8.5 6.5 8.5-6.5" />
+    </>
+  ),
+  open: <path d="M14 4h6v6M20 4l-8 8M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" />,
   collapse: <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />,
   expand: <path d="M13 17l5-5-5-5M6 17l5-5-5-5" />,
 } as const;

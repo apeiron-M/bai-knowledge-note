@@ -42,7 +42,7 @@ import { chatRun, stopChatRun } from "../hooks/chat-runs.js";
 import { formatLastModified } from "../lib/format-time.js";
 import { readSourcesTab, writeOpenFolder, writeSourcesTab } from "../lib/source-tree.js";
 import { SourceTimelineView } from "./timeline/SourceTimelineView.js";
-import type { TimelineGraphData } from "../hooks/use-source-timeline.js";
+import { useSourceTimeline, type TimelineGraphData } from "../hooks/use-source-timeline.js";
 import { saveSearchQuery } from "../hooks/use-graph-search.js";
 import { usePaletteSemantic } from "../hooks/use-palette-semantic.js";
 import {
@@ -284,6 +284,8 @@ export function DriveExplorer({ children }: EditorProps) {
     useState<GraphFilter>(EMPTY_GRAPH_FILTER);
   // Graph › Over time, and the addition the timeline's Show in graph lit. Held here so it survives an open document.
   const [graphTime, setGraphTime] = useState<OverTime>({ on: false, pick: null });
+  /** Show in graph from Notes: the note or topic the graph selects when it opens. */
+  const [graphFocusOn, setGraphFocusOn] = useState<{ id: string; nonce: number } | null>(null);
   const [sourcesHome, setSourcesHome] = useState(0);
   // `notesLoading` is true until the first metadata fetch settles. It has
   // to be threaded into every note-derived view: without it they render
@@ -335,6 +337,13 @@ export function DriveExplorer({ children }: EditorProps) {
     (n) => n.documentType === "powerhouse/scopeofwork",
   ).length;
   const showDocumentEditor = !!children;
+  // The Notes page reads the source timeline for parts in order, kinds and
+  // dates — from the server only, and only while it is on screen.
+  const { timeline: notesTimeline } = useSourceTimeline(
+    viewMode === "notes" && !showDocumentEditor ? (driveId ?? undefined) : undefined,
+    timelineGraph,
+    { browserFallback: false },
+  );
   const [guideOpen, setGuideOpen] = useState(false);
   /** The kind of document "Add to the vault" is creating, while its dialog is open. */
   const [creating, setCreating] = useState<(typeof CREATE_ITEMS)[number] | null>(null);
@@ -887,9 +896,35 @@ export function DriveExplorer({ children }: EditorProps) {
       <NoteList
         key={notesScope ? `scope:${notesScope.label}` : "all"}
         notes={notes}
+        mocs={mocs}
+        // The engine's own tree, fetched with the graph: Connect's cache can lag behind
+        // what the engine wrote itself (a workflow's source, a REST write), and would
+        // file their notes under "no source". The cache only until the first fetch.
+        tree={serverAllNodes.length > 0 ? serverAllNodes : treeNodes}
+        timeline={notesTimeline}
+        driveId={driveId ?? undefined}
         isLoading={notesLoading}
+        sourcesBusy={intake.working}
         scope={notesScope}
         onClearScope={() => setNotesScope(null)}
+        onScope={setNotesScope}
+        onOpenNote={openDocument}
+        onOpenSource={(source) => (source.kind === "folder" ? openSourcesFolder(source.id) : openDocument(source.id))}
+        onOpenTopic={openDocument}
+        onShowInGraph={(id) => {
+          handleSwitchView("graph");
+          setGraphFocusOn({ id, nonce: Date.now() });
+        }}
+        onShowAdditionInGraph={(additionId) => {
+          handleSwitchView("graph");
+          setGraphTime({ on: true, pick: additionId });
+        }}
+        onAddSources={() => {
+          intake.open();
+          handleSwitchView("sources");
+        }}
+        onPasteText={() => setCreating(CREATE_ITEMS.find((i) => i.key === "paste") ?? null)}
+        onSeeSources={() => handleSwitchView("sources")}
       />
     ),
     topics: (
@@ -915,6 +950,7 @@ export function DriveExplorer({ children }: EditorProps) {
         tensions={tensions}
         onGraphFocusChange={handleGraphFocusChange}
         clearFocusNonce={graphClearNonce}
+        focusOn={graphFocusOn}
         layoutKey={driveId ?? undefined}
         filter={graphFilter}
         onFilterChange={setGraphFilter}

@@ -70,8 +70,12 @@ function loadFromServer(driveId: string): Promise<void> {
 /**
  * @param driveId the vault, or undefined to stay idle (Graph with Over time off).
  * @param graph the editor's graph, read only by the browser fallback.
+ * @param opts.browserFallback false: against a server that predates the query,
+ *   answer null rather than read every source in the browser (the Notes page
+ *   only enriches with it, and works without).
  */
-export function useSourceTimeline(driveId: string | undefined, graph: TimelineGraphData): UseSourceTimeline {
+export function useSourceTimeline(driveId: string | undefined, graph: TimelineGraphData, opts: { browserFallback?: boolean } = {}): UseSourceTimeline {
+  const allowFallback = opts.browserFallback ?? true;
   const [timeline, setTimeline] = useState<SourceTimeline | null>(() => (driveId ? (cache.get(driveId) ?? null) : null));
   const [error, setError] = useState<Error | null>(null);
   const [answeredUnsupported, setBrowser] = useState(false);
@@ -134,7 +138,7 @@ export function useSourceTimeline(driveId: string | undefined, graph: TimelineGr
 
   // Browser path, only while it is in use: the source documents the Sources
   // view loads (same retained cache, so switching tabs is instant).
-  const fallback = Boolean(driveId) && browser;
+  const fallback = Boolean(driveId) && browser && allowFallback;
   const specs = useMemo<ReactorDocSpec[]>(
     () => (fallback ? graph.allNodes.filter((n) => n.documentType === "bai/source").map((n) => ({ id: n.id, documentType: "bai/source", name: n.name })) : NO_SPECS),
     [fallback, graph.allNodes],
@@ -161,6 +165,7 @@ export function useSourceTimeline(driveId: string | undefined, graph: TimelineGr
   const named = useMemo(() => withSourceNames(timeline, graph.allNodes), [timeline, graph.allNodes]);
 
   if (!driveId) return { timeline: null, isLoading: false, error: null, mode: null, refetch };
+  if (browser && !allowFallback) return { timeline: null, isLoading: false, error: null, mode: "browser", refetch };
   if (browser) {
     const shown = shownBrowserTimeline(built, held, driveId);
     return { timeline: shown, isLoading: shown === null && graph.error === null, error: graph.error, mode: "browser", refetch: graph.refetch };

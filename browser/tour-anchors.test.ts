@@ -11,7 +11,7 @@ const ANCHORS: Record<string, string[]> = {
   "editors/knowledge-vault/components/VaultSidebar.tsx": ['data-tour="search"', 'data-tour="add-sources"', 'data-tour="settings"'],
   "editors/knowledge-vault/components/VaultMenu.tsx": ["data-tour={item.tour}"],
   "editors/knowledge-vault/components/DriveExplorer.tsx": ['tour: "settings-queue"', 'tour: "settings-health"', "data-tour={`sources-${tab.key}`}"],
-  "editors/knowledge-vault/components/NoteList.tsx": ['tour={index === 0 ? "note-card" : undefined}', "data-tour={tour}"],
+  "editors/knowledge-vault/components/notes/NoteRow.tsx": ['data-tour={tour ? "note-card" : undefined}'],
   "editors/knowledge-vault/components/chat/ChatConnectPanel.tsx": ['data-tour="ai-connect"'],
   "editors/knowledge-note-editor/editor.tsx": ["data-tour={`note-${key}`}"],
   "browser/BrowserVault.tsx": ['data-tour="corner"'],

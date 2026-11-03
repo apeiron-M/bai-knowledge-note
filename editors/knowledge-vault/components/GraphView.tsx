@@ -109,6 +109,8 @@ type GraphViewProps = {
   onGraphFocusChange?: (focus: GraphFocus | null) => void;
   /** Incremented by the parent to force-clear selection (e.g. sidebar ✕). */
   clearFocusNonce?: number;
+  /** Show in graph from elsewhere in the vault (Notes): select this node, once per nonce, when the graph holds it. */
+  focusOn?: { id: string; nonce: number } | null;
   /** Remembers the layout per key (the drive id) so a reload starts settled. */
   layoutKey?: string;
   /** Start from this renderer instead of the best available (to try a fallback). */
@@ -424,6 +426,25 @@ export default function GraphView(props: GraphViewProps) {
     select(-1, null, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.clearFocusNonce]);
+
+  // Show in graph (Notes): select the node as Find would, once the scene holds
+  // it. The graph may still be loading or laying out, so look for a while.
+  const appliedFocus = useRef(0);
+  useEffect(() => {
+    const want = props.focusOn;
+    if (!ready || !want || appliedFocus.current === want.nonce) return;
+    let frame = 0;
+    let tries = 0;
+    const attempt = () => {
+      if (sceneRef.current?.graph?.index.has(want.id)) {
+        appliedFocus.current = want.nonce;
+        chooseFound(want.id);
+      } else if (++tries < 300) frame = requestAnimationFrame(attempt);
+    };
+    attempt();
+    return () => cancelAnimationFrame(frame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, props.focusOn?.nonce]);
 
   // The legend changed: one pass to rebuild the mask, the highlight pass to
   // draw it. The layout is not told: hidden nodes keep their places.
