@@ -34,7 +34,8 @@ function isNoteHit(hit: VaultSearchHit): boolean {
  * {@link CHANGE_Q_HITS} hits plus their one-hop knowledge-edge neighbours.
  * Explicit `documentIds` always narrow what `q` resolves to. With an explicit
  * `moc` the map is already chosen and `q` searches within it. `resolved`
- * says which it was. Shared by the GraphQL resolver and `GET changes`, so
+ * says which it was; `rank` carries the hits, most relevant first, so the
+ * story orders the scope by them (Addendum D2) — never echoed. Shared by the GraphQL resolver and `GET changes`, so
  * both answer the same totals.
  */
 export async function resolveChangeScope(
@@ -60,13 +61,17 @@ export async function resolveChangeScope(
     chosen = { ...(chosen ?? scope), sources, resolved: chosen?.resolved ?? { kind: "source", match: scope.source, sources: sources.length } };
   }
   if (chosen) {
-    // The caller chose the part: q searches within it.
+    // The caller chose the part: q searches within it, and its hits order the story (Addendum D2).
     if (!chosen.q) return chosen;
-    const { resolved, ...within } = await searchScope(subgraph, driveId, chosen, chosen.q, await searchVault(subgraph, driveId, chosen.q, "SEMANTIC", CHANGE_Q_HITS, false));
-    return { ...within, resolved: chosen.resolved ?? resolved };
+    const hits = await searchVault(subgraph, driveId, chosen.q, "SEMANTIC", CHANGE_Q_NOTE_HITS, false);
+    const { resolved, ...within } = await searchScope(subgraph, driveId, chosen, chosen.q, hits.slice(0, CHANGE_Q_HITS));
+    return { ...within, rank: rankOf(hits), resolved: chosen.resolved ?? resolved };
   }
   if (!scope.q) return scope;
-  if (scope.moc) return searchScope(subgraph, driveId, scope, scope.q, await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_HITS, false));
+  if (scope.moc) {
+    const hits = await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_NOTE_HITS, false);
+    return { ...(await searchScope(subgraph, driveId, scope, scope.q, hits.slice(0, CHANGE_Q_HITS))), rank: rankOf(hits) };
+  }
   const candidates = maps ?? (await query.changeMaps());
   const driveName = drive.name ?? null;
   const vault = matchMapTitle(scope.q, driveName ? [{ id: driveId, title: driveName, depth: 0 }, ...candidates] : candidates);
@@ -78,9 +83,15 @@ export async function resolveChangeScope(
   const below = candidates.filter((m) => m.depth > 0);
   const notes = [...new Set(hits.filter(isNoteHit).map((h) => String(h.node.documentId)))];
   const picked = notes.length && below.length ? selectAreasByHits(notes, below, await query.changeMapNotes(below.map((m) => m.id))) : null;
-  if (picked?.length === 1) return { ...scope, moc: picked[0].id, resolved: { kind: "moc", id: picked[0].id, title: picked[0].title } };
-  if (picked) return { ...scope, mocs: picked.map((m) => m.id), resolved: { kind: "areas", areas: picked.map((m) => ({ id: m.id, title: m.title })) } };
-  return searchScope(subgraph, driveId, scope, scope.q, hits.slice(0, CHANGE_Q_HITS));
+  const rank = rankOf(hits);
+  if (picked?.length === 1) return { ...scope, moc: picked[0].id, rank, resolved: { kind: "moc", id: picked[0].id, title: picked[0].title } };
+  if (picked) return { ...scope, mocs: picked.map((m) => m.id), rank, resolved: { kind: "areas", areas: picked.map((m) => ({ id: m.id, title: m.title })) } };
+  return { ...(await searchScope(subgraph, driveId, scope, scope.q, hits.slice(0, CHANGE_Q_HITS))), rank };
+}
+
+/** A query's hits as the story orders its scope by (Addendum D2): document ids, most relevant first. */
+function rankOf(hits: readonly VaultSearchHit[]): string[] {
+  return [...new Set(hits.map((h) => String(h.node.documentId)))];
 }
 
 /**

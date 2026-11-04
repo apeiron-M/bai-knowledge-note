@@ -413,6 +413,25 @@ describe("graph query: changes()", () => {
     expect((d.events ?? []).map((e) => e.documentId).sort()).toEqual(["n1", "n2"]);
   });
 
+  it("orders the story inside a q scope by the query's hits, passed as rank, and never echoes it (Addendum D2)", async () => {
+    const db = harness.db;
+    await insertNode(db, "hub", "Hub", "bai/moc", "MOC (HUB)");
+    await insertNode(db, "a1", "Reactor and Drives", "bai/moc", "MOC (DOMAIN)");
+    await insertEdge(db, "hub", "a1", "CHILD_MOC");
+    for (const id of ["n1", "n2", "n3"]) {
+      await insertNode(db, id, `${id} now`);
+      await insertEdge(db, "a1", id, "CORE_IDEA");
+    }
+    await insertOps(db, ["n1", "n2", "n3"].flatMap((id, i) => [
+      { documentId: id, documentType: "bai/knowledge-note", operationType: "SET_TITLE", timestamp: "2026-10-01T10:00:00.000Z", index: 2 * i, inputJson: `{"title":"${id} then"}`, signerAddress: null },
+      { documentId: id, documentType: "bai/knowledge-note", operationType: "SET_TITLE", timestamp: "2026-11-02T10:00:00.000Z", index: 2 * i + 1, inputJson: `{"title":"${id} now"}`, signerAddress: null },
+    ]));
+    const scope = { q: "reactor", mocs: ["a1"], rank: ["n3", "n1"] };
+    const d = await createGraphQuery(db).changes({ since: "2026-11-01T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" }, scope);
+    expect(d.story?.areas[0].changedClaims.map((c) => c.documentId)).toEqual(["n3", "n1", "n2"]);
+    expect(d.scope).toBe(scope);
+  });
+
   it("matches sources by title, provenance URL or folder path, any case, and scopes to them and their notes (Addendum C1b)", async () => {
     const db = harness.db;
     const source = (id: string, title: string, url: string | null, claimIds: string[]) =>

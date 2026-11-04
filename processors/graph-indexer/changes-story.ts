@@ -67,6 +67,8 @@ export interface Shift {
   replacedBy?: string;
   /** For a note created in the window: when its first recorded state (the then) was written. */
   thenAt?: string;
+  /** When the claim reads the same: the differing span of each gist, with context (Addendum D7). */
+  gistDiff?: { then: string; now: string };
 }
 
 export interface StoryArea {
@@ -75,6 +77,8 @@ export interface StoryArea {
   title: string;
   notesThen: number;
   notesNow: number;
+  /** When `since` predates the vault: the area's live notes at the end of its first import day (Addendum D1). */
+  notesAtStart?: number;
   /** Uncapped: how many new, changed and retired claims the area has (the lists are capped). */
   newCount: number;
   changedCount: number;
@@ -94,6 +98,8 @@ export interface ChangeStory {
     notesNow: number;
     /** When `since` predates the vault's first recorded activity: that activity — growth is counted from it (Addendum C2). */
     from?: string;
+    /** With `from`: the live notes at the end of the vault's first import day — its first recorded state (Addendum D1). */
+    notesAtStart?: number;
     newAreas: { id: string; title: string }[];
     newMaps: { id: string; title: string; area: string | null }[];
   };
@@ -317,14 +323,74 @@ const NEGATIONS = new Set(["not", "no", "never", "without", "cannot", "nor", "no
 export function isDuplicateMerge(then: string, now: string, reason: string | null): boolean {
   if (reason !== null && reason.trim() !== "") return DUPLICATE_REASON.some((re) => re.test(reason));
   if (claimSimilarity(then, now) < MERGE_SIMILARITY) return false;
+  return !turnsAround(then, now);
+}
+
+/** Whether the words two near-identical texts differ by hold a negation, a digit or a version. */
+function turnsAround(then: string, now: string): boolean {
   const a = claimTokens(then);
   const b = claimTokens(now);
   const differing = [...a].filter((w) => !b.has(w)).concat([...b].filter((w) => !a.has(w)));
-  return !differing.some((w) => NEGATIONS.has(w) || /\d/.test(w));
+  return differing.some((w) => NEGATIONS.has(w) || /\d/.test(w));
 }
 
+/**
+ * A claim or gist as compared for a shift (Addendum D5): lowercased,
+ * whitespace collapsed, trailing punctuation dropped — "drive" and "drive."
+ * say the same.
+ */
+export function normaliseClaim(text: string | null): string {
+  return (text ?? "").toLowerCase().replace(/\s+/g, " ").trim().replace(/[\s.,;:!?…]+$/u, "");
+}
+
+/** A gist rewritten at or above this token similarity, under the same claim, is a trivial rewording (Addendum D7). */
+export const GIST_REWORDING = 0.9;
+
+/**
+ * Whether the vault says something different (Addendum D5, D7): the claim or
+ * the gist differs once normalised, and a gist-only difference is more than a
+ * trivial rewording.
+ */
 function differs(a: { claim: string; gist: string | null }, b: { claim: string; gist: string | null }): boolean {
-  return a.claim !== b.claim || (a.gist ?? "") !== (b.gist ?? "");
+  if (normaliseClaim(a.claim) !== normaliseClaim(b.claim)) return true;
+  if (normaliseClaim(a.gist) === normaliseClaim(b.gist)) return false;
+  // A near-identical gist that adds a negation or changes a number says something else (as for merges, B corrections).
+  return claimSimilarity(a.gist ?? "", b.gist ?? "") < GIST_REWORDING || turnsAround(a.gist ?? "", b.gist ?? "");
+}
+
+/** Context words kept around a gist's differing span, and the most characters a side may take. */
+const GIST_CONTEXT_WORDS = 3;
+export const MAX_GIST_DIFF = 160;
+
+/**
+ * The differing span of two gists (Addendum D7): a word-level diff by common
+ * prefix and suffix (words compared as {@link normaliseClaim} reads them),
+ * each side's differing words with {@link GIST_CONTEXT_WORDS} words of
+ * context, "…" where the text goes on, at most {@link MAX_GIST_DIFF}
+ * characters a side.
+ */
+export function gistDiff(then: string | null, now: string | null): { then: string; now: string } {
+  const a = (then ?? "").split(/\s+/).filter(Boolean);
+  const b = (now ?? "").split(/\s+/).filter(Boolean);
+  const same = (x: string, y: string) => normaliseClaim(x) === normaliseClaim(y);
+  let pre = 0;
+  while (pre < a.length && pre < b.length && same(a[pre], b[pre])) pre++;
+  let suf = 0;
+  while (suf < a.length - pre && suf < b.length - pre && same(a[a.length - 1 - suf], b[b.length - 1 - suf])) suf++;
+  const span = (words: string[]) => {
+    const from = Math.max(0, pre - GIST_CONTEXT_WORDS);
+    const to = Math.min(words.length, words.length - suf + GIST_CONTEXT_WORDS);
+    const text = `${from > 0 ? "…" : ""}${words.slice(from, to).join(" ")}`;
+    const tail = to < words.length ? "…" : "";
+    if (text.length + tail.length <= MAX_GIST_DIFF) return text + tail;
+    return `${text.slice(0, MAX_GIST_DIFF - 1).trimEnd()}…`;
+  };
+  return { then: a.length ? span(a) : "", now: b.length ? span(b) : "" };
+}
+
+/** A shift's then → now; a description-only one carries the gists' differing spans (Addendum D7). */
+function shiftText(then: { claim: string; gist: string | null }, now: { claim: string; gist: string | null }) {
+  return { then, now, ...(normaliseClaim(then.claim) === normaliseClaim(now.claim) ? { gistDiff: gistDiff(then.gist, now.gist) } : {}) };
 }
 
 /** What buildStory and buildThenVsNow both read, computed once per digest by {@link storyFacts}. */
@@ -353,9 +419,21 @@ export interface Facts {
   isNote: (id: string) => boolean;
   liveThen: (id: string) => boolean;
   liveNow: (id: string) => boolean;
+  /** When `since` predates the vault: live at the end of its first import day (Addendum D1). */
+  liveAtStart?: (id: string) => boolean;
+  /** A query's hits, by position (0 = most relevant): the order inside its scope (Addendum D2). */
+  rank?: Map<string, number>;
 }
 
-export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: StoryContext, window: { since: string; until: string }, ids: Set<string> | null): Facts {
+export function storyFacts(
+  events: ChangeEvent[],
+  thenFields: ThenFields,
+  s: StoryContext,
+  window: { since: string; until: string },
+  ids: Set<string> | null,
+  firstImport?: { end: string; archived: ReadonlySet<string> },
+  hits?: readonly string[],
+): Facts {
   const { areas, areasByDoc } = areasOf(s);
   const inScope = (id: string) => !ids || ids.has(id);
   const node = (id: string) => s.nodes.get(id);
@@ -412,12 +490,12 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
       } else if (differs(then, now)) {
         // Created in the window too: its then is as first recorded (Addendum B corrections).
         const at = created.has(e.documentId) ? thenFields.get(e.documentId)?.at : undefined;
-        shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.supersededBy.reason, replacedBy: e.supersededBy.documentId, ...(at ? { thenAt: at } : {}) });
+        shifts.set(e.documentId, { documentId: e.documentId, ...shiftText(then, now), why: e.supersededBy.reason, replacedBy: e.supersededBy.documentId, ...(at ? { thenAt: at } : {}) });
       }
     } else if (e.kind === "revised" && !shifts.has(e.documentId) && !merged.has(e.documentId) && (e.fields?.title || e.fields?.description)) {
       const then = thenOf(e.documentId);
       const now = nowOf(e.documentId);
-      if (differs(then, now)) shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.revisionNotes?.length ? e.revisionNotes.join("; ") : null });
+      if (differs(then, now)) shifts.set(e.documentId, { documentId: e.documentId, ...shiftText(then, now), why: e.revisionNotes?.length ? e.revisionNotes.join("; ") : null });
     } else if (e.kind === "created" && !shifts.has(e.documentId) && !merged.has(e.documentId)) {
       // Created in the window and revised after its creating batch settled.
       const first = thenFields.get(e.documentId);
@@ -426,7 +504,7 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
       const now = nowOf(e.documentId);
       if (!differs(then, now)) continue;
       const why = first.revisionNotes?.length ? first.revisionNotes.join("; ") : null;
-      shifts.set(e.documentId, { documentId: e.documentId, then, now, why, thenAt: first.at });
+      shifts.set(e.documentId, { documentId: e.documentId, ...shiftText(then, now), why, thenAt: first.at });
     }
   }
   // A note created in the window reports `created` only, never `archived`:
@@ -451,7 +529,37 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
     if (at) firstAt.set(id, at);
   }
   const shiftReplacements = new Set([...shifts.values()].flatMap((sh) => (sh.replacedBy ? [sh.replacedBy] : [])));
-  return { since: window.since, areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, firstAt, merged, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
+  // Since predates the vault: a note counts at the start when it existed by the
+  // end of the first import day (nothing saying when: it did) and was not archived by then.
+  const liveAtStart = firstImport
+    ? (id: string) => {
+        const at = createdAt.get(id) ?? node(id)?.addedAt ?? null;
+        return isNote(id) && (at === null || at <= firstImport.end) && !firstImport.archived.has(id);
+      }
+    : undefined;
+  const rank = hits?.length ? new Map<string, number>() : undefined;
+  hits?.forEach((id, i) => {
+    if (!rank?.has(id)) rank?.set(id, i);
+  });
+  return {
+    since: window.since, areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, firstAt, merged, retired,
+    inScope, thenOf, nowOf, isNote, liveThen, liveNow,
+    ...(liveAtStart ? { liveAtStart } : {}),
+    ...(rank ? { rank } : {}),
+  };
+}
+
+/**
+ * The first `max` of `items` for a question (Addendum D2): with a query's
+ * hits, those that matched lead in hit order and the rest — in their own
+ * order — take at most half the slots; without, the first `max` as they come.
+ */
+function relevant<T>(items: readonly T[], max: number, rank: Map<string, number> | undefined, ids: (t: T) => readonly (string | undefined)[]): T[] {
+  if (!rank) return items.slice(0, max);
+  const rankOf = (t: T) => Math.min(...ids(t).map((id) => (id === undefined ? Infinity : (rank.get(id) ?? Infinity))));
+  const matched = items.filter((t) => rankOf(t) < Infinity).sort((a, b) => rankOf(a) - rankOf(b));
+  const rest = items.filter((t) => rankOf(t) === Infinity);
+  return [...matched, ...rest.slice(0, Math.floor(max / 2))].slice(0, max);
 }
 
 const claimOf = (f: Facts, id: string, then = false): Claim => {
@@ -459,23 +567,33 @@ const claimOf = (f: Facts, id: string, then = false): Claim => {
   return { documentId: id, ...(then ? f.thenOf(id) : f.nowOf(id)), ...(at ? { thenAt: at } : {}) };
 };
 
+/** An area reports versions only when at least this share of its sources carry a git ref (Addendum D6). */
+export const VERSIONED_SHARE = 0.5;
+
 /**
  * The git refs of these sources (spec Addendum B4): first = the earliest of
  * each source's ref standing at `since` (its last ingestion before, else its
  * first in the window); now = the latest ref. Only ingestions that recorded a
- * ref count; null when none did.
+ * ref count; null when none did, or when under {@link VERSIONED_SHARE} of the
+ * sources ever recorded one (a source never ingested counts as unversioned).
  */
 export function sourceVersions(sources: Iterable<string>, ingests: Map<string, { at: string; ref: string | null }[]>, since: string): { first: string | null; now: string | null } | null {
   let first: { at: string; ref: string } | null = null;
   let now: { at: string; ref: string } | null = null;
+  let total = 0;
+  let versioned = 0;
   for (const id of sources) {
+    total++;
     const list = (ingests.get(id) ?? []).filter((i): i is { at: string; ref: string } => i.ref !== null);
     if (!list.length) continue;
+    versioned++;
     const then = [...list].reverse().find((i) => i.at < since) ?? list[0];
     const last = list[list.length - 1];
     if (!first || then.at < first.at) first = then;
     if (!now || last.at > now.at) now = last;
   }
+  // Versions only where the area is versioned: at least half its sources carry a git ref (Addendum D6).
+  if (versioned < VERSIONED_SHARE * total) return null;
   return first || now ? { first: first?.ref ?? null, now: now?.ref ?? null } : null;
 }
 
@@ -491,6 +609,7 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
     notesThen: notes.filter(f.liveThen).length,
     notesNow: notes.filter(f.liveNow).length,
     ...(s.vaultStart && s.vaultStart > f.since ? { from: s.vaultStart } : {}),
+    ...(f.liveAtStart ? { notesAtStart: notes.filter(f.liveAtStart).length } : {}),
     newAreas: maps.filter(([id]) => isArea(id)).map(([id, n]) => ({ id, title: n.title || id })),
     newMaps: maps
       .filter(([id]) => !isArea(id))
@@ -544,13 +663,14 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
       title: id === null ? "Elsewhere" : (areaTitle.get(id) ?? id),
       notesThen,
       notesNow,
+      ...(f.liveAtStart ? { notesAtStart: members.filter(f.liveAtStart).length } : {}),
       newCount: newIds.length,
       changedCount: shifts.length,
       retiredCount: retired.length,
       mergedCount,
       ...(versions ? { versions } : {}),
-      newClaims: newIds.slice(0, MAX_NEW_CLAIMS).map((n) => claimOf(f, n)),
-      changedClaims: shifts.slice(0, MAX_CHANGED_CLAIMS),
+      newClaims: relevant(newIds, MAX_NEW_CLAIMS, f.rank, (n) => [n]).map((n) => claimOf(f, n)),
+      changedClaims: relevant(shifts, MAX_CHANGED_CLAIMS, f.rank, (sh) => [sh.documentId, sh.replacedBy]),
       retiredClaims: retired.slice(0, MAX_RETIRED_CLAIMS).map((n) => claimOf(f, n, true)),
       weight: weight + Math.abs(notesNow - notesThen),
     });
@@ -580,19 +700,10 @@ export function buildThenVsNow(f: Facts, s: StoryContext): ThenVsNow {
   const nowIds = new Set(notes.filter((id) => f.liveNow(id) && !s.superseded.has(id) && !f.supersededInWindow.has(id)));
   // Held then and now in the same words: say it once.
   const same = new Set(thenIds.filter((id) => nowIds.has(id) && !differs(f.thenOf(id), f.nowOf(id))));
-  const then = thenIds
-    .filter((id) => !same.has(id))
-    .sort(order(changedThen))
-    .slice(0, MAX_THEN_VS_NOW)
-    .map((id) => claimOf(f, id, true));
-  const now = [...nowIds]
-    .filter((id) => !same.has(id))
-    .sort(order(changedNow))
-    .slice(0, MAX_THEN_VS_NOW)
-    .map((id) => claimOf(f, id));
-  const unchanged = [...same]
-    .sort(order(() => false))
-    .slice(0, MAX_THEN_VS_NOW)
-    .map((id) => claimOf(f, id));
+  // With a query, its hits lead each side (Addendum D2).
+  const pick = (ids: string[]) => relevant(ids, MAX_THEN_VS_NOW, f.rank, (id) => [id]);
+  const then = pick(thenIds.filter((id) => !same.has(id)).sort(order(changedThen))).map((id) => claimOf(f, id, true));
+  const now = pick([...nowIds].filter((id) => !same.has(id)).sort(order(changedNow))).map((id) => claimOf(f, id));
+  const unchanged = pick([...same].sort(order(() => false))).map((id) => claimOf(f, id));
   return { then, now, unchanged };
 }
