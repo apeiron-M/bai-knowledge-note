@@ -2,6 +2,7 @@ import type { BaseSubgraph } from "@powerhousedao/reactor-api";
 import { GraphQLError } from "graphql";
 import { getDb, getQuery, getWritableDb, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
+import { backfillDriveSourceHistory } from "./helpers/source-history.js";
 import { loadPlacedSources, loadSourceTimeline, sourceListRow, sourceRowStore } from "./helpers/source-timeline.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import {
@@ -31,8 +32,10 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
 /**
  * Resolvers that must not be served on a bare READ grant.
  *
- * One mutation because it writes: `knowledgeGraphReindex` DELETEs and rebuilds
- * the projection (and CREATEs its tables when a namespace has none).
+ * Two mutations because they write: `knowledgeGraphReindex` DELETEs and
+ * rebuilds the projection (and CREATEs its tables when a namespace has none);
+ * `knowledgeGraphBackfillSourceHistory` inserts source history rows. (Their
+ * REST twins ask for manage access; GraphQL's guard knows read and write.)
  *
  * Four queries because of what they expose rather than what they change:
  * `knowledgeGraphDebug` serves the raw projection tables, and the three
@@ -50,6 +53,7 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
  */
 export const PRIVILEGED_RESOLVERS = new Set([
   "knowledgeGraphReindex",
+  "knowledgeGraphBackfillSourceHistory",
   "knowledgeGraphDebug",
   "knowledgeGraphHistory",
   "knowledgeGraphActivity",
@@ -238,6 +242,8 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
     Mutation: withDriveGuards(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
+      knowledgeGraphBackfillSourceHistory: ((_: unknown, args: { driveId: string }) =>
+        backfillDriveSourceHistory(subgraph, args.driveId)) as unknown as Resolver,
     }),
 
     Query: withDriveGuards(subgraph, {

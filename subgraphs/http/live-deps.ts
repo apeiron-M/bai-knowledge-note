@@ -7,6 +7,7 @@ import { isCurrentNode } from "../../processors/graph-indexer/query.js";
 import { readAccessMap } from "../access/access-map.js";
 import { getDb, getQuery } from "../knowledge-graph/helpers/db.js";
 import { reindexDrive } from "../knowledge-graph/helpers/reindex.js";
+import { backfillDriveSourceHistory } from "../knowledge-graph/helpers/source-history.js";
 import type { HttpRouteDeps } from "./lib/deps.js";
 import type { StructureRouteDeps } from "./routes/structure.js";
 
@@ -45,6 +46,8 @@ export function buildStructureRouteDeps(
     },
     reindex: (driveId: string) => reindexDrive(subgraph, driveId),
     accessMap: (driveId: string) => readAccessMap(subgraph, driveId),
+    backfillSourceHistory: (driveId: string) =>
+      backfillDriveSourceHistory(subgraph, driveId),
     authorization: subgraph.authorizationService,
   };
 }

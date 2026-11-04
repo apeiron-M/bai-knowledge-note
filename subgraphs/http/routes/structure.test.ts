@@ -59,6 +59,7 @@ function deps(overrides: Partial<StructureRouteDeps> = {}): StructureRouteDeps {
       errors: [],
     })),
     accessMap: vi.fn(async () => ({ available: true })),
+    backfillSourceHistory: vi.fn(async () => ({ sources: 3, inserted: 7, skipped: 0, errors: [] })),
     ...overrides,
   };
 }
@@ -167,6 +168,28 @@ describe("structure routes", () => {
       indexedEdges: 3,
       errors: [],
     });
+  });
+
+  it("refuses the source-history backfill to a caller who can write but not manage", async () => {
+    const d = deps();
+    d.authorization.canManage = vi.fn(async () => false);
+    const res = await createStructureRoute(d, "admin/backfill-source-history")(
+      new Request("http://h/admin/backfill-source-history?drive=d", { method: "POST" }),
+      ctxFor(),
+    );
+    expect(res.status).toBe(403);
+    expect(d.backfillSourceHistory).not.toHaveBeenCalled();
+  });
+
+  it("runs the source-history backfill for a manager, on the canonical drive", async () => {
+    const d = deps();
+    const res = await createStructureRoute(d, "admin/backfill-source-history")(
+      new Request("http://h/admin/backfill-source-history?drive=d", { method: "POST" }),
+      ctxFor(),
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ sources: 3, inserted: 7, skipped: 0, errors: [] });
+    expect(d.backfillSourceHistory).toHaveBeenCalledWith("drive");
   });
 
   it("forwards similar with the note id and a bounded limit", async () => {

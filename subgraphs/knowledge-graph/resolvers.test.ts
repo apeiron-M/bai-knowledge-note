@@ -84,6 +84,7 @@ describe("PRIVILEGED_RESOLVERS", () => {
     expect([...PRIVILEGED_RESOLVERS].sort()).toEqual([
       // writes the projection
       "knowledgeGraphReindex",
+      "knowledgeGraphBackfillSourceHistory",
       // serve operation diffs and signer addresses — an audit log
       "knowledgeGraphActivity",
       "knowledgeGraphActivityByType",

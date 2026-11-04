@@ -21,4 +21,12 @@ describe("knowledgeGraph schema", () => {
     const topic = build().getType("KnowledgeGraphTimelineTopic") as { getFields(): Record<string, { type: unknown }> };
     expect(Object.keys(topic.getFields())).toEqual(["documentId", "title", "addedAt", "writtenAt", "additionId"]);
   });
+
+  it("offers the source-history backfill as a mutation", () => {
+    const field = build().getMutationType()?.getFields().knowledgeGraphBackfillSourceHistory;
+    expect(String(field?.type)).toBe("SourceHistoryBackfill!");
+    expect(field?.args.map((a) => `${a.name}: ${String(a.type)}`)).toEqual(["driveId: ID!"]);
+    const result = build().getType("SourceHistoryBackfill") as { getFields(): Record<string, unknown> };
+    expect(Object.keys(result.getFields())).toEqual(["sources", "inserted", "skipped", "errors"]);
+  });
 });

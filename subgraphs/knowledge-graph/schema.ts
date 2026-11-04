@@ -223,6 +223,13 @@ export const schema: DocumentNode = gql`
     errors: [String!]!
   }
 
+  type SourceHistoryBackfill {
+    sources: Int!
+    inserted: Int!
+    skipped: Int!
+    errors: [String!]!
+  }
+
   """
   One addition to the vault: what a person added at once — a file's folder,
   a pasted source or a sources/batch call, a workflow's burst, an agent's
@@ -518,5 +525,12 @@ export const schema: DocumentNode = gql`
     the processor missed historical operations.
     """
     knowledgeGraphReindex(driveId: ID!): ReindexResult!
+    """
+    Record the drive's source operations (ingestions, status changes,
+    extracted claims) in the operation history, read from each source's
+    log. Idempotent; no reindex. Needed once on an index built before
+    source operations were recorded.
+    """
+    knowledgeGraphBackfillSourceHistory(driveId: ID!): SourceHistoryBackfill!
   }
 `;

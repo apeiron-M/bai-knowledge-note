@@ -21,3 +21,8 @@ Task 1: Ruling: two existing tests (indexed-kinds "ignores document types outsid
 Task 1: Ruling: the activity/stale filter is `document_type IS NULL OR <> 'bai/source'` (a plain `<>` would drop untyped legacy rows) — cost if wrong: none.
 Task 1: Ruling: extracted the row builder to processors/graph-indexer/operation-row.ts (operationRowOf, RECORDED_SOURCE_ACTIONS) so Task 2's backfill writes byte-identical rows; added gitRefOf to summarize.ts (browser-safe, reused by changes.ts) — cost if wrong: none.
 Task 1: Ruling: "recent" in the plan's list reads graph_nodes, not graph_operations — no filter needed there — cost if wrong: none.
+Task 1: complete (commits b5e2aa9..3567560, tests: bun run test tests/processor/ → 263/263 pass; bun run tsc clean)
+## Task 2
+Task 2: Ruling: GraphQL `knowledgeGraphBackfillSourceHistory` is write-gated (PRIVILEGED_RESOLVERS), REST `admin/backfill-source-history` is manage-gated — the GraphQL guard only knows read/write and `knowledgeGraphReindex` has the same split; spec's "canManage-gated" holds on REST — cost if wrong: a writer (not manager) can run an idempotent insert-only backfill over GraphQL.
+Task 2: Ruling: the route passes the canonical drive id (from canonicalForManage) to the backfill, unlike admin/reindex which passes the raw param — the namespace is keyed on the canonical id — cost if wrong: none.
+Task 2: Ruling: added a row to docs/http-api.md for the new route — the route table is the documented surface — cost if wrong: none.

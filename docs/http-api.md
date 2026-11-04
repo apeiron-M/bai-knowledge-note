@@ -42,6 +42,7 @@ route that reads the index takes `drive` (a document UUID).
 | `GET` | `bridges` | `renown` | `drive`; **requires `canWrite`** | articulation points — notes whose removal would split the graph (Tarjan, one DFS pass, O(V+E)). A curation tool: it answers what structural work needs doing, so it sits with `activity`/`history` rather than with discovery |
 | `GET` | `access-map` | `renown` | `drive`; **requires `canManage`** | grants, protections, operation grants |
 | `POST` | `admin/reindex` | `renown` | `drive`; **requires `canManage`** | `{ indexedNodes, indexedEdges, errors }` (reindex does not re-embed) |
+| `POST` | `admin/backfill-source-history` | `renown` | `drive`; **requires `canManage`** | `{ sources, inserted, skipped, errors }` — records each source's operations in the history (`GET changes` reads them); idempotent, no reindex |
 | `GET` | `llms.txt` | `renown-optional` | `drive` | MoC index as plain text; anonymous only when the drive is anonymously readable, titles only |
 | `GET` | `llms-full.txt` | `renown-optional` | `drive`; `includeDrafts=1` to inline every non-archived note, not just canonical ones | canonical notes plus the scope-of-work and WBS outlines; signed-in only |
 | `GET` | `health.json` | `renown` | `drive` | the last health report |

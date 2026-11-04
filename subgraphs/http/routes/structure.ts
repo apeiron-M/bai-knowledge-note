@@ -25,7 +25,8 @@ export type StructureKind =
   | "activity"
   | "history"
   | "access-map"
-  | "admin/reindex";
+  | "admin/reindex"
+  | "admin/backfill-source-history";
 
 export type StructureRouteDeps = HttpRouteDeps & {
   getQuery(driveId: string): GraphQuery;
@@ -34,6 +35,9 @@ export type StructureRouteDeps = HttpRouteDeps & {
     driveId: string,
   ): Promise<{ indexedNodes: number; indexedEdges: number; errors: string[] }>;
   accessMap(driveId: string): Promise<unknown>;
+  backfillSourceHistory(
+    driveId: string,
+  ): Promise<{ sources: number; inserted: number; skipped: number; errors: string[] }>;
   authorization: HttpRouteDeps["authorization"] & {
     canManage: IAuthorizationService["canManage"];
   };
@@ -166,6 +170,12 @@ export function createStructureRoute(
           return Response.json(await deps.reindex(drive), {
             headers: OK_CACHE,
           });
+        case "admin/backfill-source-history": {
+          const canonical = await canonicalForManage(deps, drive, ctx);
+          return Response.json(await deps.backfillSourceHistory(canonical), {
+            headers: OK_CACHE,
+          });
+        }
         default:
           throw new HttpError(500, "INTERNAL", `Unknown structure kind`);
       }
@@ -198,4 +208,9 @@ export function registerStructureRoutes(
   http.get("notes/:id/history", renown, route("history"));
   http.get("access-map", renown, route("access-map"));
   http.post("admin/reindex", { auth: "renown", body: "parsed" }, route("admin/reindex"));
+  http.post(
+    "admin/backfill-source-history",
+    { auth: "renown", body: "parsed" },
+    route("admin/backfill-source-history"),
+  );
 }
