@@ -49,6 +49,12 @@ index)*: a dedicated, idempotent backfill — a `knowledgeGraphBackfillSourceHis
 `POST admin/backfill-source-history` route, `canManage`-gated — reads each source's operation log from the reactor and
 inserts the missing `graph_operations` rows (`onConflict doNothing` on the existing `<documentId>-<index>` id). No
 reindex, no window in which search reads a half-built index. A future full reindex fills the same rows naturally.
+*(Review fix, 2026-11-04.)* An index written before this feature also lost each document's first two **global**
+operations: document-scope `CREATE_DOCUMENT`/`UPGRADE_DOCUMENT` (indices 0 and 1) were stored under the same
+`<doc>-<index>` ids. A migration moves non-global rows to `<doc>-<scope>-<index>` (idempotent; a duplicate of an
+already-scoped row is deleted), and the backfill takes `all: true` / `?scope=all` to write every global operation of
+every indexed document as well, filling the freed ids. Both surfaces check `canManage` (the GraphQL resolver asks it
+itself, beyond the guard's write check).
 
 ### 2. Change events — one pure module
 `processors/graph-indexer/changes.ts` (no kysely, no embedder — importable by the browser like `summarize.ts`):
@@ -85,7 +91,9 @@ ChangeDigest {
 }
 ```
 Grouping: a note goes to the MoCs holding it as `CORE_IDEA` (most specific tier first), else its first topic, else
-"unplaced"; a source goes where most of its `extractedClaims` go, else its `/sources` folder.
+"unplaced"; a map's own changes group under the map itself; a source goes where most of its `extractedClaims` go, else
+its `/sources` folder (read from the drive tree per digest, as the source timeline does — `graph_sources` keeps no
+folder).
 **Scope** (all optional, combinable): `moc`, `topic`, `documentIds`, `q` (semantic search → the hit set plus its
 one-hop neighbourhood, so "what changed in processors" works without knowing a MoC id), `types`.
 
@@ -132,7 +140,15 @@ before → after for revised claims and naming the replacement for superseded on
   over the deterministic order (significance, timestamp, documentId).
 - **`q=`:** semantic search, top 10 hits, plus their one-hop knowledge-edge neighbours, then the `types` filter. Same
   code path for GraphQL and REST, so chat and plugin totals match.
-- **Dates:** UTC. A date-only `until` includes that whole day; a date-only `since` starts at 00:00Z.
+- **Dates:** UTC. A date-only `until` includes that whole day; a date-only `since` starts at 00:00Z; a timestamp
+  without an offset is UTC. History timestamps are stored in `toISOString()` form (writers normalise, a migration
+  rewrites older rows) so that string order is time order; a row whose timestamp is not ISO is skipped.
+- **Cursor:** carries the window's end, so paging without `until` stays on one window; an unreadable cursor is
+  `BAD_USER_INPUT` / 400.
+- **Payload caps:** a revised body's `before` is its first 400 characters (the hunks carry the diff); a source event
+  names its first 20 notes plus `noteCount`; a source whose earlier text was never recorded reports `added`/`removed`
+  as null ("earlier version not recorded"), not 0. Line counts are linear (a moved line is not counted); hunks are
+  computed only for the events shown (highlights and the current page).
 - **Chat transport:** `what_changed` calls `knowledgeGraphChanges` over GraphQL (like the other vault tools) and gets
   JSON; the markdown rendering is for REST consumers. `changes.ts` stays browser-safe for import hygiene and so the
   editor can fall back to it against an older server, as `source-timeline.ts` does.
