@@ -1107,7 +1107,7 @@ export function createGraphQuery(db: GraphReadDb) {
     async changes(
       window: { since: string; until: string },
       scope: ChangeScope,
-      opts: { limit?: number; cursor?: string | null } = {},
+      opts: { limit?: number; cursor?: string | null; sourceFolders?: ReadonlyMap<string, string> } = {},
     ): Promise<ChangeDigest> {
       return loadChanges(db, window, scope, opts);
     },

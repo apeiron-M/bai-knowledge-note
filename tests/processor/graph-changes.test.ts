@@ -105,11 +105,11 @@ describe("graph query: changes()", () => {
 
     const ids = [...new Set(f.rows.map((r) => r.documentId))].sort();
     const scope = { documentIds: ids };
-    const fromDb = await createGraphQuery(db).changes(f.window, scope, { limit: 200 });
+    // Source folders come from the drive tree (the subgraph passes them in).
+    const sourceFolders = new Map(f.context.sources.filter((s) => s.folder).map((s) => [s.id, s.folder as string]));
+    const fromDb = await createGraphQuery(db).changes(f.window, scope, { limit: 200, sourceFolders });
 
-    // The index holds no source folder; everything else is the fixture's context.
     const ctx = fixtureContext();
-    for (const [id, s] of ctx.sources) ctx.sources.set(id, { ...s, folder: null });
     const pure = buildChanges(f.rows, f.baseline, ctx, f.window, { scope, limit: 200 });
 
     expect(fromDb.totals).toEqual(pure.totals);
@@ -142,6 +142,24 @@ describe("graph query: changes()", () => {
     expect(d.events?.map((e) => e.documentId).sort()).toEqual(["n1", "n2", "s1"]);
     expect(d.scope).toEqual({ moc: "m1" });
     expect(d.groups.map((g) => g.title).sort()).toEqual(["Processors", "Read models"]);
+  });
+
+  it("reads a map's baseline from CREATE_MOC, and drops a supersession taken back by a note outside the scope", async () => {
+    const db = harness.db;
+    await insertNode(db, "m1", "Processors", "bai/moc", "MOC (TOPIC)");
+    const op = (documentId: string, documentType: string, operationType: string, input: unknown, timestamp: string): OperationRow => ({ documentId, documentType, operationType, timestamp, index: 0, inputJson: JSON.stringify(input), signerAddress: null });
+    await insertOps(db, [
+      op("m1", "bai/moc", "CREATE_MOC", { title: "Processors", description: "first words", orientation: "", tier: "TOPIC" }, "2026-08-01T00:00:00.000Z"),
+      op("m1", "bai/moc", "UPDATE_DESCRIPTION", { description: "second words" }, "2026-11-03T01:00:00.000Z"),
+      op("x", "bai/knowledge-note", "ADD_RELATIONSHIP", { sourceId: "x", targetId: "n1", relationshipType: "SUPERSEDES" }, "2026-11-03T01:00:00.000Z"),
+      op("x", "bai/knowledge-note", "REMOVE_RELATIONSHIP", { sourceId: "x", targetId: "n1" }, "2026-11-03T02:00:00.000Z"),
+      op("n1", "bai/knowledge-note", "ADD_TOPIC", { name: "t" }, "2026-11-03T03:00:00.000Z"),
+    ]);
+    const window = { since: "2026-11-03T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" };
+    const d = await createGraphQuery(db).changes(window, { documentIds: ["m1", "n1"] }, {});
+    expect(d.events?.map((e) => [e.documentId, e.kind])).toEqual([["m1", "revised"]]);
+    expect(d.events?.[0].fields?.description).toEqual({ before: "first words", after: "second words" });
+    expect(d.groups.map((g) => g.key)).toEqual(["moc:m1"]);
   });
 
   it("answers a sync-sized window — large sources and notes with baselines — in seconds, not minutes", async () => {

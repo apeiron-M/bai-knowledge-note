@@ -290,7 +290,7 @@ async function baselineRows(db: ReadDb, since: string, docIds: string[]): Promis
   return out;
 }
 
-async function loadContext(db: ReadDb, rows: OperationRow[]): Promise<ChangeContext> {
+async function loadContext(db: ReadDb, rows: OperationRow[], sourceFolders: ReadonlyMap<string, string>): Promise<ChangeContext> {
   const docIds = new Set(rows.map((r) => r.documentId));
   for (const r of rows) {
     if (r.operationType !== "ADD_RELATIONSHIP" || !r.inputJson) continue;
@@ -307,7 +307,7 @@ async function loadContext(db: ReadDb, rows: OperationRow[]): Promise<ChangeCont
   const noteIds = new Set([...docIds].filter((id) => !sourceMap.has(id)));
   for (const [id, row] of sourceMap) {
     const claimIds = row.claimIds ?? [];
-    sources.set(id, { title: row.title ?? id, folder: null, claimIds, addedAt: row.addedAt ?? null });
+    sources.set(id, { title: row.title ?? id, folder: sourceFolders.get(id) ?? null, claimIds, addedAt: row.addedAt ?? null });
     for (const n of claimIds) noteIds.add(n);
   }
 
@@ -365,7 +365,7 @@ export async function loadChanges(
   db: ReadDb,
   window: { since: string; until: string },
   scope: ChangeScope,
-  opts: { limit?: number; cursor?: string | null } = {},
+  opts: { limit?: number; cursor?: string | null; sourceFolders?: ReadonlyMap<string, string> } = {},
 ): Promise<ChangeDigest> {
   let ids: Set<string> | null = scope.documentIds ? new Set(scope.documentIds) : null;
   if (scope.moc) ids = intersect(ids, await mocScope(db, scope.moc));
@@ -378,11 +378,11 @@ export async function loadChanges(
   const created = new Set(raw.filter((r) => CREATED_TYPES.has(r.operation_type)).map((r) => r.document_id));
   const inScopeDocs = [...new Set(rows.filter((r) => (!ids || ids.has(r.documentId)) && !created.has(r.documentId)).map((r) => r.documentId))];
   const baseline = (await baselineRows(db, window.since, inScopeDocs)).map(toRow);
-  const ctx = await loadContext(db, rows);
+  const ctx = await loadContext(db, rows, opts.sourceFolders ?? new Map());
 
   const internal: ChangeScope = { ...(ids ? { documentIds: [...ids] } : {}), ...(scope.types ? { types: scope.types } : {}) };
   // Ids came from a scope key: the caller asked for events, even if the ids are empty.
   if (!ids && (scope.q || scope.moc || scope.topic)) internal.documentIds = [];
-  const digest = buildChanges(rows, baseline, ctx, window, { scope: internal, ...opts });
+  const digest = buildChanges(rows, baseline, ctx, window, { scope: internal, limit: opts.limit, cursor: opts.cursor });
   return { ...digest, scope };
 }

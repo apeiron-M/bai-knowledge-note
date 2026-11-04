@@ -7,7 +7,7 @@ import {
   type ChangeScope,
 } from "../../../processors/graph-indexer/changes.js";
 import { isKnowledgeLinkType } from "../../../processors/graph-indexer/link-types.js";
-import { getQuery, type GraphSubgraph } from "./db.js";
+import { getQuery, readerOf, type GraphSubgraph } from "./db.js";
 import { searchVault } from "./search.js";
 
 /** How many semantic hits a `q` scope starts from (spec §7). */
@@ -62,6 +62,56 @@ export function scopeOf(args: ChangeArgs): ChangeScope {
   return scope;
 }
 
+interface DriveTreeNode {
+  id: string;
+  name?: string | null;
+  kind?: string;
+  documentType?: string | null;
+  parentFolder?: string | null;
+}
+
+/**
+ * Each source's folder as a path from the drive root (`/sources/powerhouse`).
+ * A source at the drive root has none. Pure, over the drive's node list.
+ */
+export function sourceFolderPaths(nodes: readonly DriveTreeNode[]): Map<string, string> {
+  const folders = new Map(nodes.filter((n) => n.kind === "folder").map((n) => [n.id, n]));
+  const paths = new Map<string, string>();
+  const pathOf = (id: string): string => {
+    const known = paths.get(id);
+    if (known !== undefined) return known;
+    const names: string[] = [];
+    const seen = new Set<string>();
+    for (let f = folders.get(id); f && !seen.has(f.id); f = f.parentFolder ? folders.get(f.parentFolder) : undefined) {
+      seen.add(f.id);
+      names.unshift(f.name ?? f.id);
+    }
+    const path = `/${names.join("/")}`;
+    paths.set(id, path);
+    return path;
+  };
+  const out = new Map<string, string>();
+  for (const n of nodes) {
+    if (n.documentType === "bai/source" && n.parentFolder && folders.has(n.parentFolder)) out.set(n.id, pathOf(n.parentFolder));
+  }
+  return out;
+}
+
+/**
+ * The drive's source folders, read from its tree (one document read, as the
+ * source timeline does). Best effort: without them a source whose notes are
+ * ungrouped lands in "Unplaced" rather than failing the digest.
+ */
+async function loadSourceFolders(subgraph: GraphSubgraph, driveId: string): Promise<Map<string, string>> {
+  try {
+    const drive = (await readerOf(subgraph).get(driveId)) as { state?: { global?: { nodes?: DriveTreeNode[] } } } | null;
+    return sourceFolderPaths(drive?.state?.global?.nodes ?? []);
+  } catch (err) {
+    console.warn(`[changes] ${driveId}: could not read the drive tree for source folders:`, err instanceof Error ? err.message : err);
+    return new Map();
+  }
+}
+
 /** A malformed window or cursor is the caller's mistake, not the server's. */
 export { ChangeInputError };
 
@@ -81,10 +131,14 @@ export async function loadDriveChanges(
   const until = args.until || (args.cursor ? cursorUntil(args.cursor) : null);
   const window = parseWindow(args.since, until, now);
   const scope = scopeOf(args);
-  const resolved = await resolveChangeScope(subgraph, driveId, scope);
+  const [resolved, sourceFolders] = await Promise.all([
+    resolveChangeScope(subgraph, driveId, scope),
+    loadSourceFolders(subgraph, driveId),
+  ]);
   const digest = await getQuery(subgraph, driveId).changes(window, resolved, {
     limit: args.limit ?? undefined,
     cursor: args.cursor ?? undefined,
+    sourceFolders,
   });
   return { ...digest, scope };
 }

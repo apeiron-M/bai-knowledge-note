@@ -160,7 +160,7 @@ describe("Query.knowledgeGraphChanges", () => {
     expect(changes).toHaveBeenCalledWith(
       { since: "2026-09-01T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" },
       {},
-      { limit: undefined, cursor: undefined },
+      { limit: undefined, cursor: undefined, sourceFolders: new Map() },
     );
     expect(out).toMatchObject({ totals: { created: 1 } });
   });
@@ -185,7 +185,7 @@ describe("Query.knowledgeGraphChanges", () => {
     const out = (await resolve(s)({}, { driveId: "d", since: "2026-11-01", q: "processors", limit: 20, cursor }, {})) as ChangeDigest;
     expect(searchVault).toHaveBeenCalledWith(s, "d", "processors", "SEMANTIC", 10, false);
     expect(changes.mock.calls[0][1]).toEqual({ q: "processors", documentIds: ["h1", "h2", "n9"] });
-    expect(changes.mock.calls[0][2]).toEqual({ limit: 20, cursor });
+    expect(changes.mock.calls[0][2]).toEqual({ limit: 20, cursor, sourceFolders: new Map() });
     // No until given: the window ends where the cursor's did.
     expect(changes.mock.calls[0][0]).toEqual({ since: "2026-11-01T00:00:00.000Z", until: "2026-11-03T12:00:00.000Z" });
     // The digest echoes the question, not the ids it resolved to.
