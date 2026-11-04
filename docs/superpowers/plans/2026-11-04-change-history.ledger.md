@@ -69,3 +69,17 @@ Task 8: Ruling: the prompt's old rule sent "anything about time" to recent_chang
 Task 8: Ruling: what_changed takes a `limit` too (LIMITS.changes 30/100) beside the plan's since/until/moc/topic/query/cursor; `query` maps to GraphQL `q`; the tool summary for an empty digest starts "nothing changed between <since> and <until>" and the prompt says "When totals.documents is 0, say nothing changed in that window" — cost if wrong: none.
 Task 8: Ruling: ENS names are resolved for every `by` in highlights and events (byName beside by) — cost if wrong: none.
 Task 8: Ruling: tool-count assertions updated (VAULT_TOOLS 19→20, use-chat's offered tools 24→25); lint errors in Task 2/6/7 tests (unbound-method, import() type annotations) fixed in this commit — cost if wrong: none.
+Task 8: complete (commits 91c51c8..ac9ad29, tests: bun run test → 3424 passed / 6 skipped (332 files); bun run tsc clean; bun run lint:fix exit 0 (warnings only))
+## Task 9
+Task 9: plugin repo /home/beast/Documents/Powerhouse/powerhouse-knowledge (main), local commit f83e35d `docs: answer "what changed" from GET changes` — not pushed.
+Task 9: Ruling: AGENT.md gets both the plan's one row in § Which surface to use AND the spec's "short changes section" (§ What changed, 8 lines); rest-api also lists `admin/backfill-source-history` — spec §6 asks for a section — cost if wrong: none.
+Task 9: Ruling: local acceptance PENDING — `ph vetra` is not running in this session and the brief forbids starting long-running servers. `bun run build` was run (exit 0; server-build check ok; `knowledgeGraphChanges` and `admin/backfill-source-history` present in dist/node). The spec's "local vault seeded from the Task 3 fixture" has no seeding path (the fixture is operation rows, not documents); the pure/DB equality on the fixture is covered by tests/processor/graph-changes.test.ts. Commands for the user:
+  1. `bun run build` (done) then restart the Switchboard: `ph vetra`
+  2. `BASE=http://localhost:4001/api/@powerhousedao/knowledge-note; AUTH="Authorization: Bearer $(switchboard auth token)"; DRIVE=<local vault drive id>`
+  3. `curl -s -H "$AUTH" -X POST "$BASE/admin/backfill-source-history?drive=$DRIVE"` (manager) → `{ sources, inserted, skipped, errors }`; run again → `inserted: 0`
+  4. Acceptance 1: `curl -s -H "$AUTH" "$BASE/changes?drive=$DRIVE&since=2026-09-01" | jq '{totals, groups: [.groups[] | {title, id, totals}]}'`; chat: "What changed in the Powerhouse stack since 2026-09-01?" → same totals (acceptance 5)
+  5. Acceptance 2: `curl -s -H "$AUTH" -H 'accept: text/markdown' "$BASE/changes?drive=$DRIVE&since=2026-09-01&moc=<Data Processing and CQRS id>"`
+  6. Acceptance 3: a `superseded` event in step 5's events carries `supersededBy.reason`
+  7. Acceptance 4: a read-only token gets 200; a non-reader gets 403 (`code: FORBIDDEN`)
+Task 9: Ruling: "after deploy to the remote vault" (POST admin/backfill-source-history once, then acceptance 1–2 live) is the user's action — skipped here — cost if wrong: n/a.
+Final review: not dispatched by the implementer — coordinator runs the whole-branch review (coordinator's instruction).
