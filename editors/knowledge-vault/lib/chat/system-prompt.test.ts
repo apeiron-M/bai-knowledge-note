@@ -169,4 +169,17 @@ describe("buildSystemPrompt", () => {
     expect(p.length).toBeGreaterThan(400);
     expect(p).not.toMatch(/undefined|null|NaN/);
   });
+
+  it("sends questions about change over time to what_changed, summary first", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/what changed in .* since .* call what_changed, never search/i);
+    expect(p).toMatch(/executive summary from its totals and each group's highlights/);
+    expect(p).toMatch(/offer the groups as topics to explore/);
+    expect(p).toMatch(/what_changed again with that group's moc/);
+    expect(p).toMatch(/say which dates you used/);
+    expect(p).toMatch(/quote before → after/);
+    expect(p).toMatch(/name the note that replaced it/);
+    // The empty digest: the tool's summary starts "nothing changed between …".
+    expect(p).toMatch(/When totals\.documents is 0, say nothing changed in that window/);
+  });
 });

@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BaseSubgraph } from "@powerhousedao/reactor-api";
 import { assertOncePerRequest, getResolvers, PRIVILEGED_RESOLVERS } from "./resolvers.js";
 import type { ChangeDigest } from "../../processors/graph-indexer/changes.js";
+import type * as DbModule from "./helpers/db.js";
+import type * as SearchModule from "./helpers/search.js";
 
 // The change digest reads the index through getQuery and resolves `q` through
 // searchVault; both are replaced so the resolver's own wiring is what runs.
@@ -9,12 +11,12 @@ const changes = vi.fn();
 const edgesTouching = vi.fn();
 const searchVault = vi.fn();
 vi.mock("./helpers/db.js", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("./helpers/db.js")>()),
+  ...(await importOriginal<typeof DbModule>()),
   getQuery: () => ({ changes, edgesTouching }),
   resolveCanonicalDriveId: (_: unknown, id: string) => Promise.resolve(id),
 }));
 vi.mock("./helpers/search.js", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("./helpers/search.js")>()),
+  ...(await importOriginal<typeof SearchModule>()),
   searchVault: (...args: unknown[]) => searchVault(...args) as unknown,
 }));
 

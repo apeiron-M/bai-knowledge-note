@@ -38,6 +38,8 @@ import {
 } from "./web.js";
 import { shortAddress } from "../../../shared/identity.js";
 import { summarizeOperation } from "../../../../processors/graph-indexer/summarize.js";
+import type { ChangeTotals } from "../../../../processors/graph-indexer/changes.js";
+import { totalsLine } from "../../../../processors/graph-indexer/changes-markdown.js";
 import {
   renderScope,
   renderWbs,
@@ -118,6 +120,8 @@ const LIMITS = {
   /** How many rows carry who/what: one extra request each, run in parallel. */
   recentDetail: 12,
   history: { default: 10, max: 50 },
+  /** what_changed: events per page when a scope is given. */
+  changes: { default: 30, max: 100 },
   web: { default: 5, max: 10 },
   editors: { default: 10, max: 25 },
   activity: 5000,
@@ -476,6 +480,48 @@ export const VAULT_TOOLS: ToolSchema[] = [
             description: "Only documents of this type, e.g. bai/source for the newest source material.",
           },
         },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "what_changed",
+      description:
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did the stack change since the last release'; never search for these. Without a scope it returns the executive summary: totals (created, revised, superseded, archived, re-verified notes; sources revised and added) and groups — one per map of content (else topic) — each with its own totals and up to five highlights. With moc, topic or query it also returns that part's events, most significant first: revised notes with before → after per field (content as diff hunks, plus any '## Revision history' lines added), superseded notes with the note that replaced them and why, created notes with the source they come from, sources re-ingested with the git refs they moved between. Follow nextCursor for more events. Dates are UTC: a date alone for since starts that day, for until covers it.",
+      parameters: {
+        type: "object",
+        properties: {
+          since: {
+            type: "string",
+            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself, and tell the person which one you used.",
+          },
+          until: {
+            type: "string",
+            description: "End of the period, ISO 8601 (a date alone covers the whole day). Default: now.",
+          },
+          moc: {
+            type: "string",
+            description: "A map of content's documentId — a group's id from an earlier what_changed call — to drill into that map (its child maps, notes and their sources).",
+          },
+          topic: {
+            type: "string",
+            description: "A topic name, to drill into the notes tagged with it.",
+          },
+          query: {
+            type: "string",
+            description: "A subject in words, when no map or topic names it: its top search hits and their linked notes are the scope.",
+          },
+          cursor: {
+            type: "string",
+            description: "nextCursor from the previous what_changed call with the same arguments, for the next page of events.",
+          },
+          limit: {
+            type: "integer",
+            description: `Events per page when a scope is given (default ${LIMITS.changes.default}, max ${LIMITS.changes.max}).`,
+          },
+        },
+        required: ["since"],
       },
     },
   },
@@ -1700,6 +1746,32 @@ function neighbourhoodOf(rows: SearchRow[]): {
 /*  Executor                                                          */
 /* ------------------------------------------------------------------ */
 
+const CHANGE_EVENT_FIELDS = `kind documentId documentType title at by significance
+  fields { title { before after } description { before after } content { before hunks added removed } }
+  revisionNotes supersededBy { documentId title reason } version { before after } comment
+  source { refBefore refAfter url added removed hunks noteIds } derivedFrom folded { operationType count }`;
+const CHANGE_TOTALS_FIELDS = "created revised superseded archived reverified sourcesRevised sourcesAdded documents operations";
+const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $cursor: String, $limit: Int) {
+  knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc, topic: $topic, q: $q, cursor: $cursor, limit: $limit) {
+    window { since until }
+    scope { moc topic q documentIds types }
+    totals { ${CHANGE_TOTALS_FIELDS} }
+    groups { key kind id title totals { ${CHANGE_TOTALS_FIELDS} } highlights { ${CHANGE_EVENT_FIELDS} } }
+    events { ${CHANGE_EVENT_FIELDS} }
+    nextCursor
+  }
+}`;
+
+/** knowledgeGraphChanges as the wire carries it (folded is a list there). */
+type ChangeEventWire = { documentId: string; by?: string | null } & Record<string, unknown>;
+type ChangeDigestWire = {
+  window: { since: string; until: string };
+  totals: ChangeTotals;
+  groups: { totals: ChangeTotals; highlights: ChangeEventWire[] }[];
+  events?: ChangeEventWire[] | null;
+  nextCursor?: string | null;
+};
+
 export async function executeTool(
   rawName: string,
   args: Record<string, unknown>,
@@ -2311,6 +2383,42 @@ export async function executeTool(
           (items[0] && "change" in items[0]
             ? `; newest: ${(items[0] as { byName?: string | null; byShort?: string | null }).byName ?? (items[0] as { byShort?: string | null }).byShort ?? "someone"} — ${(items[0] as { change?: string }).change ?? ""}`
             : ""),
+      );
+    }
+
+    case "what_changed": {
+      const since = str(args, "since");
+      if (!since) return fail(`since is required: the start of the period as an ISO 8601 date, e.g. 2026-09-01`);
+      const variables = {
+        driveId,
+        since,
+        until: str(args, "until"),
+        moc: str(args, "moc"),
+        topic: str(args, "topic"),
+        q: str(args, "query"),
+        cursor: str(args, "cursor"),
+        limit: int(args, "limit", LIMITS.changes.default, LIMITS.changes.max),
+      };
+      const r = await gql<{ knowledgeGraphChanges: ChangeDigestWire }>(graphEndpoint(), CHANGES_QUERY, variables);
+      if ("error" in r) return fail(r.error);
+      const digest = r.data.knowledgeGraphChanges;
+      const events = [...digest.groups.flatMap((g) => g.highlights), ...(digest.events ?? [])];
+      const names = await resolveEnsNames(events.map((e) => e.by ?? "").filter((a) => a !== ""));
+      const named = <T extends { by?: string | null }>(e: T): T & { byName: string | null } => ({
+        ...e,
+        byName: e.by ? (names.get(e.by) ?? null) : null,
+      });
+      const data = {
+        ...digest,
+        groups: digest.groups.map((g) => ({ ...g, highlights: g.highlights.map(named) })),
+        ...(digest.events ? { events: digest.events.map(named) } : {}),
+      };
+      const span = `between ${digest.window.since.slice(0, 10)} and ${digest.window.until.slice(0, 10)}`;
+      if (digest.totals.documents === 0) return ok(data, `nothing changed ${span}`);
+      return ok(
+        data,
+        `${totalsLine(digest.totals)} ${span}, in ${digest.groups.length} group${digest.groups.length === 1 ? "" : "s"}` +
+          (digest.events ? `; ${digest.events.length} event${digest.events.length === 1 ? "" : "s"}${digest.nextCursor ? ", more with nextCursor" : ""}` : ""),
       );
     }
 

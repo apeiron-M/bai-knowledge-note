@@ -63,3 +63,9 @@ Task 6: complete (commits 8603796..885a012, tests: bun run test subgraphs/knowle
 Task 7: Ruling: the route takes a `loadChanges(driveId, args)` dep (live: `loadDriveChanges(subgraph, …)`, the same function the resolver calls) instead of re-implementing scope resolution; the "same totals" test runs both surfaces over one real PGlite index — cost if wrong: none.
 Task 7: Ruling: `since` is required on REST (400 without it), matching GraphQL's `since: String!` — cost if wrong: none.
 Task 7: Ruling: documented the route in docs/http-api.md's table — cost if wrong: none.
+Task 7: complete (commits 885a012..91c51c8, tests: bun run test subgraphs/http/routes/changes.test.ts → 6/6 pass; tsc clean)
+## Task 8
+Task 8: Ruling: the prompt's old rule sent "anything about time" to recent_changes; it now sends change over a period to what_changed (never search) and keeps recent_changes for "the latest edits as a list" — both tools coexist — cost if wrong: the model picks recent_changes for a period question (prompt test pins the routing).
+Task 8: Ruling: what_changed takes a `limit` too (LIMITS.changes 30/100) beside the plan's since/until/moc/topic/query/cursor; `query` maps to GraphQL `q`; the tool summary for an empty digest starts "nothing changed between <since> and <until>" and the prompt says "When totals.documents is 0, say nothing changed in that window" — cost if wrong: none.
+Task 8: Ruling: ENS names are resolved for every `by` in highlights and events (byName beside by) — cost if wrong: none.
+Task 8: Ruling: tool-count assertions updated (VAULT_TOOLS 19→20, use-chat's offered tools 24→25); lint errors in Task 2/6/7 tests (unbound-method, import() type annotations) fixed in this commit — cost if wrong: none.

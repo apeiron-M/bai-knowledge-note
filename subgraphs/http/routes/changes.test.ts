@@ -7,17 +7,19 @@ import { createGraphQuery } from "../../../processors/graph-indexer/query.js";
 import { loadDriveChanges } from "../../knowledge-graph/helpers/changes-scope.js";
 import { getResolvers } from "../../knowledge-graph/resolvers.js";
 import { createChangesRoute, type ChangesRouteDeps } from "./changes.js";
+import type * as DbModule from "../../knowledge-graph/helpers/db.js";
+import type * as SearchModule from "../../knowledge-graph/helpers/search.js";
 
 // Both surfaces read through getQuery; here it is one real PGlite index, so
 // the route and the resolver answer from the same rows.
 let harness: Awaited<ReturnType<typeof createTestDb>>;
 vi.mock("../../knowledge-graph/helpers/db.js", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../../knowledge-graph/helpers/db.js")>()),
+  ...(await importOriginal<typeof DbModule>()),
   getQuery: () => createGraphQuery(harness.db),
   resolveCanonicalDriveId: (_: unknown, id: string) => Promise.resolve(id),
 }));
 vi.mock("../../knowledge-graph/helpers/search.js", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../../knowledge-graph/helpers/search.js")>()),
+  ...(await importOriginal<typeof SearchModule>()),
   searchVault: () => Promise.resolve([{ node: { documentId: "n1" } }]),
 }));
 

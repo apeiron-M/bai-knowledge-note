@@ -74,7 +74,7 @@ const lastRequest = () =>
 afterEach(() => vi.restoreAllMocks());
 
 describe("VAULT_TOOLS", () => {
-  it("exposes exactly the nineteen read-only tools", () => {
+  it("exposes exactly the twenty read-only tools", () => {
     expect(VAULT_TOOLS.map((t) => t.function.name).sort()).toEqual([
       "document_history",
       "keyword_search",
@@ -95,6 +95,7 @@ describe("VAULT_TOOLS", () => {
       "topic_maps",
       "vault_editors",
       "vault_stats",
+      "what_changed",
     ]);
   });
 
@@ -2030,5 +2031,70 @@ describe("reading for an answer", () => {
     const hits = (r.data as { hits: Record<string, unknown>[] }).hits;
     expect(hits[0].source).toEqual({ documentId: "src-4", title: "Chapter 4 Software", documentType: "bai/source" });
     expect(hits[1]).not.toHaveProperty("source");
+  });
+});
+
+describe("what_changed — the change digest over a window", () => {
+  const digest = (documents: number) => ({
+    window: { since: "2026-09-01T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" },
+    scope: { moc: "m1" },
+    totals: { created: documents, revised: 0, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents, operations: documents * 3 },
+    groups: documents
+      ? [
+          {
+            key: "moc:m1",
+            kind: "moc",
+            id: "m1",
+            title: "Data Processing and CQRS",
+            totals: { created: 1, revised: 0, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents: 1, operations: 3 },
+            highlights: [{ kind: "created", documentId: "n1", title: "A claim", at: "2026-11-03T10:00:00.000Z", by: "0xabc", folded: [] }],
+          },
+        ]
+      : [],
+    events: documents ? [{ kind: "created", documentId: "n1", title: "A claim", at: "2026-11-03T10:00:00.000Z", by: "0xabc", folded: [] }] : [],
+    nextCursor: null,
+  });
+
+  it("is offered with since required and the scope arguments", () => {
+    const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+    const params = tool?.function.parameters as { properties: Record<string, unknown>; required: string[] };
+    expect(params.required).toEqual(["since"]);
+    expect(Object.keys(params.properties).sort()).toEqual(["cursor", "limit", "moc", "query", "since", "topic", "until"]);
+    expect(tool?.function.description).toMatch(/never search/i);
+  });
+
+  it("asks knowledgeGraphChanges with moc, query and cursor passed through", async () => {
+    mockGql({ knowledgeGraphChanges: digest(1) });
+    const r = await executeTool(
+      "what_changed",
+      { since: "2026-09-01", until: "2026-11-03", moc: "[[m1]]", query: "processors", cursor: "abc", limit: 500 },
+      CTX,
+    );
+    expect(r.ok).toBe(true);
+    const { body } = lastRequest();
+    expect(body.query).toContain("knowledgeGraphChanges(");
+    expect(body.variables).toEqual({
+      driveId: "drive-1",
+      since: "2026-09-01",
+      until: "2026-11-03",
+      moc: "m1",
+      topic: null,
+      q: "processors",
+      cursor: "abc",
+      limit: 100,
+    });
+    if (r.ok) expect(r.summary).toMatch(/1 created/);
+  });
+
+  it("says nothing changed for an empty digest", async () => {
+    mockGql({ knowledgeGraphChanges: digest(0) });
+    const r = await executeTool("what_changed", { since: "2026-09-01" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.summary).toMatch(/^nothing changed between 2026-09-01 and 2026-11-03/);
+  });
+
+  it("refuses a call without since", async () => {
+    const r = await executeTool("what_changed", {}, CTX);
+    expect(r).toEqual({ ok: false, error: expect.stringMatching(/since is required/) as unknown });
   });
 });
