@@ -325,7 +325,7 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .select(["id", "timestamp"])
     .where("timestamp", "not like", "____-__-__T__:__:__.___Z")
     .execute();
-  for (const row of odd) {
+  for (const row of odd as { id: string; timestamp: string }[]) {
     const fixed = normalizeTimestamp(row.timestamp);
     if (fixed === row.timestamp) continue;
     await db.updateTable("graph_operations").set({ timestamp: fixed }).where("id", "=", row.id).execute();
