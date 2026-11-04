@@ -290,6 +290,7 @@ describe("graph query: changes()", () => {
     await insertEdge(db, "hub", "a1", "CHILD_MOC");
     await insertEdge(db, "a1", "n1", "CORE_IDEA");
     await insertEdge(db, "n1", "s1", "DERIVED_FROM");
+    await insertEdge(db, "n1", "s2", "DERIVED_FROM");
     const op = (operationType: string, input: unknown, timestamp: string, index: number, documentId = "n1", documentType = "bai/knowledge-note"): OperationRow => ({ documentId, documentType, operationType, timestamp, index, inputJson: JSON.stringify(input), signerAddress: null });
     // insertOps writes no summary: the ref is only in the input's method.
     await insertOps(db, [
@@ -297,9 +298,11 @@ describe("graph query: changes()", () => {
       op("SET_TITLE", { title: "Delivery is at-least-once" }, "2026-11-03T10:00:00.000Z", 1),
       op("INGEST_SOURCE", { title: "Guide", content: "x", method: "sha256:abc git:v6.2.2-dev.74" }, "2026-08-01T00:00:00.000Z", 0, "s1", "bai/source"),
       op("INGEST_SOURCE", { title: "Guide", content: "y", method: "git:v6.2.3-dev.91 sha256:def" }, "2026-11-03T09:00:00.000Z", 1, "s1", "bai/source"),
+      // A source untouched in the window: its input was never read, so the ref comes from SQL.
+      op("INGEST_SOURCE", { title: "Old guide", content: "z", method: "git:v6.2.1" }, "2026-07-01T00:00:00.000Z", 0, "s2", "bai/source"),
     ]);
     const d = await createGraphQuery(db).changes({ since: "2026-09-01T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" }, {}, {});
-    expect(d.story?.areas.find((a) => a.id === "a1")?.versions).toEqual({ first: "v6.2.2-dev.74", now: "v6.2.3-dev.91" });
+    expect(d.story?.areas.find((a) => a.id === "a1")?.versions).toEqual({ first: "v6.2.1", now: "v6.2.3-dev.91" });
   });
 
   it("reads no body for a created note whose later title/description writes leave its first recorded claim as it was (review B, I5)", () => {

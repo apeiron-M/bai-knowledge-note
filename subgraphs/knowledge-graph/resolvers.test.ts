@@ -221,7 +221,7 @@ describe("Query.knowledgeGraphChanges", () => {
   it("resolves a q that names the drive to the whole vault", async () => {
     changeMaps.mockResolvedValue([{ id: "a1", title: "Data Processing and CQRS", depth: 1 }]);
     const { subgraph: s } = subgraph();
-    Object.assign(s, { readClient: { get: vi.fn(async () => ({ header: { name: "Powerhouse Vault" }, state: { global: { name: "Powerhouse Vault", nodes: [] } } })) } });
+    Object.assign(s, { readClient: { get: vi.fn(() => Promise.resolve({ header: { name: "Powerhouse Vault" }, state: { global: { name: "Powerhouse Vault", nodes: [] } } })) } });
     const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "powerhouse vault" }, {})) as ChangeDigest;
     expect(searchVault).not.toHaveBeenCalled();
     expect(changes.mock.calls[0][1]).toEqual({});

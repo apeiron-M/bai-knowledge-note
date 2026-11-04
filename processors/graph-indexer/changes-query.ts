@@ -426,7 +426,13 @@ const LIFECYCLE_TYPES = ["ARCHIVE_NOTE", "ARCHIVE_OBSERVATION", "RESTORE_NOTE"];
  * which notes were archived at `since`, and which are superseded now. The
  * then-titles come from the digest's own baseline.
  */
-async function loadStoryContext(db: ReadDb, { since, until }: { since: string; until: string }, ids: Set<string> | null, rowDocs: Set<string>): Promise<StoryContext> {
+async function loadStoryContext(
+  db: ReadDb,
+  { since, until }: { since: string; until: string },
+  ids: Set<string> | null,
+  rowDocs: Set<string>,
+  knownRefs: ReadonlyMap<string, string | null>,
+): Promise<StoryContext> {
   const nodes = new Map<string, StoryNode>();
   const hubs: string[] = [];
   type NodeRow = { document_id: string; title: string | null; description: string | null; document_type: string | null; status: string | null; note_type: string | null; added_at: string | null };
@@ -494,26 +500,51 @@ async function loadStoryContext(db: ReadDb, { since, until }: { since: string; u
   const archivedAtSince = new Set([...last].filter(([, r]) => r.operation_type !== "RESTORE_NOTE").map(([id]) => id));
 
   // Every ingestion up to until, by its summary (`Ingested “…” (<git ref>)`):
-  // the git ref without reading the source text (spec Addendum B4).
-  // The method's `git:` ref, cut out in SQL so the source text never travels:
-  // a row whose summary lost the ref (truncated, or written before it) still has it.
+  // the git ref without reading the source text (spec Addendum B4). A row
+  // whose summary carries no ref (truncated, or written before summaries) may
+  // still have it in its input's method (review B, M4): from the inputs this
+  // digest already read, else cut out in SQL for those rows only.
   const ingestRows = await db
     .selectFrom("graph_operations")
-    .select(["document_id", "timestamp", "index", "summary", sql<string | null>`substring(input_json from '"method"\s*:\s*"([^"]*)"')`.as("method")])
+    .select(["id", "document_id", "timestamp", "index", "summary"])
     .where("operation_type", "=", INGEST)
     .where("timestamp", "<=", until)
     .where("timestamp", "like", ISO_LIKE)
     .execute();
+  const refs = new Map(ingestRows.map((r) => [r.id, ingestRef(r.summary) ?? knownRefs.get(r.id) ?? null]));
+  const missing = ingestRows.filter((r) => refs.get(r.id) === null && !knownRefs.has(r.id)).map((r) => r.id);
+  for (const part of chunks(missing)) {
+    const found = await db
+      .selectFrom("graph_operations")
+      .select(["id", sql<string | null>`substring(input_json from '"method"\s*:\s*"([^"]*)"')`.as("method")])
+      .where("id", "in", part)
+      .execute();
+    for (const f of found) refs.set(f.id, gitRefOf(f.method));
+  }
   ingestRows.sort((a, b) => (a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : a.index - b.index));
   const ingests = new Map<string, { at: string; ref: string | null }[]>();
   for (const r of ingestRows) {
-    const entry = { at: r.timestamp, ref: ingestRef(r.summary) ?? gitRefOf(r.method) };
+    const entry = { at: r.timestamp, ref: refs.get(r.id) ?? null };
     const list = ingests.get(r.document_id);
     if (list) list.push(entry);
     else ingests.set(r.document_id, [entry]);
   }
 
   return { nodes, hubs, childMaps, coreIdeas, archivedAtSince, superseded, derivedFrom, ingests };
+}
+
+/** The git refs of the ingestions whose input this digest already read, by row id (null: its method has none). */
+function ingestRefsOf(rows: RawRow[]): Map<string, string | null> {
+  const out = new Map<string, string | null>();
+  for (const r of rows) {
+    if (r.operation_type !== INGEST || !r.input_json) continue;
+    try {
+      out.set(r.id, gitRefOf((JSON.parse(r.input_json) as { method?: unknown }).method));
+    } catch {
+      // unreadable input: the SQL fallback has a go at it
+    }
+  }
+  return out;
 }
 
 /** The git ref an INGEST_SOURCE summary ends with (summarize.ts: `Ingested “title” (ref)`), else null. */
@@ -578,11 +609,12 @@ export async function loadChanges(
   // A document created in the window reports `created` only: it needs no baseline.
   const created = new Set(raw.filter((r) => CREATED_TYPES.has(r.operation_type)).map((r) => r.document_id));
   const inScopeDocs = [...new Set(rows.filter((r) => (!ids || ids.has(r.documentId)) && !created.has(r.documentId)).map((r) => r.documentId))];
-  const baseline = (await baselineRows(db, window.since, inScopeDocs)).map(toRow);
+  const baselineRaw = await baselineRows(db, window.since, inScopeDocs);
+  const baseline = baselineRaw.map(toRow);
   // A cursor page carries no story (the first page did): skip loading it.
   const [ctx, story] = await Promise.all([
     loadContext(db, rows, opts.sourceFolders ?? new Map()),
-    opts.cursor ? undefined : loadStoryContext(db, window, ids, new Set(rows.map((r) => r.documentId))),
+    opts.cursor ? undefined : loadStoryContext(db, window, ids, new Set(rows.map((r) => r.documentId)), ingestRefsOf([...raw, ...baselineRaw])),
   ]);
   if (story) ctx.story = story;
 
