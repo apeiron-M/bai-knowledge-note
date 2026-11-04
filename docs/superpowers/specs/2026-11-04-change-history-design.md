@@ -237,3 +237,47 @@ then → now, retired) and puts the event detail after it.
    ids or op counts in the prose.
 7. "How did processor delivery work in September and how does it work now?" answers from `thenVsNow`: then
    "exactly once, in order"; now "at-least-once, with a crash gap", citing both notes.
+
+---
+
+## Addendum B — first recorded vs now, scope and size (approved 2026-11-04, after testing 1.0.54-dev.53 live)
+
+Tested on the live vault after deploy + backfill. Four defects, all from real answers:
+
+**B1. Scoped chat answers stay small.** A `q`/`topic`/`moc` call produced a 155 KB digest; the chat forwarded ~50–60 KB
+(30 events with diffs + full `thenVsNow`) and the model stalled. Rule: the chat's `what_changed` returns, for any call,
+the chat-budgeted `story` (as for unscoped) plus `thenVsNow` clipped to the same budget (≤ 6 then, ≤ 6 now, ≤ 6
+unchanged, gists clipped) — **total ≤ ~14 KB**. Per-document `events` are returned only when the model passes
+`detail: true` (or a `cursor`), ≤ 10 per page, two hunks each. Tests pin the bound on a realistic 50-area scoped digest.
+
+**B2. Scope choice.** "What changed in the Powerhouse stack" was sent as `query: "Powerhouse stack"` → 10 hits + neighbours
+(162 of 2,600 notes). Rules: (a) the system prompt says to call `what_changed` **unscoped** when the subject is the
+vault as a whole or its main subject (the hub's title / the vault's overall theme); (b) a `query` first resolves to a
+**MoC** whose title matches it (case-insensitive, word match against hub areas and their descendant maps) and then scopes
+by that MoC subtree; (c) only when no MoC matches does it fall back to semantic search, now **25** hits + one-hop
+neighbours. The resolved scope (map title or "search: …") is reported in the result so the model can say what it covered.
+
+**B3. Duplicate merges are not changes in understanding.** The steward and extraction agents merged twin notes with
+`SUPERSEDES` ("Same claim, written earlier…"). Such a supersession is **not** a Shift when the then/now claims are
+near-identical (normalised token Jaccard ≥ 0.6 on title, or the SUPERSEDES reason marks a duplicate — contains
+"twin", "duplicate", "same claim", "already makes this claim", "merged"). They are counted in `merged` per area
+(uncapped count) and never listed in `changedClaims`.
+
+**B4. First recorded vs now.** "Since June/September" on the Powerhouse vault: the notes were *created* inside the window
+(2026-09-02, describing v6.2.2-dev.74) and revised later (2026-11-03, v6.2.3-dev.91). The story treated them as new only
+and showed no evolution. Rule: for a note **created inside the window**, its *then* is its **first recorded state** — its
+title/description once its creating batch settled: the last value written within **1 hour** of its CREATE_DOCUMENT (an
+extraction batch writes all fields within minutes). If its claim (title/description) differs from now, it is a Shift
+with `then.at` = that first-recorded time and `why` = the revision lines added later, and it is **also** listed as new
+(the area says "new knowledge, and some of it already revised"). Same for `thenVsNow`: a note created in the window
+contributes its first-recorded claim to `then`. Sources: each area reports `versions: { first: <git ref of the earliest
+ingest of its sources in the window or before>, now: <latest> }` when its sources carry `git:` refs in `method`, so the
+story can say "first recorded at v6.2.2-dev.74, now v6.2.3-dev.91+e0f277d". Shift gains optional `thenAt`.
+
+**Acceptance (live, after deploy):**
+8. "What changed in the Powerhouse stack since September?" → unscoped story; Reactor and Drives, Authorization,
+   Deployment, Connect each show then→now shifts that are real revisions (no "same claim" merges), with
+   `versions` v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d; the chat result ≤ ~14 KB; a free model answers without stalling.
+9. "How did processor delivery work in September and how does it work now?" → resolves to the Data Processing and
+   CQRS map (or its processors notes), then: "exactly once, in order" (first recorded 2026-09-02), now:
+   "at-least-once with a crash gap".
