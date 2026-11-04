@@ -198,4 +198,10 @@ describe("buildSystemPrompt", () => {
     expect(p).toMatch(/versions/);
     expect(p).toMatch(/merged .* not a change in understanding/);
   });
+
+  it("names the vault so the main-subject rule is actionable, and says a query naming it or its hub covers the whole vault (review B, I4)", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/the vault's name \(“Powerhouse Knowledge”\)/);
+    expect(p).toMatch(/a query that names the vault or its hub is answered for the whole vault/);
+  });
 });

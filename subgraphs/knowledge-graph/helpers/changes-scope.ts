@@ -15,23 +15,33 @@ import { searchVault } from "./search.js";
 export const CHANGE_Q_HITS = 25;
 
 /**
- * Resolve a `q` scope (spec Addendum B2): a query that names a hub area or a
- * map below it (whole words, see `matchMapTitle`) scopes to that map's
- * subtree; otherwise the top semantic hits plus their one-hop knowledge-edge
- * neighbours. Explicit `documentIds` narrow the search result; with an
- * explicit `moc` the map is already chosen and `q` searches within it.
- * `resolved` says which it was. Shared by the GraphQL resolver and
- * `GET changes`, so both answer the same totals.
+ * Resolve a `q` scope (spec Addendum B2, tightened after review): a query
+ * that names a hub or the drive itself (whole words, see `matchMapTitle`) is
+ * the whole vault — `q` is dropped and the digest is the unscoped one; a
+ * query that names a hub area or a map below it scopes to that map's subtree;
+ * otherwise the top semantic hits plus their one-hop knowledge-edge
+ * neighbours. Explicit `documentIds` always narrow what `q` resolves to (the
+ * map's subtree or the search result). With an explicit `moc` the map is
+ * already chosen and `q` searches within it. `resolved` says which it was.
+ * Shared by the GraphQL resolver and `GET changes`, so both answer the same
+ * totals.
  */
 export async function resolveChangeScope(
   subgraph: GraphSubgraph,
   driveId: string,
   scope: ChangeScope,
+  driveName: string | null = null,
 ): Promise<ChangeScope> {
   if (!scope.q) return scope;
   const query = getQuery(subgraph, driveId);
   if (!scope.moc) {
-    const map = matchMapTitle(scope.q, await query.changeMaps());
+    const candidates = await query.changeMaps();
+    if (driveName) candidates.unshift({ id: driveId, title: driveName, depth: 0 });
+    const map = matchMapTitle(scope.q, candidates);
+    if (map?.depth === 0) {
+      const { q: _q, ...whole } = scope;
+      return { ...whole, resolved: { kind: "vault", title: map.title } };
+    }
     if (map) return { ...scope, moc: map.id, resolved: { kind: "moc", id: map.id, title: map.title } };
   }
   const hits = await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_HITS, false);
@@ -107,17 +117,22 @@ export function sourceFolderPaths(nodes: readonly DriveTreeNode[]): Map<string, 
 }
 
 /**
- * The drive's source folders, read from its tree (one document read, as the
- * source timeline does). Best effort: without them a source whose notes are
- * ungrouped lands in "Unplaced" rather than failing the digest.
+ * The drive's name and source folders, read from its document (one read, as
+ * the source timeline does). Best effort: without them a `q` naming the drive
+ * is matched against the maps only, and a source whose notes are ungrouped
+ * lands in "Unplaced" rather than failing the digest.
  */
-async function loadSourceFolders(subgraph: GraphSubgraph, driveId: string): Promise<Map<string, string>> {
+async function loadDriveFacts(subgraph: GraphSubgraph, driveId: string): Promise<{ name: string | null; sourceFolders: Map<string, string> }> {
   try {
-    const drive = (await readerOf(subgraph).get(driveId)) as { state?: { global?: { nodes?: DriveTreeNode[] } } } | null;
-    return sourceFolderPaths(drive?.state?.global?.nodes ?? []);
+    const drive = (await readerOf(subgraph).get(driveId)) as {
+      header?: { name?: string | null };
+      state?: { global?: { name?: string | null; nodes?: DriveTreeNode[] } };
+    } | null;
+    const name = drive?.state?.global?.name || drive?.header?.name || null;
+    return { name, sourceFolders: sourceFolderPaths(drive?.state?.global?.nodes ?? []) };
   } catch (err) {
     console.warn(`[changes] ${driveId}: could not read the drive tree for source folders:`, err instanceof Error ? err.message : err);
-    return new Map();
+    return { name: null, sourceFolders: new Map() };
   }
 }
 
@@ -140,10 +155,8 @@ export async function loadDriveChanges(
   const until = args.until || (args.cursor ? cursorUntil(args.cursor) : null);
   const window = parseWindow(args.since, until, now);
   const scope = scopeOf(args);
-  const [resolved, sourceFolders] = await Promise.all([
-    resolveChangeScope(subgraph, driveId, scope),
-    loadSourceFolders(subgraph, driveId),
-  ]);
+  const { name, sourceFolders } = await loadDriveFacts(subgraph, driveId);
+  const resolved = await resolveChangeScope(subgraph, driveId, scope, name);
   const { resolved: how, ...internal } = resolved;
   const digest = await getQuery(subgraph, driveId).changes(window, internal, {
     limit: args.limit ?? undefined,

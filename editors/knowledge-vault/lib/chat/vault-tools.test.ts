@@ -2411,6 +2411,41 @@ describe("what_changed — the change digest over a window", () => {
       expect((r.data as { scope: string }).scope).toBe("search “processor delivery”: 25 hits and their linked notes");
     });
 
+    it("clips the query a search scope names to 80 characters", async () => {
+      const q = `processor delivery ${"and more words ".repeat(40)}`;
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), story: null, scope: { q, resolved: { kind: "search", query: q, hits: 25 } } } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: q }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const scope = (r.data as { scope: string }).scope;
+      expect(scope).toMatch(/^search “processor delivery and more/);
+      expect(scope.length).toBeLessThanOrEqual(140);
+    });
+
+    it("names a vault scope with the hub's (or drive's) title (review B, I4)", async () => {
+      mockGql({ knowledgeGraphChanges: { ...heavyDigest(1, false), scope: { q: "Powerhouse stack", resolved: { kind: "vault", title: "Powerhouse Stack" } }, story: bigStory(), thenVsNow: null } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "Powerhouse stack" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect((r.data as { scope: string }).scope).toBe("the whole vault (“Powerhouse Stack” names it)");
+    });
+
+    it("keeps a detail page within budget even when text the clips do not reach is huge", async () => {
+      const huge = (i: number) => ({
+        ...bigEvent(i),
+        by: `0x${"a".repeat(1500)}`,
+        source: { refBefore: "r".repeat(3000), refAfter: "s".repeat(3000), added: 1, removed: 1, hunks: ["h"], noteIds: [], noteCount: 0 },
+      });
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), events: Array.from({ length: 10 }, (_, i) => huge(i)) } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery", detail: true }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+      expect((r.data as { events: unknown[] }).events).toHaveLength(10);
+    });
+
+    it("tells the model a query naming the vault or its hub covers the whole vault", () => {
+      const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+      expect(tool?.function.description).toMatch(/names the vault or its hub[^.]*whole vault/);
+    });
+
     it("offers detail, saying events come only with it", () => {
       const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
       if (!tool) throw new Error("what_changed is not offered");

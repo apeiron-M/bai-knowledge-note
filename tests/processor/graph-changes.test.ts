@@ -281,7 +281,7 @@ describe("graph query: changes()", () => {
     expect(area?.versions).toEqual({ first: "v6.2.2-dev.74", now: "v6.2.3-dev.91+e0f277d" });
   });
 
-  it("lists the hub's areas and their descendant maps with depth, for a query to name a map", async () => {
+  it("lists the hub (depth 0), its areas and their descendant maps with depth, for a query to name a map or the vault", async () => {
     const db = harness.db;
     await insertNode(db, "hub", "Powerhouse", "bai/moc", "MOC (HUB)");
     await insertNode(db, "a1", "Data Processing and CQRS", "bai/moc", "MOC (DOMAIN)");
@@ -292,6 +292,7 @@ describe("graph query: changes()", () => {
     await insertEdge(db, "m1", "a1", "CHILD_MOC"); // a cycle is walked once
     const maps = await createGraphQuery(db).changeMaps();
     expect(maps).toEqual([
+      { id: "hub", title: "Powerhouse", depth: 0 },
       { id: "a1", title: "Data Processing and CQRS", depth: 1 },
       { id: "m1", title: "Processors", depth: 2 },
     ]);

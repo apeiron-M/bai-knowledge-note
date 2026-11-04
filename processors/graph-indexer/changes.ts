@@ -109,11 +109,15 @@ export interface ChangeScope {
   documentIds?: string[];
   q?: string;
   types?: string[];
-  /** On a digest: what `q` resolved to — a map it names, else a semantic search (spec Addendum B2). */
+  /** On a digest: what `q` resolved to — the whole vault, a map it names, else a semantic search (spec Addendum B2). */
   resolved?: ResolvedScope;
 }
 
-export type ResolvedScope = { kind: "moc"; id: string; title: string } | { kind: "search"; query: string; hits: number };
+export type ResolvedScope =
+  | { kind: "moc"; id: string; title: string }
+  | { kind: "search"; query: string; hits: number }
+  /** The query named the hub or the drive: the whole vault, as an unscoped call (Addendum B corrections). */
+  | { kind: "vault"; title: string };
 
 export type MocTier = "HUB" | "DOMAIN" | "TOPIC";
 

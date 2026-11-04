@@ -350,14 +350,14 @@ export const schema: DocumentNode = gql`
     documentIds: [String!]
     q: String
     types: [String!]
-    "What q resolved to: a map whose title it names, else a semantic search."
+    "What q resolved to: the whole vault (it named the hub or the drive), a map whose title it names, else a semantic search."
     resolved: KnowledgeGraphChangeResolvedScope
   }
 
   type KnowledgeGraphChangeResolvedScope {
-    "moc | search"
+    "vault | moc | search"
     kind: String!
-    "The map, when kind is moc."
+    "The map, when kind is moc; title is also the hub's or drive's name, when kind is vault."
     id: String
     title: String
     "The search, when kind is search: the query and how many hits it started from (their linked notes join them)."

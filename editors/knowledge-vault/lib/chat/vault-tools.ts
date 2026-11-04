@@ -498,7 +498,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "what_changed",
       description:
-        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). A query that names a map (an area or a map below it) scopes to that map, otherwise to the top search hits and their linked notes; `scope` says which. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query; a query that names a map (an area or a map below it) scopes to that map, otherwise to the top search hits and their linked notes; `scope` says which. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
       parameters: {
         type: "object",
         properties: {
@@ -1847,7 +1847,9 @@ export function chatThenVsNow(t: ThenVsNow, perSide = CHAT_THEN_VS_NOW): Record<
 
 /** What a q covered, in words: the map it named, or a search. */
 function resolvedLine(r: ResolvedScope): string {
-  return r.kind === "moc" ? `the map ${r.title} (${r.id})` : `search “${r.query}”: ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes`;
+  if (r.kind === "vault") return `the whole vault (“${clip(r.title, 80)}” names it)`;
+  if (r.kind === "moc") return `the map ${clip(r.title, 80)} (${r.id})`;
+  return `search “${clip(r.query, 80)}”: ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes`;
 }
 
 type Caps = readonly [newClaims: number, changed: number, retired: number];
@@ -1970,6 +1972,12 @@ const DRILL_CLIPS: readonly { hunk: number; text: number }[] = [
 ];
 /** At most this much of the budget goes to a page of events. */
 const EVENTS_BUDGET = 9_500;
+/**
+ * A page laid out with the hardest clips may run past {@link EVENTS_BUDGET}
+ * (the story then gives way) but never past this: with the window, totals,
+ * scope and cursor the whole result stays within CHANGES_CHAT_BUDGET.
+ */
+const EVENTS_HARD_CAP = 12_000;
 
 type FieldWire = { before?: string | null; after?: string | null } | null | undefined;
 type ContentWire = { before?: string | null; hunks?: string[] | null; added?: number | null; removed?: number | null } | null | undefined;
@@ -2032,14 +2040,26 @@ function drillEvent(e: ChangeEventWire & { byName?: string | null }, { hunk: DRI
   };
 }
 
-/** A page of drill-down events within {@link EVENTS_BUDGET}: every event the server returned, its text clipped harder until it fits. */
+/** The last resort of {@link drillPage}: what the event is, about which document, when — every text short. */
+function bareEvent(e: ChangeEventWire): Record<string, unknown> {
+  const text = (v: unknown, n: number) => (typeof v === "string" ? clip(v, n) : null);
+  return { kind: text(e.kind, 20), documentId: clip(e.documentId, 80), title: text(e.title, 60), at: text(e.at, 24), change: clip(changeLine(e), 80) };
+}
+
+/**
+ * A page of drill-down events within {@link EVENTS_BUDGET}: every event the
+ * server returned, its text clipped harder until it fits; when even the
+ * hardest clips leave it over {@link EVENTS_HARD_CAP} (text no clip reaches —
+ * a long ref or signer), each event is cut to {@link bareEvent}, so the
+ * result always fits.
+ */
 function drillPage(events: (ChangeEventWire & { byName?: string | null })[]): Record<string, unknown>[] {
   let page: Record<string, unknown>[] = [];
   for (const clips of DRILL_CLIPS) {
     page = events.map((e) => drillEvent(e, clips));
-    if (JSON.stringify(page).length <= EVENTS_BUDGET) break;
+    if (JSON.stringify(page).length <= EVENTS_BUDGET) return page;
   }
-  return page;
+  return JSON.stringify(page).length <= EVENTS_HARD_CAP ? page : events.map(bareEvent);
 }
 
 export async function executeTool(

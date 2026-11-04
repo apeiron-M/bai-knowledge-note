@@ -478,9 +478,10 @@ export function ingestRef(summary: string | null): string | null {
 }
 
 /**
- * The maps a `q` scope may name (spec Addendum B2): every hub's top-level
- * areas (depth 1) and the maps below them (child maps, any depth, each at its
- * shallowest), areas first. Hubs themselves are the whole vault, not a scope.
+ * The maps a `q` scope may name (spec Addendum B2): the hubs (depth 0 — a
+ * query naming one means the whole vault), every hub's top-level areas
+ * (depth 1) and the maps below them (child maps, any depth, each at its
+ * shallowest), shallowest first.
  */
 export async function loadChangeMaps(db: ReadDb): Promise<ScopeMap[]> {
   const maps = await db.selectFrom("graph_nodes").select(["document_id", "title", "note_type"]).where("document_type", "=", "bai/moc").execute();
@@ -492,7 +493,7 @@ export async function loadChangeMaps(db: ReadDb): Promise<ScopeMap[]> {
     if (list) list.push(e.target_document_id);
     else children.set(e.source_document_id, [e.target_document_id]);
   }
-  const out: ScopeMap[] = [];
+  const out: ScopeMap[] = [...hubs].map((id) => ({ id, title: title.get(id) as string, depth: 0 }));
   const seen = new Set(hubs);
   let frontier = [...hubs];
   for (let depth = 1; frontier.length; depth++) {

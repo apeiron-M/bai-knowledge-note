@@ -225,7 +225,8 @@ export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMa
   }
   const rank = (a: (typeof hits)[number], b: (typeof hits)[number]) => Number(b.exact) - Number(a.exact) || a.map.depth - b.map.depth || a.size - b.size;
   hits.sort(rank);
-  if (hits.length > 1 && rank(hits[0], hits[1]) === 0) return null;
+  // Two hubs (depth 0) may tie: both are the whole vault.
+  if (hits.length > 1 && rank(hits[0], hits[1]) === 0 && hits[0].map.depth > 0) return null;
   return hits[0]?.map ?? null;
 }
 

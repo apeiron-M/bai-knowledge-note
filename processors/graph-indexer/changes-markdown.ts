@@ -120,10 +120,11 @@ function thenVsNowSection(t: ThenVsNow, out: string[]): void {
   if (t.unchanged.length) out.push("Unchanged:", ...t.unchanged.map(claimLine), "");
 }
 
-/** What a `q` covered: the map it named, or a search. */
+/** What a `q` covered: the whole vault, the map it named, or a search. */
 function scopeLine(d: ChangeDigest): string | null {
   const r = d.scope.resolved;
   if (!r) return null;
+  if (r.kind === "vault") return `Scope: the whole vault (“${oneLine(d.scope.q ?? r.title, 80)}” names ${oneLine(r.title, 80)}).`;
   return r.kind === "moc"
     ? `Scope: the map ${r.title} [[${r.id}]]${d.scope.q ? ` (matched “${oneLine(d.scope.q, 80)}”)` : ""}.`
     : `Scope: search “${oneLine(r.query, 80)}” — ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes.`;

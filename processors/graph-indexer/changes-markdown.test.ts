@@ -134,5 +134,7 @@ describe("renderChangesMarkdown: the story leads", () => {
     expect(md).toContain("- [[n3]] Exactly once (first recorded 2026-09-02)");
     const search = renderChangesMarkdown({ ...digest, scope: { q: "delivery", resolved: { kind: "search", query: "delivery", hits: 25 } } });
     expect(search).toContain("Scope: search “delivery” — 25 hits and their linked notes.");
+    const vault = renderChangesMarkdown({ ...digest, scope: { q: "Powerhouse stack", resolved: { kind: "vault", title: "Powerhouse Stack" } } });
+    expect(vault).toContain("Scope: the whole vault (“Powerhouse stack” names Powerhouse Stack).");
   });
 });

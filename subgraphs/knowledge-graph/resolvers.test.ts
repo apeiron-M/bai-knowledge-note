@@ -206,6 +206,37 @@ describe("Query.knowledgeGraphChanges", () => {
     expect(out.scope).toEqual({ q: "data processing", resolved: { kind: "moc", id: "a1", title: "Data Processing and CQRS" } });
   });
 
+  it("resolves a q that names the hub to the whole vault, server-side: no moc, no search, no q", async () => {
+    changeMaps.mockResolvedValue([
+      { id: "hub", title: "Powerhouse Stack", depth: 0 },
+      { id: "a1", title: "Data Processing and CQRS", depth: 1 },
+    ]);
+    const { subgraph: s } = subgraph();
+    const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "the Powerhouse stack" }, {})) as ChangeDigest;
+    expect(searchVault).not.toHaveBeenCalled();
+    expect(changes.mock.calls[0][1]).toEqual({});
+    expect(out.scope).toEqual({ q: "the Powerhouse stack", resolved: { kind: "vault", title: "Powerhouse Stack" } });
+  });
+
+  it("resolves a q that names the drive to the whole vault", async () => {
+    changeMaps.mockResolvedValue([{ id: "a1", title: "Data Processing and CQRS", depth: 1 }]);
+    const { subgraph: s } = subgraph();
+    Object.assign(s, { readClient: { get: vi.fn(async () => ({ header: { name: "Powerhouse Vault" }, state: { global: { name: "Powerhouse Vault", nodes: [] } } })) } });
+    const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "powerhouse vault" }, {})) as ChangeDigest;
+    expect(searchVault).not.toHaveBeenCalled();
+    expect(changes.mock.calls[0][1]).toEqual({});
+    expect(out.scope).toEqual({ q: "powerhouse vault", resolved: { kind: "vault", title: "Powerhouse Vault" } });
+  });
+
+  it("narrows a q-named map to explicit documentIds (the ids always narrow what q resolves to)", async () => {
+    changeMaps.mockResolvedValue([{ id: "a1", title: "Data Processing and CQRS", depth: 1 }]);
+    const { subgraph: s } = subgraph();
+    const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "data processing", documentIds: ["n1", "n2"] }, {})) as ChangeDigest;
+    expect(searchVault).not.toHaveBeenCalled();
+    expect(changes.mock.calls[0][1]).toEqual({ q: "data processing", moc: "a1", documentIds: ["n1", "n2"] });
+    expect(out.scope.resolved).toEqual({ kind: "moc", id: "a1", title: "Data Processing and CQRS" });
+  });
+
   it("searches when an explicit moc is given with q (the map is already chosen)", async () => {
     changeMaps.mockResolvedValue([{ id: "m1", title: "Processors", depth: 2 }]);
     const { subgraph: s } = subgraph();
