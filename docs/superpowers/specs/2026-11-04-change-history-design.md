@@ -346,3 +346,27 @@ Acceptance (on a local import of the live vault, then live): "What changed in th
 "…in the powerhouse repo since summer?", "…in the powerhouse reactor since summer?" each answer only from technical
 areas, with ≥ 10 then→now shifts for the reactor question, dated "first recorded on …", no invented area descriptions,
 no merge counts, correct year.
+
+### Addendum C — C1 replaced after measuring on the live vault (2026-11-04)
+Measured with the vault's own embeddings: map-orientation similarity is compressed (0.84–0.90) and dominated by the vault's
+own subject ("Powerhouse"): "the Powerhouse stack" scored business areas (lead corpus 0.866, Service Pricing 0.858) with
+the technical ones, and "powerhouse reactor" ranked Reactor and Drives 8th. Note-hit concentration (top 200 semantic note
+hits counted per area subtree) works for specific terms ("reactor" → Reactor and Drives, Workflow Automation,
+Deployment, Authorization, Reactor Sync; "service pricing" → Service Pricing 91%) but not for vague subjects in a
+single-subject vault ("stack", "repo" still pull Domain Model Catalog and the lead corpus). So C1 becomes three explicit
+mechanisms, in this order:
+- **C1a — areas chosen by the model.** `what_changed` (and GraphQL/REST) accept `areas: [id or exact title]`; the scope
+  is the union of those areas' subtrees + their sources (`resolved: { kind: "areas", areas }`). The unscoped story already
+  lists every area by title (cheap). Prompt rule: for a broad subject that is not the whole vault ("the stack", "the
+  technical side", "the business side"), first call unscoped, pick the relevant areas **by their titles**, then call again
+  with `areas`. Unknown titles are reported back, never guessed.
+- **C1b — scope by source.** `source: "<text>"` scopes to notes derived (DERIVED_FROM / extractedClaims) from sources whose
+  title, provenance URL or `/sources` folder path contains the text (case-insensitive), plus those sources
+  (`resolved: { kind: "source", match, sources: n }`). Prompt rule: "what changed in <a repo / document set / book /
+  meeting series>" → `source`. On the live vault, `source: "powerhouse-inc/powerhouse"` is exactly the repo-derived set.
+- **C1c — specific terms by note concentration.** `q` (after the vault-title check) ranks areas by how many of the top
+  200 semantic note hits fall in each area subtree, selecting areas holding ≥ 10% of the hits (max 8), else the 25-hit
+  search. The map-orientation embedding ranking is removed. A narrow sub-map is preferred only when it holds ≥ 60% of the
+  selected hits.
+Acceptance additions: "powerhouse repo since summer" → `source`; "the Powerhouse stack since September" → unscoped list
+→ `areas` with only technical areas; "the reactor since summer" → C1c areas led by Reactor and Drives.
