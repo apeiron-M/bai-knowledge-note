@@ -22,10 +22,10 @@ type Signer = {
 };
 
 /**
- * One `graph_operations` row for a global-scope operation. Shared by the
- * live indexer and the source-history backfill, so both write the same row
- * under the same id (`<documentId>-<index>`) and a backfilled row is
- * indistinguishable from a live one.
+ * One `graph_operations` row for an operation. Shared by the live indexer
+ * and the source-history backfill, so both write the same row under the
+ * same id (`<documentId>-<index>` for global operations) and a backfilled
+ * row is indistinguishable from a live one.
  */
 export function operationRowOf(o: {
   documentId: string;
@@ -49,14 +49,18 @@ export function operationRowOf(o: {
       : Array.isArray(lastSignature)
         ? lastSignature.join(", ")
         : lastSignature;
+  const scope = o.scope ?? "global";
   return {
-    id: `${o.documentId}-${o.index}`,
+    // The reactor numbers each scope separately: a document-scope
+    // CREATE_DOCUMENT is index 0, like the first global operation. The
+    // scope in the id keeps them apart (the same scheme link rows use).
+    id: scope === "global" ? `${o.documentId}-${o.index}` : `${o.documentId}-${scope}-${o.index}`,
     document_id: o.documentId,
     document_type: o.documentType,
     operation_type: o.type,
     timestamp: o.timestampUtcMs ?? new Date().toISOString(),
     index: o.index,
-    scope: o.scope ?? "global",
+    scope,
     summary: summarizeOperation(o.type, input),
     input_json: JSON.stringify(input),
     signer_address: signer?.user?.address || null,

@@ -9,6 +9,8 @@ import {
 import { KNOWLEDGE_NODE_TYPE_LIST } from "./project.js";
 import { parseEdgeMetadata, type EdgeConfidence } from "./edge-metadata.js";
 import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
+import type { ChangeDigest, ChangeScope } from "./changes.js";
+import { loadChanges } from "./changes-query.js";
 
 /**
  * `graph_edges` holds only knowledge edges going forward (the processor stopped
@@ -1096,6 +1098,19 @@ export function createGraphQuery(db: GraphReadDb) {
      */
 
     // ---- Operation history queries ----
+
+    /**
+     * What changed in a window — the change digest (see `changes.ts`,
+     * `changes-query.ts`). `scope.q` must be resolved to `documentIds` by the
+     * caller.
+     */
+    async changes(
+      window: { since: string; until: string },
+      scope: ChangeScope,
+      opts: { limit?: number; cursor?: string | null } = {},
+    ): Promise<ChangeDigest> {
+      return loadChanges(db, window, scope, opts);
+    },
 
     async history(documentId: string, limit = 50): Promise<OperationRecord[]> {
       const rows = await db

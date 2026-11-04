@@ -548,3 +548,34 @@ describe("source operations are recorded", () => {
     await db.deleteFrom("graph_nodes").where("document_id", "=", "note-hist-1").execute();
   });
 });
+
+describe("graph_operations ids by scope", () => {
+  it("keeps a document-scope CREATE_DOCUMENT and the global operation of the same index apart", async () => {
+    const processor = new GraphIndexerProcessor(
+      "test",
+      { branch: ["main"], documentId: ["*"], documentType: ["bai/knowledge-note"], scope: ["global", "document"] },
+      db as unknown as IRelationalDb<DB>,
+      undefined,
+      { embed: false },
+    );
+    const create = makeOp({ documentId: "note-scope-1", actionType: "CREATE_DOCUMENT", actionInput: {}, index: 0 });
+    const createDoc = { ...create, context: { ...create.context, scope: "document" } } as OperationWithContext;
+    await processor.onOperations([
+      createDoc,
+      makeOp({ documentId: "note-scope-1", actionType: "SET_TITLE", actionInput: { title: "First" }, index: 0, resultingState: { title: "First", topics: [] } }),
+    ]);
+    const rows = await db
+      .selectFrom("graph_operations")
+      .select(["id", "operation_type"])
+      .where("document_id", "=", "note-scope-1")
+      .orderBy("id")
+      .execute();
+    expect(rows).toEqual([
+      { id: "note-scope-1-0", operation_type: "SET_TITLE" },
+      { id: "note-scope-1-document-0", operation_type: "CREATE_DOCUMENT" },
+    ]);
+    await db.deleteFrom("graph_operations").where("document_id", "=", "note-scope-1").execute();
+    await db.deleteFrom("graph_topics").where("document_id", "=", "note-scope-1").execute();
+    await db.deleteFrom("graph_nodes").where("document_id", "=", "note-scope-1").execute();
+  });
+});
