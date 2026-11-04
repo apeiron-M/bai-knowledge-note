@@ -185,5 +185,7 @@ describe("buildSystemPrompt", () => {
     expect(p).toMatch(/cite claims with \[\[documentId\]\] markers only/i);
     expect(p).toMatch(/call what_changed with query set to it and answer from thenVsNow/);
     expect(p).toMatch(/When what_changed says nothing changed, say nothing changed in that window/);
+    expect(p).toMatch(/Elsewhere has no map: ask about it with query/);
+    expect(p).toMatch(/thenVsNow \(then: .*now: .*unchanged: /);
   });
 });
