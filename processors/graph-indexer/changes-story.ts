@@ -243,6 +243,9 @@ const DUPLICATE_REASON = [
   /\bidentical claim\b/i,
   /\bredundant with\b/i,
   /merged (into|with) (the )?(newer|older|surviving|twin)/i,
+  // Addendum C6: a rewording whose reason says it states the same thing.
+  /\bstates the same\b/i,
+  /\bsame (floor|rule|limit|default)\b/i,
 ];
 /** With no reason, at or above this title similarity a supersession is a duplicate merge. */
 export const MERGE_SIMILARITY = 0.8;

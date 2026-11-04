@@ -646,6 +646,12 @@ describe("story: review B fixes", () => {
         "Twin of the newer note",
         "duplicate of n9",
         "Merged into the surviving note",
+        // Addendum C6: rewordings whose reason says they state the same thing.
+        "The newer note states the same, with the dev.91 wording",
+        "Same floor as the older note, said more plainly",
+        "Reworded: same rule",
+        "same limit, clearer wording",
+        "Same default, restated",
       ]) {
         expect([reason, isDuplicateMerge("Snapshots are kept forever", "The reactor retains each document state indefinitely", reason)]).toEqual([reason, true]);
       }
