@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
 import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
-import { areasOf, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
+import { areasOf, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
 function row(documentId: string, operationType: string, input: Record<string, unknown>, timestamp: string): OperationRow {
@@ -575,5 +575,32 @@ describe("story: first recorded vs now on the recorded 2026-11-03 sync", () => {
     const shift = withDesc(late, "Read models on another handle are now fenced")?.changedClaims[0];
     expect(shift).toMatchObject({ documentId: ID, then: { claim: title }, now: { claim: "Read models on another handle are now fenced" }, thenAt: "2026-11-03T19:30:27.660Z" });
     expect(run(late, "x")?.newClaims.map((c) => c.documentId)).toEqual([ID]);
+  });
+});
+
+describe("scope: a query names a map (Addendum B2)", () => {
+  const maps = [
+    { id: "a1", title: "Data Processing and CQRS", depth: 1 },
+    { id: "a2", title: "Reactor and Drives", depth: 1 },
+    { id: "m1", title: "Processors", depth: 2 },
+    { id: "m2", title: "Reactor storage", depth: 2 },
+    { id: "m3", title: "Processor delivery", depth: 3 },
+  ];
+  it("matches a map whose title holds the query's words, case-insensitive, plurals folded", () => {
+    expect(matchMapTitle("data processing", maps)?.id).toBe("a1");
+    expect(matchMapTitle("PROCESSOR", maps)?.id).toBe("m1");
+    expect(matchMapTitle("reactor", maps)?.id).toBe("a2"); // an area before a descendant map
+  });
+  it("prefers the map whose title is exactly the query, then the shallower, then the shorter title", () => {
+    expect(matchMapTitle("reactor storage", maps)?.id).toBe("m2");
+    expect(matchMapTitle("processor delivery", maps)?.id).toBe("m3");
+  });
+  it("matches a map whose whole title the query contains", () => {
+    expect(matchMapTitle("what changed in reactor storage lately", maps)?.id).toBe("m2");
+  });
+  it("matches nothing for a subject no map title names, or only stopwords", () => {
+    expect(matchMapTitle("Powerhouse stack", maps)).toBeNull();
+    expect(matchMapTitle("the and of", maps)).toBeNull();
+    expect(matchMapTitle("proc", maps)).toBeNull(); // whole words only
   });
 });

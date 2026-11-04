@@ -9,10 +9,11 @@ import type * as SearchModule from "./helpers/search.js";
 // searchVault; both are replaced so the resolver's own wiring is what runs.
 const changes = vi.fn();
 const edgesTouching = vi.fn();
+const changeMaps = vi.fn();
 const searchVault = vi.fn();
 vi.mock("./helpers/db.js", async (importOriginal) => ({
   ...(await importOriginal<typeof DbModule>()),
-  getQuery: () => ({ changes, edgesTouching }),
+  getQuery: () => ({ changes, edgesTouching, changeMaps }),
   resolveCanonicalDriveId: (_: unknown, id: string) => Promise.resolve(id),
 }));
 const backfillDriveSourceHistory = vi.fn();
@@ -148,6 +149,7 @@ describe("Query.knowledgeGraphChanges", () => {
   beforeEach(() => {
     changes.mockReset().mockResolvedValue(digest);
     edgesTouching.mockReset().mockResolvedValue([]);
+    changeMaps.mockReset().mockResolvedValue([]);
     searchVault.mockReset().mockResolvedValue([]);
   });
 
@@ -183,13 +185,33 @@ describe("Query.knowledgeGraphChanges", () => {
     const { subgraph: s } = subgraph();
     const cursor = btoa(JSON.stringify({ k: [5, 1, "2026-11-02T00:00:00.000Z", "x", "revised"], u: "2026-11-03T12:00:00.000Z" }));
     const out = (await resolve(s)({}, { driveId: "d", since: "2026-11-01", q: "processors", limit: 20, cursor }, {})) as ChangeDigest;
-    expect(searchVault).toHaveBeenCalledWith(s, "d", "processors", "SEMANTIC", 10, false);
+    expect(searchVault).toHaveBeenCalledWith(s, "d", "processors", "SEMANTIC", 25, false);
     expect(changes.mock.calls[0][1]).toEqual({ q: "processors", documentIds: ["h1", "h2", "n9"] });
     expect(changes.mock.calls[0][2]).toEqual({ limit: 20, cursor, sourceFolders: new Map() });
     // No until given: the window ends where the cursor's did.
     expect(changes.mock.calls[0][0]).toEqual({ since: "2026-11-01T00:00:00.000Z", until: "2026-11-03T12:00:00.000Z" });
-    // The digest echoes the question, not the ids it resolved to.
-    expect(out.scope).toEqual({ q: "processors" });
+    // The digest echoes the question, not the ids it resolved to, and says what it covered.
+    expect(out.scope).toEqual({ q: "processors", resolved: { kind: "search", query: "processors", hits: 2 } });
+  });
+
+  it("resolves a q that names a hub area or descendant map to that map's subtree, without searching", async () => {
+    changeMaps.mockResolvedValue([
+      { id: "a1", title: "Data Processing and CQRS", depth: 1 },
+      { id: "m1", title: "Processors", depth: 2 },
+    ]);
+    const { subgraph: s } = subgraph();
+    const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "data processing" }, {})) as ChangeDigest;
+    expect(searchVault).not.toHaveBeenCalled();
+    expect(changes.mock.calls[0][1]).toEqual({ q: "data processing", moc: "a1" });
+    expect(out.scope).toEqual({ q: "data processing", resolved: { kind: "moc", id: "a1", title: "Data Processing and CQRS" } });
+  });
+
+  it("searches when an explicit moc is given with q (the map is already chosen)", async () => {
+    changeMaps.mockResolvedValue([{ id: "m1", title: "Processors", depth: 2 }]);
+    const { subgraph: s } = subgraph();
+    await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "processors", moc: "a1" }, {});
+    expect(searchVault).toHaveBeenCalled();
+    expect(changes.mock.calls[0][1]).toMatchObject({ moc: "a1", q: "processors" });
   });
 
   it("reports a malformed date as a user error", async () => {

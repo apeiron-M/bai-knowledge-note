@@ -10,7 +10,8 @@ import { KNOWLEDGE_NODE_TYPE_LIST } from "./project.js";
 import { parseEdgeMetadata, type EdgeConfidence } from "./edge-metadata.js";
 import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
 import type { ChangeDigest, ChangeScope } from "./changes.js";
-import { loadChanges } from "./changes-query.js";
+import { loadChangeMaps, loadChanges } from "./changes-query.js";
+import type { ScopeMap } from "./changes-story.js";
 
 /**
  * `graph_edges` holds only knowledge edges going forward (the processor stopped
@@ -1110,6 +1111,11 @@ export function createGraphQuery(db: GraphReadDb) {
       opts: { limit?: number; cursor?: string | null; sourceFolders?: ReadonlyMap<string, string> } = {},
     ): Promise<ChangeDigest> {
       return loadChanges(db, window, scope, opts);
+    },
+
+    /** The hub's areas and the maps below them, for a `q` scope to name a map. */
+    async changeMaps(): Promise<ScopeMap[]> {
+      return loadChangeMaps(db);
     },
 
     async history(documentId: string, limit = 50): Promise<OperationRecord[]> {

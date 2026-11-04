@@ -173,6 +173,35 @@ export function claimSimilarity(a: string, b: string): number {
   return both / (x.size + y.size - both);
 }
 
+/** A map a `q` scope may name: a hub area (depth 1) or a map below one. */
+export interface ScopeMap {
+  id: string;
+  title: string;
+  depth: number;
+}
+
+/**
+ * The map a query names (spec Addendum B2), by whole words, case-insensitive,
+ * plurals folded: a map whose title holds every word of the query, or whose
+ * every title word the query holds. The best is the one whose words are
+ * exactly the query's, then the shallower (an area before its maps), then the
+ * shorter title. Null when none matches.
+ */
+export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMap | null {
+  const q = claimTokens(query);
+  if (!q.size) return null;
+  const hits: { map: ScopeMap; exact: boolean; size: number }[] = [];
+  for (const map of maps) {
+    const t = claimTokens(map.title);
+    if (!t.size) continue;
+    const qInT = [...q].every((w) => t.has(w));
+    const tInQ = [...t].every((w) => q.has(w));
+    if (qInT || tInQ) hits.push({ map, exact: qInT && tInQ, size: t.size });
+  }
+  hits.sort((a, b) => Number(b.exact) - Number(a.exact) || a.map.depth - b.map.depth || a.size - b.size || a.map.title.localeCompare(b.map.title));
+  return hits[0]?.map ?? null;
+}
+
 /** A SUPERSEDES reason that says the two notes were one claim written twice. */
 const DUPLICATE_REASON = /twin|duplicate|same claim|already makes this claim|merged/i;
 /** At or above this title similarity, a supersession is a duplicate merge. */

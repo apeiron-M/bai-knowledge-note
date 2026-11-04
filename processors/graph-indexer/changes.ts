@@ -109,7 +109,11 @@ export interface ChangeScope {
   documentIds?: string[];
   q?: string;
   types?: string[];
+  /** On a digest: what `q` resolved to — a map it names, else a semantic search (spec Addendum B2). */
+  resolved?: ResolvedScope;
 }
+
+export type ResolvedScope = { kind: "moc"; id: string; title: string } | { kind: "search"; query: string; hits: number };
 
 export type MocTier = "HUB" | "DOMAIN" | "TOPIC";
 

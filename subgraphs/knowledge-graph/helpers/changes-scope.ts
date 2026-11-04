@@ -6,18 +6,22 @@ import {
   type ChangeDigest,
   type ChangeScope,
 } from "../../../processors/graph-indexer/changes.js";
+import { matchMapTitle } from "../../../processors/graph-indexer/changes-story.js";
 import { isKnowledgeLinkType } from "../../../processors/graph-indexer/link-types.js";
 import { getQuery, readerOf, type GraphSubgraph } from "./db.js";
 import { searchVault } from "./search.js";
 
-/** How many semantic hits a `q` scope starts from (spec §7). */
-export const CHANGE_Q_HITS = 10;
+/** How many semantic hits a `q` scope starts from when it names no map (spec Addendum B2). */
+export const CHANGE_Q_HITS = 25;
 
 /**
- * Resolve a `q` scope to document ids: the top semantic hits plus their
- * one-hop knowledge-edge neighbours, so "what changed in processors" works
- * without knowing a map id. Explicit `documentIds` narrow the result. Shared
- * by the GraphQL resolver and `GET changes`, so both answer the same totals.
+ * Resolve a `q` scope (spec Addendum B2): a query that names a hub area or a
+ * map below it (whole words, see `matchMapTitle`) scopes to that map's
+ * subtree; otherwise the top semantic hits plus their one-hop knowledge-edge
+ * neighbours. Explicit `documentIds` narrow the search result; with an
+ * explicit `moc` the map is already chosen and `q` searches within it.
+ * `resolved` says which it was. Shared by the GraphQL resolver and
+ * `GET changes`, so both answer the same totals.
  */
 export async function resolveChangeScope(
   subgraph: GraphSubgraph,
@@ -25,9 +29,14 @@ export async function resolveChangeScope(
   scope: ChangeScope,
 ): Promise<ChangeScope> {
   if (!scope.q) return scope;
+  const query = getQuery(subgraph, driveId);
+  if (!scope.moc) {
+    const map = matchMapTitle(scope.q, await query.changeMaps());
+    if (map) return { ...scope, moc: map.id, resolved: { kind: "moc", id: map.id, title: map.title } };
+  }
   const hits = await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_HITS, false);
   const ids = new Set(hits.map((h) => String(h.node.documentId)));
-  const edges = await getQuery(subgraph, driveId).edgesTouching([...ids]);
+  const edges = await query.edgesTouching([...ids]);
   const seeds = new Set(ids);
   for (const e of edges) {
     if (!isKnowledgeLinkType(e.linkType)) continue;
@@ -36,7 +45,7 @@ export async function resolveChangeScope(
   }
   const explicit = scope.documentIds ? new Set(scope.documentIds) : null;
   const documentIds = [...ids].filter((id) => !explicit || explicit.has(id)).sort();
-  return { ...scope, documentIds };
+  return { ...scope, documentIds, resolved: { kind: "search", query: scope.q, hits: hits.length } };
 }
 
 export type ChangeArgs = {
@@ -135,12 +144,13 @@ export async function loadDriveChanges(
     resolveChangeScope(subgraph, driveId, scope),
     loadSourceFolders(subgraph, driveId),
   ]);
-  const digest = await getQuery(subgraph, driveId).changes(window, resolved, {
+  const { resolved: how, ...internal } = resolved;
+  const digest = await getQuery(subgraph, driveId).changes(window, internal, {
     limit: args.limit ?? undefined,
     cursor: args.cursor ?? undefined,
     sourceFolders,
   });
-  return { ...digest, scope };
+  return { ...digest, scope: how ? { ...scope, resolved: how } : scope };
 }
 
 /** {@link loadDriveChanges} for GraphQL: a bad window or cursor is BAD_USER_INPUT. */

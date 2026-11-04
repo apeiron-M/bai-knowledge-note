@@ -53,9 +53,12 @@ describe("knowledgeGraph schema", () => {
     const fields = (name: string) => Object.keys((build().getType(name) as { getFields(): Record<string, unknown> }).getFields());
     expect(fields("KnowledgeGraphChangeStory")).toEqual(["growth", "areas"]);
     expect(fields("KnowledgeGraphChangeGrowth")).toEqual(["notesThen", "notesNow", "newAreas", "newMaps"]);
-    expect(fields("KnowledgeGraphChangeArea")).toEqual(["id", "title", "notesThen", "notesNow", "newCount", "changedCount", "retiredCount", "newClaims", "changedClaims", "retiredClaims"]);
-    expect(fields("KnowledgeGraphChangeClaim")).toEqual(["documentId", "claim", "gist"]);
-    expect(fields("KnowledgeGraphChangeShift")).toEqual(["documentId", "then", "now", "why", "replacedBy"]);
+    expect(fields("KnowledgeGraphChangeArea")).toEqual(["id", "title", "notesThen", "notesNow", "newCount", "changedCount", "retiredCount", "mergedCount", "versions", "newClaims", "changedClaims", "retiredClaims"]);
+    expect(fields("KnowledgeGraphChangeVersions")).toEqual(["first", "now"]);
+    expect(fields("KnowledgeGraphChangeClaim")).toEqual(["documentId", "claim", "gist", "thenAt"]);
+    expect(fields("KnowledgeGraphChangeShift")).toEqual(["documentId", "then", "now", "why", "replacedBy", "thenAt"]);
+    expect(fields("KnowledgeGraphChangeScope")).toEqual(["moc", "topic", "documentIds", "q", "types", "resolved"]);
+    expect(fields("KnowledgeGraphChangeResolvedScope")).toEqual(["kind", "id", "title", "query", "hits"]);
     expect(fields("KnowledgeGraphThenVsNow")).toEqual(["then", "now", "unchanged"]);
   });
 });

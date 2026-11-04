@@ -61,6 +61,7 @@ describe("renderChangesMarkdown: the story leads", () => {
           newCount: 3,
           changedCount: 1,
           retiredCount: 1,
+          mergedCount: 0,
           newClaims: [{ documentId: "n6", claim: "Processors checkpoint per batch", gist: "One cursor per batch" }],
           changedClaims: [
             {
@@ -113,5 +114,25 @@ describe("renderChangesMarkdown: the story leads", () => {
     const shift = { documentId: "n2", then: { claim: "Same claim", gist: "old gist" }, now: { claim: "Same claim", gist: "new gist" }, why: null };
     const md = renderChangesMarkdown({ ...digest, story: { ...story, areas: [{ ...story.areas[0], changedClaims: [shift] }] } });
     expect(md).toContain("- [[n2]] then “Same claim — old gist” → now “Same claim — new gist”");
+  });
+
+  it("says what a q resolved to, the merges it did not list, the source versions, and when a then was first recorded", () => {
+    const story = digest.story;
+    if (!story) throw new Error("the fixture has a story");
+    const shift = { documentId: "n3", then: { claim: "Exactly once", gist: null }, now: { claim: "At least once", gist: null }, why: null, thenAt: "2026-09-02T10:00:05.000Z" };
+    const area = { ...story.areas[0], mergedCount: 3, versions: { first: "v6.2.2-dev.74", now: "v6.2.3-dev.91+e0f277d" }, changedClaims: [shift] };
+    const md = renderChangesMarkdown({
+      ...digest,
+      scope: { q: "data processing", resolved: { kind: "moc", id: "a2", title: "Data Processing and CQRS" } },
+      story: { ...story, areas: [area] },
+      thenVsNow: { then: [{ documentId: "n3", claim: "Exactly once", gist: null, thenAt: "2026-09-02T10:00:05.000Z" }], now: [], unchanged: [] },
+    });
+    expect(md).toContain("Scope: the map Data Processing and CQRS [[a2]] (matched “data processing”).");
+    expect(md).toContain("Sources: v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d.");
+    expect(md).toContain("3 duplicate notes merged (not listed).");
+    expect(md).toContain("- [[n3]] then (first recorded 2026-09-02) “Exactly once” → now “At least once”");
+    expect(md).toContain("- [[n3]] Exactly once (first recorded 2026-09-02)");
+    const search = renderChangesMarkdown({ ...digest, scope: { q: "delivery", resolved: { kind: "search", query: "delivery", hits: 25 } } });
+    expect(search).toContain("Scope: search “delivery” — 25 hits and their linked notes.");
   });
 });

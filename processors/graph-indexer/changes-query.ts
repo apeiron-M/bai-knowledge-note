@@ -25,7 +25,7 @@ import {
   type MocTier,
   type OperationRow,
 } from "./changes.js";
-import type { StoryContext, StoryNode } from "./changes-story.js";
+import type { ScopeMap, StoryContext, StoryNode } from "./changes-story.js";
 import { parseEdgeMetadata } from "./edge-metadata.js";
 import { KNOWLEDGE_LINK_TYPES } from "./link-types.js";
 import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
@@ -475,6 +475,39 @@ async function loadStoryContext(db: ReadDb, { since, until }: { since: string; u
 /** The git ref an INGEST_SOURCE summary ends with (summarize.ts: `Ingested “title” (ref)`), else null. */
 export function ingestRef(summary: string | null): string | null {
   return /” \(([^()\s]+)\)$/.exec(summary ?? "")?.[1] ?? null;
+}
+
+/**
+ * The maps a `q` scope may name (spec Addendum B2): every hub's top-level
+ * areas (depth 1) and the maps below them (child maps, any depth, each at its
+ * shallowest), areas first. Hubs themselves are the whole vault, not a scope.
+ */
+export async function loadChangeMaps(db: ReadDb): Promise<ScopeMap[]> {
+  const maps = await db.selectFrom("graph_nodes").select(["document_id", "title", "note_type"]).where("document_type", "=", "bai/moc").execute();
+  const title = new Map(maps.map((m) => [m.document_id, m.title ?? m.document_id]));
+  const hubs = new Set(maps.filter((m) => /MOC \(HUB\)/.test(m.note_type ?? "")).map((m) => m.document_id));
+  const children = new Map<string, string[]>();
+  for (const e of await db.selectFrom("graph_edges").select(["source_document_id", "target_document_id"]).where("link_type", "=", "CHILD_MOC").execute()) {
+    const list = children.get(e.source_document_id);
+    if (list) list.push(e.target_document_id);
+    else children.set(e.source_document_id, [e.target_document_id]);
+  }
+  const out: ScopeMap[] = [];
+  const seen = new Set(hubs);
+  let frontier = [...hubs];
+  for (let depth = 1; frontier.length; depth++) {
+    const next: string[] = [];
+    for (const id of frontier) {
+      for (const child of children.get(id) ?? []) {
+        if (seen.has(child) || !title.has(child)) continue;
+        seen.add(child);
+        next.push(child);
+        out.push({ id: child, title: title.get(child) as string, depth });
+      }
+    }
+    frontier = next;
+  }
+  return out;
 }
 
 /**
