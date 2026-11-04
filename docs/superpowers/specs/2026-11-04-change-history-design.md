@@ -295,3 +295,8 @@ story can say "first recorded at v6.2.2-dev.74, now v6.2.3-dev.91+e0f277d". Shif
 - **B2 tightened.** A query→map match where the title's words are a subset of the query needs the title to cover ≥ 50%
   of the query's content tokens, or to be the only matching map; otherwise search. A query matching the **hub's** title
   (or the vault's drive name) resolves to the whole vault (`resolved: { kind: "vault" }`), server-side.
+- **As built (review B fixes, ledger § Review B fixes).** Query filler ("what changed", "how does … work now") is not
+  content; "the only matching map" is read as the only map whose title shares any word with the query; a tie between
+  the best two maps searches. `resolved: { kind: "vault", title }` names the hub or drive matched. Explicit
+  `documentIds` always narrow what `q` resolves to. A retired note is never also a shift; a note created and archived
+  in the window is retired. A created note's bodies are read only when its claim differs from its first record.
