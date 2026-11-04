@@ -55,6 +55,11 @@ export interface StoredMessage {
    * each is kept apart, by proposal id (use-work-proposal.ts).
    */
   proposals?: WorkProposal[];
+  /**
+   * The what_changed period the conversation stood on after this turn: a
+   * later question without a date reuses it (Addendum D3).
+   */
+  changesWindow?: { since: string; until: string | null };
 }
 
 export interface Thread {

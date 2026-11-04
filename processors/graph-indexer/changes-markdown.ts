@@ -85,7 +85,15 @@ function claimLine(c: Claim): string {
 }
 
 function shiftLine(s: Shift): string {
-  // A description-only shift reads the same by claim: show the gists then.
+  // A description-only shift: the claim once, then only where the gists differ (Addendum D7).
+  if (s.gistDiff) {
+    return (
+      `- [[${s.documentId}]] “${oneLine(s.now.claim, 140)}”: then ${s.thenAt ? `(first recorded ${s.thenAt.slice(0, 10)}) ` : ""}“${oneLine(s.gistDiff.then, 170) || "no description"}” → now “${oneLine(s.gistDiff.now, 170) || "no description"}”` +
+      (s.replacedBy ? ` [[${s.replacedBy}]]` : "") +
+      (s.why ? ` — because ${oneLine(s.why, 160)}` : "")
+    );
+  }
+  // A description-only shift from an older server reads the same by claim: show the gists then.
   const sameClaim = s.then.claim === s.now.claim;
   const text = (t: { claim: string; gist: string | null }) =>
     `“${oneLine(t.claim, 140)}${sameClaim ? ` — ${t.gist === null ? "no description" : oneLine(t.gist, 120)}` : ""}”`;
@@ -99,14 +107,19 @@ function shiftLine(s: Shift): string {
 /** The story first: how the vault grew, then per area what is new, what changed, what retired. */
 function storySection(story: ChangeStory, out: string[]): void {
   const g = story.growth;
-  // Since predates the vault: when it began, never "0 notes then" (Addendum C2).
-  const grew = g.from ? `The vault began on ${g.from.slice(0, 10)}; it holds ${g.notesNow} live notes now.` : `Live notes: ${g.notesThen} → ${g.notesNow}.`;
+  // Since predates the vault: from its first recorded state (Addendum D1), never "0 notes then" (C2).
+  const grew = !g.from
+    ? `Live notes: ${g.notesThen} → ${g.notesNow}.`
+    : g.notesAtStart !== undefined
+      ? `First recorded on ${g.from.slice(0, 10)}: ${g.notesAtStart} live notes → now ${g.notesNow}.`
+      : `The vault began on ${g.from.slice(0, 10)}; it holds ${g.notesNow} live notes now.`;
   out.push("## What the vault knows now", "", grew);
   if (g.newAreas.length) out.push(`New areas: ${g.newAreas.map((a) => a.title).join(", ")}.`);
   if (g.newMaps.length) out.push(`New maps: ${g.newMaps.map((m) => (m.area ? `${m.title} (${m.area})` : m.title)).join(", ")}.`);
   out.push("");
   for (const a of story.areas) {
-    out.push(`### ${a.title} — ${a.notesThen} → ${a.notesNow} notes`, "");
+    const notes = a.notesAtStart !== undefined ? `first recorded ${a.notesAtStart} → ${a.notesNow}` : `${a.notesThen} → ${a.notesNow}`;
+    out.push(`### ${a.title} — ${notes} notes`, "");
     if (a.versions) out.push(`Sources: ${a.versions.first ?? "?"} → ${a.versions.now ?? "?"}.`, "");
     const more = (shown: number, count: number, word: string) => (count > shown ? [`- …and ${count - shown} more ${word}`] : []);
     if (a.newClaims.length) out.push("New:", ...a.newClaims.map(claimLine), ...more(a.newClaims.length, a.newCount, "new"), "");

@@ -260,6 +260,8 @@ export const schema: DocumentNode = gql`
     notesNow: Int!
     "When since predates the vault's first recorded activity: that activity; growth is counted from it (notesThen is then 0 because the vault did not exist yet)."
     from: String
+    "With from: the live notes at the end of the vault's first import day (its first recorded state) — growth reads notesAtStart → notesNow, never 0 → notesNow."
+    notesAtStart: Int
     newAreas: [KnowledgeGraphChangeMapRef!]!
     newMaps: [KnowledgeGraphChangeNewMap!]!
   }
@@ -282,6 +284,8 @@ export const schema: DocumentNode = gql`
     title: String!
     notesThen: Int!
     notesNow: Int!
+    "When since predates the vault: the area's live notes at the end of its first import day."
+    notesAtStart: Int
     "How many notes are new in the area (uncapped; newClaims shows at most 8)."
     newCount: Int!
     "How many claims shifted in the area (uncapped; changedClaims shows at most 8)."
@@ -290,11 +294,11 @@ export const schema: DocumentNode = gql`
     retiredCount: Int!
     "Supersessions that merged twin notes (same claim written twice): counted, never listed as changed."
     mergedCount: Int!
-    "The git refs of the area's sources: as they stood at since (else first ingested) → latest. Null when they carry none."
+    "The git refs of the area's sources: as they stood at since (else first ingested) → latest. Null unless at least half of them carry one."
     versions: KnowledgeGraphChangeVersions
-    "Notes created in the window, most connected first (at most 8); a note that replaced another is its shift's now, not new."
+    "Notes created in the window, most connected first — with a query, its hits first in hit order and at most half the slots for the rest (at most 8); a note that replaced another is its shift's now, not new."
     newClaims: [KnowledgeGraphChangeClaim!]!
-    "Claims the vault now states differently (at most 8)."
+    "Claims the vault now states differently (at most 8; with a query, its hits first and at most half the slots for the rest)."
     changedClaims: [KnowledgeGraphChangeShift!]!
     "Notes archived in the window, still archived, and never replaced (at most 5)."
     retiredClaims: [KnowledgeGraphChangeClaim!]!
@@ -330,6 +334,13 @@ export const schema: DocumentNode = gql`
     replacedBy: String
     "For a note created in the window: when its first recorded state (the then) was written."
     thenAt: String
+    "When the claim reads the same: the differing span of each gist, with a few words of context (at most 160 characters a side)."
+    gistDiff: KnowledgeGraphChangeGistDiff
+  }
+
+  type KnowledgeGraphChangeGistDiff {
+    then: String!
+    now: String!
   }
 
   type KnowledgeGraphThenVsNow {

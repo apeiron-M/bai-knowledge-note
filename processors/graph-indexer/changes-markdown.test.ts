@@ -146,6 +146,30 @@ describe("renderChangesMarkdown: the story leads", () => {
     expect(md).not.toContain("Live notes: 0 →");
   });
 
+  it("counts growth from the vault's first recorded state, vault-wide and per area, never 0 → N (Addendum D1)", () => {
+    const story = digest.story;
+    if (!story) throw new Error("the fixture has a story");
+    const growth = { ...story.growth, notesThen: 0, from: "2026-09-02T10:00:00.000Z", notesAtStart: 98 };
+    const md = renderChangesMarkdown({ ...digest, story: { ...story, growth, areas: [{ ...story.areas[0], notesThen: 0, notesAtStart: 30 }] } });
+    expect(md).toContain("First recorded on 2026-09-02: 98 live notes → now 150.");
+    expect(md).toContain("### Data Processing and CQRS — first recorded 30 → 44 notes");
+    expect(md).not.toContain("— 0 → 44");
+  });
+
+  it("shows only the differing spans of a description-only shift's gists (Addendum D7)", () => {
+    const story = digest.story;
+    if (!story) throw new Error("the fixture has a story");
+    const shift = {
+      documentId: "n2",
+      then: { claim: "Delivery", gist: "Processors see each operation exactly once, in the order the reactor wrote them." },
+      now: { claim: "Delivery", gist: "Processors see each operation at least once, in the order the reactor wrote them." },
+      why: null,
+      gistDiff: { then: "…see each operation exactly once, in the…", now: "…see each operation at least once, in the…" },
+    };
+    const md = renderChangesMarkdown({ ...digest, story: { ...story, areas: [{ ...story.areas[0], changedClaims: [shift] }] } });
+    expect(md).toContain("- [[n2]] “Delivery”: then “…see each operation exactly once, in the…” → now “…see each operation at least once, in the…”");
+  });
+
   it("names the main areas a q matched (Addendum C1)", () => {
     const md = renderChangesMarkdown({
       ...digest,
