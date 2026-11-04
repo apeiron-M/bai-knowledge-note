@@ -768,3 +768,32 @@ describe("story: review B fixes", () => {
     expect([...claimTokens("does process address status analysis processors drives")]).toEqual(["does", "process", "address", "status", "analysis", "processor", "drive"]);
   });
 });
+
+describe("story: Addendum C", () => {
+  const supersede = (by: string, old: string, reason: string, at = IN(2)) =>
+    row(by, "ADD_RELATIONSHIP", { sourceId: by, targetId: old, relationshipType: "SUPERSEDES", metadata: { reason } }, at);
+
+  describe("C4: a note created in the window always has a first-recorded date", () => {
+    it("dates a supersession of a note whose CREATE row was lost by its added_at", () => {
+      const rows = [supersede("n9", "n2", "dev.91: the outbox replays after a crash", IN(5)), row("n2", "ARCHIVE_NOTE", {}, IN(5, 1))];
+      const s = story(
+        [
+          ["n2", note("Delivery is exactly once, in order", { status: "ARCHIVED", addedAt: IN(1) })],
+          ["n9", note("Delivery is at-least-once, with a crash gap", { addedAt: IN(4) })],
+        ],
+        { coreIdeas: new Map([["m1", ["n2", "n9"]]]), superseded: new Set(["n2"]) },
+      );
+      const shift = digest(rows, [], s).story?.areas.find((a) => a.id === "a1")?.changedClaims[0];
+      expect(shift).toMatchObject({ documentId: "n2", replacedBy: "n9", thenAt: IN(1) });
+    });
+
+    it("reads the first recorded claim of a note whose CREATE row was lost from the hour after its added_at", () => {
+      const rows = [row("n2", "SET_TITLE", { title: "Delivery is exactly once, in order" }, IN(1, 2)), row("n2", "SET_TITLE", { title: "Delivery is at-least-once" }, IN(6))];
+      const s = story([["n2", note("Delivery is at-least-once", { addedAt: IN(1) })]]);
+      const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+      expect(area?.changedClaims).toEqual([
+        { documentId: "n2", then: { claim: "Delivery is exactly once, in order", gist: null }, now: { claim: "Delivery is at-least-once", gist: null }, why: null, thenAt: IN(1, 2) },
+      ]);
+    });
+  });
+});

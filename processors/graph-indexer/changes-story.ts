@@ -377,6 +377,13 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
   // A note created in the window reports `created` only, never `archived`:
   // archived now, it was archived in the window too.
   for (const e of events) if (e.kind === "created" && archivedNow(e.documentId)) archivedInWindow.add(e.documentId);
+  // A note created in the window always says when its then was first recorded:
+  // its creating batch, else its creation time — added_at when the CREATE row was lost (Addendum C4).
+  for (const sh of shifts.values()) {
+    if (sh.thenAt || !created.has(sh.documentId)) continue;
+    const at = thenFields.get(sh.documentId)?.at ?? createdAt.get(sh.documentId);
+    if (at) sh.thenAt = at;
+  }
   const firstAt = new Map([...shifts.values()].flatMap((sh) => (sh.thenAt ? [[sh.documentId, sh.thenAt] as const] : [])));
   // Retired: archived in the window, still archived, and replaced by nothing — ever.
   const retired = new Set(
