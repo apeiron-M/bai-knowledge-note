@@ -303,88 +303,108 @@ export interface LineDiff {
   hunks: string[];
 }
 
-/** Above this many cells the LCS table is not built; the diff counts lines instead. */
-const MAX_LCS_CELLS = 4_000_000;
+/** Lines per side of one LCS window: a 400 × 400 table, whatever the text's size. */
+const DIFF_WINDOW = 400;
 
 function clip(s: string, max = MAX_HUNK_CHARS): string {
   return s.length > max ? `${s.slice(0, max - 1)}…` : s;
 }
 
+type DiffOp = ["-" | "+" | " ", string];
+
+/** The LCS edit script between two (small) line lists. */
+function lcsOps(x: string[], y: string[]): DiffOp[] {
+  const n = x.length;
+  const m = y.length;
+  const table: Uint32Array[] = Array.from({ length: n + 1 }, () => new Uint32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      table[i][j] = x[i] === y[j] ? table[i + 1][j + 1] + 1 : Math.max(table[i + 1][j], table[i][j + 1]);
+    }
+  }
+  const ops: DiffOp[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (x[i] === y[j]) {
+      ops.push([" ", x[i]]);
+      i++;
+      j++;
+    } else if (table[i + 1][j] >= table[i][j + 1]) ops.push(["-", x[i++]]);
+    else ops.push(["+", y[j++]]);
+  }
+  while (i < n) ops.push(["-", x[i++]]);
+  while (j < m) ops.push(["+", y[j++]]);
+  return ops;
+}
+
 /**
- * Lines added and removed between two texts, with up to {@link MAX_HUNKS}
- * hunks (`-old` / `+new` lines, each hunk ≤ {@link MAX_HUNK_CHARS} chars).
- * A longest-common-subsequence over lines after trimming the shared head and
- * tail; texts too large for the table are compared as line multisets.
+ * The first {@link MAX_HUNKS} hunks (`-old` / `+new` lines, each ≤
+ * {@link MAX_HUNK_CHARS} chars) between two texts, after the shared head and
+ * tail. The LCS runs over windows of {@link DIFF_WINDOW} lines: a window's
+ * script is kept up to its last matching line, and the next window starts
+ * there, so a large source costs a few small tables rather than one huge one,
+ * and the walk stops once the hunks are full.
  */
-export function diffLines(before: string, after: string): LineDiff {
-  if (before === after) return { added: 0, removed: 0, hunks: [] };
+function firstHunks(before: string, after: string): string[] {
   const a = before.split("\n");
   const b = after.split("\n");
   let head = 0;
   while (head < a.length && head < b.length && a[head] === b[head]) head++;
   let tail = 0;
   while (tail < a.length - head && tail < b.length - head && a[a.length - 1 - tail] === b[b.length - 1 - tail]) tail++;
-  const x = a.slice(head, a.length - tail);
-  const y = b.slice(head, b.length - tail);
+  const aEnd = a.length - tail;
+  const bEnd = b.length - tail;
 
-  // ops: [" "|"-"|"+", line]
-  const ops: Array<["-" | "+" | " ", string]> = [];
-  if (x.length * y.length > MAX_LCS_CELLS) {
-    const counts = new Map<string, number>();
-    for (const l of x) counts.set(l, (counts.get(l) ?? 0) + 1);
-    const plus: string[] = [];
-    for (const l of y) {
-      const c = counts.get(l) ?? 0;
-      if (c > 0) counts.set(l, c - 1);
-      else plus.push(l);
-    }
-    const minus: string[] = [];
-    for (const [l, c] of counts) for (let i = 0; i < c; i++) minus.push(l);
-    for (const l of minus) ops.push(["-", l]);
-    for (const l of plus) ops.push(["+", l]);
-  } else {
-    const n = x.length;
-    const m = y.length;
-    const table: Uint32Array[] = Array.from({ length: n + 1 }, () => new Uint32Array(m + 1));
-    for (let i = n - 1; i >= 0; i--) {
-      for (let j = m - 1; j >= 0; j--) {
-        table[i][j] = x[i] === y[j] ? table[i + 1][j + 1] + 1 : Math.max(table[i + 1][j], table[i][j + 1]);
-      }
-    }
-    let i = 0;
-    let j = 0;
-    while (i < n && j < m) {
-      if (x[i] === y[j]) {
-        ops.push([" ", x[i]]);
-        i++;
-        j++;
-      } else if (table[i + 1][j] >= table[i][j + 1]) ops.push(["-", x[i++]]);
-      else ops.push(["+", y[j++]]);
-    }
-    while (i < n) ops.push(["-", x[i++]]);
-    while (j < m) ops.push(["+", y[j++]]);
-  }
-
-  let added = 0;
-  let removed = 0;
   const hunks: string[] = [];
   let current: string[] = [];
   const flush = () => {
     if (current.length && hunks.length < MAX_HUNKS) hunks.push(clip(current.join("\n")));
     current = [];
   };
-  for (const [op, line] of ops) {
-    if (op === " ") {
-      flush();
-      continue;
+  let i = head;
+  let j = head;
+  while ((i < aEnd || j < bEnd) && hunks.length < MAX_HUNKS) {
+    const x = a.slice(i, Math.min(aEnd, i + DIFF_WINDOW));
+    const y = b.slice(j, Math.min(bEnd, j + DIFF_WINDOW));
+    const last = i + x.length >= aEnd && j + y.length >= bEnd;
+    let ops = lcsOps(x, y);
+    if (!last) {
+      // Keep the script up to its last match: past it, the window's edge may
+      // have cut a pair apart. With no match at all, the window is one change.
+      let cut = -1;
+      for (let k = ops.length - 1; k >= 0; k--) {
+        if (ops[k][0] === " ") {
+          cut = k;
+          break;
+        }
+      }
+      if (cut >= 0) ops = ops.slice(0, cut + 1);
     }
-    if (op === "+") added++;
-    else removed++;
-    // Blank lines count, but say nothing in a hunk.
-    if (line.trim() !== "") current.push(`${op}${line}`);
+    for (const [op, line] of ops) {
+      if (op === " ") {
+        flush();
+        i++;
+        j++;
+        continue;
+      }
+      if (op === "-") i++;
+      else j++;
+      // Blank lines count, but say nothing in a hunk.
+      if (line.trim() !== "") current.push(`${op}${line}`);
+    }
   }
   flush();
-  return { added, removed, hunks };
+  return hunks;
+}
+
+/**
+ * Lines added and removed between two texts (see {@link countLines}), with
+ * the first {@link MAX_HUNKS} hunks (see {@link firstHunks}).
+ */
+export function diffLines(before: string, after: string): LineDiff {
+  if (before === after) return { added: 0, removed: 0, hunks: [] };
+  return { ...countLines(before, after), hunks: firstHunks(before, after) };
 }
 
 /**

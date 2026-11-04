@@ -144,6 +144,45 @@ describe("graph query: changes()", () => {
     expect(d.groups.map((g) => g.title).sort()).toEqual(["Processors", "Read models"]);
   });
 
+  it("answers a sync-sized window — large sources and notes with baselines — in seconds, not minutes", async () => {
+    const db = harness.db;
+    const before = "2026-10-01T00:00:00.000Z";
+    const during = (i: number) => new Date(Date.parse("2026-11-03T01:00:00.000Z") + i * 1000).toISOString();
+    // A source like the monorepo's: ~1,500 lines, a few hundred changed between refs.
+    const sourceText = (s: number, v: number) =>
+      Array.from({ length: 1500 }, (_, l) => (l % 7 === 0 && v === 2 ? `revised ${s}:${l} ${"y".repeat(30)}` : `line ${s}:${l} ${"x".repeat(30)}`)).join("\n");
+    const noteBody = (n: number, v: number) => Array.from({ length: 60 }, (_, l) => (l % 10 === 0 && v === 2 ? `edited ${n}:${l}` : `claim ${n}:${l} ${"z".repeat(40)}`)).join("\n");
+    const rows: OperationRow[] = [];
+    for (let s = 0; s < 300; s++) {
+      for (const [v, at] of [[1, before], [2, during(s)]] as const) {
+        rows.push({ documentId: `s${s}`, documentType: "bai/source", operationType: "INGEST_SOURCE", timestamp: at, index: v, inputJson: JSON.stringify({ title: `Source ${s}`, content: sourceText(s, v), method: `git:v${v}` }), signerAddress: null });
+      }
+      // Re-ingested twice in the window, so the first and last ingestion both count.
+      rows.push({ documentId: `s${s}`, documentType: "bai/source", operationType: "INGEST_SOURCE", timestamp: during(s + 1), index: 3, inputJson: JSON.stringify({ title: `Source ${s}`, content: sourceText(s, 2), method: "git:v3" }), signerAddress: null });
+    }
+    for (let n = 0; n < 1000; n++) {
+      rows.push({ documentId: `n${n}`, documentType: "bai/knowledge-note", operationType: "SET_CONTENT", timestamp: before, index: 0, inputJson: JSON.stringify({ content: noteBody(n, 1) }), signerAddress: null });
+      for (let k = 0; k < 3; k++) rows.push({ documentId: `n${n}`, documentType: "bai/knowledge-note", operationType: "SET_CONTENT", timestamp: during(n * 3 + k), index: 1 + k, inputJson: JSON.stringify({ content: noteBody(n, k === 2 ? 2 : 1) }), signerAddress: null });
+    }
+    for (let i = 0; i < 300; i++) await insertSource(db, `s${i}`, `Source ${i}`, Array.from({ length: 40 }, (_, k) => `n${(i * 3 + k) % 1000}`), "2026-08-01T00:00:00.000Z");
+    await insertOps(db, rows);
+
+    const window = { since: "2026-11-03T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" };
+    const started = performance.now();
+    const summary = await createGraphQuery(db).changes(window, {}, {});
+    const page = await createGraphQuery(db).changes(window, { types: ["bai/source"], documentIds: Array.from({ length: 300 }, (_, i) => `s${i}`) }, { limit: 50 });
+    const elapsed = performance.now() - started;
+
+    expect(summary.totals).toMatchObject({ revised: 1000, sourcesRevised: 300 });
+    expect(page.events).toHaveLength(50);
+    const e = page.events?.[0];
+    expect(e?.source).toMatchObject({ refBefore: "v1", refAfter: "v3", added: 215, removed: 215 });
+    expect(e?.source?.hunks.length).toBeGreaterThan(0);
+    // Measured: ~0.8 s here, against ~16 s when every event was LCS-diffed
+    // and every body read. Events past the page are counted, not diffed.
+    expect(elapsed).toBeLessThan(3000);
+  }, 120_000);
+
   it("answers a window of 20,000 operations in under two seconds", async () => {
     const db = harness.db;
     const rows: OperationRow[] = [];

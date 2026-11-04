@@ -59,6 +59,26 @@ describe("diffLines", () => {
     expect(d).toEqual({ added: 2, removed: 1, hunks: ["-b\n+B", "+e"] });
   });
 
+  it("finds the first hunks of a large text without tabling the whole of it", () => {
+    const before = Array.from({ length: 20_000 }, (_, i) => `line ${i}`).join("\n");
+    const after = Array.from({ length: 20_000 }, (_, i) => (i % 500 === 250 ? `changed ${i}` : `line ${i}`)).join("\n");
+    const started = performance.now();
+    const d = diffLines(before, after);
+    expect(performance.now() - started).toBeLessThan(250);
+    expect(d.hunks.slice(0, 2)).toEqual(["-line 250\n+changed 250", "-line 750\n+changed 750"]);
+    expect(d.hunks).toHaveLength(6);
+    expect(d).toMatchObject({ added: 40, removed: 40 });
+  });
+
+  it("keeps hunks in order across windows, and shows a wholly replaced stretch", () => {
+    const before = Array.from({ length: 1500 }, (_, i) => `a${i}`).join("\n");
+    const after = Array.from({ length: 1500 }, (_, i) => (i >= 700 && i < 1300 ? `b${i}` : `a${i}`)).join("\n");
+    const d = diffLines(before, after);
+    expect(d.hunks.length).toBeGreaterThan(0);
+    expect(d.hunks[0].startsWith("-a700")).toBe(true);
+    expect(d).toMatchObject({ added: 600, removed: 600 });
+  });
+
   it("caps hunks at six of at most 400 characters", () => {
     const before = Array.from({ length: 20 }, (_, i) => `line ${i}`).join("\n");
     const after = Array.from({ length: 20 }, (_, i) => (i % 2 ? `changed ${i} ${"x".repeat(500)}` : `line ${i}`)).join("\n");

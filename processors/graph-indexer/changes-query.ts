@@ -7,6 +7,10 @@
  * Every row is read for counting, but `input_json` only for the operations
  * that can become an event (a SUPERSEDES link, a version stamp, a claim
  * edit, a lifecycle step, an ingestion) — the rest come back without it.
+ * The heavy inputs — whole bodies and whole source texts — are read in a
+ * second pass and only where they decide the result: a document's last
+ * content write and the patches after it, a source's first and last
+ * ingestion; the same before the window for the baseline.
  */
 import { sql, type Kysely } from "kysely";
 import type { DB } from "./schema.js";
@@ -29,10 +33,19 @@ const SOURCE_TYPE = "bai/source";
 /** Bound parameter lists stay well under Postgres's 65,535. */
 const CHUNK = 1000;
 
-/** Operation types whose input is always needed; the two below need theirs only sometimes. */
-const PLAIN_EVENT_TYPES = EVENT_OPERATION_TYPES.filter((t) => t !== "ADD_RELATIONSHIP" && t !== "SET_METADATA_FIELD");
+/** Inputs that carry a whole body or source text: fetched by id, only where they decide the result. */
+const CONTENT_SET_TYPES = ["SET_CONTENT", "UPDATE_CLAIM_CONTENT"];
+const PATCH = "PATCH_CONTENT";
+const INGEST = "INGEST_SOURCE";
+const HEAVY_TYPES = new Set([...CONTENT_SET_TYPES, PATCH, INGEST]);
+const CREATED_TYPES = new Set(["CREATE_DOCUMENT", "CREATE_MOC", "CREATE_CLAIM", "CREATE_TENSION", "CREATE_OBSERVATION"]);
+/** Operation types whose small input is always needed; the two below need theirs only sometimes. */
+const PLAIN_EVENT_TYPES = EVENT_OPERATION_TYPES.filter((t) => t !== "ADD_RELATIONSHIP" && t !== "SET_METADATA_FIELD" && !HEAVY_TYPES.has(t));
 const SUPERSEDES_LIKE = '%"relationshipType":"SUPERSEDES"%';
+const NO_TYPE_LIKE = '%"relationshipType"%';
 const VERSION_LIKE = '%"field":"version"%';
+/** How every timestamp the indexer writes begins (migrations.ts normalises the rest). */
+const ISO_LIKE = "____-__-__T%";
 
 function chunks<T>(list: T[]): T[][] {
   const out: T[][] = [];
@@ -156,19 +169,73 @@ async function windowRows(db: ReadDb, window: { since: string; until: string }, 
   if (!ids) return (await base().execute()) as RawRow[];
   const out: RawRow[] = [];
   for (const part of chunks(ids)) out.push(...((await base().where("document_id", "in", part).execute()) as RawRow[]));
-  // A supersession is recorded on the replacing note, which may be outside the scope.
+  // A supersession (and its removal) is recorded on the replacing note, which may be outside the scope.
   const seen = new Set(out.map((r) => r.id));
   const sup = (await base()
-    .where("operation_type", "=", "ADD_RELATIONSHIP")
-    .where("input_json", "like", SUPERSEDES_LIKE)
+    .where((eb) =>
+      eb.or([
+        eb.and([eb("operation_type", "=", "ADD_RELATIONSHIP"), eb("input_json", "like", SUPERSEDES_LIKE)]),
+        eb.and([
+          eb("operation_type", "=", "REMOVE_RELATIONSHIP"),
+          eb.or([eb("input_json", "like", SUPERSEDES_LIKE), eb("input_json", "not like", NO_TYPE_LIKE)]),
+        ]),
+      ]),
+    )
     .execute()) as RawRow[];
   for (const r of sup) if (!seen.has(r.id)) out.push(r);
   return out;
 }
 
-/** The last pre-window row per document and tracked operation type, plus every pre-window content patch. */
+function byTimeRaw(a: RawRow, b: RawRow): number {
+  return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : a.index - b.index;
+}
+
+/**
+ * Which heavy rows' inputs decide the digest, from rows in time order per
+ * document: a document's last content write and the patches after it (all
+ * patches when it has none), a source's first and last ingestion. A document
+ * created in the window needs none — its edits are its creation.
+ */
+function decidingHeavyRows(rows: RawRow[]): string[] {
+  const byDoc = new Map<string, RawRow[]>();
+  for (const r of rows) byDoc.set(r.document_id, [...(byDoc.get(r.document_id) ?? []), r]);
+  const wanted: string[] = [];
+  for (const list of byDoc.values()) {
+    list.sort(byTimeRaw);
+    const ingests = list.filter((r) => r.operation_type === INGEST);
+    if (ingests.length) {
+      wanted.push(ingests[0].id);
+      if (ingests.length > 1) wanted.push(ingests[ingests.length - 1].id);
+    }
+    if (list.some((r) => CREATED_TYPES.has(r.operation_type))) continue;
+    let lastSet = -1;
+    for (let i = 0; i < list.length; i++) if (CONTENT_SET_TYPES.includes(list[i].operation_type)) lastSet = i;
+    if (lastSet >= 0) wanted.push(list[lastSet].id);
+    for (let i = lastSet + 1; i < list.length; i++) if (list[i].operation_type === PATCH) wanted.push(list[i].id);
+  }
+  return wanted;
+}
+
+/** Fill `input_json` of these rows, by id. */
+async function fillInputs(db: ReadDb, rows: RawRow[], ids: string[]): Promise<void> {
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  for (const part of chunks(ids)) {
+    const found = await db.selectFrom("graph_operations").select(["id", "input_json"]).where("id", "in", part).execute();
+    for (const f of found) {
+      const row = byId.get(f.id);
+      if (row) row.input_json = f.input_json;
+    }
+  }
+}
+
+/**
+ * The baseline: per document, the last pre-window row of each tracked
+ * operation type, and the content patches after its last content write —
+ * inputs only where they decide the value. Rows whose timestamp is not ISO
+ * are not "before" anything and are left out.
+ */
 async function baselineRows(db: ReadDb, since: string, docIds: string[]): Promise<RawRow[]> {
-  const tracked = BASELINE_OPERATION_TYPES.filter((t) => t !== "PATCH_CONTENT");
+  const tracked = BASELINE_OPERATION_TYPES.filter((t) => t !== PATCH);
   const out: RawRow[] = [];
   for (const part of chunks(docIds)) {
     const ranked = db
@@ -180,28 +247,45 @@ async function baselineRows(db: ReadDb, since: string, docIds: string[]): Promis
         "operation_type",
         "timestamp",
         "index",
-        "input_json",
         "signer_address",
+        sql<string | null>`case when operation_type in (${sql.join([...HEAVY_TYPES])}) then null else input_json end`.as("input_json"),
         sql<number>`row_number() over (partition by document_id, operation_type order by timestamp desc, "index" desc)`.as("rn"),
       ])
       .where("timestamp", "<", since)
+      .where("timestamp", "like", ISO_LIKE)
       .where("document_id", "in", part)
       .where("operation_type", "in", tracked)
       .where((eb) => eb.or([eb("operation_type", "!=", "SET_METADATA_FIELD"), eb("input_json", "like", VERSION_LIKE)]));
-    const last = await db
+    const last = (await db
       .selectFrom(ranked.as("ranked"))
       .select(["id", "document_id", "document_type", "operation_type", "timestamp", "index", "input_json", "signer_address"])
       .where("rn", "=", 1)
-      .execute();
-    out.push(...(last as RawRow[]));
-    const patches = await db
+      .execute()) as RawRow[];
+    // The last content write before the window, per document: patches before it are overwritten.
+    const lastSet = new Map<string, RawRow>();
+    for (const r of last) {
+      if (!CONTENT_SET_TYPES.includes(r.operation_type)) continue;
+      const prev = lastSet.get(r.document_id);
+      if (!prev || byTimeRaw(prev, r) < 0) lastSet.set(r.document_id, r);
+    }
+    const patches = ((await db
       .selectFrom("graph_operations")
-      .select(["id", "document_id", "document_type", "operation_type", "timestamp", "index", "input_json", "signer_address"])
+      .select(["id", "document_id", "document_type", "operation_type", "timestamp", "index", sql<string | null>`null`.as("input_json"), "signer_address"])
       .where("timestamp", "<", since)
+      .where("timestamp", "like", ISO_LIKE)
       .where("document_id", "in", part)
-      .where("operation_type", "=", "PATCH_CONTENT")
-      .execute();
-    out.push(...(patches as RawRow[]));
+      .where("operation_type", "=", PATCH)
+      .execute()) as RawRow[]).filter((p) => {
+      const set = lastSet.get(p.document_id);
+      return !set || byTimeRaw(set, p) < 0;
+    });
+    const heavy = [
+      ...last.filter((r) => r.operation_type === INGEST || CONTENT_SET_TYPES.includes(r.operation_type)).map((r) => r.id),
+      ...patches.map((p) => p.id),
+    ];
+    const rows = [...last, ...patches];
+    await fillInputs(db, rows, heavy);
+    out.push(...rows);
   }
   return out;
 }
@@ -288,8 +372,11 @@ export async function loadChanges(
   if (scope.topic) ids = intersect(ids, await topicScope(db, scope.topic));
 
   const raw = await windowRows(db, window, ids ? [...ids] : null);
+  await fillInputs(db, raw, decidingHeavyRows(raw));
   const rows = raw.map(toRow);
-  const inScopeDocs = [...new Set(rows.filter((r) => !ids || ids.has(r.documentId)).map((r) => r.documentId))];
+  // A document created in the window reports `created` only: it needs no baseline.
+  const created = new Set(raw.filter((r) => CREATED_TYPES.has(r.operation_type)).map((r) => r.document_id));
+  const inScopeDocs = [...new Set(rows.filter((r) => (!ids || ids.has(r.documentId)) && !created.has(r.documentId)).map((r) => r.documentId))];
   const baseline = (await baselineRows(db, window.since, inScopeDocs)).map(toRow);
   const ctx = await loadContext(db, rows);
 
