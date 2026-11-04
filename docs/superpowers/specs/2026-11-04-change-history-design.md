@@ -212,6 +212,10 @@ Shift = { documentId, then: { claim, gist }, now: { claim, gist }, why: string|n
   scope it also returns `thenVsNow: { then: Claim[] (≤ 12), now: Claim[] (≤ 12) }` — the scope's claims as the vault
   held them at `since` (notes that existed and were not archived then, with their then-titles) versus now. This is what
   answers "how did the reactor work in the summer, and how does it work now".
+- **"Now" is the vault's current state**, also for an explicit past `until`: titles, descriptions, statuses, map
+  membership and edges are read as they stand today (the index keeps no snapshot of them at `until`). The events
+  and totals respect `until`; the story's *now* side and `notesNow` do not. A question about two past dates is
+  answered from the events, not from `now`. (Review A, accepted as documented behaviour.)
 
 ### A2. Chat
 - `what_changed` returns `story` (and `thenVsNow` when scoped) as the main payload; totals become one short line; ids
