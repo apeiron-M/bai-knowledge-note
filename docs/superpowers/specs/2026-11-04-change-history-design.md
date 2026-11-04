@@ -174,3 +174,62 @@ before → after for revised claims and naming the replacement for superseded on
 ## Left to the builder
 Diff algorithm and hunk caps; SQL shape; cursor format; exact markdown layout; test fixtures (pure-function tests on
 recorded op rows from today's sync, route tests, chat-tool tests).
+
+---
+
+## Addendum A — the knowledge story (approved 2026-11-04, after local testing)
+
+**Why.** Testing the first build in the vault chat showed the answer led with documents and operations ("33 created,
+338 revised, 5 superseded — 371 documents, 7,205 operations"). That is the plumbing. The reader — think of a CEO — wants
+to know **what the vault knows now that it did not before**: how it grew, what new knowledge arrived and how it relates
+to the main themes, and what the vault now understands *differently* ("in the summer the reactor did X; now it does Y,
+because Z"). Counts and ids stay in the digest for the plugin and for drill-downs; they never lead the answer.
+
+**Main topics** are the hub's top-level areas: the MoCs that are `CHILD_MOC` of the single HUB. Every note belongs to
+the area(s) whose subtree holds it as a `CORE_IDEA` (descendant MoCs included); a note in no area is "elsewhere".
+
+### A1. The digest gains a `story` (semantic layer), computed by the same pure module
+```
+story: {
+  growth: { notesThen: number, notesNow: number, newAreas: {id,title}[], newMaps: {id,title,area}[] },
+  areas: [ {                                   // hub top-level areas with any change, most changed first
+    id, title,
+    notesThen, notesNow,                        // CANONICAL/IN_REVIEW/DRAFT notes in the subtree, not archived, at since / now
+    newClaims:     Claim[]   (≤ 8),             // notes created in the window, most connected first
+    changedClaims: Shift[]   (≤ 8),             // the vault now says something different
+    retiredClaims: Claim[]   (≤ 5),             // archived in the window with no replacement
+  } ],
+}
+Claim = { documentId, claim: string /* title */, gist: string|null /* description */ }
+Shift = { documentId, then: { claim, gist }, now: { claim, gist }, why: string|null, replacedBy?: documentId }
+```
+- **then** = the note's title/description as they stood at `since` (the existing baselines); **now** = current values.
+  A supersession is a Shift whose *then* is the old note and *now* the replacing note, `why` = the SUPERSEDES reason.
+  A revision's `why` = the `## Revision history` line added in the window, else null. A Shift is only emitted when the
+  claim text (title or description) actually differs — a version stamp alone is not a shift.
+- "Most connected first" = incoming knowledge-edge count (graph_edges), ties by recency.
+- A **scoped** request (`q`, `moc`, `topic`) returns the same `story` restricted to the scope; for a `q` / `topic`
+  scope it also returns `thenVsNow: { then: Claim[] (≤ 12), now: Claim[] (≤ 12) }` — the scope's claims as the vault
+  held them at `since` (notes that existed and were not archived then, with their then-titles) versus now. This is what
+  answers "how did the reactor work in the summer, and how does it work now".
+
+### A2. Chat
+- `what_changed` returns `story` (and `thenVsNow` when scoped) as the main payload; totals become one short line; ids
+  are kept only for citations. The unscoped call no longer returns per-document highlights.
+- System prompt for change-over-time answers: write for a non-technical executive, in four parts — **how the vault
+  grew** (areas that grew, new areas, how they connect to the main themes), **what is new** (the substance of the new
+  claims per main area, in plain sentences), **what we now understand differently** (then → now, with the because),
+  **where to look next** (offer the areas as follow-ups). No document ids, no operation counts, no "superseded"/
+  "revised" jargon in the prose; cite claims with `[[documentId]]` markers only. For "how did X work then vs now",
+  call `what_changed` with `query: X` and answer from `thenVsNow` and the scoped shifts.
+
+### A3. REST / plugin
+`GET changes` returns `story` too; the markdown rendering leads with the story (growth, then per area: new, changed
+then → now, retired) and puts the event detail after it.
+
+### A4. Acceptance additions
+6. On the live vault after deploy + backfill, "what changed since 2026-09-01" names the new areas (Workflow Automation,
+   Hosts, Runners and Plugins, Document Privacy and Erasure) and at least one then → now shift per changed area, with no
+   ids or op counts in the prose.
+7. "How did processor delivery work in September and how does it work now?" answers from `thenVsNow`: then
+   "exactly once, in order"; now "at-least-once, with a crash gap", citing both notes.
