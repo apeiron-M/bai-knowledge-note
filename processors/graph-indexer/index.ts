@@ -16,7 +16,8 @@ import {
 } from "./link-types.js";
 import { isIndexedDocumentType, projectNode } from "./project.js";
 import { revisionOf, SOURCE_DOCUMENT_TYPE, SOURCE_ROW_VERSION, sourceRowOf } from "./source-timeline.js";
-import { summarizeLink, summarizeOperation } from "./summarize.js";
+import { summarizeLink } from "./summarize.js";
+import { operationRowOf, RECORDED_SOURCE_ACTIONS } from "./operation-row.js";
 import {
   TensionAutomation,
   type TensionAutomationDeps,
@@ -277,7 +278,9 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         operation.action.type !== "DELETE_DOCUMENT" &&
         operation.action.type !== "PURGE_DOCUMENT"
       ) {
-        if (context.resultingState && (await this.isOurs(documentId))) lastBySource.set(documentId, entry);
+        if (!(await this.isOurs(documentId))) continue;
+        if (RECORDED_SOURCE_ACTIONS.has(operation.action.type)) await this.recordOperation(entry);
+        if (context.resultingState) lastBySource.set(documentId, entry);
         continue;
       }
 
@@ -398,48 +401,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       if (!(await this.isOurs(documentId))) continue;
 
       // Index operation for history tracking
-      try {
-        const input = operation.action.input as Record<string, unknown>;
-        const signer = operation.action.context?.signer as
-          | {
-              user?: { address?: string };
-              app?: { name?: string; key?: string };
-              signatures?: Array<string | string[]>;
-            }
-          | undefined;
-        // Keep the LAST signature, which is the one the verifier checks
-        // (`createSignatureVerifier` reads `signatures[length - 1]`). The
-        // reactor stores tuples; the wire carries them joined by ", ".
-        // Persisting the serialized form means a reader can verify the op
-        // from this projection alone, without a second reactor round-trip.
-        const lastSignature = signer?.signatures?.at(-1);
-        const signature =
-          lastSignature === undefined
-            ? null
-            : Array.isArray(lastSignature)
-              ? lastSignature.join(", ")
-              : lastSignature;
-        await this.relationalDb
-          .insertInto("graph_operations")
-          .values({
-            id: `${documentId}-${operation.index}`,
-            document_id: documentId,
-            operation_type: operation.action.type,
-            timestamp: operation.timestampUtcMs ?? new Date().toISOString(),
-            index: operation.index,
-            scope: context.scope ?? "global",
-            summary: summarizeOperation(operation.action.type, input),
-            input_json: JSON.stringify(input),
-            signer_address: signer?.user?.address || null,
-            signer_app: signer?.app?.name || null,
-            signer_key: signer?.app?.key || null,
-            signature,
-          })
-          .onConflict((oc) => oc.column("id").doNothing())
-          .execute();
-      } catch {
-        // non-critical — don't block state reconciliation
-      }
+      await this.recordOperation(entry);
 
       // Collect last state per document
       if (context.resultingState) {
@@ -742,6 +704,34 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   }
 
   /**
+   * One history row per global operation (see `operation-row.ts`). Non-
+   * critical: a failure here never blocks state reconciliation.
+   */
+  private async recordOperation(entry: OperationWithContext): Promise<void> {
+    try {
+      const { operation, context } = entry;
+      await this.relationalDb
+        .insertInto("graph_operations")
+        .values(
+          operationRowOf({
+            documentId: context.documentId,
+            documentType: context.documentType,
+            index: operation.index,
+            type: operation.action.type,
+            input: operation.action.input,
+            timestampUtcMs: operation.timestampUtcMs,
+            scope: context.scope,
+            signer: operation.action.context?.signer,
+          }),
+        )
+        .onConflict((oc) => oc.column("id").doNothing())
+        .execute();
+    } catch {
+      // non-critical — don't block state reconciliation
+    }
+  }
+
+  /**
    * A link change is activity on the note the link starts from. The
    * reactor numbers `document`-scope operations separately from `global`
    * ones, so the row id carries the scope: `<documentId>-document-<index>`
@@ -788,6 +778,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         .values({
           id: `${sourceId}-document-${operation.index}`,
           document_id: sourceId,
+          document_type: context.documentType,
           operation_type: operation.action.type,
           timestamp: operation.timestampUtcMs ?? new Date().toISOString(),
           index: operation.index,

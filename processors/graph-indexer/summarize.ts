@@ -129,9 +129,32 @@ export function summarizeOperation(
       return input.sowRef
         ? `Linked to scope of work ${s(input.sowRef)}`
         : `Unlinked from its scope of work`;
+    // Sources (recorded since change history)
+    case "INGEST_SOURCE": {
+      const ref = gitRefOf(input.method);
+      return `Ingested “${truncate(input.title)}”${ref ? ` (${ref})` : ""}`;
+    }
+    case "SET_SOURCE_STATUS":
+      return `Source ${s(input.status)}`;
+    case "ADD_EXTRACTED_CLAIM":
+      return `Claim extracted: ${s(input.claimRef)}`;
+    case "REMOVE_EXTRACTED_CLAIM":
+      return `Claim removed: ${s(input.claimRef)}`;
+    case "RECORD_EXTRACTION_STATS":
+      return `Extraction: ${s(input.claimCount, "0")} claims, ${s(input.skippedCount, "0")} skipped`;
     default:
       return type;
   }
+}
+
+/**
+ * The git ref a source was ingested at: the token after `git:` in its
+ * `method` (`sha256:<hash> git:<ref>`, written by the monorepo sync). Null
+ * when the method names none.
+ */
+export function gitRefOf(method: unknown): string | null {
+  const m = /(?:^|\s)git:(\S+)/.exec(s(method));
+  return m ? m[1] : null;
 }
 
 /**

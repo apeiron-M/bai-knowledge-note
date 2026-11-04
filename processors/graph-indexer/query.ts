@@ -285,6 +285,19 @@ function rowToOperation(row: {
   };
 }
 
+/**
+ * History rows that belong to the graph's own nodes. Sources' operations are
+ * recorded too (for the change digest), but the activity views predate that
+ * and keep showing notes only. NULL counts as "not a source": rows the
+ * migration could not type are old node rows.
+ */
+function notSourceOperation(eb: ExpressionBuilder<DB, "graph_operations">) {
+  return eb.or([
+    eb("graph_operations.document_type", "is", null),
+    eb("graph_operations.document_type", "!=", "bai/source"),
+  ]);
+}
+
 /** Everything `createGraphQuery` needs. Read-only by construction. */
 export type GraphReadDb = Pick<Kysely<DB>, "selectFrom">;
 
@@ -1099,6 +1112,7 @@ export function createGraphQuery(db: GraphReadDb) {
     async activity(limit = 50, since?: string): Promise<OperationRecord[]> {
       let query = db
         .selectFrom("graph_operations")
+        .where(notSourceOperation)
         .orderBy("timestamp", "desc")
         .orderBy("index", "desc")
         .selectAll()
@@ -1119,6 +1133,7 @@ export function createGraphQuery(db: GraphReadDb) {
       const rows = await db
         .selectFrom("graph_operations")
         .where("operation_type", "=", operationType)
+        .where(notSourceOperation)
         .orderBy("timestamp", "desc")
         .selectAll()
         .limit(limit)
@@ -1137,6 +1152,7 @@ export function createGraphQuery(db: GraphReadDb) {
           db
             .selectFrom("graph_operations")
             .where("timestamp", ">", since)
+            .where(notSourceOperation)
             .select("document_id"),
         )
         .where("updated_at", "<", since)

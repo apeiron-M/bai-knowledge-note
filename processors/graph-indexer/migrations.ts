@@ -145,6 +145,24 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     // column likely already exists — ignore
   }
 
+  // --- Operation kind ---
+  //
+  // Which document type each history row belongs to, so the change digest
+  // can tell sources (recorded since change history; never graph nodes) from
+  // notes without a join that a source would fail. Rows that predate the
+  // column take their node's type, or `bai/source` when the document is a
+  // source; link rows belong to their edge's source note, which is a node.
+  await db.schema
+    .alterTable("graph_operations")
+    .addColumn("document_type", "varchar(64)", (col) => col.ifNotExists())
+    .execute();
+  await db.schema
+    .createIndex("idx_graph_ops_type_ts")
+    .on("graph_operations")
+    .columns(["document_type", "timestamp"])
+    .ifNotExists()
+    .execute();
+
   // --- Edge metadata ---
   //
   // The reactor stores an opaque jsonb per relationship; the vault reads
@@ -231,6 +249,33 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
       .addColumn(name, "integer", (col) => col.notNull().defaultTo(fallback).ifNotExists())
       .execute();
   }
+
+  // Backfill `graph_operations.document_type` (see "Operation kind" above).
+  // Only nulls are touched, so this costs one pass the first time and an
+  // index probe afterwards.
+  await db
+    .updateTable("graph_operations")
+    .set((eb) => ({
+      document_type: eb
+        .selectFrom("graph_nodes")
+        .select("graph_nodes.document_type")
+        .whereRef("graph_nodes.document_id", "=", "graph_operations.document_id"),
+    }))
+    .where("document_type", "is", null)
+    .execute();
+  await db
+    .updateTable("graph_operations")
+    .set({ document_type: "bai/source" })
+    .where("document_type", "is", null)
+    .where((eb) =>
+      eb.exists(
+        eb
+          .selectFrom("graph_sources")
+          .select("graph_sources.document_id")
+          .whereRef("graph_sources.document_id", "=", "graph_operations.document_id"),
+      ),
+    )
+    .execute();
 
   // Durable embedding store — replaces the separate memory:// PGlite that
   // lost every vector on restart. Lives in the same per-drive namespace as

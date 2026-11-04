@@ -46,3 +46,19 @@ describe("summarizeOperation", () => {
     expect(summarizeOperation("SET_STATUS", { status: "CANONICAL" })).toBe("SET_STATUS");
   });
 });
+
+describe("summarizeOperation: source operations", () => {
+  it("names the ingested source and its git ref", () => {
+    expect(
+      summarizeOperation("INGEST_SOURCE", { title: "Processors", method: "sha256:ab12 git:v6.2.3-dev.91+e0f277d" }),
+    ).toBe("Ingested “Processors” (v6.2.3-dev.91+e0f277d)");
+    expect(summarizeOperation("INGEST_SOURCE", { title: "Plain", method: "converted" })).toBe("Ingested “Plain”");
+  });
+
+  it("says status, claims and stats in words", () => {
+    expect(summarizeOperation("SET_SOURCE_STATUS", { status: "EXTRACTED" })).toBe("Source EXTRACTED");
+    expect(summarizeOperation("ADD_EXTRACTED_CLAIM", { claimRef: "n1" })).toBe("Claim extracted: n1");
+    expect(summarizeOperation("REMOVE_EXTRACTED_CLAIM", { claimRef: "n1" })).toBe("Claim removed: n1");
+    expect(summarizeOperation("RECORD_EXTRACTION_STATS", { claimCount: 7, skippedCount: 2 })).toBe("Extraction: 7 claims, 2 skipped");
+  });
+});
