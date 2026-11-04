@@ -6,6 +6,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestDb } from "../helpers/create-test-db.js";
 import { createGraphQuery } from "../../processors/graph-indexer/query.js";
+import { decidingHeavyRows } from "../../processors/graph-indexer/changes-query.js";
 import { buildChanges, type OperationRow } from "../../processors/graph-indexer/changes.js";
 import { SOURCE_ROW_VERSION } from "../../processors/graph-indexer/source-timeline.js";
 import { fixtureContext, loadChangesFixture } from "../fixtures/changes/load.js";
@@ -280,6 +281,67 @@ describe("graph query: changes()", () => {
     expect(area?.newClaims.map((c) => c.documentId)).toEqual(["n1"]);
     expect(area?.versions).toEqual({ first: "v6.2.2-dev.74", now: "v6.2.3-dev.91+e0f277d" });
   });
+
+  it("reads an area's source versions from the ingestion's method when its summary carries no ref (review B, M4)", async () => {
+    const db = harness.db;
+    await insertNode(db, "hub", "Powerhouse", "bai/moc", "MOC (HUB)");
+    await insertNode(db, "a1", "Processors", "bai/moc", "MOC (DOMAIN)");
+    await insertNode(db, "n1", "Delivery is at-least-once");
+    await insertEdge(db, "hub", "a1", "CHILD_MOC");
+    await insertEdge(db, "a1", "n1", "CORE_IDEA");
+    await insertEdge(db, "n1", "s1", "DERIVED_FROM");
+    const op = (operationType: string, input: unknown, timestamp: string, index: number, documentId = "n1", documentType = "bai/knowledge-note"): OperationRow => ({ documentId, documentType, operationType, timestamp, index, inputJson: JSON.stringify(input), signerAddress: null });
+    // insertOps writes no summary: the ref is only in the input's method.
+    await insertOps(db, [
+      op("SET_TITLE", { title: "Delivery is exactly once" }, "2026-08-01T00:00:00.000Z", 0),
+      op("SET_TITLE", { title: "Delivery is at-least-once" }, "2026-11-03T10:00:00.000Z", 1),
+      op("INGEST_SOURCE", { title: "Guide", content: "x", method: "sha256:abc git:v6.2.2-dev.74" }, "2026-08-01T00:00:00.000Z", 0, "s1", "bai/source"),
+      op("INGEST_SOURCE", { title: "Guide", content: "y", method: "git:v6.2.3-dev.91 sha256:def" }, "2026-11-03T09:00:00.000Z", 1, "s1", "bai/source"),
+    ]);
+    const d = await createGraphQuery(db).changes({ since: "2026-09-01T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" }, {}, {});
+    expect(d.story?.areas.find((a) => a.id === "a1")?.versions).toEqual({ first: "v6.2.2-dev.74", now: "v6.2.3-dev.91" });
+  });
+
+  it("reads no body for a created note whose later title/description writes leave its first recorded claim as it was (review B, I5)", () => {
+    const raw = (id: string, operation_type: string, input: unknown, timestamp: string, index: number) => ({
+      id, document_id: "n1", document_type: "bai/knowledge-note", operation_type, timestamp, index, input_json: input === null ? null : JSON.stringify(input), signer_address: null,
+    });
+    const created = [
+      raw("c", "CREATE_DOCUMENT", {}, "2026-09-02T10:00:00.000Z", 0),
+      raw("t1", "SET_TITLE", { title: "Delivery is exactly once" }, "2026-09-02T10:00:01.000Z", 1),
+      raw("b1", "SET_CONTENT", null, "2026-09-02T10:00:02.000Z", 2),
+      raw("b2", "SET_CONTENT", null, "2026-11-03T10:00:00.000Z", 4),
+    ];
+    // Re-saved with the same title: the claim reads as first recorded, no body decides anything.
+    expect(decidingHeavyRows([...created, raw("t2", "SET_TITLE", { title: "Delivery is exactly once" }, "2026-11-03T10:00:01.000Z", 5)])).toEqual([]);
+    // Revised: the bodies as first recorded and as now give the revision lines.
+    expect(decidingHeavyRows([...created, raw("t2", "SET_TITLE", { title: "Delivery is at-least-once" }, "2026-11-03T10:00:01.000Z", 5)])).toEqual(["b1", "b2"]);
+  });
+
+  it("answers a window of 1,000 notes created and re-saved later without reading their bodies, in seconds", async () => {
+    const db = harness.db;
+    const body = (n: number, v: number) => `claim ${n} v${v}\n${"body line of a long note\n".repeat(1200)}`;
+    const rows: OperationRow[] = [];
+    const at = (base: string, s: number) => new Date(Date.parse(base) + s * 1000).toISOString();
+    for (let n = 0; n < 1000; n++) {
+      const doc = `n${n}`;
+      const note = (operationType: string, input: unknown, timestamp: string, index: number): OperationRow => ({ documentId: doc, documentType: "bai/knowledge-note", operationType, timestamp, index, inputJson: JSON.stringify(input), signerAddress: null });
+      rows.push(
+        note("CREATE_DOCUMENT", {}, at("2026-09-02T10:00:00.000Z", n), 0),
+        note("SET_TITLE", { title: `Claim ${n}` }, at("2026-09-02T10:00:01.000Z", n), 1),
+        note("SET_CONTENT", { content: body(n, 1) }, at("2026-09-02T10:00:02.000Z", n), 2),
+        note("SET_TITLE", { title: `Claim ${n}` }, at("2026-11-03T10:00:00.000Z", n), 3),
+        note("SET_CONTENT", { content: body(n, 2) }, at("2026-11-03T10:00:01.000Z", n), 4),
+      );
+    }
+    await insertOps(db, rows);
+    const started = performance.now();
+    const d = await createGraphQuery(db).changes({ since: "2026-09-01T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" }, {}, {});
+    const elapsed = performance.now() - started;
+    expect(d.totals.created).toBe(1000);
+    // Measured ~0.3 s here (bodies of 30 KB each, 2,000 of them, before and after the fix alike on PGlite).
+    expect(elapsed).toBeLessThan(1500);
+  }, 120_000);
 
   it("lists the hub (depth 0), its areas and their descendant maps with depth, for a query to name a map or the vault", async () => {
     const db = harness.db;

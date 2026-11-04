@@ -27,6 +27,7 @@ import {
 } from "./changes.js";
 import type { ScopeMap, StoryContext, StoryNode } from "./changes-story.js";
 import { parseEdgeMetadata } from "./edge-metadata.js";
+import { gitRefOf } from "./summarize.js";
 import { KNOWLEDGE_LINK_TYPES } from "./link-types.js";
 import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
 
@@ -58,7 +59,7 @@ function chunks<T>(list: T[]): T[][] {
   return out;
 }
 
-type RawRow = {
+export type RawRow = {
   id: string;
   document_id: string;
   document_type: string | null;
@@ -195,15 +196,49 @@ function byTimeRaw(a: RawRow, b: RawRow): number {
   return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : a.index - b.index;
 }
 
+/** A title or description input, parsed from a row whose small input the window query read. */
+function claimFieldsOf(r: RawRow): { title?: string; description?: string } {
+  if (!r.input_json) return {};
+  try {
+    const input = JSON.parse(r.input_json) as { title?: unknown; description?: unknown };
+    return {
+      ...(typeof input.title === "string" ? { title: input.title } : {}),
+      ...(typeof input.description === "string" ? { description: input.description } : {}),
+    };
+  } catch {
+    return {};
+  }
+}
+
+/** The title and description these rows (in time order) leave. */
+function claimAfter(rows: RawRow[]): string {
+  let title: string | null = null;
+  let description: string | null = null;
+  for (const r of rows) {
+    if (!CLAIM_TYPES.has(r.operation_type) && !CREATED_TYPES.has(r.operation_type)) continue;
+    const f = claimFieldsOf(r);
+    title = f.title ?? title;
+    description = f.description ?? description;
+  }
+  return JSON.stringify([title, description]);
+}
+
 /**
  * Which heavy rows' inputs decide the digest, from rows in time order per
  * document: a document's last content write and the patches after it (all
  * patches when it has none), a source's first and last ingestion. A document
- * created in the window needs none — its edits are its creation.
+ * created in the window needs none — its edits are its creation — unless its
+ * claim (title/description) reads differently now than its creating batch
+ * left it: then its bodies as first recorded and as now give the revision
+ * lines of the shift (spec Addendum B4; only then, review B).
  */
-function decidingHeavyRows(rows: RawRow[]): string[] {
+export function decidingHeavyRows(rows: RawRow[]): string[] {
   const byDoc = new Map<string, RawRow[]>();
-  for (const r of rows) byDoc.set(r.document_id, [...(byDoc.get(r.document_id) ?? []), r]);
+  for (const r of rows) {
+    const list = byDoc.get(r.document_id);
+    if (list) list.push(r);
+    else byDoc.set(r.document_id, [r]);
+  }
   const wanted: string[] = [];
   for (const list of byDoc.values()) {
     list.sort(byTimeRaw);
@@ -225,7 +260,7 @@ function decidingHeavyRows(rows: RawRow[]): string[] {
       // give the revision lines added since (spec Addendum B4).
       const end = Date.parse(create.timestamp) + FIRST_RECORD_MS;
       const settled = list.findIndex((r) => Date.parse(r.timestamp) > end);
-      if (settled >= 0 && list.slice(settled).some((r) => CLAIM_TYPES.has(r.operation_type))) {
+      if (settled >= 0 && list.slice(settled).some((r) => CLAIM_TYPES.has(r.operation_type)) && claimAfter(list.slice(0, settled)) !== claimAfter(list)) {
         content(settled);
         content(list.length);
       }
@@ -353,9 +388,16 @@ async function loadContext(db: ReadDb, rows: OperationRow[], sourceFolders: Read
       .execute();
     for (const c of core) {
       const tier = (/MOC \((HUB|DOMAIN|TOPIC)\)/.exec(c.noteType ?? "")?.[1] ?? "TOPIC") as MocTier;
-      mocsByNote.set(c.note, [...(mocsByNote.get(c.note) ?? []), { id: c.moc, title: c.title ?? c.moc, tier }]);
+      const ref = { id: c.moc, title: c.title ?? c.moc, tier };
+      const list = mocsByNote.get(c.note);
+      if (list) list.push(ref);
+      else mocsByNote.set(c.note, [ref]);
     }
-    for (const e of await edgeTargets(db, part, "DERIVED_FROM")) derivedFrom.set(e.source, [...(derivedFrom.get(e.source) ?? []), e.target]);
+    for (const e of await edgeTargets(db, part, "DERIVED_FROM")) {
+      const list = derivedFrom.get(e.source);
+      if (list) list.push(e.target);
+      else derivedFrom.set(e.source, [e.target]);
+    }
     const sup = await db
       .selectFrom("graph_edges")
       .select(["source_document_id", "target_document_id", "metadata"])
@@ -453,9 +495,11 @@ async function loadStoryContext(db: ReadDb, { since, until }: { since: string; u
 
   // Every ingestion up to until, by its summary (`Ingested “…” (<git ref>)`):
   // the git ref without reading the source text (spec Addendum B4).
+  // The method's `git:` ref, cut out in SQL so the source text never travels:
+  // a row whose summary lost the ref (truncated, or written before it) still has it.
   const ingestRows = await db
     .selectFrom("graph_operations")
-    .select(["document_id", "timestamp", "index", "summary"])
+    .select(["document_id", "timestamp", "index", "summary", sql<string | null>`substring(input_json from '"method"\s*:\s*"([^"]*)"')`.as("method")])
     .where("operation_type", "=", INGEST)
     .where("timestamp", "<=", until)
     .where("timestamp", "like", ISO_LIKE)
@@ -463,7 +507,7 @@ async function loadStoryContext(db: ReadDb, { since, until }: { since: string; u
   ingestRows.sort((a, b) => (a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : a.index - b.index));
   const ingests = new Map<string, { at: string; ref: string | null }[]>();
   for (const r of ingestRows) {
-    const entry = { at: r.timestamp, ref: ingestRef(r.summary) };
+    const entry = { at: r.timestamp, ref: ingestRef(r.summary) ?? gitRefOf(r.method) };
     const list = ingests.get(r.document_id);
     if (list) list.push(entry);
     else ingests.set(r.document_id, [entry]);
