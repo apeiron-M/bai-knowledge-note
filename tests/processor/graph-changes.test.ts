@@ -162,6 +162,80 @@ describe("graph query: changes()", () => {
     expect(d.groups.map((g) => g.key)).toEqual(["moc:m1"]);
   });
 
+  it("tells the knowledge story: hub areas, then-titles, archived-at-since, incoming edges, and then vs now for q", async () => {
+    const db = harness.db;
+    const node = async (id: string, title: string, documentType: string, extra: { noteType?: string; status?: string; description?: string; addedAt?: string } = {}) =>
+      db
+        .insertInto("graph_nodes")
+        .values({
+          id,
+          document_id: id,
+          title,
+          description: extra.description ?? null,
+          note_type: extra.noteType ?? null,
+          status: extra.status ?? (documentType === "bai/moc" ? "MOC" : "CANONICAL"),
+          content: null,
+          author: null,
+          source_origin: null,
+          created_at: null,
+          added_at: extra.addedAt ?? "2026-08-01T00:00:00.000Z",
+          updated_at: T,
+          document_type: documentType,
+        })
+        .execute();
+    await node("hub", "Powerhouse", "bai/moc", { noteType: "MOC (HUB)" });
+    await node("a1", "Processors", "bai/moc", { noteType: "MOC (DOMAIN)" });
+    await node("m1", "Delivery", "bai/moc", { noteType: "MOC (TOPIC)" });
+    await node("n1", "Delivery is at-least-once, with a crash gap", "bai/knowledge-note");
+    await node("n2", "Processors poll", "bai/knowledge-note", { status: "ARCHIVED" });
+    await node("n3", "Processors checkpoint per batch", "bai/knowledge-note", { addedAt: "2026-11-03T05:00:00.000Z", description: "gist" });
+    await node("n4", "Other", "bai/knowledge-note");
+    await insertEdge(db, "hub", "a1", "CHILD_MOC");
+    await insertEdge(db, "a1", "m1", "CHILD_MOC");
+    await insertEdge(db, "m1", "n1", "CORE_IDEA");
+    await insertEdge(db, "a1", "n2", "CORE_IDEA");
+    await insertEdge(db, "m1", "n3", "CORE_IDEA");
+    await insertEdge(db, "n4", "n3", "RELATES_TO");
+    const op = (documentId: string, operationType: string, input: unknown, timestamp: string, index = 0): OperationRow => ({ documentId, documentType: "bai/knowledge-note", operationType, timestamp, index, inputJson: JSON.stringify(input), signerAddress: null });
+    await insertOps(db, [
+      op("n1", "SET_TITLE", { title: "Delivery is exactly once, in order" }, "2026-08-01T00:00:00.000Z", 2),
+      op("n2", "ARCHIVE_NOTE", {}, "2026-10-01T00:00:00.000Z", 3),
+      op("n1", "SET_TITLE", { title: "Delivery is at-least-once, with a crash gap" }, "2026-11-03T01:00:00.000Z", 5),
+      op("n3", "CREATE_DOCUMENT", {}, "2026-11-03T05:00:00.000Z", 0),
+    ]);
+    const window = { since: "2026-11-03T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" };
+    const d = await createGraphQuery(db).changes(window, {}, {});
+    expect(d.thenVsNow).toBeUndefined();
+    expect(d.story?.growth).toMatchObject({ notesThen: 2, notesNow: 3 });
+    expect(d.story?.areas).toEqual([
+      {
+        id: "a1",
+        title: "Processors",
+        notesThen: 1,
+        notesNow: 2,
+        newClaims: [{ documentId: "n3", claim: "Processors checkpoint per batch", gist: "gist" }],
+        changedClaims: [
+          {
+            documentId: "n1",
+            then: { claim: "Delivery is exactly once, in order", gist: null },
+            now: { claim: "Delivery is at-least-once, with a crash gap", gist: null },
+            why: null,
+          },
+        ],
+        retiredClaims: [],
+      },
+    ]);
+
+    const q = await createGraphQuery(db).changes(window, { q: "processor delivery", documentIds: ["n1", "n2", "n3"] }, {});
+    expect(q.thenVsNow).toEqual({
+      then: [{ documentId: "n1", claim: "Delivery is exactly once, in order", gist: null }],
+      now: [
+        { documentId: "n3", claim: "Processors checkpoint per batch", gist: "gist" },
+        { documentId: "n1", claim: "Delivery is at-least-once, with a crash gap", gist: null },
+      ],
+    });
+  });
+
   it("answers a sync-sized window — large sources and notes with baselines — in seconds, not minutes", async () => {
     const db = harness.db;
     const before = "2026-10-01T00:00:00.000Z";

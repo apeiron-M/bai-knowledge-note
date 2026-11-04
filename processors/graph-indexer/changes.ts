@@ -12,6 +12,7 @@
  * before `since`). See docs/superpowers/specs/2026-11-04-change-history-design.md
  * §2, §3 and §7 for the rules this implements.
  */
+import { buildStory, buildThenVsNow, type ChangeStory, type StoryContext, type ThenFields, type ThenVsNow } from "./changes-story.js";
 import { gitRefOf } from "./summarize.js";
 
 export type ChangeKind =
@@ -123,6 +124,8 @@ export interface ChangeContext {
   mocsByNote: Map<string, { id: string; title: string; tier: MocTier }[]>;
   derivedFrom: Map<string, string[]>;
   edgeReason(source: string, target: string, type: string): string | null;
+  /** What the knowledge story needs (Addendum A); without it the digest has no story. */
+  story?: StoryContext;
 }
 
 export interface ChangeDigest {
@@ -132,6 +135,10 @@ export interface ChangeDigest {
   groups: ChangeGroup[];
   events?: ChangeEvent[];
   nextCursor?: string | null;
+  /** What the vault knows now that it did not before, by main area (Addendum A). */
+  story?: ChangeStory;
+  /** For a `q` or `topic` scope: the scope's claims at `since` versus now. */
+  thenVsNow?: ThenVsNow;
 }
 
 // ---- Limits (plan: Global Constraints) ----
@@ -810,7 +817,7 @@ export function buildChanges(
   baseline: OperationRow[],
   ctx: ChangeContext,
   window: { since: string; until: string },
-  opts: { scope: ChangeScope; limit?: number; cursor?: string | null },
+  opts: { scope: ChangeScope; limit?: number; cursor?: string | null; thenVsNow?: boolean },
 ): ChangeDigest {
   const scope = opts.scope;
   const ids = scope.documentIds ? new Set(scope.documentIds) : null;
@@ -889,6 +896,16 @@ export function buildChanges(
     );
 
   const digest: ChangeDigest = { window, scope, totals: totalsOf(events, operations), groups };
+  if (ctx.story) {
+    // Each document's title and description at since, where a baseline recorded them.
+    const thenFields: ThenFields = new Map();
+    for (const [id, list] of baselineByDoc) {
+      const f = foldFields(list, EMPTY_FIELDS);
+      thenFields.set(id, { title: f.title, description: f.description });
+    }
+    digest.story = buildStory(events, thenFields, ctx.story, window, ids);
+    if (opts.thenVsNow ?? Boolean(scope.q || scope.topic)) digest.thenVsNow = buildThenVsNow(events, thenFields, ctx.story, window, ids);
+  }
   const shown = groups.flatMap((g) => g.highlights);
   if (hasScope(scope)) {
     const limit = Math.min(EVENTS_MAX_LIMIT, Math.max(1, opts.limit ?? EVENTS_DEFAULT_LIMIT));

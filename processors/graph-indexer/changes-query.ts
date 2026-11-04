@@ -24,7 +24,9 @@ import {
   type MocTier,
   type OperationRow,
 } from "./changes.js";
+import type { StoryContext, StoryNode } from "./changes-story.js";
 import { parseEdgeMetadata } from "./edge-metadata.js";
+import { KNOWLEDGE_LINK_TYPES } from "./link-types.js";
 import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
 
 type ReadDb = Pick<Kysely<DB>, "selectFrom">;
@@ -354,6 +356,83 @@ async function loadContext(db: ReadDb, rows: OperationRow[], sourceFolders: Read
   };
 }
 
+const STORY_TYPES = ["bai/knowledge-note", "bai/moc"];
+const LIFECYCLE_TYPES = ["ARCHIVE_NOTE", "ARCHIVE_OBSERVATION", "RESTORE_NOTE"];
+
+/**
+ * What the knowledge story needs (spec Addendum A): notes and maps as they
+ * stand now (every one unscoped; the scope's, the window's and every map
+ * otherwise), the hub and its map tree, incoming knowledge-edge counts,
+ * which notes were archived at `since`, and which are superseded now. The
+ * then-titles come from the digest's own baseline.
+ */
+async function loadStoryContext(db: ReadDb, since: string, ids: Set<string> | null, rowDocs: Set<string>): Promise<StoryContext> {
+  const nodes = new Map<string, StoryNode>();
+  const hubs: string[] = [];
+  type NodeRow = { document_id: string; title: string | null; description: string | null; document_type: string | null; status: string | null; note_type: string | null; added_at: string | null };
+  const take = (rows: NodeRow[]) => {
+    for (const n of rows) {
+      const documentType = n.document_type ?? "bai/knowledge-note";
+      nodes.set(n.document_id, { title: n.title ?? "", description: n.description, documentType, status: n.status, addedAt: n.added_at, incoming: 0 });
+      if (documentType === "bai/moc" && /MOC \(HUB\)/.test(n.note_type ?? "")) hubs.push(n.document_id);
+    }
+  };
+  const columns = ["document_id", "title", "description", "document_type", "status", "note_type", "added_at"] as const;
+  if (!ids) {
+    take(await db.selectFrom("graph_nodes").select([...columns]).where("document_type", "in", STORY_TYPES).execute());
+  } else {
+    take(await db.selectFrom("graph_nodes").select([...columns]).where("document_type", "=", "bai/moc").execute());
+    // The scope's notes, and the window's (a replacing note may sit outside the scope).
+    for (const part of chunks([...new Set([...ids, ...rowDocs])])) {
+      take(await db.selectFrom("graph_nodes").select([...columns]).where("document_id", "in", part).where("document_type", "=", "bai/knowledge-note").execute());
+    }
+  }
+
+  const childMaps = new Map<string, string[]>();
+  const coreIdeas = new Map<string, string[]>();
+  const superseded = new Set<string>();
+  const edges = await db
+    .selectFrom("graph_edges")
+    .select(["source_document_id", "target_document_id", "link_type"])
+    .where("link_type", "in", ["CHILD_MOC", "CORE_IDEA", "SUPERSEDES"])
+    .execute();
+  for (const e of edges) {
+    if (e.link_type === "SUPERSEDES") superseded.add(e.target_document_id);
+    else {
+      const into = e.link_type === "CHILD_MOC" ? childMaps : coreIdeas;
+      into.set(e.source_document_id, [...(into.get(e.source_document_id) ?? []), e.target_document_id]);
+    }
+  }
+
+  const incoming = await db
+    .selectFrom("graph_edges")
+    .select(["target_document_id", sql<number>`count(*)`.as("n")])
+    .where("link_type", "in", [...KNOWLEDGE_LINK_TYPES])
+    .groupBy("target_document_id")
+    .execute();
+  for (const r of incoming) {
+    const n = nodes.get(r.target_document_id);
+    if (n) n.incoming = Number(r.n);
+  }
+
+  // Lifecycle steps are rare: read them all before the window, keep each note's last.
+  const lifecycle = await db
+    .selectFrom("graph_operations")
+    .select(["document_id", "operation_type", "timestamp", "index"])
+    .where("operation_type", "in", LIFECYCLE_TYPES)
+    .where("timestamp", "<", since)
+    .where("timestamp", "like", ISO_LIKE)
+    .execute();
+  const last = new Map<string, { operation_type: string; timestamp: string; index: number }>();
+  for (const r of lifecycle) {
+    const prev = last.get(r.document_id);
+    if (!prev || prev.timestamp < r.timestamp || (prev.timestamp === r.timestamp && prev.index < r.index)) last.set(r.document_id, r);
+  }
+  const archivedAtSince = new Set([...last].filter(([, r]) => r.operation_type !== "RESTORE_NOTE").map(([id]) => id));
+
+  return { nodes, hubs, childMaps, coreIdeas, archivedAtSince, superseded };
+}
+
 /**
  * The change digest for a window over this index. `scope.moc` and
  * `scope.topic` are resolved here to document ids (a map through its child
@@ -378,11 +457,20 @@ export async function loadChanges(
   const created = new Set(raw.filter((r) => CREATED_TYPES.has(r.operation_type)).map((r) => r.document_id));
   const inScopeDocs = [...new Set(rows.filter((r) => (!ids || ids.has(r.documentId)) && !created.has(r.documentId)).map((r) => r.documentId))];
   const baseline = (await baselineRows(db, window.since, inScopeDocs)).map(toRow);
-  const ctx = await loadContext(db, rows, opts.sourceFolders ?? new Map());
+  const [ctx, story] = await Promise.all([
+    loadContext(db, rows, opts.sourceFolders ?? new Map()),
+    loadStoryContext(db, window.since, ids, new Set(rows.map((r) => r.documentId))),
+  ]);
+  ctx.story = story;
 
   const internal: ChangeScope = { ...(ids ? { documentIds: [...ids] } : {}), ...(scope.types ? { types: scope.types } : {}) };
   // Ids came from a scope key: the caller asked for events, even if the ids are empty.
   if (!ids && (scope.q || scope.moc || scope.topic)) internal.documentIds = [];
-  const digest = buildChanges(rows, baseline, ctx, window, { scope: internal, limit: opts.limit, cursor: opts.cursor });
+  const digest = buildChanges(rows, baseline, ctx, window, {
+    scope: internal,
+    limit: opts.limit,
+    cursor: opts.cursor,
+    thenVsNow: Boolean(scope.q || scope.topic),
+  });
   return { ...digest, scope };
 }
