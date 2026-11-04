@@ -1885,7 +1885,7 @@ export function chatThenVsNow(t: ThenVsNow, perSide = CHAT_THEN_VS_NOW): Record<
 /** Live notes then → now, or — since predates the vault — from its first recorded state (Addendum D1), never "0 → N". */
 function growthLine(g: ChangeStory["growth"]): string {
   if (!g.from) return `live notes ${g.notesThen} → ${g.notesNow}`;
-  if (g.notesAtStart !== undefined && g.notesAtStart !== null) return `first recorded on ${g.from.slice(0, 10)}: ${g.notesAtStart} live notes → now ${g.notesNow}`;
+  if (g.notesAtStart !== undefined) return `first recorded on ${g.from.slice(0, 10)}: ${g.notesAtStart} live notes → now ${g.notesNow}`;
   return `the vault began on ${g.from.slice(0, 10)}; ${g.notesNow} live notes now`;
 }
 
@@ -1956,7 +1956,7 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
       // Since predates the vault: its first recorded state (Addendum D1), never "0 notes then" (C2).
       ...(!g.from
         ? { notesThen: g.notesThen }
-        : g.notesAtStart !== undefined && g.notesAtStart !== null
+        : g.notesAtStart !== undefined
           ? { firstRecorded: g.from.slice(0, 10), notesAtStart: g.notesAtStart }
           : { vaultBegan: g.from.slice(0, 10) }),
       notesNow: g.notesNow,
@@ -1979,7 +1979,7 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
     return {
       id: a.id,
       title: a.title,
-      notes: a.notesAtStart !== undefined && a.notesAtStart !== null ? `first recorded ${a.notesAtStart} → ${a.notesNow}` : `${a.notesThen} → ${a.notesNow}`,
+      notes: a.notesAtStart !== undefined ? `first recorded ${a.notesAtStart} → ${a.notesNow}` : `${a.notesThen} → ${a.notesNow}`,
       new: newClaims.map((c) => chatClaim(c, gists)),
       changed: changed.map(chatShift),
       retired: retired.map((c) => chatClaim(c, gists)),

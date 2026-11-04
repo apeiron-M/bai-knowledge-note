@@ -425,15 +425,16 @@ describe("Query.knowledgeGraphChanges", () => {
       const { subgraph: s } = subgraph();
       await resolve(s)({}, { driveId: "d", since: "2026-09-01", areas: ["rd"], q: "snapshots" }, {});
       expect(searchVault).toHaveBeenCalledWith(s, "d", "snapshots", "SEMANTIC", 200, false);
-      expect(changes.mock.calls[0][1].documentIds).toEqual(range("n", 25).sort());
-      expect(changes.mock.calls[0][1].rank).toEqual(range("n", 30));
+      const internal = changes.mock.calls[0][1] as { documentIds?: string[]; rank?: string[] };
+      expect(internal.documentIds).toEqual(range("n", 25).sort());
+      expect(internal.rank).toEqual(range("n", 30));
     });
 
     it("gives no rank to a scope without a query", async () => {
       changeMaps.mockResolvedValue([{ id: "rd", title: "Reactor and Drives", depth: 1, area: "rd" }]);
       const { subgraph: s } = subgraph();
       await resolve(s)({}, { driveId: "d", since: "2026-09-01", areas: ["rd"] }, {});
-      expect(changes.mock.calls[0][1].rank).toBeUndefined();
+      expect((changes.mock.calls[0][1] as { rank?: string[] }).rank).toBeUndefined();
     });
   });
 
