@@ -2413,7 +2413,8 @@ describe("what_changed — the change digest over a window", () => {
 
     it("offers detail, saying events come only with it", () => {
       const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
-      const props = (tool?.function.parameters as { properties: Record<string, { type: string; description: string }> }).properties;
+      if (!tool) throw new Error("what_changed is not offered");
+      const props = (tool.function.parameters as { properties: Record<string, { type: string; description: string }> }).properties;
       expect(props.detail.type).toBe("boolean");
       expect(props.detail.description).toMatch(/events/i);
     });
