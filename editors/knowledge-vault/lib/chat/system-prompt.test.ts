@@ -188,4 +188,20 @@ describe("buildSystemPrompt", () => {
     expect(p).toMatch(/Elsewhere has no map: ask about it with query/);
     expect(p).toMatch(/thenVsNow \(then: .*now: .*unchanged: /);
   });
+
+  it("scopes change questions about the vault's main subject to the whole vault, and reads what the tool resolved (Addendum B1, B2, B4)", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/the vault as a whole or its main subject .* call what_changed with no moc, topic or query/);
+    expect(p).toMatch(/scope says what a query covered/);
+    expect(p).toMatch(/detail: true/);
+    expect(p).toMatch(/thenAt .* first recorded/);
+    expect(p).toMatch(/versions/);
+    expect(p).toMatch(/merged .* not a change in understanding/);
+  });
+
+  it("names the vault so the main-subject rule is actionable, and says a query naming it or its hub covers the whole vault (review B, I4)", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/the vault's name \(“Powerhouse Knowledge”\)/);
+    expect(p).toMatch(/a query that names the vault or its hub is answered for the whole vault/);
+  });
 });

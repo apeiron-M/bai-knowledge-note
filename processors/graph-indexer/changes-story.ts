@@ -43,12 +43,18 @@ export interface StoryContext {
   archivedAtSince: Set<string>;
   /** Notes a SUPERSEDES edge points at now. */
   superseded: Set<string>;
+  /** DERIVED_FROM edges, note → sources (for an area's source versions). */
+  derivedFrom?: Map<string, string[]>;
+  /** Each source's ingestions up to `until`, in time order, with the git ref each recorded (null: none). */
+  ingests?: Map<string, { at: string; ref: string | null }[]>;
 }
 
 export interface Claim {
   documentId: string;
   claim: string;
   gist: string | null;
+  /** On a then-claim of a note created in the window: when its first recorded state was written. */
+  thenAt?: string;
 }
 
 export interface Shift {
@@ -57,6 +63,8 @@ export interface Shift {
   now: { claim: string; gist: string | null };
   why: string | null;
   replacedBy?: string;
+  /** For a note created in the window: when its first recorded state (the then) was written. */
+  thenAt?: string;
 }
 
 export interface StoryArea {
@@ -69,6 +77,10 @@ export interface StoryArea {
   newCount: number;
   changedCount: number;
   retiredCount: number;
+  /** Supersessions that merged twin notes: counted, never listed as changed (Addendum B3). */
+  mergedCount: number;
+  /** The git refs of the area's sources: as they stood at since (else first ingested) → latest. Absent without refs. */
+  versions?: { first: string | null; now: string | null };
   newClaims: Claim[];
   changedClaims: Shift[];
   retiredClaims: Claim[];
@@ -93,8 +105,12 @@ export interface ThenVsNow {
   unchanged: Claim[];
 }
 
-/** A document's title and description at `since`, where a baseline recorded them. */
-export type ThenFields = Map<string, { title: string | null; description: string | null }>;
+/**
+ * A document's title and description at `since`, where a baseline recorded
+ * them; for a note created in the window, its first recorded state, with
+ * when (`at`) and the revision-history lines added since (Addendum B4).
+ */
+export type ThenFields = Map<string, { title: string | null; description: string | null; at?: string; revisionNotes?: string[] }>;
 
 /**
  * The hub's top-level areas (by title) and, for every map and note in an
@@ -134,12 +150,128 @@ export function areasOf(s: StoryContext): { areas: { id: string; title: string }
   return { areas, areasByDoc };
 }
 
+/** Words too common to tell two claims apart. */
+const STOPWORDS = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "is", "it", "its", "of", "on", "or", "so", "that", "the", "their", "this", "to", "with"]);
+
+/** Words ending in "s" that are not plurals: folding them would clip them ("does" → "doe"). */
+const NOT_PLURAL = new Set(["does", "goes", "always", "perhaps", "whereas", "news", "series", "species"]);
+
+/** A plural "s" to drop: not "ss", "us" or "is" (process, status, analysis), nor a word in {@link NOT_PLURAL}. */
+function foldPlural(w: string): string {
+  return w.length > 3 && w.endsWith("s") && !/(ss|us|is)$/.test(w) && !NOT_PLURAL.has(w) ? w.slice(0, -1) : w;
+}
+
+/** A claim's words, lowercased, without punctuation, stopwords or a plural "s". */
+export function claimTokens(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const w of text.toLowerCase().split(/[^\p{L}\p{N}]+/u)) {
+    if (!w || STOPWORDS.has(w)) continue;
+    out.add(foldPlural(w));
+  }
+  return out;
+}
+
+/** Jaccard similarity of two claims' {@link claimTokens}. */
+export function claimSimilarity(a: string, b: string): number {
+  const x = claimTokens(a);
+  const y = claimTokens(b);
+  if (!x.size && !y.size) return 1;
+  let both = 0;
+  for (const w of x) if (y.has(w)) both++;
+  return both / (x.size + y.size - both);
+}
+
+/** A map a `q` scope may name: a hub area (depth 1) or a map below one. */
+export interface ScopeMap {
+  id: string;
+  title: string;
+  depth: number;
+}
+
+/**
+ * Words a question wraps its subject in ("what changed in …", "how does …
+ * work now"): not content, so a map's coverage of the query ignores them.
+ */
+const QUERY_FILLER = new Set(
+  ["what", "how", "why", "when", "where", "which", "who", "did", "does", "do", "done", "has", "have", "had", "was", "were", "been",
+    "work", "works", "worked", "working", "change", "changed", "changes", "new", "now", "then", "lately", "recently", "since",
+    "today", "about", "tell", "me", "we", "our", "us", "you", "i"].map(foldPlural),
+);
+/** A map whose words are a subset of the query must cover at least this share of the query's content words. */
+export const MAP_COVERAGE = 0.5;
+
+/**
+ * The map a query names (spec Addendum B2, tightened after review): by whole
+ * words, case-insensitive, plurals folded, the question's filler words
+ * ({@link QUERY_FILLER}) left out. A map matches when its title holds every
+ * content word of the query, or when the query holds every word of its title
+ * and the title covers ≥ {@link MAP_COVERAGE} of the query's content words —
+ * or it is the only map that shares any word with the query. The best is
+ * the exact word set, then the shallower (an area before its maps), then the
+ * shorter title; when the best two tie on all three, nothing decides between
+ * them and the query searches instead (null). Null when none matches.
+ */
+export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMap | null {
+  const q = new Set([...claimTokens(query)].filter((w) => !QUERY_FILLER.has(w)));
+  if (!q.size) return null;
+  const titled = maps.map((map) => ({ map, t: claimTokens(map.title) })).filter((m) => m.t.size);
+  const sharing = titled.filter(({ t }) => [...t].some((w) => q.has(w))).length;
+  const hits: { map: ScopeMap; exact: boolean; size: number }[] = [];
+  for (const { map, t } of titled) {
+    const qInT = [...q].every((w) => t.has(w));
+    const tInQ = [...t].every((w) => q.has(w));
+    const covers = t.size / q.size >= MAP_COVERAGE || sharing === 1;
+    if (qInT || (tInQ && covers)) hits.push({ map, exact: qInT && tInQ, size: t.size });
+  }
+  const rank = (a: (typeof hits)[number], b: (typeof hits)[number]) => Number(b.exact) - Number(a.exact) || a.map.depth - b.map.depth || a.size - b.size;
+  hits.sort(rank);
+  // Two hubs (depth 0) may tie: both are the whole vault.
+  if (hits.length > 1 && rank(hits[0], hits[1]) === 0 && hits[0].map.depth > 0) return null;
+  return hits[0]?.map ?? null;
+}
+
+/**
+ * A SUPERSEDES reason that says the two notes were one claim written twice —
+ * anchored phrases only (spec Addendum B corrections): a reason that merely
+ * mentions "duplicate operations" or "merged into the reactor" is a change.
+ */
+const DUPLICATE_REASON = [
+  /^\s*same (claim|point)\b/i,
+  /already makes this claim/i,
+  /\btwin\b/i,
+  /\bduplicate (of|note|claim)\b/i,
+  /\bidentical claim\b/i,
+  /\bredundant with\b/i,
+  /merged (into|with) (the )?(newer|older|surviving|twin)/i,
+];
+/** With no reason, at or above this title similarity a supersession is a duplicate merge. */
+export const MERGE_SIMILARITY = 0.8;
+/** Words that turn a claim around: a near-identical title that adds or drops one is a change. */
+const NEGATIONS = new Set(["not", "no", "never", "without", "cannot", "nor", "none", "isn", "aren", "doesn", "don", "won", "wasn", "weren", "can"]);
+
+/**
+ * A supersession that merged twin notes (spec Addendum B3, corrected after
+ * review): its reason holds an anchored duplicate phrase, or it has no reason
+ * and the titles are near-identical (Jaccard ≥ {@link MERGE_SIMILARITY}) with
+ * no negation, digit or version among the words that differ. Not a change in
+ * understanding.
+ */
+export function isDuplicateMerge(then: string, now: string, reason: string | null): boolean {
+  if (reason !== null && reason.trim() !== "") return DUPLICATE_REASON.some((re) => re.test(reason));
+  if (claimSimilarity(then, now) < MERGE_SIMILARITY) return false;
+  const a = claimTokens(then);
+  const b = claimTokens(now);
+  const differing = [...a].filter((w) => !b.has(w)).concat([...b].filter((w) => !a.has(w)));
+  return !differing.some((w) => NEGATIONS.has(w) || /\d/.test(w));
+}
+
 function differs(a: { claim: string; gist: string | null }, b: { claim: string; gist: string | null }): boolean {
   return a.claim !== b.claim || (a.gist ?? "") !== (b.gist ?? "");
 }
 
 /** What buildStory and buildThenVsNow both read, computed once per digest by {@link storyFacts}. */
 export interface Facts {
+  since: string;
   areas: { id: string; title: string }[];
   areasByDoc: Map<string, string[]>;
   /** Created in the window (an event, or `addedAt` inside it). */
@@ -152,6 +284,10 @@ export interface Facts {
   /** Replacing notes the story shows as a shift's now (never also as new). */
   shiftReplacements: Set<string>;
   shifts: Map<string, Shift>;
+  /** Notes created in the window whose first recorded state is the then: when it was written. */
+  firstAt: Map<string, string>;
+  /** Notes merged into a twin in the window (old note → its replacement). */
+  merged: Map<string, string>;
   retired: Set<string>;
   inScope: (id: string) => boolean;
   thenOf: (id: string) => { claim: string; gist: string | null };
@@ -205,30 +341,78 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
     !(archivedNow(id) && !archivedInWindow.has(id));
 
   const shifts = new Map<string, Shift>();
+  const merged = new Map<string, string>();
   for (const e of events) {
     if (!isNote(e.documentId) || !inScope(e.documentId)) continue;
     if (e.kind === "superseded" && e.supersededBy) {
       const then = thenOf(e.documentId);
       const now = nowOf(e.supersededBy.documentId);
       if (node(e.supersededBy.documentId) === undefined && e.supersededBy.title) now.claim = e.supersededBy.title;
-      if (differs(then, now)) {
-        shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.supersededBy.reason, replacedBy: e.supersededBy.documentId });
+      if (isDuplicateMerge(then.claim, now.claim, e.supersededBy.reason)) {
+        merged.set(e.documentId, e.supersededBy.documentId);
+        shifts.delete(e.documentId);
+      } else if (differs(then, now)) {
+        // Created in the window too: its then is as first recorded (Addendum B corrections).
+        const at = created.has(e.documentId) ? thenFields.get(e.documentId)?.at : undefined;
+        shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.supersededBy.reason, replacedBy: e.supersededBy.documentId, ...(at ? { thenAt: at } : {}) });
       }
-    } else if (e.kind === "revised" && !shifts.has(e.documentId) && (e.fields?.title || e.fields?.description)) {
+    } else if (e.kind === "revised" && !shifts.has(e.documentId) && !merged.has(e.documentId) && (e.fields?.title || e.fields?.description)) {
       const then = thenOf(e.documentId);
       const now = nowOf(e.documentId);
       if (differs(then, now)) shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.revisionNotes?.length ? e.revisionNotes.join("; ") : null });
+    } else if (e.kind === "created" && !shifts.has(e.documentId) && !merged.has(e.documentId)) {
+      // Created in the window and revised after its creating batch settled.
+      const first = thenFields.get(e.documentId);
+      if (!first?.at) continue;
+      const then = thenOf(e.documentId);
+      const now = nowOf(e.documentId);
+      if (!differs(then, now)) continue;
+      const why = first.revisionNotes?.length ? first.revisionNotes.join("; ") : null;
+      shifts.set(e.documentId, { documentId: e.documentId, then, now, why, thenAt: first.at });
     }
   }
+  // A note created in the window reports `created` only, never `archived`:
+  // archived now, it was archived in the window too.
+  for (const e of events) if (e.kind === "created" && archivedNow(e.documentId)) archivedInWindow.add(e.documentId);
+  const firstAt = new Map([...shifts.values()].flatMap((sh) => (sh.thenAt ? [[sh.documentId, sh.thenAt] as const] : [])));
   // Retired: archived in the window, still archived, and replaced by nothing — ever.
   const retired = new Set(
     [...archivedInWindow].filter((id) => isNote(id) && inScope(id) && archivedNow(id) && !supersededInWindow.has(id) && !s.superseded.has(id)),
   );
+  // A retired note is not also a changed one: it holds nothing now (its then keeps its thenAt).
+  for (const id of retired) {
+    shifts.delete(id);
+    const at = created.has(id) ? thenFields.get(id)?.at : undefined;
+    if (at) firstAt.set(id, at);
+  }
   const shiftReplacements = new Set([...shifts.values()].flatMap((sh) => (sh.replacedBy ? [sh.replacedBy] : [])));
-  return { areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
+  return { since: window.since, areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, firstAt, merged, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
 }
 
-const claimOf = (f: Facts, id: string, then = false): Claim => ({ documentId: id, ...(then ? f.thenOf(id) : f.nowOf(id)) });
+const claimOf = (f: Facts, id: string, then = false): Claim => {
+  const at = then ? f.firstAt.get(id) : undefined;
+  return { documentId: id, ...(then ? f.thenOf(id) : f.nowOf(id)), ...(at ? { thenAt: at } : {}) };
+};
+
+/**
+ * The git refs of these sources (spec Addendum B4): first = the earliest of
+ * each source's ref standing at `since` (its last ingestion before, else its
+ * first in the window); now = the latest ref. Only ingestions that recorded a
+ * ref count; null when none did.
+ */
+export function sourceVersions(sources: Iterable<string>, ingests: Map<string, { at: string; ref: string | null }[]>, since: string): { first: string | null; now: string | null } | null {
+  let first: { at: string; ref: string } | null = null;
+  let now: { at: string; ref: string } | null = null;
+  for (const id of sources) {
+    const list = (ingests.get(id) ?? []).filter((i): i is { at: string; ref: string } => i.ref !== null);
+    if (!list.length) continue;
+    const then = [...list].reverse().find((i) => i.at < since) ?? list[0];
+    const last = list[list.length - 1];
+    if (!first || then.at < first.at) first = then;
+    if (!now || last.at > now.at) now = last;
+  }
+  return first || now ? { first: first?.ref ?? null, now: now?.ref ?? null } : null;
+}
 
 /** The story: growth, then each main area with any change, most changed first; "Elsewhere" last. */
 export function buildStory(f: Facts, s: StoryContext): ChangeStory {
@@ -265,11 +449,16 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
     const at = f.areasByDoc.get(sh.documentId) ?? (sh.replacedBy ? f.areasByDoc.get(sh.replacedBy) : undefined) ?? [null];
     for (const a of at) push(shiftsByArea, a, sh);
   }
+  // A merge is filed like a shift: the old note's areas, else the replacement's.
+  const mergedByArea = new Map<string | null, number>();
+  for (const [old, by] of f.merged) {
+    for (const a of f.areasByDoc.get(old) ?? f.areasByDoc.get(by) ?? [null]) mergedByArea.set(a, (mergedByArea.get(a) ?? 0) + 1);
+  }
   const areas: (StoryArea & { weight: number })[] = [];
-  for (const id of new Set([...buckets.keys(), ...shiftsByArea.keys()])) {
+  for (const id of new Set([...buckets.keys(), ...shiftsByArea.keys(), ...mergedByArea.keys()])) {
     const members = buckets.get(id) ?? [];
     const newIds = members
-      .filter((n) => f.created.has(n) && f.liveNow(n) && !f.shiftReplacements.has(n))
+      .filter((n) => f.created.has(n) && f.liveNow(n) && !f.shiftReplacements.has(n) && !f.merged.has(n))
       .sort(
         (a, b) =>
           incoming(b) - incoming(a) ||
@@ -280,8 +469,10 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
     const retired = members.filter((n) => f.retired.has(n));
     const notesThen = members.filter(f.liveThen).length;
     const notesNow = members.filter(f.liveNow).length;
+    const mergedCount = mergedByArea.get(id) ?? 0;
+    const versions = s.ingests && s.derivedFrom ? sourceVersions(new Set(members.flatMap((n) => s.derivedFrom?.get(n) ?? [])), s.ingests, f.since) : null;
     const weight = newIds.length + shifts.length + retired.length;
-    if (!weight && notesThen === notesNow) continue;
+    if (!weight && !mergedCount && notesThen === notesNow) continue;
     areas.push({
       id,
       title: id === null ? "Elsewhere" : (areaTitle.get(id) ?? id),
@@ -290,6 +481,8 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
       newCount: newIds.length,
       changedCount: shifts.length,
       retiredCount: retired.length,
+      mergedCount,
+      ...(versions ? { versions } : {}),
       newClaims: newIds.slice(0, MAX_NEW_CLAIMS).map((n) => claimOf(f, n)),
       changedClaims: shifts.slice(0, MAX_CHANGED_CLAIMS),
       retiredClaims: retired.slice(0, MAX_RETIRED_CLAIMS).map((n) => claimOf(f, n, true)),
@@ -311,10 +504,13 @@ export function buildThenVsNow(f: Facts, s: StoryContext): ThenVsNow {
   const notes = [...s.nodes.keys()].filter((id) => f.isNote(id) && f.inScope(id));
   const order = (lead: (id: string) => boolean) => (a: string, b: string) =>
     Number(lead(b)) - Number(lead(a)) || incoming(b) - incoming(a) || a.localeCompare(b);
-  const changedThen = (id: string) => f.shifts.has(id) || f.retired.has(id) || f.supersededInWindow.has(id);
-  const changedNow = (id: string) => f.shifts.has(id) || f.created.has(id) || f.replacements.has(id);
+  // A merged twin is housekeeping: off both sides, and its survivor is not "changed" by it.
+  const mergedInto = new Set(f.merged.values());
+  const changedThen = (id: string) => f.shifts.has(id) || f.retired.has(id) || (f.supersededInWindow.has(id) && !f.merged.has(id));
+  const changedNow = (id: string) => f.shifts.has(id) || f.created.has(id) || f.shiftReplacements.has(id) || (f.replacements.has(id) && !mergedInto.has(id));
   const supersededBefore = (id: string) => s.superseded.has(id) && !f.supersededInWindow.has(id);
-  const thenIds = notes.filter((id) => f.liveThen(id) && !supersededBefore(id));
+  // A note created in the window and revised since holds its first recorded claim on the then side.
+  const thenIds = notes.filter((id) => !f.merged.has(id) && ((f.liveThen(id) && !supersededBefore(id)) || f.firstAt.has(id)));
   const nowIds = new Set(notes.filter((id) => f.liveNow(id) && !s.superseded.has(id) && !f.supersededInWindow.has(id)));
   // Held then and now in the same words: say it once.
   const same = new Set(thenIds.filter((id) => nowIds.has(id) && !differs(f.thenOf(id), f.nowOf(id))));

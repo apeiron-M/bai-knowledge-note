@@ -286,6 +286,10 @@ export const schema: DocumentNode = gql`
     changedCount: Int!
     "How many notes retired in the area (uncapped; retiredClaims shows at most 5)."
     retiredCount: Int!
+    "Supersessions that merged twin notes (same claim written twice): counted, never listed as changed."
+    mergedCount: Int!
+    "The git refs of the area's sources: as they stood at since (else first ingested) → latest. Null when they carry none."
+    versions: KnowledgeGraphChangeVersions
     "Notes created in the window, most connected first (at most 8); a note that replaced another is its shift's now, not new."
     newClaims: [KnowledgeGraphChangeClaim!]!
     "Claims the vault now states differently (at most 8)."
@@ -300,6 +304,13 @@ export const schema: DocumentNode = gql`
     claim: String!
     "The note's description."
     gist: String
+    "On a then-claim of a note created in the window: when its first recorded state was written."
+    thenAt: String
+  }
+
+  type KnowledgeGraphChangeVersions {
+    first: String
+    now: String
   }
 
   type KnowledgeGraphChangeClaimText {
@@ -315,6 +326,8 @@ export const schema: DocumentNode = gql`
     why: String
     "The replacing note, for a supersession."
     replacedBy: String
+    "For a note created in the window: when its first recorded state (the then) was written."
+    thenAt: String
   }
 
   type KnowledgeGraphThenVsNow {
@@ -337,6 +350,19 @@ export const schema: DocumentNode = gql`
     documentIds: [String!]
     q: String
     types: [String!]
+    "What q resolved to: the whole vault (it named the hub or the drive), a map whose title it names, else a semantic search."
+    resolved: KnowledgeGraphChangeResolvedScope
+  }
+
+  type KnowledgeGraphChangeResolvedScope {
+    "vault | moc | search"
+    kind: String!
+    "The map, when kind is moc; title is also the hub's or drive's name, when kind is vault."
+    id: String
+    title: String
+    "The search, when kind is search: the query and how many hits it started from (their linked notes join them)."
+    query: String
+    hits: Int
   }
 
   type KnowledgeGraphChangeTotals {

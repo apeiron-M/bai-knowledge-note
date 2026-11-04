@@ -2060,7 +2060,7 @@ describe("what_changed — the change digest over a window", () => {
     const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
     const params = tool?.function.parameters as { properties: Record<string, unknown>; required: string[] };
     expect(params.required).toEqual(["since"]);
-    expect(Object.keys(params.properties).sort()).toEqual(["cursor", "limit", "moc", "query", "since", "topic", "until"]);
+    expect(Object.keys(params.properties).sort()).toEqual(["cursor", "detail", "limit", "moc", "query", "since", "topic", "until"]);
     expect(tool?.function.description).toMatch(/never search/i);
   });
 
@@ -2082,7 +2082,8 @@ describe("what_changed — the change digest over a window", () => {
       topic: null,
       q: "processors",
       cursor: "abc",
-      limit: 100,
+      limit: 10,
+      detail: true,
     });
     if (r.ok) expect(r.summary).toMatch(/1 created/);
   });
@@ -2187,12 +2188,13 @@ describe("what_changed — the change digest over a window", () => {
     expect(data.thenVsNow.then[0].documentId).toBe("n1");
     expect(data.thenVsNow.now[0].documentId).toBe("n9");
     expect(data.story).toBeDefined();
-    expect(data.events.length).toBeGreaterThan(0);
+    // Events only on request (detail: true or a cursor).
+    expect(data.events).toBeUndefined();
   });
 
   it("keeps diffs on a drill-down but drops bulk: two hunks per event, no folded or derivedFrom", async () => {
     mockGql({ knowledgeGraphChanges: heavyDigest(1, true) });
-    const r = await executeTool("what_changed", { since: "2026-01-01", moc: "m1" }, CTX);
+    const r = await executeTool("what_changed", { since: "2026-01-01", moc: "m1", detail: true }, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     const data = r.data as { events: { fields: { content: { hunks: string[]; before?: string } }; folded?: unknown; derivedFrom?: unknown }[] };
@@ -2297,5 +2299,159 @@ describe("what_changed — the change digest over a window", () => {
   it("refuses a call without since", async () => {
     const r = await executeTool("what_changed", {}, CTX);
     expect(r).toEqual({ ok: false, error: expect.stringMatching(/since is required/) as unknown });
+  });
+
+  describe("stays small for any call (Addendum B1)", () => {
+    const BUDGET = 14_000;
+    const long = (seed: string) => `${seed} ${words(40, "w")}`.slice(0, 300);
+    const bigTvn = () => {
+      const c = (id: string) => ({ documentId: uuid(id, 1), claim: long("Claim"), gist: long("Gist") });
+      return {
+        then: Array.from({ length: 12 }, (_, i) => c(`t${i}`)),
+        now: Array.from({ length: 12 }, (_, i) => c(`n${i}`)),
+        unchanged: Array.from({ length: 12 }, (_, i) => c(`u${i}`)),
+      };
+    };
+    const bigEvent = (i: number) => ({
+      ...heavyEvent(i),
+      documentId: uuid("e", i),
+      title: long("Title"),
+      fields: {
+        title: { before: long("Before"), after: long("After") },
+        description: { before: long("Dbefore"), after: long("Dafter") },
+        content: { before: "x".repeat(400), hunks: Array.from({ length: 6 }, () => "@@ -1 +1 @@\n" + "y".repeat(400)), added: 12, removed: 3 },
+      },
+      revisionNotes: [long("Rev1"), long("Rev2"), long("Rev3")],
+      supersededBy: { documentId: uuid("s", i), title: long("Sup"), reason: long("Reason") },
+    });
+    /** A realistic scoped digest: the 50-area story, a full thenVsNow, 30 heavy events the server returned. */
+    const scopedDigest = () => ({
+      ...heavyDigest(1, true),
+      scope: { q: "processor delivery", resolved: { kind: "search", query: "processor delivery", hits: 25 } },
+      events: Array.from({ length: 30 }, (_, i) => bigEvent(i)),
+      nextCursor: "next",
+      story: bigStory(),
+      thenVsNow: bigTvn(),
+    });
+
+    it("answers a scoped call on a 50-area vault in ≤ 14 KB: story, thenVsNow ≤ 6 a side, no events", async () => {
+      mockGql({ knowledgeGraphChanges: scopedDigest() });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const data = r.data as { story?: { areas: unknown[] }; thenVsNow: { then: unknown[]; now: unknown[]; unchanged: unknown[] }; events?: unknown };
+      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+      expect(data.events).toBeUndefined();
+      expect(data.thenVsNow.then).toHaveLength(6);
+      expect(data.thenVsNow.now).toHaveLength(6);
+      expect(data.thenVsNow.unchanged).toHaveLength(6);
+      expect(data.story?.areas.length).toBeGreaterThanOrEqual(3);
+      expect(lastRequest().body.variables).toMatchObject({ detail: false });
+      expect(lastRequest().body.query).toMatch(/events @include\(if: \$detail\)/);
+    });
+
+    it("returns at most 10 events with two hunks each on detail: true, still ≤ 14 KB", async () => {
+      mockGql({ knowledgeGraphChanges: scopedDigest() });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery", detail: true }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const data = r.data as { events: { fields: { content: { hunks: string[] } } }[]; nextCursor: string | null };
+      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+      expect(data.events).toHaveLength(10);
+      for (const e of data.events) expect(e.fields.content.hunks.length).toBeLessThanOrEqual(2);
+      expect(data.nextCursor).toBe("next");
+      expect(lastRequest().body.variables).toMatchObject({ detail: true, limit: 10 });
+    });
+
+    it("treats a cursor as a request for the next page of events", async () => {
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), story: null, thenVsNow: null } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery", cursor: "next" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect((r.data as { events: unknown[] }).events).toHaveLength(10);
+      expect(lastRequest().body.variables).toMatchObject({ detail: true });
+    });
+
+    it("stays ≤ 14 KB for the unscoped call too", async () => {
+      mockGql({ knowledgeGraphChanges: { ...heavyDigest(30, false), story: bigStory(), thenVsNow: null } });
+      const r = await executeTool("what_changed", { since: "2026-09-01" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+    });
+
+    it("says what the query resolved to, and carries merges, source versions and first-recorded dates", async () => {
+      const story = bigStory();
+      story.areas[0] = {
+        ...story.areas[0],
+        ...{ mergedCount: 4, versions: { first: "v6.2.2-dev.74", now: "v6.2.3-dev.91+e0f277d" } },
+        changedClaims: [{ ...story.areas[0].changedClaims[0], ...{ thenAt: "2026-09-02T10:00:05.000Z" } }],
+      };
+      mockGql({
+        knowledgeGraphChanges: {
+          ...heavyDigest(1, true),
+          scope: { q: "data processing", resolved: { kind: "moc", id: "a2", title: "Data Processing and CQRS" } },
+          story,
+          thenVsNow: { then: [{ ...claim("n1"), thenAt: "2026-09-02T10:00:05.000Z" }], now: [], unchanged: [] },
+        },
+      });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "data processing" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const data = r.data as { scope: string; story: { areas: Record<string, unknown>[] }; thenVsNow: { then: Record<string, unknown>[] } };
+      expect(data.scope).toBe("the map Data Processing and CQRS (a2)");
+      expect(r.summary).toMatch(/the map Data Processing and CQRS/);
+      expect(data.story.areas[0]).toMatchObject({ merged: 4, versions: "v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d" });
+      expect((data.story.areas[0].changed as Record<string, unknown>[])[0]).toMatchObject({ thenAt: "2026-09-02" });
+      expect(data.thenVsNow.then[0]).toMatchObject({ thenAt: "2026-09-02" });
+      const { body } = lastRequest();
+      expect(body.query).toContain("resolved { kind id title query hits }");
+      expect(body.query).toContain("mergedCount versions { first now }");
+    });
+
+    it("names a search scope with its hit count", async () => {
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), story: null } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect((r.data as { scope: string }).scope).toBe("search “processor delivery”: 25 hits and their linked notes");
+    });
+
+    it("clips the query a search scope names to 80 characters", async () => {
+      const q = `processor delivery ${"and more words ".repeat(40)}`;
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), story: null, scope: { q, resolved: { kind: "search", query: q, hits: 25 } } } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: q }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const scope = (r.data as { scope: string }).scope;
+      expect(scope).toMatch(/^search “processor delivery and more/);
+      expect(scope.length).toBeLessThanOrEqual(140);
+    });
+
+    it("names a vault scope with the hub's (or drive's) title (review B, I4)", async () => {
+      mockGql({ knowledgeGraphChanges: { ...heavyDigest(1, false), scope: { q: "Powerhouse stack", resolved: { kind: "vault", title: "Powerhouse Stack" } }, story: bigStory(), thenVsNow: null } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "Powerhouse stack" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect((r.data as { scope: string }).scope).toBe("the whole vault (“Powerhouse Stack” names it)");
+    });
+
+    it("keeps a detail page within budget even when text the clips do not reach is huge", async () => {
+      const huge = (i: number) => ({
+        ...bigEvent(i),
+        by: `0x${"a".repeat(1500)}`,
+        source: { refBefore: "r".repeat(3000), refAfter: "s".repeat(3000), added: 1, removed: 1, hunks: ["h"], noteIds: [], noteCount: 0 },
+      });
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), events: Array.from({ length: 10 }, (_, i) => huge(i)) } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery", detail: true }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+      expect((r.data as { events: unknown[] }).events).toHaveLength(10);
+    });
+
+    it("tells the model a query naming the vault or its hub covers the whole vault", () => {
+      const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+      expect(tool?.function.description).toMatch(/names the vault or its hub[^.]*whole vault/);
+    });
+
+    it("offers detail, saying events come only with it", () => {
+      const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+      if (!tool) throw new Error("what_changed is not offered");
+      const props = (tool.function.parameters as { properties: Record<string, { type: string; description: string }> }).properties;
+      expect(props.detail.type).toBe("boolean");
+      expect(props.detail.description).toMatch(/events/i);
+    });
   });
 });

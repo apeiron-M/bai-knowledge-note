@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildChanges, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
-import { areasOf, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
+import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
+import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
+import { areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
 function row(documentId: string, operationType: string, input: Record<string, unknown>, timestamp: string): OperationRow {
@@ -422,5 +423,342 @@ describe("story: review fixes (Addendum A)", () => {
       now: [{ documentId: "n1", claim: "Now claim", gist: null }],
       unchanged: [{ documentId: "n8", claim: "Steady claim", gist: null }],
     });
+  });
+});
+
+describe("story: duplicate merges (Addendum B3)", () => {
+  const supersede = (by: string, old: string, reason: string, at = IN(2)) =>
+    row(by, "ADD_RELATIONSHIP", { sourceId: by, targetId: old, relationshipType: "SUPERSEDES", metadata: { reason } }, at);
+
+  it("does not make a near-identical twin merged by SUPERSEDES with no reason a shift: it is counted as merged", () => {
+    const rows = [supersede("n9", "n2", "")];
+    const s = story([
+      ["n2", note("Storage keeps every snapshot of a document", { status: "ARCHIVED" })],
+      ["n9", note("Storage keeps every snapshot of each document")],
+    ], { coreIdeas: new Map([["m1", ["n2", "n9"]]]) });
+    const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([]);
+    expect(area?.changedCount).toBe(0);
+    expect(area?.mergedCount).toBe(1);
+  });
+
+  it("does not make a supersession whose reason marks a duplicate a shift, whatever the titles", () => {
+    const reasons = ["Twin of the newer note", "duplicate claim", "Same claim, written earlier", "n9 already makes this claim", "Merged into the newer note"];
+    for (const reason of reasons) {
+      const rows = [supersede("n9", "n2", reason)];
+      const s = story([
+        ["n2", note("Snapshots are kept forever", { status: "ARCHIVED" })],
+        ["n9", note("The reactor retains each document state indefinitely")],
+      ], { coreIdeas: new Map([["m1", ["n2", "n9"]]]) });
+      const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+      expect([reason, area?.changedClaims.length, area?.mergedCount]).toEqual([reason, 0, 1]);
+    }
+  });
+
+  it("keeps a real replacement as a shift, and does not list a merged twin created in the window as new", () => {
+    const rows = [
+      supersede("n9", "n2", "checkpoints replaced full snapshots"),
+      row("n7", "CREATE_DOCUMENT", {}, IN(1)),
+      supersede("n1", "n7", "same claim, written earlier", IN(3)),
+    ];
+    const s = story([
+      ["n2", note("Storage keeps every snapshot", { status: "ARCHIVED" })],
+      ["n9", note("Storage keeps snapshots per checkpoint")],
+      ["n7", note("A twin", { addedAt: IN(1) })],
+      ["n1", note("The original")],
+    ], { coreIdeas: new Map([["m1", ["n1", "n2", "n7", "n9"]]]) });
+    const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims.map((c) => c.documentId)).toEqual(["n2"]);
+    expect(area?.mergedCount).toBe(1);
+    expect(area?.newClaims.map((c) => c.documentId)).toEqual([]);
+  });
+});
+
+describe("story: first recorded vs now (Addendum B4)", () => {
+  // Created at 01:00 by an extraction batch (fields within minutes), revised at 05:00.
+  const created = (late: OperationRow[] = []) => [
+    row("n2", "CREATE_DOCUMENT", {}, IN(1)),
+    row("n2", "SET_TITLE", { title: "Draft title" }, IN(1, 1)),
+    row("n2", "SET_TITLE", { title: "Delivery is exactly once, in order" }, IN(1, 5)),
+    row("n2", "SET_DESCRIPTION", { description: "Each operation reaches a processor once" }, IN(1, 5)),
+    row("n2", "SET_CONTENT", { content: "body\n\n## Revision history\n- v6.2.2-dev.74 (2026-09-02): first" }, IN(1, 6)),
+    ...late,
+  ];
+  const revisedLater = [
+    row("n2", "SET_TITLE", { title: "Delivery is at-least-once, with a crash gap" }, IN(5)),
+    row("n2", "SET_CONTENT", { content: "body2\n\n## Revision history\n- v6.2.2-dev.74 (2026-09-02): first\n- v6.2.3-dev.91 (2026-11-03): the outbox replays after a crash" }, IN(5, 1)),
+  ];
+  const nodes = (): [string, StoryNode][] => [["n2", note("Delivery is at-least-once, with a crash gap", { description: "Each operation reaches a processor once", addedAt: IN(1) })]];
+
+  it("makes a note created in the window and revised after its creating batch a shift from its first recorded state, and still new", () => {
+    const area = digest(created(revisedLater), [], story(nodes())).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([
+      {
+        documentId: "n2",
+        then: { claim: "Delivery is exactly once, in order", gist: "Each operation reaches a processor once" },
+        now: { claim: "Delivery is at-least-once, with a crash gap", gist: "Each operation reaches a processor once" },
+        why: "v6.2.3-dev.91 (2026-11-03): the outbox replays after a crash",
+        thenAt: IN(1, 5),
+      },
+    ]);
+    expect(area?.newClaims.map((c) => c.documentId)).toEqual(["n2"]);
+  });
+
+  it("is not a shift when the note reads now as its creating batch left it", () => {
+    const s = story([["n2", note("Delivery is exactly once, in order", { description: "Each operation reaches a processor once", addedAt: IN(1) })]]);
+    const area = digest(created(), [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([]);
+    expect(area?.newClaims.map((c) => c.documentId)).toEqual(["n2"]);
+  });
+
+  it("does not count a title written more than an hour after creation as first recorded", () => {
+    const rows = [row("n2", "CREATE_DOCUMENT", {}, IN(1)), row("n2", "SET_TITLE", { title: "Late title" }, IN(2, 1))];
+    const s = story([["n2", note("Now title", { addedAt: IN(1) })]]);
+    expect(digest(rows, [], s).story?.areas.find((a) => a.id === "a1")?.changedClaims).toEqual([]);
+  });
+
+  it("puts a created-then-revised note's first recorded claim on the then side of thenVsNow", () => {
+    const t = digest(created(revisedLater), [], story(nodes()), { q: "delivery", documentIds: ["n2"] }).thenVsNow;
+    expect(t?.then).toEqual([{ documentId: "n2", claim: "Delivery is exactly once, in order", gist: "Each operation reaches a processor once", thenAt: IN(1, 5) }]);
+    expect(t?.now.map((c) => c.documentId)).toEqual(["n2"]);
+    expect(t?.unchanged).toEqual([]);
+  });
+
+  it("reports an area's source versions: the ref standing at since (else first in the window) → the latest", () => {
+    const rows = [row("n1", "SET_TITLE", { title: "New" }, IN(1)), row("n3", "SET_TITLE", { title: "New 3" }, IN(1))];
+    const baseline = [row("n1", "SET_TITLE", { title: "Old" }, BEFORE), row("n3", "SET_TITLE", { title: "Old 3" }, BEFORE)];
+    const s = story([["n1", note("New")], ["n3", note("New 3")]], {
+      derivedFrom: new Map([["n1", ["s1", "s2"]], ["n3", ["s3"]]]),
+      ingests: new Map([
+        ["s1", [{ at: "2026-06-01T00:00:00.000Z", ref: "v6.2.1" }, { at: "2026-09-02T00:00:00.000Z", ref: "v6.2.2-dev.74" }, { at: IN(4), ref: "v6.2.3-dev.91+e0f277d" }]],
+        ["s2", [{ at: IN(2), ref: "v6.2.3-dev.90" }]],
+        ["s3", [{ at: IN(3), ref: null }]],
+      ]),
+    });
+    const d = buildChanges(rows, baseline, ctx(s), { since: "2026-09-01T00:00:00.000Z", until: W.until }, { scope: {} });
+    const areas = d.story?.areas ?? [];
+    expect(areas.find((a) => a.id === "a1")?.versions).toEqual({ first: "v6.2.1", now: "v6.2.3-dev.91+e0f277d" });
+    // No git refs: no versions.
+    expect(areas.find((a) => a.id === "a2")?.versions).toBeUndefined();
+  });
+});
+
+describe("story: first recorded vs now on the recorded 2026-11-03 sync", () => {
+  // A real note: created 19:30:26, fields written 19:30:27, body rewritten 19:34 — one batch.
+  const ID = "X64lW2nOJzR5JBqM7k8HgWCW69-r7yy8H8aXHvrqRy4";
+  const rowsOf = () =>
+    loadChangesFixture()
+      .rows.filter((r) => r.documentId === ID)
+      .sort((a, b) => (a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : a.index - b.index));
+  const titleOf = (rows: OperationRow[]) => JSON.parse(rows.find((r) => r.operationType === "SET_TITLE")?.inputJson ?? "{}") as { title: string };
+
+  it("reads its first recorded state from the creating batch, a rewrite minutes later included", () => {
+    const rows = rowsOf();
+    const first = firstRecorded(rows);
+    expect(first?.at).toBe("2026-11-03T19:30:27.660Z");
+    expect(first?.title).toBe(titleOf(rows).title);
+  });
+
+  it("is new only as recorded, and a shift once its title is revised hours later", () => {
+    const rows = rowsOf();
+    const { title } = titleOf(rows);
+    const s = (now: string) =>
+      story([[ID, note(now, { description: null, addedAt: rows[0].timestamp })]], { coreIdeas: new Map([["a2", [ID]]]) });
+    const window = { since: "2026-11-03T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" };
+    const run = (r: OperationRow[], now: string) => buildChanges(r, [], ctx(s(now)), window, { scope: {} }).story?.areas.find((a) => a.id === "a2");
+    // The description as now = as first recorded, so only the title decides.
+    const desc = (JSON.parse(rows.find((r) => r.operationType === "SET_DESCRIPTION")?.inputJson ?? "{}") as { description: string }).description;
+    const withDesc = (r: OperationRow[], now: string) =>
+      buildChanges(r, [], ctx(story([[ID, note(now, { description: desc, addedAt: rows[0].timestamp })]], { coreIdeas: new Map([["a2", [ID]]]) })), window, { scope: {} }).story?.areas.find((a) => a.id === "a2");
+    expect(withDesc(rows, title)?.changedClaims).toEqual([]);
+    const late = [...rows, row(ID, "SET_TITLE", { title: "Read models on another handle are now fenced" }, "2026-11-03T22:00:00.000Z")];
+    const shift = withDesc(late, "Read models on another handle are now fenced")?.changedClaims[0];
+    expect(shift).toMatchObject({ documentId: ID, then: { claim: title }, now: { claim: "Read models on another handle are now fenced" }, thenAt: "2026-11-03T19:30:27.660Z" });
+    expect(run(late, "x")?.newClaims.map((c) => c.documentId)).toEqual([ID]);
+  });
+});
+
+describe("scope: a query names a map (Addendum B2)", () => {
+  const maps = [
+    { id: "a1", title: "Data Processing and CQRS", depth: 1 },
+    { id: "a2", title: "Reactor and Drives", depth: 1 },
+    { id: "m1", title: "Processors", depth: 2 },
+    { id: "m2", title: "Reactor storage", depth: 2 },
+    { id: "m3", title: "Processor delivery", depth: 3 },
+  ];
+  it("matches a map whose title holds the query's words, case-insensitive, plurals folded", () => {
+    expect(matchMapTitle("data processing", maps)?.id).toBe("a1");
+    expect(matchMapTitle("PROCESSOR", maps)?.id).toBe("m1");
+    expect(matchMapTitle("reactor", maps)?.id).toBe("a2"); // an area before a descendant map
+  });
+  it("prefers the map whose title is exactly the query, then the shallower, then the shorter title", () => {
+    expect(matchMapTitle("reactor storage", maps)?.id).toBe("m2");
+    expect(matchMapTitle("processor delivery", maps)?.id).toBe("m3");
+  });
+  it("matches a map whose whole title the query contains", () => {
+    expect(matchMapTitle("what changed in reactor storage lately", maps)?.id).toBe("m2");
+  });
+  it("matches nothing for a subject no map title names, or only stopwords", () => {
+    expect(matchMapTitle("Powerhouse stack", maps)).toBeNull();
+    expect(matchMapTitle("the and of", maps)).toBeNull();
+    expect(matchMapTitle("proc", maps)).toBeNull(); // whole words only
+  });
+});
+
+describe("story: review B fixes", () => {
+  const supersede = (by: string, old: string, reason: string, at: string) =>
+    row(by, "ADD_RELATIONSHIP", { sourceId: by, targetId: old, relationshipType: "SUPERSEDES", metadata: { reason } }, at);
+  const LONG = { since: "2026-06-01T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" };
+
+  describe("C1: a duplicate merge needs an anchored duplicate phrase, or no reason and a near-identical title", () => {
+    it("never counts a real reversal as a merge, with no reason or a neutral one", () => {
+      const reversals: [string, string][] = [
+        ["Processors receive operations exactly once", "Processors receive operations at least once"],
+        ["Relational processors are supported", "Relational processors are not supported"],
+        ["Switchboard runs on v6.2.2-dev.74", "Switchboard runs on v6.2.3-dev.91"],
+        ["Connect runs the reactor in-process", "Connect runs the reactor remotely"],
+        ["Drives sync by pull responders", "Drives sync by push listeners"],
+      ];
+      for (const [then, now] of reversals) {
+        expect([then, isDuplicateMerge(then, now, null)]).toEqual([then, false]);
+        expect([then, isDuplicateMerge(then, now, "")]).toEqual([then, false]);
+        expect([then, isDuplicateMerge(then, now, "dev.91 changed this")]).toEqual([then, false]);
+      }
+    });
+
+    it("does not read a reason that merely mentions duplicates or merging as a merge", () => {
+      for (const reason of [
+        "Delivery is at-least-once: a crash replays operations, so processors see duplicate operations after a crash",
+        "Replaced: the old processor API was merged into the reactor package in dev.91",
+        "Duplicates the newer note",
+      ]) {
+        expect([reason, isDuplicateMerge("A claim", "Another claim entirely", reason)]).toEqual([reason, false]);
+      }
+    });
+
+    it("reads an anchored duplicate phrase as a merge, whatever the titles", () => {
+      for (const reason of [
+        "Same claim, written earlier",
+        "Same point, better evidence",
+        "Redundant with the newer note, which says the same",
+        "Identical claim written earlier",
+        "n9 already makes this claim",
+        "Twin of the newer note",
+        "duplicate of n9",
+        "Merged into the surviving note",
+      ]) {
+        expect([reason, isDuplicateMerge("Snapshots are kept forever", "The reactor retains each document state indefinitely", reason)]).toEqual([reason, true]);
+      }
+    });
+
+    it("counts an unexplained supersession of a near-identical title as a merge (Jaccard ≥ 0.8, no negation, no number)", () => {
+      expect(isDuplicateMerge("Storage keeps every snapshot of a document", "Storage keeps every snapshot of each document", null)).toBe(true);
+      // 0.75 — under the bar.
+      expect(isDuplicateMerge("Storage keeps snapshots", "Storage keeps all snapshots", null)).toBe(false);
+      // Near-identical but negated or renumbered: a change.
+      expect(isDuplicateMerge("The reactor keeps every snapshot of each document", "The reactor keeps every snapshot of each document never", null)).toBe(false);
+      expect(isDuplicateMerge("The reactor keeps every snapshot of each document for every drive and remote in release v5", "The reactor keeps every snapshot of each document for every drive and remote in release v6", null)).toBe(false);
+    });
+
+    it("makes 'exactly once' → 'at least once' with a reason about duplicate operations a shift, not a merge", () => {
+      const rows = [supersede("n9", "n2", "dev.91 outbox replays after a crash, so processors see duplicate operations", IN(2))];
+      const s = story([
+        ["n2", note("Processors receive each operation exactly once, in order", { status: "ARCHIVED" })],
+        ["n9", note("Processors receive operations at least once, with a crash gap")],
+      ], { coreIdeas: new Map([["m1", ["n2", "n9"]]]) });
+      const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+      expect(area?.changedClaims.map((c) => c.documentId)).toEqual(["n2"]);
+      expect(area?.mergedCount).toBe(0);
+    });
+  });
+
+  it("I1: gives a note created in the window and superseded in it its first recorded then, with thenAt, on both surfaces", () => {
+    const rows = [
+      row("old", "CREATE_DOCUMENT", {}, "2026-09-02T10:00:00.000Z"),
+      row("old", "SET_TITLE", { title: "Processors receive each operation exactly once, in order" }, "2026-09-02T10:00:01.000Z"),
+      row("new", "CREATE_DOCUMENT", {}, "2026-11-03T10:00:00.000Z"),
+      row("new", "SET_TITLE", { title: "Processors receive operations at least once, with a crash gap" }, "2026-11-03T10:00:01.000Z"),
+      supersede("new", "old", "dev.91 outbox replays after a crash", "2026-11-03T10:00:02.000Z"),
+      row("old", "ARCHIVE_NOTE", { comment: "superseded" }, "2026-11-03T10:00:03.000Z"),
+    ];
+    const s = story(
+      [
+        ["old", note("Processors receive each operation exactly once, in order", { status: "ARCHIVED", addedAt: "2026-09-02T10:00:00.000Z" })],
+        ["new", note("Processors receive operations at least once, with a crash gap", { addedAt: "2026-11-03T10:00:00.000Z" })],
+      ],
+      { coreIdeas: new Map([["a2", ["old", "new"]]]), superseded: new Set(["old"]) },
+    );
+    const d = buildChanges(rows, [], ctx(s), LONG, { scope: { documentIds: ["old", "new"] }, thenVsNow: true });
+    const area = d.story?.areas.find((a) => a.id === "a2");
+    expect(area?.changedClaims).toEqual([
+      {
+        documentId: "old",
+        then: { claim: "Processors receive each operation exactly once, in order", gist: null },
+        now: { claim: "Processors receive operations at least once, with a crash gap", gist: null },
+        why: "dev.91 outbox replays after a crash",
+        replacedBy: "new",
+        thenAt: "2026-09-02T10:00:01.000Z",
+      },
+    ]);
+    expect(d.thenVsNow?.then).toEqual([{ documentId: "old", claim: "Processors receive each operation exactly once, in order", gist: null, thenAt: "2026-09-02T10:00:01.000Z" }]);
+    expect(d.thenVsNow?.now.map((c) => c.documentId)).toEqual(["new"]);
+  });
+
+  it("I2: leaves a merged twin out of thenVsNow; its survivor reads as unchanged", () => {
+    const rows = [supersede("t2", "t1", "Same claim, written earlier", "2026-11-03T10:00:00.000Z"), row("t1", "ARCHIVE_NOTE", {}, "2026-11-03T10:00:01.000Z")];
+    const s = story(
+      [
+        ["t1", note("Drives are documents", { status: "ARCHIVED", addedAt: "2026-01-01T00:00:00.000Z" })],
+        ["t2", note("A drive is a document", { addedAt: "2026-01-01T00:00:00.000Z" })],
+      ],
+      { coreIdeas: new Map([["a2", ["t1", "t2"]]]), superseded: new Set(["t1"]) },
+    );
+    const d = buildChanges(rows, [], ctx(s), LONG, { scope: { documentIds: ["t1", "t2"] }, thenVsNow: true });
+    expect(d.story?.areas.find((a) => a.id === "a2")?.mergedCount).toBe(1);
+    expect(d.thenVsNow).toEqual({ then: [], now: [], unchanged: [{ documentId: "t2", claim: "A drive is a document", gist: null }] });
+  });
+
+  it("M1: lists a note created, revised and archived in the window as retired only, not also changed", () => {
+    const rows = [
+      row("n2", "CREATE_DOCUMENT", {}, IN(1)),
+      row("n2", "SET_TITLE", { title: "First claim" }, IN(1, 1)),
+      row("n2", "SET_TITLE", { title: "Revised claim" }, IN(5)),
+      row("n2", "ARCHIVE_NOTE", {}, IN(6)),
+    ];
+    const s = story([["n2", note("Revised claim", { status: "ARCHIVED", addedAt: IN(1) })]]);
+    const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([]);
+    expect(area?.changedCount).toBe(0);
+    expect(area?.retiredClaims).toEqual([{ documentId: "n2", claim: "First claim", gist: null, thenAt: IN(1, 1) }]);
+  });
+
+  describe("I3: a query names a map only when the map covers it", () => {
+    const maps = [
+      { id: "rd", title: "Reactor and Drives", depth: 1 },
+      { id: "rs", title: "Reactor Sync Infrastructure", depth: 2 },
+      { id: "dp", title: "Data Processing and CQRS", depth: 1 },
+      { id: "pr", title: "Processors", depth: 2 },
+      { id: "auth", title: "Authorization", depth: 1 },
+      { id: "dep", title: "Deployment", depth: 1 },
+      { id: "c", title: "Connect", depth: 1 },
+    ];
+    it("searches when the map's title covers under half of the query's content and another map shares a word", () => {
+      expect(matchMapTitle("how documents sync between Connect and Switchboard", maps)).toBeNull();
+    });
+    it("searches when two maps match equally (no alphabetical tie-break)", () => {
+      expect(matchMapTitle("authorization in connect", maps)).toBeNull();
+    });
+    it("still names the map a query covers", () => {
+      expect(matchMapTitle("reactor", maps)?.id).toBe("rd");
+      expect(matchMapTitle("what changed in reactor sync", maps)?.id).toBe("rs");
+      expect(matchMapTitle("deployment of the switchboard", maps)?.id).toBe("dep");
+      expect(matchMapTitle("authorization changes", maps)?.id).toBe("auth");
+      // Under half, but the only map that shares a word with the query.
+      expect(matchMapTitle("How did processor delivery work in September and how does it work now?", maps)?.id).toBe("pr");
+    });
+  });
+
+  it("M3: folds plurals without clipping 'does', 'status' or 'analysis'", () => {
+    expect([...claimTokens("does process address status analysis processors drives")]).toEqual(["does", "process", "address", "status", "analysis", "processor", "drive"]);
   });
 });

@@ -81,7 +81,7 @@ function bullet(e: ChangeEvent): string {
 }
 
 function claimLine(c: Claim): string {
-  return `- [[${c.documentId}]] ${oneLine(c.claim, 160)}${c.gist ? ` — ${oneLine(c.gist, 160)}` : ""}`;
+  return `- [[${c.documentId}]] ${oneLine(c.claim, 160)}${c.gist ? ` — ${oneLine(c.gist, 160)}` : ""}${c.thenAt ? ` (first recorded ${c.thenAt.slice(0, 10)})` : ""}`;
 }
 
 function shiftLine(s: Shift): string {
@@ -90,7 +90,7 @@ function shiftLine(s: Shift): string {
   const text = (t: { claim: string; gist: string | null }) =>
     `“${oneLine(t.claim, 140)}${sameClaim ? ` — ${t.gist === null ? "no description" : oneLine(t.gist, 120)}` : ""}”`;
   return (
-    `- [[${s.documentId}]] then ${text(s.then)} → now ${text(s.now)}` +
+    `- [[${s.documentId}]] then ${s.thenAt ? `(first recorded ${s.thenAt.slice(0, 10)}) ` : ""}${text(s.then)} → now ${text(s.now)}` +
     (s.replacedBy ? ` [[${s.replacedBy}]]` : "") +
     (s.why ? ` — because ${oneLine(s.why, 160)}` : "")
   );
@@ -105,10 +105,12 @@ function storySection(story: ChangeStory, out: string[]): void {
   out.push("");
   for (const a of story.areas) {
     out.push(`### ${a.title} — ${a.notesThen} → ${a.notesNow} notes`, "");
+    if (a.versions) out.push(`Sources: ${a.versions.first ?? "?"} → ${a.versions.now ?? "?"}.`, "");
     const more = (shown: number, count: number, word: string) => (count > shown ? [`- …and ${count - shown} more ${word}`] : []);
     if (a.newClaims.length) out.push("New:", ...a.newClaims.map(claimLine), ...more(a.newClaims.length, a.newCount, "new"), "");
     if (a.changedClaims.length) out.push("Now understood differently:", ...a.changedClaims.map(shiftLine), ...more(a.changedClaims.length, a.changedCount, "changed"), "");
     if (a.retiredClaims.length) out.push("Retired:", ...a.retiredClaims.map(claimLine), ...more(a.retiredClaims.length, a.retiredCount, "retired"), "");
+    if (a.mergedCount) out.push(`${a.mergedCount} duplicate note${a.mergedCount === 1 ? "" : "s"} merged (not listed).`, "");
   }
 }
 
@@ -118,8 +120,20 @@ function thenVsNowSection(t: ThenVsNow, out: string[]): void {
   if (t.unchanged.length) out.push("Unchanged:", ...t.unchanged.map(claimLine), "");
 }
 
+/** What a `q` covered: the whole vault, the map it named, or a search. */
+function scopeLine(d: ChangeDigest): string | null {
+  const r = d.scope.resolved;
+  if (!r) return null;
+  if (r.kind === "vault") return `Scope: the whole vault (“${oneLine(d.scope.q ?? r.title, 80)}” names ${oneLine(r.title, 80)}).`;
+  return r.kind === "moc"
+    ? `Scope: the map ${r.title} [[${r.id}]]${d.scope.q ? ` (matched “${oneLine(d.scope.q, 80)}”)` : ""}.`
+    : `Scope: search “${oneLine(r.query, 80)}” — ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes.`;
+}
+
 export function renderChangesMarkdown(d: ChangeDigest): string {
   const out: string[] = [`# Changes ${d.window.since} → ${d.window.until}`, ""];
+  const scope = scopeLine(d);
+  if (scope) out.push(scope, "");
   if (d.totals.documents === 0 && !d.thenVsNow) {
     out.push("Nothing changed in this window.");
     return out.join("\n") + "\n";

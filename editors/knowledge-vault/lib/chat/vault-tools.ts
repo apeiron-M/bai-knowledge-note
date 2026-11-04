@@ -38,7 +38,7 @@ import {
 } from "./web.js";
 import { shortAddress } from "../../../shared/identity.js";
 import { summarizeOperation } from "../../../../processors/graph-indexer/summarize.js";
-import type { ChangeTotals } from "../../../../processors/graph-indexer/changes.js";
+import type { ChangeTotals, ResolvedScope } from "../../../../processors/graph-indexer/changes.js";
 import { totalsLine } from "../../../../processors/graph-indexer/changes-markdown.js";
 import {
   MAX_CHANGED_CLAIMS,
@@ -130,8 +130,8 @@ const LIMITS = {
   /** How many rows carry who/what: one extra request each, run in parallel. */
   recentDetail: 12,
   history: { default: 10, max: 50 },
-  /** what_changed: events per page when a scope is given. */
-  changes: { default: 30, max: 100 },
+  /** what_changed: events per detail page (Addendum B1: at most 10). */
+  changes: { default: 10, max: 10 },
   web: { default: 5, max: 10 },
   editors: { default: 10, max: 25 },
   activity: 5000,
@@ -498,7 +498,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "what_changed",
       description:
-        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). With moc, topic or query it adds that part's events (before → after per field, replacements and reasons, source refs); follow nextCursor for more. Dates are UTC: a date alone for since starts that day, for until covers it.",
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query; a query that names a map (an area or a map below it) scopes to that map, otherwise to the top search hits and their linked notes; `scope` says which. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
       parameters: {
         type: "object",
         properties: {
@@ -525,7 +525,12 @@ export const VAULT_TOOLS: ToolSchema[] = [
           },
           cursor: {
             type: "string",
-            description: "nextCursor from the previous what_changed call with the same arguments, for the next page of events.",
+            description: "nextCursor from the previous what_changed call with the same arguments, for the next page of events (implies detail).",
+          },
+          detail: {
+            type: "boolean",
+            description:
+              "true to get the per-document events (before → after per field, replacements and reasons, source refs) of a moc, topic or query scope, a page at a time. Leave it out for the overview — answer from the story first; ask for detail only when the person wants to go deeper.",
           },
           limit: {
             type: "integer",
@@ -1763,21 +1768,21 @@ const CHANGE_EVENT_FIELDS = `kind documentId documentType title at by significan
   source { refBefore refAfter url added removed hunks noteIds noteCount } derivedFrom folded { operationType count }`;
 const CHANGE_CLAIM_FIELDS = "documentId claim gist";
 const CHANGE_TOTALS_FIELDS = "created revised superseded archived reverified sourcesRevised sourcesAdded documents operations";
-const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $cursor: String, $limit: Int) {
+const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $cursor: String, $limit: Int, $detail: Boolean!) {
   knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc, topic: $topic, q: $q, cursor: $cursor, limit: $limit) {
     window { since until }
-    scope { moc topic q documentIds types }
+    scope { moc topic q resolved { kind id title query hits } }
     totals { ${CHANGE_TOTALS_FIELDS} }
-    events { ${CHANGE_EVENT_FIELDS} }
-    nextCursor
+    events @include(if: $detail) { ${CHANGE_EVENT_FIELDS} }
+    nextCursor @include(if: $detail)
     story {
       growth { notesThen notesNow newAreas { id title } newMaps { id title area } }
-      areas { id title notesThen notesNow newCount changedCount retiredCount
+      areas { id title notesThen notesNow newCount changedCount retiredCount mergedCount versions { first now }
         newClaims { ${CHANGE_CLAIM_FIELDS} }
-        changedClaims { documentId then { claim gist } now { claim gist } why replacedBy }
+        changedClaims { documentId then { claim gist } now { claim gist } why replacedBy thenAt }
         retiredClaims { ${CHANGE_CLAIM_FIELDS} } }
     }
-    thenVsNow { then { ${CHANGE_CLAIM_FIELDS} } now { ${CHANGE_CLAIM_FIELDS} } unchanged { ${CHANGE_CLAIM_FIELDS} } }
+    thenVsNow { then { ${CHANGE_CLAIM_FIELDS} thenAt } now { ${CHANGE_CLAIM_FIELDS} } unchanged { ${CHANGE_CLAIM_FIELDS} } }
   }
 }`;
 
@@ -1785,6 +1790,7 @@ const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, 
 type ChangeEventWire = { documentId: string; by?: string | null } & Record<string, unknown>;
 type ChangeDigestWire = {
   window: { since: string; until: string };
+  scope?: { resolved?: ResolvedScope | null } | null;
   totals: ChangeTotals;
   events?: ChangeEventWire[] | null;
   nextCursor?: string | null;
@@ -1794,6 +1800,12 @@ type ChangeDigestWire = {
 
 /** The story a what_changed answer may carry: small enough to leave room for the conversation. */
 const STORY_BUDGET = 11_000;
+/** A whole what_changed result, any call (spec Addendum B1): story, thenVsNow and a page of events together. */
+export const CHANGES_CHAT_BUDGET = 14_000;
+/** thenVsNow claims per side in the chat (the server sends up to 12). */
+const CHAT_THEN_VS_NOW = 6;
+/** Below this much room a detail page leaves the story out (the overview call carried it). */
+const STORY_MIN_ROOM = 1_200;
 /** Areas the chat shows in detail before it thins any of them. */
 const DETAILED_AREAS = 10;
 /** Fewest areas it keeps in detail while thinning their claims. */
@@ -1805,7 +1817,12 @@ const claimText = (t: { claim: string; gist: string | null }, withGist: boolean)
   claim: clip(t.claim, 140),
   ...(withGist && t.gist ? { gist: clip(t.gist, 120) } : {}),
 });
-const chatClaim = (c: Claim, withGist = true) => ({ documentId: c.documentId, ...claimText(c, withGist) });
+const chatClaim = (c: Claim, withGist = true, gistMax = 120) => ({
+  documentId: c.documentId,
+  claim: clip(c.claim, 140),
+  ...(withGist && c.gist ? { gist: clip(c.gist, gistMax) } : {}),
+  ...(c.thenAt ? { thenAt: c.thenAt.slice(0, 10) } : {}),
+});
 function chatShift(sh: Shift): Record<string, unknown> {
   // The gist matters only when the claim itself reads the same.
   const sameClaim = sh.then.claim === sh.now.claim;
@@ -1815,7 +1832,24 @@ function chatShift(sh: Shift): Record<string, unknown> {
     now: claimText(sh.now, sameClaim),
     ...(sh.why ? { why: clip(sh.why, 140) } : {}),
     ...(sh.replacedBy ? { replacedBy: sh.replacedBy } : {}),
+    // A note created in the window: its then is as first recorded, on this date.
+    ...(sh.thenAt ? { thenAt: sh.thenAt.slice(0, 10) } : {}),
   };
+}
+
+/** thenVsNow for the chat: at most {@link CHAT_THEN_VS_NOW} a side, gists clipped. */
+export function chatThenVsNow(t: ThenVsNow, perSide = CHAT_THEN_VS_NOW): Record<string, unknown> {
+  const side = (list: Claim[]) => list.slice(0, perSide).map((c) => chatClaim(c, true, 100));
+  const more = (list: Claim[]) => Math.max(0, list.length - perSide);
+  const extra = more(t.then) + more(t.now) + more(t.unchanged);
+  return { then: side(t.then), now: side(t.now), unchanged: side(t.unchanged), ...(extra ? { more: `${extra} more claims not shown` } : {}) };
+}
+
+/** What a q covered, in words: the map it named, or a search. */
+function resolvedLine(r: ResolvedScope): string {
+  if (r.kind === "vault") return `the whole vault (“${clip(r.title, 80)}” names it)`;
+  if (r.kind === "moc") return `the map ${clip(r.title, 80)} (${r.id})`;
+  return `search “${clip(r.query, 80)}”: ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes`;
 }
 
 type Caps = readonly [newClaims: number, changed: number, retired: number];
@@ -1858,17 +1892,19 @@ function* storyLayouts(areas: number): Generator<StoryLayout> {
  * shown area holds beyond its claims here.
  */
 export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<string, unknown> {
-  const named = <T>(list: T[]) => list.slice(0, NAMED_MAPS);
-  const extra = (key: string, list: unknown[]) => (list.length > NAMED_MAPS ? { [key]: list.length - NAMED_MAPS } : {});
   const g = story.growth;
-  const growth = {
-    notesThen: g.notesThen,
-    notesNow: g.notesNow,
-    newAreas: named(g.newAreas).map((a) => clip(a.title, 80)),
-    ...extra("moreNewAreas", g.newAreas),
-    newMaps: named(g.newMaps).map((m) => clip(m.area ? `${m.title} (${m.area})` : m.title, 100)),
-    ...extra("moreNewMaps", g.newMaps),
+  const growthNaming = (names: number) => {
+    const extra = (key: string, list: unknown[]) => (list.length > names ? { [key]: list.length - names } : {});
+    return {
+      notesThen: g.notesThen,
+      notesNow: g.notesNow,
+      newAreas: g.newAreas.slice(0, names).map((a) => clip(a.title, 80)),
+      ...extra("moreNewAreas", g.newAreas),
+      newMaps: g.newMaps.slice(0, names).map((m) => clip(m.area ? `${m.title} (${m.area})` : m.title, 100)),
+      ...extra("moreNewMaps", g.newMaps),
+    };
   };
+  let growth = growthNaming(NAMED_MAPS);
   const detail = (a: StoryArea, [nNew, nChanged, nRetired]: Caps, gists: boolean) => {
     const newClaims = a.newClaims.slice(0, nNew);
     const changed = a.changedClaims.slice(0, nChanged);
@@ -1886,6 +1922,9 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
       changed: changed.map(chatShift),
       retired: retired.map((c) => chatClaim(c, gists)),
       ...(more.length ? { more: more.join(", ") } : {}),
+      // Twin notes merged: not a change in understanding, only counted.
+      ...(a.mergedCount ? { merged: a.mergedCount } : {}),
+      ...(a.versions ? { versions: `${a.versions.first ?? "?"} → ${a.versions.now ?? "?"}` } : {}),
     };
   };
   const build = ({ caps, gists }: StoryLayout, others = Infinity) => {
@@ -1910,11 +1949,35 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
     const out = build(last, others);
     if (fits(out)) return out;
   }
-  return build(last, 0);
+  // A small budget (a detail page): name fewer new maps and areas, then only count them.
+  for (const names of [5, 0]) {
+    growth = growthNaming(names);
+    const out = build(last, 0);
+    if (fits(out)) return out;
+  }
+  return { growth, areas: [], moreAreas: story.areas.length };
 }
 
 /** Diff hunks kept per event on a drill-down; the reader can open the note for the rest. */
 const DRILL_HUNKS = 2;
+/**
+ * How much of a drill-down event's text is kept: each hunk, and each other
+ * text. A page of ten heavy events is laid out with the first that fits.
+ */
+const DRILL_CLIPS: readonly { hunk: number; text: number }[] = [
+  { hunk: 300, text: 140 },
+  { hunk: 200, text: 100 },
+  { hunk: 120, text: 70 },
+  { hunk: 60, text: 50 },
+];
+/** At most this much of the budget goes to a page of events. */
+const EVENTS_BUDGET = 9_500;
+/**
+ * A page laid out with the hardest clips may run past {@link EVENTS_BUDGET}
+ * (the story then gives way) but never past this: with the window, totals,
+ * scope and cursor the whole result stays within CHANGES_CHAT_BUDGET.
+ */
+const EVENTS_HARD_CAP = 12_000;
 
 type FieldWire = { before?: string | null; after?: string | null } | null | undefined;
 type ContentWire = { before?: string | null; hunks?: string[] | null; added?: number | null; removed?: number | null } | null | undefined;
@@ -1946,20 +2009,57 @@ export function changeLine(e: ChangeEventWire): string {
 }
 
 /** An event as a drill-down returns it: the diff, without the bulk a reader does not need. */
-function drillEvent(e: ChangeEventWire & { byName?: string | null }): Record<string, unknown> {
+function drillEvent(e: ChangeEventWire & { byName?: string | null }, { hunk: DRILL_HUNK_CHARS, text: DRILL_TEXT } = DRILL_CLIPS[0]): Record<string, unknown> {
   const { folded: _folded, derivedFrom: _derived, ...rest } = e;
   const fields = rest.fields as { title?: FieldWire; description?: FieldWire; content?: ContentWire } | null | undefined;
   const source = rest.source as SourceWire;
+  const hunks = (list: string[] | null | undefined) => (list ?? []).slice(0, DRILL_HUNKS).map((h) => clip(h, DRILL_HUNK_CHARS));
+  const field = (f: FieldWire) => (f ? { before: f.before ? clip(f.before, DRILL_TEXT) : (f.before ?? null), after: f.after ? clip(f.after, DRILL_TEXT) : (f.after ?? null) } : f);
+  const notes = rest.revisionNotes as string[] | null | undefined;
+  const sup = rest.supersededBy as { documentId: string; title?: string | null; reason?: string | null } | null | undefined;
   return {
     ...rest,
+    title: typeof rest.title === "string" ? clip(rest.title, DRILL_TEXT) : rest.title,
     ...(fields
-      ? { fields: { ...fields, ...(fields.content ? { content: { hunks: (fields.content.hunks ?? []).slice(0, DRILL_HUNKS), added: fields.content.added ?? null, removed: fields.content.removed ?? null } } : {}) } }
+      ? {
+          fields: {
+            ...(fields.title ? { title: field(fields.title) } : {}),
+            ...(fields.description ? { description: field(fields.description) } : {}),
+            ...(fields.content ? { content: { hunks: hunks(fields.content.hunks), added: fields.content.added ?? null, removed: fields.content.removed ?? null } } : {}),
+          },
+        }
       : {}),
+    ...(notes?.length ? { revisionNotes: notes.slice(0, 2).map((n) => clip(n, DRILL_TEXT)) } : {}),
+    ...(sup ? { supersededBy: { documentId: sup.documentId, title: sup.title ? clip(sup.title, DRILL_TEXT) : null, reason: sup.reason ? clip(sup.reason, DRILL_TEXT) : null } } : {}),
+    ...(typeof rest.comment === "string" ? { comment: clip(rest.comment, DRILL_TEXT) } : {}),
     ...(source
-      ? { source: { refBefore: source.refBefore ?? null, refAfter: source.refAfter ?? null, added: source.added ?? null, removed: source.removed ?? null, hunks: (source.hunks ?? []).slice(0, DRILL_HUNKS), noteCount: source.noteCount ?? source.noteIds?.length ?? 0 } }
+      ? { source: { refBefore: source.refBefore ?? null, refAfter: source.refAfter ?? null, added: source.added ?? null, removed: source.removed ?? null, hunks: hunks(source.hunks), noteCount: source.noteCount ?? source.noteIds?.length ?? 0 } }
       : {}),
-    change: changeLine(e),
+    // The one-line summary only where no field, replacement or source says it already.
+    ...(fields || sup || source ? {} : { change: clip(changeLine(e), 2 * DRILL_TEXT) }),
   };
+}
+
+/** The last resort of {@link drillPage}: what the event is, about which document, when — every text short. */
+function bareEvent(e: ChangeEventWire): Record<string, unknown> {
+  const text = (v: unknown, n: number) => (typeof v === "string" ? clip(v, n) : null);
+  return { kind: text(e.kind, 20), documentId: clip(e.documentId, 80), title: text(e.title, 60), at: text(e.at, 24), change: clip(changeLine(e), 80) };
+}
+
+/**
+ * A page of drill-down events within {@link EVENTS_BUDGET}: every event the
+ * server returned, its text clipped harder until it fits; when even the
+ * hardest clips leave it over {@link EVENTS_HARD_CAP} (text no clip reaches —
+ * a long ref or signer), each event is cut to {@link bareEvent}, so the
+ * result always fits.
+ */
+function drillPage(events: (ChangeEventWire & { byName?: string | null })[]): Record<string, unknown>[] {
+  let page: Record<string, unknown>[] = [];
+  for (const clips of DRILL_CLIPS) {
+    page = events.map((e) => drillEvent(e, clips));
+    if (JSON.stringify(page).length <= EVENTS_BUDGET) return page;
+  }
+  return JSON.stringify(page).length <= EVENTS_HARD_CAP ? page : events.map(bareEvent);
 }
 
 export async function executeTool(
@@ -2582,6 +2682,9 @@ export async function executeTool(
       const moc = str(args, "moc");
       if (moc !== null && /^(null|undefined)$/i.test(moc.trim()))
         return fail(`moc must be a map's id: Elsewhere (id null) is no map — ask about it with query instead`);
+      const cursor = str(args, "cursor");
+      // Events only on request: the overview is the story (spec Addendum B1).
+      const detail = bool(args, "detail") || cursor !== null;
       const variables = {
         driveId,
         since,
@@ -2589,44 +2692,52 @@ export async function executeTool(
         moc,
         topic: str(args, "topic"),
         q: str(args, "query"),
-        cursor: str(args, "cursor"),
+        cursor,
         limit: int(args, "limit", LIMITS.changes.default, LIMITS.changes.max),
+        detail,
       };
       const r = await gql<{ knowledgeGraphChanges: ChangeDigestWire }>(graphEndpoint(), CHANGES_QUERY, variables);
       if ("error" in r) return fail(r.error);
       const digest = r.data.knowledgeGraphChanges;
-      const events = digest.events ?? [];
-      const names = await resolveEnsNames(events.map((e) => e.by ?? "").filter((a) => a !== ""));
+      const events = detail ? (digest.events ?? []).slice(0, LIMITS.changes.max) : null;
+      const names = await resolveEnsNames((events ?? []).map((e) => e.by ?? "").filter((a) => a !== ""));
       const named = <T extends { by?: string | null }>(e: T): T & { byName: string | null } => ({
         ...e,
         byName: e.by ? (names.get(e.by) ?? null) : null,
       });
+      const resolved = digest.scope?.resolved ?? null;
       // The story is the answer — what the vault knows now that it did not
-      // before, by main area; totals are one line, and per-document detail
-      // comes only on a drill-down (moc / topic / query), still bounded.
-      const data = {
+      // before, by main area; totals are one line. The whole result stays
+      // within CHANGES_CHAT_BUDGET: a page of events first (when asked), then
+      // thenVsNow (fewer a side if need be), and the story fills the rest.
+      const data: Record<string, unknown> = {
         window: digest.window,
         totals: totalsLine(digest.totals),
-        ...(digest.story ? { story: chatStory(digest.story) } : {}),
-        ...(digest.thenVsNow
-          ? {
-              thenVsNow: {
-                then: digest.thenVsNow.then.map((c) => chatClaim(c)),
-                now: digest.thenVsNow.now.map((c) => chatClaim(c)),
-                unchanged: digest.thenVsNow.unchanged.map((c) => chatClaim(c)),
-              },
-            }
-          : {}),
-        ...(digest.events ? { events: digest.events.map((e) => drillEvent(named(e))), nextCursor: digest.nextCursor ?? null } : {}),
+        ...(resolved ? { scope: resolvedLine(resolved) } : {}),
+        ...(events ? { events: drillPage(events.map(named)), nextCursor: digest.nextCursor ?? null } : {}),
       };
+      const size = (v: unknown) => JSON.stringify(v).length;
+      if (digest.thenVsNow) {
+        for (let perSide = CHAT_THEN_VS_NOW; perSide >= 0; perSide--) {
+          data.thenVsNow = chatThenVsNow(digest.thenVsNow, perSide);
+          if (size(data) + STORY_MIN_ROOM <= CHANGES_CHAT_BUDGET) break;
+        }
+      }
+      if (digest.story) {
+        const room = Math.min(STORY_BUDGET, CHANGES_CHAT_BUDGET - size(data) - 12);
+        if (room >= STORY_MIN_ROOM) data.story = chatStory(digest.story, room);
+        else data.story = "left out of this detail page — the call without detail carries it";
+      }
       const span = `between ${digest.window.since.slice(0, 10)} and ${digest.window.until.slice(0, 10)}`;
-      if (digest.totals.documents === 0) return ok(data, `nothing changed ${span}`);
+      const covered = resolved ? `; scope: ${resolvedLine(resolved)}` : "";
+      if (digest.totals.documents === 0) return ok(data, `nothing changed ${span}${covered}`);
       return ok(
         data,
         `${totalsLine(digest.totals)} ${span}` +
+          covered +
           (digest.story ? `; live notes ${digest.story.growth.notesThen} → ${digest.story.growth.notesNow}, ${digest.story.areas.length} area${digest.story.areas.length === 1 ? "" : "s"} changed` : "") +
           (digest.thenVsNow ? "; thenVsNow for the scope" : "") +
-          (digest.events ? `; ${digest.events.length} event${digest.events.length === 1 ? "" : "s"}${digest.nextCursor ? ", more with nextCursor" : ""}` : ""),
+          (events ? `; ${events.length} event${events.length === 1 ? "" : "s"}${digest.nextCursor ? ", more with nextCursor" : ""}` : ""),
       );
     }
 

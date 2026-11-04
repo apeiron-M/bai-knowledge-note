@@ -146,7 +146,9 @@ describe("GET changes", () => {
       .knowledgeGraphChanges;
     const gql = await resolver({}, { driveId: DRIVE, since: "2026-11-01", until: "2026-11-03", q: "claims" }, {});
     expect(rest.totals).toEqual(gql.totals);
-    expect(rest.scope).toEqual({ q: "claims" });
+    // Both say what q covered: no map is named "claims", so a search.
+    expect(rest.scope).toEqual({ q: "claims", resolved: { kind: "search", query: "claims", hits: 1 } });
+    expect(gql.scope).toEqual(rest.scope);
     expect(rest.totals).toMatchObject({ revised: 1, documents: 1 });
   });
 });
