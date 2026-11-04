@@ -99,7 +99,13 @@ describe("buildChanges on the 2026-11-03 sync (Data Processing and CQRS)", () =>
     return hit ? ((JSON.parse(hit.inputJson ?? "{}") as Record<string, string>)[key] ?? null) : null;
   };
   // A MoC's description is set by UPDATE_DESCRIPTION; it is a claim field too.
-  const claimFields: [string, string][] = [["SET_TITLE", "title"], ["SET_DESCRIPTION", "description"], ["UPDATE_DESCRIPTION", "description"], ["SET_CONTENT", "content"]];
+  const claimFields: [string, string][] = [
+    ["SET_TITLE", "title"],
+    ["SET_DESCRIPTION", "description"],
+    ["UPDATE_DESCRIPTION", "description"],
+    ["SET_CONTENT", "content"],
+    ["UPDATE_CLAIM_CONTENT", "content"],
+  ];
   const revisedIds = new Set(
     notes(fixture.rows)
       .filter((r) => !createdIds.has(r.documentId))
@@ -114,6 +120,12 @@ describe("buildChanges on the 2026-11-03 sync (Data Processing and CQRS)", () =>
 
   it("leads with the map the question named", () => {
     expect(digest.groups[0].title).toBe("Data Processing and CQRS");
+  });
+
+  it("re-derives from a window with no content patches (patches are covered on hand-built rows)", () => {
+    // The re-derivation above compares last values and does not replay
+    // PATCH_CONTENT; it is complete only while the fixture holds none.
+    expect([...fixture.rows, ...fixture.baseline].some((r) => r.operationType === "PATCH_CONTENT")).toBe(false);
   });
 
   it("counts revised and created notes as the rows say", () => {
@@ -148,9 +160,29 @@ describe("buildChanges on the 2026-11-03 sync (Data Processing and CQRS)", () =>
   });
 
   it("names the replacement and the reason of a superseded note", () => {
-    const sup = (digest.events ?? []).find((e) => e.kind === "superseded");
-    expect(sup?.supersededBy?.documentId).toBeTruthy();
-    expect(sup?.supersededBy?.reason).toBeTruthy();
+    // Re-derived from the SUPERSEDES rows: the replacing note is the edge's
+    // source; the reason is the edge's current one, else the row's.
+    const expected = new Map<string, { documentId: string; reason: string | null }>();
+    for (const r of fixture.rows) {
+      if (r.operationType !== "ADD_RELATIONSHIP") continue;
+      const input = JSON.parse(r.inputJson ?? "{}") as { sourceId?: string; targetId?: string; relationshipType?: string; metadata?: { reason?: string } };
+      if (input.relationshipType !== "SUPERSEDES" || !input.sourceId || !input.targetId) continue;
+      const edge = fixture.context.edges.find((e) => e.type === "SUPERSEDES" && e.source === input.sourceId && e.target === input.targetId);
+      expected.set(input.targetId, { documentId: input.sourceId, reason: edge?.reason ?? input.metadata?.reason ?? null });
+    }
+    const sup = (digest.events ?? []).filter((e) => e.kind === "superseded");
+    expect(sup.length).toBeGreaterThan(0);
+    for (const e of sup) {
+      const want = expected.get(e.documentId);
+      expect(want).toBeDefined();
+      expect(e.supersededBy?.documentId).toBe(want?.documentId);
+      expect(e.supersededBy?.reason).toBe(want?.reason);
+    }
+    // One, pinned: the duplicate retired at verify on 2026-11-03.
+    expect(sup.find((e) => e.documentId === "w7dOjx0xIZyj0dRo_eY0M7G_aGag0egNIUsR1A46czQ")?.supersededBy).toMatchObject({
+      documentId: "cba7b65a-7071-4790-b61f-055cde3b4cae",
+      reason: expect.stringMatching(/^Retires a duplicate at verify: both say processors derive read models by folding operations/) as unknown,
+    });
   });
 });
 
