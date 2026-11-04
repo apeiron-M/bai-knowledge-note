@@ -65,6 +65,10 @@ export interface StoryArea {
   title: string;
   notesThen: number;
   notesNow: number;
+  /** Uncapped: how many new, changed and retired claims the area has (the lists are capped). */
+  newCount: number;
+  changedCount: number;
+  retiredCount: number;
   newClaims: Claim[];
   changedClaims: Shift[];
   retiredClaims: Claim[];
@@ -81,8 +85,12 @@ export interface ChangeStory {
 }
 
 export interface ThenVsNow {
+  /** Claims as they stood at since that read differently now (or are gone). */
   then: Claim[];
+  /** Claims as they stand now that read differently at since (or are new). */
   now: Claim[];
+  /** Claims held at since and now in the same words: listed once. */
+  unchanged: Claim[];
 }
 
 /** A document's title and description at `since`, where a baseline recorded them. */
@@ -100,8 +108,9 @@ export function areasOf(s: StoryContext): { areas: { id: string; title: string }
     .sort((a, b) => a.title.localeCompare(b.title) || a.id.localeCompare(b.id));
   const areasByDoc = new Map<string, string[]>();
   const add = (doc: string, area: string) => {
-    const list = areasByDoc.get(doc) ?? [];
-    if (!list.includes(area)) areasByDoc.set(doc, [...list, area]);
+    const list = areasByDoc.get(doc);
+    if (!list) areasByDoc.set(doc, [area]);
+    else if (!list.includes(area)) list.push(area);
   };
   for (const area of areas) {
     const maps = new Set([area.id]);
@@ -129,7 +138,8 @@ function differs(a: { claim: string; gist: string | null }, b: { claim: string; 
   return a.claim !== b.claim || (a.gist ?? "") !== (b.gist ?? "");
 }
 
-interface Facts {
+/** What buildStory and buildThenVsNow both read, computed once per digest by {@link storyFacts}. */
+export interface Facts {
   areas: { id: string; title: string }[];
   areasByDoc: Map<string, string[]>;
   /** Created in the window (an event, or `addedAt` inside it). */
@@ -139,6 +149,8 @@ interface Facts {
   supersededInWindow: Set<string>;
   /** Replacing notes of in-window supersessions. */
   replacements: Set<string>;
+  /** Replacing notes the story shows as a shift's now (never also as new). */
+  shiftReplacements: Set<string>;
   shifts: Map<string, Shift>;
   retired: Set<string>;
   inScope: (id: string) => boolean;
@@ -149,7 +161,7 @@ interface Facts {
   liveNow: (id: string) => boolean;
 }
 
-function factsOf(events: ChangeEvent[], thenFields: ThenFields, s: StoryContext, window: { since: string; until: string }, ids: Set<string> | null): Facts {
+export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: StoryContext, window: { since: string; until: string }, ids: Set<string> | null): Facts {
   const { areas, areasByDoc } = areasOf(s);
   const inScope = (id: string) => !ids || ids.has(id);
   const node = (id: string) => s.nodes.get(id);
@@ -208,21 +220,18 @@ function factsOf(events: ChangeEvent[], thenFields: ThenFields, s: StoryContext,
       if (differs(then, now)) shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.revisionNotes?.length ? e.revisionNotes.join("; ") : null });
     }
   }
-  const retired = new Set([...archivedInWindow].filter((id) => isNote(id) && inScope(id) && !supersededInWindow.has(id)));
-  return { areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shifts, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
+  // Retired: archived in the window, still archived, and replaced by nothing — ever.
+  const retired = new Set(
+    [...archivedInWindow].filter((id) => isNote(id) && inScope(id) && archivedNow(id) && !supersededInWindow.has(id) && !s.superseded.has(id)),
+  );
+  const shiftReplacements = new Set([...shifts.values()].flatMap((sh) => (sh.replacedBy ? [sh.replacedBy] : [])));
+  return { areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
 }
 
 const claimOf = (f: Facts, id: string, then = false): Claim => ({ documentId: id, ...(then ? f.thenOf(id) : f.nowOf(id)) });
 
 /** The story: growth, then each main area with any change, most changed first; "Elsewhere" last. */
-export function buildStory(
-  events: ChangeEvent[],
-  thenFields: ThenFields,
-  s: StoryContext,
-  window: { since: string; until: string },
-  ids: Set<string> | null,
-): ChangeStory {
-  const f = factsOf(events, thenFields, s, window, ids);
+export function buildStory(f: Facts, s: StoryContext): ChangeStory {
   const incoming = (id: string) => s.nodes.get(id)?.incoming ?? 0;
   const notes = [...s.nodes.keys()].filter((id) => f.isNote(id) && f.inScope(id));
 
@@ -241,24 +250,33 @@ export function buildStory(
       }),
   };
 
+  const push = <T>(into: Map<string | null, T[]>, key: string | null, value: T) => {
+    const list = into.get(key);
+    if (list) list.push(value);
+    else into.set(key, [value]);
+  };
   const buckets = new Map<string | null, string[]>();
-  for (const id of notes) {
-    const list = f.areasByDoc.get(id) ?? [null];
-    for (const a of list) buckets.set(a, [...(buckets.get(a) ?? []), id]);
+  for (const id of notes) for (const a of f.areasByDoc.get(id) ?? [null]) push(buckets, a, id);
+  // A shift is filed under the old note's areas, else the replacement's
+  // (an unmapped note replaced by a mapped one), else Elsewhere.
+  // Event order: supersessions first, then revisions by size.
+  const shiftsByArea = new Map<string | null, Shift[]>();
+  for (const sh of f.shifts.values()) {
+    const at = f.areasByDoc.get(sh.documentId) ?? (sh.replacedBy ? f.areasByDoc.get(sh.replacedBy) : undefined) ?? [null];
+    for (const a of at) push(shiftsByArea, a, sh);
   }
   const areas: (StoryArea & { weight: number })[] = [];
-  for (const [id, members] of buckets) {
+  for (const id of new Set([...buckets.keys(), ...shiftsByArea.keys()])) {
+    const members = buckets.get(id) ?? [];
     const newIds = members
-      .filter((n) => f.created.has(n) && f.liveNow(n))
+      .filter((n) => f.created.has(n) && f.liveNow(n) && !f.shiftReplacements.has(n))
       .sort(
         (a, b) =>
           incoming(b) - incoming(a) ||
           (f.createdAt.get(b) ?? "").localeCompare(f.createdAt.get(a) ?? "") ||
           a.localeCompare(b),
       );
-    const memberSet = new Set(members);
-    // Event order: supersessions first, then revisions by size.
-    const shifts = [...f.shifts.values()].filter((sh) => memberSet.has(sh.documentId));
+    const shifts = shiftsByArea.get(id) ?? [];
     const retired = members.filter((n) => f.retired.has(n));
     const notesThen = members.filter(f.liveThen).length;
     const notesNow = members.filter(f.liveNow).length;
@@ -269,6 +287,9 @@ export function buildStory(
       title: id === null ? "Elsewhere" : (areaTitle.get(id) ?? id),
       notesThen,
       notesNow,
+      newCount: newIds.length,
+      changedCount: shifts.length,
+      retiredCount: retired.length,
       newClaims: newIds.slice(0, MAX_NEW_CLAIMS).map((n) => claimOf(f, n)),
       changedClaims: shifts.slice(0, MAX_CHANGED_CLAIMS),
       retiredClaims: retired.slice(0, MAX_RETIRED_CLAIMS).map((n) => claimOf(f, n, true)),
@@ -285,14 +306,7 @@ export function buildStory(
  * then-titles; now = live notes nobody has superseded. Notes that changed
  * lead each side (that is the contrast), then the most connected.
  */
-export function buildThenVsNow(
-  events: ChangeEvent[],
-  thenFields: ThenFields,
-  s: StoryContext,
-  window: { since: string; until: string },
-  ids: Set<string> | null,
-): ThenVsNow {
-  const f = factsOf(events, thenFields, s, window, ids);
+export function buildThenVsNow(f: Facts, s: StoryContext): ThenVsNow {
   const incoming = (id: string) => s.nodes.get(id)?.incoming ?? 0;
   const notes = [...s.nodes.keys()].filter((id) => f.isNote(id) && f.inScope(id));
   const order = (lead: (id: string) => boolean) => (a: string, b: string) =>
@@ -300,15 +314,23 @@ export function buildThenVsNow(
   const changedThen = (id: string) => f.shifts.has(id) || f.retired.has(id) || f.supersededInWindow.has(id);
   const changedNow = (id: string) => f.shifts.has(id) || f.created.has(id) || f.replacements.has(id);
   const supersededBefore = (id: string) => s.superseded.has(id) && !f.supersededInWindow.has(id);
-  const then = notes
-    .filter((id) => f.liveThen(id) && !supersededBefore(id))
+  const thenIds = notes.filter((id) => f.liveThen(id) && !supersededBefore(id));
+  const nowIds = new Set(notes.filter((id) => f.liveNow(id) && !s.superseded.has(id) && !f.supersededInWindow.has(id)));
+  // Held then and now in the same words: say it once.
+  const same = new Set(thenIds.filter((id) => nowIds.has(id) && !differs(f.thenOf(id), f.nowOf(id))));
+  const then = thenIds
+    .filter((id) => !same.has(id))
     .sort(order(changedThen))
     .slice(0, MAX_THEN_VS_NOW)
     .map((id) => claimOf(f, id, true));
-  const now = notes
-    .filter((id) => f.liveNow(id) && !s.superseded.has(id) && !f.supersededInWindow.has(id))
+  const now = [...nowIds]
+    .filter((id) => !same.has(id))
     .sort(order(changedNow))
     .slice(0, MAX_THEN_VS_NOW)
     .map((id) => claimOf(f, id));
-  return { then, now };
+  const unchanged = [...same]
+    .sort(order(() => false))
+    .slice(0, MAX_THEN_VS_NOW)
+    .map((id) => claimOf(f, id));
+  return { then, now, unchanged };
 }

@@ -85,7 +85,10 @@ function claimLine(c: Claim): string {
 }
 
 function shiftLine(s: Shift): string {
-  const text = (t: { claim: string; gist: string | null }) => `“${oneLine(t.claim, 140)}”`;
+  // A description-only shift reads the same by claim: show the gists then.
+  const sameClaim = s.then.claim === s.now.claim;
+  const text = (t: { claim: string; gist: string | null }) =>
+    `“${oneLine(t.claim, 140)}${sameClaim ? ` — ${t.gist === null ? "no description" : oneLine(t.gist, 120)}` : ""}”`;
   return (
     `- [[${s.documentId}]] then ${text(s.then)} → now ${text(s.now)}` +
     (s.replacedBy ? ` [[${s.replacedBy}]]` : "") +
@@ -102,15 +105,17 @@ function storySection(story: ChangeStory, out: string[]): void {
   out.push("");
   for (const a of story.areas) {
     out.push(`### ${a.title} — ${a.notesThen} → ${a.notesNow} notes`, "");
-    if (a.newClaims.length) out.push("New:", ...a.newClaims.map(claimLine), "");
-    if (a.changedClaims.length) out.push("Now understood differently:", ...a.changedClaims.map(shiftLine), "");
-    if (a.retiredClaims.length) out.push("Retired:", ...a.retiredClaims.map(claimLine), "");
+    const more = (shown: number, count: number, word: string) => (count > shown ? [`- …and ${count - shown} more ${word}`] : []);
+    if (a.newClaims.length) out.push("New:", ...a.newClaims.map(claimLine), ...more(a.newClaims.length, a.newCount, "new"), "");
+    if (a.changedClaims.length) out.push("Now understood differently:", ...a.changedClaims.map(shiftLine), ...more(a.changedClaims.length, a.changedCount, "changed"), "");
+    if (a.retiredClaims.length) out.push("Retired:", ...a.retiredClaims.map(claimLine), ...more(a.retiredClaims.length, a.retiredCount, "retired"), "");
   }
 }
 
 function thenVsNowSection(t: ThenVsNow, out: string[]): void {
   out.push("## Then vs now", "", "Then:", ...(t.then.length ? t.then.map(claimLine) : ["- (nothing in scope yet)"]), "");
   out.push("Now:", ...(t.now.length ? t.now.map(claimLine) : ["- (nothing in scope now)"]), "");
+  if (t.unchanged.length) out.push("Unchanged:", ...t.unchanged.map(claimLine), "");
 }
 
 export function renderChangesMarkdown(d: ChangeDigest): string {

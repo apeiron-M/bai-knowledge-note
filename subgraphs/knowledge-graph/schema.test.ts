@@ -53,9 +53,9 @@ describe("knowledgeGraph schema", () => {
     const fields = (name: string) => Object.keys((build().getType(name) as { getFields(): Record<string, unknown> }).getFields());
     expect(fields("KnowledgeGraphChangeStory")).toEqual(["growth", "areas"]);
     expect(fields("KnowledgeGraphChangeGrowth")).toEqual(["notesThen", "notesNow", "newAreas", "newMaps"]);
-    expect(fields("KnowledgeGraphChangeArea")).toEqual(["id", "title", "notesThen", "notesNow", "newClaims", "changedClaims", "retiredClaims"]);
+    expect(fields("KnowledgeGraphChangeArea")).toEqual(["id", "title", "notesThen", "notesNow", "newCount", "changedCount", "retiredCount", "newClaims", "changedClaims", "retiredClaims"]);
     expect(fields("KnowledgeGraphChangeClaim")).toEqual(["documentId", "claim", "gist"]);
     expect(fields("KnowledgeGraphChangeShift")).toEqual(["documentId", "then", "now", "why", "replacedBy"]);
-    expect(fields("KnowledgeGraphThenVsNow")).toEqual(["then", "now"]);
+    expect(fields("KnowledgeGraphThenVsNow")).toEqual(["then", "now", "unchanged"]);
   });
 });

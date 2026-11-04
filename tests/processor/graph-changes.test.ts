@@ -213,6 +213,9 @@ describe("graph query: changes()", () => {
         title: "Processors",
         notesThen: 1,
         notesNow: 2,
+        newCount: 1,
+        changedCount: 1,
+        retiredCount: 0,
         newClaims: [{ documentId: "n3", claim: "Processors checkpoint per batch", gist: "gist" }],
         changedClaims: [
           {
@@ -233,6 +236,7 @@ describe("graph query: changes()", () => {
         { documentId: "n3", claim: "Processors checkpoint per batch", gist: "gist" },
         { documentId: "n1", claim: "Delivery is at-least-once, with a crash gap", gist: null },
       ],
+      unchanged: [],
     });
   });
 

@@ -400,7 +400,9 @@ async function loadStoryContext(db: ReadDb, since: string, ids: Set<string> | nu
     if (e.link_type === "SUPERSEDES") superseded.add(e.target_document_id);
     else {
       const into = e.link_type === "CHILD_MOC" ? childMaps : coreIdeas;
-      into.set(e.source_document_id, [...(into.get(e.source_document_id) ?? []), e.target_document_id]);
+      const list = into.get(e.source_document_id);
+      if (list) list.push(e.target_document_id);
+      else into.set(e.source_document_id, [e.target_document_id]);
     }
   }
 
@@ -457,11 +459,12 @@ export async function loadChanges(
   const created = new Set(raw.filter((r) => CREATED_TYPES.has(r.operation_type)).map((r) => r.document_id));
   const inScopeDocs = [...new Set(rows.filter((r) => (!ids || ids.has(r.documentId)) && !created.has(r.documentId)).map((r) => r.documentId))];
   const baseline = (await baselineRows(db, window.since, inScopeDocs)).map(toRow);
+  // A cursor page carries no story (the first page did): skip loading it.
   const [ctx, story] = await Promise.all([
     loadContext(db, rows, opts.sourceFolders ?? new Map()),
-    loadStoryContext(db, window.since, ids, new Set(rows.map((r) => r.documentId))),
+    opts.cursor ? undefined : loadStoryContext(db, window.since, ids, new Set(rows.map((r) => r.documentId))),
   ]);
-  ctx.story = story;
+  if (story) ctx.story = story;
 
   const internal: ChangeScope = { ...(ids ? { documentIds: [...ids] } : {}), ...(scope.types ? { types: scope.types } : {}) };
   // Ids came from a scope key: the caller asked for events, even if the ids are empty.

@@ -259,15 +259,12 @@ describe("story: scope and then-vs-now", () => {
   it("answers then vs now for a q scope: then-titles at since, without notes archived before or created after", () => {
     const s = story(nodes, { archivedAtSince: new Set(["n7"]), coreIdeas: new Map([["a2", ["n1", "n6", "n7", "n8", "n3"]]]) });
     const d = digest(rows, baseline, s, { q: "processor delivery", documentIds: ["n1", "n6", "n7", "n8"] });
-    expect(d.thenVsNow?.then).toEqual([
-      { documentId: "n1", claim: "Delivery is exactly once, in order", gist: null },
-      { documentId: "n8", claim: "Processors run in the reactor's process", gist: null },
-    ]);
+    expect(d.thenVsNow?.then).toEqual([{ documentId: "n1", claim: "Delivery is exactly once, in order", gist: null }]);
     expect(d.thenVsNow?.now).toEqual([
       { documentId: "n1", claim: "Delivery is at-least-once, with a crash gap", gist: null },
       { documentId: "n6", claim: "Processors checkpoint per batch", gist: null },
-      { documentId: "n8", claim: "Processors run in the reactor's process", gist: null },
     ]);
+    expect(d.thenVsNow?.unchanged).toEqual([{ documentId: "n8", claim: "Processors run in the reactor's process", gist: null }]);
     // The story is restricted to the scope: n3 is not counted.
     expect(d.story?.areas[0]).toMatchObject({ id: "a2", notesThen: 2, notesNow: 3 });
   });
@@ -285,11 +282,145 @@ describe("story: scope and then-vs-now", () => {
     expect(d.thenVsNow?.now.map((c) => c.documentId)).toEqual(["n1"]);
   });
 
-  it("caps then and now at 12 each", () => {
+  it("caps then, now and unchanged at 12 each", () => {
     const many: [string, StoryNode][] = Array.from({ length: 15 }, (_, i) => [`p${i}`, note(`Claim ${i}`)]);
     const d = digest([], [], story(many), { q: "x", documentIds: many.map(([id]) => id) });
-    expect(d.thenVsNow?.then).toHaveLength(MAX_THEN_VS_NOW);
-    expect(d.thenVsNow?.now).toHaveLength(MAX_THEN_VS_NOW);
+    expect(d.thenVsNow?.unchanged).toHaveLength(MAX_THEN_VS_NOW);
+    const baseline = many.map(([id], i) => row(id, "SET_TITLE", { title: `Was ${i}` }, BEFORE));
+    const rows = many.map(([id], i) => row(id, "SET_TITLE", { title: `Claim ${i}` }, IN(1, i)));
+    const moved = digest(rows, baseline, story(many), { q: "x", documentIds: many.map(([id]) => id) });
+    expect(moved.thenVsNow?.then).toHaveLength(MAX_THEN_VS_NOW);
+    expect(moved.thenVsNow?.now).toHaveLength(MAX_THEN_VS_NOW);
     expect(MAX_THEN_VS_NOW).toBe(12);
+  });
+});
+
+describe("story: review fixes (Addendum A)", () => {
+  it("files a supersession under the replacement's area when the old note was in no area", () => {
+    const rows = [
+      row("n9", "CREATE_DOCUMENT", {}, IN(1)),
+      row("n9", "ADD_RELATIONSHIP", { sourceId: "n9", targetId: "old", relationshipType: "SUPERSEDES", metadata: { reason: "better" } }, IN(2)),
+      row("old", "ARCHIVE_NOTE", {}, IN(3)),
+    ];
+    const s = story(
+      [
+        ["old", note("Old loose claim", { status: "ARCHIVED" })],
+        ["n9", note("New mapped claim", { addedAt: IN(1) })],
+      ],
+      { coreIdeas: new Map([["a2", ["n9"]]]) },
+    );
+    const areas = digest(rows, [], s).story?.areas ?? [];
+    expect(areas.find((a) => a.id === "a2")?.changedClaims.map((c) => c.documentId)).toEqual(["old"]);
+    expect(areas.find((a) => a.id === null)?.changedClaims ?? []).toEqual([]);
+  });
+
+  it("does not list a replacing note as new: it is the shift's now", () => {
+    const rows = [
+      row("n9", "CREATE_DOCUMENT", {}, IN(1)),
+      row("n9", "ADD_RELATIONSHIP", { sourceId: "n9", targetId: "n2", relationshipType: "SUPERSEDES" }, IN(2)),
+    ];
+    const s = story(
+      [
+        ["n2", note("Storage keeps every snapshot", { status: "ARCHIVED" })],
+        ["n9", note("Storage keeps snapshots per checkpoint", { addedAt: IN(1) })],
+      ],
+      { coreIdeas: new Map([["m2", ["n2", "n9"]]]) },
+    );
+    const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims.map((c) => c.replacedBy)).toEqual(["n9"]);
+    expect(area?.newClaims).toEqual([]);
+    expect(area?.newCount).toBe(0);
+  });
+
+  it("does not retire a note archived and restored in the window", () => {
+    const rows = [row("n3", "ARCHIVE_NOTE", {}, IN(1)), row("n3", "RESTORE_NOTE", {}, IN(2))];
+    const s = story([["n3", note("Processors poll")]]);
+    const d = digest(rows, [], s);
+    expect(d.story?.areas.flatMap((a) => a.retiredClaims)).toEqual([]);
+  });
+
+  it("does not retire a note archived in the window that was superseded before it", () => {
+    const rows = [row("n3", "ARCHIVE_NOTE", {}, IN(1))];
+    const s = story([["n3", note("Processors poll", { status: "ARCHIVED" })]], { superseded: new Set(["n3"]) });
+    expect(digest(rows, [], s).story?.areas.flatMap((a) => a.retiredClaims)).toEqual([]);
+  });
+
+  it("is not a shift when the baseline lost the then-title (null falls back to now)", () => {
+    const baseline = [row("n1", "SET_DESCRIPTION", { description: "same gist" }, BEFORE)];
+    const rows = [row("n1", "SET_TITLE", { title: "Current claim" }, IN(1))];
+    const s = story([["n1", note("Current claim", { description: "same gist" })]]);
+    expect(digest(rows, baseline, s).story?.areas.flatMap((a) => a.changedClaims)).toEqual([]);
+  });
+
+  it("emits a description-only shift: same claim, different gist", () => {
+    const baseline = [row("n1", "SET_TITLE", { title: "Same claim" }, BEFORE), row("n1", "SET_DESCRIPTION", { description: "old gist" }, BEFORE)];
+    const rows = [row("n1", "SET_DESCRIPTION", { description: "new gist" }, IN(1))];
+    const s = story([["n1", note("Same claim", { description: "new gist" })]]);
+    expect(digest(rows, baseline, s).story?.areas[0].changedClaims).toEqual([
+      { documentId: "n1", then: { claim: "Same claim", gist: "old gist" }, now: { claim: "Same claim", gist: "new gist" }, why: null },
+    ]);
+  });
+
+  it("unions several hubs, and counts a note whose map sits under two areas in both", () => {
+    const rows = [row("x1", "CREATE_DOCUMENT", {}, IN(1))];
+    const s = story([["hub2", map("Second hub")], ["a4", map("Plugins")], ["shared", map("Shared map")], ["x1", note("Shared claim", { addedAt: IN(1) })]], {
+      hubs: ["hub", "hub2"],
+      childMaps: new Map([
+        ["hub", ["a1", "a2"]],
+        ["hub2", ["a4"]],
+        ["a2", ["shared"]],
+        ["a4", ["shared"]],
+      ]),
+      coreIdeas: new Map([["shared", ["x1"]]]),
+    });
+    expect(areasOf(s).areas.map((a) => a.id)).toEqual(["a4", "a2", "a1"]);
+    const areas = digest(rows, [], s).story?.areas ?? [];
+    expect(areas.map((a) => [a.id, a.newClaims.map((c) => c.documentId)])).toEqual([
+      ["a4", ["x1"]],
+      ["a2", ["x1"]],
+    ]);
+  });
+
+  it("carries uncapped counts of new, changed and retired claims per area", () => {
+    const rows: OperationRow[] = [];
+    const baseline: OperationRow[] = [];
+    const nodes: [string, StoryNode][] = [];
+    const ids: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      rows.push(row(`new${i}`, "CREATE_DOCUMENT", {}, IN(1, i)));
+      nodes.push([`new${i}`, note(`New ${i}`, { addedAt: IN(1, i) })]);
+      baseline.push(row(`chg${i}`, "SET_TITLE", { title: `Old ${i}` }, BEFORE));
+      rows.push(row(`chg${i}`, "SET_TITLE", { title: `Changed ${i}` }, IN(2, i)));
+      nodes.push([`chg${i}`, note(`Changed ${i}`)]);
+      rows.push(row(`ret${i}`, "ARCHIVE_NOTE", {}, IN(3, i)));
+      nodes.push([`ret${i}`, note(`Retired ${i}`, { status: "ARCHIVED" })]);
+      ids.push(`new${i}`, `chg${i}`, `ret${i}`);
+    }
+    const area = digest(rows, baseline, story(nodes, { coreIdeas: new Map([["a2", ids]]) })).story?.areas[0];
+    expect(area).toMatchObject({ newCount: 10, changedCount: 10, retiredCount: 10 });
+  });
+
+  it("gives no story or thenVsNow on a cursor page (the first page carried them)", () => {
+    const rows = [row("n1", "SET_TITLE", { title: "A" }, IN(1)), row("n6", "CREATE_DOCUMENT", {}, IN(2))];
+    const s = story([["n1", note("A")], ["n6", note("B", { addedAt: IN(2) })]]);
+    const first = buildChanges(rows, [], ctx(s), W, { scope: { q: "x", documentIds: ["n1", "n6"] }, limit: 1 });
+    expect(first.story).toBeDefined();
+    expect(first.nextCursor).toBeTruthy();
+    const next = buildChanges(rows, [], ctx(s), W, { scope: { q: "x", documentIds: ["n1", "n6"] }, limit: 1, cursor: first.nextCursor });
+    expect(next.events).toHaveLength(1);
+    expect(next.story).toBeUndefined();
+    expect(next.thenVsNow).toBeUndefined();
+  });
+
+  it("lists a claim the vault holds unchanged once, under unchanged, not on both sides", () => {
+    const baseline = [row("n1", "SET_TITLE", { title: "Then claim" }, BEFORE)];
+    const rows = [row("n1", "SET_TITLE", { title: "Now claim" }, IN(1))];
+    const s = story([["n1", note("Now claim")], ["n8", note("Steady claim")]]);
+    const t = digest(rows, baseline, s, { q: "x", documentIds: ["n1", "n8"] }).thenVsNow;
+    expect(t).toEqual({
+      then: [{ documentId: "n1", claim: "Then claim", gist: null }],
+      now: [{ documentId: "n1", claim: "Now claim", gist: null }],
+      unchanged: [{ documentId: "n8", claim: "Steady claim", gist: null }],
+    });
   });
 });

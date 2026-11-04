@@ -12,7 +12,7 @@
  * before `since`). See docs/superpowers/specs/2026-11-04-change-history-design.md
  * §2, §3 and §7 for the rules this implements.
  */
-import { buildStory, buildThenVsNow, type ChangeStory, type StoryContext, type ThenFields, type ThenVsNow } from "./changes-story.js";
+import { buildStory, buildThenVsNow, storyFacts, type ChangeStory, type StoryContext, type ThenFields, type ThenVsNow } from "./changes-story.js";
 import { gitRefOf } from "./summarize.js";
 
 export type ChangeKind =
@@ -896,15 +896,17 @@ export function buildChanges(
     );
 
   const digest: ChangeDigest = { window, scope, totals: totalsOf(events, operations), groups };
-  if (ctx.story) {
+  // A cursor page is the events' continuation: the first page carried the story.
+  if (ctx.story && !opts.cursor) {
     // Each document's title and description at since, where a baseline recorded them.
     const thenFields: ThenFields = new Map();
     for (const [id, list] of baselineByDoc) {
       const f = foldFields(list, EMPTY_FIELDS);
       thenFields.set(id, { title: f.title, description: f.description });
     }
-    digest.story = buildStory(events, thenFields, ctx.story, window, ids);
-    if (opts.thenVsNow ?? Boolean(scope.q || scope.topic)) digest.thenVsNow = buildThenVsNow(events, thenFields, ctx.story, window, ids);
+    const facts = storyFacts(events, thenFields, ctx.story, window, ids);
+    digest.story = buildStory(facts, ctx.story);
+    if (opts.thenVsNow ?? Boolean(scope.q || scope.topic)) digest.thenVsNow = buildThenVsNow(facts, ctx.story);
   }
   const shown = groups.flatMap((g) => g.highlights);
   if (hasScope(scope)) {

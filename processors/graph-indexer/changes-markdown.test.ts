@@ -58,6 +58,9 @@ describe("renderChangesMarkdown: the story leads", () => {
           title: "Data Processing and CQRS",
           notesThen: 40,
           notesNow: 44,
+          newCount: 3,
+          changedCount: 1,
+          retiredCount: 1,
           newClaims: [{ documentId: "n6", claim: "Processors checkpoint per batch", gist: "One cursor per batch" }],
           changedClaims: [
             {
@@ -75,6 +78,7 @@ describe("renderChangesMarkdown: the story leads", () => {
     thenVsNow: {
       then: [{ documentId: "n1", claim: "Delivery is exactly once, in order", gist: null }],
       now: [{ documentId: "n9", claim: "Delivery is at-least-once, with a crash gap", gist: null }],
+      unchanged: [{ documentId: "n8", claim: "Processors run in the reactor's process", gist: null }],
     },
   };
 
@@ -92,5 +96,22 @@ describe("renderChangesMarkdown: the story leads", () => {
     expect(md).toContain("## Then vs now");
     expect(at("## What the vault knows now")).toBeLessThan(at("1 created"));
     expect(at("## Then vs now")).toBeLessThan(at("1 created"));
+  });
+
+  it("says how many more new claims an area has than it lists", () => {
+    expect(renderChangesMarkdown(digest)).toContain("- …and 2 more new");
+  });
+
+  it("lists the claims that held throughout once, under Unchanged", () => {
+    const md = renderChangesMarkdown(digest);
+    expect(md).toContain("Unchanged:\n- [[n8]] Processors run in the reactor's process");
+  });
+
+  it("shows the gists of a description-only shift, so then and now do not read the same", () => {
+    const story = digest.story;
+    if (!story) throw new Error("the fixture has a story");
+    const shift = { documentId: "n2", then: { claim: "Same claim", gist: "old gist" }, now: { claim: "Same claim", gist: "new gist" }, why: null };
+    const md = renderChangesMarkdown({ ...digest, story: { ...story, areas: [{ ...story.areas[0], changedClaims: [shift] }] } });
+    expect(md).toContain("- [[n2]] then “Same claim — old gist” → now “Same claim — new gist”");
   });
 });

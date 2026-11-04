@@ -237,9 +237,13 @@ export const schema: DocumentNode = gql`
     """
     What the vault knows now that it did not before, by the hub's main areas —
     the semantic layer to lead an answer with. Restricted to the scope when one is given.
+    Absent on a cursor page (the first page carried it).
     """
     story: KnowledgeGraphChangeStory
-    """For a q or topic scope: the scope's claims as the vault held them at since, versus now."""
+    """
+    For a q or topic scope: the scope's claims as the vault held them at since, versus now
+    ("now" is the current state, even for a past until). Absent on a cursor page.
+    """
     thenVsNow: KnowledgeGraphThenVsNow
   }
 
@@ -276,11 +280,17 @@ export const schema: DocumentNode = gql`
     title: String!
     notesThen: Int!
     notesNow: Int!
-    "Notes created in the window, most connected first (at most 8)."
+    "How many notes are new in the area (uncapped; newClaims shows at most 8)."
+    newCount: Int!
+    "How many claims shifted in the area (uncapped; changedClaims shows at most 8)."
+    changedCount: Int!
+    "How many notes retired in the area (uncapped; retiredClaims shows at most 5)."
+    retiredCount: Int!
+    "Notes created in the window, most connected first (at most 8); a note that replaced another is its shift's now, not new."
     newClaims: [KnowledgeGraphChangeClaim!]!
     "Claims the vault now states differently (at most 8)."
     changedClaims: [KnowledgeGraphChangeShift!]!
-    "Notes archived in the window with no replacement (at most 5)."
+    "Notes archived in the window, still archived, and never replaced (at most 5)."
     retiredClaims: [KnowledgeGraphChangeClaim!]!
   }
 
@@ -308,10 +318,12 @@ export const schema: DocumentNode = gql`
   }
 
   type KnowledgeGraphThenVsNow {
-    "At most 12."
+    "Claims as they stood at since that read differently now or are gone (at most 12)."
     then: [KnowledgeGraphChangeClaim!]!
-    "At most 12."
+    "Claims as they stand now that read differently at since or are new (at most 12)."
     now: [KnowledgeGraphChangeClaim!]!
+    "Claims held at since and now in the same words, listed once (at most 12)."
+    unchanged: [KnowledgeGraphChangeClaim!]!
   }
 
   type KnowledgeGraphChangeWindow {
