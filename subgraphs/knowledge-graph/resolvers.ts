@@ -3,6 +3,7 @@ import { GraphQLError } from "graphql";
 import { getDb, getQuery, getWritableDb, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
 import { backfillDriveSourceHistory } from "./helpers/source-history.js";
+import { loadDriveChangesForGraphQL, type ChangeArgs } from "./helpers/changes-scope.js";
 import { loadPlacedSources, loadSourceTimeline, sourceListRow, sourceRowStore } from "./helpers/source-timeline.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import {
@@ -239,6 +240,12 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
       },
     },
 
+    KnowledgeGraphChangeEvent: {
+      // A map in the digest; a list on the wire (no JSON scalar here).
+      folded: (parent: { folded?: Record<string, number> }) =>
+        Object.entries(parent.folded ?? {}).map(([operationType, count]) => ({ operationType, count })),
+    },
+
     Mutation: withDriveGuards(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
@@ -257,6 +264,11 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
       // but skipping ensure on reads is safe — the graph doc only
       // needs to exist if a writer (sync, mutation) needs it, and
       // reindex calls its own setup path that doesn't depend on it.
+
+      // Read-gated like every discovery query (spec 2026-11-04 §4): the drive
+      // guard checks read access; there is no per-document filter below it.
+      knowledgeGraphChanges: (_: unknown, args: ChangeArgs & { driveId: string }) =>
+        loadDriveChangesForGraphQL(subgraph, args.driveId, args),
 
       knowledgeGraphNodes: async (_: unknown, args: { driveId: string }) => {
         const query = getQuery(subgraph, args.driveId);

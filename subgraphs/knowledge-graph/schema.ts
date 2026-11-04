@@ -223,6 +223,127 @@ export const schema: DocumentNode = gql`
     errors: [String!]!
   }
 
+  """What changed in a window — see knowledgeGraphChanges."""
+  type KnowledgeGraphChangeDigest {
+    window: KnowledgeGraphChangeWindow!
+    """The scope as asked (q is echoed, not the ids it resolved to)."""
+    scope: KnowledgeGraphChangeScope!
+    totals: KnowledgeGraphChangeTotals!
+    """Every group with at least one event, most significant first; never paged."""
+    groups: [KnowledgeGraphChangeGroup!]!
+    """Present whenever a scope is given (moc, topic, documentIds, q); paged by limit/cursor."""
+    events: [KnowledgeGraphChangeEvent!]
+    nextCursor: String
+  }
+
+  type KnowledgeGraphChangeWindow {
+    since: String!
+    until: String!
+  }
+
+  type KnowledgeGraphChangeScope {
+    moc: String
+    topic: String
+    documentIds: [String!]
+    q: String
+    types: [String!]
+  }
+
+  type KnowledgeGraphChangeTotals {
+    created: Int!
+    revised: Int!
+    superseded: Int!
+    archived: Int!
+    reverified: Int!
+    sourcesRevised: Int!
+    sourcesAdded: Int!
+    "Distinct documents with at least one event."
+    documents: Int!
+    "Operations in the window, in scope."
+    operations: Int!
+  }
+
+  type KnowledgeGraphChangeGroup {
+    key: String!
+    "moc | topic | folder | unplaced"
+    kind: String!
+    id: String
+    title: String!
+    totals: KnowledgeGraphChangeTotals!
+    "At most five, most significant first."
+    highlights: [KnowledgeGraphChangeEvent!]!
+  }
+
+  type KnowledgeGraphChangeEvent {
+    """
+    created | revised | superseded | archived | restored | approved |
+    reverified | source-added | source-revised | source-archived | source-deleted
+    """
+    kind: String!
+    documentId: String!
+    documentType: String!
+    title: String!
+    at: String!
+    by: String
+    significance: Int!
+    fields: KnowledgeGraphChangeFields
+    "Lines added under the note's '## Revision history' in the window."
+    revisionNotes: [String!]
+    supersededBy: KnowledgeGraphChangeSupersededBy
+    version: KnowledgeGraphChangeVersion
+    comment: String
+    source: KnowledgeGraphChangeSource
+    derivedFrom: [String!]
+    "Other operations on the document, counted by type, not listed."
+    folded: [KnowledgeGraphChangeCount!]!
+  }
+
+  type KnowledgeGraphChangeFields {
+    title: KnowledgeGraphFieldChange
+    description: KnowledgeGraphFieldChange
+    content: KnowledgeGraphContentChange
+  }
+
+  "before is null when the field was not set before the window."
+  type KnowledgeGraphFieldChange {
+    before: String
+    after: String!
+  }
+
+  type KnowledgeGraphContentChange {
+    before: String
+    "Up to six, each at most 400 characters: '-' removed lines, '+' added lines."
+    hunks: [String!]!
+    added: Int!
+    removed: Int!
+  }
+
+  type KnowledgeGraphChangeSupersededBy {
+    documentId: String!
+    title: String!
+    reason: String
+  }
+
+  type KnowledgeGraphChangeVersion {
+    before: String
+    after: String!
+  }
+
+  type KnowledgeGraphChangeSource {
+    refBefore: String
+    refAfter: String
+    url: String
+    added: Int!
+    removed: Int!
+    hunks: [String!]!
+    noteIds: [String!]!
+  }
+
+  type KnowledgeGraphChangeCount {
+    operationType: String!
+    count: Int!
+  }
+
   type SourceHistoryBackfill {
     sources: Int!
     inserted: Int!
@@ -511,6 +632,28 @@ export const schema: DocumentNode = gql`
       since: String!
       limit: Int
     ): [KnowledgeGraphNode!]!
+
+    """
+    What changed in the drive between since and until (ISO dates, UTC; a
+    date-only until covers that whole day; until defaults to now): totals,
+    then groups by map (or topic) with up to five highlights each — the
+    executive summary. Give a scope (moc, topic, q, documentIds) to also get
+    the events, paged by limit (default 50, max 200) and cursor. q is a
+    semantic search: its top 10 hits plus their one-hop neighbours. Readers
+    of the drive may ask.
+    """
+    knowledgeGraphChanges(
+      driveId: ID!
+      since: String!
+      until: String
+      moc: String
+      topic: String
+      q: String
+      documentIds: [String!]
+      types: [String!]
+      limit: Int
+      cursor: String
+    ): KnowledgeGraphChangeDigest!
 
     """
     Debug: raw processor DB tables

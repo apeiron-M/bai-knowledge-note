@@ -29,4 +29,23 @@ describe("knowledgeGraph schema", () => {
     const result = build().getType("SourceHistoryBackfill") as { getFields(): Record<string, unknown> };
     expect(Object.keys(result.getFields())).toEqual(["sources", "inserted", "skipped", "errors"]);
   });
+
+  it("serves the change digest to readers, with every scope argument", () => {
+    const field = build().getQueryType()?.getFields().knowledgeGraphChanges;
+    expect(String(field?.type)).toBe("KnowledgeGraphChangeDigest!");
+    expect(field?.args.map((a) => `${a.name}: ${String(a.type)}`)).toEqual([
+      "driveId: ID!",
+      "since: String!",
+      "until: String",
+      "moc: String",
+      "topic: String",
+      "q: String",
+      "documentIds: [String!]",
+      "types: [String!]",
+      "limit: Int",
+      "cursor: String",
+    ]);
+    const digest = build().getType("KnowledgeGraphChangeDigest") as { getFields(): Record<string, unknown> };
+    expect(Object.keys(digest.getFields())).toEqual(["window", "scope", "totals", "groups", "events", "nextCursor"]);
+  });
 });
