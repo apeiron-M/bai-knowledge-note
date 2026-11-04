@@ -1749,7 +1749,7 @@ function neighbourhoodOf(rows: SearchRow[]): {
 const CHANGE_EVENT_FIELDS = `kind documentId documentType title at by significance
   fields { title { before after } description { before after } content { before hunks added removed } }
   revisionNotes supersededBy { documentId title reason } version { before after } comment
-  source { refBefore refAfter url added removed hunks noteIds } derivedFrom folded { operationType count }`;
+  source { refBefore refAfter url added removed hunks noteIds noteCount } derivedFrom folded { operationType count }`;
 const CHANGE_TOTALS_FIELDS = "created revised superseded archived reverified sourcesRevised sourcesAdded documents operations";
 const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $cursor: String, $limit: Int) {
   knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc, topic: $topic, q: $q, cursor: $cursor, limit: $limit) {

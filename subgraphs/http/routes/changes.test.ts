@@ -118,6 +118,18 @@ describe("GET changes", () => {
     expect(body.events.map((e) => e.documentId)).toEqual(["n1"]);
   });
 
+  it("pages through one window when no until is given, and 400s a cursor it did not issue", async () => {
+    const first = (await (await get(`drive=${DRIVE}&since=2026-11-01&documentIds=n1,n2&limit=1`)).json()) as { window: { until: string }; nextCursor: string; events: { documentId: string }[] };
+    expect(first.nextCursor).toBeTruthy();
+    await new Promise((r) => setTimeout(r, 5));
+    const second = (await (await get(`drive=${DRIVE}&since=2026-11-01&documentIds=n1,n2&limit=1&cursor=${encodeURIComponent(first.nextCursor)}`)).json()) as { window: { until: string }; events: { documentId: string }[] };
+    expect(second.window.until).toBe(first.window.until);
+    expect([...first.events, ...second.events].map((e) => e.documentId).sort()).toEqual(["n1", "n2"]);
+    const bad = await get(`drive=${DRIVE}&since=2026-11-01&documentIds=n1&cursor=garbage`);
+    expect(bad.status).toBe(400);
+    expect(await bad.json()).toMatchObject({ code: "BAD_REQUEST" });
+  });
+
   it("answers markdown when asked", async () => {
     const res = await get(`drive=${DRIVE}&since=2026-11-01&until=2026-11-03`, { accept: "text/markdown" });
     expect(res.headers.get("content-type")).toContain("text/markdown");

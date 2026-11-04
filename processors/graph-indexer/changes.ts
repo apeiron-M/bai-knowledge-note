@@ -43,8 +43,10 @@ export interface FieldChange {
 }
 
 export interface ContentChange {
+  /** The earlier text, clipped to {@link MAX_BEFORE_CHARS} (the hunks carry the diff). */
   before: string | null;
   hunks: string[];
+  /** Lines added and removed (a line that only moved is not counted). */
   added: number;
   removed: number;
 }
@@ -66,10 +68,14 @@ export interface ChangeEvent {
     refBefore: string | null;
     refAfter: string | null;
     url: string | null;
-    added: number;
-    removed: number;
+    /** Null when the earlier text was never recorded (an index not yet backfilled). */
+    added: number | null;
+    removed: number | null;
     hunks: string[];
+    /** The first {@link MAX_SOURCE_NOTE_IDS} notes derived from the source. */
     noteIds: string[];
+    /** How many notes derive from the source. */
+    noteCount: number;
   };
   derivedFrom?: string[];
   folded: Record<string, number>;
@@ -135,6 +141,9 @@ export const EVENTS_MAX_LIMIT = 200;
 export const HIGHLIGHTS_PER_GROUP = 5;
 export const MAX_HUNKS = 6;
 export const MAX_HUNK_CHARS = 400;
+/** A revised body's earlier text ships this much, no more. */
+export const MAX_BEFORE_CHARS = 400;
+export const MAX_SOURCE_NOTE_IDS = 20;
 
 export const SIGNIFICANCE: Record<ChangeKind, number> = {
   superseded: 6,
@@ -151,23 +160,35 @@ export const SIGNIFICANCE: Record<ChangeKind, number> = {
 };
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+/** A date-time that names its offset (`Z`, `+02:00`, `-0500`). */
+const HAS_OFFSET = /(?:Z|[+-]\d{2}:?\d{2})$/i;
+/** How every timestamp the indexer writes begins; anything else is not compared. */
+const ISO_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T/;
+
+/** A window or cursor the caller got wrong: a 400, never a 500. */
+export class ChangeInputError extends Error {}
+
+function utc(value: string): string {
+  return value.includes("T") && !HAS_OFFSET.test(value) ? `${value}Z` : value;
+}
 
 /**
  * The window in UTC. A date-only `since` starts at 00:00Z; a date-only
- * `until` covers that whole day; no `until` means now.
+ * `until` covers that whole day; a timestamp without an offset is UTC; no
+ * `until` means now.
  */
 export function parseWindow(
   since: string,
   until?: string | null,
   now: Date = new Date(),
 ): { since: string; until: string } {
-  const from = DATE_ONLY.test(since) ? `${since}T00:00:00.000Z` : since;
-  const to = !until ? now.toISOString() : DATE_ONLY.test(until) ? `${until}T23:59:59.999Z` : until;
+  const from = DATE_ONLY.test(since) ? `${since}T00:00:00.000Z` : utc(since);
+  const to = !until ? now.toISOString() : DATE_ONLY.test(until) ? `${until}T23:59:59.999Z` : utc(until);
   const a = new Date(from);
   const b = new Date(to);
-  if (Number.isNaN(a.getTime())) throw new Error(`since is not a date: ${since}`);
-  if (Number.isNaN(b.getTime())) throw new Error(`until is not a date: ${String(until)}`);
-  if (a.getTime() > b.getTime()) throw new Error(`since (${since}) is after until (${String(until)})`);
+  if (Number.isNaN(a.getTime())) throw new ChangeInputError(`since is not a date: ${since}`);
+  if (Number.isNaN(b.getTime())) throw new ChangeInputError(`until is not a date: ${String(until)}`);
+  if (a.getTime() > b.getTime()) throw new ChangeInputError(`since (${since}) is after until (${String(until)})`);
   return { since: a.toISOString(), until: b.toISOString() };
 }
 
@@ -182,11 +203,14 @@ const ARCHIVE_OPS = new Set(["ARCHIVE_NOTE", "ARCHIVE_OBSERVATION"]);
 const RESTORE_OPS = new Set(["RESTORE_NOTE"]);
 const APPROVE_OPS = new Set(["APPROVE_NOTE"]);
 const DELETE_OPS = new Set(["DELETE_DOCUMENT", "PURGE_DOCUMENT"]);
+/** A model's own creation operation: it sets the first title, description and (some) content. */
+const CREATE_OPS = new Set(["CREATE_MOC", "CREATE_CLAIM", "CREATE_TENSION", "CREATE_OBSERVATION"]);
 const SOURCE_TYPE = "bai/source";
 
 /** Operation types that can make an event (the query layer fetches their inputs). */
 export const EVENT_OPERATION_TYPES: readonly string[] = [
   "CREATE_DOCUMENT",
+  ...CREATE_OPS,
   ...TITLE_OPS,
   ...DESCRIPTION_OPS,
   ...CONTENT_OPS,
@@ -199,10 +223,12 @@ export const EVENT_OPERATION_TYPES: readonly string[] = [
   "INGEST_SOURCE",
   "SET_SOURCE_STATUS",
   "ADD_RELATIONSHIP",
+  "REMOVE_RELATIONSHIP",
 ];
 
 /** Operation types whose last pre-window value is a baseline. */
 export const BASELINE_OPERATION_TYPES: readonly string[] = [
+  ...CREATE_OPS,
   ...TITLE_OPS,
   ...DESCRIPTION_OPS,
   ...CONTENT_OPS,
@@ -253,7 +279,11 @@ function foldFields(rows: OperationRow[], start: Fields): Fields {
   for (const row of rows) {
     const t = row.operationType;
     const input = parseInput(row);
-    if (TITLE_OPS.has(t)) f.title = str(input.title) ?? f.title;
+    if (CREATE_OPS.has(t)) {
+      f.title = str(input.title) ?? f.title;
+      f.description = str(input.description) ?? f.description;
+      f.content = str(input.content) ?? f.content;
+    } else if (TITLE_OPS.has(t)) f.title = str(input.title) ?? f.title;
     else if (DESCRIPTION_OPS.has(t)) f.description = str(input.description) ?? f.description;
     else if (CONTENT_OPS.has(t)) f.content = str(input.content) ?? f.content;
     else if (t === PATCH_OP) f.content = applyPatch(f.content, input);
@@ -276,8 +306,8 @@ export interface LineDiff {
 /** Above this many cells the LCS table is not built; the diff counts lines instead. */
 const MAX_LCS_CELLS = 4_000_000;
 
-function clip(s: string): string {
-  return s.length > MAX_HUNK_CHARS ? `${s.slice(0, MAX_HUNK_CHARS - 1)}…` : s;
+function clip(s: string, max = MAX_HUNK_CHARS): string {
+  return s.length > max ? `${s.slice(0, max - 1)}…` : s;
 }
 
 /**
@@ -357,6 +387,33 @@ export function diffLines(before: string, after: string): LineDiff {
   return { added, removed, hunks };
 }
 
+/**
+ * Lines added and removed, cheaply: the shared head and tail trimmed, the
+ * rest compared as line multisets (a line that only moved is not counted).
+ * Linear, so every event can be weighed; {@link diffLines} then runs only for
+ * the events a reader will see.
+ */
+export function countLines(before: string, after: string): { added: number; removed: number } {
+  if (before === after) return { added: 0, removed: 0 };
+  const a = before.split("\n");
+  const b = after.split("\n");
+  let head = 0;
+  while (head < a.length && head < b.length && a[head] === b[head]) head++;
+  let tail = 0;
+  while (tail < a.length - head && tail < b.length - head && a[a.length - 1 - tail] === b[b.length - 1 - tail]) tail++;
+  const counts = new Map<string, number>();
+  for (let i = head; i < a.length - tail; i++) counts.set(a[i], (counts.get(a[i]) ?? 0) + 1);
+  let added = 0;
+  for (let j = head; j < b.length - tail; j++) {
+    const c = counts.get(b[j]) ?? 0;
+    if (c > 0) counts.set(b[j], c - 1);
+    else added++;
+  }
+  let removed = 0;
+  for (const c of counts.values()) removed += c;
+  return { added, removed };
+}
+
 // ---- Revision history convention ----
 
 /** The `- ` lines under a `## Revision history` heading. */
@@ -395,7 +452,7 @@ function weight(e: ChangeEvent): number {
   const c = e.fields?.content;
   const fieldCount = (e.fields?.title ? 1 : 0) + (e.fields?.description ? 1 : 0);
   if (c) return c.added + c.removed + fieldCount;
-  if (e.source) return e.source.added + e.source.removed;
+  if (e.source) return (e.source.added ?? 0) + (e.source.removed ?? 0);
   return fieldCount;
 }
 
@@ -418,24 +475,48 @@ function compareEvents(a: ChangeEvent, b: ChangeEvent): number {
   return compareKeys(keyOf(a), keyOf(b));
 }
 
-/** Opaque: the sort key of the last event on the page. */
-function encodeCursor(e: ChangeEvent): string {
-  return btoa(JSON.stringify(keyOf(e)));
+function toBase64(text: string): string {
+  let binary = "";
+  for (const byte of new TextEncoder().encode(text)) binary += String.fromCharCode(byte);
+  return btoa(binary);
 }
 
-function decodeCursor(cursor: string): CursorKey | null {
+function fromBase64(b64: string): string {
+  return new TextDecoder().decode(Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)));
+}
+
+/**
+ * Opaque: the sort key of the last event on the page, and the window's end —
+ * so a caller who gave no `until` pages through the same window rather than
+ * one that moves to "now" with every page.
+ */
+function encodeCursor(e: ChangeEvent, until: string): string {
+  return toBase64(JSON.stringify({ k: keyOf(e), u: until }));
+}
+
+function decodeCursor(cursor: string): { key: CursorKey; until: string } {
+  let v: unknown;
   try {
-    const v: unknown = JSON.parse(atob(cursor));
-    if (Array.isArray(v) && v.length === 5) return v as CursorKey;
+    v = JSON.parse(fromBase64(cursor));
   } catch {
-    // an unreadable cursor starts from the top
+    v = null;
   }
-  return null;
+  const c = v as { k?: unknown; u?: unknown } | null;
+  if (!c || !Array.isArray(c.k) || c.k.length !== 5 || typeof c.u !== "string") {
+    throw new ChangeInputError("cursor is not one this endpoint returned");
+  }
+  return { key: c.k as CursorKey, until: c.u };
+}
+
+/** The window end a cursor was issued for (the caller's `until` when it gives none). */
+export function cursorUntil(cursor: string): string {
+  return decodeCursor(cursor).until;
 }
 
 interface Built {
   events: ChangeEvent[];
-  documentsWithEvents: Set<string>;
+  /** Texts to diff into hunks, once it is known which events are shown. */
+  pending: Map<ChangeEvent, { before: string; after: string }>;
 }
 
 function buildEvents(
@@ -446,6 +527,7 @@ function buildEvents(
   window: { since: string },
 ): Built {
   const events: ChangeEvent[] = [];
+  const pending: Built["pending"] = new Map();
   const titleOf = (id: string, fallback?: string | null): string =>
     ctx.nodes.get(id)?.title || fallback || ctx.sources.get(id)?.title || id;
 
@@ -491,25 +573,28 @@ function buildEvents(
         } else {
           // Before = the last ingestion before the window, else the first in it.
           const beforeInput = priorIngest ?? (firstIngestInWindow && firstIngestInWindow !== ingest ? parseInput(firstIngestInWindow) : null);
-          const diff =
-            beforeInput && typeof beforeInput.content === "string" && typeof after.content === "string"
-              ? diffLines(beforeInput.content, after.content)
-              : { added: 0, removed: 0, hunks: [] };
+          const beforeText = str(beforeInput?.content);
+          const afterText = str(after.content);
+          // No earlier text recorded: the counts are unknown, not zero.
+          const counts = beforeText !== null && afterText !== null ? countLines(beforeText, afterText) : null;
+          const claimIds = ctx.sources.get(documentId)?.claimIds ?? [];
           const e = make("source-revised", ingest, {
             title: titleOf(documentId, str(after.title)),
             source: {
               refBefore: beforeInput ? gitRefOf(beforeInput.method) : null,
               refAfter: gitRefOf(after.method),
               url: str(after.url),
-              added: diff.added,
-              removed: diff.removed,
-              hunks: diff.hunks,
-              noteIds: ctx.sources.get(documentId)?.claimIds ?? [],
+              added: counts?.added ?? null,
+              removed: counts?.removed ?? null,
+              hunks: [],
+              noteIds: claimIds.slice(0, MAX_SOURCE_NOTE_IDS),
+              noteCount: claimIds.length,
             },
           });
+          if (counts && beforeText !== null && afterText !== null) pending.set(e, { before: beforeText, after: afterText });
           // Re-ingested with identical text: a re-verification of the source,
           // ranked with the other re-verifications (last).
-          if (diff.added === 0 && diff.removed === 0) e.significance = SIGNIFICANCE.reverified;
+          if (beforeText !== null && beforeText === afterText) e.significance = SIGNIFICANCE.reverified;
           docEvents.push(e);
         }
       }
@@ -518,7 +603,7 @@ function buildEvents(
         docEvents.push(make("source-archived", statusRow));
       }
     } else {
-      const created = rows.find((r) => r.operationType === "CREATE_DOCUMENT");
+      const created = rows.find((r) => r.operationType === "CREATE_DOCUMENT" || CREATE_OPS.has(r.operationType));
       if (created) {
         // Its in-window edits are its creation.
         for (const r of rows) if (r.operationType !== "ADD_RELATIONSHIP" || !isSupersedes(r)) used.add(r);
@@ -534,9 +619,11 @@ function buildEvents(
         const title = fieldChange(base.title, now.title);
         const description = fieldChange(base.description, now.description);
         let content: ContentChange | undefined;
+        let contentTexts: { before: string; after: string } | undefined;
         if (now.content !== null && now.content !== base.content) {
-          const d = diffLines(base.content ?? "", now.content);
-          content = { before: base.content, hunks: d.hunks, added: d.added, removed: d.removed };
+          const d = countLines(base.content ?? "", now.content);
+          content = { before: base.content === null ? null : clip(base.content, MAX_BEFORE_CHARS), hunks: [], added: d.added, removed: d.removed };
+          contentTexts = { before: base.content ?? "", after: now.content };
         }
         const claimChanged = Boolean(title || description || content);
         for (const r of claimRows) used.add(r);
@@ -548,13 +635,13 @@ function buildEvents(
           if (title) fields.title = title;
           if (description) fields.description = description;
           if (content) fields.content = content;
-          docEvents.push(
-            make("revised", last, {
-              fields,
-              ...(notes.length ? { revisionNotes: notes } : {}),
-              derivedFrom: ctx.derivedFrom.get(documentId) ?? [],
-            }),
-          );
+          const e = make("revised", last, {
+            fields,
+            ...(notes.length ? { revisionNotes: notes } : {}),
+            derivedFrom: ctx.derivedFrom.get(documentId) ?? [],
+          });
+          if (contentTexts) pending.set(e, contentTexts);
+          docEvents.push(e);
         }
         const versionRow = lastOf(
           rows.filter((r) => r.operationType === "SET_METADATA_FIELD" && parseInput(r).field === "version"),
@@ -600,7 +687,7 @@ function buildEvents(
     docEvents[0].folded = folded;
     events.push(...docEvents);
   }
-  return { events, documentsWithEvents: new Set(events.map((e) => e.documentId)) };
+  return { events, pending };
 }
 
 function isSupersedes(row: OperationRow): boolean {
@@ -621,12 +708,15 @@ interface GroupRef {
 const UNPLACED: GroupRef = { key: "unplaced", kind: "unplaced", id: null, title: "Unplaced" };
 
 function noteGroup(noteId: string, ctx: ChangeContext): GroupRef | null {
+  // A map's own changes belong to the map, not to the maps above it.
+  const node = ctx.nodes.get(noteId);
+  if (node?.documentType === "bai/moc") return { key: `moc:${noteId}`, kind: "moc", id: noteId, title: node.title || noteId };
   const mocs = ctx.mocsByNote.get(noteId);
   if (mocs?.length) {
     const best = [...mocs].sort((a, b) => TIER_RANK[a.tier] - TIER_RANK[b.tier] || a.title.localeCompare(b.title) || a.id.localeCompare(b.id))[0];
     return { key: `moc:${best.id}`, kind: "moc", id: best.id, title: best.title };
   }
-  const topic = ctx.nodes.get(noteId)?.topics[0];
+  const topic = node?.topics[0];
   if (topic) return { key: `topic:${topic}`, kind: "topic", id: topic, title: topic };
   return null;
 }
@@ -666,9 +756,9 @@ function totalsOf(events: ChangeEvent[], operations: number): ChangeTotals {
 
 // ---- Scope ----
 
-function inScope(documentId: string, documentType: string, scope: ChangeScope, ctx: ChangeContext): boolean {
+function inScope(documentId: string, documentType: string, scope: ChangeScope, ids: Set<string> | null, ctx: ChangeContext): boolean {
   if (scope.types?.length && !scope.types.includes(documentType)) return false;
-  if (scope.documentIds && !scope.documentIds.includes(documentId)) return false;
+  if (ids && !ids.has(documentId)) return false;
   const notesOf = (id: string): string[] => (documentType === SOURCE_TYPE ? (ctx.sources.get(id)?.claimIds ?? []) : [id]);
   // With explicit ids (the query layer resolves a MoC through its child maps),
   // the ids are the scope; moc/topic only narrow when no ids were given.
@@ -703,16 +793,28 @@ export function buildChanges(
   opts: { scope: ChangeScope; limit?: number; cursor?: string | null },
 ): ChangeDigest {
   const scope = opts.scope;
-  const inWindow = rows.filter((r) => r.timestamp >= window.since && r.timestamp <= window.until).sort(byTime);
+  const ids = scope.documentIds ? new Set(scope.documentIds) : null;
+  // String order is time order only for ISO timestamps (what the indexer
+  // writes); anything else — an epoch stamp from an old writer — is skipped
+  // rather than misplaced.
+  const iso = (r: OperationRow) => ISO_TIMESTAMP.test(r.timestamp);
+  const inWindow = rows.filter((r) => iso(r) && r.timestamp >= window.since && r.timestamp <= window.until).sort(byTime);
 
-  // Supersession: the edge row lives on the replacing note; the event is the replaced one's.
+  // Supersession: the edge row lives on the replacing note; the event is the
+  // replaced one's. A removal later in the window takes it back.
   const superseded = new Map<string, { row: OperationRow; by: string; reason: string | null }>();
   for (const row of inWindow) {
-    if (!isSupersedes(row)) continue;
+    const removal = row.operationType === "REMOVE_RELATIONSHIP";
+    if (!removal && !isSupersedes(row)) continue;
     const input = parseInput(row);
     const target = str(input.targetId);
     const source = str(input.sourceId) ?? row.documentId;
     if (!target) continue;
+    if (removal) {
+      const type = str(input.relationshipType);
+      if ((type === null || type === "SUPERSEDES") && superseded.get(target)?.by === source) superseded.delete(target);
+      continue;
+    }
     const metadata = input.metadata as { reason?: unknown } | undefined;
     superseded.set(target, {
       row,
@@ -723,24 +825,24 @@ export function buildChanges(
 
   const rowsByDoc = new Map<string, OperationRow[]>();
   for (const row of inWindow) {
-    if (!inScope(row.documentId, row.documentType, scope, ctx)) continue;
+    if (!inScope(row.documentId, row.documentType, scope, ids, ctx)) continue;
     const list = rowsByDoc.get(row.documentId) ?? [];
     list.push(row);
     rowsByDoc.set(row.documentId, list);
   }
   for (const target of [...superseded.keys()]) {
     const type = ctx.nodes.get(target)?.documentType ?? "bai/knowledge-note";
-    if (!inScope(target, type, scope, ctx)) superseded.delete(target);
+    if (!inScope(target, type, scope, ids, ctx)) superseded.delete(target);
   }
   const baselineByDoc = new Map<string, OperationRow[]>();
   for (const row of [...baseline].sort(byTime)) {
-    if (row.timestamp >= window.since) continue;
+    if (!iso(row) || row.timestamp >= window.since) continue;
     const list = baselineByDoc.get(row.documentId) ?? [];
     list.push(row);
     baselineByDoc.set(row.documentId, list);
   }
 
-  const { events } = buildEvents(rowsByDoc, baselineByDoc, superseded, ctx, window);
+  const { events, pending } = buildEvents(rowsByDoc, baselineByDoc, superseded, ctx, window);
   events.sort(compareEvents);
   const operations = [...rowsByDoc.values()].reduce((n, l) => n + l.length, 0);
   const opsByDoc = new Map([...rowsByDoc].map(([id, l]) => [id, l.length]));
@@ -767,13 +869,24 @@ export function buildChanges(
     );
 
   const digest: ChangeDigest = { window, scope, totals: totalsOf(events, operations), groups };
+  const shown = groups.flatMap((g) => g.highlights);
   if (hasScope(scope)) {
     const limit = Math.min(EVENTS_MAX_LIMIT, Math.max(1, opts.limit ?? EVENTS_DEFAULT_LIMIT));
-    const key = opts.cursor ? decodeCursor(opts.cursor) : null;
+    const key = opts.cursor ? decodeCursor(opts.cursor).key : null;
     const remaining = key ? events.filter((e) => compareKeys(keyOf(e), key) > 0) : events;
     const page = remaining.slice(0, limit);
     digest.events = page;
-    digest.nextCursor = remaining.length > limit ? encodeCursor(page[page.length - 1]) : null;
+    digest.nextCursor = remaining.length > limit ? encodeCursor(page[page.length - 1], window.until) : null;
+    shown.push(...page);
+  }
+  // Hunks only for what the reader sees: a line diff of a large source is the
+  // expensive part, and most events of a big window are only counted.
+  for (const e of new Set(shown)) {
+    const texts = pending.get(e);
+    if (!texts) continue;
+    const { hunks } = diffLines(texts.before, texts.after);
+    if (e.fields?.content) e.fields.content.hunks = hunks;
+    else if (e.source) e.source.hunks = hunks;
   }
   return digest;
 }

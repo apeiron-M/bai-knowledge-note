@@ -311,9 +311,11 @@ export const schema: DocumentNode = gql`
   }
 
   type KnowledgeGraphContentChange {
+    "The earlier text, its first 400 characters (the hunks carry the diff)."
     before: String
     "Up to six, each at most 400 characters: '-' removed lines, '+' added lines."
     hunks: [String!]!
+    "Lines added and removed; a line that only moved is not counted."
     added: Int!
     removed: Int!
   }
@@ -333,10 +335,15 @@ export const schema: DocumentNode = gql`
     refBefore: String
     refAfter: String
     url: String
-    added: Int!
-    removed: Int!
+    "Lines added; null when the earlier text was never recorded (run the history backfill)."
+    added: Int
+    "Lines removed; null when the earlier text was never recorded."
+    removed: Int
     hunks: [String!]!
+    "The first 20 notes derived from the source."
     noteIds: [String!]!
+    "How many notes derive from the source."
+    noteCount: Int!
   }
 
   type KnowledgeGraphChangeCount {

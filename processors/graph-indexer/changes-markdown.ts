@@ -55,8 +55,13 @@ function detail(e: ChangeEvent): string {
       const s = e.source;
       if (!s) return "";
       const ref = s.refBefore || s.refAfter ? `${s.refBefore ?? "?"} → ${s.refAfter ?? "?"}` : "re-ingested";
-      const lines = s.added || s.removed ? `+${s.added}/−${s.removed} lines` : "text unchanged";
-      return `${ref}, ${lines}${s.noteIds.length ? `, ${s.noteIds.length} notes` : ""}`;
+      const lines =
+        s.added === null || s.removed === null
+          ? "earlier version not recorded"
+          : s.added || s.removed
+            ? `+${s.added}/−${s.removed} lines`
+            : "text unchanged";
+      return `${ref}, ${lines}${s.noteCount ? `, ${s.noteCount} notes` : ""}`;
     }
     case "created":
       return e.derivedFrom?.length ? `from ${e.derivedFrom.map((id) => `[[${id}]]`).join(", ")}` : "";

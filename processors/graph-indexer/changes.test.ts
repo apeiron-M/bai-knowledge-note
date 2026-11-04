@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   buildChanges,
+  ChangeInputError,
+  cursorUntil,
   diffLines,
   parseWindow,
   type ChangeContext,
@@ -321,5 +323,103 @@ describe("buildChanges: events and groups", () => {
     const ids = [...(first.events ?? []), ...(second.events ?? []), ...(third.events ?? [])].map((e) => e.documentId);
     expect(new Set(ids).size).toBe(5);
     expect(ids).toEqual(["e", "d", "c", "b", "a"]);
+  });
+});
+
+describe("buildChanges: review fixes", () => {
+  const S = "bai/source";
+
+  it("ships at most 400 characters of a revised body's earlier text", () => {
+    const long = Array.from({ length: 200 }, (_, i) => `line ${i} of the original claim`).join("\n");
+    const baseline = [row("n1", "SET_CONTENT", { content: long }, "2026-10-01T00:00:00.000Z")];
+    const rows = [row("n1", "SET_CONTENT", { content: `${long}\nnew line` }, "2026-11-03T01:00:00.000Z")];
+    const d = buildChanges(rows, baseline, ctx(), W, { scope: { documentIds: ["n1"] } });
+    const content = d.events?.[0].fields?.content;
+    expect(content?.before?.length).toBeLessThanOrEqual(400);
+    expect(content?.before?.startsWith("line 0 of the original claim")).toBe(true);
+    expect(content).toMatchObject({ added: 1, removed: 0, hunks: ["+new line"] });
+  });
+
+  it("names at most 20 of a revised source's notes, and says how many there are", () => {
+    const claimIds = Array.from({ length: 45 }, (_, i) => `n${i}`);
+    const baseline = [row("s1", "INGEST_SOURCE", { title: "Big", content: "a" }, "2026-08-01T00:00:00.000Z", S)];
+    const rows = [row("s1", "INGEST_SOURCE", { title: "Big", content: "b" }, "2026-11-03T01:00:00.000Z", S)];
+    const d = buildChanges(rows, baseline, ctx({ sources: new Map([["s1", { title: "Big", folder: null, claimIds }]]) }), W, { scope: { documentIds: ["s1"] } });
+    expect(d.events?.[0].source?.noteIds).toEqual(claimIds.slice(0, 20));
+    expect(d.events?.[0].source?.noteCount).toBe(45);
+  });
+
+  it("does not claim '0 lines changed' for a source whose earlier version was never recorded", () => {
+    const rows = [row("s1", "INGEST_SOURCE", { title: "Guide", content: "b", method: "sha256:2 git:v6.2.3-dev.91+e0f277d" }, "2026-11-03T01:00:00.000Z", S)];
+    const c = ctx({ sources: new Map([["s1", { title: "Guide", folder: null, claimIds: [], addedAt: "2026-08-01T00:00:00.000Z" }]]) });
+    const d = buildChanges(rows, [], c, W, { scope: { documentIds: ["s1"] } });
+    expect(d.events?.[0]).toMatchObject({ kind: "source-revised", significance: 3, source: { refBefore: null, added: null, removed: null, hunks: [] } });
+  });
+
+  it("starts a created map's, claim's, tension's or observation's baseline at its CREATE_* input", () => {
+    const baseline = [
+      row("m1", "CREATE_MOC", { title: "Processors", description: "old map description", orientation: "", tier: "TOPIC" }, "2026-08-01T00:00:00.000Z", "bai/moc"),
+      row("c1", "CREATE_CLAIM", { title: "Claim", description: "d", content: "old claim body" }, "2026-08-01T00:00:00.000Z", "bai/research-claim"),
+    ];
+    const rows = [
+      row("m1", "UPDATE_DESCRIPTION", { description: "new map description" }, "2026-11-03T01:00:00.000Z", "bai/moc"),
+      row("c1", "UPDATE_CLAIM_CONTENT", { content: "new claim body" }, "2026-11-03T01:00:00.000Z", "bai/research-claim"),
+    ];
+    const d = buildChanges(rows, baseline, ctx(), W, { scope: { documentIds: ["m1", "c1"] } });
+    expect(d.events?.find((e) => e.documentId === "m1")?.fields?.description).toEqual({ before: "old map description", after: "new map description" });
+    expect(d.events?.find((e) => e.documentId === "c1")?.fields?.content?.before).toBe("old claim body");
+  });
+
+  it("drops a supersession removed later in the same window", () => {
+    const rows = [
+      row("n2", "ADD_RELATIONSHIP", { sourceId: "n2", targetId: "n1", relationshipType: "SUPERSEDES" }, "2026-11-03T01:00:00.000Z"),
+      row("n2", "REMOVE_RELATIONSHIP", { sourceId: "n2", targetId: "n1", relationshipType: "SUPERSEDES" }, "2026-11-03T02:00:00.000Z"),
+      row("n4", "ADD_RELATIONSHIP", { sourceId: "n4", targetId: "n3", relationshipType: "SUPERSEDES" }, "2026-11-03T01:00:00.000Z"),
+      row("n4", "REMOVE_RELATIONSHIP", { sourceId: "n4", targetId: "n3", relationshipType: "SUPERSEDES" }, "2026-11-03T02:00:00.000Z"),
+      row("n4", "ADD_RELATIONSHIP", { sourceId: "n4", targetId: "n3", relationshipType: "SUPERSEDES" }, "2026-11-03T03:00:00.000Z"),
+    ];
+    const d = buildChanges(rows, [], ctx(), W, { scope: { documentIds: ["n1", "n3"] } });
+    expect(d.events?.map((e) => [e.documentId, e.kind])).toEqual([["n3", "superseded"]]);
+  });
+
+  it("groups a map's own revision under the map", () => {
+    const rows = [row("m1", "UPDATE_DESCRIPTION", { description: "x" }, "2026-11-03T01:00:00.000Z", "bai/moc")];
+    const c = ctx({
+      nodes: new Map([["m1", { title: "Processors", documentType: "bai/moc", status: "MOC", topics: ["infra"] }]]),
+      mocsByNote: new Map([["m1", [{ id: "hub", title: "Hub", tier: "HUB" as const }]]]),
+    });
+    const d = buildChanges(rows, [], c, W, { scope: {} });
+    expect(d.groups.map((g) => g.key)).toEqual(["moc:m1"]);
+    expect(d.groups[0].title).toBe("Processors");
+  });
+
+  it("ignores rows whose timestamp is not an ISO date (an epoch stamp is not 'before' the window)", () => {
+    const baseline = [row("n1", "SET_TITLE", { title: "Epoch title" }, "1762128000000")];
+    const rows = [row("n1", "SET_TITLE", { title: "New" }, "2026-11-03T01:00:00.000Z")];
+    const d = buildChanges(rows, baseline, ctx(), W, { scope: { documentIds: ["n1"] } });
+    expect(d.events?.[0].fields?.title).toEqual({ before: null, after: "New" });
+  });
+
+  it("keeps the window's end in the cursor, and refuses a cursor it cannot read", () => {
+    const rows = ["a", "b", "c"].map((id, i) => row(id, "SET_TITLE", { title: id }, `2026-11-03T0${i}:00:00.000Z`));
+    const scope = { documentIds: ["a", "b", "c"] };
+    const first = buildChanges(rows, [], ctx(), W, { scope, limit: 1 });
+    expect(cursorUntil(first.nextCursor as string)).toBe(W.until);
+    expect(() => cursorUntil("not a cursor")).toThrow(ChangeInputError);
+    expect(() => buildChanges(rows, [], ctx(), W, { scope, limit: 1, cursor: "bm9wZQ==" })).toThrow(ChangeInputError);
+  });
+});
+
+describe("parseWindow: offsets", () => {
+  it("reads a timestamp without an offset as UTC, and keeps an explicit offset", () => {
+    expect(parseWindow("2026-11-03T18:00:00", "2026-11-03T20:00:00.5")).toEqual({
+      since: "2026-11-03T18:00:00.000Z",
+      until: "2026-11-03T20:00:00.500Z",
+    });
+    expect(parseWindow("2026-11-03T18:00:00+02:00", "2026-11-04").since).toBe("2026-11-03T16:00:00.000Z");
+  });
+
+  it("refuses a malformed date as a ChangeInputError", () => {
+    expect(() => parseWindow("summer")).toThrow(ChangeInputError);
   });
 });

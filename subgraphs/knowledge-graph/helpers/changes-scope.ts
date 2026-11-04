@@ -1,5 +1,11 @@
 import { GraphQLError } from "graphql";
-import { parseWindow, type ChangeDigest, type ChangeScope } from "../../../processors/graph-indexer/changes.js";
+import {
+  ChangeInputError,
+  cursorUntil,
+  parseWindow,
+  type ChangeDigest,
+  type ChangeScope,
+} from "../../../processors/graph-indexer/changes.js";
 import { isKnowledgeLinkType } from "../../../processors/graph-indexer/link-types.js";
 import { getQuery, type GraphSubgraph } from "./db.js";
 import { searchVault } from "./search.js";
@@ -56,13 +62,15 @@ export function scopeOf(args: ChangeArgs): ChangeScope {
   return scope;
 }
 
-/** A malformed window is the caller's mistake, not the server's. */
-export class ChangeWindowError extends Error {}
+/** A malformed window or cursor is the caller's mistake, not the server's. */
+export { ChangeInputError };
 
 /**
  * The change digest for a drive (canonical id): window parsed in UTC, `q`
- * resolved, the caller's scope echoed. Authorization is the caller's job —
- * the subgraph's drive guard or the route's `canonicalForRead`.
+ * resolved, the caller's scope echoed. A next page asked without `until`
+ * keeps the window the cursor was issued for. Authorization is the caller's
+ * job — the subgraph's drive guard or the route's `canonicalForRead`.
+ * Throws {@link ChangeInputError} for a bad date or cursor.
  */
 export async function loadDriveChanges(
   subgraph: GraphSubgraph,
@@ -70,12 +78,8 @@ export async function loadDriveChanges(
   args: ChangeArgs,
   now: Date = new Date(),
 ): Promise<ChangeDigest> {
-  let window: { since: string; until: string };
-  try {
-    window = parseWindow(args.since, args.until, now);
-  } catch (err) {
-    throw new ChangeWindowError(err instanceof Error ? err.message : String(err));
-  }
+  const until = args.until || (args.cursor ? cursorUntil(args.cursor) : null);
+  const window = parseWindow(args.since, until, now);
   const scope = scopeOf(args);
   const resolved = await resolveChangeScope(subgraph, driveId, scope);
   const digest = await getQuery(subgraph, driveId).changes(window, resolved, {
@@ -85,12 +89,12 @@ export async function loadDriveChanges(
   return { ...digest, scope };
 }
 
-/** {@link loadDriveChanges} for GraphQL: a bad window is BAD_USER_INPUT. */
+/** {@link loadDriveChanges} for GraphQL: a bad window or cursor is BAD_USER_INPUT. */
 export async function loadDriveChangesForGraphQL(subgraph: GraphSubgraph, driveId: string, args: ChangeArgs): Promise<ChangeDigest> {
   try {
     return await loadDriveChanges(subgraph, driveId, args);
   } catch (err) {
-    if (err instanceof ChangeWindowError) throw new GraphQLError(err.message, { extensions: { code: "BAD_USER_INPUT" } });
+    if (err instanceof ChangeInputError) throw new GraphQLError(err.message, { extensions: { code: "BAD_USER_INPUT" } });
     throw err;
   }
 }

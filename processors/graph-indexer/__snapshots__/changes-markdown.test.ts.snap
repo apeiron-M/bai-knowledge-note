@@ -7,12 +7,12 @@ exports[`renderChangesMarkdown > renders the fixture digest: totals, groups with
 
 ## Data Processing and CQRS
 
-27 created, 14 revised, 3 superseded, 21 re-verified, 26 sources revised, 15 sources added — 103 documents, 1196 operations
+27 created, 15 revised, 3 superseded, 21 re-verified, 26 sources revised, 15 sources added — 104 documents, 1245 operations
 
 - [[w7dOjx0xIZyj0dRo_eY0M7G_aGag0egNIUsR1A46czQ]] Processors derive read models by folding operations instead of re-querying the source document — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors derive read models by folding operations instead…
 - [[42A16vUPSK_F_sQhFPsNABHU9Lor3pDxFtpDaKwsyYY]] Processors run in the background on Switchboard, folding the operation stream into read models serv… — superseded: by [[760af66a-a9ff-4c5d-967e-1c4ca164ef4b]] One package plugs into all three tiers: the Reactor runs its reducers, Connect … — Retires a duplicate at verify: both say Switchboard runs a package's processors and serves their re…
 - [[L4E3_Igf3McdSWpYumjiiGoN5OpNpPRO_GP02KrBoVk]] Processors maintain derived read models by subscribing to the operation stream. — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors keep derived read models by folding the operatio…
-- [[b527d68e-cd36-4d09-81a2-78750e1c7181]] Processors write only through dispatch, whose execute, createInDrive and deleteDocument resolve onc… — revised: title “Processors mutate documents only through dispatch.execute(), which submits a jo…” → “Processors write only through dispatch, whose execute, createInDrive and delete…”; description “IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reacto…” → “Each IProcessorDispatch member answers with the job's { id, status } at accepta…”; content +21/−17 lines (v6.2.3-dev.91+e0f277d (2026-11-03): \`dispatch\` is no longer execute-only. \`createInDrive\` and \`dele…)
+- [[b527d68e-cd36-4d09-81a2-78750e1c7181]] Processors write only through dispatch, whose execute, createInDrive and deleteDocument resolve onc… — revised: title “Processors mutate documents only through dispatch.execute(), which submits a jo…” → “Processors write only through dispatch, whose execute, createInDrive and delete…”; description “IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reacto…” → “Each IProcessorDispatch member answers with the job's { id, status } at accepta…”; content +20/−16 lines (v6.2.3-dev.91+e0f277d (2026-11-03): \`dispatch\` is no longer execute-only. \`createInDrive\` and \`dele…)
 - [[2ecb99d3-0646-4077-a416-6a64eb79fb9e]] A throwing processor is isolated and never retried automatically: it goes to errored and its cursor… — revised: title “A throwing processor is isolated and never retried automatically — it goes to e…” → “A throwing processor is isolated and never retried automatically: it goes to er…”; description “Other processors are unaffected. Recovery requires tracked.retry() or re-regist…” → “Other processors keep receiving; later matching batches are skipped and pull it…”; content +19/−12 lines (v6.2.3-dev.91+e0f277d (2026-11-03): "its cursor freezes" became "its cursor is held below the faile…)
 
 ## Error Handling
@@ -58,18 +58,12 @@ exports[`renderChangesMarkdown > renders the fixture digest: totals, groups with
 
 - [[rHx9EFY8BwIgKl-2_9hkN8mixHXlKVdvBs5K6qJS3II]] context.resultingState is the whole document serialized with each scope and the header at its top l… — created: from [[abee0d48-af08-42e8-a869-a67c9e11c953]]
 
-## Unplaced
-
-1 revised — 1 document, 49 operations
-
-- [[b3fc78f5-f8e5-4077-b4cb-345516ed68ad]] Data Processing and CQRS — revised: description not set before → “Eighty-six notes on the read side of Powerhouse's CQRS split: processors (inter…”
-
 ## Changes
 
 - [[w7dOjx0xIZyj0dRo_eY0M7G_aGag0egNIUsR1A46czQ]] Processors derive read models by folding operations instead of re-querying the source document — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors derive read models by folding operations instead…
 - [[42A16vUPSK_F_sQhFPsNABHU9Lor3pDxFtpDaKwsyYY]] Processors run in the background on Switchboard, folding the operation stream into read models serv… — superseded: by [[760af66a-a9ff-4c5d-967e-1c4ca164ef4b]] One package plugs into all three tiers: the Reactor runs its reducers, Connect … — Retires a duplicate at verify: both say Switchboard runs a package's processors and serves their re…
 - [[L4E3_Igf3McdSWpYumjiiGoN5OpNpPRO_GP02KrBoVk]] Processors maintain derived read models by subscribing to the operation stream. — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors keep derived read models by folding the operatio…
-- [[b527d68e-cd36-4d09-81a2-78750e1c7181]] Processors write only through dispatch, whose execute, createInDrive and deleteDocument resolve onc… — revised: title “Processors mutate documents only through dispatch.execute(), which submits a jo…” → “Processors write only through dispatch, whose execute, createInDrive and delete…”; description “IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reacto…” → “Each IProcessorDispatch member answers with the job's { id, status } at accepta…”; content +21/−17 lines (v6.2.3-dev.91+e0f277d (2026-11-03): \`dispatch\` is no longer execute-only. \`createInDrive\` and \`dele…)
+- [[b527d68e-cd36-4d09-81a2-78750e1c7181]] Processors write only through dispatch, whose execute, createInDrive and deleteDocument resolve onc… — revised: title “Processors mutate documents only through dispatch.execute(), which submits a jo…” → “Processors write only through dispatch, whose execute, createInDrive and delete…”; description “IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reacto…” → “Each IProcessorDispatch member answers with the job's { id, status } at accepta…”; content +20/−16 lines (v6.2.3-dev.91+e0f277d (2026-11-03): \`dispatch\` is no longer execute-only. \`createInDrive\` and \`dele…)
   \`\`\`diff
   -A processor is supposed to run a strictly one-way data flow: operations arrive through \`onOperations\`, and any resulting mutation leaves through \`dispatch\`. The \`dispatch\` object is handed to the factory on \`IProcessorHostModule\`, and its only method is \`execute\`:
   +A processor runs a one-way data flow: operations arrive through \`onOperations\`, and every write leaves through \`dispatch\`, the \`IPro…
@@ -218,6 +212,6 @@ exports[`renderChangesMarkdown > renders the fixture digest: totals, groups with
   +- Unregistering the factory marks its cursor rows **released**. A released row does not position a processor, so …
   \`\`\`
 
-Next page: cursor=WzUsMjgsIjIwMjYtMTEtMDNUMTk6NDk6MDEuMTc4WiIsIjUwZjhlYTBhLTk4NjEtNDhmYy04OTliLTlmMDYzYTAzOGQ2ZSIsInJldmlzZWQiXQ==
+Next page: cursor=eyJrIjpbNSwyOCwiMjAyNi0xMS0wM1QxOTo0OTowMS4xNzhaIiwiNTBmOGVhMGEtOTg2MS00OGZjLTg5OWItOWYwNjNhMDM4ZDZlIiwicmV2aXNlZCJdLCJ1IjoiMjAyNi0xMS0wNFQwMDowMDowMC4wMDBaIn0=
 "
 `;

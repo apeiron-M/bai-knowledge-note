@@ -1,7 +1,7 @@
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import type { ChangeDigest } from "../../../processors/graph-indexer/changes.js";
 import { renderChangesMarkdown } from "../../../processors/graph-indexer/changes-markdown.js";
-import { ChangeWindowError, type ChangeArgs } from "../../knowledge-graph/helpers/changes-scope.js";
+import { ChangeInputError, type ChangeArgs } from "../../knowledge-graph/helpers/changes-scope.js";
 import { canonicalForRead } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
@@ -48,7 +48,7 @@ export function createChangesRoute(deps: ChangesRouteDeps) {
       try {
         digest = await deps.loadChanges(id, args);
       } catch (err) {
-        if (err instanceof ChangeWindowError) throw new HttpError(400, "BAD_REQUEST", err.message);
+        if (err instanceof ChangeInputError) throw new HttpError(400, "BAD_REQUEST", err.message);
         throw err;
       }
       if ((request.headers.get("accept") ?? "").includes("text/markdown")) {

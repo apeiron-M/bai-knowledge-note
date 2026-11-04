@@ -177,10 +177,13 @@ describe("Query.knowledgeGraphChanges", () => {
       { sourceDocumentId: "t1", targetDocumentId: "h2", linkType: "INVOLVES" },
     ]);
     const { subgraph: s } = subgraph();
-    const out = (await resolve(s)({}, { driveId: "d", since: "2026-11-01", q: "processors", limit: 20, cursor: "c" }, {})) as ChangeDigest;
+    const cursor = btoa(JSON.stringify({ k: [5, 1, "2026-11-02T00:00:00.000Z", "x", "revised"], u: "2026-11-03T12:00:00.000Z" }));
+    const out = (await resolve(s)({}, { driveId: "d", since: "2026-11-01", q: "processors", limit: 20, cursor }, {})) as ChangeDigest;
     expect(searchVault).toHaveBeenCalledWith(s, "d", "processors", "SEMANTIC", 10, false);
     expect(changes.mock.calls[0][1]).toEqual({ q: "processors", documentIds: ["h1", "h2", "n9"] });
-    expect(changes.mock.calls[0][2]).toEqual({ limit: 20, cursor: "c" });
+    expect(changes.mock.calls[0][2]).toEqual({ limit: 20, cursor });
+    // No until given: the window ends where the cursor's did.
+    expect(changes.mock.calls[0][0]).toEqual({ since: "2026-11-01T00:00:00.000Z", until: "2026-11-03T12:00:00.000Z" });
     // The digest echoes the question, not the ids it resolved to.
     expect(out.scope).toEqual({ q: "processors" });
   });
@@ -188,5 +191,11 @@ describe("Query.knowledgeGraphChanges", () => {
   it("reports a malformed date as a user error", async () => {
     const { subgraph: s } = subgraph();
     await expect(resolve(s)({}, { driveId: "d", since: "last summer" }, {})).rejects.toThrow(/not a date/);
+  });
+
+  it("reports a cursor it did not issue as BAD_USER_INPUT", async () => {
+    const { subgraph: s } = subgraph();
+    await expect(resolve(s)({}, { driveId: "d", since: "2026-11-01", cursor: "c" }, {})).rejects.toMatchObject({ extensions: { code: "BAD_USER_INPUT" } });
+    expect(changes).not.toHaveBeenCalled();
   });
 });
