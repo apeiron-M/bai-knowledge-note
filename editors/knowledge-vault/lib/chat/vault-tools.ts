@@ -1767,10 +1767,68 @@ type ChangeEventWire = { documentId: string; by?: string | null } & Record<strin
 type ChangeDigestWire = {
   window: { since: string; until: string };
   totals: ChangeTotals;
-  groups: { totals: ChangeTotals; highlights: ChangeEventWire[] }[];
+  groups: { id?: string | null; title?: string; totals: ChangeTotals; highlights: ChangeEventWire[] }[];
   events?: ChangeEventWire[] | null;
   nextCursor?: string | null;
 };
+
+/** The summary step lists this many groups in full; the rest come back as titles and totals. */
+const SUMMARY_GROUPS = 12;
+/** Diff hunks kept per event on a drill-down; the reader can open the note for the rest. */
+const DRILL_HUNKS = 2;
+/** Highlights per group in the summary step — the top ones by significance. */
+const SUMMARY_HIGHLIGHTS = 3;
+
+type FieldWire = { before?: string | null; after?: string | null } | null | undefined;
+type ContentWire = { before?: string | null; hunks?: string[] | null; added?: number | null; removed?: number | null } | null | undefined;
+type SourceWire = { refBefore?: string | null; refAfter?: string | null; added?: number | null; removed?: number | null; hunks?: string[] | null; noteIds?: string[] | null; noteCount?: number | null } | null | undefined;
+
+const clip = (s: string, n: number): string => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+
+/**
+ * One line saying what changed — enough for an executive summary, where a
+ * model needs the fact and not the diff. The diff stays one drill-down away.
+ */
+export function changeLine(e: ChangeEventWire): string {
+  const parts: string[] = [];
+  const fields = e.fields as { title?: FieldWire; description?: FieldWire; content?: ContentWire } | null | undefined;
+  if (fields?.title?.after) parts.push(fields.title.before ? `title "${clip(fields.title.before, 80)}" → "${clip(fields.title.after, 80)}"` : `title set`);
+  if (fields?.description) parts.push("description revised");
+  const content = fields?.content;
+  if (content) parts.push(content.added == null || content.removed == null ? "content revised" : `+${content.added} −${content.removed} lines`);
+  const sup = e.supersededBy as { title?: string | null } | null | undefined;
+  if (sup?.title) parts.push(`superseded by "${clip(sup.title, 80)}"`);
+  const source = e.source as SourceWire;
+  if (source) {
+    if (source.refBefore || source.refAfter) parts.push(`${source.refBefore ?? "?"} → ${source.refAfter ?? "?"}`);
+    parts.push(source.added == null || source.removed == null ? "earlier version not recorded" : `+${source.added} −${source.removed} lines`);
+  }
+  const version = e.version as FieldWire;
+  if (version?.after && !parts.length) parts.push(`re-verified at ${version.after}`);
+  return parts.join("; ") || (typeof e.kind === "string" ? e.kind : "changed");
+}
+
+/** A highlight as the summary step returns it: the fact, never the diff. */
+function summaryEvent(e: ChangeEventWire & { byName?: string | null }): Record<string, unknown> {
+  return { kind: e.kind, documentId: e.documentId, title: e.title, at: e.at, by: e.by ?? null, byName: e.byName ?? null, change: changeLine(e) };
+}
+
+/** An event as a drill-down returns it: the diff, without the bulk a reader does not need. */
+function drillEvent(e: ChangeEventWire & { byName?: string | null }): Record<string, unknown> {
+  const { folded: _folded, derivedFrom: _derived, ...rest } = e;
+  const fields = rest.fields as { title?: FieldWire; description?: FieldWire; content?: ContentWire } | null | undefined;
+  const source = rest.source as SourceWire;
+  return {
+    ...rest,
+    ...(fields
+      ? { fields: { ...fields, ...(fields.content ? { content: { hunks: (fields.content.hunks ?? []).slice(0, DRILL_HUNKS), added: fields.content.added ?? null, removed: fields.content.removed ?? null } } : {}) } }
+      : {}),
+    ...(source
+      ? { source: { refBefore: source.refBefore ?? null, refAfter: source.refAfter ?? null, added: source.added ?? null, removed: source.removed ?? null, hunks: (source.hunks ?? []).slice(0, DRILL_HUNKS), noteCount: source.noteCount ?? source.noteIds?.length ?? 0 } }
+      : {}),
+    change: changeLine(e),
+  };
+}
 
 export async function executeTool(
   rawName: string,
@@ -2408,10 +2466,26 @@ export async function executeTool(
         ...e,
         byName: e.by ? (names.get(e.by) ?? null) : null,
       });
+      // The summary step answers "what changed" with facts, not diffs: a full
+      // digest of a busy vault runs to hundreds of kilobytes, which stalls
+      // smaller models and crowds out every other turn. Diffs come back on a
+      // drill-down (moc / topic / query), still bounded.
+      const scoped = Boolean(variables.moc || variables.topic || variables.q);
+      const shown = scoped ? digest.groups : digest.groups.slice(0, SUMMARY_GROUPS);
+      const rest = scoped ? [] : digest.groups.slice(SUMMARY_GROUPS);
       const data = {
-        ...digest,
-        groups: digest.groups.map((g) => ({ ...g, highlights: g.highlights.map(named) })),
-        ...(digest.events ? { events: digest.events.map(named) } : {}),
+        window: digest.window,
+        totals: digest.totals,
+        groups: shown.map((g) => ({
+          ...g,
+          ...(scoped ? {} : { totals: totalsLine(g.totals) }),
+          highlights: scoped
+            ? g.highlights.map((h) => drillEvent(named(h)))
+            : g.highlights.slice(0, SUMMARY_HIGHLIGHTS).map((h) => summaryEvent(named(h))),
+        })),
+        ...(rest.length ? { otherGroups: rest.map((g) => ({ id: g.id ?? null, title: g.title ?? "", totals: totalsLine(g.totals) })) } : {}),
+        ...(digest.events ? { events: digest.events.map((e) => drillEvent(named(e))) } : {}),
+        nextCursor: digest.nextCursor ?? null,
       };
       const span = `between ${digest.window.since.slice(0, 10)} and ${digest.window.until.slice(0, 10)}`;
       if (digest.totals.documents === 0) return ok(data, `nothing changed ${span}`);

@@ -2093,6 +2093,62 @@ describe("what_changed — the change digest over a window", () => {
     if (r.ok) expect(r.summary).toMatch(/^nothing changed between 2026-09-01 and 2026-11-03/);
   });
 
+  const heavyEvent = (i: number) => ({
+    kind: "revised",
+    documentId: `n${i}`,
+    title: `Claim ${i}`,
+    at: "2026-11-03T10:00:00.000Z",
+    by: "0xabc",
+    fields: { title: { before: "Old title", after: `Claim ${i}` }, content: { before: "x".repeat(400), hunks: ["@@ -1 +1 @@\n" + "y".repeat(400), "z".repeat(400), "w".repeat(400)], added: 12, removed: 3 } },
+    revisionNotes: ["- v6.2.3-dev.91+e0f277d (2026-11-03): dispatch gained createInDrive"],
+    supersededBy: null,
+    source: null,
+    derivedFrom: ["s1", "s2"],
+    folded: [{ operationType: "SET_METADATA_FIELD", count: 9 }],
+  });
+  const heavyDigest = (groups: number, scoped: boolean) => ({
+    window: { since: "2026-01-01T00:00:00.000Z", until: "2026-11-04T23:59:59.999Z" },
+    scope: scoped ? { moc: "m1" } : {},
+    totals: { created: 0, revised: groups * 5, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents: groups * 5, operations: groups * 50 },
+    groups: Array.from({ length: groups }, (_, g) => ({
+      key: `moc:m${g}`, kind: "moc", id: `m${g}`, title: `Map ${g}`,
+      totals: { created: 0, revised: 5, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents: 5, operations: 50 },
+      highlights: Array.from({ length: 5 }, (_, i) => heavyEvent(g * 5 + i)),
+    })),
+    events: scoped ? Array.from({ length: 30 }, (_, i) => heavyEvent(i)) : null,
+    nextCursor: null,
+  });
+
+  it("keeps the unscoped summary small: 12 groups with one-line highlights, the rest as titles and totals", async () => {
+    mockGql({ knowledgeGraphChanges: heavyDigest(30, false) });
+    const r = await executeTool("what_changed", { since: "2026-01-01" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const data = r.data as { groups: { highlights: Record<string, unknown>[] }[]; otherGroups: { title: string; totals: unknown }[] };
+    expect(JSON.stringify(data).length).toBeLessThan(10_000);
+    expect(data.groups).toHaveLength(12);
+    expect(data.otherGroups).toHaveLength(18);
+    expect(data.otherGroups[0]).toEqual({ id: "m12", title: "Map 12", totals: expect.stringMatching(/5 revised/) as unknown });
+    expect(data.groups[0].highlights).toHaveLength(3);
+    const h = data.groups[0].highlights[0];
+    expect(h).not.toHaveProperty("fields");
+    expect(h).not.toHaveProperty("folded");
+    expect(h.change).toBe('title "Old title" → "Claim 0"; +12 −3 lines');
+  });
+
+  it("keeps diffs on a drill-down but drops bulk: two hunks per event, no folded or derivedFrom", async () => {
+    mockGql({ knowledgeGraphChanges: heavyDigest(1, true) });
+    const r = await executeTool("what_changed", { since: "2026-01-01", moc: "m1" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const data = r.data as { events: { fields: { content: { hunks: string[]; before?: string } }; folded?: unknown; derivedFrom?: unknown }[] };
+    expect(data.events[0].fields.content.hunks).toHaveLength(2);
+    expect(data.events[0].fields.content.before).toBeUndefined();
+    expect(data.events[0]).not.toHaveProperty("folded");
+    expect(data.events[0]).not.toHaveProperty("derivedFrom");
+    expect(JSON.stringify(data).length).toBeLessThan(60_000);
+  });
+
   it("refuses a call without since", async () => {
     const r = await executeTool("what_changed", {}, CTX);
     expect(r).toEqual({ ok: false, error: expect.stringMatching(/since is required/) as unknown });
