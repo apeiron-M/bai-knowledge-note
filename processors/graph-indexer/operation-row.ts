@@ -15,6 +15,21 @@ export const RECORDED_SOURCE_ACTIONS: ReadonlySet<string> = new Set([
   "RECORD_EXTRACTION_STATS",
 ]);
 
+const CANONICAL = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+/**
+ * An operation timestamp as `toISOString()` writes it, so that string order
+ * in `graph_operations.timestamp` (a varchar the change digest compares) is
+ * time order: an ISO string without milliseconds or in another offset is
+ * rewritten, an epoch-milliseconds string is converted, anything unreadable
+ * is kept as it came.
+ */
+export function normalizeTimestamp(raw: string): string {
+  if (CANONICAL.test(raw)) return raw;
+  const date = /^\d+$/.test(raw) ? new Date(Number(raw)) : new Date(raw);
+  return Number.isNaN(date.getTime()) ? raw : date.toISOString();
+}
+
 type Signer = {
   user?: { address?: string };
   app?: { name?: string; key?: string };
@@ -58,7 +73,7 @@ export function operationRowOf(o: {
     document_id: o.documentId,
     document_type: o.documentType,
     operation_type: o.type,
-    timestamp: o.timestampUtcMs ?? new Date().toISOString(),
+    timestamp: normalizeTimestamp(o.timestampUtcMs ?? new Date().toISOString()),
     index: o.index,
     scope,
     summary: summarizeOperation(o.type, input),

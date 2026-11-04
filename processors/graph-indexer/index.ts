@@ -17,7 +17,7 @@ import {
 import { isIndexedDocumentType, projectNode } from "./project.js";
 import { revisionOf, SOURCE_DOCUMENT_TYPE, SOURCE_ROW_VERSION, sourceRowOf } from "./source-timeline.js";
 import { summarizeLink } from "./summarize.js";
-import { operationRowOf, RECORDED_SOURCE_ACTIONS } from "./operation-row.js";
+import { normalizeTimestamp, operationRowOf, RECORDED_SOURCE_ACTIONS } from "./operation-row.js";
 import {
   TensionAutomation,
   type TensionAutomationDeps,
@@ -780,7 +780,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           document_id: sourceId,
           document_type: context.documentType,
           operation_type: operation.action.type,
-          timestamp: operation.timestampUtcMs ?? new Date().toISOString(),
+          timestamp: normalizeTimestamp(operation.timestampUtcMs ?? new Date().toISOString()),
           index: operation.index,
           scope: context.scope ?? "document",
           summary,

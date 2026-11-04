@@ -1,5 +1,6 @@
 import type { IRelationalDb } from "@powerhousedao/shared/processors";
 import { sql } from "kysely";
+import { normalizeTimestamp } from "./operation-row.js";
 
 export async function up(db: IRelationalDb<any>): Promise<void> {
   await db.schema
@@ -310,6 +311,25 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .where("scope", "<>", "global")
     .where("id", "=", sql<string>`document_id || '-' || "index"`)
     .execute();
+
+  // Normalise history timestamps to `toISOString()` form. The column is a
+  // varchar the change digest compares as a string, which is time order only
+  // when every value has the same shape: an older writer's `…:59Z` (no
+  // milliseconds) sorted after `…:59.999Z` and fell out of a window, and an
+  // epoch-milliseconds string sorted before every date and landed in the
+  // baseline. The live writer normalises (operation-row.ts); this rewrites
+  // what is already stored. Unreadable values are left for the digest to skip.
+  // After the first run the LIKE matches nothing, so this is one scan.
+  const odd = await db
+    .selectFrom("graph_operations")
+    .select(["id", "timestamp"])
+    .where("timestamp", "not like", "____-__-__T__:__:__.___Z")
+    .execute();
+  for (const row of odd) {
+    const fixed = normalizeTimestamp(row.timestamp);
+    if (fixed === row.timestamp) continue;
+    await db.updateTable("graph_operations").set({ timestamp: fixed }).where("id", "=", row.id).execute();
+  }
 
   // Durable embedding store — replaces the separate memory:// PGlite that
   // lost every vector on restart. Lives in the same per-drive namespace as

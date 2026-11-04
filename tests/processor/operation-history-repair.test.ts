@@ -14,6 +14,7 @@ import type { DB } from "../../processors/graph-indexer/schema.js";
 import { createGraphQuery } from "../../processors/graph-indexer/query.js";
 import { backfillOperationHistory, type SourceOp, type SourceOpReader } from "../../processors/graph-indexer/source-history-backfill.js";
 import { SOURCE_ROW_VERSION } from "../../processors/graph-indexer/source-timeline.js";
+import { operationRowOf } from "../../processors/graph-indexer/operation-row.js";
 
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
@@ -139,5 +140,43 @@ describe("an index recorded before change history", () => {
     const source = d.events?.find((e) => e.documentId === "s1");
     expect(source).toMatchObject({ kind: "source-revised", source: { refBefore: "v6.2.2-dev.74", refAfter: "v6.2.3-dev.91+e0f277d", added: 1, removed: 1 } });
     expect(d.totals.operations).toBe(2);
+  });
+});
+
+describe("history timestamps", () => {
+  let harness: TestDb;
+  beforeEach(async () => {
+    harness = await createTestDb();
+  });
+  afterEach(async () => {
+    await harness.cleanup();
+  });
+
+  it("are written as ISO with milliseconds, whatever the operation carried", () => {
+    const at = (timestampUtcMs: string) => operationRowOf({ documentId: "n", documentType: "bai/knowledge-note", index: 0, type: "SET_TITLE", input: {}, timestampUtcMs }).timestamp;
+    expect(at("2026-11-03T10:00:00Z")).toBe("2026-11-03T10:00:00.000Z");
+    expect(at("1762164000000")).toBe("2025-11-03T10:00:00.000Z");
+    expect(at("2026-11-03T10:00:00.123Z")).toBe("2026-11-03T10:00:00.123Z");
+    expect(at("garbage")).toBe("garbage");
+  });
+
+  it("already stored are normalised by the migration, so string order is time order", async () => {
+    await harness.db
+      .insertInto("graph_operations")
+      .values([
+        oldRow("a", "n1", "global", 0, "SET_TITLE", {}, "2026-11-03T23:59:59Z"),
+        oldRow("b", "n1", "global", 1, "SET_TITLE", {}, "1762164000000"),
+        oldRow("c", "n1", "global", 2, "SET_TITLE", {}, "2026-11-03T10:00:00.000Z"),
+        oldRow("d", "n1", "global", 3, "SET_TITLE", {}, "not a time"),
+      ])
+      .execute();
+    await up(harness.db as unknown as IRelationalDb<DB>);
+    const rows = await harness.db.selectFrom("graph_operations").select(["id", "timestamp"]).orderBy("id").execute();
+    expect(rows).toEqual([
+      { id: "a", timestamp: "2026-11-03T23:59:59.000Z" },
+      { id: "b", timestamp: "2025-11-03T10:00:00.000Z" },
+      { id: "c", timestamp: "2026-11-03T10:00:00.000Z" },
+      { id: "d", timestamp: "not a time" },
+    ]);
   });
 });
