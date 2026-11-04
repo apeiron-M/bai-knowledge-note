@@ -18,6 +18,7 @@ import {
   BASELINE_OPERATION_TYPES,
   buildChanges,
   EVENT_OPERATION_TYPES,
+  FIRST_RECORD_MS,
   type ChangeContext,
   type ChangeDigest,
   type ChangeScope,
@@ -40,6 +41,8 @@ const CONTENT_SET_TYPES = ["SET_CONTENT", "UPDATE_CLAIM_CONTENT"];
 const PATCH = "PATCH_CONTENT";
 const INGEST = "INGEST_SOURCE";
 const HEAVY_TYPES = new Set([...CONTENT_SET_TYPES, PATCH, INGEST]);
+/** Writes of a claim's title or description. */
+const CLAIM_TYPES = new Set(["SET_TITLE", "SET_DESCRIPTION", "UPDATE_DESCRIPTION"]);
 const CREATED_TYPES = new Set(["CREATE_DOCUMENT", "CREATE_MOC", "CREATE_CLAIM", "CREATE_TENSION", "CREATE_OBSERVATION"]);
 /** Operation types whose small input is always needed; the two below need theirs only sometimes. */
 const PLAIN_EVENT_TYPES = EVENT_OPERATION_TYPES.filter((t) => t !== "ADD_RELATIONSHIP" && t !== "SET_METADATA_FIELD" && !HEAVY_TYPES.has(t));
@@ -209,11 +212,26 @@ function decidingHeavyRows(rows: RawRow[]): string[] {
       wanted.push(ingests[0].id);
       if (ingests.length > 1) wanted.push(ingests[ingests.length - 1].id);
     }
-    if (list.some((r) => CREATED_TYPES.has(r.operation_type))) continue;
-    let lastSet = -1;
-    for (let i = 0; i < list.length; i++) if (CONTENT_SET_TYPES.includes(list[i].operation_type)) lastSet = i;
-    if (lastSet >= 0) wanted.push(list[lastSet].id);
-    for (let i = lastSet + 1; i < list.length; i++) if (list[i].operation_type === PATCH) wanted.push(list[i].id);
+    const content = (upTo: number) => {
+      let lastSet = -1;
+      for (let i = 0; i < upTo; i++) if (CONTENT_SET_TYPES.includes(list[i].operation_type)) lastSet = i;
+      if (lastSet >= 0) wanted.push(list[lastSet].id);
+      for (let i = lastSet + 1; i < upTo; i++) if (list[i].operation_type === PATCH) wanted.push(list[i].id);
+    };
+    const create = list.find((r) => CREATED_TYPES.has(r.operation_type));
+    if (create) {
+      // Its edits are its creation — unless a title or description came after
+      // its creating batch settled: then the body as first recorded and as now
+      // give the revision lines added since (spec Addendum B4).
+      const end = Date.parse(create.timestamp) + FIRST_RECORD_MS;
+      const settled = list.findIndex((r) => Date.parse(r.timestamp) > end);
+      if (settled >= 0 && list.slice(settled).some((r) => CLAIM_TYPES.has(r.operation_type))) {
+        content(settled);
+        content(list.length);
+      }
+      continue;
+    }
+    content(list.length);
   }
   return wanted;
 }
@@ -366,7 +384,7 @@ const LIFECYCLE_TYPES = ["ARCHIVE_NOTE", "ARCHIVE_OBSERVATION", "RESTORE_NOTE"];
  * which notes were archived at `since`, and which are superseded now. The
  * then-titles come from the digest's own baseline.
  */
-async function loadStoryContext(db: ReadDb, since: string, ids: Set<string> | null, rowDocs: Set<string>): Promise<StoryContext> {
+async function loadStoryContext(db: ReadDb, { since, until }: { since: string; until: string }, ids: Set<string> | null, rowDocs: Set<string>): Promise<StoryContext> {
   const nodes = new Map<string, StoryNode>();
   const hubs: string[] = [];
   type NodeRow = { document_id: string; title: string | null; description: string | null; document_type: string | null; status: string | null; note_type: string | null; added_at: string | null };
@@ -390,16 +408,17 @@ async function loadStoryContext(db: ReadDb, since: string, ids: Set<string> | nu
 
   const childMaps = new Map<string, string[]>();
   const coreIdeas = new Map<string, string[]>();
+  const derivedFrom = new Map<string, string[]>();
   const superseded = new Set<string>();
   const edges = await db
     .selectFrom("graph_edges")
     .select(["source_document_id", "target_document_id", "link_type"])
-    .where("link_type", "in", ["CHILD_MOC", "CORE_IDEA", "SUPERSEDES"])
+    .where("link_type", "in", ["CHILD_MOC", "CORE_IDEA", "SUPERSEDES", "DERIVED_FROM"])
     .execute();
   for (const e of edges) {
     if (e.link_type === "SUPERSEDES") superseded.add(e.target_document_id);
     else {
-      const into = e.link_type === "CHILD_MOC" ? childMaps : coreIdeas;
+      const into = e.link_type === "CHILD_MOC" ? childMaps : e.link_type === "CORE_IDEA" ? coreIdeas : derivedFrom;
       const list = into.get(e.source_document_id);
       if (list) list.push(e.target_document_id);
       else into.set(e.source_document_id, [e.target_document_id]);
@@ -432,7 +451,30 @@ async function loadStoryContext(db: ReadDb, since: string, ids: Set<string> | nu
   }
   const archivedAtSince = new Set([...last].filter(([, r]) => r.operation_type !== "RESTORE_NOTE").map(([id]) => id));
 
-  return { nodes, hubs, childMaps, coreIdeas, archivedAtSince, superseded };
+  // Every ingestion up to until, by its summary (`Ingested “…” (<git ref>)`):
+  // the git ref without reading the source text (spec Addendum B4).
+  const ingestRows = await db
+    .selectFrom("graph_operations")
+    .select(["document_id", "timestamp", "index", "summary"])
+    .where("operation_type", "=", INGEST)
+    .where("timestamp", "<=", until)
+    .where("timestamp", "like", ISO_LIKE)
+    .execute();
+  ingestRows.sort((a, b) => (a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : a.index - b.index));
+  const ingests = new Map<string, { at: string; ref: string | null }[]>();
+  for (const r of ingestRows) {
+    const entry = { at: r.timestamp, ref: ingestRef(r.summary) };
+    const list = ingests.get(r.document_id);
+    if (list) list.push(entry);
+    else ingests.set(r.document_id, [entry]);
+  }
+
+  return { nodes, hubs, childMaps, coreIdeas, archivedAtSince, superseded, derivedFrom, ingests };
+}
+
+/** The git ref an INGEST_SOURCE summary ends with (summarize.ts: `Ingested “title” (ref)`), else null. */
+export function ingestRef(summary: string | null): string | null {
+  return /” \(([^()\s]+)\)$/.exec(summary ?? "")?.[1] ?? null;
 }
 
 /**
@@ -462,7 +504,7 @@ export async function loadChanges(
   // A cursor page carries no story (the first page did): skip loading it.
   const [ctx, story] = await Promise.all([
     loadContext(db, rows, opts.sourceFolders ?? new Map()),
-    opts.cursor ? undefined : loadStoryContext(db, window.since, ids, new Set(rows.map((r) => r.documentId))),
+    opts.cursor ? undefined : loadStoryContext(db, window, ids, new Set(rows.map((r) => r.documentId))),
   ]);
   if (story) ctx.story = story;
 

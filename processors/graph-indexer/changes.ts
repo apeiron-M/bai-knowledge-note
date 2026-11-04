@@ -717,6 +717,35 @@ function buildEvents(
   return { events, pending };
 }
 
+/** How long a creating batch takes to settle: its fields are written within minutes (spec Addendum B4). */
+export const FIRST_RECORD_MS = 60 * 60 * 1000;
+
+/**
+ * A created document's first recorded state: its title and description as
+ * the last writes within {@link FIRST_RECORD_MS} of its creation left them,
+ * when they were written, and the `## Revision history` lines added since.
+ * Null when it has no creation row or no title/description in that hour.
+ * `rows` are the document's rows in time order.
+ */
+export function firstRecorded(rows: OperationRow[]): { title: string | null; description: string | null; at: string; revisionNotes: string[] } | null {
+  const create = rows.find((r) => r.operationType === "CREATE_DOCUMENT" || CREATE_OPS.has(r.operationType));
+  if (!create) return null;
+  const end = Date.parse(create.timestamp) + FIRST_RECORD_MS;
+  const early = rows.filter((r) => Date.parse(r.timestamp) <= end);
+  const first = foldFields(early, EMPTY_FIELDS);
+  if (first.title === null && first.description === null) return null;
+  const sets = early.filter((r) => {
+    if (TITLE_OPS.has(r.operationType) || DESCRIPTION_OPS.has(r.operationType)) return true;
+    if (!CREATE_OPS.has(r.operationType)) return false;
+    const input = parseInput(r);
+    return str(input.title) !== null || str(input.description) !== null;
+  });
+  const at = sets.length ? sets[sets.length - 1].timestamp : create.timestamp;
+  const before = new Set(revisionHistoryLines(first.content));
+  const revisionNotes = revisionHistoryLines(foldFields(rows, EMPTY_FIELDS).content).filter((l) => !before.has(l));
+  return { title: first.title, description: first.description, at, revisionNotes };
+}
+
 function isSupersedes(row: OperationRow): boolean {
   return row.operationType === "ADD_RELATIONSHIP" && parseInput(row).relationshipType === "SUPERSEDES";
 }
@@ -903,6 +932,12 @@ export function buildChanges(
     for (const [id, list] of baselineByDoc) {
       const f = foldFields(list, EMPTY_FIELDS);
       thenFields.set(id, { title: f.title, description: f.description });
+    }
+    // A note created in the window: its then is its first recorded state.
+    for (const e of events) {
+      if (e.kind !== "created") continue;
+      const first = firstRecorded(rowsByDoc.get(e.documentId) ?? []);
+      if (first) thenFields.set(e.documentId, first);
     }
     const facts = storyFacts(events, thenFields, ctx.story, window, ids);
     digest.story = buildStory(facts, ctx.story);

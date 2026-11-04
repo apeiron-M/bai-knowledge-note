@@ -241,6 +241,46 @@ describe("graph query: changes()", () => {
     });
   });
 
+  it("reads a created note's first recorded state and the revision lines added since, and its area's source versions", async () => {
+    const db = harness.db;
+    await insertNode(db, "hub", "Powerhouse", "bai/moc", "MOC (HUB)");
+    await insertNode(db, "a1", "Processors", "bai/moc", "MOC (DOMAIN)");
+    await insertNode(db, "n1", "Delivery is at-least-once, with a crash gap");
+    await insertEdge(db, "hub", "a1", "CHILD_MOC");
+    await insertEdge(db, "a1", "n1", "CORE_IDEA");
+    await insertEdge(db, "n1", "s1", "DERIVED_FROM");
+    const op = (operationType: string, input: unknown, timestamp: string, index: number): OperationRow => ({ documentId: "n1", documentType: "bai/knowledge-note", operationType, timestamp, index, inputJson: JSON.stringify(input), signerAddress: null });
+    await insertOps(db, [
+      op("CREATE_DOCUMENT", {}, "2026-09-02T10:00:00.000Z", 0),
+      op("SET_TITLE", { title: "Delivery is exactly once, in order" }, "2026-09-02T10:00:05.000Z", 1),
+      op("SET_CONTENT", { content: "body\n\n## Revision history\n- v6.2.2-dev.74 (2026-09-02): first" }, "2026-09-02T10:00:06.000Z", 2),
+      op("SET_TITLE", { title: "Delivery is at-least-once, with a crash gap" }, "2026-11-03T10:00:00.000Z", 3),
+      op("SET_CONTENT", { content: "body2\n\n## Revision history\n- v6.2.2-dev.74 (2026-09-02): first\n- v6.2.3-dev.91 (2026-11-03): outbox replays" }, "2026-11-03T10:00:01.000Z", 4),
+    ]);
+    const ingest = (id: string, timestamp: string, ref: string, index: number) => ({
+      id, document_id: "s1", document_type: "bai/source", operation_type: "INGEST_SOURCE", timestamp, index, scope: "global",
+      summary: `Ingested “Processors (guide)” (${ref})`, input_json: JSON.stringify({ title: "Processors (guide)", content: "x", method: `sha256:abc git:${ref}` }),
+      signer_address: null, signer_app: null, signer_key: null, signature: null,
+    });
+    await db.insertInto("graph_operations").values([
+      ingest("i1", "2026-09-02T09:00:00.000Z", "v6.2.2-dev.74", 0),
+      ingest("i2", "2026-11-03T09:00:00.000Z", "v6.2.3-dev.91+e0f277d", 1),
+    ]).execute();
+    const d = await createGraphQuery(db).changes({ since: "2026-09-01T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" }, {}, {});
+    const area = d.story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([
+      {
+        documentId: "n1",
+        then: { claim: "Delivery is exactly once, in order", gist: null },
+        now: { claim: "Delivery is at-least-once, with a crash gap", gist: null },
+        why: "v6.2.3-dev.91 (2026-11-03): outbox replays",
+        thenAt: "2026-09-02T10:00:05.000Z",
+      },
+    ]);
+    expect(area?.newClaims.map((c) => c.documentId)).toEqual(["n1"]);
+    expect(area?.versions).toEqual({ first: "v6.2.2-dev.74", now: "v6.2.3-dev.91+e0f277d" });
+  });
+
   it("answers a sync-sized window — large sources and notes with baselines — in seconds, not minutes", async () => {
     const db = harness.db;
     const before = "2026-10-01T00:00:00.000Z";

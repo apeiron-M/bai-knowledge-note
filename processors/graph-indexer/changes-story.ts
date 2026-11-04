@@ -43,12 +43,18 @@ export interface StoryContext {
   archivedAtSince: Set<string>;
   /** Notes a SUPERSEDES edge points at now. */
   superseded: Set<string>;
+  /** DERIVED_FROM edges, note → sources (for an area's source versions). */
+  derivedFrom?: Map<string, string[]>;
+  /** Each source's ingestions up to `until`, in time order, with the git ref each recorded (null: none). */
+  ingests?: Map<string, { at: string; ref: string | null }[]>;
 }
 
 export interface Claim {
   documentId: string;
   claim: string;
   gist: string | null;
+  /** On a then-claim of a note created in the window: when its first recorded state was written. */
+  thenAt?: string;
 }
 
 export interface Shift {
@@ -57,6 +63,8 @@ export interface Shift {
   now: { claim: string; gist: string | null };
   why: string | null;
   replacedBy?: string;
+  /** For a note created in the window: when its first recorded state (the then) was written. */
+  thenAt?: string;
 }
 
 export interface StoryArea {
@@ -71,6 +79,8 @@ export interface StoryArea {
   retiredCount: number;
   /** Supersessions that merged twin notes: counted, never listed as changed (Addendum B3). */
   mergedCount: number;
+  /** The git refs of the area's sources: as they stood at since (else first ingested) → latest. Absent without refs. */
+  versions?: { first: string | null; now: string | null };
   newClaims: Claim[];
   changedClaims: Shift[];
   retiredClaims: Claim[];
@@ -95,8 +105,12 @@ export interface ThenVsNow {
   unchanged: Claim[];
 }
 
-/** A document's title and description at `since`, where a baseline recorded them. */
-export type ThenFields = Map<string, { title: string | null; description: string | null }>;
+/**
+ * A document's title and description at `since`, where a baseline recorded
+ * them; for a note created in the window, its first recorded state, with
+ * when (`at`) and the revision-history lines added since (Addendum B4).
+ */
+export type ThenFields = Map<string, { title: string | null; description: string | null; at?: string; revisionNotes?: string[] }>;
 
 /**
  * The hub's top-level areas (by title) and, for every map and note in an
@@ -178,6 +192,7 @@ function differs(a: { claim: string; gist: string | null }, b: { claim: string; 
 
 /** What buildStory and buildThenVsNow both read, computed once per digest by {@link storyFacts}. */
 export interface Facts {
+  since: string;
   areas: { id: string; title: string }[];
   areasByDoc: Map<string, string[]>;
   /** Created in the window (an event, or `addedAt` inside it). */
@@ -190,6 +205,8 @@ export interface Facts {
   /** Replacing notes the story shows as a shift's now (never also as new). */
   shiftReplacements: Set<string>;
   shifts: Map<string, Shift>;
+  /** Notes created in the window whose first recorded state is the then: when it was written. */
+  firstAt: Map<string, string>;
   /** Notes merged into a twin in the window (old note → its replacement). */
   merged: Map<string, string>;
   retired: Set<string>;
@@ -262,17 +279,50 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
       const then = thenOf(e.documentId);
       const now = nowOf(e.documentId);
       if (differs(then, now)) shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.revisionNotes?.length ? e.revisionNotes.join("; ") : null });
+    } else if (e.kind === "created" && !shifts.has(e.documentId) && !merged.has(e.documentId)) {
+      // Created in the window and revised after its creating batch settled.
+      const first = thenFields.get(e.documentId);
+      if (!first?.at) continue;
+      const then = thenOf(e.documentId);
+      const now = nowOf(e.documentId);
+      if (!differs(then, now)) continue;
+      const why = first.revisionNotes?.length ? first.revisionNotes.join("; ") : null;
+      shifts.set(e.documentId, { documentId: e.documentId, then, now, why, thenAt: first.at });
     }
   }
+  const firstAt = new Map([...shifts.values()].flatMap((sh) => (sh.thenAt ? [[sh.documentId, sh.thenAt] as const] : [])));
   // Retired: archived in the window, still archived, and replaced by nothing — ever.
   const retired = new Set(
     [...archivedInWindow].filter((id) => isNote(id) && inScope(id) && archivedNow(id) && !supersededInWindow.has(id) && !s.superseded.has(id)),
   );
   const shiftReplacements = new Set([...shifts.values()].flatMap((sh) => (sh.replacedBy ? [sh.replacedBy] : [])));
-  return { areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, merged, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
+  return { since: window.since, areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, firstAt, merged, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
 }
 
-const claimOf = (f: Facts, id: string, then = false): Claim => ({ documentId: id, ...(then ? f.thenOf(id) : f.nowOf(id)) });
+const claimOf = (f: Facts, id: string, then = false): Claim => {
+  const at = then ? f.firstAt.get(id) : undefined;
+  return { documentId: id, ...(then ? f.thenOf(id) : f.nowOf(id)), ...(at ? { thenAt: at } : {}) };
+};
+
+/**
+ * The git refs of these sources (spec Addendum B4): first = the earliest of
+ * each source's ref standing at `since` (its last ingestion before, else its
+ * first in the window); now = the latest ref. Only ingestions that recorded a
+ * ref count; null when none did.
+ */
+export function sourceVersions(sources: Iterable<string>, ingests: Map<string, { at: string; ref: string | null }[]>, since: string): { first: string | null; now: string | null } | null {
+  let first: { at: string; ref: string } | null = null;
+  let now: { at: string; ref: string } | null = null;
+  for (const id of sources) {
+    const list = (ingests.get(id) ?? []).filter((i): i is { at: string; ref: string } => i.ref !== null);
+    if (!list.length) continue;
+    const then = [...list].reverse().find((i) => i.at < since) ?? list[0];
+    const last = list[list.length - 1];
+    if (!first || then.at < first.at) first = then;
+    if (!now || last.at > now.at) now = last;
+  }
+  return first || now ? { first: first?.ref ?? null, now: now?.ref ?? null } : null;
+}
 
 /** The story: growth, then each main area with any change, most changed first; "Elsewhere" last. */
 export function buildStory(f: Facts, s: StoryContext): ChangeStory {
@@ -330,6 +380,7 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
     const notesThen = members.filter(f.liveThen).length;
     const notesNow = members.filter(f.liveNow).length;
     const mergedCount = mergedByArea.get(id) ?? 0;
+    const versions = s.ingests && s.derivedFrom ? sourceVersions(new Set(members.flatMap((n) => s.derivedFrom?.get(n) ?? [])), s.ingests, f.since) : null;
     const weight = newIds.length + shifts.length + retired.length;
     if (!weight && !mergedCount && notesThen === notesNow) continue;
     areas.push({
@@ -341,6 +392,7 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
       changedCount: shifts.length,
       retiredCount: retired.length,
       mergedCount,
+      ...(versions ? { versions } : {}),
       newClaims: newIds.slice(0, MAX_NEW_CLAIMS).map((n) => claimOf(f, n)),
       changedClaims: shifts.slice(0, MAX_CHANGED_CLAIMS),
       retiredClaims: retired.slice(0, MAX_RETIRED_CLAIMS).map((n) => claimOf(f, n, true)),
@@ -365,7 +417,8 @@ export function buildThenVsNow(f: Facts, s: StoryContext): ThenVsNow {
   const changedThen = (id: string) => f.shifts.has(id) || f.retired.has(id) || f.supersededInWindow.has(id);
   const changedNow = (id: string) => f.shifts.has(id) || f.created.has(id) || f.replacements.has(id);
   const supersededBefore = (id: string) => s.superseded.has(id) && !f.supersededInWindow.has(id);
-  const thenIds = notes.filter((id) => f.liveThen(id) && !supersededBefore(id));
+  // A note created in the window and revised since holds its first recorded claim on the then side.
+  const thenIds = notes.filter((id) => (f.liveThen(id) && !supersededBefore(id)) || f.firstAt.has(id));
   const nowIds = new Set(notes.filter((id) => f.liveNow(id) && !s.superseded.has(id) && !f.supersededInWindow.has(id)));
   // Held then and now in the same words: say it once.
   const same = new Set(thenIds.filter((id) => nowIds.has(id) && !differs(f.thenOf(id), f.nowOf(id))));

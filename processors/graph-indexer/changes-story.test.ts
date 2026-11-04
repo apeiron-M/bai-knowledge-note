@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildChanges, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
+import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
+import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
 import { areasOf, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
@@ -470,5 +471,109 @@ describe("story: duplicate merges (Addendum B3)", () => {
     expect(area?.changedClaims.map((c) => c.documentId)).toEqual(["n2"]);
     expect(area?.mergedCount).toBe(1);
     expect(area?.newClaims.map((c) => c.documentId)).toEqual([]);
+  });
+});
+
+describe("story: first recorded vs now (Addendum B4)", () => {
+  // Created at 01:00 by an extraction batch (fields within minutes), revised at 05:00.
+  const created = (late: OperationRow[] = []) => [
+    row("n2", "CREATE_DOCUMENT", {}, IN(1)),
+    row("n2", "SET_TITLE", { title: "Draft title" }, IN(1, 1)),
+    row("n2", "SET_TITLE", { title: "Delivery is exactly once, in order" }, IN(1, 5)),
+    row("n2", "SET_DESCRIPTION", { description: "Each operation reaches a processor once" }, IN(1, 5)),
+    row("n2", "SET_CONTENT", { content: "body\n\n## Revision history\n- v6.2.2-dev.74 (2026-09-02): first" }, IN(1, 6)),
+    ...late,
+  ];
+  const revisedLater = [
+    row("n2", "SET_TITLE", { title: "Delivery is at-least-once, with a crash gap" }, IN(5)),
+    row("n2", "SET_CONTENT", { content: "body2\n\n## Revision history\n- v6.2.2-dev.74 (2026-09-02): first\n- v6.2.3-dev.91 (2026-11-03): the outbox replays after a crash" }, IN(5, 1)),
+  ];
+  const nodes = (): [string, StoryNode][] => [["n2", note("Delivery is at-least-once, with a crash gap", { description: "Each operation reaches a processor once", addedAt: IN(1) })]];
+
+  it("makes a note created in the window and revised after its creating batch a shift from its first recorded state, and still new", () => {
+    const area = digest(created(revisedLater), [], story(nodes())).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([
+      {
+        documentId: "n2",
+        then: { claim: "Delivery is exactly once, in order", gist: "Each operation reaches a processor once" },
+        now: { claim: "Delivery is at-least-once, with a crash gap", gist: "Each operation reaches a processor once" },
+        why: "v6.2.3-dev.91 (2026-11-03): the outbox replays after a crash",
+        thenAt: IN(1, 5),
+      },
+    ]);
+    expect(area?.newClaims.map((c) => c.documentId)).toEqual(["n2"]);
+  });
+
+  it("is not a shift when the note reads now as its creating batch left it", () => {
+    const s = story([["n2", note("Delivery is exactly once, in order", { description: "Each operation reaches a processor once", addedAt: IN(1) })]]);
+    const area = digest(created(), [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([]);
+    expect(area?.newClaims.map((c) => c.documentId)).toEqual(["n2"]);
+  });
+
+  it("does not count a title written more than an hour after creation as first recorded", () => {
+    const rows = [row("n2", "CREATE_DOCUMENT", {}, IN(1)), row("n2", "SET_TITLE", { title: "Late title" }, IN(2, 1))];
+    const s = story([["n2", note("Now title", { addedAt: IN(1) })]]);
+    expect(digest(rows, [], s).story?.areas.find((a) => a.id === "a1")?.changedClaims).toEqual([]);
+  });
+
+  it("puts a created-then-revised note's first recorded claim on the then side of thenVsNow", () => {
+    const t = digest(created(revisedLater), [], story(nodes()), { q: "delivery", documentIds: ["n2"] }).thenVsNow;
+    expect(t?.then).toEqual([{ documentId: "n2", claim: "Delivery is exactly once, in order", gist: "Each operation reaches a processor once", thenAt: IN(1, 5) }]);
+    expect(t?.now.map((c) => c.documentId)).toEqual(["n2"]);
+    expect(t?.unchanged).toEqual([]);
+  });
+
+  it("reports an area's source versions: the ref standing at since (else first in the window) → the latest", () => {
+    const rows = [row("n1", "SET_TITLE", { title: "New" }, IN(1)), row("n3", "SET_TITLE", { title: "New 3" }, IN(1))];
+    const baseline = [row("n1", "SET_TITLE", { title: "Old" }, BEFORE), row("n3", "SET_TITLE", { title: "Old 3" }, BEFORE)];
+    const s = story([["n1", note("New")], ["n3", note("New 3")]], {
+      derivedFrom: new Map([["n1", ["s1", "s2"]], ["n3", ["s3"]]]),
+      ingests: new Map([
+        ["s1", [{ at: "2026-06-01T00:00:00.000Z", ref: "v6.2.1" }, { at: "2026-09-02T00:00:00.000Z", ref: "v6.2.2-dev.74" }, { at: IN(4), ref: "v6.2.3-dev.91+e0f277d" }]],
+        ["s2", [{ at: IN(2), ref: "v6.2.3-dev.90" }]],
+        ["s3", [{ at: IN(3), ref: null }]],
+      ]),
+    });
+    const d = buildChanges(rows, baseline, ctx(s), { since: "2026-09-01T00:00:00.000Z", until: W.until }, { scope: {} });
+    const areas = d.story?.areas ?? [];
+    expect(areas.find((a) => a.id === "a1")?.versions).toEqual({ first: "v6.2.1", now: "v6.2.3-dev.91+e0f277d" });
+    // No git refs: no versions.
+    expect(areas.find((a) => a.id === "a2")?.versions).toBeUndefined();
+  });
+});
+
+describe("story: first recorded vs now on the recorded 2026-11-03 sync", () => {
+  // A real note: created 19:30:26, fields written 19:30:27, body rewritten 19:34 — one batch.
+  const ID = "X64lW2nOJzR5JBqM7k8HgWCW69-r7yy8H8aXHvrqRy4";
+  const rowsOf = () =>
+    loadChangesFixture()
+      .rows.filter((r) => r.documentId === ID)
+      .sort((a, b) => (a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : a.index - b.index));
+  const titleOf = (rows: OperationRow[]) => JSON.parse(rows.find((r) => r.operationType === "SET_TITLE")?.inputJson ?? "{}") as { title: string };
+
+  it("reads its first recorded state from the creating batch, a rewrite minutes later included", () => {
+    const rows = rowsOf();
+    const first = firstRecorded(rows);
+    expect(first?.at).toBe("2026-11-03T19:30:27.660Z");
+    expect(first?.title).toBe(titleOf(rows).title);
+  });
+
+  it("is new only as recorded, and a shift once its title is revised hours later", () => {
+    const rows = rowsOf();
+    const { title } = titleOf(rows);
+    const s = (now: string) =>
+      story([[ID, note(now, { description: null, addedAt: rows[0].timestamp })]], { coreIdeas: new Map([["a2", [ID]]]) });
+    const window = { since: "2026-11-03T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" };
+    const run = (r: OperationRow[], now: string) => buildChanges(r, [], ctx(s(now)), window, { scope: {} }).story?.areas.find((a) => a.id === "a2");
+    // The description as now = as first recorded, so only the title decides.
+    const desc = (JSON.parse(rows.find((r) => r.operationType === "SET_DESCRIPTION")?.inputJson ?? "{}") as { description: string }).description;
+    const withDesc = (r: OperationRow[], now: string) =>
+      buildChanges(r, [], ctx(story([[ID, note(now, { description: desc, addedAt: rows[0].timestamp })]], { coreIdeas: new Map([["a2", [ID]]]) })), window, { scope: {} }).story?.areas.find((a) => a.id === "a2");
+    expect(withDesc(rows, title)?.changedClaims).toEqual([]);
+    const late = [...rows, row(ID, "SET_TITLE", { title: "Read models on another handle are now fenced" }, "2026-11-03T22:00:00.000Z")];
+    const shift = withDesc(late, "Read models on another handle are now fenced")?.changedClaims[0];
+    expect(shift).toMatchObject({ documentId: ID, then: { claim: title }, now: { claim: "Read models on another handle are now fenced" }, thenAt: "2026-11-03T19:30:27.660Z" });
+    expect(run(late, "x")?.newClaims.map((c) => c.documentId)).toEqual([ID]);
   });
 });
