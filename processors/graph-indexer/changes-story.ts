@@ -47,6 +47,8 @@ export interface StoryContext {
   derivedFrom?: Map<string, string[]>;
   /** Each source's ingestions up to `until`, in time order, with the git ref each recorded (null: none). */
   ingests?: Map<string, { at: string; ref: string | null }[]>;
+  /** The vault's first recorded activity: its earliest operation or added_at (Addendum C2); null when it has none. */
+  vaultStart?: string | null;
 }
 
 export interface Claim {
@@ -90,6 +92,8 @@ export interface ChangeStory {
   growth: {
     notesThen: number;
     notesNow: number;
+    /** When `since` predates the vault's first recorded activity: that activity — growth is counted from it (Addendum C2). */
+    from?: string;
     newAreas: { id: string; title: string }[];
     newMaps: { id: string; title: string; area: string | null }[];
   };
@@ -181,11 +185,15 @@ export function claimSimilarity(a: string, b: string): number {
   return both / (x.size + y.size - both);
 }
 
-/** A map a `q` scope may name: a hub area (depth 1) or a map below one. */
+/** A map a `q` scope may name: a hub (depth 0), a hub area (depth 1) or a map below one. */
 export interface ScopeMap {
   id: string;
   title: string;
   depth: number;
+  /** The top-level area the map sits under (itself for an area); null for a hub. Absent: an area is its own. */
+  area?: string | null;
+  /** The map's own text besides its title: description and orientation (Addendum C1's keyword fallback). */
+  text?: string;
 }
 
 /**
@@ -195,7 +203,10 @@ export interface ScopeMap {
 const QUERY_FILLER = new Set(
   ["what", "how", "why", "when", "where", "which", "who", "did", "does", "do", "done", "has", "have", "had", "was", "were", "been",
     "work", "works", "worked", "working", "change", "changed", "changes", "new", "now", "then", "lately", "recently", "since",
-    "today", "about", "tell", "me", "we", "our", "us", "you", "i"].map(foldPlural),
+    "today", "about", "tell", "me", "we", "our", "us", "you", "i",
+    // A period is not a subject (Addendum C1): "since September", "this summer", "last year".
+    "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december",
+    "spring", "summer", "autumn", "fall", "winter", "last", "past", "week", "month", "year", "ago", "until", "between"].map(foldPlural),
 );
 /** A map whose words are a subset of the query must cover at least this share of the query's content words. */
 export const MAP_COVERAGE = 0.5;
@@ -212,7 +223,7 @@ export const MAP_COVERAGE = 0.5;
  * them and the query searches instead (null). Null when none matches.
  */
 export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMap | null {
-  const q = new Set([...claimTokens(query)].filter((w) => !QUERY_FILLER.has(w)));
+  const q = queryWords(query);
   if (!q.size) return null;
   const titled = maps.map((map) => ({ map, t: claimTokens(map.title) })).filter((m) => m.t.size);
   const sharing = titled.filter(({ t }) => [...t].some((w) => q.has(w))).length;
@@ -228,6 +239,87 @@ export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMa
   // Two hubs (depth 0) may tie: both are the whole vault.
   if (hits.length > 1 && rank(hits[0], hits[1]) === 0 && hits[0].map.depth > 0) return null;
   return hits[0]?.map ?? null;
+}
+
+/** The content words of a question: its {@link claimTokens} without {@link QUERY_FILLER}. */
+function queryWords(query: string): Set<string> {
+  return new Set([...claimTokens(query)].filter((w) => !QUERY_FILLER.has(w)));
+}
+
+/** What a word found only in a map's text (description, orientation) counts for, against 1 in its title. */
+export const TEXT_WORD_WEIGHT = 0.5;
+
+/**
+ * How well each map matches a query by its words (spec Addendum C1's
+ * fallback when no embedding is available): each content word of the query
+ * counts 1 when the map's title holds it, {@link TEXT_WORD_WEIGHT} when only
+ * its description or orientation does; the score is the mean over the
+ * query's content words, 0..1. Hubs are not scored.
+ */
+export function keywordMapScores(query: string, maps: readonly ScopeMap[]): Map<string, number> {
+  const q = queryWords(query);
+  const out = new Map<string, number>();
+  if (!q.size) return out;
+  for (const m of maps) {
+    if (m.depth === 0) continue;
+    const title = claimTokens(m.title);
+    const text = claimTokens(m.text ?? "");
+    let sum = 0;
+    for (const w of q) sum += title.has(w) ? 1 : text.has(w) ? TEXT_WORD_WEIGHT : 0;
+    out.set(m.id, sum / q.size);
+  }
+  return out;
+}
+
+/**
+ * The thresholds of {@link selectScopeAreas}, per scorer (spec Addendum C1).
+ * `floor`: the least score an area (through itself or a map below it) needs
+ * at all — below it on every area, the query searches instead. `narrowGap`:
+ * how much better a map below an area must match than the area itself for
+ * the scope to narrow to that map. Semantic scores are cosine similarities of
+ * gte-small embeddings (title + description + orientation), which sit high
+ * for any two texts of one domain; keyword scores are {@link keywordMapScores}.
+ */
+export const AREA_MATCH = {
+  semantic: { floor: 0.8, narrowGap: 0.05 },
+  keyword: { floor: 0.5, narrowGap: 0.5 },
+} as const;
+/** An area is in scope when its best score is at least this share of the best area's. */
+export const AREA_RELATIVE = 0.9;
+/** At most this many areas make one scope. */
+export const MAX_SCOPE_AREAS = 12;
+
+/**
+ * The main areas a subject means (spec Addendum C1): every top-level area
+ * whose best score — its own or a map's below it — is at least
+ * {@link AREA_RELATIVE} of the best area's and at least the scorer's floor,
+ * best first, at most {@link MAX_SCOPE_AREAS}. An area whose best map below
+ * matches better than the area by the scorer's `narrowGap` (a narrow subject,
+ * "attachments") is replaced by that map. A map with no score (not embedded)
+ * counts for nothing. Null when no area clears the floor: search instead.
+ */
+export function selectScopeAreas(maps: readonly ScopeMap[], scores: ReadonlyMap<string, number>, scorer: keyof typeof AREA_MATCH): ScopeMap[] | null {
+  const { floor, narrowGap } = AREA_MATCH[scorer];
+  const areaOf = (m: ScopeMap) => (m.area === undefined ? (m.depth === 1 ? m.id : null) : m.area);
+  const ranked = maps
+    .filter((m) => m.depth === 1)
+    .map((area) => {
+      const own = scores.get(area.id) ?? -Infinity;
+      let best: { map: ScopeMap; score: number } | null = null;
+      for (const m of maps) {
+        if (m.depth < 2 || areaOf(m) !== area.id) continue;
+        const score = scores.get(m.id);
+        if (score !== undefined && (!best || score > best.score || (score === best.score && m.depth < best.map.depth))) best = { map: m, score };
+      }
+      const narrow = best !== null && best.score - own >= narrowGap;
+      return { pick: narrow && best ? best.map : area, score: Math.max(own, best?.score ?? -Infinity) };
+    })
+    .filter((a) => Number.isFinite(a.score))
+    .sort((a, b) => b.score - a.score || a.pick.title.localeCompare(b.pick.title));
+  if (!ranked.length || ranked[0].score < floor) return null;
+  const top = ranked[0].score;
+  const bar = Math.max(floor, AREA_RELATIVE * top);
+  return ranked.filter((a) => a.score >= bar).slice(0, MAX_SCOPE_AREAS).map((a) => a.pick);
 }
 
 /**
@@ -435,6 +527,7 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
   const growth: ChangeStory["growth"] = {
     notesThen: notes.filter(f.liveThen).length,
     notesNow: notes.filter(f.liveNow).length,
+    ...(s.vaultStart && s.vaultStart > f.since ? { from: s.vaultStart } : {}),
     newAreas: maps.filter(([id]) => isArea(id)).map(([id, n]) => ({ id, title: n.title || id })),
     newMaps: maps
       .filter(([id]) => !isArea(id))

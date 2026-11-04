@@ -258,6 +258,8 @@ export const schema: DocumentNode = gql`
     notesThen: Int!
     "Live notes now."
     notesNow: Int!
+    "When since predates the vault's first recorded activity: that activity; growth is counted from it (notesThen is then 0 because the vault did not exist yet)."
+    from: String
     newAreas: [KnowledgeGraphChangeMapRef!]!
     newMaps: [KnowledgeGraphChangeNewMap!]!
   }
@@ -342,6 +344,8 @@ export const schema: DocumentNode = gql`
   type KnowledgeGraphChangeWindow {
     since: String!
     until: String!
+    "The vault's first recorded activity (its earliest operation or note creation); null on a cursor page or an empty vault."
+    vaultStart: String
   }
 
   type KnowledgeGraphChangeScope {
@@ -355,7 +359,7 @@ export const schema: DocumentNode = gql`
   }
 
   type KnowledgeGraphChangeResolvedScope {
-    "vault | moc | search"
+    "vault | areas | moc | search"
     kind: String!
     "The map, when kind is moc; title is also the hub's or drive's name, when kind is vault."
     id: String
@@ -363,6 +367,8 @@ export const schema: DocumentNode = gql`
     "The search, when kind is search: the query and how many hits it started from (their linked notes join them)."
     query: String
     hits: Int
+    "The main areas the query matched, best first, when kind is areas (a map below an area stands in for it when it matched far better)."
+    areas: [KnowledgeGraphChangeMapRef!]
   }
 
   type KnowledgeGraphChangeTotals {

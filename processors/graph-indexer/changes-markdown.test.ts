@@ -137,4 +137,21 @@ describe("renderChangesMarkdown: the story leads", () => {
     const vault = renderChangesMarkdown({ ...digest, scope: { q: "Powerhouse stack", resolved: { kind: "vault", title: "Powerhouse Stack" } } });
     expect(vault).toContain("Scope: the whole vault (“Powerhouse stack” names Powerhouse Stack).");
   });
+
+  it("says when the vault began instead of 0 notes then, when since predates it (Addendum C2)", () => {
+    const story = digest.story;
+    if (!story) throw new Error("the fixture has a story");
+    const md = renderChangesMarkdown({ ...digest, story: { ...story, growth: { ...story.growth, notesThen: 0, from: "2026-09-02T10:00:00.000Z" } } });
+    expect(md).toContain("The vault began on 2026-09-02; it holds 150 live notes now.");
+    expect(md).not.toContain("Live notes: 0 →");
+  });
+
+  it("names the main areas a q matched (Addendum C1)", () => {
+    const md = renderChangesMarkdown({
+      ...digest,
+      scope: { q: "the reactor", resolved: { kind: "areas", areas: [{ id: "a1", title: "Reactor and Drives" }, { id: "a3", title: "Reactor Sync Infrastructure" }] } },
+    });
+    expect(md).toContain("Scope: the areas Reactor and Drives [[a1]], Reactor Sync Infrastructure [[a3]] (matched “the reactor”).");
+  });
 });
+

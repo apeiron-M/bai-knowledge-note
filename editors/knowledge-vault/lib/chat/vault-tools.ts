@@ -498,13 +498,13 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "what_changed",
       description:
-        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query; a query that names a map (an area or a map below it) scopes to that map, otherwise to the top search hits and their linked notes; `scope` says which. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query; any other query means the main areas about it — the hub's areas whose maps match it best (or the one map below an area that matches far better, for a narrow subject) — and only when no area matches, the top search hits and their linked notes; `scope` says which. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
       parameters: {
         type: "object",
         properties: {
           since: {
             type: "string",
-            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself, and tell the person which one you used.",
+            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself — a month or season without a year is its most recent past occurrence, by today's date in your instructions — and tell the person which one you used.",
           },
           until: {
             type: "string",
@@ -521,7 +521,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
           },
           query: {
             type: "string",
-            description: "A subject in words, when no map or topic names it: its top search hits and their linked notes are the scope.",
+            description: "A subject in words (\"the reactor\", \"attachments\"): the scope is the main areas about it, else its top search hits and their linked notes. Leave it out for the vault as a whole or its main subject.",
           },
           cursor: {
             type: "string",
@@ -1770,14 +1770,14 @@ const CHANGE_CLAIM_FIELDS = "documentId claim gist";
 const CHANGE_TOTALS_FIELDS = "created revised superseded archived reverified sourcesRevised sourcesAdded documents operations";
 const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $cursor: String, $limit: Int, $detail: Boolean!) {
   knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc, topic: $topic, q: $q, cursor: $cursor, limit: $limit) {
-    window { since until }
-    scope { moc topic q resolved { kind id title query hits } }
+    window { since until vaultStart }
+    scope { moc topic q resolved { kind id title query hits areas { id title } } }
     totals { ${CHANGE_TOTALS_FIELDS} }
     events @include(if: $detail) { ${CHANGE_EVENT_FIELDS} }
     nextCursor @include(if: $detail)
     story {
-      growth { notesThen notesNow newAreas { id title } newMaps { id title area } }
-      areas { id title notesThen notesNow newCount changedCount retiredCount mergedCount versions { first now }
+      growth { notesThen notesNow from newAreas { id title } newMaps { id title area } }
+      areas { id title notesThen notesNow newCount changedCount retiredCount versions { first now }
         newClaims { ${CHANGE_CLAIM_FIELDS} }
         changedClaims { documentId then { claim gist } now { claim gist } why replacedBy thenAt }
         retiredClaims { ${CHANGE_CLAIM_FIELDS} } }
@@ -1789,7 +1789,7 @@ const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, 
 /** knowledgeGraphChanges as the wire carries it (folded is a list there). */
 type ChangeEventWire = { documentId: string; by?: string | null } & Record<string, unknown>;
 type ChangeDigestWire = {
-  window: { since: string; until: string };
+  window: { since: string; until: string; vaultStart?: string | null };
   scope?: { resolved?: ResolvedScope | null } | null;
   totals: ChangeTotals;
   events?: ChangeEventWire[] | null;
@@ -1845,9 +1845,15 @@ export function chatThenVsNow(t: ThenVsNow, perSide = CHAT_THEN_VS_NOW): Record<
   return { then: side(t.then), now: side(t.now), unchanged: side(t.unchanged), ...(extra ? { more: `${extra} more claims not shown` } : {}) };
 }
 
-/** What a q covered, in words: the map it named, or a search. */
+/** Live notes then → now, or — since predates the vault — when it began and how many it holds now. */
+function growthLine(g: ChangeStory["growth"]): string {
+  return g.from ? `the vault began on ${g.from.slice(0, 10)}; ${g.notesNow} live notes now` : `live notes ${g.notesThen} → ${g.notesNow}`;
+}
+
+/** What a q covered, in words: the whole vault, the main areas it matched, one map, or a search. */
 function resolvedLine(r: ResolvedScope): string {
   if (r.kind === "vault") return `the whole vault (“${clip(r.title, 80)}” names it)`;
+  if (r.kind === "areas") return `the main areas ${r.areas.map((a) => `${clip(a.title, 80)} (${a.id})`).join(", ")}`;
   if (r.kind === "moc") return `the map ${clip(r.title, 80)} (${r.id})`;
   return `search “${clip(r.query, 80)}”: ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes`;
 }
@@ -1896,7 +1902,8 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
   const growthNaming = (names: number) => {
     const extra = (key: string, list: unknown[]) => (list.length > names ? { [key]: list.length - names } : {});
     return {
-      notesThen: g.notesThen,
+      // Since predates the vault: say when it began, never "0 notes then" (Addendum C2).
+      ...(g.from ? { vaultBegan: g.from.slice(0, 10) } : { notesThen: g.notesThen }),
       notesNow: g.notesNow,
       newAreas: g.newAreas.slice(0, names).map((a) => clip(a.title, 80)),
       ...extra("moreNewAreas", g.newAreas),
@@ -1922,8 +1929,9 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
       changed: changed.map(chatShift),
       retired: retired.map((c) => chatClaim(c, gists)),
       ...(more.length ? { more: more.join(", ") } : {}),
-      // Twin notes merged: not a change in understanding, only counted.
-      ...(a.mergedCount ? { merged: a.mergedCount } : {}),
+      // Named without a claim: the model may name and count it, never characterise it (Addendum C5).
+      ...(newClaims.length + changed.length + retired.length === 0 ? { nameOnly: true } : {}),
+      // No merge counts: twin notes folded together are housekeeping, never a change to report (Addendum C3).
       ...(a.versions ? { versions: `${a.versions.first ?? "?"} → ${a.versions.now ?? "?"}` } : {}),
     };
   };
@@ -2735,7 +2743,7 @@ export async function executeTool(
         data,
         `${totalsLine(digest.totals)} ${span}` +
           covered +
-          (digest.story ? `; live notes ${digest.story.growth.notesThen} → ${digest.story.growth.notesNow}, ${digest.story.areas.length} area${digest.story.areas.length === 1 ? "" : "s"} changed` : "") +
+          (digest.story ? `; ${growthLine(digest.story.growth)}, ${digest.story.areas.length} area${digest.story.areas.length === 1 ? "" : "s"} changed` : "") +
           (digest.thenVsNow ? "; thenVsNow for the scope" : "") +
           (events ? `; ${events.length} event${events.length === 1 ? "" : "s"}${digest.nextCursor ? ", more with nextCursor" : ""}` : ""),
       );

@@ -6,25 +6,28 @@ import {
   type ChangeDigest,
   type ChangeScope,
 } from "../../../processors/graph-indexer/changes.js";
-import { matchMapTitle } from "../../../processors/graph-indexer/changes-story.js";
+import { keywordMapScores, matchMapTitle, selectScopeAreas } from "../../../processors/graph-indexer/changes-story.js";
 import { isKnowledgeLinkType } from "../../../processors/graph-indexer/link-types.js";
 import { getQuery, readerOf, type GraphSubgraph } from "./db.js";
-import { searchVault } from "./search.js";
+import { mapSimilarities, searchVault } from "./search.js";
 
 /** How many semantic hits a `q` scope starts from when it names no map (spec Addendum B2). */
 export const CHANGE_Q_HITS = 25;
 
 /**
- * Resolve a `q` scope (spec Addendum B2, tightened after review): a query
- * that names a hub or the drive itself (whole words, see `matchMapTitle`) is
- * the whole vault — `q` is dropped and the digest is the unscoped one; a
- * query that names a hub area or a map below it scopes to that map's subtree;
- * otherwise the top semantic hits plus their one-hop knowledge-edge
- * neighbours. Explicit `documentIds` always narrow what `q` resolves to (the
- * map's subtree or the search result). With an explicit `moc` the map is
- * already chosen and `q` searches within it. `resolved` says which it was.
- * Shared by the GraphQL resolver and `GET changes`, so both answer the same
- * totals.
+ * Resolve a `q` scope (spec Addendum B2, tightened after review, and C1): a
+ * query that names a hub or the drive itself (whole words, see
+ * `matchMapTitle`) is the whole vault — `q` is dropped and the digest is the
+ * unscoped one. Otherwise a subject means the main areas about it: the hub's
+ * top-level areas, and the maps below them, ranked by similarity to the
+ * query (their embeddings; their words when the server cannot embed) —
+ * see `selectScopeAreas`. Several areas scope to the union of their
+ * subtrees (`mocs`), one map to its subtree (`moc`). Only when no area
+ * clears the floor does it fall back to the top semantic hits plus their
+ * one-hop knowledge-edge neighbours. Explicit `documentIds` always narrow
+ * what `q` resolves to. With an explicit `moc` the map is already chosen and
+ * `q` searches within it. `resolved` says which it was. Shared by the
+ * GraphQL resolver and `GET changes`, so both answer the same totals.
  */
 export async function resolveChangeScope(
   subgraph: GraphSubgraph,
@@ -36,13 +39,16 @@ export async function resolveChangeScope(
   const query = getQuery(subgraph, driveId);
   if (!scope.moc) {
     const candidates = await query.changeMaps();
-    if (driveName) candidates.unshift({ id: driveId, title: driveName, depth: 0 });
-    const map = matchMapTitle(scope.q, candidates);
-    if (map?.depth === 0) {
+    const vault = matchMapTitle(scope.q, driveName ? [{ id: driveId, title: driveName, depth: 0 }, ...candidates] : candidates);
+    if (vault?.depth === 0) {
       const { q: _q, ...whole } = scope;
-      return { ...whole, resolved: { kind: "vault", title: map.title } };
+      return { ...whole, resolved: { kind: "vault", title: vault.title } };
     }
-    if (map) return { ...scope, moc: map.id, resolved: { kind: "moc", id: map.id, title: map.title } };
+    const maps = candidates.filter((m) => m.depth > 0);
+    const similar = await mapSimilarities(subgraph, driveId, scope.q, maps.map((m) => m.id));
+    const picked = similar ? selectScopeAreas(maps, similar, "semantic") : selectScopeAreas(maps, keywordMapScores(scope.q, maps), "keyword");
+    if (picked?.length === 1) return { ...scope, moc: picked[0].id, resolved: { kind: "moc", id: picked[0].id, title: picked[0].title } };
+    if (picked) return { ...scope, mocs: picked.map((m) => m.id), resolved: { kind: "areas", areas: picked.map((m) => ({ id: m.id, title: m.title })) } };
   }
   const hits = await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_HITS, false);
   const ids = new Set(hits.map((h) => String(h.node.documentId)));

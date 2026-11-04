@@ -99,7 +99,9 @@ function shiftLine(s: Shift): string {
 /** The story first: how the vault grew, then per area what is new, what changed, what retired. */
 function storySection(story: ChangeStory, out: string[]): void {
   const g = story.growth;
-  out.push("## What the vault knows now", "", `Live notes: ${g.notesThen} → ${g.notesNow}.`);
+  // Since predates the vault: when it began, never "0 notes then" (Addendum C2).
+  const grew = g.from ? `The vault began on ${g.from.slice(0, 10)}; it holds ${g.notesNow} live notes now.` : `Live notes: ${g.notesThen} → ${g.notesNow}.`;
+  out.push("## What the vault knows now", "", grew);
   if (g.newAreas.length) out.push(`New areas: ${g.newAreas.map((a) => a.title).join(", ")}.`);
   if (g.newMaps.length) out.push(`New maps: ${g.newMaps.map((m) => (m.area ? `${m.title} (${m.area})` : m.title)).join(", ")}.`);
   out.push("");
@@ -125,6 +127,10 @@ function scopeLine(d: ChangeDigest): string | null {
   const r = d.scope.resolved;
   if (!r) return null;
   if (r.kind === "vault") return `Scope: the whole vault (“${oneLine(d.scope.q ?? r.title, 80)}” names ${oneLine(r.title, 80)}).`;
+  if (r.kind === "areas") {
+    const named = r.areas.map((a) => `${oneLine(a.title, 80)} [[${a.id}]]`).join(", ");
+    return `Scope: the areas ${named}${d.scope.q ? ` (matched “${oneLine(d.scope.q, 80)}”)` : ""}.`;
+  }
   return r.kind === "moc"
     ? `Scope: the map ${r.title} [[${r.id}]]${d.scope.q ? ` (matched “${oneLine(d.scope.q, 80)}”)` : ""}.`
     : `Scope: search “${oneLine(r.query, 80)}” — ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes.`;

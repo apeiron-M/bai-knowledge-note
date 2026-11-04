@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
 import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
-import { areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
+import { AREA_MATCH, areasOf, claimTokens, isDuplicateMerge, keywordMapScores, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_SCOPE_AREAS, MAX_THEN_VS_NOW, selectScopeAreas, type ScopeMap, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
 function row(documentId: string, operationType: string, input: Record<string, unknown>, timestamp: string): OperationRow {
@@ -795,5 +795,76 @@ describe("story: Addendum C", () => {
         { documentId: "n2", then: { claim: "Delivery is exactly once, in order", gist: null }, now: { claim: "Delivery is at-least-once", gist: null }, why: null, thenAt: IN(1, 2) },
       ]);
     });
+  });
+});
+
+describe("story: Addendum C2 — the vault's first recorded activity", () => {
+  it("reports window.vaultStart, and counts growth from it when since predates it", () => {
+    const s = story([["n1", note("A claim", { addedAt: IN(2) })]], { vaultStart: IN(1) });
+    const d = buildChanges([row("n1", "CREATE_DOCUMENT", {}, IN(2))], [], ctx(s), { since: "2025-09-01T00:00:00.000Z", until: W.until }, { scope: {} });
+    expect(d.window).toEqual({ since: "2025-09-01T00:00:00.000Z", until: W.until, vaultStart: IN(1) });
+    expect(d.story?.growth.from).toBe(IN(1));
+  });
+
+  it("counts growth from since when the vault already existed then", () => {
+    const s = story([["n1", note("A claim")]], { vaultStart: BEFORE });
+    const d = digest([row("n1", "SET_TITLE", { title: "A claim" }, IN(2))], [], s);
+    expect(d.window.vaultStart).toBe(BEFORE);
+    expect(d.story?.growth.from).toBeUndefined();
+  });
+});
+
+describe("scope: a subject means the main areas about it (Addendum C1)", () => {
+  // A hub on the scale of the live one: technical areas and business areas, each with its orientation.
+  const area = (id: string, title: string, text: string): ScopeMap => ({ id, title, depth: 1, area: id, text });
+  const sub = (id: string, title: string, parent: string, text = "", depth = 2): ScopeMap => ({ id, title, depth, area: parent, text });
+  const HUB: ScopeMap[] = [
+    { id: "hub", title: "Powerhouse Knowledge", depth: 0, area: null, text: "Everything the vault knows" },
+    area("rd", "Reactor and Drives", "How the reactor of the Powerhouse stack stores documents and drives, loads models and applies operations."),
+    area("rs", "Reactor Sync Infrastructure", "How reactors of the Powerhouse stack synchronise drives over channels, outboxes and remotes."),
+    area("auth", "Authorization and Identity", "Who may read and write in the Powerhouse stack: signatures, renown, drive permissions."),
+    area("dep", "Deployment and Operations", "Running the Powerhouse stack: Switchboard hosting, Docker, databases, upgrades."),
+    area("con", "Connect Application", "The Powerhouse stack's Connect app: drives, editors and the reactor client in the browser."),
+    area("dms", "Document Model System", "Document models in the Powerhouse stack: schemas, operations, reducers, codegen."),
+    area("dp", "Data Processing and CQRS", "Processors and read models in the Powerhouse stack, fed by the reactor's operations."),
+    area("lead", "Lead Corpus", "Prospects and companies the Powerhouse team tracks for sales outreach."),
+    area("dmc", "Domain Model Catalog", "Business domains catalogued as candidate document models for clients."),
+    area("price", "Service Pricing", "How Powerhouse prices its services: rates, packages, margins."),
+    sub("rd-store", "Reactor Storage", "rd", "PGlite and Postgres storage of the reactor"),
+    sub("rd-store-snap", "Snapshots", "rd", "Document snapshots kept by storage", 3),
+    sub("att", "Attachments", "dms", "Files attached to documents: upload, hashing, attachment references"),
+    sub("dms-codegen", "Codegen", "dms", "Generating reducers and types from a document model"),
+  ];
+  const ids = (picked: ScopeMap[] | null) => (picked ?? []).map((m) => m.id).sort();
+  const TECHNICAL = ["auth", "con", "dep", "dms", "dp", "rd", "rs"];
+
+  it("scopes 'the Powerhouse stack' to the technical areas only, none of the business ones", () => {
+    expect(ids(selectScopeAreas(HUB, keywordMapScores("What changed in the Powerhouse stack since September?", HUB), "keyword"))).toEqual(TECHNICAL);
+  });
+
+  it("scopes 'the reactor' to Reactor and Drives (its sub-maps go with it) and Reactor Sync Infrastructure", () => {
+    expect(ids(selectScopeAreas(HUB, keywordMapScores("what changed in the powerhouse reactor since summer", HUB), "keyword"))).toEqual(["rd", "rs"]);
+    expect(ids(selectScopeAreas(HUB, keywordMapScores("the reactor", HUB), "keyword"))).toEqual(["rd", "rs"]);
+  });
+
+  it("narrows to a map below an area when it matches far better than the area ('attachments')", () => {
+    expect(ids(selectScopeAreas(HUB, keywordMapScores("what changed in attachments", HUB), "keyword"))).toEqual(["att"]);
+  });
+
+  it("matches no area when nothing clears the floor: the caller searches", () => {
+    expect(selectScopeAreas(HUB, keywordMapScores("quantum chromodynamics", HUB), "keyword")).toBeNull();
+    expect(selectScopeAreas(HUB, keywordMapScores("what changed since September", HUB), "keyword")).toBeNull();
+  });
+
+  it("with similarities: every area within 0.9 of the best and above the floor, at most twelve", () => {
+    const sims = new Map<string, number>([["rd", 0.9], ["rs", 0.86], ["auth", 0.8], ["lead", 0.7], ["rd-store", 0.88], ["att", 0.95]]);
+    // dms's own score is missing (not embedded): its Attachments map stands for it, and is narrowed to.
+    expect(ids(selectScopeAreas(HUB, sims, "semantic"))).toEqual(["att", "rd", "rs"]);
+    // Nothing above the floor: no areas.
+    expect(selectScopeAreas(HUB, new Map([["rd", AREA_MATCH.semantic.floor - 0.01]]), "semantic")).toBeNull();
+    const many: ScopeMap[] = Array.from({ length: 20 }, (_, i) => area(`x${i}`, `Area ${i}`, ""));
+    const all = selectScopeAreas(many, new Map(many.map((m, i) => [m.id, 0.9 - i * 0.001])), "semantic");
+    expect(all).toHaveLength(MAX_SCOPE_AREAS);
+    expect(all?.[0].id).toBe("x0");
   });
 });

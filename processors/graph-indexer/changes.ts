@@ -105,6 +105,8 @@ export interface ChangeGroup {
 
 export interface ChangeScope {
   moc?: string;
+  /** Internal: the main areas (or maps) a `q` resolved to — the union of their subtrees (Addendum C1). Never echoed. */
+  mocs?: string[];
   topic?: string;
   documentIds?: string[];
   q?: string;
@@ -114,6 +116,8 @@ export interface ChangeScope {
 }
 
 export type ResolvedScope =
+  /** The main areas the query matched (Addendum C1); a map below an area stands in for it when it matched far better. */
+  | { kind: "areas"; areas: { id: string; title: string }[] }
   | { kind: "moc"; id: string; title: string }
   | { kind: "search"; query: string; hits: number }
   /** The query named the hub or the drive: the whole vault, as an unscoped call (Addendum B corrections). */
@@ -137,7 +141,8 @@ export interface ChangeContext {
 }
 
 export interface ChangeDigest {
-  window: { since: string; until: string };
+  /** `vaultStart`: the vault's first recorded activity (Addendum C2), on a digest that carries the story. */
+  window: { since: string; until: string; vaultStart?: string };
   scope: ChangeScope;
   totals: ChangeTotals;
   groups: ChangeGroup[];
@@ -934,7 +939,8 @@ export function buildChanges(
         a.title.localeCompare(b.title),
     );
 
-  const digest: ChangeDigest = { window, scope, totals: totalsOf(events, operations), groups };
+  const vaultStart = ctx.story && !opts.cursor ? ctx.story.vaultStart : null;
+  const digest: ChangeDigest = { window: vaultStart ? { ...window, vaultStart } : window, scope, totals: totalsOf(events, operations), groups };
   // A cursor page is the events' continuation: the first page carried the story.
   if (ctx.story && !opts.cursor) {
     // Each document's title and description at since, where a baseline recorded them.
