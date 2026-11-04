@@ -424,3 +424,51 @@ describe("story: review fixes (Addendum A)", () => {
     });
   });
 });
+
+describe("story: duplicate merges (Addendum B3)", () => {
+  const supersede = (by: string, old: string, reason: string, at = IN(2)) =>
+    row(by, "ADD_RELATIONSHIP", { sourceId: by, targetId: old, relationshipType: "SUPERSEDES", metadata: { reason } }, at);
+
+  it("does not make a near-identical twin merged by SUPERSEDES a shift: it is counted as merged", () => {
+    const rows = [supersede("n9", "n2", "consolidating")];
+    const s = story([
+      ["n2", note("Storage keeps every snapshot of a document", { status: "ARCHIVED" })],
+      ["n9", note("Storage keeps every snapshot of each document")],
+    ], { coreIdeas: new Map([["m1", ["n2", "n9"]]]) });
+    const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([]);
+    expect(area?.changedCount).toBe(0);
+    expect(area?.mergedCount).toBe(1);
+  });
+
+  it("does not make a supersession whose reason marks a duplicate a shift, whatever the titles", () => {
+    const reasons = ["Twin of the newer note", "duplicate claim", "Same claim, written earlier", "n9 already makes this claim", "Merged into n9"];
+    for (const reason of reasons) {
+      const rows = [supersede("n9", "n2", reason)];
+      const s = story([
+        ["n2", note("Snapshots are kept forever", { status: "ARCHIVED" })],
+        ["n9", note("The reactor retains each document state indefinitely")],
+      ], { coreIdeas: new Map([["m1", ["n2", "n9"]]]) });
+      const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+      expect([reason, area?.changedClaims.length, area?.mergedCount]).toEqual([reason, 0, 1]);
+    }
+  });
+
+  it("keeps a real replacement as a shift, and does not list a merged twin created in the window as new", () => {
+    const rows = [
+      supersede("n9", "n2", "checkpoints replaced full snapshots"),
+      row("n7", "CREATE_DOCUMENT", {}, IN(1)),
+      supersede("n1", "n7", "same claim, written earlier", IN(3)),
+    ];
+    const s = story([
+      ["n2", note("Storage keeps every snapshot", { status: "ARCHIVED" })],
+      ["n9", note("Storage keeps snapshots per checkpoint")],
+      ["n7", note("A twin", { addedAt: IN(1) })],
+      ["n1", note("The original")],
+    ], { coreIdeas: new Map([["m1", ["n1", "n2", "n7", "n9"]]]) });
+    const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims.map((c) => c.documentId)).toEqual(["n2"]);
+    expect(area?.mergedCount).toBe(1);
+    expect(area?.newClaims.map((c) => c.documentId)).toEqual([]);
+  });
+});

@@ -69,6 +69,8 @@ export interface StoryArea {
   newCount: number;
   changedCount: number;
   retiredCount: number;
+  /** Supersessions that merged twin notes: counted, never listed as changed (Addendum B3). */
+  mergedCount: number;
   newClaims: Claim[];
   changedClaims: Shift[];
   retiredClaims: Claim[];
@@ -134,6 +136,42 @@ export function areasOf(s: StoryContext): { areas: { id: string; title: string }
   return { areas, areasByDoc };
 }
 
+/** Words too common to tell two claims apart. */
+const STOPWORDS = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "is", "it", "its", "of", "on", "or", "so", "that", "the", "their", "this", "to", "with"]);
+
+/** A claim's words, lowercased, without punctuation, stopwords or a plural "s". */
+export function claimTokens(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const w of text.toLowerCase().split(/[^\p{L}\p{N}]+/u)) {
+    if (!w || STOPWORDS.has(w)) continue;
+    out.add(w.length > 3 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w);
+  }
+  return out;
+}
+
+/** Jaccard similarity of two claims' {@link claimTokens}. */
+export function claimSimilarity(a: string, b: string): number {
+  const x = claimTokens(a);
+  const y = claimTokens(b);
+  if (!x.size && !y.size) return 1;
+  let both = 0;
+  for (const w of x) if (y.has(w)) both++;
+  return both / (x.size + y.size - both);
+}
+
+/** A SUPERSEDES reason that says the two notes were one claim written twice. */
+const DUPLICATE_REASON = /twin|duplicate|same claim|already makes this claim|merged/i;
+/** At or above this title similarity, a supersession is a duplicate merge. */
+export const MERGE_SIMILARITY = 0.6;
+
+/**
+ * A supersession that merged twin notes (spec Addendum B3): the claims read
+ * near-identically, or the reason says so. Not a change in understanding.
+ */
+export function isDuplicateMerge(then: string, now: string, reason: string | null): boolean {
+  return (reason !== null && DUPLICATE_REASON.test(reason)) || claimSimilarity(then, now) >= MERGE_SIMILARITY;
+}
+
 function differs(a: { claim: string; gist: string | null }, b: { claim: string; gist: string | null }): boolean {
   return a.claim !== b.claim || (a.gist ?? "") !== (b.gist ?? "");
 }
@@ -152,6 +190,8 @@ export interface Facts {
   /** Replacing notes the story shows as a shift's now (never also as new). */
   shiftReplacements: Set<string>;
   shifts: Map<string, Shift>;
+  /** Notes merged into a twin in the window (old note → its replacement). */
+  merged: Map<string, string>;
   retired: Set<string>;
   inScope: (id: string) => boolean;
   thenOf: (id: string) => { claim: string; gist: string | null };
@@ -205,16 +245,20 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
     !(archivedNow(id) && !archivedInWindow.has(id));
 
   const shifts = new Map<string, Shift>();
+  const merged = new Map<string, string>();
   for (const e of events) {
     if (!isNote(e.documentId) || !inScope(e.documentId)) continue;
     if (e.kind === "superseded" && e.supersededBy) {
       const then = thenOf(e.documentId);
       const now = nowOf(e.supersededBy.documentId);
       if (node(e.supersededBy.documentId) === undefined && e.supersededBy.title) now.claim = e.supersededBy.title;
-      if (differs(then, now)) {
+      if (isDuplicateMerge(then.claim, now.claim, e.supersededBy.reason)) {
+        merged.set(e.documentId, e.supersededBy.documentId);
+        shifts.delete(e.documentId);
+      } else if (differs(then, now)) {
         shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.supersededBy.reason, replacedBy: e.supersededBy.documentId });
       }
-    } else if (e.kind === "revised" && !shifts.has(e.documentId) && (e.fields?.title || e.fields?.description)) {
+    } else if (e.kind === "revised" && !shifts.has(e.documentId) && !merged.has(e.documentId) && (e.fields?.title || e.fields?.description)) {
       const then = thenOf(e.documentId);
       const now = nowOf(e.documentId);
       if (differs(then, now)) shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.revisionNotes?.length ? e.revisionNotes.join("; ") : null });
@@ -225,7 +269,7 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
     [...archivedInWindow].filter((id) => isNote(id) && inScope(id) && archivedNow(id) && !supersededInWindow.has(id) && !s.superseded.has(id)),
   );
   const shiftReplacements = new Set([...shifts.values()].flatMap((sh) => (sh.replacedBy ? [sh.replacedBy] : [])));
-  return { areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
+  return { areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, merged, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
 }
 
 const claimOf = (f: Facts, id: string, then = false): Claim => ({ documentId: id, ...(then ? f.thenOf(id) : f.nowOf(id)) });
@@ -265,11 +309,16 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
     const at = f.areasByDoc.get(sh.documentId) ?? (sh.replacedBy ? f.areasByDoc.get(sh.replacedBy) : undefined) ?? [null];
     for (const a of at) push(shiftsByArea, a, sh);
   }
+  // A merge is filed like a shift: the old note's areas, else the replacement's.
+  const mergedByArea = new Map<string | null, number>();
+  for (const [old, by] of f.merged) {
+    for (const a of f.areasByDoc.get(old) ?? f.areasByDoc.get(by) ?? [null]) mergedByArea.set(a, (mergedByArea.get(a) ?? 0) + 1);
+  }
   const areas: (StoryArea & { weight: number })[] = [];
-  for (const id of new Set([...buckets.keys(), ...shiftsByArea.keys()])) {
+  for (const id of new Set([...buckets.keys(), ...shiftsByArea.keys(), ...mergedByArea.keys()])) {
     const members = buckets.get(id) ?? [];
     const newIds = members
-      .filter((n) => f.created.has(n) && f.liveNow(n) && !f.shiftReplacements.has(n))
+      .filter((n) => f.created.has(n) && f.liveNow(n) && !f.shiftReplacements.has(n) && !f.merged.has(n))
       .sort(
         (a, b) =>
           incoming(b) - incoming(a) ||
@@ -280,8 +329,9 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
     const retired = members.filter((n) => f.retired.has(n));
     const notesThen = members.filter(f.liveThen).length;
     const notesNow = members.filter(f.liveNow).length;
+    const mergedCount = mergedByArea.get(id) ?? 0;
     const weight = newIds.length + shifts.length + retired.length;
-    if (!weight && notesThen === notesNow) continue;
+    if (!weight && !mergedCount && notesThen === notesNow) continue;
     areas.push({
       id,
       title: id === null ? "Elsewhere" : (areaTitle.get(id) ?? id),
@@ -290,6 +340,7 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
       newCount: newIds.length,
       changedCount: shifts.length,
       retiredCount: retired.length,
+      mergedCount,
       newClaims: newIds.slice(0, MAX_NEW_CLAIMS).map((n) => claimOf(f, n)),
       changedClaims: shifts.slice(0, MAX_CHANGED_CLAIMS),
       retiredClaims: retired.slice(0, MAX_RETIRED_CLAIMS).map((n) => claimOf(f, n, true)),

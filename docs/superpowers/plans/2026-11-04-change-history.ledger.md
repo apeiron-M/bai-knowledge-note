@@ -148,3 +148,9 @@ A-fix: Ruling: `storyFacts` is computed once per digest and passed to `buildStor
 A-fix: Ruling (process): restored-in-window, lost-baseline, description-only story shift and several-hubs/map-under-two-areas were test gaps on behaviour that already held: those four tests were green on first run; every other new test was observed RED first — cost if wrong: weaker evidence those four tests can fail.
 A-fix plugin: powerhouse-knowledge local commit 5a9a3f1 (main, not pushed) — skills/rest-api (counts, unchanged, retired, cursor pages, past until, Elsewhere drill-down), skills/search, AGENT.md; AGENTS.md and agents/knowledge-agent.md regenerated, `--check` passes.
 A-fix: complete (commits 1fd6c345, 16b399b4, 2bee4162; tsc, lint:fix, test, build green)
+
+## Addendum B — first recorded vs now, scope and size
+Spec: § Addendum B (binding). Executor: inline. Base: 1f8d8785.
+B3: Ruling: the per-area count is named `mergedCount` (the spec says "counted in `merged` per area"; the brief says `mergedCount`) — it sits beside newCount/changedCount/retiredCount and reads as a count — cost if wrong: a rename in four surfaces.
+B3: Ruling: tokens = lowercase words split on non-letters/digits, minus a short stopword list (a, the, of, is, …), a trailing plural "s" dropped from words over 3 letters (not "ss"); Jaccard ≥ 0.6 on the old note's then-title vs the replacement's title; reason test is case-insensitive substring of twin / duplicate / same claim / already makes this claim / merged — cost if wrong: a borderline reworded title is counted as a merge rather than a shift.
+B3: Ruling: a merge is filed like a shift (old note's areas, else the replacement's, else Elsewhere); an area with only merges still appears; a merged twin created in the window is not listed as new (it was the duplicate); a merged note's in-window revision is not a shift either — cost if wrong: none.

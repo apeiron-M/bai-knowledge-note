@@ -216,6 +216,7 @@ describe("graph query: changes()", () => {
         newCount: 1,
         changedCount: 1,
         retiredCount: 0,
+        mergedCount: 0,
         newClaims: [{ documentId: "n3", claim: "Processors checkpoint per batch", gist: "gist" }],
         changedClaims: [
           {
