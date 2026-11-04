@@ -281,3 +281,17 @@ story can say "first recorded at v6.2.2-dev.74, now v6.2.3-dev.91+e0f277d". Shif
 9. "How did processor delivery work in September and how does it work now?" → resolves to the Data Processing and
    CQRS map (or its processors notes), then: "exactly once, in order" (first recorded 2026-09-02), now:
    "at-least-once with a crash gap".
+
+### Addendum B — corrections after review (2026-11-04)
+- **B3 replaced.** Title Jaccard ≥ 0.6 with an unanchored reason match counted real reversals as merges ("exactly once" →
+  "at least once" 0.67; "supported" → "not supported" 0.75; version-only flips 0.63). New rule: a supersession is a
+  duplicate merge only when (a) its reason matches an anchored duplicate phrase — `^\s*same (claim|point)\b`,
+  `already makes this claim`, `\btwin\b`, `\bduplicate (of|note|claim)\b`, `\bidentical claim\b`, `\bredundant with\b`,
+  `merged (into|with) (the )?(newer|older|surviving|twin)` — or (b) the reason is empty AND title Jaccard ≥ **0.8** AND
+  the differing tokens contain **no negation** (not/no/never/without/cannot) **and no digit or version token**.
+  Merged notes are excluded from `thenVsNow` and from new/changed lists everywhere.
+- **B4 extended.** First-recorded then-state also applies when a note created in the window is then superseded in it
+  (`thenAt` on the supersession shift; the old note's first-recorded claim on the `then` side).
+- **B2 tightened.** A query→map match where the title's words are a subset of the query needs the title to cover ≥ 50%
+  of the query's content tokens, or to be the only matching map; otherwise search. A query matching the **hub's** title
+  (or the vault's drive name) resolves to the whole vault (`resolved: { kind: "vault" }`), server-side.
