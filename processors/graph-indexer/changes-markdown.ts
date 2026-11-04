@@ -4,6 +4,7 @@
  * browser-safe, like `changes.ts`.
  */
 import type { ChangeDigest, ChangeEvent, ChangeTotals } from "./changes.js";
+import type { ChangeStory, Claim, Shift, ThenVsNow } from "./changes-story.js";
 
 const ONE_LINE = 120;
 
@@ -79,12 +80,48 @@ function bullet(e: ChangeEvent): string {
   return `- [[${e.documentId}]] ${oneLine(e.title, 100)} — ${e.kind}${d ? `: ${d}` : ""}`;
 }
 
+function claimLine(c: Claim): string {
+  return `- [[${c.documentId}]] ${oneLine(c.claim, 160)}${c.gist ? ` — ${oneLine(c.gist, 160)}` : ""}`;
+}
+
+function shiftLine(s: Shift): string {
+  const text = (t: { claim: string; gist: string | null }) => `“${oneLine(t.claim, 140)}”`;
+  return (
+    `- [[${s.documentId}]] then ${text(s.then)} → now ${text(s.now)}` +
+    (s.replacedBy ? ` [[${s.replacedBy}]]` : "") +
+    (s.why ? ` — because ${oneLine(s.why, 160)}` : "")
+  );
+}
+
+/** The story first: how the vault grew, then per area what is new, what changed, what retired. */
+function storySection(story: ChangeStory, out: string[]): void {
+  const g = story.growth;
+  out.push("## What the vault knows now", "", `Live notes: ${g.notesThen} → ${g.notesNow}.`);
+  if (g.newAreas.length) out.push(`New areas: ${g.newAreas.map((a) => a.title).join(", ")}.`);
+  if (g.newMaps.length) out.push(`New maps: ${g.newMaps.map((m) => (m.area ? `${m.title} (${m.area})` : m.title)).join(", ")}.`);
+  out.push("");
+  for (const a of story.areas) {
+    out.push(`### ${a.title} — ${a.notesThen} → ${a.notesNow} notes`, "");
+    if (a.newClaims.length) out.push("New:", ...a.newClaims.map(claimLine), "");
+    if (a.changedClaims.length) out.push("Now understood differently:", ...a.changedClaims.map(shiftLine), "");
+    if (a.retiredClaims.length) out.push("Retired:", ...a.retiredClaims.map(claimLine), "");
+  }
+}
+
+function thenVsNowSection(t: ThenVsNow, out: string[]): void {
+  out.push("## Then vs now", "", "Then:", ...(t.then.length ? t.then.map(claimLine) : ["- (nothing in scope yet)"]), "");
+  out.push("Now:", ...(t.now.length ? t.now.map(claimLine) : ["- (nothing in scope now)"]), "");
+}
+
 export function renderChangesMarkdown(d: ChangeDigest): string {
   const out: string[] = [`# Changes ${d.window.since} → ${d.window.until}`, ""];
-  if (d.totals.documents === 0) {
+  if (d.totals.documents === 0 && !d.thenVsNow) {
     out.push("Nothing changed in this window.");
     return out.join("\n") + "\n";
   }
+  if (d.story) storySection(d.story, out);
+  if (d.thenVsNow) thenVsNowSection(d.thenVsNow, out);
+  if (d.story || d.thenVsNow) out.push("## Detail", "");
   out.push(totalsLine(d.totals), "");
   for (const g of d.groups) {
     out.push(`## ${g.title}`, "", totalsLine(g.totals), "");

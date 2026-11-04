@@ -46,6 +46,16 @@ describe("knowledgeGraph schema", () => {
       "cursor: String",
     ]);
     const digest = build().getType("KnowledgeGraphChangeDigest") as { getFields(): Record<string, unknown> };
-    expect(Object.keys(digest.getFields())).toEqual(["window", "scope", "totals", "groups", "events", "nextCursor"]);
+    expect(Object.keys(digest.getFields())).toEqual(["window", "scope", "totals", "groups", "events", "nextCursor", "story", "thenVsNow"]);
+  });
+
+  it("types the knowledge story: growth, areas of claims and shifts, then vs now", () => {
+    const fields = (name: string) => Object.keys((build().getType(name) as { getFields(): Record<string, unknown> }).getFields());
+    expect(fields("KnowledgeGraphChangeStory")).toEqual(["growth", "areas"]);
+    expect(fields("KnowledgeGraphChangeGrowth")).toEqual(["notesThen", "notesNow", "newAreas", "newMaps"]);
+    expect(fields("KnowledgeGraphChangeArea")).toEqual(["id", "title", "notesThen", "notesNow", "newClaims", "changedClaims", "retiredClaims"]);
+    expect(fields("KnowledgeGraphChangeClaim")).toEqual(["documentId", "claim", "gist"]);
+    expect(fields("KnowledgeGraphChangeShift")).toEqual(["documentId", "then", "now", "why", "replacedBy"]);
+    expect(fields("KnowledgeGraphThenVsNow")).toEqual(["then", "now"]);
   });
 });

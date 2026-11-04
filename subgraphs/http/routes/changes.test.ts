@@ -109,6 +109,7 @@ describe("GET changes", () => {
     expect(body.totals).toMatchObject({ revised: 1, created: 1 });
     expect(body.window.until).toBe("2026-11-03T23:59:59.999Z");
     expect(body.events).toBeUndefined();
+    expect((body as { story?: { growth: unknown; areas: unknown[] } }).story).toMatchObject({ growth: expect.any(Object) as unknown, areas: expect.any(Array) as unknown });
   });
 
   it("passes the scope through: comma-separated documentIds, limit and cursor", async () => {

@@ -234,6 +234,84 @@ export const schema: DocumentNode = gql`
     """Present whenever a scope is given (moc, topic, documentIds, q); paged by limit/cursor."""
     events: [KnowledgeGraphChangeEvent!]
     nextCursor: String
+    """
+    What the vault knows now that it did not before, by the hub's main areas —
+    the semantic layer to lead an answer with. Restricted to the scope when one is given.
+    """
+    story: KnowledgeGraphChangeStory
+    """For a q or topic scope: the scope's claims as the vault held them at since, versus now."""
+    thenVsNow: KnowledgeGraphThenVsNow
+  }
+
+  type KnowledgeGraphChangeStory {
+    growth: KnowledgeGraphChangeGrowth!
+    "Main areas (the hub's CHILD_MOC maps) with any change, most changed first; Elsewhere (id null) last."
+    areas: [KnowledgeGraphChangeArea!]!
+  }
+
+  type KnowledgeGraphChangeGrowth {
+    "Live notes (not archived) at since."
+    notesThen: Int!
+    "Live notes now."
+    notesNow: Int!
+    newAreas: [KnowledgeGraphChangeMapRef!]!
+    newMaps: [KnowledgeGraphChangeNewMap!]!
+  }
+
+  type KnowledgeGraphChangeMapRef {
+    id: String!
+    title: String!
+  }
+
+  type KnowledgeGraphChangeNewMap {
+    id: String!
+    title: String!
+    "The title of the main area the map falls under."
+    area: String
+  }
+
+  type KnowledgeGraphChangeArea {
+    "Null for Elsewhere: notes in no main area."
+    id: String
+    title: String!
+    notesThen: Int!
+    notesNow: Int!
+    "Notes created in the window, most connected first (at most 8)."
+    newClaims: [KnowledgeGraphChangeClaim!]!
+    "Claims the vault now states differently (at most 8)."
+    changedClaims: [KnowledgeGraphChangeShift!]!
+    "Notes archived in the window with no replacement (at most 5)."
+    retiredClaims: [KnowledgeGraphChangeClaim!]!
+  }
+
+  type KnowledgeGraphChangeClaim {
+    documentId: String!
+    "The note's title: the claim."
+    claim: String!
+    "The note's description."
+    gist: String
+  }
+
+  type KnowledgeGraphChangeClaimText {
+    claim: String!
+    gist: String
+  }
+
+  type KnowledgeGraphChangeShift {
+    documentId: String!
+    then: KnowledgeGraphChangeClaimText!
+    now: KnowledgeGraphChangeClaimText!
+    "The SUPERSEDES reason, or the revision-history line added in the window."
+    why: String
+    "The replacing note, for a supersession."
+    replacedBy: String
+  }
+
+  type KnowledgeGraphThenVsNow {
+    "At most 12."
+    then: [KnowledgeGraphChangeClaim!]!
+    "At most 12."
+    now: [KnowledgeGraphChangeClaim!]!
   }
 
   type KnowledgeGraphChangeWindow {

@@ -43,3 +43,54 @@ describe("renderChangesMarkdown: sources", () => {
     expect(renderChangesMarkdown(digest)).toContain("? → v2, earlier version not recorded, 30 notes");
   });
 });
+
+describe("renderChangesMarkdown: the story leads", () => {
+  const digest: ChangeDigest = {
+    window: { since: "2026-09-01T00:00:00.000Z", until: "2026-11-04T23:59:59.999Z" },
+    scope: { q: "processor delivery" },
+    totals: { created: 1, revised: 1, superseded: 1, archived: 1, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents: 3, operations: 40 },
+    groups: [],
+    story: {
+      growth: { notesThen: 120, notesNow: 150, newAreas: [{ id: "a3", title: "Workflow Automation" }], newMaps: [{ id: "m3", title: "Triggers", area: "Workflow Automation" }] },
+      areas: [
+        {
+          id: "a2",
+          title: "Data Processing and CQRS",
+          notesThen: 40,
+          notesNow: 44,
+          newClaims: [{ documentId: "n6", claim: "Processors checkpoint per batch", gist: "One cursor per batch" }],
+          changedClaims: [
+            {
+              documentId: "n1",
+              then: { claim: "Delivery is exactly once, in order", gist: null },
+              now: { claim: "Delivery is at-least-once, with a crash gap", gist: null },
+              why: "the outbox replays after a crash",
+              replacedBy: "n9",
+            },
+          ],
+          retiredClaims: [{ documentId: "n7", claim: "Processors poll the reactor", gist: null }],
+        },
+      ],
+    },
+    thenVsNow: {
+      then: [{ documentId: "n1", claim: "Delivery is exactly once, in order", gist: null }],
+      now: [{ documentId: "n9", claim: "Delivery is at-least-once, with a crash gap", gist: null }],
+    },
+  };
+
+  it("puts growth, then per area what is new, what changed then → now, and what retired, before the totals", () => {
+    const md = renderChangesMarkdown(digest);
+    const at = (s: string) => md.indexOf(s);
+    expect(md).toContain("## What the vault knows now");
+    expect(md).toContain("Live notes: 120 → 150");
+    expect(md).toContain("New areas: Workflow Automation");
+    expect(md).toContain("New maps: Triggers (Workflow Automation)");
+    expect(md).toContain("### Data Processing and CQRS — 40 → 44 notes");
+    expect(md).toContain("- [[n6]] Processors checkpoint per batch — One cursor per batch");
+    expect(md).toContain("- [[n1]] then “Delivery is exactly once, in order” → now “Delivery is at-least-once, with a crash gap” [[n9]] — because the outbox replays after a crash");
+    expect(md).toContain("- [[n7]] Processors poll the reactor");
+    expect(md).toContain("## Then vs now");
+    expect(at("## What the vault knows now")).toBeLessThan(at("1 created"));
+    expect(at("## Then vs now")).toBeLessThan(at("1 created"));
+  });
+});
