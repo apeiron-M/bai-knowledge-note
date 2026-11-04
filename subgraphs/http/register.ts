@@ -29,6 +29,8 @@ import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
 import { createReconcileRoute } from "./routes/reconcile.js";
 import { createTimelineRoute } from "./routes/timeline.js";
+import { createChangesRoute } from "./routes/changes.js";
+import { loadDriveChanges } from "../knowledge-graph/helpers/changes-scope.js";
 import { createSearchRoute } from "./routes/search.js";
 import { timedRoute } from "./lib/slow.js";
 
@@ -179,6 +181,17 @@ export function registerHttpRoutes(http: IHttpScope, subgraph: BaseSubgraph): vo
         ...deps,
         getQuery: (driveId: string) => getQuery(subgraph, driveId),
         getStore: (driveId: string) => sourceRowStore(() => getWritableDb(subgraph, driveId)),
+      }),
+    ),
+  );
+  http.get(
+    "changes",
+    { auth: "renown" },
+    timedRoute(
+      "GET changes",
+      createChangesRoute({
+        ...deps,
+        loadChanges: (driveId, args) => loadDriveChanges(subgraph, driveId, args),
       }),
     ),
   );

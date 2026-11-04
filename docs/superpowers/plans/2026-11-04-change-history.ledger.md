@@ -58,3 +58,8 @@ Task 6: Ruling: GraphQL types are prefixed `KnowledgeGraphChange*` (gateway-wide
 Task 6: Ruling: `q` neighbours = endpoints of knowledge-typed edges (KNOWLEDGE_LINK_TYPES, which include DERIVED_FROM/CORE_IDEA — so a hit's sources and maps join the scope); derived edges (INVOLVES, CITES…) do not — spec §7 "one-hop knowledge-edge neighbours" — cost if wrong: scope slightly wider/narrower.
 Task 6: Ruling: the digest exposes `by` (signer address) and claim text diffs to READ callers, while knowledgeGraphActivity/History stay write-gated as "an audit log and an address book" — this is the spec's explicit coordinator call (§4: read-gated at the drive); flagged for the user, not changed — cost if wrong: contributor addresses visible to drive readers.
 Task 6: Ruling: a malformed since/until is a GraphQL BAD_USER_INPUT (REST: 400) — cost if wrong: none.
+Task 6: complete (commits 8603796..885a012, tests: bun run test subgraphs/knowledge-graph/ → 50/50 pass; tsc clean)
+## Task 7
+Task 7: Ruling: the route takes a `loadChanges(driveId, args)` dep (live: `loadDriveChanges(subgraph, …)`, the same function the resolver calls) instead of re-implementing scope resolution; the "same totals" test runs both surfaces over one real PGlite index — cost if wrong: none.
+Task 7: Ruling: `since` is required on REST (400 without it), matching GraphQL's `since: String!` — cost if wrong: none.
+Task 7: Ruling: documented the route in docs/http-api.md's table — cost if wrong: none.
