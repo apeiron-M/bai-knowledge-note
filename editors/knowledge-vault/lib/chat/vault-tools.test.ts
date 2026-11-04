@@ -2119,21 +2119,71 @@ describe("what_changed — the change digest over a window", () => {
     nextCursor: null,
   });
 
-  it("keeps the unscoped summary small: 12 groups with one-line highlights, the rest as titles and totals", async () => {
-    mockGql({ knowledgeGraphChanges: heavyDigest(30, false) });
-    const r = await executeTool("what_changed", { since: "2026-01-01" }, CTX);
+  const words = (n: number, seed: string) => Array.from({ length: n }, (_, i) => `${seed}${i}`).join(" ");
+  const claim = (id: string) => ({ documentId: id, claim: `${id} ${words(14, "claim")}`, gist: words(30, "gist") });
+  const realisticStory = () => ({
+    growth: {
+      notesThen: 1240,
+      notesNow: 1388,
+      newAreas: [{ id: "a-wf", title: "Workflow Automation" }, { id: "a-host", title: "Hosts, Runners and Plugins" }],
+      newMaps: Array.from({ length: 6 }, (_, i) => ({ id: `m-new${i}`, title: `New map ${i}`, area: "Workflow Automation" })),
+    },
+    areas: Array.from({ length: 11 }, (_, a) => ({
+      id: a === 10 ? null : `area${a}`,
+      title: a === 10 ? "Elsewhere" : `Area ${a}`,
+      notesThen: 100 + a,
+      notesNow: 120 + a,
+      newClaims: Array.from({ length: 8 }, (_, i) => claim(`new-${a}-${i}`)),
+      changedClaims: Array.from({ length: 8 }, (_, i) => ({
+        documentId: `chg-${a}-${i}`,
+        then: { claim: words(14, "then"), gist: words(30, "thengist") },
+        now: { claim: words(14, "now"), gist: words(30, "nowgist") },
+        why: words(20, "because"),
+        replacedBy: i % 2 ? `rep-${a}-${i}` : null,
+      })),
+      retiredClaims: Array.from({ length: 5 }, (_, i) => claim(`ret-${a}-${i}`)),
+    })),
+  });
+
+  it("answers the unscoped call with the story, totals as one line, and no per-document highlights — under 12 KB", async () => {
+    mockGql({ knowledgeGraphChanges: { ...heavyDigest(30, false), story: realisticStory(), thenVsNow: null } });
+    const r = await executeTool("what_changed", { since: "2026-09-01" }, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) return;
-    const data = r.data as { groups: { highlights: Record<string, unknown>[] }[]; otherGroups: { title: string; totals: unknown }[] };
-    expect(JSON.stringify(data).length).toBeLessThan(10_000);
-    expect(data.groups).toHaveLength(12);
-    expect(data.otherGroups).toHaveLength(18);
-    expect(data.otherGroups[0]).toEqual({ id: "m12", title: "Map 12", totals: expect.stringMatching(/5 revised/) as unknown });
-    expect(data.groups[0].highlights).toHaveLength(3);
-    const h = data.groups[0].highlights[0];
-    expect(h).not.toHaveProperty("fields");
-    expect(h).not.toHaveProperty("folded");
-    expect(h.change).toBe('title "Old title" → "Claim 0"; +12 −3 lines');
+    const { body } = lastRequest();
+    expect(body.query).toContain("story {");
+    expect(body.query).toContain("thenVsNow {");
+    const data = r.data as {
+      totals: unknown;
+      groups?: unknown;
+      story: { growth: { notesThen: number; notesNow: number; newAreas: string[] }; areas: { id: string | null; title: string; new: { documentId: string }[]; changed: { documentId: string; then: unknown; now: unknown }[] }[] };
+    };
+    expect(JSON.stringify(data).length).toBeLessThan(12_000);
+    expect(data).not.toHaveProperty("groups");
+    expect(JSON.stringify(data)).not.toContain("highlights");
+    expect(typeof data.totals).toBe("string");
+    expect(data.totals).toMatch(/150 revised/);
+    expect(data.story.growth).toMatchObject({ notesThen: 1240, notesNow: 1388, newAreas: ["Workflow Automation", "Hosts, Runners and Plugins"] });
+    expect(data.story.areas[0].id).toBe("area0");
+    // Trimmed, never lost: an area that does not fit is still named, with its id for a drill-down.
+    const other = (data.story as { otherAreas?: { id: string | null }[] }).otherAreas ?? [];
+    expect(data.story.areas.length + other.length).toBe(11);
+    expect(data.story.areas.length).toBeGreaterThanOrEqual(3);
+    expect(data.story.areas[0].new[0].documentId).toBe("new-0-0");
+    expect(data.story.areas[0].changed[0]).toMatchObject({ documentId: "chg-0-0", then: expect.any(Object) as unknown, now: expect.any(Object) as unknown });
+  });
+
+  it("answers a query scope from thenVsNow and the scoped story", async () => {
+    const tvn = { then: [claim("n1")], now: [claim("n9")] };
+    mockGql({ knowledgeGraphChanges: { ...heavyDigest(1, true), scope: { q: "processor delivery" }, story: realisticStory(), thenVsNow: tvn } });
+    const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const data = r.data as { thenVsNow: { then: { documentId: string }[]; now: { documentId: string }[] }; story: unknown; events: unknown[] };
+    expect(data.thenVsNow.then[0].documentId).toBe("n1");
+    expect(data.thenVsNow.now[0].documentId).toBe("n9");
+    expect(data.story).toBeDefined();
+    expect(data.events.length).toBeGreaterThan(0);
   });
 
   it("keeps diffs on a drill-down but drops bulk: two hunks per event, no folded or derivedFrom", async () => {

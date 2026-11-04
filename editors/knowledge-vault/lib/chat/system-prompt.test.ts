@@ -170,16 +170,20 @@ describe("buildSystemPrompt", () => {
     expect(p).not.toMatch(/undefined|null|NaN/);
   });
 
-  it("sends questions about change over time to what_changed, summary first", () => {
+  it("sends questions about change over time to what_changed, and answers them as a four-part story for an executive", () => {
     const p = buildSystemPrompt(base);
     expect(p).toMatch(/what changed in .* since .* call what_changed, never search/i);
-    expect(p).toMatch(/executive summary from its totals and each group's highlights/);
-    expect(p).toMatch(/offer the groups as topics to explore/);
-    expect(p).toMatch(/what_changed again with that group's moc/);
     expect(p).toMatch(/say which dates you used/);
-    expect(p).toMatch(/quote before → after/);
-    expect(p).toMatch(/name the note that replaced it/);
-    // The empty digest: the tool's summary starts "nothing changed between …".
-    expect(p).toMatch(/When totals\.documents is 0, say nothing changed in that window/);
+    expect(p).toMatch(/non-technical executive/);
+    // The four parts, in order.
+    const parts = ["How the vault grew", "What is new", "What we now understand differently", "Where to look next"].map((h) => p.indexOf(h));
+    for (const i of parts) expect(i).toBeGreaterThan(-1);
+    expect([...parts].sort((x, y) => x - y)).toEqual(parts);
+    expect(p).toMatch(/then → now, with the because/);
+    expect(p).toMatch(/No document ids, no operation counts/);
+    expect(p).toMatch(/"superseded" or "revised"/);
+    expect(p).toMatch(/cite claims with \[\[documentId\]\] markers only/i);
+    expect(p).toMatch(/call what_changed with query set to it and answer from thenVsNow/);
+    expect(p).toMatch(/When what_changed says nothing changed, say nothing changed in that window/);
   });
 });
