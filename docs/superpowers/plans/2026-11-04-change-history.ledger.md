@@ -83,3 +83,4 @@ Task 9: Ruling: local acceptance PENDING — `ph vetra` is not running in this s
   7. Acceptance 4: a read-only token gets 200; a non-reader gets 403 (`code: FORBIDDEN`)
 Task 9: Ruling: "after deploy to the remote vault" (POST admin/backfill-source-history once, then acceptance 1–2 live) is the user's action — skipped here — cost if wrong: n/a.
 Final review: not dispatched by the implementer — coordinator runs the whole-branch review (coordinator's instruction).
+Task 9: complete except acceptance (commits ac9ad29..9673365 here, f83e35d in powerhouse-knowledge; build exit 0; acceptance pending)
