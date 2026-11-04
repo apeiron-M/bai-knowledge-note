@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
 import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
-import { areasOf, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
+import { areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
 function row(documentId: string, operationType: string, input: Record<string, unknown>, timestamp: string): OperationRow {
@@ -430,8 +430,8 @@ describe("story: duplicate merges (Addendum B3)", () => {
   const supersede = (by: string, old: string, reason: string, at = IN(2)) =>
     row(by, "ADD_RELATIONSHIP", { sourceId: by, targetId: old, relationshipType: "SUPERSEDES", metadata: { reason } }, at);
 
-  it("does not make a near-identical twin merged by SUPERSEDES a shift: it is counted as merged", () => {
-    const rows = [supersede("n9", "n2", "consolidating")];
+  it("does not make a near-identical twin merged by SUPERSEDES with no reason a shift: it is counted as merged", () => {
+    const rows = [supersede("n9", "n2", "")];
     const s = story([
       ["n2", note("Storage keeps every snapshot of a document", { status: "ARCHIVED" })],
       ["n9", note("Storage keeps every snapshot of each document")],
@@ -443,7 +443,7 @@ describe("story: duplicate merges (Addendum B3)", () => {
   });
 
   it("does not make a supersession whose reason marks a duplicate a shift, whatever the titles", () => {
-    const reasons = ["Twin of the newer note", "duplicate claim", "Same claim, written earlier", "n9 already makes this claim", "Merged into n9"];
+    const reasons = ["Twin of the newer note", "duplicate claim", "Same claim, written earlier", "n9 already makes this claim", "Merged into the newer note"];
     for (const reason of reasons) {
       const rows = [supersede("n9", "n2", reason)];
       const s = story([
@@ -602,5 +602,163 @@ describe("scope: a query names a map (Addendum B2)", () => {
     expect(matchMapTitle("Powerhouse stack", maps)).toBeNull();
     expect(matchMapTitle("the and of", maps)).toBeNull();
     expect(matchMapTitle("proc", maps)).toBeNull(); // whole words only
+  });
+});
+
+describe("story: review B fixes", () => {
+  const supersede = (by: string, old: string, reason: string, at: string) =>
+    row(by, "ADD_RELATIONSHIP", { sourceId: by, targetId: old, relationshipType: "SUPERSEDES", metadata: { reason } }, at);
+  const LONG = { since: "2026-06-01T00:00:00.000Z", until: "2026-11-04T00:00:00.000Z" };
+
+  describe("C1: a duplicate merge needs an anchored duplicate phrase, or no reason and a near-identical title", () => {
+    it("never counts a real reversal as a merge, with no reason or a neutral one", () => {
+      const reversals: [string, string][] = [
+        ["Processors receive operations exactly once", "Processors receive operations at least once"],
+        ["Relational processors are supported", "Relational processors are not supported"],
+        ["Switchboard runs on v6.2.2-dev.74", "Switchboard runs on v6.2.3-dev.91"],
+        ["Connect runs the reactor in-process", "Connect runs the reactor remotely"],
+        ["Drives sync by pull responders", "Drives sync by push listeners"],
+      ];
+      for (const [then, now] of reversals) {
+        expect([then, isDuplicateMerge(then, now, null)]).toEqual([then, false]);
+        expect([then, isDuplicateMerge(then, now, "")]).toEqual([then, false]);
+        expect([then, isDuplicateMerge(then, now, "dev.91 changed this")]).toEqual([then, false]);
+      }
+    });
+
+    it("does not read a reason that merely mentions duplicates or merging as a merge", () => {
+      for (const reason of [
+        "Delivery is at-least-once: a crash replays operations, so processors see duplicate operations after a crash",
+        "Replaced: the old processor API was merged into the reactor package in dev.91",
+        "Duplicates the newer note",
+      ]) {
+        expect([reason, isDuplicateMerge("A claim", "Another claim entirely", reason)]).toEqual([reason, false]);
+      }
+    });
+
+    it("reads an anchored duplicate phrase as a merge, whatever the titles", () => {
+      for (const reason of [
+        "Same claim, written earlier",
+        "Same point, better evidence",
+        "Redundant with the newer note, which says the same",
+        "Identical claim written earlier",
+        "n9 already makes this claim",
+        "Twin of the newer note",
+        "duplicate of n9",
+        "Merged into the surviving note",
+      ]) {
+        expect([reason, isDuplicateMerge("Snapshots are kept forever", "The reactor retains each document state indefinitely", reason)]).toEqual([reason, true]);
+      }
+    });
+
+    it("counts an unexplained supersession of a near-identical title as a merge (Jaccard ≥ 0.8, no negation, no number)", () => {
+      expect(isDuplicateMerge("Storage keeps every snapshot of a document", "Storage keeps every snapshot of each document", null)).toBe(true);
+      // 0.75 — under the bar.
+      expect(isDuplicateMerge("Storage keeps snapshots", "Storage keeps all snapshots", null)).toBe(false);
+      // Near-identical but negated or renumbered: a change.
+      expect(isDuplicateMerge("The reactor keeps every snapshot of each document", "The reactor keeps every snapshot of each document never", null)).toBe(false);
+      expect(isDuplicateMerge("The reactor keeps every snapshot of each document for every drive and remote in release v5", "The reactor keeps every snapshot of each document for every drive and remote in release v6", null)).toBe(false);
+    });
+
+    it("makes 'exactly once' → 'at least once' with a reason about duplicate operations a shift, not a merge", () => {
+      const rows = [supersede("n9", "n2", "dev.91 outbox replays after a crash, so processors see duplicate operations", IN(2))];
+      const s = story([
+        ["n2", note("Processors receive each operation exactly once, in order", { status: "ARCHIVED" })],
+        ["n9", note("Processors receive operations at least once, with a crash gap")],
+      ], { coreIdeas: new Map([["m1", ["n2", "n9"]]]) });
+      const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+      expect(area?.changedClaims.map((c) => c.documentId)).toEqual(["n2"]);
+      expect(area?.mergedCount).toBe(0);
+    });
+  });
+
+  it("I1: gives a note created in the window and superseded in it its first recorded then, with thenAt, on both surfaces", () => {
+    const rows = [
+      row("old", "CREATE_DOCUMENT", {}, "2026-09-02T10:00:00.000Z"),
+      row("old", "SET_TITLE", { title: "Processors receive each operation exactly once, in order" }, "2026-09-02T10:00:01.000Z"),
+      row("new", "CREATE_DOCUMENT", {}, "2026-11-03T10:00:00.000Z"),
+      row("new", "SET_TITLE", { title: "Processors receive operations at least once, with a crash gap" }, "2026-11-03T10:00:01.000Z"),
+      supersede("new", "old", "dev.91 outbox replays after a crash", "2026-11-03T10:00:02.000Z"),
+      row("old", "ARCHIVE_NOTE", { comment: "superseded" }, "2026-11-03T10:00:03.000Z"),
+    ];
+    const s = story(
+      [
+        ["old", note("Processors receive each operation exactly once, in order", { status: "ARCHIVED", addedAt: "2026-09-02T10:00:00.000Z" })],
+        ["new", note("Processors receive operations at least once, with a crash gap", { addedAt: "2026-11-03T10:00:00.000Z" })],
+      ],
+      { coreIdeas: new Map([["a2", ["old", "new"]]]), superseded: new Set(["old"]) },
+    );
+    const d = buildChanges(rows, [], ctx(s), LONG, { scope: { documentIds: ["old", "new"] }, thenVsNow: true });
+    const area = d.story?.areas.find((a) => a.id === "a2");
+    expect(area?.changedClaims).toEqual([
+      {
+        documentId: "old",
+        then: { claim: "Processors receive each operation exactly once, in order", gist: null },
+        now: { claim: "Processors receive operations at least once, with a crash gap", gist: null },
+        why: "dev.91 outbox replays after a crash",
+        replacedBy: "new",
+        thenAt: "2026-09-02T10:00:01.000Z",
+      },
+    ]);
+    expect(d.thenVsNow?.then).toEqual([{ documentId: "old", claim: "Processors receive each operation exactly once, in order", gist: null, thenAt: "2026-09-02T10:00:01.000Z" }]);
+    expect(d.thenVsNow?.now.map((c) => c.documentId)).toEqual(["new"]);
+  });
+
+  it("I2: leaves a merged twin out of thenVsNow; its survivor reads as unchanged", () => {
+    const rows = [supersede("t2", "t1", "Same claim, written earlier", "2026-11-03T10:00:00.000Z"), row("t1", "ARCHIVE_NOTE", {}, "2026-11-03T10:00:01.000Z")];
+    const s = story(
+      [
+        ["t1", note("Drives are documents", { status: "ARCHIVED", addedAt: "2026-01-01T00:00:00.000Z" })],
+        ["t2", note("A drive is a document", { addedAt: "2026-01-01T00:00:00.000Z" })],
+      ],
+      { coreIdeas: new Map([["a2", ["t1", "t2"]]]), superseded: new Set(["t1"]) },
+    );
+    const d = buildChanges(rows, [], ctx(s), LONG, { scope: { documentIds: ["t1", "t2"] }, thenVsNow: true });
+    expect(d.story?.areas.find((a) => a.id === "a2")?.mergedCount).toBe(1);
+    expect(d.thenVsNow).toEqual({ then: [], now: [], unchanged: [{ documentId: "t2", claim: "A drive is a document", gist: null }] });
+  });
+
+  it("M1: lists a note created, revised and archived in the window as retired only, not also changed", () => {
+    const rows = [
+      row("n2", "CREATE_DOCUMENT", {}, IN(1)),
+      row("n2", "SET_TITLE", { title: "First claim" }, IN(1, 1)),
+      row("n2", "SET_TITLE", { title: "Revised claim" }, IN(5)),
+      row("n2", "ARCHIVE_NOTE", {}, IN(6)),
+    ];
+    const s = story([["n2", note("Revised claim", { status: "ARCHIVED", addedAt: IN(1) })]]);
+    const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+    expect(area?.changedClaims).toEqual([]);
+    expect(area?.changedCount).toBe(0);
+    expect(area?.retiredClaims).toEqual([{ documentId: "n2", claim: "First claim", gist: null, thenAt: IN(1, 1) }]);
+  });
+
+  describe("I3: a query names a map only when the map covers it", () => {
+    const maps = [
+      { id: "rd", title: "Reactor and Drives", depth: 1 },
+      { id: "rs", title: "Reactor Sync Infrastructure", depth: 2 },
+      { id: "dp", title: "Data Processing and CQRS", depth: 1 },
+      { id: "pr", title: "Processors", depth: 2 },
+      { id: "auth", title: "Authorization", depth: 1 },
+      { id: "dep", title: "Deployment", depth: 1 },
+      { id: "c", title: "Connect", depth: 1 },
+    ];
+    it("searches when the map's title covers under half of the query's content and another map shares a word", () => {
+      expect(matchMapTitle("how documents sync between Connect and Switchboard", maps)).toBeNull();
+    });
+    it("searches when two maps match equally (no alphabetical tie-break)", () => {
+      expect(matchMapTitle("authorization in connect", maps)).toBeNull();
+    });
+    it("still names the map a query covers", () => {
+      expect(matchMapTitle("reactor", maps)?.id).toBe("rd");
+      expect(matchMapTitle("what changed in reactor sync", maps)?.id).toBe("rs");
+      expect(matchMapTitle("deployment of the switchboard", maps)?.id).toBe("dep");
+      expect(matchMapTitle("authorization changes", maps)?.id).toBe("auth");
+      // Under half, but the only map that shares a word with the query.
+      expect(matchMapTitle("How did processor delivery work in September and how does it work now?", maps)?.id).toBe("pr");
+    });
+  });
+
+  it("M3: folds plurals without clipping 'does', 'status' or 'analysis'", () => {
+    expect([...claimTokens("does process address status analysis processors drives")]).toEqual(["does", "process", "address", "status", "analysis", "processor", "drive"]);
   });
 });

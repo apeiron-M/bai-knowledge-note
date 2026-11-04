@@ -153,12 +153,20 @@ export function areasOf(s: StoryContext): { areas: { id: string; title: string }
 /** Words too common to tell two claims apart. */
 const STOPWORDS = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "is", "it", "its", "of", "on", "or", "so", "that", "the", "their", "this", "to", "with"]);
 
+/** Words ending in "s" that are not plurals: folding them would clip them ("does" → "doe"). */
+const NOT_PLURAL = new Set(["does", "goes", "always", "perhaps", "whereas", "news", "series", "species"]);
+
+/** A plural "s" to drop: not "ss", "us" or "is" (process, status, analysis), nor a word in {@link NOT_PLURAL}. */
+function foldPlural(w: string): string {
+  return w.length > 3 && w.endsWith("s") && !/(ss|us|is)$/.test(w) && !NOT_PLURAL.has(w) ? w.slice(0, -1) : w;
+}
+
 /** A claim's words, lowercased, without punctuation, stopwords or a plural "s". */
 export function claimTokens(text: string): Set<string> {
   const out = new Set<string>();
   for (const w of text.toLowerCase().split(/[^\p{L}\p{N}]+/u)) {
     if (!w || STOPWORDS.has(w)) continue;
-    out.add(w.length > 3 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w);
+    out.add(foldPlural(w));
   }
   return out;
 }
@@ -181,38 +189,79 @@ export interface ScopeMap {
 }
 
 /**
- * The map a query names (spec Addendum B2), by whole words, case-insensitive,
- * plurals folded: a map whose title holds every word of the query, or whose
- * every title word the query holds. The best is the one whose words are
- * exactly the query's, then the shallower (an area before its maps), then the
- * shorter title. Null when none matches.
+ * Words a question wraps its subject in ("what changed in …", "how does …
+ * work now"): not content, so a map's coverage of the query ignores them.
+ */
+const QUERY_FILLER = new Set(
+  ["what", "how", "why", "when", "where", "which", "who", "did", "does", "do", "done", "has", "have", "had", "was", "were", "been",
+    "work", "works", "worked", "working", "change", "changed", "changes", "new", "now", "then", "lately", "recently", "since",
+    "today", "about", "tell", "me", "we", "our", "us", "you", "i"].map(foldPlural),
+);
+/** A map whose words are a subset of the query must cover at least this share of the query's content words. */
+export const MAP_COVERAGE = 0.5;
+
+/**
+ * The map a query names (spec Addendum B2, tightened after review): by whole
+ * words, case-insensitive, plurals folded, the question's filler words
+ * ({@link QUERY_FILLER}) left out. A map matches when its title holds every
+ * content word of the query, or when the query holds every word of its title
+ * and the title covers ≥ {@link MAP_COVERAGE} of the query's content words —
+ * or it is the only map that shares any word with the query. The best is
+ * the exact word set, then the shallower (an area before its maps), then the
+ * shorter title; when the best two tie on all three, nothing decides between
+ * them and the query searches instead (null). Null when none matches.
  */
 export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMap | null {
-  const q = claimTokens(query);
+  const q = new Set([...claimTokens(query)].filter((w) => !QUERY_FILLER.has(w)));
   if (!q.size) return null;
+  const titled = maps.map((map) => ({ map, t: claimTokens(map.title) })).filter((m) => m.t.size);
+  const sharing = titled.filter(({ t }) => [...t].some((w) => q.has(w))).length;
   const hits: { map: ScopeMap; exact: boolean; size: number }[] = [];
-  for (const map of maps) {
-    const t = claimTokens(map.title);
-    if (!t.size) continue;
+  for (const { map, t } of titled) {
     const qInT = [...q].every((w) => t.has(w));
     const tInQ = [...t].every((w) => q.has(w));
-    if (qInT || tInQ) hits.push({ map, exact: qInT && tInQ, size: t.size });
+    const covers = t.size / q.size >= MAP_COVERAGE || sharing === 1;
+    if (qInT || (tInQ && covers)) hits.push({ map, exact: qInT && tInQ, size: t.size });
   }
-  hits.sort((a, b) => Number(b.exact) - Number(a.exact) || a.map.depth - b.map.depth || a.size - b.size || a.map.title.localeCompare(b.map.title));
+  const rank = (a: (typeof hits)[number], b: (typeof hits)[number]) => Number(b.exact) - Number(a.exact) || a.map.depth - b.map.depth || a.size - b.size;
+  hits.sort(rank);
+  if (hits.length > 1 && rank(hits[0], hits[1]) === 0) return null;
   return hits[0]?.map ?? null;
 }
 
-/** A SUPERSEDES reason that says the two notes were one claim written twice. */
-const DUPLICATE_REASON = /twin|duplicate|same claim|already makes this claim|merged/i;
-/** At or above this title similarity, a supersession is a duplicate merge. */
-export const MERGE_SIMILARITY = 0.6;
+/**
+ * A SUPERSEDES reason that says the two notes were one claim written twice —
+ * anchored phrases only (spec Addendum B corrections): a reason that merely
+ * mentions "duplicate operations" or "merged into the reactor" is a change.
+ */
+const DUPLICATE_REASON = [
+  /^\s*same (claim|point)\b/i,
+  /already makes this claim/i,
+  /\btwin\b/i,
+  /\bduplicate (of|note|claim)\b/i,
+  /\bidentical claim\b/i,
+  /\bredundant with\b/i,
+  /merged (into|with) (the )?(newer|older|surviving|twin)/i,
+];
+/** With no reason, at or above this title similarity a supersession is a duplicate merge. */
+export const MERGE_SIMILARITY = 0.8;
+/** Words that turn a claim around: a near-identical title that adds or drops one is a change. */
+const NEGATIONS = new Set(["not", "no", "never", "without", "cannot", "nor", "none", "isn", "aren", "doesn", "don", "won", "wasn", "weren", "can"]);
 
 /**
- * A supersession that merged twin notes (spec Addendum B3): the claims read
- * near-identically, or the reason says so. Not a change in understanding.
+ * A supersession that merged twin notes (spec Addendum B3, corrected after
+ * review): its reason holds an anchored duplicate phrase, or it has no reason
+ * and the titles are near-identical (Jaccard ≥ {@link MERGE_SIMILARITY}) with
+ * no negation, digit or version among the words that differ. Not a change in
+ * understanding.
  */
 export function isDuplicateMerge(then: string, now: string, reason: string | null): boolean {
-  return (reason !== null && DUPLICATE_REASON.test(reason)) || claimSimilarity(then, now) >= MERGE_SIMILARITY;
+  if (reason !== null && reason.trim() !== "") return DUPLICATE_REASON.some((re) => re.test(reason));
+  if (claimSimilarity(then, now) < MERGE_SIMILARITY) return false;
+  const a = claimTokens(then);
+  const b = claimTokens(now);
+  const differing = [...a].filter((w) => !b.has(w)).concat([...b].filter((w) => !a.has(w)));
+  return !differing.some((w) => NEGATIONS.has(w) || /\d/.test(w));
 }
 
 function differs(a: { claim: string; gist: string | null }, b: { claim: string; gist: string | null }): boolean {
@@ -302,7 +351,9 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
         merged.set(e.documentId, e.supersededBy.documentId);
         shifts.delete(e.documentId);
       } else if (differs(then, now)) {
-        shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.supersededBy.reason, replacedBy: e.supersededBy.documentId });
+        // Created in the window too: its then is as first recorded (Addendum B corrections).
+        const at = created.has(e.documentId) ? thenFields.get(e.documentId)?.at : undefined;
+        shifts.set(e.documentId, { documentId: e.documentId, then, now, why: e.supersededBy.reason, replacedBy: e.supersededBy.documentId, ...(at ? { thenAt: at } : {}) });
       }
     } else if (e.kind === "revised" && !shifts.has(e.documentId) && !merged.has(e.documentId) && (e.fields?.title || e.fields?.description)) {
       const then = thenOf(e.documentId);
@@ -319,11 +370,20 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
       shifts.set(e.documentId, { documentId: e.documentId, then, now, why, thenAt: first.at });
     }
   }
+  // A note created in the window reports `created` only, never `archived`:
+  // archived now, it was archived in the window too.
+  for (const e of events) if (e.kind === "created" && archivedNow(e.documentId)) archivedInWindow.add(e.documentId);
   const firstAt = new Map([...shifts.values()].flatMap((sh) => (sh.thenAt ? [[sh.documentId, sh.thenAt] as const] : [])));
   // Retired: archived in the window, still archived, and replaced by nothing — ever.
   const retired = new Set(
     [...archivedInWindow].filter((id) => isNote(id) && inScope(id) && archivedNow(id) && !supersededInWindow.has(id) && !s.superseded.has(id)),
   );
+  // A retired note is not also a changed one: it holds nothing now (its then keeps its thenAt).
+  for (const id of retired) {
+    shifts.delete(id);
+    const at = created.has(id) ? thenFields.get(id)?.at : undefined;
+    if (at) firstAt.set(id, at);
+  }
   const shiftReplacements = new Set([...shifts.values()].flatMap((sh) => (sh.replacedBy ? [sh.replacedBy] : [])));
   return { since: window.since, areas, areasByDoc, created, createdAt, archivedInWindow, supersededInWindow, replacements, shiftReplacements, shifts, firstAt, merged, retired, inScope, thenOf, nowOf, isNote, liveThen, liveNow };
 }
@@ -443,11 +503,13 @@ export function buildThenVsNow(f: Facts, s: StoryContext): ThenVsNow {
   const notes = [...s.nodes.keys()].filter((id) => f.isNote(id) && f.inScope(id));
   const order = (lead: (id: string) => boolean) => (a: string, b: string) =>
     Number(lead(b)) - Number(lead(a)) || incoming(b) - incoming(a) || a.localeCompare(b);
-  const changedThen = (id: string) => f.shifts.has(id) || f.retired.has(id) || f.supersededInWindow.has(id);
-  const changedNow = (id: string) => f.shifts.has(id) || f.created.has(id) || f.replacements.has(id);
+  // A merged twin is housekeeping: off both sides, and its survivor is not "changed" by it.
+  const mergedInto = new Set(f.merged.values());
+  const changedThen = (id: string) => f.shifts.has(id) || f.retired.has(id) || (f.supersededInWindow.has(id) && !f.merged.has(id));
+  const changedNow = (id: string) => f.shifts.has(id) || f.created.has(id) || f.shiftReplacements.has(id) || (f.replacements.has(id) && !mergedInto.has(id));
   const supersededBefore = (id: string) => s.superseded.has(id) && !f.supersededInWindow.has(id);
   // A note created in the window and revised since holds its first recorded claim on the then side.
-  const thenIds = notes.filter((id) => (f.liveThen(id) && !supersededBefore(id)) || f.firstAt.has(id));
+  const thenIds = notes.filter((id) => !f.merged.has(id) && ((f.liveThen(id) && !supersededBefore(id)) || f.firstAt.has(id)));
   const nowIds = new Set(notes.filter((id) => f.liveNow(id) && !s.superseded.has(id) && !f.supersededInWindow.has(id)));
   // Held then and now in the same words: say it once.
   const same = new Set(thenIds.filter((id) => nowIds.has(id) && !differs(f.thenOf(id), f.nowOf(id))));
