@@ -105,19 +105,30 @@ export interface ChangeGroup {
 
 export interface ChangeScope {
   moc?: string;
-  /** Internal: the main areas (or maps) a `q` resolved to — the union of their subtrees (Addendum C1). Never echoed. */
+  /** Internal: the areas (or maps) `areas` or `q` resolved to — the union of their subtrees (Addendum C1a, C1c). Never echoed. */
   mocs?: string[];
   topic?: string;
   documentIds?: string[];
   q?: string;
   types?: string[];
-  /** On a digest: what `q` resolved to — the whole vault, a map it names, else a semantic search (spec Addendum B2). */
+  /** The areas the caller chose, each a map id or its exact title (Addendum C1a). */
+  areas?: string[];
+  /** Text a source's title, provenance URL or folder path contains: its notes are the scope (Addendum C1b). */
+  source?: string;
+  /** Internal: the sources `source` matched — they and the notes derived from them. Never echoed. */
+  sources?: string[];
+  /** On a digest: what the scope resolved to — areas, a source match, the whole vault, a map, else a semantic search (Addendum B2, C1). */
   resolved?: ResolvedScope;
 }
 
 export type ResolvedScope =
-  /** The main areas the query matched (Addendum C1); a map below an area stands in for it when it matched far better. */
-  | { kind: "areas"; areas: { id: string; title: string }[] }
+  /**
+   * The areas the caller named (C1a; `unknown`: the names no map has, never
+   * guessed) or the areas a query's notes concentrate in (C1c).
+   */
+  | { kind: "areas"; areas: { id: string; title: string }[]; unknown?: string[] }
+  /** The sources `source` matched, by count (Addendum C1b). */
+  | { kind: "source"; match: string; sources: number }
   | { kind: "moc"; id: string; title: string }
   | { kind: "search"; query: string; hits: number }
   /** The query named the hub or the drive: the whole vault, as an unscoped call (Addendum B corrections). */

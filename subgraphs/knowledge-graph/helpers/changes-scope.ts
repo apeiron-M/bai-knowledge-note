@@ -6,53 +6,109 @@ import {
   type ChangeDigest,
   type ChangeScope,
 } from "../../../processors/graph-indexer/changes.js";
-import { keywordMapScores, matchMapTitle, selectScopeAreas } from "../../../processors/graph-indexer/changes-story.js";
+import { matchMapTitle, selectAreasByHits, type ScopeMap } from "../../../processors/graph-indexer/changes-story.js";
 import { isKnowledgeLinkType } from "../../../processors/graph-indexer/link-types.js";
 import { getQuery, readerOf, type GraphSubgraph } from "./db.js";
-import { mapSimilarities, searchVault } from "./search.js";
+import { searchVault, type VaultSearchHit } from "./search.js";
 
-/** How many semantic hits a `q` scope starts from when it names no map (spec Addendum B2). */
+/** How many semantic hits a `q` scope falls back to when its hits concentrate in no area (spec Addendum B2). */
 export const CHANGE_Q_HITS = 25;
+/** How many semantic hits a `q` scope counts per area (spec Addendum C1c). */
+export const CHANGE_Q_NOTE_HITS = 200;
+
+/** A search hit that is a note: maps and sources are left out of the count (an untyped legacy node is a note). */
+function isNoteHit(hit: VaultSearchHit): boolean {
+  const type = hit.node.documentType;
+  return type === undefined || type === null || type === "bai/knowledge-note";
+}
 
 /**
- * Resolve a `q` scope (spec Addendum B2, tightened after review, and C1): a
+ * Resolve a `q` scope (spec Addendum B2, tightened after review, and C1c): a
  * query that names a hub or the drive itself (whole words, see
  * `matchMapTitle`) is the whole vault — `q` is dropped and the digest is the
- * unscoped one. Otherwise a subject means the main areas about it: the hub's
- * top-level areas, and the maps below them, ranked by similarity to the
- * query (their embeddings; their words when the server cannot embed) —
- * see `selectScopeAreas`. Several areas scope to the union of their
- * subtrees (`mocs`), one map to its subtree (`moc`). Only when no area
- * clears the floor does it fall back to the top semantic hits plus their
- * one-hop knowledge-edge neighbours. Explicit `documentIds` always narrow
- * what `q` resolves to. With an explicit `moc` the map is already chosen and
- * `q` searches within it. `resolved` says which it was. Shared by the
- * GraphQL resolver and `GET changes`, so both answer the same totals.
+ * unscoped one. Otherwise a specific term means the areas its notes
+ * concentrate in: its top {@link CHANGE_Q_NOTE_HITS} semantic note hits are
+ * counted per top-level area subtree (`selectAreasByHits`). Several areas
+ * scope to the union of their subtrees (`mocs`), one map to its subtree
+ * (`moc`). When no area holds enough of the hits, the scope is the first
+ * {@link CHANGE_Q_HITS} hits plus their one-hop knowledge-edge neighbours.
+ * Explicit `documentIds` always narrow what `q` resolves to. With an explicit
+ * `moc` the map is already chosen and `q` searches within it. `resolved`
+ * says which it was. Shared by the GraphQL resolver and `GET changes`, so
+ * both answer the same totals.
  */
 export async function resolveChangeScope(
   subgraph: GraphSubgraph,
   driveId: string,
   scope: ChangeScope,
-  driveName: string | null = null,
+  drive: { name?: string | null; sourceFolders?: ReadonlyMap<string, string> } = {},
 ): Promise<ChangeScope> {
-  if (!scope.q) return scope;
   const query = getQuery(subgraph, driveId);
-  if (!scope.moc) {
-    const candidates = await query.changeMaps();
-    const vault = matchMapTitle(scope.q, driveName ? [{ id: driveId, title: driveName, depth: 0 }, ...candidates] : candidates);
-    if (vault?.depth === 0) {
-      const { q: _q, ...whole } = scope;
-      return { ...whole, resolved: { kind: "vault", title: vault.title } };
-    }
-    const maps = candidates.filter((m) => m.depth > 0);
-    const similar = await mapSimilarities(subgraph, driveId, scope.q, maps.map((m) => m.id));
-    const picked = similar ? selectScopeAreas(maps, similar, "semantic") : selectScopeAreas(maps, keywordMapScores(scope.q, maps), "keyword");
-    if (picked?.length === 1) return { ...scope, moc: picked[0].id, resolved: { kind: "moc", id: picked[0].id, title: picked[0].title } };
-    if (picked) return { ...scope, mocs: picked.map((m) => m.id), resolved: { kind: "areas", areas: picked.map((m) => ({ id: m.id, title: m.title })) } };
+  let chosen: ChangeScope | null = null;
+  let maps: ScopeMap[] | null = null;
+  if (scope.areas?.length) {
+    maps = await query.changeMaps();
+    const { picked, unknown } = namedAreas(scope.areas, maps);
+    chosen = {
+      ...scope,
+      mocs: picked.map((m) => m.id),
+      resolved: { kind: "areas", areas: picked.map((m) => ({ id: m.id, title: m.title })), ...(unknown.length ? { unknown } : {}) },
+    };
   }
-  const hits = await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_HITS, false);
+  if (scope.source?.trim()) {
+    const sources = await query.changeSources(scope.source, drive.sourceFolders ?? new Map());
+    chosen = { ...(chosen ?? scope), sources, resolved: chosen?.resolved ?? { kind: "source", match: scope.source, sources: sources.length } };
+  }
+  if (chosen) {
+    // The caller chose the part: q searches within it.
+    if (!chosen.q) return chosen;
+    const { resolved, ...within } = await searchScope(subgraph, driveId, chosen, chosen.q, await searchVault(subgraph, driveId, chosen.q, "SEMANTIC", CHANGE_Q_HITS, false));
+    return { ...within, resolved: chosen.resolved ?? resolved };
+  }
+  if (!scope.q) return scope;
+  if (scope.moc) return searchScope(subgraph, driveId, scope, scope.q, await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_HITS, false));
+  const candidates = maps ?? (await query.changeMaps());
+  const driveName = drive.name ?? null;
+  const vault = matchMapTitle(scope.q, driveName ? [{ id: driveId, title: driveName, depth: 0 }, ...candidates] : candidates);
+  if (vault?.depth === 0) {
+    const { q: _q, ...whole } = scope;
+    return { ...whole, resolved: { kind: "vault", title: vault.title } };
+  }
+  const hits = await searchVault(subgraph, driveId, scope.q, "SEMANTIC", CHANGE_Q_NOTE_HITS, false);
+  const below = candidates.filter((m) => m.depth > 0);
+  const notes = [...new Set(hits.filter(isNoteHit).map((h) => String(h.node.documentId)))];
+  const picked = notes.length && below.length ? selectAreasByHits(notes, below, await query.changeMapNotes(below.map((m) => m.id))) : null;
+  if (picked?.length === 1) return { ...scope, moc: picked[0].id, resolved: { kind: "moc", id: picked[0].id, title: picked[0].title } };
+  if (picked) return { ...scope, mocs: picked.map((m) => m.id), resolved: { kind: "areas", areas: picked.map((m) => ({ id: m.id, title: m.title })) } };
+  return searchScope(subgraph, driveId, scope, scope.q, hits.slice(0, CHANGE_Q_HITS));
+}
+
+/**
+ * The maps the caller named (Addendum C1a): each name is a map's id or its
+ * exact title (case and surrounding space ignored); a title several maps
+ * share names those at the shallowest depth. Hubs are no area. A name no map
+ * has is returned in `unknown` — never matched to a near title.
+ */
+export function namedAreas(names: readonly string[], maps: readonly ScopeMap[]): { picked: ScopeMap[]; unknown: string[] } {
+  const below = maps.filter((m) => m.depth > 0);
+  const norm = (t: string) => t.trim().replace(/\s+/g, " ").toLowerCase();
+  const picked: ScopeMap[] = [];
+  const unknown: string[] = [];
+  for (const name of names) {
+    const byId = below.filter((m) => m.id === name.trim());
+    const byTitle = below.filter((m) => norm(m.title) === norm(name));
+    const shallowest = Math.min(...byTitle.map((m) => m.depth));
+    const found = byId.length ? byId : byTitle.filter((m) => m.depth === shallowest);
+    if (!found.length) unknown.push(name);
+    for (const m of found) if (!picked.includes(m)) picked.push(m);
+  }
+  return { picked, unknown };
+}
+
+/** A `q` answered by search: these hits plus their one-hop knowledge-edge neighbours, narrowed to explicit `documentIds`. */
+async function searchScope(subgraph: GraphSubgraph, driveId: string, scope: ChangeScope, q: string, hits: VaultSearchHit[]): Promise<ChangeScope> {
   const ids = new Set(hits.map((h) => String(h.node.documentId)));
-  const edges = await query.edgesTouching([...ids]);
+  const edges = await getQuery(subgraph, driveId).edgesTouching([...ids]);
   const seeds = new Set(ids);
   for (const e of edges) {
     if (!isKnowledgeLinkType(e.linkType)) continue;
@@ -61,7 +117,7 @@ export async function resolveChangeScope(
   }
   const explicit = scope.documentIds ? new Set(scope.documentIds) : null;
   const documentIds = [...ids].filter((id) => !explicit || explicit.has(id)).sort();
-  return { ...scope, documentIds, resolved: { kind: "search", query: scope.q, hits: hits.length } };
+  return { ...scope, documentIds, resolved: { kind: "search", query: q, hits: hits.length } };
 }
 
 export type ChangeArgs = {
@@ -70,6 +126,8 @@ export type ChangeArgs = {
   moc?: string | null;
   topic?: string | null;
   q?: string | null;
+  areas?: string[] | null;
+  source?: string | null;
   documentIds?: string[] | null;
   types?: string[] | null;
   limit?: number | null;
@@ -82,6 +140,8 @@ export function scopeOf(args: ChangeArgs): ChangeScope {
   if (args.moc) scope.moc = args.moc;
   if (args.topic) scope.topic = args.topic;
   if (args.q) scope.q = args.q;
+  if (args.areas?.length) scope.areas = args.areas;
+  if (args.source?.trim()) scope.source = args.source;
   if (args.documentIds?.length) scope.documentIds = args.documentIds;
   if (args.types?.length) scope.types = args.types;
   return scope;
@@ -162,7 +222,7 @@ export async function loadDriveChanges(
   const window = parseWindow(args.since, until, now);
   const scope = scopeOf(args);
   const { name, sourceFolders } = await loadDriveFacts(subgraph, driveId);
-  const resolved = await resolveChangeScope(subgraph, driveId, scope, name);
+  const resolved = await resolveChangeScope(subgraph, driveId, scope, { name, sourceFolders });
   const { resolved: how, ...internal } = resolved;
   const digest = await getQuery(subgraph, driveId).changes(window, internal, {
     limit: args.limit ?? undefined,

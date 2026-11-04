@@ -2060,7 +2060,7 @@ describe("what_changed — the change digest over a window", () => {
     const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
     const params = tool?.function.parameters as { properties: Record<string, unknown>; required: string[] };
     expect(params.required).toEqual(["since"]);
-    expect(Object.keys(params.properties).sort()).toEqual(["cursor", "detail", "limit", "moc", "query", "since", "topic", "until"]);
+    expect(Object.keys(params.properties).sort()).toEqual(["areas", "cursor", "detail", "limit", "moc", "query", "since", "source", "topic", "until"]);
     expect(tool?.function.description).toMatch(/never search/i);
   });
 
@@ -2081,6 +2081,8 @@ describe("what_changed — the change digest over a window", () => {
       moc: "m1",
       topic: null,
       q: "processors",
+      areas: null,
+      source: null,
       cursor: "abc",
       limit: 10,
       detail: true,
@@ -2402,7 +2404,7 @@ describe("what_changed — the change digest over a window", () => {
       expect((data.story.areas[0].changed as Record<string, unknown>[])[0]).toMatchObject({ thenAt: "2026-09-02" });
       expect(data.thenVsNow.then[0]).toMatchObject({ thenAt: "2026-09-02" });
       const { body } = lastRequest();
-      expect(body.query).toContain("resolved { kind id title query hits areas { id title } }");
+      expect(body.query).toContain("resolved { kind id title query hits areas { id title } unknown match sources }");
       expect(body.query).toContain("retiredCount versions { first now }");
       expect(body.query).not.toContain("mergedCount");
     });
@@ -2451,6 +2453,56 @@ describe("what_changed — the change digest over a window", () => {
       expect((r.data as { scope: string }).scope).toBe("the main areas Reactor and Drives (rd), Reactor Sync Infrastructure (rs)");
       const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
       expect(tool?.function.description).toMatch(/main areas about it/);
+    });
+
+    it("passes areas (ids or titles, a [[id]] unwrapped) and source through, and names what they covered (Addendum C1a, C1b)", async () => {
+      mockGql({
+        knowledgeGraphChanges: {
+          ...scopedDigest(),
+          story: null,
+          scope: { areas: ["Reactor and Drives", "The stack"], resolved: { kind: "areas", areas: [{ id: "rd", title: "Reactor and Drives" }], unknown: ["The stack"] } },
+        },
+      });
+      const r = await executeTool("what_changed", { since: "2026-09-01", areas: ["Reactor and Drives", "[[rs]]", " ", "The stack"] }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const { body } = lastRequest();
+      expect(body.variables).toMatchObject({ areas: ["Reactor and Drives", "rs", "The stack"], source: null, q: null });
+      expect(body.query).toMatch(/areas: \$areas, source: \$source/);
+      expect(body.query).toContain("areas { id title } unknown match sources }");
+      expect((r.data as { scope: string }).scope).toBe("the areas Reactor and Drives (rd); no area is titled “The stack” — use the exact titles from the story");
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), story: null, scope: { source: "powerhouse-inc/powerhouse", resolved: { kind: "source", match: "powerhouse-inc/powerhouse", sources: 3 } } } });
+      const s = await executeTool("what_changed", { since: "2026-09-01", source: "powerhouse-inc/powerhouse" }, CTX);
+      if (!s.ok) throw new Error(s.error);
+      expect(lastRequest().body.variables).toMatchObject({ source: "powerhouse-inc/powerhouse", areas: null });
+      expect((s.data as { scope: string }).scope).toBe("the notes from 3 sources matching “powerhouse-inc/powerhouse”");
+    });
+
+    it("stays ≤ 14 KB with a detail page when the model names sixty areas, half unknown (Addendum C1a)", async () => {
+      const title = (i: number) => `Area ${i} ${"with a long title ".repeat(5)}`;
+      const areas = Array.from({ length: 30 }, (_, i) => ({ id: `a${i}`.padEnd(44, "x"), title: title(i) }));
+      const unknown = Array.from({ length: 30 }, (_, i) => `Unknown ${title(i)}`);
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), scope: { areas: [...areas.map((a) => a.title), ...unknown], resolved: { kind: "areas", areas, unknown } } } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", areas: [...areas.map((a) => a.title), ...unknown], detail: true }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+      const scope = (r.data as { scope: string }).scope;
+      expect(scope).toMatch(/and 18 more areas/);
+      expect(scope).toMatch(/and 20 more names/);
+    });
+
+    it("describes areas, source and query for the three kinds of subject", () => {
+      const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+      if (!tool) throw new Error("what_changed is not offered");
+      const props = (tool.function.parameters as { properties: Record<string, { type: string; description: string; items?: { type: string } }> }).properties;
+      expect(props.areas.type).toBe("array");
+      expect(props.areas.items?.type).toBe("string");
+      expect(props.areas.description).toMatch(/exact titles?/);
+      expect(props.areas.description).toMatch(/call without/);
+      expect(props.source.description).toMatch(/repo/);
+      expect(props.source.description).toMatch(/title, provenance URL or folder path/);
+      expect(props.query.description).toMatch(/specific/);
+      expect(tool.function.description).toMatch(/areas/);
+      expect(tool.function.description).not.toMatch(/match it best/);
     });
 
     it("names a search scope with its hit count", async () => {

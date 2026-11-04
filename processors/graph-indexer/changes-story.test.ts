@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
 import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
-import { AREA_MATCH, areasOf, claimTokens, isDuplicateMerge, keywordMapScores, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_SCOPE_AREAS, MAX_THEN_VS_NOW, selectScopeAreas, type ScopeMap, type StoryContext, type StoryNode } from "./changes-story.js";
+import { areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_SCOPE_AREAS, MAX_THEN_VS_NOW, selectAreasByHits, type ScopeMap, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
 function row(documentId: string, operationType: string, input: Record<string, unknown>, timestamp: string): OperationRow {
@@ -814,57 +814,60 @@ describe("story: Addendum C2 — the vault's first recorded activity", () => {
   });
 });
 
-describe("scope: a subject means the main areas about it (Addendum C1)", () => {
-  // A hub on the scale of the live one: technical areas and business areas, each with its orientation.
-  const area = (id: string, title: string, text: string): ScopeMap => ({ id, title, depth: 1, area: id, text });
-  const sub = (id: string, title: string, parent: string, text = "", depth = 2): ScopeMap => ({ id, title, depth, area: parent, text });
+describe("scope: a specific term means the areas its notes concentrate in (Addendum C1c)", () => {
+  const area = (id: string, title: string): ScopeMap => ({ id, title, depth: 1, area: id });
+  const sub = (id: string, title: string, parent: string, depth = 2): ScopeMap => ({ id, title, depth, area: parent });
   const HUB: ScopeMap[] = [
-    { id: "hub", title: "Powerhouse Knowledge", depth: 0, area: null, text: "Everything the vault knows" },
-    area("rd", "Reactor and Drives", "How the reactor of the Powerhouse stack stores documents and drives, loads models and applies operations."),
-    area("rs", "Reactor Sync Infrastructure", "How reactors of the Powerhouse stack synchronise drives over channels, outboxes and remotes."),
-    area("auth", "Authorization and Identity", "Who may read and write in the Powerhouse stack: signatures, renown, drive permissions."),
-    area("dep", "Deployment and Operations", "Running the Powerhouse stack: Switchboard hosting, Docker, databases, upgrades."),
-    area("con", "Connect Application", "The Powerhouse stack's Connect app: drives, editors and the reactor client in the browser."),
-    area("dms", "Document Model System", "Document models in the Powerhouse stack: schemas, operations, reducers, codegen."),
-    area("dp", "Data Processing and CQRS", "Processors and read models in the Powerhouse stack, fed by the reactor's operations."),
-    area("lead", "Lead Corpus", "Prospects and companies the Powerhouse team tracks for sales outreach."),
-    area("dmc", "Domain Model Catalog", "Business domains catalogued as candidate document models for clients."),
-    area("price", "Service Pricing", "How Powerhouse prices its services: rates, packages, margins."),
-    sub("rd-store", "Reactor Storage", "rd", "PGlite and Postgres storage of the reactor"),
-    sub("rd-store-snap", "Snapshots", "rd", "Document snapshots kept by storage", 3),
-    sub("att", "Attachments", "dms", "Files attached to documents: upload, hashing, attachment references"),
-    sub("dms-codegen", "Codegen", "dms", "Generating reducers and types from a document model"),
+    { id: "hub", title: "Powerhouse Knowledge", depth: 0, area: null },
+    area("rd", "Reactor and Drives"),
+    area("rs", "Reactor Sync Infrastructure"),
+    area("wf", "Workflow Automation"),
+    area("lead", "Lead Corpus"),
+    area("price", "Service Pricing"),
+    sub("rd-store", "Reactor Storage", "rd"),
+    sub("rd-store-snap", "Snapshots", "rd", 3),
   ];
-  const ids = (picked: ScopeMap[] | null) => (picked ?? []).map((m) => m.id).sort();
-  const TECHNICAL = ["auth", "con", "dep", "dms", "dp", "rd", "rs"];
+  // 100 note hits: n0..n99. Each map's subtree holds a range of them.
+  const range = (from: number, to: number) => Array.from({ length: to - from }, (_, i) => `n${from + i}`);
+  const HITS = range(0, 100);
+  const notes = (entries: [string, string[]][]) => new Map(entries.map(([id, list]) => [id, new Set(list)]));
+  const ids = (picked: ScopeMap[] | null) => (picked ?? []).map((m) => m.id);
 
-  it("scopes 'the Powerhouse stack' to the technical areas only, none of the business ones", () => {
-    expect(ids(selectScopeAreas(HUB, keywordMapScores("What changed in the Powerhouse stack since September?", HUB), "keyword"))).toEqual(TECHNICAL);
+  it("selects every area holding at least 10% of the hits, most hits first — a 9% area stays out", () => {
+    const mapNotes = notes([
+      ["rd", range(0, 40)],
+      ["rd-store", range(0, 20)],
+      ["rs", range(40, 65)],
+      ["wf", range(65, 80)],
+      ["lead", range(80, 89)], // 9%
+      ["price", []],
+    ]);
+    expect(ids(selectAreasByHits(HITS, HUB, mapNotes))).toEqual(["rd", "rs", "wf"]);
   });
 
-  it("scopes 'the reactor' to Reactor and Drives (its sub-maps go with it) and Reactor Sync Infrastructure", () => {
-    expect(ids(selectScopeAreas(HUB, keywordMapScores("what changed in the powerhouse reactor since summer", HUB), "keyword"))).toEqual(["rd", "rs"]);
-    expect(ids(selectScopeAreas(HUB, keywordMapScores("the reactor", HUB), "keyword"))).toEqual(["rd", "rs"]);
+  it("counts a hit in every area whose subtree holds it, and hits in no area still count toward the whole", () => {
+    // n0..n9 sit in both rd and rs; nothing else is in any area: each holds 10%.
+    const mapNotes = notes([["rd", range(0, 10)], ["rs", range(0, 10)]]);
+    expect(ids(selectAreasByHits(HITS, HUB, mapNotes))).toEqual(["rd", "rs"]);
   });
 
-  it("narrows to a map below an area when it matches far better than the area ('attachments')", () => {
-    expect(ids(selectScopeAreas(HUB, keywordMapScores("what changed in attachments", HUB), "keyword"))).toEqual(["att"]);
+  it("narrows to a sub-map holding at least 60% of the selected areas' hits ('service pricing' → one map)", () => {
+    const mapNotes = notes([["rd", range(0, 50)], ["rd-store", range(0, 35)], ["rd-store-snap", range(0, 31)]]);
+    // rd-store holds 35 of the 50 selected hits (70%): the map with most hits wins over its narrower child.
+    expect(ids(selectAreasByHits(HITS, HUB, mapNotes))).toEqual(["rd-store"]);
+    // 29 of 50 is 58%: no narrowing.
+    expect(ids(selectAreasByHits(HITS, HUB, notes([["rd", range(0, 50)], ["rd-store", range(0, 29)]])))).toEqual(["rd"]);
   });
 
-  it("matches no area when nothing clears the floor: the caller searches", () => {
-    expect(selectScopeAreas(HUB, keywordMapScores("quantum chromodynamics", HUB), "keyword")).toBeNull();
-    expect(selectScopeAreas(HUB, keywordMapScores("what changed since September", HUB), "keyword")).toBeNull();
+  it("selects at most eight areas", () => {
+    const many: ScopeMap[] = Array.from({ length: 10 }, (_, i) => area(`x${i}`, `Area ${i}`));
+    const mapNotes = notes(many.map((m, i) => [m.id, range(i * 10, i * 10 + 10)]));
+    expect(selectAreasByHits(HITS, many, mapNotes)).toHaveLength(MAX_SCOPE_AREAS);
+    expect(MAX_SCOPE_AREAS).toBe(8);
   });
 
-  it("with similarities: every area within 0.9 of the best and above the floor, at most twelve", () => {
-    const sims = new Map<string, number>([["rd", 0.9], ["rs", 0.86], ["auth", 0.8], ["lead", 0.7], ["rd-store", 0.88], ["att", 0.95]]);
-    // dms's own score is missing (not embedded): its Attachments map stands for it, and is narrowed to.
-    expect(ids(selectScopeAreas(HUB, sims, "semantic"))).toEqual(["att", "rd", "rs"]);
-    // Nothing above the floor: no areas.
-    expect(selectScopeAreas(HUB, new Map([["rd", AREA_MATCH.semantic.floor - 0.01]]), "semantic")).toBeNull();
-    const many: ScopeMap[] = Array.from({ length: 20 }, (_, i) => area(`x${i}`, `Area ${i}`, ""));
-    const all = selectScopeAreas(many, new Map(many.map((m, i) => [m.id, 0.9 - i * 0.001])), "semantic");
-    expect(all).toHaveLength(MAX_SCOPE_AREAS);
-    expect(all?.[0].id).toBe("x0");
+  it("selects nothing when no area holds 10% of the hits, or there are no hits: the caller searches", () => {
+    expect(selectAreasByHits(HITS, HUB, notes([["rd", range(0, 9)]]))).toBeNull();
+    expect(selectAreasByHits([], HUB, notes([["rd", range(0, 9)]]))).toBeNull();
   });
 });

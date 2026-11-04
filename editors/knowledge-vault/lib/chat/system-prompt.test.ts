@@ -192,12 +192,23 @@ describe("buildSystemPrompt", () => {
 
   it("scopes change questions about the vault's main subject to the whole vault, and reads what the tool resolved (Addendum B1, B2, B4)", () => {
     const p = buildSystemPrompt(base);
-    expect(p).toMatch(/the vault as a whole or its main subject .* call what_changed with no moc, topic or query/);
-    expect(p).toMatch(/scope says what a query covered/);
-    expect(p).toMatch(/the main areas it matched/);
+    expect(p).toMatch(/the vault as a whole .* call what_changed with no moc, topic, query, areas or source/);
+    expect(p).toMatch(/scope says what it covered/);
+    expect(p).toMatch(/the areas named or matched/);
     expect(p).toMatch(/detail: true/);
     expect(p).toMatch(/thenAt .* first recorded/);
     expect(p).toMatch(/versions/);
+  });
+
+  it("picks the scope by the kind of subject: broad → unscoped then areas by title; a repo or document set → source; a specific term → query (Addendum C1)", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/broad subject that is not the whole vault — "the stack", "the technical side", "the business side" — first call what_changed without a scope, choose the areas it covers by their titles .* then call again with areas set to those exact titles/);
+    expect(p).toMatch(/never pass a title the list does not show/);
+    expect(p).toMatch(/not found, correct it from the list rather than guessing/);
+    expect(p).toMatch(/"what changed in <a repo, a document set, a book, a meeting series>" → call it with source/i);
+    expect(p).toMatch(/A specific term — "the reactor", "attachments" — → query/);
+    // The old rule sent the vault's theme to the whole vault; a broad subject now picks areas.
+    expect(p).not.toMatch(/"the Powerhouse stack" is the whole vault/);
   });
 
   it("carries today's date and resolves a month or season without a year to its most recent past occurrence (Addendum C2)", () => {

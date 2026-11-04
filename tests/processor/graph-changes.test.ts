@@ -371,25 +371,34 @@ describe("graph query: changes()", () => {
     await insertEdge(db, "m1", "a1", "CHILD_MOC"); // a cycle is walked once
     const maps = await createGraphQuery(db).changeMaps();
     expect(maps).toEqual([
-      { id: "hub", title: "Powerhouse", depth: 0, area: null, text: "" },
-      { id: "a1", title: "Data Processing and CQRS", depth: 1, area: "a1", text: "" },
-      { id: "m1", title: "Processors", depth: 2, area: "a1", text: "" },
+      { id: "hub", title: "Powerhouse", depth: 0, area: null },
+      { id: "a1", title: "Data Processing and CQRS", depth: 1, area: "a1" },
+      { id: "m1", title: "Processors", depth: 2, area: "a1" },
     ]);
   });
 
-  it("gives each map its top-level area and its own text (description and orientation) for a subject to match (Addendum C1)", async () => {
+  it("gives each map its top-level area, and each map's notes through its whole subtree (Addendum C1c)", async () => {
     const db = harness.db;
     await insertNode(db, "hub", "Powerhouse", "bai/moc", "MOC (HUB)");
     await insertNode(db, "a1", "Document Model System", "bai/moc", "MOC (DOMAIN)");
     await insertNode(db, "m1", "Attachments", "bai/moc", "MOC (TOPIC)");
     await insertNode(db, "m2", "Attachment hashing", "bai/moc", "MOC (TOPIC)");
-    await db.updateTable("graph_nodes").set({ description: "Files on documents", content: "Upload, hashing and references" }).where("document_id", "=", "m1").execute();
+    for (const id of ["n1", "n2", "n3"]) await insertNode(db, id, id);
     await insertEdge(db, "hub", "a1", "CHILD_MOC");
     await insertEdge(db, "a1", "m1", "CHILD_MOC");
     await insertEdge(db, "m1", "m2", "CHILD_MOC");
-    const maps = await createGraphQuery(db).changeMaps();
-    expect(maps.find((m) => m.id === "m1")).toEqual({ id: "m1", title: "Attachments", depth: 2, area: "a1", text: "Files on documents Upload, hashing and references" });
+    await insertEdge(db, "m2", "m1", "CHILD_MOC"); // a cycle is walked once
+    await insertEdge(db, "a1", "n1", "CORE_IDEA");
+    await insertEdge(db, "m1", "n2", "CORE_IDEA");
+    await insertEdge(db, "m2", "n3", "CORE_IDEA");
+    const query = createGraphQuery(db);
+    const maps = await query.changeMaps();
+    expect(maps.find((m) => m.id === "m1")).toEqual({ id: "m1", title: "Attachments", depth: 2, area: "a1" });
     expect(maps.find((m) => m.id === "m2")).toMatchObject({ depth: 3, area: "a1" });
+    const notes = await query.changeMapNotes(["a1", "m1", "m2"]);
+    expect([...(notes.get("a1") ?? [])].sort()).toEqual(["n1", "n2", "n3"]);
+    expect([...(notes.get("m1") ?? [])].sort()).toEqual(["n2", "n3"]);
+    expect([...(notes.get("m2") ?? [])].sort()).toEqual(["n2", "n3"]);
   });
 
   it("scopes several areas at once: the union of their subtrees and their sources (Addendum C1)", async () => {
@@ -402,6 +411,30 @@ describe("graph query: changes()", () => {
     await insertOps(db, ["n1", "n2", "n3"].map((id, i) => ({ documentId: id, documentType: "bai/knowledge-note", operationType: "SET_TITLE", timestamp: "2026-11-02T10:00:00.000Z", index: i, inputJson: `{"title":"${id}!"}`, signerAddress: null })));
     const d = await createGraphQuery(db).changes({ since: "2026-11-01T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" }, { q: "reactor", mocs: ["a1", "a2"] });
     expect((d.events ?? []).map((e) => e.documentId).sort()).toEqual(["n1", "n2"]);
+  });
+
+  it("matches sources by title, provenance URL or folder path, any case, and scopes to them and their notes (Addendum C1b)", async () => {
+    const db = harness.db;
+    const source = (id: string, title: string, url: string | null, claimIds: string[]) =>
+      db
+        .insertInto("graph_sources")
+        .values({ document_id: id, row_json: JSON.stringify({ id, title, url, claimIds, addedAt: T }), revision: 1, version: SOURCE_ROW_VERSION, updated_at: T })
+        .execute();
+    await source("s1", "packages/reactor/README.md", "https://github.com/powerhouse-inc/powerhouse/blob/main/packages/reactor/README.md", ["n1"]);
+    await source("s2", "Connect guide", null, []);
+    await source("s3", "Pricing call", "https://meet.example/pricing", ["n3"]);
+    for (const id of ["n1", "n2", "n3"]) await insertNode(db, id, id);
+    await insertEdge(db, "n2", "s2", "DERIVED_FROM");
+    const query = createGraphQuery(db);
+    const folders = new Map([["s2", "/sources/Powerhouse-Inc/powerhouse"]]);
+    expect(await query.changeSources("POWERHOUSE-INC/powerhouse", folders)).toEqual(["s1", "s2"]);
+    expect(await query.changeSources("connect GUIDE", folders)).toEqual(["s2"]);
+    expect(await query.changeSources("  ", folders)).toEqual([]);
+    await insertOps(db, ["n1", "n2", "n3"].map((id, i) => ({ documentId: id, documentType: "bai/knowledge-note", operationType: "SET_TITLE", timestamp: "2026-11-02T10:00:00.000Z", index: i, inputJson: `{"title":"${id}!"}`, signerAddress: null })));
+    const d = await query.changes({ since: "2026-11-01T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" }, { sources: ["s1", "s2"] });
+    // n1 through s1's extractedClaims, n2 through its DERIVED_FROM edge; n3 is another source's.
+    expect((d.events ?? []).map((e) => e.documentId).sort()).toEqual(["n1", "n2"]);
+    expect(d.thenVsNow).toBeDefined();
   });
 
   it("answers a sync-sized window — large sources and notes with baselines — in seconds, not minutes", async () => {

@@ -122,15 +122,19 @@ function thenVsNowSection(t: ThenVsNow, out: string[]): void {
   if (t.unchanged.length) out.push("Unchanged:", ...t.unchanged.map(claimLine), "");
 }
 
-/** What a `q` covered: the whole vault, the map it named, or a search. */
+/** What the scope covered: the areas named or matched, the sources matched, the whole vault, one map, or a search. */
 function scopeLine(d: ChangeDigest): string | null {
   const r = d.scope.resolved;
   if (!r) return null;
+  // q within areas or sources the caller chose searched them; on its own it matched them.
+  const q = d.scope.q ? ` (${d.scope.areas || d.scope.source ? "searched for" : "matched"} “${oneLine(d.scope.q, 80)}”)` : "";
   if (r.kind === "vault") return `Scope: the whole vault (“${oneLine(d.scope.q ?? r.title, 80)}” names ${oneLine(r.title, 80)}).`;
   if (r.kind === "areas") {
-    const named = r.areas.map((a) => `${oneLine(a.title, 80)} [[${a.id}]]`).join(", ");
-    return `Scope: the areas ${named}${d.scope.q ? ` (matched “${oneLine(d.scope.q, 80)}”)` : ""}.`;
+    const named = r.areas.length ? `the areas ${r.areas.map((a) => `${oneLine(a.title, 80)} [[${a.id}]]`).join(", ")}${q}` : "no area";
+    const unknown = r.unknown?.length ? `; no area is titled ${r.unknown.map((u) => `“${oneLine(u, 80)}”`).join(", ")}` : "";
+    return `Scope: ${named}${unknown}.`;
   }
+  if (r.kind === "source") return `Scope: the notes from ${r.sources} source${r.sources === 1 ? "" : "s"} matching “${oneLine(r.match, 80)}”${q}.`;
   return r.kind === "moc"
     ? `Scope: the map ${r.title} [[${r.id}]]${d.scope.q ? ` (matched “${oneLine(d.scope.q, 80)}”)` : ""}.`
     : `Scope: search “${oneLine(r.query, 80)}” — ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes.`;

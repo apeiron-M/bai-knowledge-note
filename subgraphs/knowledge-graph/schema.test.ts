@@ -40,6 +40,8 @@ describe("knowledgeGraph schema", () => {
       "moc: String",
       "topic: String",
       "q: String",
+      "areas: [String!]",
+      "source: String",
       "documentIds: [String!]",
       "types: [String!]",
       "limit: Int",
@@ -58,8 +60,8 @@ describe("knowledgeGraph schema", () => {
     expect(fields("KnowledgeGraphChangeVersions")).toEqual(["first", "now"]);
     expect(fields("KnowledgeGraphChangeClaim")).toEqual(["documentId", "claim", "gist", "thenAt"]);
     expect(fields("KnowledgeGraphChangeShift")).toEqual(["documentId", "then", "now", "why", "replacedBy", "thenAt"]);
-    expect(fields("KnowledgeGraphChangeScope")).toEqual(["moc", "topic", "documentIds", "q", "types", "resolved"]);
-    expect(fields("KnowledgeGraphChangeResolvedScope")).toEqual(["kind", "id", "title", "query", "hits", "areas"]);
+    expect(fields("KnowledgeGraphChangeScope")).toEqual(["moc", "topic", "documentIds", "q", "types", "areas", "source", "resolved"]);
+    expect(fields("KnowledgeGraphChangeResolvedScope")).toEqual(["kind", "id", "title", "query", "hits", "areas", "unknown", "match", "sources"]);
     expect(fields("KnowledgeGraphThenVsNow")).toEqual(["then", "now", "unchanged"]);
   });
 });

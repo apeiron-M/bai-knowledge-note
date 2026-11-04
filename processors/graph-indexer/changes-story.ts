@@ -192,8 +192,6 @@ export interface ScopeMap {
   depth: number;
   /** The top-level area the map sits under (itself for an area); null for a hub. Absent: an area is its own. */
   area?: string | null;
-  /** The map's own text besides its title: description and orientation (Addendum C1's keyword fallback). */
-  text?: string;
 }
 
 /**
@@ -246,80 +244,45 @@ function queryWords(query: string): Set<string> {
   return new Set([...claimTokens(query)].filter((w) => !QUERY_FILLER.has(w)));
 }
 
-/** What a word found only in a map's text (description, orientation) counts for, against 1 in its title. */
-export const TEXT_WORD_WEIGHT = 0.5;
+/** An area is in a `q` scope when it holds at least this share of the query's note hits (Addendum C1c). */
+export const AREA_HIT_SHARE = 0.1;
+/** At most this many areas make one `q` scope. */
+export const MAX_SCOPE_AREAS = 8;
+/** A map below an area replaces the selected areas when it holds at least this share of their hits. */
+export const NARROW_HIT_SHARE = 0.6;
 
 /**
- * How well each map matches a query by its words (spec Addendum C1's
- * fallback when no embedding is available): each content word of the query
- * counts 1 when the map's title holds it, {@link TEXT_WORD_WEIGHT} when only
- * its description or orientation does; the score is the mean over the
- * query's content words, 0..1. Hubs are not scored.
+ * The areas a specific term means (spec Addendum C1c): its top semantic note
+ * hits are counted per top-level area subtree (`mapNotes`: each map's notes,
+ * its descendant maps' included; a hit in two areas counts for both), and
+ * every area holding at least {@link AREA_HIT_SHARE} of all the hits is
+ * selected, most hits first, at most {@link MAX_SCOPE_AREAS}. When one map
+ * below an area holds at least {@link NARROW_HIT_SHARE} of the selected
+ * areas' hits, it alone is the scope (the one with most of them; a tie goes
+ * to the deeper map). Null when no area holds enough: search instead.
  */
-export function keywordMapScores(query: string, maps: readonly ScopeMap[]): Map<string, number> {
-  const q = queryWords(query);
-  const out = new Map<string, number>();
-  if (!q.size) return out;
-  for (const m of maps) {
-    if (m.depth === 0) continue;
-    const title = claimTokens(m.title);
-    const text = claimTokens(m.text ?? "");
-    let sum = 0;
-    for (const w of q) sum += title.has(w) ? 1 : text.has(w) ? TEXT_WORD_WEIGHT : 0;
-    out.set(m.id, sum / q.size);
-  }
-  return out;
-}
-
-/**
- * The thresholds of {@link selectScopeAreas}, per scorer (spec Addendum C1).
- * `floor`: the least score an area (through itself or a map below it) needs
- * at all — below it on every area, the query searches instead. `narrowGap`:
- * how much better a map below an area must match than the area itself for
- * the scope to narrow to that map. Semantic scores are cosine similarities of
- * gte-small embeddings (title + description + orientation), which sit high
- * for any two texts of one domain; keyword scores are {@link keywordMapScores}.
- */
-export const AREA_MATCH = {
-  semantic: { floor: 0.8, narrowGap: 0.05 },
-  keyword: { floor: 0.5, narrowGap: 0.5 },
-} as const;
-/** An area is in scope when its best score is at least this share of the best area's. */
-export const AREA_RELATIVE = 0.9;
-/** At most this many areas make one scope. */
-export const MAX_SCOPE_AREAS = 12;
-
-/**
- * The main areas a subject means (spec Addendum C1): every top-level area
- * whose best score — its own or a map's below it — is at least
- * {@link AREA_RELATIVE} of the best area's and at least the scorer's floor,
- * best first, at most {@link MAX_SCOPE_AREAS}. An area whose best map below
- * matches better than the area by the scorer's `narrowGap` (a narrow subject,
- * "attachments") is replaced by that map. A map with no score (not embedded)
- * counts for nothing. Null when no area clears the floor: search instead.
- */
-export function selectScopeAreas(maps: readonly ScopeMap[], scores: ReadonlyMap<string, number>, scorer: keyof typeof AREA_MATCH): ScopeMap[] | null {
-  const { floor, narrowGap } = AREA_MATCH[scorer];
-  const areaOf = (m: ScopeMap) => (m.area === undefined ? (m.depth === 1 ? m.id : null) : m.area);
-  const ranked = maps
+export function selectAreasByHits(hits: readonly string[], maps: readonly ScopeMap[], mapNotes: ReadonlyMap<string, ReadonlySet<string>>): ScopeMap[] | null {
+  const all = new Set(hits);
+  if (!all.size) return null;
+  const inMap = (id: string, among: ReadonlySet<string>) => {
+    const notes = mapNotes.get(id);
+    return notes ? [...among].filter((n) => notes.has(n)) : [];
+  };
+  const selected = maps
     .filter((m) => m.depth === 1)
-    .map((area) => {
-      const own = scores.get(area.id) ?? -Infinity;
-      let best: { map: ScopeMap; score: number } | null = null;
-      for (const m of maps) {
-        if (m.depth < 2 || areaOf(m) !== area.id) continue;
-        const score = scores.get(m.id);
-        if (score !== undefined && (!best || score > best.score || (score === best.score && m.depth < best.map.depth))) best = { map: m, score };
-      }
-      const narrow = best !== null && best.score - own >= narrowGap;
-      return { pick: narrow && best ? best.map : area, score: Math.max(own, best?.score ?? -Infinity) };
-    })
-    .filter((a) => Number.isFinite(a.score))
-    .sort((a, b) => b.score - a.score || a.pick.title.localeCompare(b.pick.title));
-  if (!ranked.length || ranked[0].score < floor) return null;
-  const top = ranked[0].score;
-  const bar = Math.max(floor, AREA_RELATIVE * top);
-  return ranked.filter((a) => a.score >= bar).slice(0, MAX_SCOPE_AREAS).map((a) => a.pick);
+    .map((area) => ({ area, hits: inMap(area.id, all) }))
+    .filter((a) => a.hits.length >= AREA_HIT_SHARE * all.size)
+    .sort((a, b) => b.hits.length - a.hits.length || a.area.title.localeCompare(b.area.title))
+    .slice(0, MAX_SCOPE_AREAS);
+  if (!selected.length) return null;
+  const covered = new Set(selected.flatMap((a) => a.hits));
+  const narrow = maps
+    .filter((m) => m.depth >= 2)
+    .map((map) => ({ map, count: inMap(map.id, covered).length }))
+    .filter((m) => m.count >= NARROW_HIT_SHARE * covered.size)
+    .sort((a, b) => b.count - a.count || b.map.depth - a.map.depth || a.map.title.localeCompare(b.map.title))
+    .at(0);
+  return narrow ? [narrow.map] : selected.map((a) => a.area);
 }
 
 /**

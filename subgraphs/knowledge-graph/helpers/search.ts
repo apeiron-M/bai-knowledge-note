@@ -1,5 +1,5 @@
 import { getDb, getQuery, type GraphSubgraph } from "./db.js";
-import { ACTIVE_MODEL, searchSimilar } from "../../../processors/graph-indexer/embedding-store.js";
+import { searchSimilar } from "../../../processors/graph-indexer/embedding-store.js";
 import { embedQuery } from "./query-embedder.js";
 import {
   RRF_K,
@@ -127,41 +127,4 @@ export async function searchVault(
     }
   }
   return keywordSearch(subgraph, driveId, query, limit, includeArchived);
-}
-/**
- * Cosine similarity of a query to each of these documents' stored embeddings
- * (title + description + body; a map's body is its orientation) — what
- * `what_changed` ranks a hub's areas by (spec Addendum C1). Null when the
- * query cannot be embedded or none of the documents has a current vector;
- * a document without one is left out of the map.
- */
-export async function mapSimilarities(
-  subgraph: GraphSubgraph,
-  driveId: string,
-  query: string,
-  documentIds: string[],
-): Promise<Map<string, number> | null> {
-  if (!documentIds.length) return null;
-  const embedding = await embedQuery(query);
-  if (!embedding) return null;
-  try {
-    const rows = await getDb(subgraph, driveId)
-      .selectFrom("note_embeddings")
-      .select(["document_id", "embedding"])
-      .where("model", "=", ACTIVE_MODEL)
-      .where("document_id", "in", documentIds)
-      .execute();
-    const out = new Map<string, number>();
-    for (const row of rows) {
-      const vector = JSON.parse(row.embedding) as number[];
-      if (vector.length !== embedding.length) continue;
-      let dot = 0;
-      for (let i = 0; i < vector.length; i++) dot += vector[i] * embedding[i];
-      out.set(row.document_id, dot);
-    }
-    return out.size ? out : null;
-  } catch (err) {
-    console.warn(`[knowledgeGraph] map embeddings unavailable, keyword fallback: ${err instanceof Error ? err.message : String(err)}`);
-    return null;
-  }
 }

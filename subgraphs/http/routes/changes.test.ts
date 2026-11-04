@@ -151,4 +151,46 @@ describe("GET changes", () => {
     expect(gql.scope).toEqual(rest.scope);
     expect(rest.totals).toMatchObject({ revised: 1, documents: 1 });
   });
+
+  describe("areas and source scopes (Addendum C1a, C1b)", () => {
+    beforeAll(async () => {
+      // Inserted after the q parity test above: a map holding n1 would turn its search into an area.
+      const T = "2026-11-01T00:00:00.000Z";
+      const node = (id: string, title: string, documentType: string, noteType: string | null) => ({
+        id, document_id: id, title, description: null, note_type: noteType, status: documentType === "bai/moc" ? "MOC" : "CANONICAL",
+        content: null, author: null, source_origin: null, created_at: null, added_at: null, updated_at: T, document_type: documentType,
+      });
+      await harness.db
+        .insertInto("graph_nodes")
+        .values([node("hub", "Vault Hub", "bai/moc", "MOC (HUB)"), node("a1", "Claims, Old and New", "bai/moc", "MOC (DOMAIN)"), node("n1", "n1", "bai/knowledge-note", null), node("n2", "n2", "bai/knowledge-note", null)])
+        .execute();
+      const edge = (s: string, t: string, type: string) => ({ id: `${s}-${t}`, source_document_id: s, target_document_id: t, link_type: type, target_title: null, updated_at: T, metadata: null });
+      await harness.db.insertInto("graph_edges").values([edge("hub", "a1", "CHILD_MOC"), edge("a1", "n1", "CORE_IDEA")]).execute();
+      const { SOURCE_ROW_VERSION } = await import("../../../processors/graph-indexer/source-timeline.js");
+      await harness.db
+        .insertInto("graph_sources")
+        .values({ document_id: "s1", row_json: JSON.stringify({ id: "s1", title: "README.md", url: "https://github.com/powerhouse-inc/powerhouse", claimIds: ["n2"], addedAt: T }), revision: 1, version: SOURCE_ROW_VERSION, updated_at: T })
+        .execute();
+    });
+    const resolver = () =>
+      (getResolvers(subgraph) as { Query: Record<string, (p: unknown, a: unknown, c: unknown) => Promise<{ totals: unknown; scope: unknown }>> }).Query.knowledgeGraphChanges;
+
+    it("takes areas as repeated parameters (a title may hold a comma) and answers as knowledgeGraphChanges does", async () => {
+      const rest = (await (await get(`drive=${DRIVE}&since=2026-11-01&until=2026-11-03&areas=${encodeURIComponent("claims, old and new")}&areas=Nope`)).json()) as { totals: unknown; scope: unknown };
+      const gql = await resolver()({}, { driveId: DRIVE, since: "2026-11-01", until: "2026-11-03", areas: ["claims, old and new", "Nope"] }, {});
+      expect(rest.scope).toEqual({ areas: ["claims, old and new", "Nope"], resolved: { kind: "areas", areas: [{ id: "a1", title: "Claims, Old and New" }], unknown: ["Nope"] } });
+      expect(gql.scope).toEqual(rest.scope);
+      expect(rest.totals).toEqual(gql.totals);
+      expect(rest.totals).toMatchObject({ revised: 1, created: 0 });
+    });
+
+    it("takes source and answers as knowledgeGraphChanges does", async () => {
+      const rest = (await (await get(`drive=${DRIVE}&since=2026-11-01&until=2026-11-03&source=Powerhouse-Inc/Powerhouse`)).json()) as { totals: unknown; scope: unknown };
+      const gql = await resolver()({}, { driveId: DRIVE, since: "2026-11-01", until: "2026-11-03", source: "Powerhouse-Inc/Powerhouse" }, {});
+      expect(rest.scope).toEqual({ source: "Powerhouse-Inc/Powerhouse", resolved: { kind: "source", match: "Powerhouse-Inc/Powerhouse", sources: 1 } });
+      expect(gql.scope).toEqual(rest.scope);
+      expect(rest.totals).toEqual(gql.totals);
+      expect(rest.totals).toMatchObject({ created: 1, revised: 0 });
+    });
+  });
 });

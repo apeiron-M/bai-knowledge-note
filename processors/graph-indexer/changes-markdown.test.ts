@@ -153,5 +153,19 @@ describe("renderChangesMarkdown: the story leads", () => {
     });
     expect(md).toContain("Scope: the areas Reactor and Drives [[a1]], Reactor Sync Infrastructure [[a3]] (matched “the reactor”).");
   });
-});
 
+  it("names the areas asked for and the names it did not find (Addendum C1a)", () => {
+    const md = renderChangesMarkdown({
+      ...digest,
+      scope: { areas: ["Reactor and Drives", "The stack"], resolved: { kind: "areas", areas: [{ id: "a1", title: "Reactor and Drives" }], unknown: ["The stack"] } },
+    });
+    expect(md).toContain("Scope: the areas Reactor and Drives [[a1]]; no area is titled “The stack”.");
+  });
+
+  it("names a source scope with its match and how many sources it matched (Addendum C1b)", () => {
+    const md = renderChangesMarkdown({ ...digest, scope: { source: "powerhouse-inc/powerhouse", resolved: { kind: "source", match: "powerhouse-inc/powerhouse", sources: 12 } } });
+    expect(md).toContain("Scope: the notes from 12 sources matching “powerhouse-inc/powerhouse”.");
+    const one = renderChangesMarkdown({ ...digest, scope: { source: "x", q: "sync", resolved: { kind: "source", match: "x", sources: 1 } } });
+    expect(one).toContain("Scope: the notes from 1 source matching “x” (searched for “sync”).");
+  });
+});
