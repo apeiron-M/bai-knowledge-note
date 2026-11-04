@@ -59,7 +59,7 @@ function deps(overrides: Partial<StructureRouteDeps> = {}): StructureRouteDeps {
       errors: [],
     })),
     accessMap: vi.fn(async () => ({ available: true })),
-    backfillSourceHistory: vi.fn(async () => ({ sources: 3, inserted: 7, skipped: 0, errors: [] })),
+    backfillSourceHistory: vi.fn(async () => ({ sources: 3, documents: 0, inserted: 7, skipped: 0, errors: [] })),
     ...overrides,
   };
 }
@@ -171,7 +171,7 @@ describe("structure routes", () => {
   });
 
   it("refuses the source-history backfill to a caller who can write but not manage", async () => {
-    const backfill = vi.fn(async () => ({ sources: 0, inserted: 0, skipped: 0, errors: [] }));
+    const backfill = vi.fn(async () => ({ sources: 0, documents: 0, inserted: 0, skipped: 0, errors: [] }));
     const d = deps({ backfillSourceHistory: backfill });
     d.authorization.canManage = vi.fn(async () => false);
     const res = await createStructureRoute(d, "admin/backfill-source-history")(
@@ -183,15 +183,27 @@ describe("structure routes", () => {
   });
 
   it("runs the source-history backfill for a manager, on the canonical drive", async () => {
-    const backfill = vi.fn(async () => ({ sources: 3, inserted: 7, skipped: 0, errors: [] }));
+    const backfill = vi.fn(async () => ({ sources: 3, documents: 0, inserted: 7, skipped: 0, errors: [] }));
     const d = deps({ backfillSourceHistory: backfill });
     const res = await createStructureRoute(d, "admin/backfill-source-history")(
       new Request("http://h/admin/backfill-source-history?drive=d", { method: "POST" }),
       ctxFor(),
     );
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ sources: 3, inserted: 7, skipped: 0, errors: [] });
-    expect(backfill).toHaveBeenCalledWith("drive");
+    expect(await res.json()).toEqual({ sources: 3, documents: 0, inserted: 7, skipped: 0, errors: [] });
+    expect(backfill).toHaveBeenCalledWith("drive", { all: false });
+  });
+
+  it("widens the backfill to every indexed document with scope=all, and refuses an unknown scope", async () => {
+    const backfill = vi.fn(async () => ({ sources: 3, documents: 9, inserted: 7, skipped: 0, errors: [] }));
+    const d = deps({ backfillSourceHistory: backfill });
+    const route = createStructureRoute(d, "admin/backfill-source-history");
+    const ok = await route(new Request("http://h/admin/backfill-source-history?drive=d&scope=all", { method: "POST" }), ctxFor());
+    expect(ok.status).toBe(200);
+    expect(backfill).toHaveBeenCalledWith("drive", { all: true });
+    const bad = await route(new Request("http://h/admin/backfill-source-history?drive=d&scope=everything", { method: "POST" }), ctxFor());
+    expect(bad.status).toBe(400);
+    expect(backfill).toHaveBeenCalledTimes(1);
   });
 
   it("forwards similar with the note id and a bounded limit", async () => {

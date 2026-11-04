@@ -15,6 +15,10 @@ vi.mock("./helpers/db.js", async (importOriginal) => ({
   getQuery: () => ({ changes, edgesTouching }),
   resolveCanonicalDriveId: (_: unknown, id: string) => Promise.resolve(id),
 }));
+const backfillDriveSourceHistory = vi.fn();
+vi.mock("./helpers/source-history.js", () => ({
+  backfillDriveSourceHistory: (...args: unknown[]) => backfillDriveSourceHistory(...args) as unknown,
+}));
 vi.mock("./helpers/search.js", async (importOriginal) => ({
   ...(await importOriginal<typeof SearchModule>()),
   searchVault: (...args: unknown[]) => searchVault(...args) as unknown,
@@ -197,5 +201,38 @@ describe("Query.knowledgeGraphChanges", () => {
     const { subgraph: s } = subgraph();
     await expect(resolve(s)({}, { driveId: "d", since: "2026-11-01", cursor: "c" }, {})).rejects.toMatchObject({ extensions: { code: "BAD_USER_INPUT" } });
     expect(changes).not.toHaveBeenCalled();
+  });
+});
+
+describe("Mutation.knowledgeGraphBackfillSourceHistory", () => {
+  type Resolver = (parent: unknown, args: Record<string, unknown>, ctx: unknown) => Promise<unknown>;
+  const resolve = (s: BaseSubgraph): Resolver =>
+    (getResolvers(s) as { Mutation: Record<string, Resolver> }).Mutation.knowledgeGraphBackfillSourceHistory;
+  const managed = (canManage: boolean) => {
+    const { subgraph: s, assertCanWrite } = subgraph();
+    const check = vi.fn(async () => canManage);
+    Object.assign(s, { authorizationService: { canManage: check }, resolveCanonicalDocumentId: async (id: string) => id });
+    return { s, assertCanWrite, check };
+  };
+  const result = { sources: 2, documents: 0, inserted: 3, skipped: 0, errors: [] };
+
+  beforeEach(() => {
+    backfillDriveSourceHistory.mockReset().mockResolvedValue(result);
+  });
+
+  it("refuses a writer who does not manage the drive, as the REST route does", async () => {
+    const { s, assertCanWrite, check } = managed(false);
+    await expect(resolve(s)({}, { driveId: "d" }, { user: { address: "0xw" } })).rejects.toThrow(/requires ADMIN/);
+    expect(assertCanWrite).toHaveBeenCalled();
+    expect(check).toHaveBeenCalledWith("d", "0xw");
+    expect(backfillDriveSourceHistory).not.toHaveBeenCalled();
+  });
+
+  it("runs for a manager, over sources only unless all is asked for", async () => {
+    const { s } = managed(true);
+    expect(await resolve(s)({}, { driveId: "d" }, { user: { address: "0xm" } })).toEqual(result);
+    expect(backfillDriveSourceHistory).toHaveBeenLastCalledWith(s, "d", { all: false });
+    await resolve(s)({}, { driveId: "d", all: true }, { user: { address: "0xm" } });
+    expect(backfillDriveSourceHistory).toHaveBeenLastCalledWith(s, "d", { all: true });
   });
 });

@@ -35,8 +35,9 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
  *
  * Two mutations because they write: `knowledgeGraphReindex` DELETEs and
  * rebuilds the projection (and CREATEs its tables when a namespace has none);
- * `knowledgeGraphBackfillSourceHistory` inserts source history rows. (Their
- * REST twins ask for manage access; GraphQL's guard knows read and write.)
+ * `knowledgeGraphBackfillSourceHistory` inserts history rows. (Their REST
+ * twins ask for manage access; GraphQL's guard knows read and write, so the
+ * backfill resolver asks `canManage` itself.)
  *
  * Four queries because of what they expose rather than what they change:
  * `knowledgeGraphDebug` serves the raw projection tables, and the three
@@ -249,8 +250,18 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
     Mutation: withDriveGuards(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
-      knowledgeGraphBackfillSourceHistory: ((_: unknown, args: { driveId: string }) =>
-        backfillDriveSourceHistory(subgraph, args.driveId)) as unknown as Resolver,
+      // The guard asks for write; the backfill asks for more, like its REST
+      // twin: ADMIN of the drive (canManage), asked of the drive's canonical id.
+      knowledgeGraphBackfillSourceHistory: (async (_: unknown, args: { driveId: string; all?: boolean | null }, ctx: unknown) => {
+        const address = (ctx as { user?: { address?: string } } | null)?.user?.address;
+        const canonical = await subgraph.resolveCanonicalDocumentId(args.driveId, ctx as object);
+        if (!(await subgraph.authorizationService.canManage(canonical, address))) {
+          throw new GraphQLError("Forbidden: knowledgeGraphBackfillSourceHistory requires ADMIN of this drive", {
+            extensions: { code: "FORBIDDEN" },
+          });
+        }
+        return backfillDriveSourceHistory(subgraph, args.driveId, { all: args.all === true });
+      }) as unknown as Resolver,
     }),
 
     Query: withDriveGuards(subgraph, {

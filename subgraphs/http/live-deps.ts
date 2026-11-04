@@ -46,8 +46,8 @@ export function buildStructureRouteDeps(
     },
     reindex: (driveId: string) => reindexDrive(subgraph, driveId),
     accessMap: (driveId: string) => readAccessMap(subgraph, driveId),
-    backfillSourceHistory: (driveId: string) =>
-      backfillDriveSourceHistory(subgraph, driveId),
+    backfillSourceHistory: (driveId: string, opts: { all: boolean }) =>
+      backfillDriveSourceHistory(subgraph, driveId, opts),
     authorization: subgraph.authorizationService,
   };
 }

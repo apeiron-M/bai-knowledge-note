@@ -37,7 +37,8 @@ export type StructureRouteDeps = HttpRouteDeps & {
   accessMap(driveId: string): Promise<unknown>;
   backfillSourceHistory(
     driveId: string,
-  ): Promise<{ sources: number; inserted: number; skipped: number; errors: string[] }>;
+    opts: { all: boolean },
+  ): Promise<{ sources: number; documents: number; inserted: number; skipped: number; errors: string[] }>;
   authorization: HttpRouteDeps["authorization"] & {
     canManage: IAuthorizationService["canManage"];
   };
@@ -172,7 +173,11 @@ export function createStructureRoute(
           });
         case "admin/backfill-source-history": {
           const canonical = await canonicalForManage(deps, drive, ctx);
-          return Response.json(await deps.backfillSourceHistory(canonical), {
+          const scope = url.searchParams.get("scope") ?? "sources";
+          if (scope !== "sources" && scope !== "all") {
+            throw new HttpError(400, "BAD_REQUEST", `scope must be "sources" or "all"`);
+          }
+          return Response.json(await deps.backfillSourceHistory(canonical, { all: scope === "all" }), {
             headers: OK_CACHE,
           });
         }

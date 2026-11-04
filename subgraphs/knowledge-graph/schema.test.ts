@@ -25,9 +25,9 @@ describe("knowledgeGraph schema", () => {
   it("offers the source-history backfill as a mutation", () => {
     const field = build().getMutationType()?.getFields().knowledgeGraphBackfillSourceHistory;
     expect(String(field?.type)).toBe("SourceHistoryBackfill!");
-    expect(field?.args.map((a) => `${a.name}: ${String(a.type)}`)).toEqual(["driveId: ID!"]);
+    expect(field?.args.map((a) => `${a.name}: ${String(a.type)}`)).toEqual(["driveId: ID!", "all: Boolean"]);
     const result = build().getType("SourceHistoryBackfill") as { getFields(): Record<string, unknown> };
-    expect(Object.keys(result.getFields())).toEqual(["sources", "inserted", "skipped", "errors"]);
+    expect(Object.keys(result.getFields())).toEqual(["sources", "documents", "inserted", "skipped", "errors"]);
   });
 
   it("serves the change digest to readers, with every scope argument", () => {

@@ -36,7 +36,7 @@ describe("backfillSourceHistory", () => {
 
   it("inserts one row per recorded source operation, shaped like the live indexer's", async () => {
     const result = await backfillSourceHistory(reader, harness.db, ["s1", "s2"]);
-    expect(result).toEqual({ sources: 2, inserted: 4, skipped: 0, errors: [] });
+    expect(result).toEqual({ sources: 2, documents: 0, inserted: 4, skipped: 0, errors: [] });
 
     const rows = await harness.db.selectFrom("graph_operations").selectAll().orderBy("id").execute();
     expect(rows.map((r) => r.id)).toEqual(["s1-0", "s1-1", "s1-3", "s2-0"]);
@@ -50,8 +50,18 @@ describe("backfillSourceHistory", () => {
   it("is idempotent: a second run inserts nothing", async () => {
     await backfillSourceHistory(reader, harness.db, ["s1", "s2"]);
     const again = await backfillSourceHistory(reader, harness.db, ["s1", "s2"]);
-    expect(again).toEqual({ sources: 2, inserted: 0, skipped: 4, errors: [] });
+    expect(again).toEqual({ sources: 2, documents: 0, inserted: 0, skipped: 4, errors: [] });
     expect(await harness.db.selectFrom("graph_operations").select("id").execute()).toHaveLength(4);
+  });
+
+  it("writes a long log in chunks of rows", async () => {
+    const long: SourceOpReader = {
+      async *operations() {
+        for (let i = 0; i < 5100; i++) yield { index: i, type: "SET_SOURCE_STATUS", input: { status: "X" }, timestampUtcMs: "2026-08-01T00:00:00.000Z" };
+      },
+    };
+    const result = await backfillSourceHistory(long, harness.db, ["big"]);
+    expect(result.inserted).toBe(5100);
   });
 
   it("isolates a source whose log cannot be read", async () => {
@@ -68,7 +78,7 @@ describe("backfillSourceHistory", () => {
 });
 
 describe("reactorSourceOpReader", () => {
-  it("pages the global operation log of a document, asking for the recorded source actions only", async () => {
+  it("pages the global operation log of a document, asking for the given actions only", async () => {
     const calls: unknown[][] = [];
     const client = {
       getOperations: async (...args: unknown[]) => {
@@ -80,7 +90,7 @@ describe("reactorSourceOpReader", () => {
       },
     };
     const out = [];
-    for await (const op of reactorSourceOpReader(client).operations("s1")) out.push(op);
+    for await (const op of reactorSourceOpReader(client).operations("s1", ["INGEST_SOURCE", "SET_SOURCE_STATUS"])) out.push(op);
     expect(out).toEqual([
       { index: 0, type: "INGEST_SOURCE", input: { title: "a" }, timestampUtcMs: "t0", signer: { user: { address: "0xa" } } },
       { index: 1, type: "SET_SOURCE_STATUS", input: { status: "X" }, timestampUtcMs: "t1", signer: undefined },
@@ -89,5 +99,17 @@ describe("reactorSourceOpReader", () => {
     expect(calls[0][1]).toEqual({ branch: "main", scopes: ["global"] });
     expect((calls[0][2] as { actionTypes: string[] }).actionTypes).toContain("INGEST_SOURCE");
     expect(calls[1][3]).toEqual({ cursor: "c1", limit: 200 });
+  });
+
+  it("asks for every action when none are given", async () => {
+    const calls: unknown[][] = [];
+    const client = {
+      getOperations: async (...args: unknown[]) => {
+        calls.push(args);
+        return { results: [] };
+      },
+    };
+    for await (const op of reactorSourceOpReader(client).operations("n1")) void op;
+    expect(calls[0][2]).toBeUndefined();
   });
 });

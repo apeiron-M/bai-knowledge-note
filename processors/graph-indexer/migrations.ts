@@ -277,6 +277,40 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     )
     .execute();
 
+  // Repair history ids written before change history. The reactor numbers
+  // each scope separately, and every operation used to be stored under
+  // `<doc>-<index>`: a document's document-scope CREATE_DOCUMENT (0) and
+  // UPGRADE_DOCUMENT (1) took the ids of its first two global operations,
+  // which `onConflict doNothing` then dropped. Non-global rows now live under
+  // `<doc>-<scope>-<index>` (operation-row.ts, and link rows always did), so
+  // move the old ones there — freeing the global ids for the backfill
+  // (`knowledgeGraphBackfillSourceHistory(all: true)`) to fill. A row whose
+  // scoped twin already exists (a replay after the change wrote it) is a
+  // duplicate and goes. Afterwards no row matches, so a second run is a scan
+  // that changes nothing.
+  // (Query builder, not raw SQL: a namespaced db qualifies the tables it sees.)
+  await db
+    .deleteFrom("graph_operations as o")
+    .where("o.scope", "is not", null)
+    .where("o.scope", "<>", "global")
+    .where("o.id", "=", sql<string>`o.document_id || '-' || o."index"`)
+    .where((eb) =>
+      eb.exists(
+        eb
+          .selectFrom("graph_operations as n")
+          .select("n.id")
+          .where("n.id", "=", sql<string>`o.document_id || '-' || o.scope || '-' || o."index"`),
+      ),
+    )
+    .execute();
+  await db
+    .updateTable("graph_operations")
+    .set({ id: sql<string>`document_id || '-' || scope || '-' || "index"` })
+    .where("scope", "is not", null)
+    .where("scope", "<>", "global")
+    .where("id", "=", sql<string>`document_id || '-' || "index"`)
+    .execute();
+
   // Durable embedding store — replaces the separate memory:// PGlite that
   // lost every vector on restart. Lives in the same per-drive namespace as
   // graph_nodes, so it persists wherever graph_nodes provably persists.

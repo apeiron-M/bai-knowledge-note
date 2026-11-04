@@ -352,7 +352,10 @@ export const schema: DocumentNode = gql`
   }
 
   type SourceHistoryBackfill {
+    "Sources whose log was read."
     sources: Int!
+    "Other indexed documents whose log was read (all: true only)."
+    documents: Int!
     inserted: Int!
     skipped: Int!
     errors: [String!]!
@@ -678,9 +681,12 @@ export const schema: DocumentNode = gql`
     """
     Record the drive's source operations (ingestions, status changes,
     extracted claims) in the operation history, read from each source's
-    log. Idempotent; no reindex. Needed once on an index built before
-    source operations were recorded.
+    log. With all: true, also every global operation of every indexed
+    document — an index recorded before change history lost each document's
+    first operations, so its change digest misses their baselines.
+    Idempotent; no reindex. Needed once on an index built before source
+    operations were recorded. Requires ADMIN of the drive (canManage).
     """
-    knowledgeGraphBackfillSourceHistory(driveId: ID!): SourceHistoryBackfill!
+    knowledgeGraphBackfillSourceHistory(driveId: ID!, all: Boolean): SourceHistoryBackfill!
   }
 `;
