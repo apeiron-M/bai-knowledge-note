@@ -40,3 +40,7 @@ Task 3: Ruling: group order = unplaced last, then the group's top significance, 
 Task 3: Ruling: `source-deleted` is implemented but only reachable when a DELETE_DOCUMENT/PURGE row is present; the live indexer's deleteNode prunes a deleted document's history rows, so live digests will not show it — not changed (deletion pruning is existing, deliberate behaviour) — cost if wrong: deleted sources invisible in the digest.
 Task 3: Ruling: fixture loader lives in tests/fixtures/changes/load.ts (shared by Tasks 3–5 tests) — cost if wrong: none.
 Task 3: Ruling (process): changes.ts was written before its test file in this task (TDD order not kept); the tests then ran and one failed (the test's own re-derivation missed UPDATE_DESCRIPTION), fixed in the test — cost if wrong: weaker evidence that each test can fail; the review-focus tests exercise distinct branches.
+Task 3: complete (commits a203be1..9fe4ae1, tests: bun run test processors/graph-indexer/changes.test.ts → 22/22 pass; tsc clean)
+## Task 4
+Task 4: Ruling: an empty digest renders "Nothing changed in this window." under the heading (no totals line, no groups) — Review Focus 5 — cost if wrong: none.
+Task 4: Ruling: content/source hunks are rendered under each event in `## Changes` as indented ```diff blocks; highlight bullets carry one-line details only — cost if wrong: layout only.

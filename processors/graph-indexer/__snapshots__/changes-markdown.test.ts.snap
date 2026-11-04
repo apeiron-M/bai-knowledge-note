@@ -1,0 +1,223 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderChangesMarkdown > renders the fixture digest: totals, groups with highlights, events, next page 1`] = `
+"# Changes 2026-11-03T18:00:00.000Z → 2026-11-04T00:00:00.000Z
+
+37 created, 17 revised, 3 superseded, 24 re-verified, 28 sources revised, 20 sources added — 126 documents, 1622 operations
+
+## Data Processing and CQRS
+
+27 created, 14 revised, 3 superseded, 21 re-verified, 26 sources revised, 15 sources added — 103 documents, 1196 operations
+
+- [[w7dOjx0xIZyj0dRo_eY0M7G_aGag0egNIUsR1A46czQ]] Processors derive read models by folding operations instead of re-querying the source document — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors derive read models by folding operations instead…
+- [[42A16vUPSK_F_sQhFPsNABHU9Lor3pDxFtpDaKwsyYY]] Processors run in the background on Switchboard, folding the operation stream into read models serv… — superseded: by [[760af66a-a9ff-4c5d-967e-1c4ca164ef4b]] One package plugs into all three tiers: the Reactor runs its reducers, Connect … — Retires a duplicate at verify: both say Switchboard runs a package's processors and serves their re…
+- [[L4E3_Igf3McdSWpYumjiiGoN5OpNpPRO_GP02KrBoVk]] Processors maintain derived read models by subscribing to the operation stream. — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors keep derived read models by folding the operatio…
+- [[b527d68e-cd36-4d09-81a2-78750e1c7181]] Processors write only through dispatch, whose execute, createInDrive and deleteDocument resolve onc… — revised: title “Processors mutate documents only through dispatch.execute(), which submits a jo…” → “Processors write only through dispatch, whose execute, createInDrive and delete…”; description “IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reacto…” → “Each IProcessorDispatch member answers with the job's { id, status } at accepta…”; content +21/−17 lines (v6.2.3-dev.91+e0f277d (2026-11-03): \`dispatch\` is no longer execute-only. \`createInDrive\` and \`dele…)
+- [[2ecb99d3-0646-4077-a416-6a64eb79fb9e]] A throwing processor is isolated and never retried automatically: it goes to errored and its cursor… — revised: title “A throwing processor is isolated and never retried automatically — it goes to e…” → “A throwing processor is isolated and never retried automatically: it goes to er…”; description “Other processors are unaffected. Recovery requires tracked.retry() or re-regist…” → “Other processors keep receiving; later matching batches are skipped and pull it…”; content +19/−12 lines (v6.2.3-dev.91+e0f277d (2026-11-03): "its cursor freezes" became "its cursor is held below the faile…)
+
+## Error Handling
+
+1 created, 2 revised, 3 sources added — 6 documents, 108 operations
+
+- [[4287517c-647b-4115-bf7e-d9442631d3b9]] operation errors are recorded on operations not thrown to callers — revised: description “When a reducer throws, the operation is still added with an .error property; st…” → “A throwing reducer's operation is still appended with .error (plus errorName an…”; content +13/−3 lines (v6.2.3-dev.91+e0f277d (2026-11-03): point 3 said "the state is NOT mutated"; corrected to "not roll…)
+- [[b595843f-e2f9-4172-a43a-eb471fc727a1]] operation error index must match the number of prior dispatches — revised: description “A failed reducer still appends an entry and leaves state untouched, so counting…” → “A failed reducer still appends an operation, so counting only failures reads th…”; content +5/−1 lines (v6.2.3-dev.91+e0f277d (2026-11-03): scoped the count to "operations dispatched before it in that sc…)
+- [[CmJz04zzo6iGJi3fnc6W-EgovnF86giJ3pchGqcac_Q]] A read model whose factory fails at boot is now logged and left out while the reactor starts degrad… — created: from [[JdbxYgnY3fDzuz6F-xGGF4kPzyDAcH3qMY4CB4TMCVY]]
+- [[q0DCYC6Cu113XH9ahJU1JTPg9GHfzuIdgloNCVKOFfw]] Skill › powerhouse-document-models › references/testing — Testing reducers — source-added
+- [[VIlEJum8TGWVg-Idcz2Bm0KysKbMeXFHp-cQqzLgr58]] Skill › powerhouse-document-models › references/reducers — Reducers — source-added
+
+## Implementation Gotchas
+
+2 created, 3 re-verified, 1 sources revised, 1 sources added — 7 documents, 62 operations
+
+- [[oqLWHQ__uO-biu2Poe4hQBj4R48SOzj3MlblqMGBWZM]] A relational processor's per-drive namespace is not drive-scoped: every drive's instance receives e… — created: from [[kto6z2_2m9tknXcdKuQD9CmeStGjKWrCUwDCjsZKcHw]], [[qqfRDd8sbW0q2ajtkQ4E8BmqogN01AsNirPq2JYSX0Q]]
+- [[oODGgcwBC9T_L53v4xaxGXvbSeFgOoBc9JTS8mWC2T0]] KnexAnalyticsStore now writes and reads its naive timestamp columns as UTC, so series rows written … — created: from [[NZ66g_GNEszdQ64KCn8YiWgsnyA7FtfBtzR-94W2ZAo]]
+- [[NZ66g_GNEszdQ64KCn8YiWgsnyA7FtfBtzR-94W2ZAo]] Package › analytics-engine › knex/MIGRATION — Migration: naive timestamp columns are now read and w… — source-added
+- [[f760ca02-0de5-45a0-bf21-519bd9e4c0fa]] The relational processor spec names migration injection and a compromised processor as its worst ca… — reverified: version v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d
+- [[97c3a924-0ba9-4b89-86f7-b7a5747d41a7]] The relational-DB processor spec describes an API the code no longer has: onStrands, InternalTransm… — reverified: version v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d
+
+## Document Privacy and Erasure
+
+4 created, 1 sources revised, 1 sources added — 6 documents, 139 operations
+
+- [[f5sL5VVuUlVqfVn8ABusuHFadaKkIv041S2HMx3opW0]] RelationalDbProcessor.deleteDocumentRows erases only tables that carry a document_id or documentId … — created: from [[abee0d48-af08-42e8-a869-a67c9e11c953]], [[jF6Vpm2gqO_pg_m8lViSmhoR4dI9OgWy6p20D3G0G8s]]
+- [[xDCx6DGtkNXDAhuwWQEgR_uKIVRPGWSu8Alo3p2S6tU]] A drive's own deletion reaches every processor of that drive whatever its filter, as the last deliv… — created: from [[c12de121-f575-4c71-95f7-bd298533dd51]], [[abee0d48-af08-42e8-a869-a67c9e11c953]], [[jF6Vpm2gqO_pg_m8lViSmhoR4dI9OgWy6p20D3G0G8s]]
+- [[eTwEh_aAe_UEC7B2r5L_17OOxQEL3znFFXQ_OtSQ2mw]] A processor must erase a deleted document's data itself by handling DELETE_DOCUMENT and PURGE_DOCUM… — created: from [[65e9a4d2-4c2f-4545-a70e-257413f7f224]], [[c12de121-f575-4c71-95f7-bd298533dd51]], [[abee0d48-af08-42e8-a869-a67c9e11c953]], [[f79ca4d1-3d30-4fdb-9d01-60f55655faeb]], [[jF6Vpm2gqO_pg_m8lViSmhoR4dI9OgWy6p20D3G0G8s]]
+- [[X64lW2nOJzR5JBqM7k8HgWCW69-r7yy8H8aXHvrqRy4]] Read models on another database handle are not fenced against a purge and can write a row for a pur… — created: from [[pp7aF5OwhxNOLo2Pn-3DeSQqCEpYrLvdneWrDEngSZI]]
+- [[abee0d48-af08-42e8-a869-a67c9e11c953]] Academy › Build › WorkWithData › Relational database processor — source-revised: v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d, +58/−14 lines, 6 notes
+
+## Code Generation
+
+2 created — 2 documents, 41 operations
+
+- [[beR07la1yDMu07PI8Gewtnx58EaSEc4x8NsuSKI56sM]] After the first scaffold a processor's files, not its Vetra document, decide what codegen registers… — created: from [[qqfRDd8sbW0q2ajtkQ4E8BmqogN01AsNirPq2JYSX0Q]]
+- [[fXyH7qe17KMx85ynu1Dn-SKUuwHSLu3CKoPmeqiyUcU]] Vetra scaffolds a processor only once its document has a name, a type of relational or analytics, a… — created: from [[qqfRDd8sbW0q2ajtkQ4E8BmqogN01AsNirPq2JYSX0Q]]
+
+## Document State Scopes
+
+1 created — 1 document, 22 operations
+
+- [[rHx9EFY8BwIgKl-2_9hkN8mixHXlKVdvBs5K6qJS3II]] context.resultingState is the whole document serialized with each scope and the header at its top l… — created: from [[abee0d48-af08-42e8-a869-a67c9e11c953]]
+
+## Unplaced
+
+1 revised — 1 document, 49 operations
+
+- [[b3fc78f5-f8e5-4077-b4cb-345516ed68ad]] Data Processing and CQRS — revised: description not set before → “Eighty-six notes on the read side of Powerhouse's CQRS split: processors (inter…”
+
+## Changes
+
+- [[w7dOjx0xIZyj0dRo_eY0M7G_aGag0egNIUsR1A46czQ]] Processors derive read models by folding operations instead of re-querying the source document — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors derive read models by folding operations instead…
+- [[42A16vUPSK_F_sQhFPsNABHU9Lor3pDxFtpDaKwsyYY]] Processors run in the background on Switchboard, folding the operation stream into read models serv… — superseded: by [[760af66a-a9ff-4c5d-967e-1c4ca164ef4b]] One package plugs into all three tiers: the Reactor runs its reducers, Connect … — Retires a duplicate at verify: both say Switchboard runs a package's processors and serves their re…
+- [[L4E3_Igf3McdSWpYumjiiGoN5OpNpPRO_GP02KrBoVk]] Processors maintain derived read models by subscribing to the operation stream. — superseded: by [[cba7b65a-7071-4790-b61f-055cde3b4cae]] Processors are materialised views over the operation log and can be rebuilt by … — Retires a duplicate at verify: both say processors keep derived read models by folding the operatio…
+- [[b527d68e-cd36-4d09-81a2-78750e1c7181]] Processors write only through dispatch, whose execute, createInDrive and deleteDocument resolve onc… — revised: title “Processors mutate documents only through dispatch.execute(), which submits a jo…” → “Processors write only through dispatch, whose execute, createInDrive and delete…”; description “IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reacto…” → “Each IProcessorDispatch member answers with the job's { id, status } at accepta…”; content +21/−17 lines (v6.2.3-dev.91+e0f277d (2026-11-03): \`dispatch\` is no longer execute-only. \`createInDrive\` and \`dele…)
+  \`\`\`diff
+  -A processor is supposed to run a strictly one-way data flow: operations arrive through \`onOperations\`, and any resulting mutation leaves through \`dispatch\`. The \`dispatch\` object is handed to the factory on \`IProcessorHostModule\`, and its only method is \`execute\`:
+  +A processor runs a one-way data flow: operations arrive through \`onOperations\`, and every write leaves through \`dispatch\`, the \`IPro…
+  \`\`\`
+  \`\`\`diff
+  -  execute(
+  -    docId: string,
+  -    branch: string,
+  -    actions: Action[],
+  -    signal?: AbortSignal,
+  -    meta?: Record<string, unknown>,
+  -  ): Promise<ProcessorDispatchResult>;
+  +  execute(docId: string, branch: string, actions: Action[],
+  +          signal?: AbortSignal, meta?: Record<string, unknown>): Promise<ProcessorDispatchResult>;
+  +  createInDrive(driveId: string, document: PHDocument, p…
+  \`\`\`
+  \`\`\`diff
+  -type ProcessorDispatchResult = {
+  -  id: string;      // job ID
+  -  status: string;  // job status at time of submission
+  -};
+  +type ProcessorDispatchResult = { id: string; status: string };
+  \`\`\`
+  \`\`\`diff
+  -Under the hood \`dispatch.execute()\` calls \`reactorClient.executeAsync()\`. The returned \`status\` is the status *at submission*, so awaiting the promise tells you the job was accepted, never that it landed. The canonical shape is a processor that watches for a state transition and fires an action at a different document:
+  +- \`execute\` submits actions on one document. In the reactor's host module it…
+  \`\`\`
+  \`\`\`diff
+  +The canonical shape is a processor that watches for a state transition and fires an action at a different document:
+  \`\`\`
+  \`\`\`diff
+  -The processor dispatches and moves on. If it needs to observe the result, the correct move is to widen its own \`ProcessorFilter\` to include the target document type so the resulting operations come back through a later \`onOperations\` call — not to await the outcome. That constraint is what keeps a processor from waiting on work that depends on the processor itself finishing.
+  +The processor dispa…
+  \`\`\`
+- [[2ecb99d3-0646-4077-a416-6a64eb79fb9e]] A throwing processor is isolated and never retried automatically: it goes to errored and its cursor… — revised: title “A throwing processor is isolated and never retried automatically — it goes to e…” → “A throwing processor is isolated and never retried automatically: it goes to er…”; description “Other processors are unaffected. Recovery requires tracked.retry() or re-regist…” → “Other processors keep receiving; later matching batches are skipped and pull it…”; content +19/−12 lines (v6.2.3-dev.91+e0f277d (2026-11-03): "its cursor freezes" became "its cursor is held below the faile…)
+  \`\`\`diff
+  -Processors run in parallel, each wrapped in its own try/catch. When \`onOperations\` throws, the manager does three things and then stops:
+  +Processors run in parallel, each on its own delivery queue. When \`onOperations\` throws, or a backfill page cannot be read, the manager:
+  \`\`\`
+  \`\`\`diff
+  -1. The processor moves to \`status: "errored"\`.
+  -2. \`lastError\` and \`lastErrorTimestamp\` are recorded on its \`TrackedProcessor\`.
+  -3. **Its cursor stops advancing.**
+  +1. moves the processor to \`status: "errored"\`;
+  +2. records \`lastError\` and \`lastErrorTimestamp\` on its \`TrackedProcessor\`;
+  +3. sets its cursor **below the lowest ordinal of the batch that failed**. When queued live batches were merge…
+  \`\`\`
+  \`\`\`diff
+  -Other processors are unaffected — a failure is contained to one processor on one drive, not the batch and not the reactor. The frozen cursor is the deliberate half of the design: because \`lastOrdinal\` does not move past the failing batch, no operations are lost. Once the processor is revived it resumes from exactly where it broke.
+  +Other processors are unaffected: the failure is contained to one…
+  \`\`\`
+  \`\`\`diff
+  -The part that surprises people is that **there is no automatic retry.** An errored processor stays errored and is skipped on every later batch, indefinitely. Recovery is explicitly triggered, by one of:
+  +**There is no automatic retry.** An errored processor stays errored and is skipped on every later batch until one of:
+  \`\`\`
+  \`\`\`diff
+  -- \`tracked.retry()\` — re-activates the processor and re-runs backfill from its frozen cursor.
+  -- Re-registering its factory — registering the same \`identifier\` unregisters the prior factory first, so this is idempotent.
+  +- \`tracked.retry()\` — re-activates the processor and replays from its cursor.
+  +- Re-registering its factory. Registering the same \`identifier\` unregisters the prior factory firs…
+  \`\`\`
+  \`\`\`diff
+  -Nothing about this is visible unless you look. Inspect via the manager: \`get(processorId)\` for one, \`getAll()\` for every tracked processor across all drives.
+  +One failure does **not** error the processor: a check for purged documents (the tombstone lookup) that keeps failing, as during a database failover. After about 80 seconds of backoff the processor parks instead, stays \`active\`, and retries…
+  \`\`\`
+- [[d0f0ef19-9525-45d1-9d48-ebc8f7922cfc]] Waiting for a write to reach READ_READY from inside a processor is an anti-pattern, because READ_RE… — revised: title “Calling reactorClient directly from inside a processor is an anti-pattern becau…” → “Waiting for a write to reach READ_READY from inside a processor is an anti-patt…”; description “reactorClient.execute() waits for the job to reach READ_READY, so it can wait o…” → “Whether through module.read.waitForJob, a write handle's readable, or the depre…”; content +20/−9 lines (v6.2.3-dev.91+e0f277d (2026-11-03): widened from "calling reactorClient.execute() blocks until READ…)
+  \`\`\`diff
+  -The academy marks this as an explicit anti-pattern warning, not a style preference. \`reactorClient.execute()\` does not return until its job reaches \`READ_READY\`, and \`READ_READY\` is only reached after the post-ready phase — which is where processors run. A processor that calls \`reactorClient.execute()\` can therefore end up waiting on the processor pipeline it is currently occupying.
+  +A processor…
+  \`\`\`
+  \`\`\`diff
+  +The reason is the projection pipeline. The read-model coordinator runs each batch of a projection chain in three steps: pre-ready read models index it, \`JOB_READ_READY\` is emitted, then the post-ready stage (where the processor manager delivers to processors) runs, and the chain's next batch starts only after that. A processor also receives one \`onOperations\` call at a time. So the \`READ_READY\` …
+  \`\`\`
+  \`\`\`diff
+  -// Bad: blocks until the job completes
+  -const doc = await reactorClient.execute(docId, "main", actions);
+  +// Bad: blocks until the job is READ_READY
+  +const result = await this.dispatch.execute(docId, "main", actions);
+  +await module.read.waitForJob(result.id);
+  \`\`\`
+  \`\`\`diff
+  -// Good: submits and returns immediately
+  +// Also bad: the deprecated facade resolves with the updated document, i.e. after READ_READY
+  +await module.client.execute(docId, "main", actions);
+  +// Good: resolves once the write is accepted
+  \`\`\`
+  \`\`\`diff
+  -Three reasons are given, in order of severity:
+  +Three reasons, in order of severity:
+  \`\`\`
+  \`\`\`diff
+  -1. **Potential blocking.** The call could wait on processors finishing their current batch, including the caller.
+  -2. **Unnecessary round-trip.** The resulting operations arrive through \`onOperations\` anyway, so awaiting them synchronously buys latency and nothing else.
+  +1. **Potential blocking.** \`READ_READY\` waits on processors finishing their current batch, including the caller.
+  +2. **Unneces…
+  \`\`\`
+- [[2ddae2ce-5409-4173-b76b-54a55b475c07]] The processor host module is layered across three packages: IProcessorHostModuleBase in shared, the… — revised: title “The processor host module is layered across three packages: IProcessorHostModul…” → “The processor host module is layered across three packages: IProcessorHostModul…”; description “Factory builders now receive the full IProcessorHostModule with client and atta…” → “Factory builders get the full IProcessorHostModule: reads go through module.rea…”; content +14/−12 lines (v6.2.3-dev.91+e0f277d (2026-11-03): the reactor layer adds \`read: IReactorReadClient\` instead of \`c…)
+  \`\`\`diff
+  -The host module a processor factory receives is now assembled in layers, and the type a builder gets is the **complete** one:
+  +The host module a processor factory receives is assembled in layers, and the type a builder gets is the **complete** one:
+  \`\`\`
+  \`\`\`diff
+  -- \`@powerhousedao/shared\` — \`IProcessorHostModuleBase\`: \`analyticsStore\`, \`relationalDb\`, \`processorApp\`, \`dispatch\`, \`getReadModel<T>(name)\`, optional \`config\`. Host-agnostic core.
+  -- \`@powerhousedao/reactor\` — \`IReactorProcessorHostModuleBase\`: adds \`client: IReactorClient\` and the **typed** \`getReadModel\` (\`getReadModel("document-view")\` returns \`IDocumentView\`, \`"document-indexer"\` returns \`…
+  \`\`\`
+  \`\`\`diff
+  -So the generated scaffold no longer needs a cast. Where it used to read \`const { client } = module as IReactorProcessorHostModule;\`, it is now simply:
+  +So a generated processor never needs a cast, and no longer needs the client at all:
+  \`\`\`
+  \`\`\`diff
+  -  const { client } = module; // client: IReactorClient
+  +  const { read, dispatch } = module; // read: IReactorReadClient
+  \`\`\`
+  \`\`\`diff
+  -\`IReactorProcessorHostModule\` still exists as a \`@deprecated\` alias of \`IProcessorHostModule\` in both packages, so old code compiles — but new code should not import it, and a cast is now a smell rather than a requirement. Connect still sets \`processorApp: "connect"\`, and Connect's implementation of \`getReadModel\` throws \`Read model "<name>" not found\` on a miss.
+  +\`IReactorProcessorHostModule\` s…
+  \`\`\`
+  \`\`\`diff
+  -_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.74)._
+  -_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._
+  +Checked against \`packages/shared/processors/types.ts\`, \`packages/reactor/src/processors/host-module.ts\` and \`packages/reactor-browser/src/types/processor-host-module.ts\` at e0…
+  \`\`\`
+- [[50f8ea0a-9861-48fc-899b-9f063a038d6e]] startFrom applies only when no cursor row positions a processor: a restart keeps the persisted curs… — revised: title “startFrom applies only when a processor's cursor row is first created; afterwar…” → “startFrom applies only when no cursor row positions a processor: a restart keep…”; description “"beginning" (default) backfills full history, "current" starts at the manager's…” → “'beginning' (default) backfills the drive's history; 'current' starts just belo…”; content +18/−8 lines (v6.2.3-dev.91+e0f277d (2026-11-03): \`"current"\` now starts just below the drive's creation for a pr…)
+  \`\`\`diff
+  -\`startFrom\` is the third, optional field on a \`ProcessorRecord\`:
+  +\`startFrom\` is an optional field on a \`ProcessorRecord\`:
+  \`\`\`
+  \`\`\`diff
+  +  replayState?: "latest" | "collapse" | "exact" | "operations";
+  +  id?: string;
+  \`\`\`
+  \`\`\`diff
+  -Its semantics are narrower than the name suggests. It is consulted **only when a processor is first created and no cursor row exists yet**:
+  +Its semantics are narrower than the name suggests. It is consulted **only when no cursor row positions the processor**:
+  \`\`\`
+  \`\`\`diff
+  -- \`"current"\` starts the cursor at the manager's current ordinal, so the processor sees only operations from now on.
+  +- \`"current"\` starts the cursor just below the drive's creation when the processor is created from the drive's creation batch, and at the manager's current ordinal when a late \`registerFactory\` creates it. So it sees either its drive's whole history (a drive born after registrati…
+  \`\`\`
+  \`\`\`diff
+  -Once a cursor row exists, \`startFrom\` is **ignored** — the persisted cursor wins. Restarting the reactor never re-runs \`startFrom\`. This is the point most people get wrong: flipping a deployed processor from \`"current"\` to \`"beginning"\` will not backfill it, because its cursor row already exists. To actually replay, you must call \`tracked.retry()\` (which re-activates and re-runs backfill) or cle…
+  \`\`\`
+  \`\`\`diff
+  -Cursors live in the \`ProcessorCursor\` table keyed by \`processorId\` (\`\${factoryId}:\${driveId}:\${index}\`) and survive restarts. On startup the manager rehydrates every cursor and catch-up replays the gap.
+  +- \`tracked.retry()\` replays from the processor's cursor (not from \`startFrom\`).
+  +- Unregistering the factory marks its cursor rows **released**. A released row does not position a processor, so …
+  \`\`\`
+
+Next page: cursor=WzUsMjgsIjIwMjYtMTEtMDNUMTk6NDk6MDEuMTc4WiIsIjUwZjhlYTBhLTk4NjEtNDhmYy04OTliLTlmMDYzYTAzOGQ2ZSIsInJldmlzZWQiXQ==
+"
+`;
