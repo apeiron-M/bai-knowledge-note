@@ -93,7 +93,11 @@ describe("graph_sources: a small row per source", () => {
     const raw = await harness.db.selectFrom("graph_sources").select("row_json").executeTakeFirstOrThrow();
     expect(raw.row_json).not.toContain("A very long chapter");
     expect(await harness.db.selectFrom("graph_nodes").selectAll().execute()).toEqual([]);
-    expect(await harness.db.selectFrom("graph_operations").selectAll().execute()).toEqual([]);
+    // Its operation is recorded for the change digest, typed as a source,
+    // and kept out of the activity views.
+    const ops = await harness.db.selectFrom("graph_operations").select(["operation_type", "document_type"]).execute();
+    expect(ops).toEqual([{ operation_type: "SET_SOURCE_STATUS", document_type: "bai/source" }]);
+    expect(await createGraphQuery(harness.db).activity(50)).toEqual([]);
   });
 
   it("follows the source's later operations", async () => {

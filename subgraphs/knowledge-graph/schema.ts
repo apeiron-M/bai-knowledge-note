@@ -223,6 +223,234 @@ export const schema: DocumentNode = gql`
     errors: [String!]!
   }
 
+  """What changed in a window — see knowledgeGraphChanges."""
+  type KnowledgeGraphChangeDigest {
+    window: KnowledgeGraphChangeWindow!
+    """The scope as asked (q is echoed, not the ids it resolved to)."""
+    scope: KnowledgeGraphChangeScope!
+    totals: KnowledgeGraphChangeTotals!
+    """Every group with at least one event, most significant first; never paged."""
+    groups: [KnowledgeGraphChangeGroup!]!
+    """Present whenever a scope is given (moc, topic, documentIds, q); paged by limit/cursor."""
+    events: [KnowledgeGraphChangeEvent!]
+    nextCursor: String
+    """
+    What the vault knows now that it did not before, by the hub's main areas —
+    the semantic layer to lead an answer with. Restricted to the scope when one is given.
+    Absent on a cursor page (the first page carried it).
+    """
+    story: KnowledgeGraphChangeStory
+    """
+    For a q or topic scope: the scope's claims as the vault held them at since, versus now
+    ("now" is the current state, even for a past until). Absent on a cursor page.
+    """
+    thenVsNow: KnowledgeGraphThenVsNow
+  }
+
+  type KnowledgeGraphChangeStory {
+    growth: KnowledgeGraphChangeGrowth!
+    "Main areas (the hub's CHILD_MOC maps) with any change, most changed first; Elsewhere (id null) last."
+    areas: [KnowledgeGraphChangeArea!]!
+  }
+
+  type KnowledgeGraphChangeGrowth {
+    "Live notes (not archived) at since."
+    notesThen: Int!
+    "Live notes now."
+    notesNow: Int!
+    newAreas: [KnowledgeGraphChangeMapRef!]!
+    newMaps: [KnowledgeGraphChangeNewMap!]!
+  }
+
+  type KnowledgeGraphChangeMapRef {
+    id: String!
+    title: String!
+  }
+
+  type KnowledgeGraphChangeNewMap {
+    id: String!
+    title: String!
+    "The title of the main area the map falls under."
+    area: String
+  }
+
+  type KnowledgeGraphChangeArea {
+    "Null for Elsewhere: notes in no main area."
+    id: String
+    title: String!
+    notesThen: Int!
+    notesNow: Int!
+    "How many notes are new in the area (uncapped; newClaims shows at most 8)."
+    newCount: Int!
+    "How many claims shifted in the area (uncapped; changedClaims shows at most 8)."
+    changedCount: Int!
+    "How many notes retired in the area (uncapped; retiredClaims shows at most 5)."
+    retiredCount: Int!
+    "Notes created in the window, most connected first (at most 8); a note that replaced another is its shift's now, not new."
+    newClaims: [KnowledgeGraphChangeClaim!]!
+    "Claims the vault now states differently (at most 8)."
+    changedClaims: [KnowledgeGraphChangeShift!]!
+    "Notes archived in the window, still archived, and never replaced (at most 5)."
+    retiredClaims: [KnowledgeGraphChangeClaim!]!
+  }
+
+  type KnowledgeGraphChangeClaim {
+    documentId: String!
+    "The note's title: the claim."
+    claim: String!
+    "The note's description."
+    gist: String
+  }
+
+  type KnowledgeGraphChangeClaimText {
+    claim: String!
+    gist: String
+  }
+
+  type KnowledgeGraphChangeShift {
+    documentId: String!
+    then: KnowledgeGraphChangeClaimText!
+    now: KnowledgeGraphChangeClaimText!
+    "The SUPERSEDES reason, or the revision-history line added in the window."
+    why: String
+    "The replacing note, for a supersession."
+    replacedBy: String
+  }
+
+  type KnowledgeGraphThenVsNow {
+    "Claims as they stood at since that read differently now or are gone (at most 12)."
+    then: [KnowledgeGraphChangeClaim!]!
+    "Claims as they stand now that read differently at since or are new (at most 12)."
+    now: [KnowledgeGraphChangeClaim!]!
+    "Claims held at since and now in the same words, listed once (at most 12)."
+    unchanged: [KnowledgeGraphChangeClaim!]!
+  }
+
+  type KnowledgeGraphChangeWindow {
+    since: String!
+    until: String!
+  }
+
+  type KnowledgeGraphChangeScope {
+    moc: String
+    topic: String
+    documentIds: [String!]
+    q: String
+    types: [String!]
+  }
+
+  type KnowledgeGraphChangeTotals {
+    created: Int!
+    revised: Int!
+    superseded: Int!
+    archived: Int!
+    reverified: Int!
+    sourcesRevised: Int!
+    sourcesAdded: Int!
+    "Distinct documents with at least one event."
+    documents: Int!
+    "Operations in the window, in scope."
+    operations: Int!
+  }
+
+  type KnowledgeGraphChangeGroup {
+    key: String!
+    "moc | topic | folder | unplaced"
+    kind: String!
+    id: String
+    title: String!
+    totals: KnowledgeGraphChangeTotals!
+    "At most five, most significant first."
+    highlights: [KnowledgeGraphChangeEvent!]!
+  }
+
+  type KnowledgeGraphChangeEvent {
+    """
+    created | revised | superseded | archived | restored | approved |
+    reverified | source-added | source-revised | source-archived | source-deleted
+    """
+    kind: String!
+    documentId: String!
+    documentType: String!
+    title: String!
+    at: String!
+    by: String
+    significance: Int!
+    fields: KnowledgeGraphChangeFields
+    "Lines added under the note's '## Revision history' in the window."
+    revisionNotes: [String!]
+    supersededBy: KnowledgeGraphChangeSupersededBy
+    version: KnowledgeGraphChangeVersion
+    comment: String
+    source: KnowledgeGraphChangeSource
+    derivedFrom: [String!]
+    "Other operations on the document, counted by type, not listed."
+    folded: [KnowledgeGraphChangeCount!]!
+  }
+
+  type KnowledgeGraphChangeFields {
+    title: KnowledgeGraphFieldChange
+    description: KnowledgeGraphFieldChange
+    content: KnowledgeGraphContentChange
+  }
+
+  "before is null when the field was not set before the window."
+  type KnowledgeGraphFieldChange {
+    before: String
+    after: String!
+  }
+
+  type KnowledgeGraphContentChange {
+    "The earlier text, its first 400 characters (the hunks carry the diff)."
+    before: String
+    "Up to six, each at most 400 characters: '-' removed lines, '+' added lines."
+    hunks: [String!]!
+    "Lines added and removed; a line that only moved is not counted."
+    added: Int!
+    removed: Int!
+  }
+
+  type KnowledgeGraphChangeSupersededBy {
+    documentId: String!
+    title: String!
+    reason: String
+  }
+
+  type KnowledgeGraphChangeVersion {
+    before: String
+    after: String!
+  }
+
+  type KnowledgeGraphChangeSource {
+    refBefore: String
+    refAfter: String
+    url: String
+    "Lines added; null when the earlier text was never recorded (run the history backfill)."
+    added: Int
+    "Lines removed; null when the earlier text was never recorded."
+    removed: Int
+    hunks: [String!]!
+    "The first 20 notes derived from the source."
+    noteIds: [String!]!
+    "How many notes derive from the source."
+    noteCount: Int!
+  }
+
+  type KnowledgeGraphChangeCount {
+    operationType: String!
+    count: Int!
+  }
+
+  type SourceHistoryBackfill {
+    "Sources whose log was read."
+    sources: Int!
+    "Other indexed documents whose log was read (all: true only)."
+    documents: Int!
+    inserted: Int!
+    skipped: Int!
+    errors: [String!]!
+  }
+
   """
   One addition to the vault: what a person added at once — a file's folder,
   a pasted source or a sources/batch call, a workflow's burst, an agent's
@@ -506,6 +734,28 @@ export const schema: DocumentNode = gql`
     ): [KnowledgeGraphNode!]!
 
     """
+    What changed in the drive between since and until (ISO dates, UTC; a
+    date-only until covers that whole day; until defaults to now): totals,
+    then groups by map (or topic) with up to five highlights each — the
+    executive summary. Give a scope (moc, topic, q, documentIds) to also get
+    the events, paged by limit (default 50, max 200) and cursor. q is a
+    semantic search: its top 10 hits plus their one-hop neighbours. Readers
+    of the drive may ask.
+    """
+    knowledgeGraphChanges(
+      driveId: ID!
+      since: String!
+      until: String
+      moc: String
+      topic: String
+      q: String
+      documentIds: [String!]
+      types: [String!]
+      limit: Int
+      cursor: String
+    ): KnowledgeGraphChangeDigest!
+
+    """
     Debug: raw processor DB tables
     """
     knowledgeGraphDebug(driveId: ID!): GraphDebugInfo!
@@ -518,5 +768,15 @@ export const schema: DocumentNode = gql`
     the processor missed historical operations.
     """
     knowledgeGraphReindex(driveId: ID!): ReindexResult!
+    """
+    Record the drive's source operations (ingestions, status changes,
+    extracted claims) in the operation history, read from each source's
+    log. With all: true, also every global operation of every indexed
+    document — an index recorded before change history lost each document's
+    first operations, so its change digest misses their baselines.
+    Idempotent; no reindex. Needed once on an index built before source
+    operations were recorded. Requires ADMIN of the drive (canManage).
+    """
+    knowledgeGraphBackfillSourceHistory(driveId: ID!, all: Boolean): SourceHistoryBackfill!
   }
 `;

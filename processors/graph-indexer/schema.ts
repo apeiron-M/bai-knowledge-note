@@ -72,6 +72,12 @@ export interface GraphOperation {
    * the operation without trusting this projection.
    */
   signature: string | null;
+  /**
+   * The document's type (`bai/knowledge-note`, `bai/source`, …). Sources
+   * have history rows but no graph node, so readers filter on this rather
+   * than join. Null only for rows the migration could not type.
+   */
+  document_type: string | null;
 }
 
 export interface NoteEmbedding {

@@ -6,6 +6,7 @@ import {
   VAULT_TOOLS,
   WEB_TOOLS,
   WORK_TOOLS,
+  chatStory,
   executeTool,
   resetVaultDocumentListing,
 } from "./vault-tools.js";
@@ -74,7 +75,7 @@ const lastRequest = () =>
 afterEach(() => vi.restoreAllMocks());
 
 describe("VAULT_TOOLS", () => {
-  it("exposes exactly the nineteen read-only tools", () => {
+  it("exposes exactly the twenty read-only tools", () => {
     expect(VAULT_TOOLS.map((t) => t.function.name).sort()).toEqual([
       "document_history",
       "keyword_search",
@@ -95,6 +96,7 @@ describe("VAULT_TOOLS", () => {
       "topic_maps",
       "vault_editors",
       "vault_stats",
+      "what_changed",
     ]);
   });
 
@@ -2030,5 +2032,270 @@ describe("reading for an answer", () => {
     const hits = (r.data as { hits: Record<string, unknown>[] }).hits;
     expect(hits[0].source).toEqual({ documentId: "src-4", title: "Chapter 4 Software", documentType: "bai/source" });
     expect(hits[1]).not.toHaveProperty("source");
+  });
+});
+
+describe("what_changed — the change digest over a window", () => {
+  const digest = (documents: number) => ({
+    window: { since: "2026-09-01T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z" },
+    scope: { moc: "m1" },
+    totals: { created: documents, revised: 0, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents, operations: documents * 3 },
+    groups: documents
+      ? [
+          {
+            key: "moc:m1",
+            kind: "moc",
+            id: "m1",
+            title: "Data Processing and CQRS",
+            totals: { created: 1, revised: 0, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents: 1, operations: 3 },
+            highlights: [{ kind: "created", documentId: "n1", title: "A claim", at: "2026-11-03T10:00:00.000Z", by: "0xabc", folded: [] }],
+          },
+        ]
+      : [],
+    events: documents ? [{ kind: "created", documentId: "n1", title: "A claim", at: "2026-11-03T10:00:00.000Z", by: "0xabc", folded: [] }] : [],
+    nextCursor: null,
+  });
+
+  it("is offered with since required and the scope arguments", () => {
+    const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+    const params = tool?.function.parameters as { properties: Record<string, unknown>; required: string[] };
+    expect(params.required).toEqual(["since"]);
+    expect(Object.keys(params.properties).sort()).toEqual(["cursor", "limit", "moc", "query", "since", "topic", "until"]);
+    expect(tool?.function.description).toMatch(/never search/i);
+  });
+
+  it("asks knowledgeGraphChanges with moc, query and cursor passed through", async () => {
+    mockGql({ knowledgeGraphChanges: digest(1) });
+    const r = await executeTool(
+      "what_changed",
+      { since: "2026-09-01", until: "2026-11-03", moc: "[[m1]]", query: "processors", cursor: "abc", limit: 500 },
+      CTX,
+    );
+    expect(r.ok).toBe(true);
+    const { body } = lastRequest();
+    expect(body.query).toContain("knowledgeGraphChanges(");
+    expect(body.variables).toEqual({
+      driveId: "drive-1",
+      since: "2026-09-01",
+      until: "2026-11-03",
+      moc: "m1",
+      topic: null,
+      q: "processors",
+      cursor: "abc",
+      limit: 100,
+    });
+    if (r.ok) expect(r.summary).toMatch(/1 created/);
+  });
+
+  it("says nothing changed for an empty digest", async () => {
+    mockGql({ knowledgeGraphChanges: digest(0) });
+    const r = await executeTool("what_changed", { since: "2026-09-01" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.summary).toMatch(/^nothing changed between 2026-09-01 and 2026-11-03/);
+  });
+
+  const heavyEvent = (i: number) => ({
+    kind: "revised",
+    documentId: `n${i}`,
+    title: `Claim ${i}`,
+    at: "2026-11-03T10:00:00.000Z",
+    by: "0xabc",
+    fields: { title: { before: "Old title", after: `Claim ${i}` }, content: { before: "x".repeat(400), hunks: ["@@ -1 +1 @@\n" + "y".repeat(400), "z".repeat(400), "w".repeat(400)], added: 12, removed: 3 } },
+    revisionNotes: ["- v6.2.3-dev.91+e0f277d (2026-11-03): dispatch gained createInDrive"],
+    supersededBy: null,
+    source: null,
+    derivedFrom: ["s1", "s2"],
+    folded: [{ operationType: "SET_METADATA_FIELD", count: 9 }],
+  });
+  const heavyDigest = (groups: number, scoped: boolean) => ({
+    window: { since: "2026-01-01T00:00:00.000Z", until: "2026-11-04T23:59:59.999Z" },
+    scope: scoped ? { moc: "m1" } : {},
+    totals: { created: 0, revised: groups * 5, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents: groups * 5, operations: groups * 50 },
+    groups: Array.from({ length: groups }, (_, g) => ({
+      key: `moc:m${g}`, kind: "moc", id: `m${g}`, title: `Map ${g}`,
+      totals: { created: 0, revised: 5, superseded: 0, archived: 0, reverified: 0, sourcesRevised: 0, sourcesAdded: 0, documents: 5, operations: 50 },
+      highlights: Array.from({ length: 5 }, (_, i) => heavyEvent(g * 5 + i)),
+    })),
+    events: scoped ? Array.from({ length: 30 }, (_, i) => heavyEvent(i)) : null,
+    nextCursor: null,
+  });
+
+  const words = (n: number, seed: string) => Array.from({ length: n }, (_, i) => `${seed}${i}`).join(" ");
+  const claim = (id: string) => ({ documentId: id, claim: `${id} ${words(14, "claim")}`, gist: words(30, "gist") });
+  const realisticStory = () => ({
+    growth: {
+      notesThen: 1240,
+      notesNow: 1388,
+      newAreas: [{ id: "a-wf", title: "Workflow Automation" }, { id: "a-host", title: "Hosts, Runners and Plugins" }],
+      newMaps: Array.from({ length: 6 }, (_, i) => ({ id: `m-new${i}`, title: `New map ${i}`, area: "Workflow Automation" })),
+    },
+    areas: Array.from({ length: 11 }, (_, a) => ({
+      id: a === 10 ? null : `area${a}`,
+      title: a === 10 ? "Elsewhere" : `Area ${a}`,
+      notesThen: 100 + a,
+      notesNow: 120 + a,
+      newCount: 8,
+      changedCount: 8,
+      retiredCount: 5,
+      newClaims: Array.from({ length: 8 }, (_, i) => claim(`new-${a}-${i}`)),
+      changedClaims: Array.from({ length: 8 }, (_, i) => ({
+        documentId: `chg-${a}-${i}`,
+        then: { claim: words(14, "then"), gist: words(30, "thengist") },
+        now: { claim: words(14, "now"), gist: words(30, "nowgist") },
+        why: words(20, "because"),
+        replacedBy: i % 2 ? `rep-${a}-${i}` : null,
+      })),
+      retiredClaims: Array.from({ length: 5 }, (_, i) => claim(`ret-${a}-${i}`)),
+    })),
+  });
+
+  it("answers the unscoped call with the story, totals as one line, and no per-document highlights — under 12 KB", async () => {
+    mockGql({ knowledgeGraphChanges: { ...heavyDigest(30, false), story: realisticStory(), thenVsNow: null } });
+    const r = await executeTool("what_changed", { since: "2026-09-01" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const { body } = lastRequest();
+    expect(body.query).toContain("story {");
+    expect(body.query).toContain("thenVsNow {");
+    const data = r.data as {
+      totals: unknown;
+      groups?: unknown;
+      story: { growth: { notesThen: number; notesNow: number; newAreas: string[] }; areas: { id: string | null; title: string; new: { documentId: string }[]; changed: { documentId: string; then: unknown; now: unknown }[] }[] };
+    };
+    expect(JSON.stringify(data).length).toBeLessThan(12_000);
+    expect(data).not.toHaveProperty("groups");
+    expect(JSON.stringify(data)).not.toContain("highlights");
+    expect(typeof data.totals).toBe("string");
+    expect(data.totals).toMatch(/150 revised/);
+    expect(data.story.growth).toMatchObject({ notesThen: 1240, notesNow: 1388, newAreas: ["Workflow Automation", "Hosts, Runners and Plugins"] });
+    expect(data.story.areas[0].id).toBe("area0");
+    // Trimmed, never lost: an area that does not fit is still named, with its id for a drill-down.
+    const other = (data.story as { otherAreas?: { id: string | null }[] }).otherAreas ?? [];
+    expect(data.story.areas.length + other.length).toBe(11);
+    expect(data.story.areas.length).toBeGreaterThanOrEqual(3);
+    expect(data.story.areas[0].new[0].documentId).toBe("new-0-0");
+    expect(data.story.areas[0].changed[0]).toMatchObject({ documentId: "chg-0-0", then: expect.any(Object) as unknown, now: expect.any(Object) as unknown });
+  });
+
+  it("answers a query scope from thenVsNow and the scoped story", async () => {
+    const tvn = { then: [claim("n1")], now: [claim("n9")], unchanged: [] };
+    mockGql({ knowledgeGraphChanges: { ...heavyDigest(1, true), scope: { q: "processor delivery" }, story: realisticStory(), thenVsNow: tvn } });
+    const r = await executeTool("what_changed", { since: "2026-09-01", query: "processor delivery" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const data = r.data as { thenVsNow: { then: { documentId: string }[]; now: { documentId: string }[] }; story: unknown; events: unknown[] };
+    expect(data.thenVsNow.then[0].documentId).toBe("n1");
+    expect(data.thenVsNow.now[0].documentId).toBe("n9");
+    expect(data.story).toBeDefined();
+    expect(data.events.length).toBeGreaterThan(0);
+  });
+
+  it("keeps diffs on a drill-down but drops bulk: two hunks per event, no folded or derivedFrom", async () => {
+    mockGql({ knowledgeGraphChanges: heavyDigest(1, true) });
+    const r = await executeTool("what_changed", { since: "2026-01-01", moc: "m1" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const data = r.data as { events: { fields: { content: { hunks: string[]; before?: string } }; folded?: unknown; derivedFrom?: unknown }[] };
+    expect(data.events[0].fields.content.hunks).toHaveLength(2);
+    expect(data.events[0].fields.content.before).toBeUndefined();
+    expect(data.events[0]).not.toHaveProperty("folded");
+    expect(data.events[0]).not.toHaveProperty("derivedFrom");
+    expect(JSON.stringify(data).length).toBeLessThan(60_000);
+  });
+
+  const uuid = (tag: string, n: number) => `${tag.padEnd(8, "0").slice(0, 8)}-0000-4000-8000-${String(n).padStart(12, "0")}`;
+  /** A vault on the scale of the live one: 50 areas, 100 new maps, full sentences, UUID ids. */
+  const bigStory = () => {
+    const sentence = (seed: string, n: number) => `${seed} ${words(n, "w")}`.slice(0, 150);
+    const c = (id: string) => ({ documentId: id, claim: sentence("Claim", 18), gist: sentence("Gist", 22) });
+    return {
+      growth: {
+        notesThen: 1240,
+        notesNow: 1700,
+        newAreas: Array.from({ length: 4 }, (_, i) => ({ id: uuid("a", 900 + i), title: `New area ${i}` })),
+        newMaps: Array.from({ length: 100 }, (_, i) => ({ id: uuid("m", i), title: `New map number ${i}`, area: `Area ${i % 50}` })),
+      },
+      areas: Array.from({ length: 50 }, (_, a) => ({
+        id: a === 49 ? null : uuid("a", a),
+        title: a === 49 ? "Elsewhere" : `Area ${a} of the vault`,
+        notesThen: 30,
+        notesNow: 40,
+        newCount: 20 - Math.floor(a / 5),
+        changedCount: 12,
+        retiredCount: 6,
+        newClaims: Array.from({ length: 8 }, (_, i) => c(uuid(`n${a}`, i))),
+        changedClaims: Array.from({ length: 8 }, (_, i) => ({
+          documentId: uuid(`c${a}`, i),
+          then: { claim: sentence("Then", 16), gist: sentence("Thengist", 20) },
+          now: { claim: sentence("Now", 16), gist: sentence("Nowgist", 20) },
+          why: sentence("Because", 25),
+          replacedBy: i % 2 ? uuid(`r${a}`, i) : null,
+        })),
+        retiredClaims: Array.from({ length: 5 }, (_, i) => c(uuid(`t${a}`, i))),
+      })),
+    };
+  };
+  type ChatArea = { id: string | null; title: string; new: unknown[]; changed: unknown[]; retired: unknown[]; more?: string };
+  type ChatStoryOut = { growth: { newMaps: string[]; moreNewMaps?: number }; areas: ChatArea[]; otherAreas?: Record<string, unknown>[]; moreAreas?: number };
+
+  it("covers the most-changed areas of a 50-area vault with 100 new maps, under 12 KB", () => {
+    const out = chatStory(bigStory() as Parameters<typeof chatStory>[0]) as ChatStoryOut;
+    expect(JSON.stringify(out).length).toBeLessThan(12_000);
+    // Every area is still named, the rest by id and title only.
+    expect(out.areas.length + (out.otherAreas?.length ?? 0) + (out.moreAreas ?? 0)).toBe(50);
+    for (const o of out.otherAreas ?? []) expect(Object.keys(o).sort()).toEqual(["id", "title"]);
+    // The top areas, most changed first, with substance.
+    expect(out.areas[0].title).toBe("Area 0 of the vault");
+    expect(out.areas.length).toBeGreaterThanOrEqual(8);
+    expect(out.areas[0].new.length).toBeGreaterThanOrEqual(2);
+    expect(out.areas[0].changed.length).toBeGreaterThanOrEqual(2);
+    for (const a of out.areas) expect(a.new.length + a.changed.length).toBeGreaterThanOrEqual(2);
+    // New maps capped, with a count of the rest.
+    expect(out.growth.newMaps.length).toBeLessThanOrEqual(15);
+    expect(out.growth.newMaps.length + (out.growth.moreNewMaps ?? 0)).toBe(100);
+  });
+
+  it("keeps the top ten areas at four new, four changed and two retired before thinning any", () => {
+    const story = bigStory();
+    const out = chatStory(story as Parameters<typeof chatStory>[0], 40_000) as ChatStoryOut;
+    expect(out.areas).toHaveLength(10);
+    for (const a of out.areas) expect([a.new.length, a.changed.length, a.retired.length]).toEqual([4, 4, 2]);
+  });
+
+  it("says what each area holds beyond what it shows from the uncapped counts", () => {
+    const out = chatStory(bigStory() as Parameters<typeof chatStory>[0], 40_000) as ChatStoryOut;
+    expect(out.areas[0].more).toBe("16 more new, 8 more changed, 4 more retired");
+  });
+
+  it("refuses moc \"null\": Elsewhere has no map, ask with query", async () => {
+    const r = await executeTool("what_changed", { since: "2026-09-01", moc: "null" }, CTX);
+    expect(r).toEqual({ ok: false, error: expect.stringMatching(/query/) as unknown });
+  });
+
+  it("asks for the story's counts and unchanged claims, and no group highlights", async () => {
+    mockGql({ knowledgeGraphChanges: digest(1) });
+    await executeTool("what_changed", { since: "2026-09-01" }, CTX);
+    const { body } = lastRequest();
+    expect(body.query).not.toContain("groups");
+    expect(body.query).toContain("newCount changedCount retiredCount");
+    expect(body.query).toMatch(/unchanged \{/);
+    const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+    if (!tool) throw new Error("what_changed is not offered");
+    const moc = (tool.function.parameters as { properties: Record<string, { description: string }> }).properties.moc.description;
+    expect(moc).toMatch(/otherAreas/);
+    expect(moc).toMatch(/Elsewhere/);
+  });
+
+  it("passes thenVsNow's unchanged claims through", async () => {
+    const tvn = { then: [claim("n1")], now: [claim("n9")], unchanged: [claim("n8")] };
+    mockGql({ knowledgeGraphChanges: { ...heavyDigest(1, true), story: realisticStory(), thenVsNow: tvn } });
+    const r = await executeTool("what_changed", { since: "2026-09-01", query: "x" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { thenVsNow: { unchanged: { documentId: string }[] } }).thenVsNow.unchanged[0].documentId).toBe("n8");
+  });
+
+  it("refuses a call without since", async () => {
+    const r = await executeTool("what_changed", {}, CTX);
+    expect(r).toEqual({ ok: false, error: expect.stringMatching(/since is required/) as unknown });
   });
 });

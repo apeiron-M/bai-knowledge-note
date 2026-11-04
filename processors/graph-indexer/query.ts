@@ -9,6 +9,8 @@ import {
 import { KNOWLEDGE_NODE_TYPE_LIST } from "./project.js";
 import { parseEdgeMetadata, type EdgeConfidence } from "./edge-metadata.js";
 import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
+import type { ChangeDigest, ChangeScope } from "./changes.js";
+import { loadChanges } from "./changes-query.js";
 
 /**
  * `graph_edges` holds only knowledge edges going forward (the processor stopped
@@ -283,6 +285,19 @@ function rowToOperation(row: {
     signature: row.signature,
     inputJson: row.input_json,
   };
+}
+
+/**
+ * History rows that belong to the graph's own nodes. Sources' operations are
+ * recorded too (for the change digest), but the activity views predate that
+ * and keep showing notes only. NULL counts as "not a source": rows the
+ * migration could not type are old node rows.
+ */
+function notSourceOperation(eb: ExpressionBuilder<DB, "graph_operations">) {
+  return eb.or([
+    eb("graph_operations.document_type", "is", null),
+    eb("graph_operations.document_type", "!=", "bai/source"),
+  ]);
 }
 
 /** Everything `createGraphQuery` needs. Read-only by construction. */
@@ -1084,6 +1099,19 @@ export function createGraphQuery(db: GraphReadDb) {
 
     // ---- Operation history queries ----
 
+    /**
+     * What changed in a window — the change digest (see `changes.ts`,
+     * `changes-query.ts`). `scope.q` must be resolved to `documentIds` by the
+     * caller.
+     */
+    async changes(
+      window: { since: string; until: string },
+      scope: ChangeScope,
+      opts: { limit?: number; cursor?: string | null; sourceFolders?: ReadonlyMap<string, string> } = {},
+    ): Promise<ChangeDigest> {
+      return loadChanges(db, window, scope, opts);
+    },
+
     async history(documentId: string, limit = 50): Promise<OperationRecord[]> {
       const rows = await db
         .selectFrom("graph_operations")
@@ -1099,6 +1127,7 @@ export function createGraphQuery(db: GraphReadDb) {
     async activity(limit = 50, since?: string): Promise<OperationRecord[]> {
       let query = db
         .selectFrom("graph_operations")
+        .where(notSourceOperation)
         .orderBy("timestamp", "desc")
         .orderBy("index", "desc")
         .selectAll()
@@ -1119,6 +1148,7 @@ export function createGraphQuery(db: GraphReadDb) {
       const rows = await db
         .selectFrom("graph_operations")
         .where("operation_type", "=", operationType)
+        .where(notSourceOperation)
         .orderBy("timestamp", "desc")
         .selectAll()
         .limit(limit)
@@ -1137,6 +1167,7 @@ export function createGraphQuery(db: GraphReadDb) {
           db
             .selectFrom("graph_operations")
             .where("timestamp", ">", since)
+            .where(notSourceOperation)
             .select("document_id"),
         )
         .where("updated_at", "<", since)

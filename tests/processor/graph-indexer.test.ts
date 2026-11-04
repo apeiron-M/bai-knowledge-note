@@ -5,6 +5,10 @@ import { PGliteDialect } from "kysely-pglite-dialect";
 import type { IRelationalDb } from "@powerhousedao/shared/processors";
 import type { DB } from "../../processors/graph-indexer/schema.js";
 import { up, down } from "../../processors/graph-indexer/migrations.js";
+import type { OperationWithContext } from "@powerhousedao/shared/document-model";
+import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
+import { createGraphQuery } from "../../processors/graph-indexer/query.js";
+import { makeOp } from "../helpers/make-op.js";
 
 let db: Kysely<DB>;
 
@@ -406,5 +410,172 @@ describe("edge reconciliation", () => {
         "doc-recon-t3",
       ])
       .execute();
+  });
+});
+
+// ---- Change history: document_type on every operation row ----
+
+describe("graph_operations.document_type", () => {
+  it("is added by the migration and backfilled from graph_nodes for rows that predate it", async () => {
+    await db
+      .insertInto("graph_nodes")
+      .values({
+        id: "doc-type-n1",
+        document_id: "doc-type-n1",
+        title: "N1",
+        description: null,
+        note_type: null,
+        status: "CANONICAL",
+        content: null,
+        author: null,
+        source_origin: null,
+        created_at: null,
+        added_at: null,
+        updated_at: "2026-11-01T00:00:00.000Z",
+        document_type: "bai/knowledge-note",
+      })
+      .execute();
+    await db
+      .insertInto("graph_operations")
+      .values({
+        id: "doc-type-n1-0",
+        document_id: "doc-type-n1",
+        operation_type: "SET_TITLE",
+        timestamp: "2026-11-01T00:00:00.000Z",
+        index: 0,
+        scope: "global",
+        summary: null,
+        input_json: null,
+        signer_address: null,
+        signer_app: null,
+        signer_key: null,
+        signature: null,
+        document_type: null,
+      })
+      .execute();
+
+    await up(db as unknown as IRelationalDb<DB>);
+
+    const row = await db
+      .selectFrom("graph_operations")
+      .select("document_type")
+      .where("id", "=", "doc-type-n1-0")
+      .executeTakeFirstOrThrow();
+    expect(row.document_type).toBe("bai/knowledge-note");
+
+    await db.deleteFrom("graph_operations").where("document_id", "=", "doc-type-n1").execute();
+    await db.deleteFrom("graph_nodes").where("document_id", "=", "doc-type-n1").execute();
+  });
+});
+
+describe("source operations are recorded", () => {
+  const ingest = (o: { documentId: string; index: number; method: string; title: string; timestampUtcMs: string }): OperationWithContext => {
+    const entry = makeOp({
+      documentId: o.documentId,
+      documentType: "bai/source",
+      actionType: "INGEST_SOURCE",
+      actionInput: {
+        title: o.title,
+        content: "Body text",
+        sourceType: "DOCUMENTATION",
+        method: o.method,
+        url: "https://github.com/powerhouse-inc/powerhouse",
+        createdAt: "2026-11-03T18:00:00.000Z",
+      },
+      index: o.index,
+    });
+    const state = {
+      header: { id: o.documentId, name: "s", createdAtUtcIso: "2026-11-03T18:00:00.000Z", revision: { global: o.index + 1 } },
+      global: { title: o.title, content: "Body text", status: "INGESTED", sourceType: "DOCUMENTATION", extractedClaims: [] },
+    };
+    return {
+      ...entry,
+      operation: { ...entry.operation, timestampUtcMs: o.timestampUtcMs },
+      context: { ...entry.context, resultingState: JSON.stringify(state) },
+    } as OperationWithContext;
+  };
+
+  it("writes an INGEST_SOURCE row typed bai/source, with the git ref in its summary, and keeps it out of activity()", async () => {
+    const processor = new GraphIndexerProcessor(
+      "test",
+      { branch: ["main"], documentId: ["*"], documentType: ["bai/knowledge-note", "bai/source"], scope: ["global", "document"] },
+      db as unknown as IRelationalDb<DB>,
+      undefined,
+      { embed: false },
+    );
+    await processor.onOperations([
+      ingest({ documentId: "src-hist-1", index: 3, method: "sha256:abc git:v6.2.3-dev.91+e0f277d", title: "Processors guide", timestampUtcMs: "2026-11-03T19:00:00.000Z" }),
+    ]);
+
+    const row = await db
+      .selectFrom("graph_operations")
+      .selectAll()
+      .where("document_id", "=", "src-hist-1")
+      .executeTakeFirstOrThrow();
+    expect(row.id).toBe("src-hist-1-3");
+    expect(row.document_type).toBe("bai/source");
+    expect(row.operation_type).toBe("INGEST_SOURCE");
+    expect(row.summary).toContain("v6.2.3-dev.91+e0f277d");
+    expect(row.summary).toContain("Processors guide");
+
+    const q = createGraphQuery(db);
+    expect((await q.activity(100)).map((r) => r.documentId)).not.toContain("src-hist-1");
+    expect((await q.activityByType("INGEST_SOURCE", 100))).toEqual([]);
+
+    await db.deleteFrom("graph_operations").where("document_id", "=", "src-hist-1").execute();
+    await db.deleteFrom("graph_sources").where("document_id", "=", "src-hist-1").execute();
+  });
+
+  it("types a note's operation rows with the note's document type", async () => {
+    const processor = new GraphIndexerProcessor(
+      "test",
+      { branch: ["main"], documentId: ["*"], documentType: ["bai/knowledge-note"], scope: ["global"] },
+      db as unknown as IRelationalDb<DB>,
+      undefined,
+      { embed: false },
+    );
+    await processor.onOperations([
+      makeOp({ documentId: "note-hist-1", actionType: "SET_TITLE", actionInput: { title: "T" }, index: 1, resultingState: { title: "T", topics: [] } }),
+    ]);
+    const row = await db
+      .selectFrom("graph_operations")
+      .select("document_type")
+      .where("document_id", "=", "note-hist-1")
+      .executeTakeFirstOrThrow();
+    expect(row.document_type).toBe("bai/knowledge-note");
+    await db.deleteFrom("graph_operations").where("document_id", "=", "note-hist-1").execute();
+    await db.deleteFrom("graph_topics").where("document_id", "=", "note-hist-1").execute();
+    await db.deleteFrom("graph_nodes").where("document_id", "=", "note-hist-1").execute();
+  });
+});
+
+describe("graph_operations ids by scope", () => {
+  it("keeps a document-scope CREATE_DOCUMENT and the global operation of the same index apart", async () => {
+    const processor = new GraphIndexerProcessor(
+      "test",
+      { branch: ["main"], documentId: ["*"], documentType: ["bai/knowledge-note"], scope: ["global", "document"] },
+      db as unknown as IRelationalDb<DB>,
+      undefined,
+      { embed: false },
+    );
+    const create = makeOp({ documentId: "note-scope-1", actionType: "CREATE_DOCUMENT", actionInput: {}, index: 0 });
+    const createDoc = { ...create, context: { ...create.context, scope: "document" } } as OperationWithContext;
+    await processor.onOperations([
+      createDoc,
+      makeOp({ documentId: "note-scope-1", actionType: "SET_TITLE", actionInput: { title: "First" }, index: 0, resultingState: { title: "First", topics: [] } }),
+    ]);
+    const rows = await db
+      .selectFrom("graph_operations")
+      .select(["id", "operation_type"])
+      .where("document_id", "=", "note-scope-1")
+      .orderBy("id")
+      .execute();
+    expect(rows).toEqual([
+      { id: "note-scope-1-0", operation_type: "SET_TITLE" },
+      { id: "note-scope-1-document-0", operation_type: "CREATE_DOCUMENT" },
+    ]);
+    await db.deleteFrom("graph_operations").where("document_id", "=", "note-scope-1").execute();
+    await db.deleteFrom("graph_topics").where("document_id", "=", "note-scope-1").execute();
+    await db.deleteFrom("graph_nodes").where("document_id", "=", "note-scope-1").execute();
   });
 });

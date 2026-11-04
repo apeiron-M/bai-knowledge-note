@@ -1,5 +1,6 @@
 import type { IRelationalDb } from "@powerhousedao/shared/processors";
 import { sql } from "kysely";
+import { normalizeTimestamp } from "./operation-row.js";
 
 export async function up(db: IRelationalDb<any>): Promise<void> {
   await db.schema
@@ -145,6 +146,24 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     // column likely already exists — ignore
   }
 
+  // --- Operation kind ---
+  //
+  // Which document type each history row belongs to, so the change digest
+  // can tell sources (recorded since change history; never graph nodes) from
+  // notes without a join that a source would fail. Rows that predate the
+  // column take their node's type, or `bai/source` when the document is a
+  // source; link rows belong to their edge's source note, which is a node.
+  await db.schema
+    .alterTable("graph_operations")
+    .addColumn("document_type", "varchar(64)", (col) => col.ifNotExists())
+    .execute();
+  await db.schema
+    .createIndex("idx_graph_ops_type_ts")
+    .on("graph_operations")
+    .columns(["document_type", "timestamp"])
+    .ifNotExists()
+    .execute();
+
   // --- Edge metadata ---
   //
   // The reactor stores an opaque jsonb per relationship; the vault reads
@@ -230,6 +249,86 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
       .alterTable("graph_sources")
       .addColumn(name, "integer", (col) => col.notNull().defaultTo(fallback).ifNotExists())
       .execute();
+  }
+
+  // Backfill `graph_operations.document_type` (see "Operation kind" above).
+  // Only nulls are touched, so this costs one pass the first time and an
+  // index probe afterwards.
+  await db
+    .updateTable("graph_operations")
+    .set((eb) => ({
+      document_type: eb
+        .selectFrom("graph_nodes")
+        .select("graph_nodes.document_type")
+        .whereRef("graph_nodes.document_id", "=", "graph_operations.document_id"),
+    }))
+    .where("document_type", "is", null)
+    .execute();
+  await db
+    .updateTable("graph_operations")
+    .set({ document_type: "bai/source" })
+    .where("document_type", "is", null)
+    .where((eb) =>
+      eb.exists(
+        eb
+          .selectFrom("graph_sources")
+          .select("graph_sources.document_id")
+          .whereRef("graph_sources.document_id", "=", "graph_operations.document_id"),
+      ),
+    )
+    .execute();
+
+  // Repair history ids written before change history. The reactor numbers
+  // each scope separately, and every operation used to be stored under
+  // `<doc>-<index>`: a document's document-scope CREATE_DOCUMENT (0) and
+  // UPGRADE_DOCUMENT (1) took the ids of its first two global operations,
+  // which `onConflict doNothing` then dropped. Non-global rows now live under
+  // `<doc>-<scope>-<index>` (operation-row.ts, and link rows always did), so
+  // move the old ones there — freeing the global ids for the backfill
+  // (`knowledgeGraphBackfillSourceHistory(all: true)`) to fill. A row whose
+  // scoped twin already exists (a replay after the change wrote it) is a
+  // duplicate and goes. Afterwards no row matches, so a second run is a scan
+  // that changes nothing.
+  // (Query builder, not raw SQL: a namespaced db qualifies the tables it sees.)
+  await db
+    .deleteFrom("graph_operations as o")
+    .where("o.scope", "is not", null)
+    .where("o.scope", "<>", "global")
+    .where("o.id", "=", sql<string>`o.document_id || '-' || o."index"`)
+    .where((eb) =>
+      eb.exists(
+        eb
+          .selectFrom("graph_operations as n")
+          .select("n.id")
+          .where("n.id", "=", sql<string>`o.document_id || '-' || o.scope || '-' || o."index"`),
+      ),
+    )
+    .execute();
+  await db
+    .updateTable("graph_operations")
+    .set({ id: sql<string>`document_id || '-' || scope || '-' || "index"` })
+    .where("scope", "is not", null)
+    .where("scope", "<>", "global")
+    .where("id", "=", sql<string>`document_id || '-' || "index"`)
+    .execute();
+
+  // Normalise history timestamps to `toISOString()` form. The column is a
+  // varchar the change digest compares as a string, which is time order only
+  // when every value has the same shape: an older writer's `…:59Z` (no
+  // milliseconds) sorted after `…:59.999Z` and fell out of a window, and an
+  // epoch-milliseconds string sorted before every date and landed in the
+  // baseline. The live writer normalises (operation-row.ts); this rewrites
+  // what is already stored. Unreadable values are left for the digest to skip.
+  // After the first run the LIKE matches nothing, so this is one scan.
+  const odd = await db
+    .selectFrom("graph_operations")
+    .select(["id", "timestamp"])
+    .where("timestamp", "not like", "____-__-__T__:__:__.___Z")
+    .execute();
+  for (const row of odd as { id: string; timestamp: string }[]) {
+    const fixed = normalizeTimestamp(row.timestamp);
+    if (fixed === row.timestamp) continue;
+    await db.updateTable("graph_operations").set({ timestamp: fixed }).where("id", "=", row.id).execute();
   }
 
   // Durable embedding store — replaces the separate memory:// PGlite that

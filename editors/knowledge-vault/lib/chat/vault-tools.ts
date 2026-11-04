@@ -38,6 +38,18 @@ import {
 } from "./web.js";
 import { shortAddress } from "../../../shared/identity.js";
 import { summarizeOperation } from "../../../../processors/graph-indexer/summarize.js";
+import type { ChangeTotals } from "../../../../processors/graph-indexer/changes.js";
+import { totalsLine } from "../../../../processors/graph-indexer/changes-markdown.js";
+import {
+  MAX_CHANGED_CLAIMS,
+  MAX_NEW_CLAIMS,
+  MAX_RETIRED_CLAIMS,
+  type ChangeStory,
+  type Claim,
+  type Shift,
+  type StoryArea,
+  type ThenVsNow,
+} from "../../../../processors/graph-indexer/changes-story.js";
 import {
   renderScope,
   renderWbs,
@@ -118,6 +130,8 @@ const LIMITS = {
   /** How many rows carry who/what: one extra request each, run in parallel. */
   recentDetail: 12,
   history: { default: 10, max: 50 },
+  /** what_changed: events per page when a scope is given. */
+  changes: { default: 30, max: 100 },
   web: { default: 5, max: 10 },
   editors: { default: 10, max: 25 },
   activity: 5000,
@@ -476,6 +490,49 @@ export const VAULT_TOOLS: ToolSchema[] = [
             description: "Only documents of this type, e.g. bai/source for the newest source material.",
           },
         },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "what_changed",
+      description:
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). With moc, topic or query it adds that part's events (before → after per field, replacements and reasons, source refs); follow nextCursor for more. Dates are UTC: a date alone for since starts that day, for until covers it.",
+      parameters: {
+        type: "object",
+        properties: {
+          since: {
+            type: "string",
+            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself, and tell the person which one you used.",
+          },
+          until: {
+            type: "string",
+            description: "End of the period, ISO 8601 (a date alone covers the whole day). Default: now.",
+          },
+          moc: {
+            type: "string",
+            description:
+              "A main area's id from story.areas or story.otherAreas of an earlier what_changed call (or any map's documentId), to drill into that map: its child maps, notes and their sources. Elsewhere (id null) is no map: to look into it use query; never pass \"null\".",
+          },
+          topic: {
+            type: "string",
+            description: "A topic name, to drill into the notes tagged with it.",
+          },
+          query: {
+            type: "string",
+            description: "A subject in words, when no map or topic names it: its top search hits and their linked notes are the scope.",
+          },
+          cursor: {
+            type: "string",
+            description: "nextCursor from the previous what_changed call with the same arguments, for the next page of events.",
+          },
+          limit: {
+            type: "integer",
+            description: `Events per page when a scope is given (default ${LIMITS.changes.default}, max ${LIMITS.changes.max}).`,
+          },
+        },
+        required: ["since"],
       },
     },
   },
@@ -1700,6 +1757,211 @@ function neighbourhoodOf(rows: SearchRow[]): {
 /*  Executor                                                          */
 /* ------------------------------------------------------------------ */
 
+const CHANGE_EVENT_FIELDS = `kind documentId documentType title at by significance
+  fields { title { before after } description { before after } content { before hunks added removed } }
+  revisionNotes supersededBy { documentId title reason } version { before after } comment
+  source { refBefore refAfter url added removed hunks noteIds noteCount } derivedFrom folded { operationType count }`;
+const CHANGE_CLAIM_FIELDS = "documentId claim gist";
+const CHANGE_TOTALS_FIELDS = "created revised superseded archived reverified sourcesRevised sourcesAdded documents operations";
+const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $cursor: String, $limit: Int) {
+  knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc, topic: $topic, q: $q, cursor: $cursor, limit: $limit) {
+    window { since until }
+    scope { moc topic q documentIds types }
+    totals { ${CHANGE_TOTALS_FIELDS} }
+    events { ${CHANGE_EVENT_FIELDS} }
+    nextCursor
+    story {
+      growth { notesThen notesNow newAreas { id title } newMaps { id title area } }
+      areas { id title notesThen notesNow newCount changedCount retiredCount
+        newClaims { ${CHANGE_CLAIM_FIELDS} }
+        changedClaims { documentId then { claim gist } now { claim gist } why replacedBy }
+        retiredClaims { ${CHANGE_CLAIM_FIELDS} } }
+    }
+    thenVsNow { then { ${CHANGE_CLAIM_FIELDS} } now { ${CHANGE_CLAIM_FIELDS} } unchanged { ${CHANGE_CLAIM_FIELDS} } }
+  }
+}`;
+
+/** knowledgeGraphChanges as the wire carries it (folded is a list there). */
+type ChangeEventWire = { documentId: string; by?: string | null } & Record<string, unknown>;
+type ChangeDigestWire = {
+  window: { since: string; until: string };
+  totals: ChangeTotals;
+  events?: ChangeEventWire[] | null;
+  nextCursor?: string | null;
+  story?: ChangeStory | null;
+  thenVsNow?: ThenVsNow | null;
+};
+
+/** The story a what_changed answer may carry: small enough to leave room for the conversation. */
+const STORY_BUDGET = 11_000;
+/** Areas the chat shows in detail before it thins any of them. */
+const DETAILED_AREAS = 10;
+/** Fewest areas it keeps in detail while thinning their claims. */
+const KEPT_AREAS = 8;
+/** New maps and new areas named by title; the rest are counted. */
+const NAMED_MAPS = 15;
+
+const claimText = (t: { claim: string; gist: string | null }, withGist: boolean) => ({
+  claim: clip(t.claim, 140),
+  ...(withGist && t.gist ? { gist: clip(t.gist, 120) } : {}),
+});
+const chatClaim = (c: Claim, withGist = true) => ({ documentId: c.documentId, ...claimText(c, withGist) });
+function chatShift(sh: Shift): Record<string, unknown> {
+  // The gist matters only when the claim itself reads the same.
+  const sameClaim = sh.then.claim === sh.now.claim;
+  return {
+    documentId: sh.documentId,
+    then: claimText(sh.then, sameClaim),
+    now: claimText(sh.now, sameClaim),
+    ...(sh.why ? { why: clip(sh.why, 140) } : {}),
+    ...(sh.replacedBy ? { replacedBy: sh.replacedBy } : {}),
+  };
+}
+
+type Caps = readonly [newClaims: number, changed: number, retired: number];
+/** How the story is laid out: the caps of each detailed area, by rank, and whether new and retired claims keep their gists. */
+interface StoryLayout {
+  caps: Caps[];
+  gists: boolean;
+}
+
+/**
+ * The layouts {@link chatStory} tries, richest first, until one fits: every
+ * area at 8/8/5, then at 4/4/2; then the top ten areas at 4/4/2 (gists, then
+ * without), nine, eight; only then thinned, from the least changed of the
+ * eight up — to 2/2/1, then to 1/1/0 — and last fewer areas at 1/1/0.
+ */
+function* storyLayouts(areas: number): Generator<StoryLayout> {
+  const n = (count: number, caps: Caps) => Array.from({ length: count }, () => caps);
+  const FULL: Caps = [MAX_NEW_CLAIMS, MAX_CHANGED_CLAIMS, MAX_RETIRED_CLAIMS];
+  const MID: Caps = [4, 4, 2];
+  const THIN: Caps = [2, 2, 1];
+  const BARE: Caps = [1, 1, 0];
+  yield { caps: n(areas, FULL), gists: true };
+  yield { caps: n(areas, MID), gists: true };
+  const top = Math.min(areas, DETAILED_AREAS);
+  yield { caps: n(top, MID), gists: true };
+  for (let shown = top; shown >= Math.min(areas, KEPT_AREAS); shown--) yield { caps: n(shown, MID), gists: false };
+  const kept = Math.min(areas, KEPT_AREAS);
+  for (let k = kept - 1; k >= 0; k--) yield { caps: [...n(k, MID), ...n(kept - k, THIN)], gists: false };
+  for (let k = kept - 1; k >= 0; k--) yield { caps: [...n(k, THIN), ...n(kept - k, BARE)], gists: false };
+  for (let shown = kept - 1; shown >= 1; shown--) yield { caps: n(shown, BARE), gists: false };
+}
+
+/**
+ * The story as the chat gets it: growth (new maps and areas named up to
+ * {@link NAMED_MAPS}, the rest counted), then the most-changed areas in
+ * detail and every other area by id and title — laid out by the first of
+ * {@link storyLayouts} that fits {@link STORY_BUDGET}. If even the barest
+ * does not, the tail of otherAreas is counted instead of named. Ids stay for
+ * citations and drill-downs; `more` says, from the uncapped counts, what each
+ * shown area holds beyond its claims here.
+ */
+export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<string, unknown> {
+  const named = <T>(list: T[]) => list.slice(0, NAMED_MAPS);
+  const extra = (key: string, list: unknown[]) => (list.length > NAMED_MAPS ? { [key]: list.length - NAMED_MAPS } : {});
+  const g = story.growth;
+  const growth = {
+    notesThen: g.notesThen,
+    notesNow: g.notesNow,
+    newAreas: named(g.newAreas).map((a) => clip(a.title, 80)),
+    ...extra("moreNewAreas", g.newAreas),
+    newMaps: named(g.newMaps).map((m) => clip(m.area ? `${m.title} (${m.area})` : m.title, 100)),
+    ...extra("moreNewMaps", g.newMaps),
+  };
+  const detail = (a: StoryArea, [nNew, nChanged, nRetired]: Caps, gists: boolean) => {
+    const newClaims = a.newClaims.slice(0, nNew);
+    const changed = a.changedClaims.slice(0, nChanged);
+    const retired = a.retiredClaims.slice(0, nRetired);
+    const more = [
+      a.newCount > newClaims.length ? `${a.newCount - newClaims.length} more new` : "",
+      a.changedCount > changed.length ? `${a.changedCount - changed.length} more changed` : "",
+      a.retiredCount > retired.length ? `${a.retiredCount - retired.length} more retired` : "",
+    ].filter(Boolean);
+    return {
+      id: a.id,
+      title: a.title,
+      notes: `${a.notesThen} → ${a.notesNow}`,
+      new: newClaims.map((c) => chatClaim(c, gists)),
+      changed: changed.map(chatShift),
+      retired: retired.map((c) => chatClaim(c, gists)),
+      ...(more.length ? { more: more.join(", ") } : {}),
+    };
+  };
+  const build = ({ caps, gists }: StoryLayout, others = Infinity) => {
+    const rest = story.areas.slice(caps.length);
+    const listed = rest.slice(0, others).map((a) => ({ id: a.id, title: clip(a.title, 80) }));
+    return {
+      growth,
+      areas: story.areas.slice(0, caps.length).map((a, i) => detail(a, caps[i], gists)),
+      ...(listed.length ? { otherAreas: listed } : {}),
+      ...(rest.length > listed.length ? { moreAreas: rest.length - listed.length } : {}),
+    };
+  };
+  const fits = (out: unknown) => JSON.stringify(out).length <= budget;
+  let last: StoryLayout = { caps: [], gists: false };
+  for (const layout of storyLayouts(story.areas.length)) {
+    const out = build(layout);
+    if (fits(out)) return out;
+    last = layout;
+  }
+  // Still over: name fewer of the other areas, count the rest.
+  for (let others = story.areas.length - last.caps.length - 1; others > 0; others--) {
+    const out = build(last, others);
+    if (fits(out)) return out;
+  }
+  return build(last, 0);
+}
+
+/** Diff hunks kept per event on a drill-down; the reader can open the note for the rest. */
+const DRILL_HUNKS = 2;
+
+type FieldWire = { before?: string | null; after?: string | null } | null | undefined;
+type ContentWire = { before?: string | null; hunks?: string[] | null; added?: number | null; removed?: number | null } | null | undefined;
+type SourceWire = { refBefore?: string | null; refAfter?: string | null; added?: number | null; removed?: number | null; hunks?: string[] | null; noteIds?: string[] | null; noteCount?: number | null } | null | undefined;
+
+const clip = (s: string, n: number): string => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+
+/**
+ * One line saying what changed — enough for an executive summary, where a
+ * model needs the fact and not the diff. The diff stays one drill-down away.
+ */
+export function changeLine(e: ChangeEventWire): string {
+  const parts: string[] = [];
+  const fields = e.fields as { title?: FieldWire; description?: FieldWire; content?: ContentWire } | null | undefined;
+  if (fields?.title?.after) parts.push(fields.title.before ? `title "${clip(fields.title.before, 80)}" → "${clip(fields.title.after, 80)}"` : `title set`);
+  if (fields?.description) parts.push("description revised");
+  const content = fields?.content;
+  if (content) parts.push(content.added == null || content.removed == null ? "content revised" : `+${content.added} −${content.removed} lines`);
+  const sup = e.supersededBy as { title?: string | null } | null | undefined;
+  if (sup?.title) parts.push(`superseded by "${clip(sup.title, 80)}"`);
+  const source = e.source as SourceWire;
+  if (source) {
+    if (source.refBefore || source.refAfter) parts.push(`${source.refBefore ?? "?"} → ${source.refAfter ?? "?"}`);
+    parts.push(source.added == null || source.removed == null ? "earlier version not recorded" : `+${source.added} −${source.removed} lines`);
+  }
+  const version = e.version as FieldWire;
+  if (version?.after && !parts.length) parts.push(`re-verified at ${version.after}`);
+  return parts.join("; ") || (typeof e.kind === "string" ? e.kind : "changed");
+}
+
+/** An event as a drill-down returns it: the diff, without the bulk a reader does not need. */
+function drillEvent(e: ChangeEventWire & { byName?: string | null }): Record<string, unknown> {
+  const { folded: _folded, derivedFrom: _derived, ...rest } = e;
+  const fields = rest.fields as { title?: FieldWire; description?: FieldWire; content?: ContentWire } | null | undefined;
+  const source = rest.source as SourceWire;
+  return {
+    ...rest,
+    ...(fields
+      ? { fields: { ...fields, ...(fields.content ? { content: { hunks: (fields.content.hunks ?? []).slice(0, DRILL_HUNKS), added: fields.content.added ?? null, removed: fields.content.removed ?? null } } : {}) } }
+      : {}),
+    ...(source
+      ? { source: { refBefore: source.refBefore ?? null, refAfter: source.refAfter ?? null, added: source.added ?? null, removed: source.removed ?? null, hunks: (source.hunks ?? []).slice(0, DRILL_HUNKS), noteCount: source.noteCount ?? source.noteIds?.length ?? 0 } }
+      : {}),
+    change: changeLine(e),
+  };
+}
+
 export async function executeTool(
   rawName: string,
   args: Record<string, unknown>,
@@ -2311,6 +2573,60 @@ export async function executeTool(
           (items[0] && "change" in items[0]
             ? `; newest: ${(items[0] as { byName?: string | null; byShort?: string | null }).byName ?? (items[0] as { byShort?: string | null }).byShort ?? "someone"} — ${(items[0] as { change?: string }).change ?? ""}`
             : ""),
+      );
+    }
+
+    case "what_changed": {
+      const since = str(args, "since");
+      if (!since) return fail(`since is required: the start of the period as an ISO 8601 date, e.g. 2026-09-01`);
+      const moc = str(args, "moc");
+      if (moc !== null && /^(null|undefined)$/i.test(moc.trim()))
+        return fail(`moc must be a map's id: Elsewhere (id null) is no map — ask about it with query instead`);
+      const variables = {
+        driveId,
+        since,
+        until: str(args, "until"),
+        moc,
+        topic: str(args, "topic"),
+        q: str(args, "query"),
+        cursor: str(args, "cursor"),
+        limit: int(args, "limit", LIMITS.changes.default, LIMITS.changes.max),
+      };
+      const r = await gql<{ knowledgeGraphChanges: ChangeDigestWire }>(graphEndpoint(), CHANGES_QUERY, variables);
+      if ("error" in r) return fail(r.error);
+      const digest = r.data.knowledgeGraphChanges;
+      const events = digest.events ?? [];
+      const names = await resolveEnsNames(events.map((e) => e.by ?? "").filter((a) => a !== ""));
+      const named = <T extends { by?: string | null }>(e: T): T & { byName: string | null } => ({
+        ...e,
+        byName: e.by ? (names.get(e.by) ?? null) : null,
+      });
+      // The story is the answer — what the vault knows now that it did not
+      // before, by main area; totals are one line, and per-document detail
+      // comes only on a drill-down (moc / topic / query), still bounded.
+      const data = {
+        window: digest.window,
+        totals: totalsLine(digest.totals),
+        ...(digest.story ? { story: chatStory(digest.story) } : {}),
+        ...(digest.thenVsNow
+          ? {
+              thenVsNow: {
+                then: digest.thenVsNow.then.map((c) => chatClaim(c)),
+                now: digest.thenVsNow.now.map((c) => chatClaim(c)),
+                unchanged: digest.thenVsNow.unchanged.map((c) => chatClaim(c)),
+              },
+            }
+          : {}),
+        ...(digest.events ? { events: digest.events.map((e) => drillEvent(named(e))), nextCursor: digest.nextCursor ?? null } : {}),
+      };
+      const span = `between ${digest.window.since.slice(0, 10)} and ${digest.window.until.slice(0, 10)}`;
+      if (digest.totals.documents === 0) return ok(data, `nothing changed ${span}`);
+      return ok(
+        data,
+        `${totalsLine(digest.totals)} ${span}` +
+          (digest.story ? `; live notes ${digest.story.growth.notesThen} → ${digest.story.growth.notesNow}, ${digest.story.areas.length} area${digest.story.areas.length === 1 ? "" : "s"} changed` : "") +
+          (digest.thenVsNow ? "; thenVsNow for the scope" : "") +
+          (digest.events ? `; ${digest.events.length} event${digest.events.length === 1 ? "" : "s"}${digest.nextCursor ? ", more with nextCursor" : ""}` : ""),
       );
     }
 

@@ -169,4 +169,23 @@ describe("buildSystemPrompt", () => {
     expect(p.length).toBeGreaterThan(400);
     expect(p).not.toMatch(/undefined|null|NaN/);
   });
+
+  it("sends questions about change over time to what_changed, and answers them as a four-part story for an executive", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/what changed in .* since .* call what_changed, never search/i);
+    expect(p).toMatch(/say which dates you used/);
+    expect(p).toMatch(/non-technical executive/);
+    // The four parts, in order.
+    const parts = ["How the vault grew", "What is new", "What we now understand differently", "Where to look next"].map((h) => p.indexOf(h));
+    for (const i of parts) expect(i).toBeGreaterThan(-1);
+    expect([...parts].sort((x, y) => x - y)).toEqual(parts);
+    expect(p).toMatch(/then → now, with the because/);
+    expect(p).toMatch(/No document ids, no operation counts/);
+    expect(p).toMatch(/"superseded" or "revised"/);
+    expect(p).toMatch(/cite claims with \[\[documentId\]\] markers only/i);
+    expect(p).toMatch(/call what_changed with query set to it and answer from thenVsNow/);
+    expect(p).toMatch(/When what_changed says nothing changed, say nothing changed in that window/);
+    expect(p).toMatch(/Elsewhere has no map: ask about it with query/);
+    expect(p).toMatch(/thenVsNow \(then: .*now: .*unchanged: /);
+  });
 });

@@ -771,7 +771,10 @@ describe("GraphIndexerProcessor.onOperations()", () => {
       op("s1", "bai/source", 0, "INGEST_SOURCE", { title: "raw" }, { title: "raw", status: "INBOX" }),
     ]);
     expect(await query.nodeByDocumentId("s1")).toBeUndefined();
-    expect(await query.history("s1")).toEqual([]);
+    // A source's own operations are history since change history (spec
+    // 2026-11-04 §1), but never activity and never a node.
+    expect((await query.history("s1")).map((r) => r.operationType)).toEqual(["INGEST_SOURCE"]);
+    expect(await query.activity(50)).toEqual([]);
   });
 
   it("mirrors ADD_RELATIONSHIP for indexed types only", async () => {
