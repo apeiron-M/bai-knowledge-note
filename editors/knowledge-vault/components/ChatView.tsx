@@ -43,6 +43,7 @@ import { useChat, type ChatFailure } from "../hooks/use-chat.js";
 import { executeTool } from "../lib/chat/vault-tools.js";
 import {
   buildSystemPrompt,
+  localDate,
   MAX_ORIENTATION_TOPICS,
 } from "../lib/chat/system-prompt.js";
 import { LoadingLine } from "./LoadingStates.js";
@@ -159,6 +160,8 @@ export function ChatView({
     () =>
       buildSystemPrompt({
         vaultName,
+        // The reader's calendar date, so "since September" resolves to the right year (Addendum C2).
+        today: localDate(new Date()),
         stats: orientation.stats,
         topics: orientation.topics,
       }),

@@ -258,6 +258,8 @@ export const schema: DocumentNode = gql`
     notesThen: Int!
     "Live notes now."
     notesNow: Int!
+    "When since predates the vault's first recorded activity: that activity; growth is counted from it (notesThen is then 0 because the vault did not exist yet)."
+    from: String
     newAreas: [KnowledgeGraphChangeMapRef!]!
     newMaps: [KnowledgeGraphChangeNewMap!]!
   }
@@ -342,6 +344,8 @@ export const schema: DocumentNode = gql`
   type KnowledgeGraphChangeWindow {
     since: String!
     until: String!
+    "The vault's first recorded activity (its earliest operation or note creation); null on a cursor page or an empty vault."
+    vaultStart: String
   }
 
   type KnowledgeGraphChangeScope {
@@ -350,12 +354,16 @@ export const schema: DocumentNode = gql`
     documentIds: [String!]
     q: String
     types: [String!]
-    "What q resolved to: the whole vault (it named the hub or the drive), a map whose title it names, else a semantic search."
+    "The areas asked for: map ids or exact titles."
+    areas: [String!]
+    "The text a source's title, provenance URL or folder path was matched against."
+    source: String
+    "What the scope resolved to: the areas named (or the areas q's notes concentrate in), the sources matched, the whole vault (q named the hub or the drive), one map, else a semantic search."
     resolved: KnowledgeGraphChangeResolvedScope
   }
 
   type KnowledgeGraphChangeResolvedScope {
-    "vault | moc | search"
+    "areas | source | vault | moc | search"
     kind: String!
     "The map, when kind is moc; title is also the hub's or drive's name, when kind is vault."
     id: String
@@ -363,6 +371,13 @@ export const schema: DocumentNode = gql`
     "The search, when kind is search: the query and how many hits it started from (their linked notes join them)."
     query: String
     hits: Int
+    "When kind is areas: the areas named, in the order asked, or those holding the most of q's note hits."
+    areas: [KnowledgeGraphChangeMapRef!]
+    "When kind is areas: the names asked for that no map has (never matched to a near title)."
+    unknown: [String!]
+    "When kind is source: the text matched, and how many sources it matched."
+    match: String
+    sources: Int
   }
 
   type KnowledgeGraphChangeTotals {
@@ -763,10 +778,15 @@ export const schema: DocumentNode = gql`
     What changed in the drive between since and until (ISO dates, UTC; a
     date-only until covers that whole day; until defaults to now): totals,
     then groups by map (or topic) with up to five highlights each — the
-    executive summary. Give a scope (moc, topic, q, documentIds) to also get
-    the events, paged by limit (default 50, max 200) and cursor. q is a
-    semantic search: its top 10 hits plus their one-hop neighbours. Readers
-    of the drive may ask.
+    executive summary. Give a scope (moc, topic, q, areas, source,
+    documentIds) to also get the events, paged by limit and cursor. areas:
+    map ids or exact titles — the union of their subtrees (unknown names are
+    reported in scope.resolved.unknown). source: text a source's title,
+    provenance URL or folder path contains — those sources and the notes
+    derived from them. q: the hub or drive name means the whole vault; else
+    the areas holding at least 10% of its top 200 semantic note hits (one
+    map below them when it holds 60% of those), else its top 25 hits plus
+    their one-hop neighbours. Readers of the drive may ask.
     """
     knowledgeGraphChanges(
       driveId: ID!
@@ -775,6 +795,8 @@ export const schema: DocumentNode = gql`
       moc: String
       topic: String
       q: String
+      areas: [String!]
+      source: String
       documentIds: [String!]
       types: [String!]
       limit: Int

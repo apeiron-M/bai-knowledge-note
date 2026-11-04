@@ -300,3 +300,73 @@ story can say "first recorded at v6.2.2-dev.74, now v6.2.3-dev.91+e0f277d". Shif
   the best two maps searches. `resolved: { kind: "vault", title }` names the hub or drive matched. Explicit
   `documentIds` always narrow what `q` resolves to. A retired note is never also a shift; a note created and archived
   in the window is retired. A created note's bodies are read only when its claim differs from its first record.
+
+---
+
+## Addendum C — subject = matching areas, dates, honesty (approved 2026-11-04, after testing 1.0.54-dev.54 live)
+
+Live answers on dev.54 showed: "since September" read as **2025** (vault "0 → 2,614"); "the Powerhouse stack / repo /
+reactor" answered with business areas (lead corpus, Domain Model Catalog, Service Pricing) or with a 25-hit search that
+missed most reactor shifts; the model **invented** contents for areas the story only named; merge counts leaked into prose;
+most shifts lacked a "first recorded" date; a rewording whose reason says "states the same" counted as a shift.
+
+**C1. A subject means the main areas about it.** Resolving `q` (after the vault-title check of B2): rank the hub's
+top-level areas — and their descendant maps — by semantic similarity between the query and each map's own text (title +
+orientation, i.e. the MoC node's embedding; keyword overlap on title+orientation as the fallback when no embedding is
+available). Select every top-level area whose best score (its own or a descendant's) clears a threshold relative to the
+best match (≥ 0.9 × top score, and above an absolute floor tuned on the live vault), at most 12 areas; the scope is the
+union of their subtrees, plus their sources. If one descendant map matches far better than its area (a narrow subject
+like "attachments"), scope to that map's subtree instead. Only when no area clears the floor does it fall back to the
+25-hit search. `scope.resolved` becomes `{ kind: "areas", areas: [{id,title}] }` (or `moc` / `search` / `vault`).
+Expected on the live vault: "the Powerhouse stack" / "the powerhouse repo" → the technical areas (Reactor and Drives,
+Reactor Sync Infrastructure, Authorization and Identity, Deployment and Operations, Connect Application, Workflow
+Automation, Hosts Runners and Plugins, Document Model System, Editors and UX, Data Processing and CQRS, GraphQL and
+Schema, Vetra Tooling …) and none of the business areas; "the reactor" → Reactor and Drives (+ its sub-maps) and Reactor
+Sync Infrastructure.
+
+**C2. Dates.** The chat system prompt carries today's date; a month or season without a year means its **most recent
+past** occurrence ("since September" on 2026-11-04 → 2026-09-01; "since summer" → 2026-06-01). The digest reports the
+vault's first recorded activity (`window.vaultStart`); when `since` predates it, growth is counted from `vaultStart`
+and the chat says "the vault began on <date>" — never "0 notes then".
+
+**C3. No merge counts reach the model.** `mergedCount` stays in the digest (REST/plugin) but the chat payload omits it.
+
+**C4. First recorded date fallback.** When a note created in the window has no CREATE row in the index (lost before the
+id fix), its first-recorded time is its `added_at` (header creation time); `thenAt` is always set for created-in-window
+shifts.
+
+**C5. No invented area content.** Areas the chat payload names without claims are marked `nameOnly: true` (or listed
+only in `otherAreas`), and the system prompt forbids describing any area beyond the claims it was given: a name-only area
+may be named and counted, never characterised.
+
+**C6. Duplicate phrasing.** Add the anchored phrase `\bstates the same\b` (and `\bsame (floor|rule|limit|default)\b`)
+to the merge rule.
+
+Acceptance (on a local import of the live vault, then live): "What changed in the Powerhouse stack since September?",
+"…in the powerhouse repo since summer?", "…in the powerhouse reactor since summer?" each answer only from technical
+areas, with ≥ 10 then→now shifts for the reactor question, dated "first recorded on …", no invented area descriptions,
+no merge counts, correct year.
+
+### Addendum C — C1 replaced after measuring on the live vault (2026-11-04)
+Measured with the vault's own embeddings: map-orientation similarity is compressed (0.84–0.90) and dominated by the vault's
+own subject ("Powerhouse"): "the Powerhouse stack" scored business areas (lead corpus 0.866, Service Pricing 0.858) with
+the technical ones, and "powerhouse reactor" ranked Reactor and Drives 8th. Note-hit concentration (top 200 semantic note
+hits counted per area subtree) works for specific terms ("reactor" → Reactor and Drives, Workflow Automation,
+Deployment, Authorization, Reactor Sync; "service pricing" → Service Pricing 91%) but not for vague subjects in a
+single-subject vault ("stack", "repo" still pull Domain Model Catalog and the lead corpus). So C1 becomes three explicit
+mechanisms, in this order:
+- **C1a — areas chosen by the model.** `what_changed` (and GraphQL/REST) accept `areas: [id or exact title]`; the scope
+  is the union of those areas' subtrees + their sources (`resolved: { kind: "areas", areas }`). The unscoped story already
+  lists every area by title (cheap). Prompt rule: for a broad subject that is not the whole vault ("the stack", "the
+  technical side", "the business side"), first call unscoped, pick the relevant areas **by their titles**, then call again
+  with `areas`. Unknown titles are reported back, never guessed.
+- **C1b — scope by source.** `source: "<text>"` scopes to notes derived (DERIVED_FROM / extractedClaims) from sources whose
+  title, provenance URL or `/sources` folder path contains the text (case-insensitive), plus those sources
+  (`resolved: { kind: "source", match, sources: n }`). Prompt rule: "what changed in <a repo / document set / book /
+  meeting series>" → `source`. On the live vault, `source: "powerhouse-inc/powerhouse"` is exactly the repo-derived set.
+- **C1c — specific terms by note concentration.** `q` (after the vault-title check) ranks areas by how many of the top
+  200 semantic note hits fall in each area subtree, selecting areas holding ≥ 10% of the hits (max 8), else the 25-hit
+  search. The map-orientation embedding ranking is removed. A narrow sub-map is preferred only when it holds ≥ 60% of the
+  selected hits.
+Acceptance additions: "powerhouse repo since summer" → `source`; "the Powerhouse stack since September" → unscoped list
+→ `areas` with only technical areas; "the reactor since summer" → C1c areas led by Reactor and Drives.

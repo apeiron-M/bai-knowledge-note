@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
 import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
-import { areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_THEN_VS_NOW, type StoryContext, type StoryNode } from "./changes-story.js";
+import { areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_SCOPE_AREAS, MAX_THEN_VS_NOW, selectAreasByHits, type ScopeMap, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
 function row(documentId: string, operationType: string, input: Record<string, unknown>, timestamp: string): OperationRow {
@@ -646,6 +646,12 @@ describe("story: review B fixes", () => {
         "Twin of the newer note",
         "duplicate of n9",
         "Merged into the surviving note",
+        // Addendum C6: rewordings whose reason says they state the same thing.
+        "The newer note states the same, with the dev.91 wording",
+        "Same floor as the older note, said more plainly",
+        "Reworded: same rule",
+        "same limit, clearer wording",
+        "Same default, restated",
       ]) {
         expect([reason, isDuplicateMerge("Snapshots are kept forever", "The reactor retains each document state indefinitely", reason)]).toEqual([reason, true]);
       }
@@ -760,5 +766,108 @@ describe("story: review B fixes", () => {
 
   it("M3: folds plurals without clipping 'does', 'status' or 'analysis'", () => {
     expect([...claimTokens("does process address status analysis processors drives")]).toEqual(["does", "process", "address", "status", "analysis", "processor", "drive"]);
+  });
+});
+
+describe("story: Addendum C", () => {
+  const supersede = (by: string, old: string, reason: string, at = IN(2)) =>
+    row(by, "ADD_RELATIONSHIP", { sourceId: by, targetId: old, relationshipType: "SUPERSEDES", metadata: { reason } }, at);
+
+  describe("C4: a note created in the window always has a first-recorded date", () => {
+    it("dates a supersession of a note whose CREATE row was lost by its added_at", () => {
+      const rows = [supersede("n9", "n2", "dev.91: the outbox replays after a crash", IN(5)), row("n2", "ARCHIVE_NOTE", {}, IN(5, 1))];
+      const s = story(
+        [
+          ["n2", note("Delivery is exactly once, in order", { status: "ARCHIVED", addedAt: IN(1) })],
+          ["n9", note("Delivery is at-least-once, with a crash gap", { addedAt: IN(4) })],
+        ],
+        { coreIdeas: new Map([["m1", ["n2", "n9"]]]), superseded: new Set(["n2"]) },
+      );
+      const shift = digest(rows, [], s).story?.areas.find((a) => a.id === "a1")?.changedClaims[0];
+      expect(shift).toMatchObject({ documentId: "n2", replacedBy: "n9", thenAt: IN(1) });
+    });
+
+    it("reads the first recorded claim of a note whose CREATE row was lost from the hour after its added_at", () => {
+      const rows = [row("n2", "SET_TITLE", { title: "Delivery is exactly once, in order" }, IN(1, 2)), row("n2", "SET_TITLE", { title: "Delivery is at-least-once" }, IN(6))];
+      const s = story([["n2", note("Delivery is at-least-once", { addedAt: IN(1) })]]);
+      const area = digest(rows, [], s).story?.areas.find((a) => a.id === "a1");
+      expect(area?.changedClaims).toEqual([
+        { documentId: "n2", then: { claim: "Delivery is exactly once, in order", gist: null }, now: { claim: "Delivery is at-least-once", gist: null }, why: null, thenAt: IN(1, 2) },
+      ]);
+    });
+  });
+});
+
+describe("story: Addendum C2 — the vault's first recorded activity", () => {
+  it("reports window.vaultStart, and counts growth from it when since predates it", () => {
+    const s = story([["n1", note("A claim", { addedAt: IN(2) })]], { vaultStart: IN(1) });
+    const d = buildChanges([row("n1", "CREATE_DOCUMENT", {}, IN(2))], [], ctx(s), { since: "2025-09-01T00:00:00.000Z", until: W.until }, { scope: {} });
+    expect(d.window).toEqual({ since: "2025-09-01T00:00:00.000Z", until: W.until, vaultStart: IN(1) });
+    expect(d.story?.growth.from).toBe(IN(1));
+  });
+
+  it("counts growth from since when the vault already existed then", () => {
+    const s = story([["n1", note("A claim")]], { vaultStart: BEFORE });
+    const d = digest([row("n1", "SET_TITLE", { title: "A claim" }, IN(2))], [], s);
+    expect(d.window.vaultStart).toBe(BEFORE);
+    expect(d.story?.growth.from).toBeUndefined();
+  });
+});
+
+describe("scope: a specific term means the areas its notes concentrate in (Addendum C1c)", () => {
+  const area = (id: string, title: string): ScopeMap => ({ id, title, depth: 1, area: id });
+  const sub = (id: string, title: string, parent: string, depth = 2): ScopeMap => ({ id, title, depth, area: parent });
+  const HUB: ScopeMap[] = [
+    { id: "hub", title: "Powerhouse Knowledge", depth: 0, area: null },
+    area("rd", "Reactor and Drives"),
+    area("rs", "Reactor Sync Infrastructure"),
+    area("wf", "Workflow Automation"),
+    area("lead", "Lead Corpus"),
+    area("price", "Service Pricing"),
+    sub("rd-store", "Reactor Storage", "rd"),
+    sub("rd-store-snap", "Snapshots", "rd", 3),
+  ];
+  // 100 note hits: n0..n99. Each map's subtree holds a range of them.
+  const range = (from: number, to: number) => Array.from({ length: to - from }, (_, i) => `n${from + i}`);
+  const HITS = range(0, 100);
+  const notes = (entries: [string, string[]][]) => new Map(entries.map(([id, list]) => [id, new Set(list)]));
+  const ids = (picked: ScopeMap[] | null) => (picked ?? []).map((m) => m.id);
+
+  it("selects every area holding at least 10% of the hits, most hits first — a 9% area stays out", () => {
+    const mapNotes = notes([
+      ["rd", range(0, 40)],
+      ["rd-store", range(0, 20)],
+      ["rs", range(40, 65)],
+      ["wf", range(65, 80)],
+      ["lead", range(80, 89)], // 9%
+      ["price", []],
+    ]);
+    expect(ids(selectAreasByHits(HITS, HUB, mapNotes))).toEqual(["rd", "rs", "wf"]);
+  });
+
+  it("counts a hit in every area whose subtree holds it, and hits in no area still count toward the whole", () => {
+    // n0..n9 sit in both rd and rs; nothing else is in any area: each holds 10%.
+    const mapNotes = notes([["rd", range(0, 10)], ["rs", range(0, 10)]]);
+    expect(ids(selectAreasByHits(HITS, HUB, mapNotes))).toEqual(["rd", "rs"]);
+  });
+
+  it("narrows to a sub-map holding at least 60% of the selected areas' hits ('service pricing' → one map)", () => {
+    const mapNotes = notes([["rd", range(0, 50)], ["rd-store", range(0, 35)], ["rd-store-snap", range(0, 31)]]);
+    // rd-store holds 35 of the 50 selected hits (70%): the map with most hits wins over its narrower child.
+    expect(ids(selectAreasByHits(HITS, HUB, mapNotes))).toEqual(["rd-store"]);
+    // 29 of 50 is 58%: no narrowing.
+    expect(ids(selectAreasByHits(HITS, HUB, notes([["rd", range(0, 50)], ["rd-store", range(0, 29)]])))).toEqual(["rd"]);
+  });
+
+  it("selects at most eight areas", () => {
+    const many: ScopeMap[] = Array.from({ length: 10 }, (_, i) => area(`x${i}`, `Area ${i}`));
+    const mapNotes = notes(many.map((m, i) => [m.id, range(i * 10, i * 10 + 10)]));
+    expect(selectAreasByHits(HITS, many, mapNotes)).toHaveLength(MAX_SCOPE_AREAS);
+    expect(MAX_SCOPE_AREAS).toBe(8);
+  });
+
+  it("selects nothing when no area holds 10% of the hits, or there are no hits: the caller searches", () => {
+    expect(selectAreasByHits(HITS, HUB, notes([["rd", range(0, 9)]]))).toBeNull();
+    expect(selectAreasByHits([], HUB, notes([["rd", range(0, 9)]]))).toBeNull();
   });
 });

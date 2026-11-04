@@ -105,15 +105,30 @@ export interface ChangeGroup {
 
 export interface ChangeScope {
   moc?: string;
+  /** Internal: the areas (or maps) `areas` or `q` resolved to — the union of their subtrees (Addendum C1a, C1c). Never echoed. */
+  mocs?: string[];
   topic?: string;
   documentIds?: string[];
   q?: string;
   types?: string[];
-  /** On a digest: what `q` resolved to — the whole vault, a map it names, else a semantic search (spec Addendum B2). */
+  /** The areas the caller chose, each a map id or its exact title (Addendum C1a). */
+  areas?: string[];
+  /** Text a source's title, provenance URL or folder path contains: its notes are the scope (Addendum C1b). */
+  source?: string;
+  /** Internal: the sources `source` matched — they and the notes derived from them. Never echoed. */
+  sources?: string[];
+  /** On a digest: what the scope resolved to — areas, a source match, the whole vault, a map, else a semantic search (Addendum B2, C1). */
   resolved?: ResolvedScope;
 }
 
 export type ResolvedScope =
+  /**
+   * The areas the caller named (C1a; `unknown`: the names no map has, never
+   * guessed) or the areas a query's notes concentrate in (C1c).
+   */
+  | { kind: "areas"; areas: { id: string; title: string }[]; unknown?: string[] }
+  /** The sources `source` matched, by count (Addendum C1b). */
+  | { kind: "source"; match: string; sources: number }
   | { kind: "moc"; id: string; title: string }
   | { kind: "search"; query: string; hits: number }
   /** The query named the hub or the drive: the whole vault, as an unscoped call (Addendum B corrections). */
@@ -137,7 +152,8 @@ export interface ChangeContext {
 }
 
 export interface ChangeDigest {
-  window: { since: string; until: string };
+  /** `vaultStart`: the vault's first recorded activity (Addendum C2), on a digest that carries the story. */
+  window: { since: string; until: string; vaultStart?: string };
   scope: ChangeScope;
   totals: ChangeTotals;
   groups: ChangeGroup[];
@@ -735,10 +751,12 @@ export const FIRST_RECORD_MS = 60 * 60 * 1000;
  * Null when it has no creation row or no title/description in that hour.
  * `rows` are the document's rows in time order.
  */
-export function firstRecorded(rows: OperationRow[]): { title: string | null; description: string | null; at: string; revisionNotes: string[] } | null {
+export function firstRecorded(rows: OperationRow[], addedAt: string | null = null): { title: string | null; description: string | null; at: string; revisionNotes: string[] } | null {
   const create = rows.find((r) => r.operationType === "CREATE_DOCUMENT" || CREATE_OPS.has(r.operationType));
-  if (!create) return null;
-  const end = Date.parse(create.timestamp) + FIRST_RECORD_MS;
+  // No creation row (lost before the id fix): the header's creation time anchors the hour (Addendum C4).
+  const createdAt = create?.timestamp ?? addedAt;
+  if (!createdAt) return null;
+  const end = Date.parse(createdAt) + FIRST_RECORD_MS;
   const early = rows.filter((r) => Date.parse(r.timestamp) <= end);
   const first = foldFields(early, EMPTY_FIELDS);
   if (first.title === null && first.description === null) return null;
@@ -748,7 +766,7 @@ export function firstRecorded(rows: OperationRow[]): { title: string | null; des
     const input = parseInput(r);
     return str(input.title) !== null || str(input.description) !== null;
   });
-  const at = sets.length ? sets[sets.length - 1].timestamp : create.timestamp;
+  const at = sets.length ? sets[sets.length - 1].timestamp : createdAt;
   const before = new Set(revisionHistoryLines(first.content));
   const revisionNotes = revisionHistoryLines(foldFields(rows, EMPTY_FIELDS).content).filter((l) => !before.has(l));
   return { title: first.title, description: first.description, at, revisionNotes };
@@ -932,7 +950,8 @@ export function buildChanges(
         a.title.localeCompare(b.title),
     );
 
-  const digest: ChangeDigest = { window, scope, totals: totalsOf(events, operations), groups };
+  const vaultStart = ctx.story && !opts.cursor ? ctx.story.vaultStart : null;
+  const digest: ChangeDigest = { window: vaultStart ? { ...window, vaultStart } : window, scope, totals: totalsOf(events, operations), groups };
   // A cursor page is the events' continuation: the first page carried the story.
   if (ctx.story && !opts.cursor) {
     // Each document's title and description at since, where a baseline recorded them.
@@ -946,6 +965,14 @@ export function buildChanges(
       if (e.kind !== "created") continue;
       const first = firstRecorded(rowsByDoc.get(e.documentId) ?? []);
       if (first) thenFields.set(e.documentId, first);
+    }
+    // Created in the window by its header (added_at) but with no creation row
+    // left: its first recorded state is read from the hour after added_at (Addendum C4).
+    for (const [id, list] of rowsByDoc) {
+      const addedAt = ctx.story.nodes.get(id)?.addedAt ?? null;
+      if (thenFields.has(id) || !addedAt || addedAt < window.since || addedAt > window.until) continue;
+      const first = firstRecorded(list, addedAt);
+      if (first) thenFields.set(id, first);
     }
     const facts = storyFacts(events, thenFields, ctx.story, window, ids);
     digest.story = buildStory(facts, ctx.story);

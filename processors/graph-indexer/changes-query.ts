@@ -148,6 +148,36 @@ async function topicScope(db: ReadDb, topic: string): Promise<Set<string>> {
   return withSources(db, new Set(rows.map((r) => r.document_id)));
 }
 
+/** These sources and the notes derived from them (a DERIVED_FROM edge to one, or in its extractedClaims) — Addendum C1b. */
+async function sourcesScope(db: ReadDb, sourceIds: string[]): Promise<Set<string>> {
+  const ids = new Set(sourceIds);
+  for (const part of chunks(sourceIds)) {
+    const rows = await db
+      .selectFrom("graph_edges")
+      .select("source_document_id")
+      .where("target_document_id", "in", part)
+      .where("link_type", "=", "DERIVED_FROM")
+      .execute();
+    for (const r of rows) ids.add(r.source_document_id);
+  }
+  for (const row of (await sourceRows(db, sourceIds)).values()) for (const n of row.claimIds) ids.add(n);
+  return ids;
+}
+
+/**
+ * The sources whose title, provenance URL or drive folder path (`sourceFolders`,
+ * e.g. `/sources/powerhouse`) contains `match`, case-insensitive (Addendum C1b).
+ */
+export async function loadMatchingSources(db: ReadDb, match: string, sourceFolders: ReadonlyMap<string, string>): Promise<string[]> {
+  const needle = match.trim().toLowerCase();
+  if (!needle) return [];
+  const has = (v: string | null | undefined) => (v ?? "").toLowerCase().includes(needle);
+  return [...(await sourceRows(db))]
+    .filter(([id, row]) => has(row.title) || has(row.url) || has(sourceFolders.get(id)))
+    .map(([id]) => id)
+    .sort();
+}
+
 function intersect(a: Set<string> | null, b: Set<string>): Set<string> {
   return a ? new Set([...a].filter((x) => b.has(x))) : b;
 }
@@ -530,7 +560,7 @@ async function loadStoryContext(
     else ingests.set(r.document_id, [entry]);
   }
 
-  return { nodes, hubs, childMaps, coreIdeas, archivedAtSince, superseded, derivedFrom, ingests };
+  return { nodes, hubs, childMaps, coreIdeas, archivedAtSince, superseded, derivedFrom, ingests, vaultStart: await loadVaultStart(db) };
 }
 
 /** The git refs of the ingestions whose input this digest already read, by row id (null: its method has none). */
@@ -547,6 +577,20 @@ function ingestRefsOf(rows: RawRow[]): Map<string, string | null> {
   return out;
 }
 
+/**
+ * The vault's first recorded activity (spec Addendum C2): the earlier of its
+ * earliest operation and its earliest header creation time (added_at, which
+ * stands in for rows lost before the id fix). Null for an empty vault.
+ */
+async function loadVaultStart(db: ReadDb): Promise<string | null> {
+  const [op, node] = await Promise.all([
+    db.selectFrom("graph_operations").select((eb) => eb.fn.min("timestamp").as("at")).where("timestamp", "like", ISO_LIKE).executeTakeFirst(),
+    db.selectFrom("graph_nodes").select((eb) => eb.fn.min("added_at").as("at")).where("added_at", "like", ISO_LIKE).executeTakeFirst(),
+  ]);
+  const found = [op?.at, node?.at].filter((at): at is string => typeof at === "string" && at !== "").sort();
+  return found[0] ?? null;
+}
+
 /** The git ref an INGEST_SOURCE summary ends with (summarize.ts: `Ingested “title” (ref)`), else null. */
 export function ingestRef(summary: string | null): string | null {
   return /” \(([^()\s]+)\)$/.exec(summary ?? "")?.[1] ?? null;
@@ -560,7 +604,8 @@ export function ingestRef(summary: string | null): string | null {
  */
 export async function loadChangeMaps(db: ReadDb): Promise<ScopeMap[]> {
   const maps = await db.selectFrom("graph_nodes").select(["document_id", "title", "note_type"]).where("document_type", "=", "bai/moc").execute();
-  const title = new Map(maps.map((m) => [m.document_id, m.title ?? m.document_id]));
+  const byId = new Map(maps.map((m) => [m.document_id, m]));
+  const title = (id: string) => byId.get(id)?.title ?? id;
   const hubs = new Set(maps.filter((m) => /MOC \(HUB\)/.test(m.note_type ?? "")).map((m) => m.document_id));
   const children = new Map<string, string[]>();
   for (const e of await db.selectFrom("graph_edges").select(["source_document_id", "target_document_id"]).where("link_type", "=", "CHILD_MOC").execute()) {
@@ -568,20 +613,59 @@ export async function loadChangeMaps(db: ReadDb): Promise<ScopeMap[]> {
     if (list) list.push(e.target_document_id);
     else children.set(e.source_document_id, [e.target_document_id]);
   }
-  const out: ScopeMap[] = [...hubs].map((id) => ({ id, title: title.get(id) as string, depth: 0 }));
+  const out: ScopeMap[] = [...hubs].map((id) => ({ id, title: title(id), depth: 0, area: null }));
   const seen = new Set(hubs);
-  let frontier = [...hubs];
+  // Each frontier map with the area it sits under (an area is its own).
+  let frontier: { id: string; area: string | null }[] = [...hubs].map((id) => ({ id, area: null }));
   for (let depth = 1; frontier.length; depth++) {
-    const next: string[] = [];
-    for (const id of frontier) {
+    const next: { id: string; area: string | null }[] = [];
+    for (const { id, area } of frontier) {
       for (const child of children.get(id) ?? []) {
-        if (seen.has(child) || !title.has(child)) continue;
+        if (seen.has(child) || !byId.has(child)) continue;
         seen.add(child);
-        next.push(child);
-        out.push({ id: child, title: title.get(child) as string, depth });
+        const under = depth === 1 ? child : area;
+        next.push({ id: child, area: under });
+        out.push({ id: child, title: title(child), depth, area: under });
       }
     }
     frontier = next;
+  }
+  return out;
+}
+
+/**
+ * Each of these maps' notes through its whole subtree: the CORE_IDEA notes of
+ * the map and of every map below it (CHILD_MOC, cycle-safe) — what a `q`
+ * scope counts its note hits against (spec Addendum C1c). Two reads: every
+ * CHILD_MOC edge and every CORE_IDEA edge.
+ */
+export async function loadMapNotes(db: ReadDb, mapIds: readonly string[]): Promise<Map<string, Set<string>>> {
+  const edges = await db.selectFrom("graph_edges").select(["source_document_id", "target_document_id", "link_type"]).where("link_type", "in", ["CHILD_MOC", "CORE_IDEA"]).execute();
+  const children = new Map<string, string[]>();
+  const ideas = new Map<string, string[]>();
+  for (const e of edges) {
+    const into = e.link_type === "CHILD_MOC" ? children : ideas;
+    const list = into.get(e.source_document_id);
+    if (list) list.push(e.target_document_id);
+    else into.set(e.source_document_id, [e.target_document_id]);
+  }
+  const out = new Map<string, Set<string>>();
+  for (const id of mapIds) {
+    const seen = new Set([id]);
+    const notes = new Set<string>();
+    for (let frontier = [id]; frontier.length; ) {
+      const next: string[] = [];
+      for (const m of frontier) {
+        for (const n of ideas.get(m) ?? []) notes.add(n);
+        for (const c of children.get(m) ?? []) {
+          if (seen.has(c)) continue;
+          seen.add(c);
+          next.push(c);
+        }
+      }
+      frontier = next;
+    }
+    out.set(id, notes);
   }
   return out;
 }
@@ -601,7 +685,14 @@ export async function loadChanges(
 ): Promise<ChangeDigest> {
   let ids: Set<string> | null = scope.documentIds ? new Set(scope.documentIds) : null;
   if (scope.moc) ids = intersect(ids, await mocScope(db, scope.moc));
+  // The main areas a q matched (Addendum C1): the union of their subtrees.
+  if (scope.mocs) {
+    const union = new Set<string>();
+    for (const id of scope.mocs) for (const d of await mocScope(db, id)) union.add(d);
+    ids = intersect(ids, union);
+  }
   if (scope.topic) ids = intersect(ids, await topicScope(db, scope.topic));
+  if (scope.sources) ids = intersect(ids, await sourcesScope(db, scope.sources));
 
   const raw = await windowRows(db, window, ids ? [...ids] : null);
   await fillInputs(db, raw, decidingHeavyRows(raw));
@@ -620,12 +711,13 @@ export async function loadChanges(
 
   const internal: ChangeScope = { ...(ids ? { documentIds: [...ids] } : {}), ...(scope.types ? { types: scope.types } : {}) };
   // Ids came from a scope key: the caller asked for events, even if the ids are empty.
-  if (!ids && (scope.q || scope.moc || scope.topic)) internal.documentIds = [];
+  if (!ids && (scope.q || scope.moc || scope.mocs || scope.topic || scope.sources)) internal.documentIds = [];
   const digest = buildChanges(rows, baseline, ctx, window, {
     scope: internal,
     limit: opts.limit,
     cursor: opts.cursor,
-    thenVsNow: Boolean(scope.q || scope.topic),
+    // A subject earns then-vs-now: a query, a topic, chosen areas or a source match (Addendum C1).
+    thenVsNow: Boolean(scope.q || scope.topic || scope.mocs || scope.sources),
   });
   return { ...digest, scope };
 }

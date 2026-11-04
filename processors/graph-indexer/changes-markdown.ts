@@ -99,7 +99,9 @@ function shiftLine(s: Shift): string {
 /** The story first: how the vault grew, then per area what is new, what changed, what retired. */
 function storySection(story: ChangeStory, out: string[]): void {
   const g = story.growth;
-  out.push("## What the vault knows now", "", `Live notes: ${g.notesThen} → ${g.notesNow}.`);
+  // Since predates the vault: when it began, never "0 notes then" (Addendum C2).
+  const grew = g.from ? `The vault began on ${g.from.slice(0, 10)}; it holds ${g.notesNow} live notes now.` : `Live notes: ${g.notesThen} → ${g.notesNow}.`;
+  out.push("## What the vault knows now", "", grew);
   if (g.newAreas.length) out.push(`New areas: ${g.newAreas.map((a) => a.title).join(", ")}.`);
   if (g.newMaps.length) out.push(`New maps: ${g.newMaps.map((m) => (m.area ? `${m.title} (${m.area})` : m.title)).join(", ")}.`);
   out.push("");
@@ -120,11 +122,19 @@ function thenVsNowSection(t: ThenVsNow, out: string[]): void {
   if (t.unchanged.length) out.push("Unchanged:", ...t.unchanged.map(claimLine), "");
 }
 
-/** What a `q` covered: the whole vault, the map it named, or a search. */
+/** What the scope covered: the areas named or matched, the sources matched, the whole vault, one map, or a search. */
 function scopeLine(d: ChangeDigest): string | null {
   const r = d.scope.resolved;
   if (!r) return null;
+  // q within areas or sources the caller chose searched them; on its own it matched them.
+  const q = d.scope.q ? ` (${d.scope.areas || d.scope.source ? "searched for" : "matched"} “${oneLine(d.scope.q, 80)}”)` : "";
   if (r.kind === "vault") return `Scope: the whole vault (“${oneLine(d.scope.q ?? r.title, 80)}” names ${oneLine(r.title, 80)}).`;
+  if (r.kind === "areas") {
+    const named = r.areas.length ? `the areas ${r.areas.map((a) => `${oneLine(a.title, 80)} [[${a.id}]]`).join(", ")}${q}` : "no area";
+    const unknown = r.unknown?.length ? `; no area is titled ${r.unknown.map((u) => `“${oneLine(u, 80)}”`).join(", ")}` : "";
+    return `Scope: ${named}${unknown}.`;
+  }
+  if (r.kind === "source") return `Scope: the notes from ${r.sources} source${r.sources === 1 ? "" : "s"} matching “${oneLine(r.match, 80)}”${q}.`;
   return r.kind === "moc"
     ? `Scope: the map ${r.title} [[${r.id}]]${d.scope.q ? ` (matched “${oneLine(d.scope.q, 80)}”)` : ""}.`
     : `Scope: search “${oneLine(r.query, 80)}” — ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes.`;

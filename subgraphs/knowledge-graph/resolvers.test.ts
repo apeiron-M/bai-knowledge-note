@@ -10,10 +10,12 @@ import type * as SearchModule from "./helpers/search.js";
 const changes = vi.fn();
 const edgesTouching = vi.fn();
 const changeMaps = vi.fn();
+const changeMapNotes = vi.fn();
+const changeSources = vi.fn();
 const searchVault = vi.fn();
 vi.mock("./helpers/db.js", async (importOriginal) => ({
   ...(await importOriginal<typeof DbModule>()),
-  getQuery: () => ({ changes, edgesTouching, changeMaps }),
+  getQuery: () => ({ changes, edgesTouching, changeMaps, changeMapNotes, changeSources }),
   resolveCanonicalDriveId: (_: unknown, id: string) => Promise.resolve(id),
 }));
 const backfillDriveSourceHistory = vi.fn();
@@ -150,8 +152,12 @@ describe("Query.knowledgeGraphChanges", () => {
     changes.mockReset().mockResolvedValue(digest);
     edgesTouching.mockReset().mockResolvedValue([]);
     changeMaps.mockReset().mockResolvedValue([]);
+    changeMapNotes.mockReset().mockResolvedValue(new Map());
+    changeSources.mockReset().mockResolvedValue([]);
     searchVault.mockReset().mockResolvedValue([]);
   });
+  const hitsOf = (ids: string[], documentType = "bai/knowledge-note") => ids.map((documentId) => ({ node: { documentId, documentType } }));
+  const range = (prefix: string, n: number) => Array.from({ length: n }, (_, i) => `${prefix}${i}`);
 
   it("is not privileged: a reader gets the digest, with the window parsed in UTC", async () => {
     expect(PRIVILEGED_RESOLVERS.has("knowledgeGraphChanges")).toBe(false);
@@ -185,7 +191,9 @@ describe("Query.knowledgeGraphChanges", () => {
     const { subgraph: s } = subgraph();
     const cursor = btoa(JSON.stringify({ k: [5, 1, "2026-11-02T00:00:00.000Z", "x", "revised"], u: "2026-11-03T12:00:00.000Z" }));
     const out = (await resolve(s)({}, { driveId: "d", since: "2026-11-01", q: "processors", limit: 20, cursor }, {})) as ChangeDigest;
-    expect(searchVault).toHaveBeenCalledWith(s, "d", "processors", "SEMANTIC", 25, false);
+    // One search: the top 200 note hits are counted per area; no area holds enough, so the first 25 are the scope.
+    expect(searchVault).toHaveBeenCalledTimes(1);
+    expect(searchVault).toHaveBeenCalledWith(s, "d", "processors", "SEMANTIC", 200, false);
     expect(changes.mock.calls[0][1]).toEqual({ q: "processors", documentIds: ["h1", "h2", "n9"] });
     expect(changes.mock.calls[0][2]).toEqual({ limit: 20, cursor, sourceFolders: new Map() });
     // No until given: the window ends where the cursor's did.
@@ -194,16 +202,164 @@ describe("Query.knowledgeGraphChanges", () => {
     expect(out.scope).toEqual({ q: "processors", resolved: { kind: "search", query: "processors", hits: 2 } });
   });
 
-  it("resolves a q that names a hub area or descendant map to that map's subtree, without searching", async () => {
+  it("resolves a q whose note hits concentrate in one area to that area's subtree", async () => {
     changeMaps.mockResolvedValue([
-      { id: "a1", title: "Data Processing and CQRS", depth: 1 },
-      { id: "m1", title: "Processors", depth: 2 },
+      { id: "a1", title: "Data Processing and CQRS", depth: 1, area: "a1" },
+      { id: "m1", title: "Processors", depth: 2, area: "a1" },
     ]);
+    searchVault.mockResolvedValue(hitsOf(range("n", 10)));
+    changeMapNotes.mockResolvedValue(new Map([["a1", new Set(range("n", 10))], ["m1", new Set(range("n", 5))]]));
     const { subgraph: s } = subgraph();
     const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "data processing" }, {})) as ChangeDigest;
-    expect(searchVault).not.toHaveBeenCalled();
+    expect(changeMapNotes).toHaveBeenCalledWith(["a1", "m1"]);
     expect(changes.mock.calls[0][1]).toEqual({ q: "data processing", moc: "a1" });
     expect(out.scope).toEqual({ q: "data processing", resolved: { kind: "moc", id: "a1", title: "Data Processing and CQRS" } });
+  });
+
+  describe("a specific term means the areas its notes concentrate in (Addendum C1c)", () => {
+    const HUB = [
+      { id: "hub", title: "Powerhouse Knowledge", depth: 0, area: null },
+      { id: "rd", title: "Reactor and Drives", depth: 1, area: "rd" },
+      { id: "rs", title: "Reactor Sync Infrastructure", depth: 1, area: "rs" },
+      { id: "dms", title: "Document Model System", depth: 1, area: "dms" },
+      { id: "lead", title: "Lead Corpus", depth: 1, area: "lead" },
+      { id: "att", title: "Attachments", depth: 2, area: "dms" },
+    ];
+    // 100 note hits: 50 in Reactor and Drives, 30 in Reactor Sync, 5 in the lead corpus.
+    const REACTOR = new Map([
+      ["rd", new Set(range("n", 50))],
+      ["rs", new Set(range("n", 80).slice(50))],
+      ["lead", new Set(range("n", 85).slice(80))],
+    ]);
+
+    it("scopes 'the powerhouse reactor' to the areas holding 10% of its top 200 note hits", async () => {
+      changeMaps.mockResolvedValue(HUB);
+      searchVault.mockResolvedValue(hitsOf(range("n", 100)));
+      changeMapNotes.mockResolvedValue(REACTOR);
+      const { subgraph: s } = subgraph();
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "the powerhouse reactor" }, {})) as ChangeDigest;
+      expect(searchVault).toHaveBeenCalledWith(s, "d", "the powerhouse reactor", "SEMANTIC", 200, false);
+      expect(changes.mock.calls[0][1]).toEqual({ q: "the powerhouse reactor", mocs: ["rd", "rs"] });
+      expect(out.scope).toEqual({
+        q: "the powerhouse reactor",
+        resolved: { kind: "areas", areas: [{ id: "rd", title: "Reactor and Drives" }, { id: "rs", title: "Reactor Sync Infrastructure" }] },
+      });
+    });
+
+    it("counts note hits only: maps and sources among the hits are left out", async () => {
+      changeMaps.mockResolvedValue(HUB);
+      // 40 map hits in the lead corpus would be 40% of all hits; they are not notes.
+      searchVault.mockResolvedValue([...hitsOf(range("m", 40), "bai/moc"), ...hitsOf(range("n", 60))]);
+      changeMapNotes.mockResolvedValue(new Map([["rd", new Set(range("n", 60))], ["lead", new Set(range("m", 40))]]));
+      const { subgraph: s } = subgraph();
+      await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "reactor" }, {});
+      expect(changes.mock.calls[0][1]).toEqual({ q: "reactor", moc: "rd" });
+    });
+
+    it("scopes a narrow subject to the one map below an area holding 60% of the hits, as a moc", async () => {
+      changeMaps.mockResolvedValue(HUB);
+      searchVault.mockResolvedValue(hitsOf(range("n", 20)));
+      changeMapNotes.mockResolvedValue(new Map([["dms", new Set(range("n", 20))], ["att", new Set(range("n", 18))]]));
+      const { subgraph: s } = subgraph();
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "attachments" }, {})) as ChangeDigest;
+      expect(changes.mock.calls[0][1]).toEqual({ q: "attachments", moc: "att" });
+      expect(out.scope.resolved).toEqual({ kind: "moc", id: "att", title: "Attachments" });
+    });
+
+    it("falls back to the first 25 hits and their neighbours when no area holds 10%", async () => {
+      changeMaps.mockResolvedValue(HUB);
+      searchVault.mockResolvedValue(hitsOf(range("n", 40)));
+      const { subgraph: s } = subgraph();
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "quantum chromodynamics" }, {})) as ChangeDigest;
+      expect(searchVault).toHaveBeenCalledTimes(1);
+      expect(out.scope.resolved).toEqual({ kind: "search", query: "quantum chromodynamics", hits: 25 });
+      expect((changes.mock.calls[0][1] as { documentIds: string[] }).documentIds).toHaveLength(25);
+    });
+
+    it("narrows several areas to explicit documentIds", async () => {
+      changeMaps.mockResolvedValue(HUB);
+      searchVault.mockResolvedValue(hitsOf(range("n", 100)));
+      changeMapNotes.mockResolvedValue(REACTOR);
+      const { subgraph: s } = subgraph();
+      await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "reactor", documentIds: ["n1"] }, {});
+      expect(changes.mock.calls[0][1]).toEqual({ q: "reactor", mocs: ["rd", "rs"], documentIds: ["n1"] });
+    });
+  });
+
+  describe("areas chosen by the caller (Addendum C1a)", () => {
+    const MAPS = [
+      { id: "hub", title: "Powerhouse Knowledge", depth: 0, area: null },
+      { id: "rd", title: "Reactor and Drives", depth: 1, area: "rd" },
+      { id: "dep", title: "Deployment and Operations", depth: 1, area: "dep" },
+      { id: "att", title: "Attachments", depth: 2, area: "rd" },
+    ];
+
+    it("scopes to the union of the named areas, by exact title (any case) or id, without searching", async () => {
+      changeMaps.mockResolvedValue(MAPS);
+      const { subgraph: s } = subgraph();
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", areas: ["reactor and drives", "dep"] }, {})) as ChangeDigest;
+      expect(searchVault).not.toHaveBeenCalled();
+      expect(changes.mock.calls[0][1]).toEqual({ areas: ["reactor and drives", "dep"], mocs: ["rd", "dep"] });
+      expect(out.scope).toEqual({
+        areas: ["reactor and drives", "dep"],
+        resolved: { kind: "areas", areas: [{ id: "rd", title: "Reactor and Drives" }, { id: "dep", title: "Deployment and Operations" }] },
+      });
+    });
+
+    it("reports titles it does not know, never guessing a near one; the hub is no area", async () => {
+      changeMaps.mockResolvedValue(MAPS);
+      const { subgraph: s } = subgraph();
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", areas: ["Reactor", "Powerhouse Knowledge", "Attachments"] }, {})) as ChangeDigest;
+      expect(changes.mock.calls[0][1]).toMatchObject({ mocs: ["att"] });
+      expect(out.scope.resolved).toEqual({ kind: "areas", areas: [{ id: "att", title: "Attachments" }], unknown: ["Reactor", "Powerhouse Knowledge"] });
+    });
+
+    it("scopes to nothing when no area is known", async () => {
+      changeMaps.mockResolvedValue(MAPS);
+      const { subgraph: s } = subgraph();
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", areas: ["The stack"] }, {})) as ChangeDigest;
+      expect(changes.mock.calls[0][1]).toEqual({ areas: ["The stack"], mocs: [] });
+      expect(out.scope.resolved).toEqual({ kind: "areas", areas: [], unknown: ["The stack"] });
+    });
+
+    it("with q, searches within the areas and still reports the areas", async () => {
+      changeMaps.mockResolvedValue(MAPS);
+      searchVault.mockResolvedValue(hitsOf(["n1"]));
+      const { subgraph: s } = subgraph();
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", areas: ["rd"], q: "snapshots" }, {})) as ChangeDigest;
+      expect(searchVault).toHaveBeenCalledWith(s, "d", "snapshots", "SEMANTIC", 25, false);
+      expect(changes.mock.calls[0][1]).toEqual({ areas: ["rd"], q: "snapshots", mocs: ["rd"], documentIds: ["n1"] });
+      expect(out.scope.resolved).toEqual({ kind: "areas", areas: [{ id: "rd", title: "Reactor and Drives" }] });
+    });
+  });
+
+  describe("scope by source (Addendum C1b)", () => {
+    it("scopes to the sources matching the text and the notes derived from them", async () => {
+      changeSources.mockResolvedValue(["s1", "s2"]);
+      const { subgraph: s } = subgraph();
+      Object.assign(s, {
+        readClient: {
+          get: vi.fn(() =>
+            Promise.resolve({
+              state: {
+                global: {
+                  name: "Vault",
+                  nodes: [
+                    { id: "f", kind: "folder", name: "sources" },
+                    { id: "s1", kind: "file", documentType: "bai/source", parentFolder: "f" },
+                  ],
+                },
+              },
+            }),
+          ),
+        },
+      });
+      const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", source: "powerhouse-inc/powerhouse" }, {})) as ChangeDigest;
+      expect(changeSources).toHaveBeenCalledWith("powerhouse-inc/powerhouse", new Map([["s1", "/sources"]]));
+      expect(searchVault).not.toHaveBeenCalled();
+      expect(changes.mock.calls[0][1]).toEqual({ source: "powerhouse-inc/powerhouse", sources: ["s1", "s2"] });
+      expect(out.scope).toEqual({ source: "powerhouse-inc/powerhouse", resolved: { kind: "source", match: "powerhouse-inc/powerhouse", sources: 2 } });
+    });
   });
 
   it("resolves a q that names the hub to the whole vault, server-side: no moc, no search, no q", async () => {
@@ -228,11 +384,12 @@ describe("Query.knowledgeGraphChanges", () => {
     expect(out.scope).toEqual({ q: "powerhouse vault", resolved: { kind: "vault", title: "Powerhouse Vault" } });
   });
 
-  it("narrows a q-named map to explicit documentIds (the ids always narrow what q resolves to)", async () => {
+  it("narrows a q-resolved map to explicit documentIds (the ids always narrow what q resolves to)", async () => {
     changeMaps.mockResolvedValue([{ id: "a1", title: "Data Processing and CQRS", depth: 1 }]);
+    searchVault.mockResolvedValue(hitsOf(range("n", 10)));
+    changeMapNotes.mockResolvedValue(new Map([["a1", new Set(range("n", 10))]]));
     const { subgraph: s } = subgraph();
     const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "data processing", documentIds: ["n1", "n2"] }, {})) as ChangeDigest;
-    expect(searchVault).not.toHaveBeenCalled();
     expect(changes.mock.calls[0][1]).toEqual({ q: "data processing", moc: "a1", documentIds: ["n1", "n2"] });
     expect(out.scope.resolved).toEqual({ kind: "moc", id: "a1", title: "Data Processing and CQRS" });
   });

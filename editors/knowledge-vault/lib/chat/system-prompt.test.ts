@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { MAX_ORIENTATION_TOPICS, buildSystemPrompt } from "./system-prompt.js";
+import { MAX_ORIENTATION_TOPICS, buildSystemPrompt, localDate } from "./system-prompt.js";
 
 const base = {
   vaultName: "Powerhouse Knowledge",
+  today: "2026-11-04",
   stats: { nodeCount: 521, edgeCount: 2211 },
   topics: [
     { name: "audit-trail", noteCount: 58 },
@@ -191,17 +192,54 @@ describe("buildSystemPrompt", () => {
 
   it("scopes change questions about the vault's main subject to the whole vault, and reads what the tool resolved (Addendum B1, B2, B4)", () => {
     const p = buildSystemPrompt(base);
-    expect(p).toMatch(/the vault as a whole or its main subject .* call what_changed with no moc, topic or query/);
-    expect(p).toMatch(/scope says what a query covered/);
+    expect(p).toMatch(/the vault as a whole .* call what_changed with no moc, topic, query, areas or source/);
+    expect(p).toMatch(/scope says what it covered/);
+    expect(p).toMatch(/the areas named or matched/);
     expect(p).toMatch(/detail: true/);
     expect(p).toMatch(/thenAt .* first recorded/);
     expect(p).toMatch(/versions/);
-    expect(p).toMatch(/merged .* not a change in understanding/);
+  });
+
+  it("picks the scope by the kind of subject: broad → unscoped then areas by title; a repo or document set → source; a specific term → query (Addendum C1)", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/broad subject that is not the whole vault — "the stack", "the technical side", "the business side" — first call what_changed without a scope, choose the areas it covers by their titles .* then call again with areas set to those exact titles/);
+    expect(p).toMatch(/never pass a title the list does not show/);
+    expect(p).toMatch(/not found, correct it from the list rather than guessing/);
+    expect(p).toMatch(/"what changed in <a repo, a document set, a book, a meeting series>" → call it with source/i);
+    expect(p).toMatch(/A specific term — "the reactor", "attachments" — → query/);
+    // The old rule sent the vault's theme to the whole vault; a broad subject now picks areas.
+    expect(p).not.toMatch(/"the Powerhouse stack" is the whole vault/);
+  });
+
+  it("carries today's date and resolves a month or season without a year to its most recent past occurrence (Addendum C2)", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toContain("Today is 2026-11-04");
+    expect(buildSystemPrompt({ ...base, today: "2027-02-10" })).toContain("Today is 2027-02-10");
+    expect(p).toMatch(/month or season without a year means its most recent past occurrence/);
+    expect(p).toMatch(/since September" → 2026-09-01/);
+    expect(p).toMatch(/since summer" → 2026-06-01/);
+    // In spring, last summer is last year's.
+    expect(buildSystemPrompt({ ...base, today: "2027-03-15" })).toMatch(/since January" → 2027-01-01, "since summer" → 2026-06-01/);
+    expect(p).toMatch(/vaultBegan[^.]*the vault began on <date>/);
+    expect(p).toMatch(/never "0 notes then"/);
+  });
+
+  it("never reports merges, and never describes an area beyond the claims it was given (Addendum C3, C5)", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).not.toMatch(/merged counts/);
+    expect(p).toMatch(/nameOnly/);
+    expect(p).toMatch(/named and counted, never characterised/);
+    expect(p).toMatch(/otherAreas/);
   });
 
   it("names the vault so the main-subject rule is actionable, and says a query naming it or its hub covers the whole vault (review B, I4)", () => {
     const p = buildSystemPrompt(base);
     expect(p).toMatch(/the vault's name \(“Powerhouse Knowledge”\)/);
     expect(p).toMatch(/a query that names the vault or its hub is answered for the whole vault/);
+  });
+
+  it("dates the prompt by the reader's calendar, not UTC's", () => {
+    expect(localDate(new Date(2026, 10, 4, 23, 30))).toBe("2026-11-04");
+    expect(localDate(new Date(2027, 0, 1, 0, 5))).toBe("2027-01-01");
   });
 });

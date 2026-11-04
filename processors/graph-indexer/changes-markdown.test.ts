@@ -137,4 +137,35 @@ describe("renderChangesMarkdown: the story leads", () => {
     const vault = renderChangesMarkdown({ ...digest, scope: { q: "Powerhouse stack", resolved: { kind: "vault", title: "Powerhouse Stack" } } });
     expect(vault).toContain("Scope: the whole vault (“Powerhouse stack” names Powerhouse Stack).");
   });
+
+  it("says when the vault began instead of 0 notes then, when since predates it (Addendum C2)", () => {
+    const story = digest.story;
+    if (!story) throw new Error("the fixture has a story");
+    const md = renderChangesMarkdown({ ...digest, story: { ...story, growth: { ...story.growth, notesThen: 0, from: "2026-09-02T10:00:00.000Z" } } });
+    expect(md).toContain("The vault began on 2026-09-02; it holds 150 live notes now.");
+    expect(md).not.toContain("Live notes: 0 →");
+  });
+
+  it("names the main areas a q matched (Addendum C1)", () => {
+    const md = renderChangesMarkdown({
+      ...digest,
+      scope: { q: "the reactor", resolved: { kind: "areas", areas: [{ id: "a1", title: "Reactor and Drives" }, { id: "a3", title: "Reactor Sync Infrastructure" }] } },
+    });
+    expect(md).toContain("Scope: the areas Reactor and Drives [[a1]], Reactor Sync Infrastructure [[a3]] (matched “the reactor”).");
+  });
+
+  it("names the areas asked for and the names it did not find (Addendum C1a)", () => {
+    const md = renderChangesMarkdown({
+      ...digest,
+      scope: { areas: ["Reactor and Drives", "The stack"], resolved: { kind: "areas", areas: [{ id: "a1", title: "Reactor and Drives" }], unknown: ["The stack"] } },
+    });
+    expect(md).toContain("Scope: the areas Reactor and Drives [[a1]]; no area is titled “The stack”.");
+  });
+
+  it("names a source scope with its match and how many sources it matched (Addendum C1b)", () => {
+    const md = renderChangesMarkdown({ ...digest, scope: { source: "powerhouse-inc/powerhouse", resolved: { kind: "source", match: "powerhouse-inc/powerhouse", sources: 12 } } });
+    expect(md).toContain("Scope: the notes from 12 sources matching “powerhouse-inc/powerhouse”.");
+    const one = renderChangesMarkdown({ ...digest, scope: { source: "x", q: "sync", resolved: { kind: "source", match: "x", sources: 1 } } });
+    expect(one).toContain("Scope: the notes from 1 source matching “x” (searched for “sync”).");
+  });
 });

@@ -17,11 +17,12 @@ function list(raw: string | null): string[] | undefined {
 }
 
 /**
- * `GET changes?drive=&since=&until=&moc=&topic=&q=&documentIds=&types=&limit=&cursor=`
+ * `GET changes?drive=&since=&until=&moc=&topic=&q=&areas=&source=&documentIds=&types=&limit=&cursor=`
  * — what changed in the drive over a window: the same digest as the
  * `knowledgeGraphChanges` query (one code path, so the same totals), as JSON,
  * or as a readable report with `Accept: text/markdown`. Read-gated at the
- * drive. `documentIds` and `types` are comma-separated.
+ * drive. `documentIds` and `types` are comma-separated; `areas` is repeated,
+ * one id or exact title each (a title may hold a comma).
  */
 export function createChangesRoute(deps: ChangesRouteDeps) {
   return async function handleChanges(request: Request, ctx: RouteContext): Promise<Response> {
@@ -39,6 +40,9 @@ export function createChangesRoute(deps: ChangesRouteDeps) {
         moc: params.get("moc"),
         topic: params.get("topic"),
         q: params.get("q"),
+        // One area per parameter: a title may hold a comma.
+        areas: params.getAll("areas").map((a) => a.trim()).filter(Boolean),
+        source: params.get("source"),
         documentIds: list(params.get("documentIds")),
         types: list(params.get("types")),
         limit: limit && Number.isFinite(Number(limit)) ? Number(limit) : undefined,

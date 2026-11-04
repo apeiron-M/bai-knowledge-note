@@ -47,6 +47,8 @@ export interface StoryContext {
   derivedFrom?: Map<string, string[]>;
   /** Each source's ingestions up to `until`, in time order, with the git ref each recorded (null: none). */
   ingests?: Map<string, { at: string; ref: string | null }[]>;
+  /** The vault's first recorded activity: its earliest operation or added_at (Addendum C2); null when it has none. */
+  vaultStart?: string | null;
 }
 
 export interface Claim {
@@ -90,6 +92,8 @@ export interface ChangeStory {
   growth: {
     notesThen: number;
     notesNow: number;
+    /** When `since` predates the vault's first recorded activity: that activity — growth is counted from it (Addendum C2). */
+    from?: string;
     newAreas: { id: string; title: string }[];
     newMaps: { id: string; title: string; area: string | null }[];
   };
@@ -181,11 +185,13 @@ export function claimSimilarity(a: string, b: string): number {
   return both / (x.size + y.size - both);
 }
 
-/** A map a `q` scope may name: a hub area (depth 1) or a map below one. */
+/** A map a `q` scope may name: a hub (depth 0), a hub area (depth 1) or a map below one. */
 export interface ScopeMap {
   id: string;
   title: string;
   depth: number;
+  /** The top-level area the map sits under (itself for an area); null for a hub. Absent: an area is its own. */
+  area?: string | null;
 }
 
 /**
@@ -195,7 +201,10 @@ export interface ScopeMap {
 const QUERY_FILLER = new Set(
   ["what", "how", "why", "when", "where", "which", "who", "did", "does", "do", "done", "has", "have", "had", "was", "were", "been",
     "work", "works", "worked", "working", "change", "changed", "changes", "new", "now", "then", "lately", "recently", "since",
-    "today", "about", "tell", "me", "we", "our", "us", "you", "i"].map(foldPlural),
+    "today", "about", "tell", "me", "we", "our", "us", "you", "i",
+    // A period is not a subject (Addendum C1): "since September", "this summer", "last year".
+    "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december",
+    "spring", "summer", "autumn", "fall", "winter", "last", "past", "week", "month", "year", "ago", "until", "between"].map(foldPlural),
 );
 /** A map whose words are a subset of the query must cover at least this share of the query's content words. */
 export const MAP_COVERAGE = 0.5;
@@ -212,7 +221,7 @@ export const MAP_COVERAGE = 0.5;
  * them and the query searches instead (null). Null when none matches.
  */
 export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMap | null {
-  const q = new Set([...claimTokens(query)].filter((w) => !QUERY_FILLER.has(w)));
+  const q = queryWords(query);
   if (!q.size) return null;
   const titled = maps.map((map) => ({ map, t: claimTokens(map.title) })).filter((m) => m.t.size);
   const sharing = titled.filter(({ t }) => [...t].some((w) => q.has(w))).length;
@@ -230,6 +239,52 @@ export function matchMapTitle(query: string, maps: readonly ScopeMap[]): ScopeMa
   return hits[0]?.map ?? null;
 }
 
+/** The content words of a question: its {@link claimTokens} without {@link QUERY_FILLER}. */
+function queryWords(query: string): Set<string> {
+  return new Set([...claimTokens(query)].filter((w) => !QUERY_FILLER.has(w)));
+}
+
+/** An area is in a `q` scope when it holds at least this share of the query's note hits (Addendum C1c). */
+export const AREA_HIT_SHARE = 0.1;
+/** At most this many areas make one `q` scope. */
+export const MAX_SCOPE_AREAS = 8;
+/** A map below an area replaces the selected areas when it holds at least this share of their hits. */
+export const NARROW_HIT_SHARE = 0.6;
+
+/**
+ * The areas a specific term means (spec Addendum C1c): its top semantic note
+ * hits are counted per top-level area subtree (`mapNotes`: each map's notes,
+ * its descendant maps' included; a hit in two areas counts for both), and
+ * every area holding at least {@link AREA_HIT_SHARE} of all the hits is
+ * selected, most hits first, at most {@link MAX_SCOPE_AREAS}. When one map
+ * below an area holds at least {@link NARROW_HIT_SHARE} of the selected
+ * areas' hits, it alone is the scope (the one with most of them; a tie goes
+ * to the deeper map). Null when no area holds enough: search instead.
+ */
+export function selectAreasByHits(hits: readonly string[], maps: readonly ScopeMap[], mapNotes: ReadonlyMap<string, ReadonlySet<string>>): ScopeMap[] | null {
+  const all = new Set(hits);
+  if (!all.size) return null;
+  const inMap = (id: string, among: ReadonlySet<string>) => {
+    const notes = mapNotes.get(id);
+    return notes ? [...among].filter((n) => notes.has(n)) : [];
+  };
+  const selected = maps
+    .filter((m) => m.depth === 1)
+    .map((area) => ({ area, hits: inMap(area.id, all) }))
+    .filter((a) => a.hits.length >= AREA_HIT_SHARE * all.size)
+    .sort((a, b) => b.hits.length - a.hits.length || a.area.title.localeCompare(b.area.title))
+    .slice(0, MAX_SCOPE_AREAS);
+  if (!selected.length) return null;
+  const covered = new Set(selected.flatMap((a) => a.hits));
+  const narrow = maps
+    .filter((m) => m.depth >= 2)
+    .map((map) => ({ map, count: inMap(map.id, covered).length }))
+    .filter((m) => m.count >= NARROW_HIT_SHARE * covered.size)
+    .sort((a, b) => b.count - a.count || b.map.depth - a.map.depth || a.map.title.localeCompare(b.map.title))
+    .at(0);
+  return narrow ? [narrow.map] : selected.map((a) => a.area);
+}
+
 /**
  * A SUPERSEDES reason that says the two notes were one claim written twice —
  * anchored phrases only (spec Addendum B corrections): a reason that merely
@@ -243,6 +298,9 @@ const DUPLICATE_REASON = [
   /\bidentical claim\b/i,
   /\bredundant with\b/i,
   /merged (into|with) (the )?(newer|older|surviving|twin)/i,
+  // Addendum C6: a rewording whose reason says it states the same thing.
+  /\bstates the same\b/i,
+  /\bsame (floor|rule|limit|default)\b/i,
 ];
 /** With no reason, at or above this title similarity a supersession is a duplicate merge. */
 export const MERGE_SIMILARITY = 0.8;
@@ -374,6 +432,13 @@ export function storyFacts(events: ChangeEvent[], thenFields: ThenFields, s: Sto
   // A note created in the window reports `created` only, never `archived`:
   // archived now, it was archived in the window too.
   for (const e of events) if (e.kind === "created" && archivedNow(e.documentId)) archivedInWindow.add(e.documentId);
+  // A note created in the window always says when its then was first recorded:
+  // its creating batch, else its creation time — added_at when the CREATE row was lost (Addendum C4).
+  for (const sh of shifts.values()) {
+    if (sh.thenAt || !created.has(sh.documentId)) continue;
+    const at = thenFields.get(sh.documentId)?.at ?? createdAt.get(sh.documentId);
+    if (at) sh.thenAt = at;
+  }
   const firstAt = new Map([...shifts.values()].flatMap((sh) => (sh.thenAt ? [[sh.documentId, sh.thenAt] as const] : [])));
   // Retired: archived in the window, still archived, and replaced by nothing — ever.
   const retired = new Set(
@@ -425,6 +490,7 @@ export function buildStory(f: Facts, s: StoryContext): ChangeStory {
   const growth: ChangeStory["growth"] = {
     notesThen: notes.filter(f.liveThen).length,
     notesNow: notes.filter(f.liveNow).length,
+    ...(s.vaultStart && s.vaultStart > f.since ? { from: s.vaultStart } : {}),
     newAreas: maps.filter(([id]) => isArea(id)).map(([id, n]) => ({ id, title: n.title || id })),
     newMaps: maps
       .filter(([id]) => !isArea(id))

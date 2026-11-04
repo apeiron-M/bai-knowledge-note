@@ -2060,7 +2060,7 @@ describe("what_changed — the change digest over a window", () => {
     const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
     const params = tool?.function.parameters as { properties: Record<string, unknown>; required: string[] };
     expect(params.required).toEqual(["since"]);
-    expect(Object.keys(params.properties).sort()).toEqual(["cursor", "detail", "limit", "moc", "query", "since", "topic", "until"]);
+    expect(Object.keys(params.properties).sort()).toEqual(["areas", "cursor", "detail", "limit", "moc", "query", "since", "source", "topic", "until"]);
     expect(tool?.function.description).toMatch(/never search/i);
   });
 
@@ -2081,6 +2081,8 @@ describe("what_changed — the change digest over a window", () => {
       moc: "m1",
       topic: null,
       q: "processors",
+      areas: null,
+      source: null,
       cursor: "abc",
       limit: 10,
       detail: true,
@@ -2237,7 +2239,7 @@ describe("what_changed — the change digest over a window", () => {
       })),
     };
   };
-  type ChatArea = { id: string | null; title: string; new: unknown[]; changed: unknown[]; retired: unknown[]; more?: string };
+  type ChatArea = { id: string | null; title: string; new: unknown[]; changed: unknown[]; retired: unknown[]; more?: string; nameOnly?: boolean };
   type ChatStoryOut = { growth: { newMaps: string[]; moreNewMaps?: number }; areas: ChatArea[]; otherAreas?: Record<string, unknown>[]; moreAreas?: number };
 
   it("covers the most-changed areas of a 50-area vault with 100 new maps, under 12 KB", () => {
@@ -2376,7 +2378,7 @@ describe("what_changed — the change digest over a window", () => {
       expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
     });
 
-    it("says what the query resolved to, and carries merges, source versions and first-recorded dates", async () => {
+    it("says what the query resolved to, and carries source versions and first-recorded dates, but no merge counts (Addendum C3)", async () => {
       const story = bigStory();
       story.areas[0] = {
         ...story.areas[0],
@@ -2396,12 +2398,111 @@ describe("what_changed — the change digest over a window", () => {
       const data = r.data as { scope: string; story: { areas: Record<string, unknown>[] }; thenVsNow: { then: Record<string, unknown>[] } };
       expect(data.scope).toBe("the map Data Processing and CQRS (a2)");
       expect(r.summary).toMatch(/the map Data Processing and CQRS/);
-      expect(data.story.areas[0]).toMatchObject({ merged: 4, versions: "v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d" });
+      expect(data.story.areas[0]).toMatchObject({ versions: "v6.2.2-dev.74 → v6.2.3-dev.91+e0f277d" });
+      expect(data.story.areas[0]).not.toHaveProperty("merged");
+      expect(JSON.stringify(r.data)).not.toMatch(/merged/i);
       expect((data.story.areas[0].changed as Record<string, unknown>[])[0]).toMatchObject({ thenAt: "2026-09-02" });
       expect(data.thenVsNow.then[0]).toMatchObject({ thenAt: "2026-09-02" });
       const { body } = lastRequest();
-      expect(body.query).toContain("resolved { kind id title query hits }");
-      expect(body.query).toContain("mergedCount versions { first now }");
+      expect(body.query).toContain("resolved { kind id title query hits areas { id title } unknown match sources }");
+      expect(body.query).toContain("retiredCount versions { first now }");
+      expect(body.query).not.toContain("mergedCount");
+    });
+
+    it("says when the vault began instead of counting notes then, when since predates it (Addendum C2)", async () => {
+      const story = bigStory();
+      const from = "2026-09-02T10:00:00.000Z";
+      mockGql({
+        knowledgeGraphChanges: {
+          ...heavyDigest(1, false),
+          window: { since: "2025-09-01T00:00:00.000Z", until: "2026-11-04T23:59:59.999Z", vaultStart: from },
+          story: { ...story, growth: { ...story.growth, notesThen: 0, from } },
+          thenVsNow: null,
+        },
+      });
+      const r = await executeTool("what_changed", { since: "2025-09-01" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const growth = (r.data as { story: { growth: Record<string, unknown> } }).story.growth;
+      expect(growth.vaultBegan).toBe("2026-09-02");
+      expect(growth).not.toHaveProperty("notesThen");
+      expect(r.summary).toMatch(/the vault began on 2026-09-02/);
+      expect(r.summary).not.toMatch(/0 →/);
+      expect(lastRequest().body.query).toContain("window { since until vaultStart }");
+      expect(lastRequest().body.query).toMatch(/growth \{ notesThen notesNow from /);
+    });
+
+    it("marks an area it names without any claim nameOnly, and no area that shows claims (Addendum C5)", () => {
+      const story = bigStory();
+      story.areas[0] = { ...story.areas[0], newCount: 0, changedCount: 0, retiredCount: 0, newClaims: [], changedClaims: [], retiredClaims: [] };
+      const out = chatStory(story as Parameters<typeof chatStory>[0], 40_000) as ChatStoryOut;
+      const bare = out.areas.find((a) => a.id === story.areas[0].id);
+      expect(bare?.nameOnly).toBe(true);
+      for (const a of out.areas.filter((x) => x !== bare)) expect(a.nameOnly).toBeUndefined();
+    });
+
+    it("names the main areas a query matched (Addendum C1)", async () => {
+      mockGql({
+        knowledgeGraphChanges: {
+          ...scopedDigest(),
+          story: null,
+          scope: { q: "the reactor", resolved: { kind: "areas", areas: [{ id: "rd", title: "Reactor and Drives" }, { id: "rs", title: "Reactor Sync Infrastructure" }] } },
+        },
+      });
+      const r = await executeTool("what_changed", { since: "2026-09-01", query: "the reactor" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect((r.data as { scope: string }).scope).toBe("the main areas Reactor and Drives (rd), Reactor Sync Infrastructure (rs)");
+      const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+      expect(tool?.function.description).toMatch(/main areas about it/);
+    });
+
+    it("passes areas (ids or titles, a [[id]] unwrapped) and source through, and names what they covered (Addendum C1a, C1b)", async () => {
+      mockGql({
+        knowledgeGraphChanges: {
+          ...scopedDigest(),
+          story: null,
+          scope: { areas: ["Reactor and Drives", "The stack"], resolved: { kind: "areas", areas: [{ id: "rd", title: "Reactor and Drives" }], unknown: ["The stack"] } },
+        },
+      });
+      const r = await executeTool("what_changed", { since: "2026-09-01", areas: ["Reactor and Drives", "[[rs]]", " ", "The stack"] }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const { body } = lastRequest();
+      expect(body.variables).toMatchObject({ areas: ["Reactor and Drives", "rs", "The stack"], source: null, q: null });
+      expect(body.query).toMatch(/areas: \$areas, source: \$source/);
+      expect(body.query).toContain("areas { id title } unknown match sources }");
+      expect((r.data as { scope: string }).scope).toBe("the areas Reactor and Drives (rd); no area is titled “The stack” — use the exact titles from the story");
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), story: null, scope: { source: "powerhouse-inc/powerhouse", resolved: { kind: "source", match: "powerhouse-inc/powerhouse", sources: 3 } } } });
+      const s = await executeTool("what_changed", { since: "2026-09-01", source: "powerhouse-inc/powerhouse" }, CTX);
+      if (!s.ok) throw new Error(s.error);
+      expect(lastRequest().body.variables).toMatchObject({ source: "powerhouse-inc/powerhouse", areas: null });
+      expect((s.data as { scope: string }).scope).toBe("the notes from 3 sources matching “powerhouse-inc/powerhouse”");
+    });
+
+    it("stays ≤ 14 KB with a detail page when the model names sixty areas, half unknown (Addendum C1a)", async () => {
+      const title = (i: number) => `Area ${i} ${"with a long title ".repeat(5)}`;
+      const areas = Array.from({ length: 30 }, (_, i) => ({ id: `a${i}`.padEnd(44, "x"), title: title(i) }));
+      const unknown = Array.from({ length: 30 }, (_, i) => `Unknown ${title(i)}`);
+      mockGql({ knowledgeGraphChanges: { ...scopedDigest(), scope: { areas: [...areas.map((a) => a.title), ...unknown], resolved: { kind: "areas", areas, unknown } } } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", areas: [...areas.map((a) => a.title), ...unknown], detail: true }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+      const scope = (r.data as { scope: string }).scope;
+      expect(scope).toMatch(/and 18 more areas/);
+      expect(scope).toMatch(/and 20 more names/);
+    });
+
+    it("describes areas, source and query for the three kinds of subject", () => {
+      const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
+      if (!tool) throw new Error("what_changed is not offered");
+      const props = (tool.function.parameters as { properties: Record<string, { type: string; description: string; items?: { type: string } }> }).properties;
+      expect(props.areas.type).toBe("array");
+      expect(props.areas.items?.type).toBe("string");
+      expect(props.areas.description).toMatch(/exact titles?/);
+      expect(props.areas.description).toMatch(/call without/);
+      expect(props.source.description).toMatch(/repo/);
+      expect(props.source.description).toMatch(/title, provenance URL or folder path/);
+      expect(props.query.description).toMatch(/specific/);
+      expect(tool.function.description).toMatch(/areas/);
+      expect(tool.function.description).not.toMatch(/match it best/);
     });
 
     it("names a search scope with its hit count", async () => {

@@ -10,7 +10,7 @@ import { KNOWLEDGE_NODE_TYPE_LIST } from "./project.js";
 import { parseEdgeMetadata, type EdgeConfidence } from "./edge-metadata.js";
 import { SOURCE_ROW_VERSION, type TimelineSourceRow } from "./source-timeline.js";
 import type { ChangeDigest, ChangeScope } from "./changes.js";
-import { loadChangeMaps, loadChanges } from "./changes-query.js";
+import { loadChangeMaps, loadChanges, loadMapNotes, loadMatchingSources } from "./changes-query.js";
 import type { ScopeMap } from "./changes-story.js";
 
 /**
@@ -1116,6 +1116,16 @@ export function createGraphQuery(db: GraphReadDb) {
     /** The hub's areas and the maps below them, for a `q` scope to name a map. */
     async changeMaps(): Promise<ScopeMap[]> {
       return loadChangeMaps(db);
+    },
+
+    /** Each map's notes through its subtree, for a `q` scope's note-hit concentration (Addendum C1c). */
+    async changeMapNotes(mapIds: string[]): Promise<Map<string, Set<string>>> {
+      return loadMapNotes(db, mapIds);
+    },
+
+    /** The sources a `source` scope matches: title, provenance URL or folder path (Addendum C1b). */
+    async changeSources(match: string, sourceFolders: ReadonlyMap<string, string>): Promise<string[]> {
+      return loadMatchingSources(db, match, sourceFolders);
     },
 
     async history(documentId: string, limit = 50): Promise<OperationRecord[]> {

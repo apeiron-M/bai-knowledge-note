@@ -498,13 +498,13 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "what_changed",
       description:
-        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query; a query that names a map (an area or a map below it) scopes to that map, otherwise to the top search hits and their linked notes; `scope` says which. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). Three ways to scope a subject: areas — the hub's areas you name by their exact titles (or ids) from story.areas / story.otherAreas of a call without scope, for a broad subject such as \"the stack\" or \"the business side\"; source — the notes derived from the sources whose title, provenance URL or folder path contains the text, for \"what changed in <a repo / document set / book / meeting series>\"; query — a specific term (\"the reactor\", \"attachments\"), which means the main areas about it, the areas holding most of its top note hits (or the one map below them holding most, for a narrow term), and only when its hits are spread thin, the top search hits and their linked notes. A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query. `scope` says what was covered, and names any area title it did not find. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
       parameters: {
         type: "object",
         properties: {
           since: {
             type: "string",
-            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself, and tell the person which one you used.",
+            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself — a month or season without a year is its most recent past occurrence, by today's date in your instructions — and tell the person which one you used.",
           },
           until: {
             type: "string",
@@ -521,7 +521,18 @@ export const VAULT_TOOLS: ToolSchema[] = [
           },
           query: {
             type: "string",
-            description: "A subject in words, when no map or topic names it: its top search hits and their linked notes are the scope.",
+            description: "A specific term in words (\"the reactor\", \"attachments\"): the scope is the main areas its notes concentrate in, else its top search hits and their linked notes. Not for a broad subject (use areas) or a repo or document set (use source); leave it out for the vault as a whole.",
+          },
+          areas: {
+            type: "array",
+            items: { type: "string" },
+            description:
+              "For a broad subject that is not the whole vault (\"the stack\", \"the technical side\", \"the business side\"): the areas it covers, by their exact titles as story.areas and story.otherAreas list them (or their ids). Make a call without query, areas or source first, pick the relevant areas by their titles, then call again with them. A title the vault does not have comes back in scope as not found — correct it from the list; never guess.",
+          },
+          source: {
+            type: "string",
+            description:
+              "For \"what changed in <a repo, document set, book or meeting series>\": text the sources' title, provenance URL or folder path contains (\"powerhouse-inc/powerhouse\", \"/sources/handbook\"), case-insensitive; the scope is those sources and the notes derived from them.",
           },
           cursor: {
             type: "string",
@@ -1582,6 +1593,14 @@ function str(args: Record<string, unknown>, key: string): string | null {
   return unwrapped ? unwrapped : null;
 }
 
+/** A list of string arguments (one string is a list of one), each unwrapped as {@link str} does; null when none is left. */
+function strList(args: Record<string, unknown>, key: string): string[] | null {
+  const v = args[key];
+  const raw: unknown[] = Array.isArray(v) ? v : typeof v === "string" ? [v] : [];
+  const out = [...new Set(raw.map((x) => str({ x }, "x")).filter((x): x is string => x !== null))];
+  return out.length ? out : null;
+}
+
 function int(
   args: Record<string, unknown>,
   key: string,
@@ -1768,16 +1787,16 @@ const CHANGE_EVENT_FIELDS = `kind documentId documentType title at by significan
   source { refBefore refAfter url added removed hunks noteIds noteCount } derivedFrom folded { operationType count }`;
 const CHANGE_CLAIM_FIELDS = "documentId claim gist";
 const CHANGE_TOTALS_FIELDS = "created revised superseded archived reverified sourcesRevised sourcesAdded documents operations";
-const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $cursor: String, $limit: Int, $detail: Boolean!) {
-  knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc, topic: $topic, q: $q, cursor: $cursor, limit: $limit) {
-    window { since until }
-    scope { moc topic q resolved { kind id title query hits } }
+const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, $moc: String, $topic: String, $q: String, $areas: [String!], $source: String, $cursor: String, $limit: Int, $detail: Boolean!) {
+  knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc, topic: $topic, q: $q, areas: $areas, source: $source, cursor: $cursor, limit: $limit) {
+    window { since until vaultStart }
+    scope { moc topic q areas source resolved { kind id title query hits areas { id title } unknown match sources } }
     totals { ${CHANGE_TOTALS_FIELDS} }
     events @include(if: $detail) { ${CHANGE_EVENT_FIELDS} }
     nextCursor @include(if: $detail)
     story {
-      growth { notesThen notesNow newAreas { id title } newMaps { id title area } }
-      areas { id title notesThen notesNow newCount changedCount retiredCount mergedCount versions { first now }
+      growth { notesThen notesNow from newAreas { id title } newMaps { id title area } }
+      areas { id title notesThen notesNow newCount changedCount retiredCount versions { first now }
         newClaims { ${CHANGE_CLAIM_FIELDS} }
         changedClaims { documentId then { claim gist } now { claim gist } why replacedBy thenAt }
         retiredClaims { ${CHANGE_CLAIM_FIELDS} } }
@@ -1789,8 +1808,8 @@ const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, 
 /** knowledgeGraphChanges as the wire carries it (folded is a list there). */
 type ChangeEventWire = { documentId: string; by?: string | null } & Record<string, unknown>;
 type ChangeDigestWire = {
-  window: { since: string; until: string };
-  scope?: { resolved?: ResolvedScope | null } | null;
+  window: { since: string; until: string; vaultStart?: string | null };
+  scope?: { q?: string | null; areas?: string[] | null; source?: string | null; resolved?: ResolvedScope | null } | null;
   totals: ChangeTotals;
   events?: ChangeEventWire[] | null;
   nextCursor?: string | null;
@@ -1810,6 +1829,9 @@ const STORY_MIN_ROOM = 1_200;
 const DETAILED_AREAS = 10;
 /** Fewest areas it keeps in detail while thinning their claims. */
 const KEPT_AREAS = 8;
+/** Areas, and area names not found, a scope line names; the rest are counted. */
+const SCOPE_NAMED_AREAS = 12;
+const SCOPE_NAMED_UNKNOWN = 10;
 /** New maps and new areas named by title; the rest are counted. */
 const NAMED_MAPS = 15;
 
@@ -1845,9 +1867,27 @@ export function chatThenVsNow(t: ThenVsNow, perSide = CHAT_THEN_VS_NOW): Record<
   return { then: side(t.then), now: side(t.now), unchanged: side(t.unchanged), ...(extra ? { more: `${extra} more claims not shown` } : {}) };
 }
 
-/** What a q covered, in words: the map it named, or a search. */
-function resolvedLine(r: ResolvedScope): string {
+/** Live notes then → now, or — since predates the vault — when it began and how many it holds now. */
+function growthLine(g: ChangeStory["growth"]): string {
+  return g.from ? `the vault began on ${g.from.slice(0, 10)}; ${g.notesNow} live notes now` : `live notes ${g.notesThen} → ${g.notesNow}`;
+}
+
+/** What a scope covered, in words: the areas named (and any not found) or matched, the sources matched, the whole vault, one map, or a search. */
+function resolvedLine(r: ResolvedScope, asked: { areas?: string[] | null } = {}): string {
   if (r.kind === "vault") return `the whole vault (“${clip(r.title, 80)}” names it)`;
+  if (r.kind === "areas") {
+    // A model may name many areas: the line names a few and counts the rest, so it never crowds out the story.
+    const list = <T>(items: readonly T[], max: number, show: (x: T) => string, rest: string) =>
+      items.slice(0, max).map(show).join(", ") + (items.length > max ? ` and ${items.length - max} more ${rest}` : "");
+    const named = r.areas.length
+      ? `${asked.areas?.length ? "the areas" : "the main areas"} ${list(r.areas, SCOPE_NAMED_AREAS, (a) => `${clip(a.title, 80)} (${clip(a.id, 60)})`, "areas")}`
+      : "no area";
+    const unknown = r.unknown?.length
+      ? `; no area is titled ${list(r.unknown, SCOPE_NAMED_UNKNOWN, (u) => `“${clip(u, 80)}”`, "names")} — use the exact titles from the story`
+      : "";
+    return named + unknown;
+  }
+  if (r.kind === "source") return `the notes from ${r.sources} source${r.sources === 1 ? "" : "s"} matching “${clip(r.match, 80)}”`;
   if (r.kind === "moc") return `the map ${clip(r.title, 80)} (${r.id})`;
   return `search “${clip(r.query, 80)}”: ${r.hits} hit${r.hits === 1 ? "" : "s"} and their linked notes`;
 }
@@ -1896,7 +1936,8 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
   const growthNaming = (names: number) => {
     const extra = (key: string, list: unknown[]) => (list.length > names ? { [key]: list.length - names } : {});
     return {
-      notesThen: g.notesThen,
+      // Since predates the vault: say when it began, never "0 notes then" (Addendum C2).
+      ...(g.from ? { vaultBegan: g.from.slice(0, 10) } : { notesThen: g.notesThen }),
       notesNow: g.notesNow,
       newAreas: g.newAreas.slice(0, names).map((a) => clip(a.title, 80)),
       ...extra("moreNewAreas", g.newAreas),
@@ -1922,8 +1963,9 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
       changed: changed.map(chatShift),
       retired: retired.map((c) => chatClaim(c, gists)),
       ...(more.length ? { more: more.join(", ") } : {}),
-      // Twin notes merged: not a change in understanding, only counted.
-      ...(a.mergedCount ? { merged: a.mergedCount } : {}),
+      // Named without a claim: the model may name and count it, never characterise it (Addendum C5).
+      ...(newClaims.length + changed.length + retired.length === 0 ? { nameOnly: true } : {}),
+      // No merge counts: twin notes folded together are housekeeping, never a change to report (Addendum C3).
       ...(a.versions ? { versions: `${a.versions.first ?? "?"} → ${a.versions.now ?? "?"}` } : {}),
     };
   };
@@ -2692,6 +2734,8 @@ export async function executeTool(
         moc,
         topic: str(args, "topic"),
         q: str(args, "query"),
+        areas: strList(args, "areas"),
+        source: str(args, "source"),
         cursor,
         limit: int(args, "limit", LIMITS.changes.default, LIMITS.changes.max),
         detail,
@@ -2706,6 +2750,7 @@ export async function executeTool(
         byName: e.by ? (names.get(e.by) ?? null) : null,
       });
       const resolved = digest.scope?.resolved ?? null;
+      const scopeLine = resolved ? resolvedLine(resolved, digest.scope ?? {}) : null;
       // The story is the answer — what the vault knows now that it did not
       // before, by main area; totals are one line. The whole result stays
       // within CHANGES_CHAT_BUDGET: a page of events first (when asked), then
@@ -2713,7 +2758,7 @@ export async function executeTool(
       const data: Record<string, unknown> = {
         window: digest.window,
         totals: totalsLine(digest.totals),
-        ...(resolved ? { scope: resolvedLine(resolved) } : {}),
+        ...(scopeLine ? { scope: scopeLine } : {}),
         ...(events ? { events: drillPage(events.map(named)), nextCursor: digest.nextCursor ?? null } : {}),
       };
       const size = (v: unknown) => JSON.stringify(v).length;
@@ -2729,13 +2774,13 @@ export async function executeTool(
         else data.story = "left out of this detail page — the call without detail carries it";
       }
       const span = `between ${digest.window.since.slice(0, 10)} and ${digest.window.until.slice(0, 10)}`;
-      const covered = resolved ? `; scope: ${resolvedLine(resolved)}` : "";
+      const covered = scopeLine ? `; scope: ${scopeLine}` : "";
       if (digest.totals.documents === 0) return ok(data, `nothing changed ${span}${covered}`);
       return ok(
         data,
         `${totalsLine(digest.totals)} ${span}` +
           covered +
-          (digest.story ? `; live notes ${digest.story.growth.notesThen} → ${digest.story.growth.notesNow}, ${digest.story.areas.length} area${digest.story.areas.length === 1 ? "" : "s"} changed` : "") +
+          (digest.story ? `; ${growthLine(digest.story.growth)}, ${digest.story.areas.length} area${digest.story.areas.length === 1 ? "" : "s"} changed` : "") +
           (digest.thenVsNow ? "; thenVsNow for the scope" : "") +
           (events ? `; ${events.length} event${events.length === 1 ? "" : "s"}${digest.nextCursor ? ", more with nextCursor" : ""}` : ""),
       );
