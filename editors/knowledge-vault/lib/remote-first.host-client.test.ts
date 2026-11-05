@@ -104,6 +104,28 @@ describe("enableRemoteFirst under a host-provided client", () => {
     expect(handle.remoteClient).not.toBe(workerClient);
   });
 
+  it("gives its own client every model Connect has loaded, read on each push — not the vault's alone", async () => {
+    // Live: Workflow Studio's publish of a workflow in another drive — a batch,
+    // signed as a chain — failed with "Unknown document model version:
+    // powerhouse/workflow v1 (no module for this document type)": the hybrid
+    // carries every document's writes, and this client knew the vault's models only.
+    const workflow = { documentModel: { global: { id: "powerhouse/workflow" } }, reducer: vi.fn(), version: 1 };
+    const packages: { documentModels: unknown[] }[] = [];
+    const workerClient = { get: vi.fn(), getOperations: vi.fn(), execute: vi.fn() };
+    stubWindow({ reactorClient: workerClient, vetraPackageManager: { packages } });
+    const { enableRemoteFirst } = await import("./remote-first.js");
+    enableRemoteFirst({ endpoint: "http://localhost:4001/graphql", driveId: "d1" });
+    const options = ctor.mock.calls[0][0] as { documentModels: unknown };
+    expect(typeof options.documentModels).toBe("function");
+    const ids = () =>
+      (options.documentModels as () => { documentModel: { global: { id: string } } }[])().map((m) => m.documentModel.global.id);
+    expect(ids()).toContain("bai/knowledge-note");
+    expect(ids()).not.toContain("powerhouse/workflow");
+    // A package Connect loads later counts on the next push.
+    packages.push({ documentModels: [workflow] });
+    expect(ids()).toContain("powerhouse/workflow");
+  });
+
   describe("restore", () => {
     // The setters write the slots the way reactor-browser's event handlers do,
     // so restore can see what the window holds when it runs.
