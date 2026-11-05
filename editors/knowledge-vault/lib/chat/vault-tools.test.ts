@@ -2091,6 +2091,49 @@ describe("what_changed — the change digest over a window", () => {
     if (r.ok) expect(r.summary).toMatch(/1 created/);
   });
 
+  it("reads GraphQL's nulls for absent fields as absent: an area's notes, a changed claim's gists (Addendum E6)", async () => {
+    // Live dev.58: every area read "first recorded null → 134", and every
+    // shift whose claim changed carried both full descriptions.
+    const wireStory = {
+      growth: { notesThen: 16, notesNow: 134, from: null, notesAtStart: null, newAreas: [], newMaps: [] },
+      areas: [
+        {
+          id: "a-auth",
+          title: "Authorization and Identity",
+          notesThen: 16,
+          notesNow: 134,
+          notesAtStart: null,
+          versions: null,
+          newCount: 0,
+          changedCount: 2,
+          retiredCount: 0,
+          newClaims: [],
+          changedClaims: [
+            { documentId: "c1", then: { claim: "Grants narrow WRITE", gist: "an old long description" }, now: { claim: "Grants are a separate key", gist: "a new long description" }, why: null, replacedBy: null, thenAt: null, gistDiff: null },
+            { documentId: "c2", then: { claim: "Purge needs an admin", gist: "x" }, now: { claim: "Purge needs an admin", gist: "y" }, why: "widened", replacedBy: null, thenAt: null, gistDiff: { then: "under OPEN", now: "whatever the grants say" } },
+          ],
+          retiredClaims: [],
+        },
+        { id: null, title: "Elsewhere", notesThen: 0, notesNow: 3, notesAtStart: null, versions: null, newCount: 3, changedCount: 0, retiredCount: 0, newClaims: [], changedClaims: [], retiredClaims: [] },
+      ],
+    };
+    mockGql({ knowledgeGraphChanges: { ...digest(2), scope: { q: "authorisation" }, story: wireStory, thenVsNow: null } });
+    const r = await executeTool("what_changed", { since: "2026-09-01", query: "authorisation" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    const story = (r.data as { story: { growth: Record<string, unknown>; areas: { notes: string; changed: { then: Record<string, unknown>; now: Record<string, unknown> }[] }[]; otherAreas?: { id: unknown; title: string }[] } }).story;
+    expect(JSON.stringify(r.data)).not.toMatch(/null →|→ null|: null live/);
+    expect(story.growth).toMatchObject({ notesThen: 16, notesNow: 134 });
+    expect(story.growth).not.toHaveProperty("firstRecorded");
+    expect(story.areas[0].notes).toBe("16 → 134");
+    // The claim changed: its wording says it, no description copies.
+    expect(story.areas[0].changed[0]).toEqual({ then: { documentId: "c1", claim: "Grants narrow WRITE" }, now: { documentId: "c1", claim: "Grants are a separate key" } });
+    // The claim held: only the part of the description that changed.
+    expect(story.areas[0].changed[1].then).toEqual({ documentId: "c2", claim: "Purge needs an admin", gist: "under OPEN" });
+    // Elsewhere keeps its id: null — that null means something.
+    const all = [...story.areas, ...(story.otherAreas ?? [])] as { id?: unknown; title: string }[];
+    expect(all.find((a) => a.title === "Elsewhere")?.id).toBeNull();
+  });
+
   describe("listAreas: the first step of a broad subject (Addendum E2)", () => {
     const listed = {
       window: { since: "2026-09-01T00:00:00.000Z", until: "2026-11-05T23:59:59.999Z" },
@@ -2245,7 +2288,7 @@ describe("what_changed — the change digest over a window", () => {
     const data = r.data as {
       totals: unknown;
       groups?: unknown;
-      story: { growth: { notesThen: number; notesNow: number; newAreas: string[] }; areas: { id: string | null; title: string; new: { documentId: string }[]; changed: { documentId: string; then: unknown; now: unknown }[] }[] };
+      story: { growth: { notesThen: number; notesNow: number; newAreas: string[] }; areas: { id: string | null; title: string; new: { documentId: string }[]; changed: { then: { documentId: string }; now: { documentId: string } }[] }[] };
     };
     expect(JSON.stringify(data).length).toBeLessThan(12_000);
     expect(data).not.toHaveProperty("groups");
@@ -2259,7 +2302,10 @@ describe("what_changed — the change digest over a window", () => {
     expect(data.story.areas.length + other.length).toBe(11);
     expect(data.story.areas.length).toBeGreaterThanOrEqual(3);
     expect(data.story.areas[0].new[0].documentId).toBe("new-0-0");
-    expect(data.story.areas[0].changed[0]).toMatchObject({ documentId: "chg-0-0", then: expect.any(Object) as unknown, now: expect.any(Object) as unknown });
+    // Each side names the note it reads from (Addendum E8): a note revised in place both times, a replaced one its replacement now.
+    expect(data.story.areas[0].changed[0]).toMatchObject({ then: { documentId: "chg-0-0" }, now: { documentId: "chg-0-0" } });
+    expect(data.story.areas[0].changed[1]).toMatchObject({ then: { documentId: "chg-0-1" }, now: { documentId: "rep-0-1" } });
+    expect(data.story.areas[0].changed[1]).not.toHaveProperty("replacedBy");
   });
 
   it("answers a query scope from thenVsNow and the scoped story", async () => {

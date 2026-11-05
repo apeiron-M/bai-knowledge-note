@@ -546,6 +546,8 @@ export interface LoopOptions {
   priorCitations?: Citation[];
   /** The period of the conversation's latest what_changed call: a follow-up without a date reuses it (Addendum D3). */
   changesWindow?: ChangesWindow | null;
+  /** The vault's name: a what_changed query made of it and a facet ("the Powerhouse stack") is no specific term (Addendum E7). */
+  vaultName?: string;
   onText?: (delta: string) => void;
   onTrail?: (entry: TrailEntry) => void;
   /** Fires when a new round starts; the UI clears the streamed text of the previous one. */
@@ -572,6 +574,41 @@ export function latestChangesWindow(messages: readonly StoredMessage[]): Changes
   }
   return null;
 }
+
+/**
+ * A question about one part of the vault, named by a facet: the stack, the
+ * code, the repo, the technical or business side, the product (Addendum E7).
+ */
+const PART_OF_VAULT_RE = /\b(?:stack|code\s?base|code|repo(?:sitory)?|tech(?:nical)?|business|product|engineering)\b/i;
+export function asksAboutPartOfVault(question: string): boolean {
+  return PART_OF_VAULT_RE.test(question);
+}
+
+const FACET_WORDS = new Set(["stack", "code", "codebase", "base", "repo", "repository", "tech", "technical", "side", "business", "product", "engineering"]);
+const FILLER_WORDS = new Set(["the", "a", "an", "its", "our", "of", "in", "on", "s", "whole", "entire", "overall", "vault"]);
+
+/**
+ * A what_changed call that covers the whole vault: no scope at all, or a
+ * query made only of the vault's name, a facet and filler — "the Powerhouse
+ * stack", "the stack" — which the server reads as the whole vault, a search,
+ * or (for "the stack") the one area whose notes say the word most.
+ */
+export function coversWholeVault(args: Record<string, unknown>, vaultName = ""): boolean {
+  const given = (key: string) => {
+    const v = args[key];
+    return (typeof v === "string" && v.trim() !== "") || (Array.isArray(v) && v.length > 0);
+  };
+  if (args.listAreas === true || ["areas", "source", "moc", "topic", "cursor"].some(given)) return false;
+  if (!given("query")) return true;
+  const query = typeof args.query === "string" ? args.query : "";
+  const vaultWords = new Set(vaultName.toLowerCase().match(/[a-z0-9]+/g) ?? []);
+  const words = query.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+  return words.every((w) => FACET_WORDS.has(w) || FILLER_WORDS.has(w) || vaultWords.has(w));
+}
+
+/** What a part of the vault asked of the whole is told instead (Addendum E7). */
+export const PART_OF_VAULT =
+  "The question is about one part of the vault — such as the stack, the code or the business side — and this call would cover all of it. Call what_changed with listAreas: true, choose the areas that part covers by their exact titles, then call again with areas set to them, and answer from that call.";
 
 /** The period a what_changed call named (Addendum D3): its since, and until when given; null when it named none. */
 export function namedChangesWindow(args: Record<string, unknown>): ChangesWindow | null {
@@ -616,6 +653,8 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let retriedToolMarkup = false;
   let retriedStaleAnswer = false;
   let retriedFalseOutage = false;
+  // A part of the vault asked of the whole: sent to choose its areas, once (Addendum E7).
+  let sentToAreas = false;
   // The answer-from-the-vault round: once per answer, and its draft kept in
   // case the rewrite comes back empty.
   let substanceRounds = 0;
@@ -920,6 +959,20 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
           error: "arguments were not a JSON object",
         };
         content = JSON.stringify({ error: entry.error });
+      } else if (name === "what_changed" && !sentToAreas && asksAboutPartOfVault(asked) && coversWholeVault(args, o.vaultName)) {
+        // The question names a part of the vault — "the stack", "the business
+        // side" — and this call covers all of it: answered from it, the stack
+        // read as the whole vault, business areas and all. Its areas first.
+        // Once: a model that insists gets what it asked for.
+        sentToAreas = true;
+        changesWindow = namedChangesWindow(args) ?? changesWindow;
+        entry = {
+          tool: name,
+          summary: "what_changed: the question names a part of the vault — asked to choose its areas first",
+          ok: true,
+          data: { next: PART_OF_VAULT },
+        };
+        content = JSON.stringify({ next: PART_OF_VAULT });
       } else {
         const r = await deps.executeTool(name, args, { driveId: o.driveId, ...(changesWindow ? { changesWindow } : {}) });
         if (r.ok && name === "what_changed") changesWindow = namedChangesWindow(args) ?? changesWindow;
@@ -1063,8 +1116,8 @@ export function collectKnownDocuments(trail: TrailEntry[]): Map<string, KnownDoc
       const old = typeof obj.documentId === "string" ? known.get(obj.documentId) : undefined;
       if (old) old.replaced = true;
     }
-    // A `then` list (thenVsNow's) holds past titles.
-    for (const [key, value] of Object.entries(obj)) visit(value, depth + 1, key === "then" && Array.isArray(value));
+    // A `then` — thenVsNow's list, or one side of a shift — holds past titles.
+    for (const [key, value] of Object.entries(obj)) visit(value, depth + 1, key === "then");
   };
   for (const e of trail) if (e.ok) visit(e.data, 0, false);
   return known;
@@ -1545,6 +1598,8 @@ export interface UseChatOptions {
   fallbackModels?: string[];
   modelName?: (id: string) => string;
   systemPrompt: string;
+  /** The vault's name, for the loop's part-of-the-vault check (Addendum E7). */
+  vaultName?: string;
 }
 
 /** A failed turn, with the model it was addressed to so the UI can act. */
@@ -1576,7 +1631,7 @@ function newId(): string {
 }
 
 export function useChat(o: UseChatOptions): UseChat {
-  const { driveId, endpoint, model, fallbackModels, modelName, systemPrompt } = o;
+  const { driveId, endpoint, model, fallbackModels, modelName, systemPrompt, vaultName } = o;
   const [threads, setThreads] = useState<Thread[]>([]);
   const [thread, setThread] = useState<Thread | null>(null);
   // The answer in progress lives outside this hook (chat-runs.ts): leaving the chat for another
@@ -1662,6 +1717,7 @@ export function useChat(o: UseChatOptions): UseChat {
           messages: history,
           priorCitations: withUser.messages.flatMap((m) => m.citations ?? []),
           changesWindow: latestChangesWindow(withUser.messages),
+          vaultName,
           signal: ctrl.signal,
           onText: (d) => {
             streamed += d;

@@ -175,6 +175,7 @@ export function ChatView({
     fallbackModels: prov.fallbackModels,
     modelName: prov.modelName,
     systemPrompt,
+    vaultName,
   });
 
   // Automation only touches automatically chosen OpenRouter models. When one

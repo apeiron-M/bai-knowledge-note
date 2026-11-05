@@ -462,3 +462,29 @@ the story three areas at one new and one changed claim. For `areas` and `source`
 thenVsNow takes the room left (dropped when not one claim a side fits); `q` and `topic` keep thenVsNow first.
 Live: six areas instead of three, thenVsNow 2.5 KB. The 14 KB budget (B1) still limits a 25-area subject to six areas
 at one new and one changed claim; raising it is a separate decision.
+
+**E6. GraphQL nulls are absences.** Live on dev.58, every area's notes line read "first recorded null → 134": GraphQL
+sends an absent optional field as `null`, and the chat's checks (`!== undefined`) read it as present — so did every
+changed claim's `gistDiff`, which made each shift whose claim changed carry both full descriptions and cost the story
+an area. The chat drops those nulls where the digest arrives (`notesAtStart`, `gistDiff`, `versions`, `from`,
+`thenAt`, `replacedBy`, `why`); Elsewhere's `id: null` stays — that null means "no map". Live after: the stack story
+fits seven areas, each read "then → now" (Development Approaches 20 → 218, Workflow Automation 0 → 113), and
+"authorisation" reads 16 → 134 with four new and four changed claims instead of two and two. Since dev.56 (Addendum D);
+the unit fixtures had the fields absent rather than null.
+
+**E7. A part of the vault asked of the whole.** Live on dev.58, "What changed in the Powerhouse stack since September?"
+was answered from a call with no scope: the whole vault's growth (836 → 2,614), business areas among the new ones, and
+the lead corpus first among the areas to look at — the prompt's facet rule was not enough. Replayed on the server, a
+model's other likely calls go no better: `query: "powerhouse"` is the whole vault and `query: "the stack"` the lead
+corpus, whose notes say "stack" most. The chat's loop now checks: when the question names a part of the vault (the
+stack, the code, the repo, the technical or business side, the product) and a what_changed call covers all of it — no
+scope, or a query of nothing but the vault's name, a facet and filler — the call is not run; the model is told to list
+the areas, choose them and call with `areas`. Once per turn: a model that insists gets the whole vault. The call's
+period is kept for the next one.
+
+**E8. Each side of a shift names its note.** Live on dev.58, eight of the answer's "now" facts cited the superseded
+note they replaced: a shift reached the chat as `{documentId: <replaced note>, then, now, replacedBy}`, and its
+`documentId` was the obvious one to cite. The chat now sends `then: {documentId, claim, …}` and `now: {documentId,
+claim, …}` — the replaced note then, its replacement now, the same note both sides for a revision — with no id at the
+top; the prompt says to cite then's for what the vault used to hold and now's for what it holds now. Live: the stack
+story fits eight areas, its replaced claims resolve to the replacement for now and the old note for then.
