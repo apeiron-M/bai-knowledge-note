@@ -13,6 +13,7 @@ import {
   extractCitations,
   needsCitationRepair,
   resolveCitations,
+  unreadCitations,
   latestChangesWindow,
   runAgentLoop,
   type TrailEntry,
@@ -1082,6 +1083,92 @@ describe("collectKnownDocuments over a list_projects row", () => {
     // envelope's title was a sibling, a chip for the scope could be labelled
     // with whichever envelope happened to be listed first.
     expect(known.get("s1")?.title).not.toBe("Paperless × Powerhouse demo");
+  });
+});
+
+describe("citing what_changed claims (Addendum E3)", () => {
+  // Real ids and shapes from the dev.57 answer to "What changed in the
+  // Powerhouse stack since September?": the vault's ids are base64url, and
+  // what_changed names a claim by its text — there is no title field.
+  const NEW = "Wq3vJ0cE1x9pJm2b7dKk0Qy0sYz4hN8uTt5LrVfA1cE";
+  const OLD = "Hk2pQ9wR4tY7uI0oP3aS6dF9gJ2kL5zX8cV1bN4mQ7w";
+  const REP = "cc79GLzdvH3xCYpgeX_NZX0PCUb5kvodcJYdN59YUaU";
+  const EDIT = "Rt5yU8iO1pA4sD7fG0hJ3kL6zX9cV2bN5mQ8wE1rT4y";
+  const story: TrailEntry = {
+    tool: "what_changed",
+    summary: "1 created, 2 revised",
+    ok: true,
+    data: {
+      window: { since: "2026-09-01T00:00:00.000Z", until: "2026-11-05T23:59:59.999Z" },
+      story: {
+        growth: { notesThen: 44, notesNow: 271 },
+        areas: [
+          {
+            id: "095fcd1a-1b4c-4f4c-bf24-6646cbe023f5",
+            title: "Reactor and Drives",
+            notes: "44 → 271",
+            new: [{ documentId: NEW, claim: "A reactor checks at boot which protocol versions its stored documents were created under" }],
+            changed: [
+              {
+                documentId: OLD,
+                then: { claim: "A failed write throws a bare Error carrying only job.error?.message" },
+                now: { claim: "A failed write rejects with JobFailedError carrying the job's JobInfo" },
+                why: "the client boundary no longer drops the typed class",
+                replacedBy: REP,
+              },
+              { documentId: EDIT, then: { claim: "dispatch takes actionOrActions" }, now: { claim: "dispatch takes actions, onErrors and onSuccess" } },
+            ],
+            retired: [],
+          },
+        ],
+      },
+    },
+  } as TrailEntry;
+
+  it("knows each claim by its text: a new claim, a revised note as it reads now, a replaced note as it read then and its replacement as it reads now", () => {
+    const known = collectKnownDocuments([story]);
+    expect(known.get(NEW)?.title).toMatch(/^A reactor checks at boot/);
+    expect(known.get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+    expect(known.get(OLD)?.title).toBe("A failed write throws a bare Error carrying only job.error?.message");
+    expect(known.get(REP)?.title).toBe("A failed write rejects with JobFailedError carrying the job's JobInfo");
+  });
+
+  it("lets a real title a later tool hands over replace the claim text", () => {
+    const read: TrailEntry = {
+      tool: "read_notes",
+      summary: "1 note",
+      ok: true,
+      data: { notes: [{ documentId: REP, title: "Failed writes reject with JobFailedError", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    const known = collectKnownDocuments([story, read]);
+    expect(known.get(REP)).toEqual({ documentId: REP, title: "Failed writes reject with JobFailedError", documentType: "bai/knowledge-note" });
+    // A title seen first is never overwritten by a claim seen later.
+    expect(collectKnownDocuments([read, story]).get(REP)?.title).toBe("Failed writes reject with JobFailedError");
+  });
+
+  it("keeps the citation of a story claim — no ' .' where it stood", () => {
+    const r = resolveCitations(`Branch on err.job.error.name rather than on a message string [[${REP}]].`, [story]);
+    expect(r.text).toBe(`Branch on err.job.error.name rather than on a message string [[${REP}]].`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([REP]);
+  });
+
+  it("reads a then → now pair the model wrapped in one more bracket as two citations, with no stray bracket left", () => {
+    const row = `| A failed write throws a bare Error | It rejects with JobFailedError [[[${OLD}]] → [[${REP}]]] | typed class kept |`;
+    const r = resolveCitations(row, [story]);
+    expect(r.text).toBe(`| A failed write throws a bare Error | It rejects with JobFailedError [[${OLD}]] → [[${REP}]] | typed class kept |`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([OLD, REP]);
+    expect(r.dropped).toBe(0);
+  });
+
+  it("still drops a marker no tool named, stray brackets with it", () => {
+    const r = resolveCitations("Claimed [[[Zz9yX8wV7uT6sR5qP4oN3mL2kJ1iH0gF9eD8cB7aA6]]] here.", [story]);
+    expect(r.text).toBe("Claimed  here.");
+    expect(r.citations).toEqual([]);
+  });
+
+  it("does not send a change story back to read the notes it cites: the story handed over their claims", () => {
+    const text = `New [[${NEW}]]; then [[${OLD}]], now [[${REP}]]; and [[${EDIT}]].`;
+    expect(unreadCitations(text, [story])).toEqual([]);
   });
 });
 

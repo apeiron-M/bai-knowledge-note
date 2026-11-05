@@ -200,9 +200,9 @@ describe("buildSystemPrompt", () => {
     expect(p).toMatch(/versions/);
   });
 
-  it("picks the scope by the kind of subject: broad → unscoped then areas by title; a repo or document set → source; a specific term → query (Addendum C1)", () => {
+  it("picks the scope by the kind of subject: broad → listAreas then areas by title; a repo or document set → source; a specific term → query (Addendum C1, E2)", () => {
     const p = buildSystemPrompt(base);
-    expect(p).toMatch(/broad subject that is not the whole vault — "the stack", "the technical side", "the business side" — first call what_changed without a scope, choose the areas it covers by their titles .* then call again with areas set to those exact titles/);
+    expect(p).toMatch(/broad subject that is not the whole vault — "the stack", "the technical side", "the business side" — first call what_changed with listAreas: true .* then call again with areas set to those exact titles and answer from that call/);
     expect(p).toMatch(/never pass a title the list does not show/);
     expect(p).toMatch(/not found, correct it from the list rather than guessing/);
     expect(p).toMatch(/"what changed in <a repo, a document set, a book, a meeting series>" → call it with source/i);
@@ -277,5 +277,12 @@ describe("buildSystemPrompt", () => {
     const p = buildSystemPrompt(base);
     // The vault's subject with a facet — stack, repo, code, product, business — gets the two-step area choice.
     expect(p).toMatch(/subject plus a facet[^.]*the Powerhouse stack/i);
+  });
+
+  it("gives a scoped call's growth to the whole scope, never to one of its areas (Addendum E4)", () => {
+    // Live: "authorisation" scoped two areas, 260 → 414 together; the answer
+    // gave all of it to Authorization and Identity, whose own notes went 18 → 134.
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/growth and totals are the whole scope's, every area it covers together: name the subject or its areas with them, never one area — an area's own count is its notes/);
   });
 });

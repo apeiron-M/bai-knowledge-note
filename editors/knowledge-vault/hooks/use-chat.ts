@@ -223,6 +223,9 @@ function readIn(e: TrailEntry): { documentId?: unknown; title?: unknown; documen
     return Array.isArray(notes) ? (notes as { documentId?: unknown }[]) : [];
   }
   if (FULL_READ_TOOLS.has(e.tool)) return [e.data as { documentId?: unknown }];
+  // what_changed hands over each claim's text — new, changed (then and now)
+  // and retired — and the answer is told to tell the story from them.
+  if (e.tool === "what_changed") return storyClaims(e.data);
   // Search hands over the text of its top hits: those were read too.
   if (e.tool === "search_vault") {
     const hits = (e.data as { hits?: unknown }).hits;
@@ -231,6 +234,24 @@ function readIn(e: TrailEntry): { documentId?: unknown; title?: unknown; documen
       : [];
   }
   return [];
+}
+
+/** Every claim a what_changed result names, a replacement included. */
+function storyClaims(data: unknown): { documentId: string }[] {
+  const out: { documentId: string }[] = [];
+  const visit = (v: unknown, depth: number) => {
+    if (depth > 8 || v === null || typeof v !== "object") return;
+    if (Array.isArray(v)) {
+      for (const item of v) visit(item, depth + 1);
+      return;
+    }
+    const obj = v as Record<string, unknown>;
+    if (typeof obj.documentId === "string") out.push({ documentId: obj.documentId });
+    if (typeof obj.replacedBy === "string" && obj.replacedBy) out.push({ documentId: obj.replacedBy });
+    for (const value of Object.values(obj)) visit(value, depth + 1);
+  };
+  visit(data, 0);
+  return out;
 }
 
 /** Every document whose text the model has seen this turn. */
@@ -937,7 +958,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
 
 /**
  * Citation markers as models actually write them. Group 1 is the canonical
- * `[[…]]`; group 2 is a single-bracket `[…]` that is not a markdown link
+ * `[[…]]`, a stray `[` before it or `]` after it included; group 2 is a single-bracket `[…]` that is not a markdown link
  * (`[text](url)`) — models drift to that form mid-answer, and a UUID or an
  * exact document title inside single brackets is unmistakably a citation.
  * Footnote numbers, tool names and ordinary bracketed prose fall through
@@ -947,7 +968,10 @@ const UUID_SRC =
   "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 const CITATION_RE = new RegExp(
   [
-    String.raw`\[\[([^\]]+?)\]\]`, // 1: [[…]] canonical
+    // A stray bracket on either side is the model wrapping a then → now
+    // pair as `[[[old]] → [[new]]]`; read as part of the id, it lost the old
+    // note's citation and left a "]" after the new one.
+    String.raw`\[?\[\[([^[\]]+?)\]\]\]?`, // 1: [[…]] canonical
     String.raw`\[([^[\]]+?)\](?!\()`, // 2: […] not a markdown link
     String.raw`\(\s*(${UUID_SRC})\s*\)`, // 3: (uuid) — parenthesised id
     String.raw`(?<![\w[(-])(${UUID_SRC})(?![\w\])-])`, // 4: bare uuid in prose
@@ -961,13 +985,41 @@ const UUID_RE =
 /** What a tool told us about a document: enough to label and open it. */
 type KnownDocument = { documentId: string; title: string; documentType: string | null };
 
+/** A what_changed claim's text: `claim` itself, or the `claim` of a then/now side. */
+function claimOf(v: unknown): string | null {
+  if (typeof v === "string") return v || null;
+  if (v && typeof v === "object") {
+    const c = (v as Record<string, unknown>).claim;
+    return typeof c === "string" && c ? c : null;
+  }
+  return null;
+}
+
 /**
  * Walk tool results collecting every `{documentId, title[, documentType]}`
  * seen — every tool follows that contract for every kind of document, so
  * a project, a source or a tension is picked up exactly like a note.
+ *
+ * what_changed is the exception: it names each note by its claim, not a
+ * title — `{documentId, claim}` for a new or retired claim, and a shift's
+ * `{documentId, then, now, replacedBy?}`, where a replaced note reads as
+ * `then` and its replacement, `replacedBy`, as `now`. Those are known by
+ * their claim until a tool hands over the real title, which then wins.
  */
 export function collectKnownDocuments(trail: TrailEntry[]): Map<string, KnownDocument> {
   const known = new Map<string, KnownDocument>();
+  const byClaim = new Set<string>();
+  const learn = (documentId: string, title: string | null, documentType: string | null, fromClaim: boolean) => {
+    const prev = known.get(documentId);
+    if (!prev) {
+      if (!title) return;
+      known.set(documentId, { documentId, title, documentType });
+      if (fromClaim) byClaim.add(documentId);
+      return;
+    }
+    if (!fromClaim && title && byClaim.delete(documentId)) prev.title = title;
+    if (!prev.documentType && documentType) prev.documentType = documentType;
+  };
   const visit = (v: unknown, depth: number) => {
     if (depth > 6 || v === null || typeof v !== "object") return;
     if (Array.isArray(v)) {
@@ -975,19 +1027,18 @@ export function collectKnownDocuments(trail: TrailEntry[]): Map<string, KnownDoc
       return;
     }
     const obj = v as Record<string, unknown>;
+    const replacedBy = typeof obj.replacedBy === "string" && obj.replacedBy ? obj.replacedBy : null;
     if (typeof obj.documentId === "string") {
-      const prev = known.get(obj.documentId);
-      const title = typeof obj.title === "string" && obj.title ? obj.title : null;
-      const documentType =
-        typeof obj.documentType === "string" ? obj.documentType : null;
-      if (!prev) {
-        if (title) {
-          known.set(obj.documentId, { documentId: obj.documentId, title, documentType });
-        }
-      } else if (!prev.documentType && documentType) {
-        prev.documentType = documentType;
-      }
+      const titled = typeof obj.title === "string" && obj.title ? obj.title : null;
+      const claimed = titled ? null : (claimOf(obj.claim) ?? claimOf(replacedBy ? obj.then : obj.now));
+      learn(
+        obj.documentId,
+        titled ?? claimed,
+        typeof obj.documentType === "string" ? obj.documentType : null,
+        titled === null,
+      );
     }
+    if (replacedBy) learn(replacedBy, claimOf(obj.now), null, true);
     for (const value of Object.values(obj)) visit(value, depth + 1);
   };
   for (const e of trail) if (e.ok) visit(e.data, 0);
