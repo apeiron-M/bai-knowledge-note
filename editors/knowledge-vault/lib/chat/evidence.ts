@@ -39,9 +39,9 @@ export function parseMarker(label: string): {
   return { documentId: label.slice(0, hash).trim(), anchor: anchor || null };
 }
 
-const MARKER_RE = /\[\[([^\]]+?)\]\]/g;
+const MARKER_RE = /\[\[([^[\]]+?)\]\]/g;
 /** An anchored marker inside a tool result's text: the item's own line. */
-const ANCHORED_MARKER_RE = /\[\[([^\]#]+)#([^\]]+)\]\]/g;
+const ANCHORED_MARKER_RE = /\[\[([^[\]#]+)#([^[\]]+)\]\]/g;
 
 /** Fields of a tool result that hold a document's prose. */
 const TEXT_FIELDS = ["content", "text", "description", "orientation"] as const;
@@ -67,7 +67,7 @@ const STOPWORDS = new Set(
 /** Strip markdown decoration and citation markers; collapse whitespace. */
 export function cleanPassage(line: string): string {
   return line
-    .replace(/\[\[[^\]]*\]\]/g, "")
+    .replace(/\[\[[^[\]]*\]\]/g, "")
     .replace(/^\s*(?:#{1,6}\s+|[-*+]\s+|\d+[.)]\s+|>\s+)/, "")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/(^|[^*])\*([^*]+)\*/g, "$1$2")

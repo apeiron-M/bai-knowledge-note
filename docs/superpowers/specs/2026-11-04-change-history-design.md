@@ -430,16 +430,22 @@ name, but when notes on no map changed `data.elsewhere` says so and points to `q
 result says that, not "nothing changed". A scope given with `listAreas` (areas, query, source, moc, topic) wins, so a
 flag the model copies forward cannot hand it the same list again. Prompt and tool text send a broad subject there first.
 
-**E3. Story claims are citable.** what_changed names claims by text (`claim`, a shift's `then`/`now`), never `title`,
-so the chat's resolver did not know them: their citations were dropped (" ." in the prose) and replacements showed as
-raw ids. A claim is now known by its text — a replaced note as it read then, its `replacedBy` as it reads now; among
-claim texts the last seen wins (a result lists then before now), a real title from any tool or an earlier turn's
-citation replaces it, and claim text matches a label only exactly, never by prefix ("[[Attachments]]" is not the claim
-that starts with the word). Story claims count as read for the read-before-citing rule (the story handed over their
-claims), so a change answer is not sent back to read them. The model also wrapped a then → now pair in one more
-bracket, `[[[old]] → [[new]]]`, which corrupted the first id and left "]" after the second: a run of markers (and what
-joins them: an arrow, a comma, "and", "to") wrapped in one bracket is unwrapped — never a markdown link's text or a
-bracketed phrase — and an unpaired extra `[` is shed from the id, the same way the unread check reads it.
+**E3. Story claims are citable.** what_changed names claims by text (`claim` — the note's title at that moment —
+and a shift's `then`/`now`), never `title`, so the chat's resolver did not know them: their citations were dropped
+(" ." in the prose) and replacements showed as raw ids. A claim is now known by its text: a replaced note as it read
+then, its `replacedBy` as it reads now. Precedence: a real title from any tool wins; a current claim (the story,
+thenVsNow's now and unchanged) is the title as of this turn and replaces an earlier claim; a thenVsNow `then` claim is
+a past title and only fills a missing label (the result's parts come in either order and its now side may be clipped);
+an earlier turn's citation — the latest one with a real title, an id being none — replaces only a past title. Every
+claim text stays an exact alias, and claim-derived titles match a label only exactly, never by prefix
+("[[Attachments]]" is not the claim that starts with the word). Story claims count as read for the read-before-citing
+rule (the story handed over their claims), so a change answer is not sent back to read them.
+Brackets: the model wrapped a then → now pair in one more bracket, `[[[old]] → [[new]]]`, which corrupted the first id
+and left "]" after the second. Before markers are read, a bracket that opens right before a marker and closes after a
+run of them is removed, whatever joins them (an arrow, "=>", "vs", "(then)"), as is a "]" right after a marker that
+closes nothing — never a markdown link's text or a bracketed phrase; one pass per line with markers as single tokens,
+so linear. A marker never crosses a bracket — in the resolver, the renderer (`numberCitations`, `markerOccurrences`),
+the evidence collector and save-as-note alike — so an unclosed `[[` swallows no prose and costs no later citation.
 
 **E4. Growth belongs to the scope.** "Authorization and Identity (260 → 414 notes)" was the two-area scope's growth;
 the area's own notes went 18 → 134. The prompt: growth is the whole scope's — give it to the subject or its areas,

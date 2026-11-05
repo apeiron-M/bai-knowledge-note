@@ -2130,6 +2130,13 @@ describe("what_changed — the change digest over a window", () => {
       expect(lastRequest().body.variables).toMatchObject({ areas: ["Reactor and Drives"] });
       await executeTool("what_changed", { since: "2026-09-01", listAreas: true, query: "the reactor" }, CTX);
       expect(lastRequest().body.variables).toMatchObject({ q: "the reactor" });
+      // A cursor pages an earlier call's events: no list.
+      await executeTool("what_changed", { since: "2026-09-01", listAreas: true, cursor: "next" }, CTX);
+      expect(lastRequest().body.variables).toMatchObject({ cursor: "next", detail: true });
+      // An empty or blank scope is no scope: the list comes back.
+      mockGql({ knowledgeGraphChanges: { window: { since: "2026-09-01T00:00:00.000Z", until: "2026-11-05T23:59:59.999Z" }, story: { areas: [] } } });
+      await executeTool("what_changed", { since: "2026-09-01", listAreas: true, areas: [], query: "  " }, CTX);
+      expect(lastRequest().body.query).toContain("story { areas { id title } }");
     });
 
     it("says when only notes on no map changed, instead of nothing", async () => {
@@ -2139,7 +2146,7 @@ describe("what_changed — the change digest over a window", () => {
       const data = r.data as { areas: string[]; next?: string };
       expect(data.areas).toEqual([]);
       expect(data.next).toMatch(/Only notes on no map changed: ask about the subject with query/);
-      expect(r.summary).not.toMatch(/nothing changed/);
+      expect(r.summary).toMatch(/^only notes on no map changed between 2026-09-01 and 2026-11-05/);
     });
 
     it("keeps the earlier question's period on a follow-up (Addendum D3)", async () => {

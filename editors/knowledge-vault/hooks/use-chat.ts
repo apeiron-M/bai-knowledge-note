@@ -951,8 +951,9 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
 
 /**
  * Citation markers as models actually write them. Group 1 is the canonical
- * `[[…]]` (a run of them wrapped in one more bracket is unwrapped first, see
- * `unwrapMarkerGroups`; an unpaired extra `[` is shed from the id); group 2 is a single-bracket `[…]` that is not a markdown link
+ * `[[…]]` — never across a bracket, so an unclosed `[[` swallows nothing
+ * (brackets around markers come off first, see `tidyMarkerBrackets`, and an
+ * unpaired extra `[` is shed from the id); group 2 is a single-bracket `[…]` that is not a markdown link
  * (`[text](url)`) — models drift to that form mid-answer, and a UUID or an
  * exact document title inside single brackets is unmistakably a citation.
  * Footnote numbers, tool names and ordinary bracketed prose fall through
@@ -962,7 +963,7 @@ const UUID_SRC =
   "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 const CITATION_RE = new RegExp(
   [
-    String.raw`\[\[([^\]]+?)\]\]`, // 1: [[…]] canonical
+    String.raw`\[\[\[*([^[\]]+?)\]\]`, // 1: [[…]] canonical
     String.raw`\[([^[\]]+?)\](?!\()`, // 2: […] not a markdown link
     String.raw`\(\s*(${UUID_SRC})\s*\)`, // 3: (uuid) — parenthesised id
     String.raw`(?<![\w[(-])(${UUID_SRC})(?![\w\])-])`, // 4: bare uuid in prose
@@ -978,8 +979,14 @@ type KnownDocument = {
   documentId: string;
   title: string;
   documentType: string | null;
-  /** Known only by a what_changed claim's text: matched exactly, and replaced by any real title. */
-  fromClaim?: true;
+  /**
+   * Set when no tool gave a real title and the title is a what_changed
+   * claim — the note's title as of this turn ("claim") or a past one
+   * ("then"). Such a title matches a label exactly, never by prefix.
+   */
+  labelFrom?: "claim" | "then";
+  /** Every claim text what_changed gave the document: exact aliases, kept when a real title arrives. */
+  claims?: string[];
 };
 
 /** A what_changed claim's text: `claim` itself, or the `claim` of a then/now side. */
@@ -997,52 +1004,54 @@ function claimOf(v: unknown): string | null {
  * seen — every tool follows that contract for every kind of document, so
  * a project, a source or a tension is picked up exactly like a note.
  *
- * what_changed is the exception: it names each note by its claim, not a
- * title — `{documentId, claim}` for a new or retired claim, and a shift's
- * `{documentId, then, now, replacedBy?}`, where a replaced note reads as
- * `then` and its replacement, `replacedBy`, as `now`. Those are known by
- * their claim — the last one seen — until a tool hands over the real title,
- * which then wins.
+ * what_changed is the exception: it names each note by its claim — the
+ * note's title at that moment — not by `title`: `{documentId, claim}` for a
+ * new or retired claim, and a shift's `{documentId, then, now, replacedBy?}`,
+ * where a replaced note reads as `then` and its replacement, `replacedBy`,
+ * as `now`. A real title from any tool wins. A current claim (the story,
+ * thenVsNow's now and unchanged) is the title as of this turn and replaces
+ * an earlier claim; a thenVsNow `then` claim is a past title and only fills
+ * a missing label — the result's parts come in either order, and its now
+ * side may be clipped. Every claim text stays an exact alias.
  */
 export function collectKnownDocuments(trail: TrailEntry[]): Map<string, KnownDocument> {
   const known = new Map<string, KnownDocument>();
-  const learn = (documentId: string, title: string | null, documentType: string | null, fromClaim: boolean) => {
-    const prev = known.get(documentId);
-    if (!prev) {
-      if (title) known.set(documentId, { documentId, title, documentType, ...(fromClaim ? { fromClaim: true as const } : {}) });
-      return;
+  const learn = (documentId: string, title: string | null, documentType: string | null, from: "title" | "claim" | "then") => {
+    let doc = known.get(documentId);
+    if (!doc) {
+      if (!title) return;
+      doc = { documentId, title, documentType, ...(from === "title" ? {} : { labelFrom: from }) };
+      known.set(documentId, doc);
+    } else if (title && doc.labelFrom && from !== "then") {
+      doc.title = title;
+      if (from === "title") delete doc.labelFrom;
+      else doc.labelFrom = "claim";
     }
-    // A real title replaces claim text, and among claim texts the last wins:
-    // what_changed lists a note's then before its now, so a note revised in
-    // place reads as it does now, whichever part of the result came first.
-    if (title && prev.fromClaim) {
-      prev.title = title;
-      if (!fromClaim) delete prev.fromClaim;
-    }
-    if (!prev.documentType && documentType) prev.documentType = documentType;
+    if (title && from !== "title" && !doc.claims?.includes(title)) doc.claims = [...(doc.claims ?? []), title];
+    if (!doc.documentType && documentType) doc.documentType = documentType;
   };
-  const visit = (v: unknown, depth: number) => {
+  const visit = (v: unknown, depth: number, thenSide: boolean) => {
     if (depth > 6 || v === null || typeof v !== "object") return;
     if (Array.isArray(v)) {
-      for (const item of v) visit(item, depth + 1);
+      for (const item of v) visit(item, depth + 1, thenSide);
       return;
     }
     const obj = v as Record<string, unknown>;
     const replacedBy = typeof obj.replacedBy === "string" && obj.replacedBy ? obj.replacedBy : null;
     if (typeof obj.documentId === "string") {
       const titled = typeof obj.title === "string" && obj.title ? obj.title : null;
-      const claimed = titled ? null : (claimOf(obj.claim) ?? claimOf(replacedBy ? obj.then : obj.now));
       learn(
         obj.documentId,
-        titled ?? claimed,
+        titled ?? claimOf(obj.claim) ?? claimOf(replacedBy ? obj.then : obj.now),
         typeof obj.documentType === "string" ? obj.documentType : null,
-        titled === null,
+        titled ? "title" : thenSide ? "then" : "claim",
       );
     }
-    if (replacedBy) learn(replacedBy, claimOf(obj.now), null, true);
-    for (const value of Object.values(obj)) visit(value, depth + 1);
+    if (replacedBy) learn(replacedBy, claimOf(obj.now), null, "claim");
+    // A `then` list (thenVsNow's) holds past titles.
+    for (const [key, value] of Object.entries(obj)) visit(value, depth + 1, key === "then" && Array.isArray(value));
   };
-  for (const e of trail) if (e.ok) visit(e.data, 0);
+  for (const e of trail) if (e.ok) visit(e.data, 0, false);
   return known;
 }
 
@@ -1084,8 +1093,13 @@ const MIN_PREFIX_LABEL = 6;
 function exactTitle(label: string, known: Map<string, KnownDocument>): KnownDocument | null {
   const key = aliasKey(label);
   if (key.length < MIN_EXACT_LABEL) return null;
-  for (const doc of known.values()) if (aliasKey(doc.title) === key) return doc;
+  for (const doc of known.values()) if (namesOf(doc).some((n) => aliasKey(n) === key)) return doc;
   return null;
+}
+
+/** A known document's names for an exact match: its title, then every claim text it was given. */
+function namesOf(doc: KnownDocument): string[] {
+  return doc.claims ? [doc.title, ...doc.claims] : [doc.title];
 }
 
 /**
@@ -1101,14 +1115,14 @@ function resolveLabel(label: string, known: Map<string, KnownDocument>): KnownDo
   let exact: KnownDocument | null = null;
   const prefixed: KnownDocument[] = [];
   for (const doc of known.values()) {
-    const k = aliasKey(doc.title);
-    if (k === key) {
+    if (namesOf(doc).some((n) => aliasKey(n) === key)) {
       exact = doc;
       break;
     }
-    // Claim text is a sentence, not a name: "[[Attachments]]" means the map,
-    // not the one claim that happens to start with the word.
-    if (key.length >= MIN_PREFIX_LABEL && !doc.fromClaim && k.startsWith(key)) prefixed.push(doc);
+    // Only a title a tool gave matches by prefix. A claim the story merely
+    // lists is no name: "[[Attachments]]" means the map, not the one claim
+    // that happens to start with the word.
+    if (key.length >= MIN_PREFIX_LABEL && !doc.labelFrom && aliasKey(doc.title).startsWith(key)) prefixed.push(doc);
   }
   if (exact) return exact;
   return prefixed.length === 1 ? prefixed[0] : null;
@@ -1215,42 +1229,98 @@ export function foldSourcesSection(
 }
 
 /**
- * Earlier turns' citations, for documents this turn's tools did not title:
- * one this turn knows only by a what_changed claim takes the earlier title.
+ * Earlier turns' citations, for documents this turn's tools did not title.
+ * Per document the latest citation with a real title counts (an id is no
+ * title). It fills a document this turn does not know and replaces a past
+ * title (a thenVsNow then claim) — never a current claim, which is the
+ * note's title as of this turn and so fresher. Claim aliases are kept.
  */
 function withPriorCitations(
   known: Map<string, KnownDocument>,
   prior: readonly Citation[],
 ): Map<string, KnownDocument> {
+  const titled = (c: Citation) => Boolean(c.title) && c.title !== c.documentId;
+  const latest = new Map<string, Citation>();
   for (const c of prior) {
+    const had = latest.get(c.documentId);
+    if (!had || titled(c) || !titled(had)) latest.set(c.documentId, c);
+  }
+  for (const c of latest.values()) {
     const have = known.get(c.documentId);
-    if (have && !have.fromClaim) continue;
+    if (have && (have.labelFrom !== "then" || !titled(c))) continue;
     known.set(c.documentId, {
       documentId: c.documentId,
-      title: c.title,
+      title: c.title || c.documentId,
       documentType: c.documentType ?? have?.documentType ?? null,
+      ...(have?.claims ? { claims: have.claims } : {}),
     });
   }
   return known;
 }
 
-/**
- * A then → now pair (or any run of markers) the model wrapped in one more
- * bracket — `[[[old]] → [[new]]]` — unwrapped. Read as written, the extra
- * bracket became part of the first id, which lost its citation, and a "]"
- * trailed the last. Only that shape: markers and what joins them, never a
- * markdown link's text ("[the repo [[id]]](url)") or a bracketed phrase.
- */
-// The separator owns the whitespace after it, so a long run of spaces has
-// one way to match — two free `\s*` around an optional one backtrack in n².
-const MARKER_GROUP_RE = /\[(\[\[[^[\]]+\]\](?:\s*(?:(?:→|->|⟶|–|—|-|,|;|\/|\bto\b|\band\b)\s*)?\[\[[^[\]]+\]\])*)\](?!\()/g;
-export function unwrapMarkerGroups(text: string): string {
-  return text.replace(MARKER_GROUP_RE, "$1");
+/** A marker, or one bracket: how `tidyMarkerBrackets` reads a line. */
+const BRACKET_TOKEN_RE = /\[\[[^[\]\n]+\]\]|[[\]]/g;
+
+function tidyLine(line: string): string {
+  const drop = new Set<number>();
+  const open: { at: number; wraps: boolean }[] = [];
+  let markerEnd = -1;
+  for (const m of line.matchAll(BRACKET_TOKEN_RE)) {
+    const at = m.index;
+    if (m[0].length > 1) {
+      // A bracket opened right before a marker wraps markers.
+      const top = open.at(-1);
+      if (top?.at === at - 1) top.wraps = true;
+      markerEnd = at + m[0].length;
+    } else if (m[0] === "[") {
+      open.push({ at, wraps: false });
+    } else {
+      const opener = open.pop();
+      if (opener) {
+        // Its closer, unless it closes a markdown link's text.
+        if (opener.wraps && line[at + 1] !== "(") drop.add(opener.at).add(at);
+      } else if (at === markerEnd) {
+        drop.add(at);
+        markerEnd = at + 1;
+      }
+    }
+  }
+  return drop.size ? line.split("").filter((_, i) => !drop.has(i)).join("") : line;
 }
 
-/** The document ids an answer's markers name, in order, read as the resolver reads them. */
+/**
+ * Brackets the model put around markers, removed before the markers are
+ * read: one that opens right before a marker and closes after a run of them
+ * — `[[[old]] → [[new]]]`, `[[[a]] (then) → [[b]] (now)]`, whatever joins
+ * them — and a "]" right after a marker that closes nothing (`[[a]]]`). Read
+ * as written, the extra bracket became part of the first id, which lost its
+ * citation, and a "]" trailed the last. A markdown link's text ("[the repo
+ * [[id]]](url)") and a bracketed phrase ("[see [[id]]]") stay whole. Line by
+ * line with markers as single tokens, so linear in the text.
+ */
+export function tidyMarkerBrackets(text: string): string {
+  if (!text.includes("[[[") && !text.includes("]]]")) return text;
+  return text
+    .split("\n")
+    .map((line) => {
+      // Two wrappers ("[[[[a]]]]") come off one per pass.
+      for (let pass = 0; pass < 3 && (line.includes("[[[") || line.includes("]]]")); pass++) {
+        const next = tidyLine(line);
+        if (next === line) break;
+        line = next;
+      }
+      return line;
+    })
+    .join("\n");
+}
+
+/**
+ * The ids an answer's `[[…]]` markers name, in order, read the way the
+ * resolver reads that form (its single-bracket, parenthesised and bare-id
+ * forms are not counted here).
+ */
 function citedIds(text: string): string[] {
-  return [...unwrapMarkerGroups(text).matchAll(/\[\[\[?([^[\]#]+)(?:#[^\]]*)?\]\]/g)].map((m) => m[1].trim());
+  return [...tidyMarkerBrackets(text).matchAll(/\[\[\[*([^[\]#]+)(?:#[^[\]]*)?\]\]/g)].map((m) => m[1].trim());
 }
 
 /**
@@ -1277,7 +1347,7 @@ export function resolveCitations(
   // turn cited. A model cannot know an id it was never shown; such a marker
   // is invented, and a chip that opens nothing is worse than no chip.
   let dropped = 0;
-  const grounded = groundMarkdownLinks(unwrapMarkerGroups(text), known, collectKnownUrls(trail));
+  const grounded = groundMarkdownLinks(tidyMarkerBrackets(text), known, collectKnownUrls(trail));
   const rewritten = grounded.replace(
     CITATION_RE,
     (
@@ -1287,10 +1357,7 @@ export function resolveCitations(
       parenthesised: string | undefined,
       bare: string | undefined,
     ) => {
-      const raw =
-        double !== undefined
-          ? double.trim().replace(/^\[+\s*/, "")
-          : (single ?? parenthesised ?? bare ?? "").trim();
+      const raw = (double ?? single ?? parenthesised ?? bare ?? "").trim();
       // An anchored marker — [[documentId#itemId]] — cites one item inside a
       // document (an envelope, a deliverable, a goal). The document resolves
       // exactly as before; the item id rides along on the rewritten marker
@@ -1340,7 +1407,7 @@ export function resolveCitations(
   );
   // A marker repeated back to back ("[[a]] [[a]] [[a]]") is one citation
   // the model stuttered, not three; collapse before numbering.
-  const collapsed = rewritten.replace(/(\[\[([^\]]+)\]\])(?:\s*\[\[\2\]\])+/g, "$1");
+  const collapsed = rewritten.replace(/(\[\[([^[\]]+)\]\])(?:\s*\[\[\2\]\])+/g, "$1");
   const folded = foldSourcesSection(collapsed, known);
   for (const doc of folded.sources) {
     if (!byId.has(doc.documentId)) {

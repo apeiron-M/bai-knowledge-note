@@ -2786,8 +2786,8 @@ export async function executeTool(
         (earlier ? " (the period of the earlier question)" : "");
       // A scope that comes with listAreas wins: the model has chosen already,
       // and a flag copied forward must not hand it the same list again (the
-      // model reads data, never the summary).
-      const scoped = ["moc", "topic", "query", "source"].some((k) => str(args, k) !== null) || strList(args, "areas") !== null;
+      // model reads data, never the summary). A cursor pages an earlier call.
+      const scoped = ["moc", "topic", "query", "source", "cursor"].some((k) => str(args, k) !== null) || strList(args, "areas") !== null;
       if (bool(args, "listAreas") && !scoped) {
         // Titles only: a broad subject's first step must hand the model no
         // whole-vault growth or totals to mistake for the subject's.
@@ -2815,7 +2815,9 @@ export async function executeTool(
               ? "Choose the areas the subject covers, then call what_changed again with areas set to their exact titles and without listAreas, and answer from that call."
               : "Only notes on no map changed: ask about the subject with query.",
           },
-          `${titles.length} area${titles.length === 1 ? "" : "s"}${elsewhere ? " and notes on no map" : ""} changed ${spanOf(window)}`,
+          titles.length
+            ? `${titles.length} area${titles.length === 1 ? "" : "s"}${elsewhere ? " and notes on no map" : ""} changed ${spanOf(window)}`
+            : `only notes on no map changed ${spanOf(window)}`,
         );
       }
       const moc = str(args, "moc");

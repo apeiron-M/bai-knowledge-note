@@ -14,7 +14,7 @@ import {
   needsCitationRepair,
   resolveCitations,
   unreadCitations,
-  unwrapMarkerGroups,
+  tidyMarkerBrackets,
   latestChangesWindow,
   runAgentLoop,
   type TrailEntry,
@@ -1142,7 +1142,13 @@ describe("citing what_changed claims (Addendum E3)", () => {
       data: { notes: [{ documentId: REP, title: "Failed writes reject with JobFailedError", documentType: "bai/knowledge-note" }] },
     } as TrailEntry;
     const known = collectKnownDocuments([story, read]);
-    expect(known.get(REP)).toEqual({ documentId: REP, title: "Failed writes reject with JobFailedError", documentType: "bai/knowledge-note" });
+    expect(known.get(REP)).toEqual({
+      documentId: REP,
+      title: "Failed writes reject with JobFailedError",
+      documentType: "bai/knowledge-note",
+      // The claim it was listed by stays an exact alias.
+      claims: ["A failed write rejects with JobFailedError carrying the job's JobInfo"],
+    });
     // A title seen first is never overwritten by a claim seen later.
     expect(collectKnownDocuments([read, story]).get(REP)?.title).toBe("Failed writes reject with JobFailedError");
   });
@@ -1184,10 +1190,70 @@ describe("citing what_changed claims (Addendum E3)", () => {
     expect(collectKnownDocuments([queryCall, story]).get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
   });
 
-  it("gives a note an earlier turn cited its title back over this turn's claim text", () => {
-    const prior = [{ documentId: REP, title: "Failed writes reject with JobFailedError", documentType: "bai/knowledge-note" }];
-    const r = resolveCitations(`It rejects [[${REP}]].`, [story], prior);
-    expect(r.citations).toEqual(prior);
+  it("takes an earlier turn's title over a past title, never over this turn's current one, and keeps the claims as aliases", () => {
+    const thenOnly: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 revised",
+      ok: true,
+      data: { thenVsNow: { then: [{ documentId: EDIT, claim: "dispatch takes actionOrActions" }], now: [], unchanged: [] } },
+    } as TrailEntry;
+    // A past title gives way to the latest earlier citation with a real title; an id is no title.
+    const prior = [
+      { documentId: EDIT, title: "An older title", documentType: "bai/knowledge-note" },
+      { documentId: EDIT, title: "The editor dispatch signature", documentType: "bai/knowledge-note" },
+      { documentId: EDIT, title: EDIT, documentType: null },
+    ];
+    const r = resolveCitations(`Dispatch [[${EDIT}]], once [[dispatch takes actionOrActions]].`, [thenOnly], prior);
+    expect(r.citations).toEqual([{ documentId: EDIT, title: "The editor dispatch signature", documentType: "bai/knowledge-note" }]);
+    expect(r.text).toBe(`Dispatch [[${EDIT}]], once [[${EDIT}]].`);
+    // A current claim is the note's title as of this turn: fresher than an earlier turn's.
+    const current = resolveCitations(`It rejects [[${REP}]].`, [story], [{ documentId: REP, title: "Failed writes reject (older title)", documentType: "bai/knowledge-note" }]);
+    expect(current.citations[0].title).toBe("A failed write rejects with JobFailedError carrying the job's JobInfo");
+    // An id-titled earlier citation replaces no text.
+    expect(resolveCitations(`[[${EDIT}]]`, [thenOnly], [{ documentId: EDIT, title: EDIT }]).citations[0].title).toBe("dispatch takes actionOrActions");
+  });
+
+  it("never lets a past title replace a current one, whichever part of the result comes first (areas call: story, then thenVsNow)", () => {
+    const areasCall: TrailEntry = {
+      tool: "what_changed",
+      summary: "2 revised",
+      ok: true,
+      data: {
+        story: { areas: [{ changed: [{ documentId: EDIT, then: { claim: "dispatch takes actionOrActions" }, now: { claim: "dispatch takes actions, onErrors and onSuccess" } }] }] },
+        // The clipped now side ranks created notes first: EDIT is on the then side only.
+        thenVsNow: { then: [{ documentId: EDIT, claim: "dispatch takes actionOrActions" }], now: [{ documentId: NEW, claim: "A created note" }], unchanged: [] },
+      },
+    } as TrailEntry;
+    expect(collectKnownDocuments([areasCall]).get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+    // Its past wording still names it.
+    expect(resolveCitations("Once [[dispatch takes actionOrActions]].", [areasCall]).citations.map((c) => c.documentId)).toEqual([EDIT]);
+  });
+
+  it("lets an unclosed [[ swallow nothing: the prose stays, and the next marker is cited — as the unread check reads it", () => {
+    const hit: TrailEntry = {
+      tool: "search_vault",
+      summary: "1 hit",
+      ok: true,
+      data: { hits: [{ documentId: "B1", title: "A searched note", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    const text = "First para [[note\n\nSecond paragraph.\n\nThird [[B1]] end.";
+    const r = resolveCitations(text, [hit]);
+    expect(r.text).toBe(text);
+    expect(r.citations.map((c) => c.documentId)).toEqual(["B1"]);
+    expect(unreadCitations(text, [hit]).map((d) => d.documentId)).toEqual(["B1"]);
+  });
+
+  it("removes a bracket wrapped around markers whatever joins them, and a stray closer after a marker", () => {
+    const cases: [string, string][] = [
+      [`[[[${OLD}]] => [[${REP}]]]`, `[[${OLD}]] => [[${REP}]]`],
+      [`[[[${OLD}]] vs [[${REP}]]]`, `[[${OLD}]] vs [[${REP}]]`],
+      [`[[[${OLD}]] (then) → [[${REP}]] (now)]`, `[[${OLD}]] (then) → [[${REP}]] (now)`],
+      [`Then [[${OLD}]]] now.`, `Then [[${OLD}]] now.`],
+      [`[[[[${OLD}]]]]`, `[[${OLD}]]`],
+    ];
+    for (const [written, read] of cases) expect(resolveCitations(written, [story]).text).toBe(read);
+    // A title with a bracket in it is no marker: left whole.
+    expect(resolveCitations("Read [[Foo [draft]]] now.", [story]).text).toBe("Read [[Foo [draft]]] now.");
   });
 
   it("matches claim text exactly, never by prefix: [[Attachments]] is not the claim that starts with the word", () => {
@@ -1218,7 +1284,7 @@ describe("citing what_changed claims (Addendum E3)", () => {
   it("unwraps in linear time: a long run of spaces after a marker is no stall", () => {
     const text = `[[[${NEW}]]${" ".repeat(200_000)}x`;
     const t = performance.now();
-    expect(unwrapMarkerGroups(text)).toBe(text);
+    expect(tidyMarkerBrackets(text)).toBe(text);
     expect(performance.now() - t).toBeLessThan(250);
   });
 
