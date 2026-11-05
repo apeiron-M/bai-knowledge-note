@@ -419,24 +419,32 @@ now also needs ≥ 2 of the top 25 note hits. Measured on ten live queries: only
 and "workflow engine" lose the lead corpus, "editors" Development Approaches, "drive apps" Reactor and Drives); the
 reactor, processors, pricing, sync, attachments and codegen scopes are unchanged and no new sub-map narrowing fires.
 Rank-weighted shares (1/r) were rejected: one top hit alone is worth ~17 %, which pulled in Connect Application for
-"editors" and Powerhouse Platforms for "workflow engine".
+"editors" and Powerhouse Platforms for "workflow engine". With fewer than 25 hits the rule reads "two hits and 10 %",
+so a query with a single hit (keyword fallback) falls back to search instead of scoping a whole area.
 
 **E2. `listAreas`.** A broad subject's first call returned the whole vault's growth and totals, and the answer reported
 them as the stack's (836 → 2,614, seven new areas including business ones). `what_changed` takes `listAreas: true`:
-it asks only `story { areas { id title } }` for the period and returns the titles (Elsewhere left out) — nothing that
-can be mistaken for the subject. Prompt and tool text send a broad subject there first.
+it asks only `story { areas { id title } }` for the period and returns the titles — nothing that can be mistaken for
+the subject — with the next step in `data.next` (the model reads `data`, never the summary). Elsewhere is no area to
+name, but when notes on no map changed `data.elsewhere` says so and points to `query`; when only they changed, the
+result says that, not "nothing changed". A scope given with `listAreas` (areas, query, source, moc, topic) wins, so a
+flag the model copies forward cannot hand it the same list again. Prompt and tool text send a broad subject there first.
 
 **E3. Story claims are citable.** what_changed names claims by text (`claim`, a shift's `then`/`now`), never `title`,
 so the chat's resolver did not know them: their citations were dropped (" ." in the prose) and replacements showed as
-raw ids. A claim is now known by its text — a replaced note as it read then, its `replacedBy` as it reads now — until
-a tool hands over the real title, which wins; story claims count as read for the read-before-citing rule (the story
-handed over their claims), so a change answer is not sent back to read them. The model also wrapped a then → now pair
-in one more bracket, `[[[old]] → [[new]]]`, which corrupted the first id and left "]" after the second: a stray bracket
-either side of a marker is absorbed.
+raw ids. A claim is now known by its text — a replaced note as it read then, its `replacedBy` as it reads now; among
+claim texts the last seen wins (a result lists then before now), a real title from any tool or an earlier turn's
+citation replaces it, and claim text matches a label only exactly, never by prefix ("[[Attachments]]" is not the claim
+that starts with the word). Story claims count as read for the read-before-citing rule (the story handed over their
+claims), so a change answer is not sent back to read them. The model also wrapped a then → now pair in one more
+bracket, `[[[old]] → [[new]]]`, which corrupted the first id and left "]" after the second: a run of markers (and what
+joins them: an arrow, a comma, "and", "to") wrapped in one bracket is unwrapped — never a markdown link's text or a
+bracketed phrase — and an unpaired extra `[` is shed from the id, the same way the unread check reads it.
 
 **E4. Growth belongs to the scope.** "Authorization and Identity (260 → 414 notes)" was the two-area scope's growth;
-the area's own notes went 18 → 134. The prompt: growth and totals are the whole scope's — name the subject or its
-areas with them, never one area; an area's own count is its notes. Same rule in the plugin.
+the area's own notes went 18 → 134. The prompt: growth is the whole scope's — give it to the subject or its areas,
+never to one area; an area's own count is its notes (growth only: the totals line stays out of the answer). Same rule
+in the plugin.
 
 **E5. Story first for a broad subject.** With 25 chosen areas, thenVsNow went first and took 5.3 of the 14 KB, leaving
 the story three areas at one new and one changed claim. For `areas` and `source` scopes the story is fitted first and
