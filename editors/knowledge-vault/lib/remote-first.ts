@@ -84,8 +84,8 @@ import { announceDocumentMutation } from "./remote-reactor.js";
  * a batch needs the state action N leaves behind — which only the document's
  * own reducer can predict. Without the modules a multi-action dispatch from a
  * logged-in user throws before the mutation ("a batch that cannot be
- * predicted must fail, never be downgraded to unsigned"). Every editor here
- * dispatches single actions today; this keeps that from being a trap.
+ * predicted must fail, never be downgraded to unsigned"). The client gets
+ * these and every model Connect has loaded — see `vaultClientModels`.
  */
 const VAULT_DOCUMENT_MODELS: readonly DocumentModelModule<any>[] = (
   Object.values(vaultModels) as unknown[]
@@ -857,6 +857,22 @@ function rerouteHalves(
   return { read, write };
 }
 
+/**
+ * The models the vault's client signs batches with: the vault's own, then
+ * every model Connect has loaded. The hybrid this client sits behind carries
+ * EVERY document's writes in this Connect, not only the vault's: Workflow
+ * Studio publishing a workflow in another drive sends a batch, and with the
+ * vault's models alone it threw "Unknown document model version:
+ * powerhouse/workflow v1 (no module for this document type)". Read on every
+ * push, so a package Connect loads later counts too.
+ */
+export function vaultClientModels(): readonly DocumentModelModule<any>[] {
+  const manager = (phSlots() as { vetraPackageManager?: { packages?: readonly { documentModels?: readonly DocumentModelModule<any>[] }[] } })
+    .vetraPackageManager;
+  const loaded = (manager?.packages ?? []).flatMap((pkg) => pkg.documentModels ?? []);
+  return loaded.length ? [...VAULT_DOCUMENT_MODELS, ...loaded] : VAULT_DOCUMENT_MODELS;
+}
+
 /** The vault's own Switchboard client, authenticated per request with the Renown bearer. */
 function buildVaultClient(endpoint: string): GraphQLReactorClient {
   // Every read and push this client makes must carry the caller's identity.
@@ -883,7 +899,7 @@ function buildVaultClient(endpoint: string): GraphQLReactorClient {
   return new GraphQLReactorClient({
     url: endpoint,
     graphqlClient: sdk,
-    documentModels: VAULT_DOCUMENT_MODELS,
+    documentModels: vaultClientModels,
   });
 }
 
