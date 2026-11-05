@@ -272,4 +272,10 @@ describe("buildSystemPrompt", () => {
     expect(localDate(new Date(2026, 10, 4, 23, 30))).toBe("2026-11-04");
     expect(localDate(new Date(2027, 0, 1, 0, 5))).toBe("2027-01-01");
   });
+
+  it("treats the vault's subject plus a facet as a broad subject, not the whole vault", () => {
+    const p = buildSystemPrompt(base);
+    // The vault's subject with a facet — stack, repo, code, product, business — gets the two-step area choice.
+    expect(p).toMatch(/subject plus a facet[^.]*the Powerhouse stack/i);
+  });
 });

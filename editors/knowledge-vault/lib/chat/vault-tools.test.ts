@@ -2243,6 +2243,21 @@ describe("what_changed — the change digest over a window", () => {
   type ChatArea = { id: string | null; title: string; new: unknown[]; changed: unknown[]; retired: unknown[]; more?: string; nameOnly?: boolean };
   type ChatStoryOut = { growth: { newMaps: string[]; moreNewMaps?: number }; areas: ChatArea[]; otherAreas?: Record<string, unknown>[]; moreAreas?: number };
 
+  it("lists a claim once even when its note belongs to several areas", () => {
+    const story = bigStory();
+    const shared = story.areas[0].newClaims[0];
+    const sharedShift = story.areas[0].changedClaims[0];
+    story.areas[1].newClaims[0] = shared;
+    story.areas[1].changedClaims[0] = sharedShift;
+    const out = chatStory(story as Parameters<typeof chatStory>[0], 40_000) as ChatStoryOut;
+    const ids = (k: "new" | "changed") =>
+      out.areas.flatMap((a) => (a[k] as { documentId?: string; id?: string }[]).map((c) => c.documentId ?? c.id));
+    for (const k of ["new", "changed"] as const) {
+      const all = ids(k).filter(Boolean);
+      expect(new Set(all).size).toBe(all.length);
+    }
+  });
+
   it("covers the most-changed areas of a 50-area vault with 100 new maps, under 12 KB", () => {
     const out = chatStory(bigStory() as Parameters<typeof chatStory>[0]) as ChatStoryOut;
     expect(JSON.stringify(out).length).toBeLessThan(12_000);
