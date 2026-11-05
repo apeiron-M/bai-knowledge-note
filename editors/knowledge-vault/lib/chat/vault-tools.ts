@@ -1823,6 +1823,23 @@ const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, 
   }
 }`;
 
+/**
+ * Optional fields of the change story that GraphQL sends as null when they
+ * are absent. The story's types — and every check on them — mean "missing"
+ * by undefined: read as present, each area said "first recorded null → 134"
+ * and each changed claim carried both full descriptions (Addendum E6).
+ * Elsewhere's `id: null` is not among them: that null means "no map".
+ */
+const ABSENT_AS_NULL = new Set(["notesAtStart", "gistDiff", "versions", "from", "thenAt", "replacedBy", "why"]);
+
+/** A wire value with those nulls removed, everything else as sent. */
+function fromWire<T>(value: T): T {
+  if (Array.isArray(value)) return value.map((v: unknown) => fromWire(v)) as T;
+  if (value === null || typeof value !== "object") return value;
+  const kept = Object.entries(value as Record<string, unknown>).filter(([key, v]) => !(v === null && ABSENT_AS_NULL.has(key)));
+  return Object.fromEntries(kept.map(([key, v]) => [key, fromWire(v)])) as T;
+}
+
 /** listAreas (Addendum E2): the period's changed areas by title, and nothing else. */
 const CHANGE_AREAS_QUERY = `query WCA($driveId: ID!, $since: String!, $until: String) {
   knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until) {
@@ -2841,7 +2858,12 @@ export async function executeTool(
       };
       const r = await gql<{ knowledgeGraphChanges: ChangeDigestWire }>(graphEndpoint(), CHANGES_QUERY, variables);
       if ("error" in r) return fail(r.error);
-      const digest = r.data.knowledgeGraphChanges;
+      const wire = r.data.knowledgeGraphChanges;
+      const digest: ChangeDigestWire = {
+        ...wire,
+        story: wire.story ? fromWire(wire.story) : wire.story,
+        thenVsNow: wire.thenVsNow ? fromWire(wire.thenVsNow) : wire.thenVsNow,
+      };
       const events = detail ? (digest.events ?? []).slice(0, LIMITS.changes.max) : null;
       const names = await resolveEnsNames((events ?? []).map((e) => e.by ?? "").filter((a) => a !== ""));
       const named = <T extends { by?: string | null }>(e: T): T & { byName: string | null } => ({
