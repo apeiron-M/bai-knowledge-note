@@ -445,7 +445,12 @@ and left "]" after the second. Before markers are read, a bracket that opens rig
 run of them is removed, whatever joins them (an arrow, "=>", "vs", "(then)"), as is a "]" right after a marker that
 closes nothing — never a markdown link's text or a bracketed phrase; one pass per line with markers as single tokens,
 so linear. A marker never crosses a bracket — in the resolver, the renderer (`numberCitations`, `markerOccurrences`),
-the evidence collector and save-as-note alike — so an unclosed `[[` swallows no prose and costs no later citation.
+the evidence collector and save-as-note alike — so an unclosed `[[` swallows no prose and costs no later citation; a
+by-name marker whose title holds brackets ("[[Meeting notes [2026-10-01]]]") is tried first, as an exact title only.
+A stored citation keeps `labelFrom`, so a claim title stays exact-only in later turns; when a replaced note and its
+replacement share a title, a label names the replacement; `[[id#]]` (an empty anchor) cites the document; and the
+resolver reads again until nothing changes, so dropping a marker cannot join the text around it into an unread one.
+Every pattern on the path is linear (the markdown-link pattern was n² on a run of brackets, on `main` too).
 
 **E4. Growth belongs to the scope.** "Authorization and Identity (260 → 414 notes)" was the two-area scope's growth;
 the area's own notes went 18 → 134. The prompt: growth is the whole scope's — give it to the subject or its areas,

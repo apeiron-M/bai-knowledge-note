@@ -20,6 +20,12 @@ export interface Citation {
   title: string;
   /** `bai/knowledge-note`, `bai/moc`, `powerhouse/scopeofwork`, … when the tool that surfaced it said. */
   documentType?: string | null;
+  /**
+   * Set when the title is a what_changed claim rather than a title a tool
+   * gave — the note's title as of that turn ("claim") or a past one ("then").
+   * A later turn matches such a title exactly, never by prefix.
+   */
+  labelFrom?: "claim" | "then";
 }
 
 /** What backs one inline marker — see `lib/chat/evidence.ts`. */

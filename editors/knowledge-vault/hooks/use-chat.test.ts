@@ -1281,6 +1281,78 @@ describe("citing what_changed claims (Addendum E3)", () => {
     expect(r.citations.map((c) => c.documentId)).toEqual([OLD, REP]);
   });
 
+  it("still cites a document by a title that holds brackets — tried as an exact title only", () => {
+    const src: TrailEntry = {
+      tool: "list_sources",
+      summary: "1 source",
+      ok: true,
+      data: { sources: [{ documentId: "S1", title: "Meeting notes [2026-10-01]", documentType: "bai/source" }] },
+    } as TrailEntry;
+    const r = resolveCitations("Decided in [[Meeting notes [2026-10-01]]].", [src]);
+    expect(r.text).toBe("Decided in [[S1]].");
+    expect(r.citations.map((c) => c.documentId)).toEqual(["S1"]);
+    expect(needsCitationRepair("Decided in [[Meeting notes [2026-10-01]]].", [src])).toBe(false);
+    // Not a prefix, not a guess: an unknown bracketed title is left as written.
+    expect(resolveCitations("See [[Meeting notes [2026]]].", [src]).text).toBe("See [[Meeting notes [2026]]].");
+  });
+
+  it("stores a claim title as one, so a later turn matches it exactly, never by prefix", () => {
+    const withClaim: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 created",
+      ok: true,
+      data: { story: { areas: [{ new: [{ documentId: NEW, claim: "Attachments are stored as blob refs in the vault" }] }] } },
+    } as TrailEntry;
+    const turn1 = resolveCitations(`Blobs [[${NEW}]].`, [withClaim]);
+    expect(turn1.citations).toEqual([{ documentId: NEW, title: "Attachments are stored as blob refs in the vault", documentType: null, labelFrom: "claim" }]);
+    // Turn two: no tool named it again, the earlier citation did.
+    expect(resolveCitations("In [[Attachments]], files are blobs.", [], turn1.citations).citations).toEqual([]);
+    expect(resolveCitations("[[Attachments are stored as blob refs in the vault]]", [], turn1.citations).citations.map((c) => c.documentId)).toEqual([NEW]);
+  });
+
+  it("names the replacement when a replaced note and its replacement share a title", () => {
+    const sameWords: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 superseded",
+      ok: true,
+      data: { story: { areas: [{ changed: [{ documentId: OLD, then: { claim: "Sync uses a cursor" }, now: { claim: "Sync uses a cursor" }, replacedBy: REP }] }] } },
+    } as TrailEntry;
+    expect(resolveCitations("[[Sync uses a cursor]]", [sameWords]).citations.map((c) => c.documentId)).toEqual([REP]);
+  });
+
+  it("reads a long run of brackets in linear time", () => {
+    const text = `${"[".repeat(40_000)} and [[${NEW}]]`;
+    const t = performance.now();
+    resolveCitations(text, [story]);
+    unreadCitations(text, [story]);
+    expect(performance.now() - t).toBeLessThan(250);
+  });
+
+  it("keeps a reference link's text whole, and takes off a wrapper with spaces inside", () => {
+    expect(tidyMarkerBrackets("[[[A]] and the docs][ref]")).toBe("[[[A]] and the docs][ref]");
+    expect(tidyMarkerBrackets("[ [[A]] → [[B]] ]")).toBe(" [[A]] → [[B]] ");
+  });
+
+  it("leaves no unread marker behind when dropping one joins the text around it into another", () => {
+    const hit: TrailEntry = {
+      tool: "search_vault",
+      summary: "1 hit",
+      ok: true,
+      data: { hits: [{ documentId: "11111111-1111-4111-8111-111111111111", title: "Reactor queues writes", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    const A = "11111111-1111-4111-8111-111111111111";
+    const r = resolveCitations(`x [[${A}[[^1]]]] y`, [hit]);
+    const left = [...r.text.matchAll(/\[\[([^[\]]+)\]\]/g)].map((m) => m[1]);
+    expect(left.every((id) => r.citations.some((c) => c.documentId === id))).toBe(true);
+    expect(r.citations.map((c) => c.documentId)).toEqual([A]);
+  });
+
+  it("reads an empty anchor as none: [[id#]] cites the document, as the unread check reads it", () => {
+    const r = resolveCitations(`Rejects [[${REP}#]].`, [story]);
+    expect(r.text).toBe(`Rejects [[${REP}]].`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([REP]);
+  });
+
   it("unwraps in linear time: a long run of spaces after a marker is no stall", () => {
     const text = `[[[${NEW}]]${" ".repeat(200_000)}x`;
     const t = performance.now();
