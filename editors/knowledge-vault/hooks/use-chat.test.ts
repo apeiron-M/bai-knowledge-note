@@ -14,6 +14,7 @@ import {
   needsCitationRepair,
   resolveCitations,
   unreadCitations,
+  unwrapMarkerGroups,
   latestChangesWindow,
   runAgentLoop,
   type TrailEntry,
@@ -1164,6 +1165,72 @@ describe("citing what_changed claims (Addendum E3)", () => {
     const r = resolveCitations("Claimed [[[Zz9yX8wV7uT6sR5qP4oN3mL2kJ1iH0gF9eD8cB7aA6]]] here.", [story]);
     expect(r.text).toBe("Claimed  here.");
     expect(r.citations).toEqual([]);
+  });
+
+  it("labels a note revised in place with its wording now, even when thenVsNow lists its then first (a query call)", () => {
+    const queryCall: TrailEntry = {
+      tool: "what_changed",
+      summary: "2 revised",
+      ok: true,
+      data: {
+        thenVsNow: {
+          then: [{ documentId: EDIT, claim: "dispatch takes actionOrActions" }],
+          now: [{ documentId: EDIT, claim: "dispatch takes actions, onErrors and onSuccess" }],
+          unchanged: [],
+        },
+      },
+    } as TrailEntry;
+    expect(collectKnownDocuments([queryCall]).get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+    expect(collectKnownDocuments([queryCall, story]).get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+  });
+
+  it("gives a note an earlier turn cited its title back over this turn's claim text", () => {
+    const prior = [{ documentId: REP, title: "Failed writes reject with JobFailedError", documentType: "bai/knowledge-note" }];
+    const r = resolveCitations(`It rejects [[${REP}]].`, [story], prior);
+    expect(r.citations).toEqual(prior);
+  });
+
+  it("matches claim text exactly, never by prefix: [[Attachments]] is not the claim that starts with the word", () => {
+    const withClaim: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 created",
+      ok: true,
+      data: { story: { areas: [{ new: [{ documentId: NEW, claim: "Attachments are stored as content-addressed blobs and fetched by hash" }] }] } },
+    } as TrailEntry;
+    expect(resolveCitations("In [[Attachments]], files are blobs.", [withClaim]).citations).toEqual([]);
+    expect(resolveCitations("Blobs [[Attachments are stored as content-addressed blobs and fetched by hash]].", [withClaim]).citations.map((c) => c.documentId)).toEqual([NEW]);
+  });
+
+  it("leaves a markdown link's text and a bracketed phrase whole", () => {
+    expect(resolveCitations(`See [the repo [[${REP}]]](https://github.com/powerhouse-inc/powerhouse) for it.`, [story]).text).toBe(
+      `See [the repo [[${REP}]]](https://github.com/powerhouse-inc/powerhouse) for it.`,
+    );
+    expect(resolveCitations(`An aside [see [[${REP}]]] here.`, [story]).text).toBe(`An aside [see [[${REP}]]] here.`);
+  });
+
+  it("unwraps a run of markers joined by a comma or 'and', and sheds an unpaired extra bracket", () => {
+    expect(resolveCitations(`Both [[[${NEW}]], [[${EDIT}]]] hold.`, [story]).text).toBe(`Both [[${NEW}]], [[${EDIT}]] hold.`);
+    const r = resolveCitations(`Then [[[${OLD}]] → [[${REP}]] now.`, [story]);
+    expect(r.text).toBe(`Then [[${OLD}]] → [[${REP}]] now.`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([OLD, REP]);
+  });
+
+  it("unwraps in linear time: a long run of spaces after a marker is no stall", () => {
+    const text = `[[[${NEW}]]${" ".repeat(200_000)}x`;
+    const t = performance.now();
+    expect(unwrapMarkerGroups(text)).toBe(text);
+    expect(performance.now() - t).toBeLessThan(250);
+  });
+
+  it("reads a wrapped or unpaired marker as its id when checking for unread notes", () => {
+    const hit: TrailEntry = {
+      tool: "search_vault",
+      summary: "1 hit",
+      ok: true,
+      data: { hits: [{ documentId: "U1", title: "A searched note", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    expect(unreadCitations("Unpaired [[[U1]] here.", [hit]).map((d) => d.documentId)).toEqual(["U1"]);
+    expect(unreadCitations("Wrapped [[[U1]]] here.", [hit]).map((d) => d.documentId)).toEqual(["U1"]);
   });
 
   it("does not send a change story back to read the notes it cites: the story handed over their claims", () => {

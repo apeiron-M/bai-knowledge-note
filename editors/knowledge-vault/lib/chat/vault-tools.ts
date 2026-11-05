@@ -512,7 +512,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "what_changed",
       description:
-        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic it also returns thenVsNow — the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). Three ways to scope a subject: areas — the hub's areas you name by their exact titles (or ids) from a listAreas call, for a broad subject such as \"the stack\" or \"the business side\"; source — the notes derived from the sources whose title, provenance URL or folder path contains the text, for \"what changed in <a repo / document set / book / meeting series>\"; query — a specific term (\"the reactor\", \"attachments\"), which means the main areas about it, the areas holding most of its top note hits (or the one map below them holding most, for a narrow term), and only when its hits are spread thin, the top search hits and their linked notes. A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query. `scope` says what was covered, and names any area title it did not find. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic — and, with what room the story leaves, with areas or source — it also returns thenVsNow: the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). Three ways to scope a subject: areas — the hub's areas you name by their exact titles (or ids) from a listAreas call, for a broad subject such as \"the stack\" or \"the business side\"; source — the notes derived from the sources whose title, provenance URL or folder path contains the text, for \"what changed in <a repo / document set / book / meeting series>\"; query — a specific term (\"the reactor\", \"attachments\"), which means the main areas about it, the areas holding most of its top note hits (or the one map below them holding most, for a narrow term), and only when its hits are spread thin, the top search hits and their linked notes. A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query. `scope` says what was covered, and names any area title it did not find. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
       parameters: {
         type: "object",
         properties: {
@@ -2784,7 +2784,11 @@ export async function executeTool(
           : `between ${w.since.slice(0, 10)} and `) +
         w.until.slice(0, 10) +
         (earlier ? " (the period of the earlier question)" : "");
-      if (bool(args, "listAreas")) {
+      // A scope that comes with listAreas wins: the model has chosen already,
+      // and a flag copied forward must not hand it the same list again (the
+      // model reads data, never the summary).
+      const scoped = ["moc", "topic", "query", "source"].some((k) => str(args, k) !== null) || strList(args, "areas") !== null;
+      if (bool(args, "listAreas") && !scoped) {
         // Titles only: a broad subject's first step must hand the model no
         // whole-vault growth or totals to mistake for the subject's.
         const r = await gql<{ knowledgeGraphChanges: { window: ChangeDigestWire["window"]; story?: { areas: { id: string | null; title: string }[] } | null } }>(
@@ -2795,12 +2799,23 @@ export async function executeTool(
         if ("error" in r) return fail(r.error);
         const d = r.data.knowledgeGraphChanges;
         const window = fromStart && d.window.vaultStart ? { ...d.window, since: d.window.vaultStart } : d.window;
-        // Elsewhere (no map) cannot be named in areas.
-        const titles = (d.story?.areas ?? []).filter((a) => a.id !== null).map((a) => a.title);
-        if (titles.length === 0) return ok({ window, areas: [] }, `nothing changed ${spanOf(window)}`);
+        const listed = d.story?.areas ?? [];
+        const titles = listed.filter((a) => a.id !== null).map((a) => a.title);
+        // Elsewhere — notes on no map — is no area to name, but its changes are changes.
+        const elsewhere = listed.some((a) => a.id === null);
+        if (titles.length === 0 && !elsewhere) {
+          return ok({ window, areas: [], next: "Nothing changed in this period." }, `nothing changed ${spanOf(window)}`);
+        }
         return ok(
-          { window, areas: titles },
-          `${titles.length} area${titles.length === 1 ? "" : "s"} changed ${spanOf(window)}: choose the ones the subject covers and call what_changed again with areas set to their exact titles`,
+          {
+            window,
+            areas: titles,
+            ...(elsewhere ? { elsewhere: "Notes on no map changed too. They are no area: ask about them with query." } : {}),
+            next: titles.length
+              ? "Choose the areas the subject covers, then call what_changed again with areas set to their exact titles and without listAreas, and answer from that call."
+              : "Only notes on no map changed: ask about the subject with query.",
+          },
+          `${titles.length} area${titles.length === 1 ? "" : "s"}${elsewhere ? " and notes on no map" : ""} changed ${spanOf(window)}`,
         );
       }
       const moc = str(args, "moc");
@@ -2836,7 +2851,7 @@ export async function executeTool(
       // The story is the answer — what the vault knows now that it did not
       // before, by main area; totals are one line. The whole result stays
       // within CHANGES_CHAT_BUDGET: a page of events first (when asked), then
-      // thenVsNow (fewer a side if need be), and the story fills the rest.
+      // the story and thenVsNow in the order the scope asks for (see below).
       // From the vault's start: the window opens there, not at the placeholder date.
       const window = fromStart && digest.window.vaultStart ? { ...digest.window, since: digest.window.vaultStart } : digest.window;
       const data: Record<string, unknown> = {
@@ -2879,7 +2894,7 @@ export async function executeTool(
         `${totalsLine(digest.totals)} ${span}` +
           covered +
           (digest.story ? `; ${growthLine(digest.story.growth)}, ${digest.story.areas.length} area${digest.story.areas.length === 1 ? "" : "s"} changed` : "") +
-          (digest.thenVsNow ? "; thenVsNow for the scope" : "") +
+          (data.thenVsNow ? "; thenVsNow for the scope" : "") +
           (events ? `; ${events.length} event${events.length === 1 ? "" : "s"}${digest.nextCursor ? ", more with nextCursor" : ""}` : ""),
       );
     }

@@ -2103,20 +2103,43 @@ describe("what_changed — the change digest over a window", () => {
       },
     };
 
-    it("asks only for the area titles of the period — whatever scope came with it — and hands back nothing to report", async () => {
+    it("asks only for the area titles of the period and hands back nothing to report — the next step is in data, which is all the model reads", async () => {
       mockGql({ knowledgeGraphChanges: listed });
-      const r = await executeTool("what_changed", { since: "2026-09-01", listAreas: true, query: "the stack", areas: ["x"] }, CTX);
+      const r = await executeTool("what_changed", { since: "2026-09-01", listAreas: true }, CTX);
       expect(r.ok).toBe(true);
       if (!r.ok) return;
       const { body } = lastRequest();
       expect(body.query).toContain("story { areas { id title } }");
       expect(body.query).not.toMatch(/growth|totals|newClaims|thenVsNow|events/);
       expect(body.variables).toEqual({ driveId: "drive-1", since: "2026-09-01", until: null });
-      // Elsewhere is no area: it cannot be named in areas.
-      expect(r.data).toEqual({ window: listed.window, areas: ["Reactor and Drives", "Service Pricing"] });
-      expect(r.summary).toMatch(/^2 areas changed between 2026-09-01 and 2026-11-05/);
-      expect(r.summary).toMatch(/call what_changed again with areas/);
-      expect(r.summary).not.toMatch(/notes|created|revised/);
+      // Elsewhere is no area — it cannot be named in areas — but its changes are reported.
+      const data = r.data as { window: unknown; areas: string[]; elsewhere?: string; next?: string };
+      expect(Object.keys(data).sort()).toEqual(["areas", "elsewhere", "next", "window"]);
+      expect(data.window).toEqual(listed.window);
+      expect(data.areas).toEqual(["Reactor and Drives", "Service Pricing"]);
+      expect(data.elsewhere).toMatch(/no map changed too\. They are no area: ask about them with query/);
+      expect(data.next).toMatch(/call what_changed again with areas set to their exact titles and without listAreas/);
+      expect(JSON.stringify(r.data)).not.toMatch(/notes(Then|Now)|created|revised/);
+      expect(r.summary).toMatch(/^2 areas and notes on no map changed between 2026-09-01 and 2026-11-05/);
+    });
+
+    it("lets a scope given with listAreas win: a flag copied forward does not hand back the list again", async () => {
+      mockGql({ knowledgeGraphChanges: { ...digest(1), story: null } });
+      await executeTool("what_changed", { since: "2026-09-01", listAreas: true, areas: ["Reactor and Drives"] }, CTX);
+      expect(lastRequest().body.query).toContain("knowledgeGraphChanges(driveId: $driveId, since: $since, until: $until, moc: $moc");
+      expect(lastRequest().body.variables).toMatchObject({ areas: ["Reactor and Drives"] });
+      await executeTool("what_changed", { since: "2026-09-01", listAreas: true, query: "the reactor" }, CTX);
+      expect(lastRequest().body.variables).toMatchObject({ q: "the reactor" });
+    });
+
+    it("says when only notes on no map changed, instead of nothing", async () => {
+      mockGql({ knowledgeGraphChanges: { ...listed, story: { areas: [{ id: null, title: "Elsewhere" }] } } });
+      const r = await executeTool("what_changed", { since: "2026-09-01", listAreas: true }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const data = r.data as { areas: string[]; next?: string };
+      expect(data.areas).toEqual([]);
+      expect(data.next).toMatch(/Only notes on no map changed: ask about the subject with query/);
+      expect(r.summary).not.toMatch(/nothing changed/);
     });
 
     it("keeps the earlier question's period on a follow-up (Addendum D3)", async () => {
@@ -2125,11 +2148,13 @@ describe("what_changed — the change digest over a window", () => {
       expect(lastRequest().body.variables).toEqual({ driveId: "drive-1", since: "2026-06-01", until: "2026-10-31" });
     });
 
-    it("says so when nothing changed in the period", async () => {
+    it("says so when nothing changed in the period — in data too", async () => {
       mockGql({ knowledgeGraphChanges: { ...listed, story: { areas: [] } } });
       const r = await executeTool("what_changed", { since: "2026-09-01", listAreas: true }, CTX);
       expect(r.ok).toBe(true);
-      if (r.ok) expect(r.summary).toMatch(/^nothing changed between 2026-09-01 and 2026-11-05/);
+      if (!r.ok) return;
+      expect(r.summary).toMatch(/^nothing changed between 2026-09-01 and 2026-11-05/);
+      expect(r.data).toEqual({ window: listed.window, areas: [], next: "Nothing changed in this period." });
     });
 
     it("is what the tool tells a broad subject to call first", () => {
@@ -2466,14 +2491,21 @@ describe("what_changed — the change digest over a window", () => {
       if (data.thenVsNow) expect(data.thenVsNow.then.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("drops thenVsNow rather than send it empty when the story leaves no room for one claim a side", async () => {
-      const areasDigest = { ...scopedDigest(), scope: { source: "x", resolved: { kind: "source", match: "x", sources: 3 } }, events: null, nextCursor: null };
-      mockGql({ knowledgeGraphChanges: areasDigest });
-      const r = await executeTool("what_changed", { since: "2026-09-01", source: "x" }, CTX);
-      if (!r.ok) throw new Error(r.error);
-      const tvn = (r.data as { thenVsNow?: { then: unknown[]; now: unknown[]; unchanged: unknown[] } }).thenVsNow;
-      if (tvn) expect(tvn.then.length + tvn.now.length + tvn.unchanged.length).toBeGreaterThan(0);
-      expect(JSON.stringify(r.data).length).toBeLessThanOrEqual(BUDGET);
+    it("gives a source scope thenVsNow with the room the story leaves, and drops it — summary included — when not one claim a side fits", async () => {
+      const sourceDigest = { ...scopedDigest(), scope: { source: "x", resolved: { kind: "source", match: "x", sources: 3 } } };
+      mockGql({ knowledgeGraphChanges: { ...sourceDigest, events: null, nextCursor: null } });
+      const overview = await executeTool("what_changed", { since: "2026-09-01", source: "x" }, CTX);
+      if (!overview.ok) throw new Error(overview.error);
+      const tvn = (overview.data as { thenVsNow?: { then: unknown[] } }).thenVsNow;
+      expect(tvn?.then.length).toBeGreaterThanOrEqual(1);
+      expect(overview.summary).toMatch(/thenVsNow for the scope/);
+      // A detail page: ten heavy events and the story leave no room for thenVsNow.
+      mockGql({ knowledgeGraphChanges: sourceDigest });
+      const page = await executeTool("what_changed", { since: "2026-09-01", source: "x", detail: true }, CTX);
+      if (!page.ok) throw new Error(page.error);
+      expect(page.data).not.toHaveProperty("thenVsNow");
+      expect(page.summary).not.toMatch(/thenVsNow/);
+      expect(JSON.stringify(page.data).length).toBeLessThanOrEqual(BUDGET);
     });
 
     it("returns at most 10 events with two hunks each on detail: true, still ≤ 14 KB", async () => {

@@ -283,6 +283,9 @@ describe("buildSystemPrompt", () => {
     // Live: "authorisation" scoped two areas, 260 → 414 together; the answer
     // gave all of it to Authorization and Identity, whose own notes went 18 → 134.
     const p = buildSystemPrompt(base);
-    expect(p).toMatch(/growth and totals are the whole scope's, every area it covers together: name the subject or its areas with them, never one area — an area's own count is its notes/);
+    expect(p).toMatch(/growth is the whole scope's, every area it covers together: give it to the subject or its areas, never to one area — an area's own count is its notes/);
+    // Growth only: totals stay out of the answer ("the totals line is for you").
+    expect(p).not.toMatch(/growth and totals are/);
+    expect(p).toMatch(/the totals line is for you, not for the answer/);
   });
 });
