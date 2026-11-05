@@ -709,7 +709,12 @@ export async function loadChanges(
   ]);
   if (story) ctx.story = story;
 
-  const internal: ChangeScope = { ...(ids ? { documentIds: [...ids] } : {}), ...(scope.types ? { types: scope.types } : {}) };
+  const internal: ChangeScope = {
+    ...(ids ? { documentIds: [...ids] } : {}),
+    ...(scope.types ? { types: scope.types } : {}),
+    // The query's hits order the story inside the scope (Addendum D2).
+    ...(scope.rank?.length ? { rank: scope.rank } : {}),
+  };
   // Ids came from a scope key: the caller asked for events, even if the ids are empty.
   if (!ids && (scope.q || scope.moc || scope.mocs || scope.topic || scope.sources)) internal.documentIds = [];
   const digest = buildChanges(rows, baseline, ctx, window, {

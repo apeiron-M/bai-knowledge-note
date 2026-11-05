@@ -117,6 +117,8 @@ export interface ChangeScope {
   source?: string;
   /** Internal: the sources `source` matched — they and the notes derived from them. Never echoed. */
   sources?: string[];
+  /** Internal: the query's semantic hits, most relevant first — the story's order inside the scope (Addendum D2). Never echoed. */
+  rank?: string[];
   /** On a digest: what the scope resolved to — areas, a source match, the whole vault, a map, else a semantic search (Addendum B2, C1). */
   resolved?: ResolvedScope;
 }
@@ -772,6 +774,30 @@ export function firstRecorded(rows: OperationRow[], addedAt: string | null = nul
   return { title: first.title, description: first.description, at, revisionNotes };
 }
 
+/** How long the vault's first import lasts: growth from before the vault counts what stood at its end (Addendum D1). */
+export const FIRST_IMPORT_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * When `since` predates the vault (Addendum D1): the end of its first import
+ * day and the notes archived by then (their last lifecycle step up to it
+ * archived them). Undefined when the vault already existed at `since`.
+ */
+function firstImport(vaultStart: string | null, since: string, rowsByDoc: Map<string, OperationRow[]>): { end: string; archived: Set<string> } | undefined {
+  if (!vaultStart || vaultStart <= since) return undefined;
+  const end = new Date(Date.parse(vaultStart) + FIRST_IMPORT_MS).toISOString();
+  const archived = new Set<string>();
+  for (const [id, list] of rowsByDoc) {
+    let last: boolean | null = null;
+    for (const r of list) {
+      if (r.timestamp > end) break;
+      if (ARCHIVE_OPS.has(r.operationType)) last = true;
+      else if (RESTORE_OPS.has(r.operationType)) last = false;
+    }
+    if (last) archived.add(id);
+  }
+  return { end, archived };
+}
+
 function isSupersedes(row: OperationRow): boolean {
   return row.operationType === "ADD_RELATIONSHIP" && parseInput(row).relationshipType === "SUPERSEDES";
 }
@@ -974,7 +1000,7 @@ export function buildChanges(
       const first = firstRecorded(list, addedAt);
       if (first) thenFields.set(id, first);
     }
-    const facts = storyFacts(events, thenFields, ctx.story, window, ids);
+    const facts = storyFacts(events, thenFields, ctx.story, window, ids, firstImport(ctx.story.vaultStart ?? null, window.since, rowsByDoc), scope.rank);
     digest.story = buildStory(facts, ctx.story);
     if (opts.thenVsNow ?? Boolean(scope.q || scope.topic)) digest.thenVsNow = buildThenVsNow(facts, ctx.story);
   }

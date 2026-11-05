@@ -86,7 +86,21 @@ export type ToolResult =
 
 export interface ToolContext {
   driveId: string;
+  /**
+   * The period of this conversation's latest what_changed call that named one
+   * (Addendum D3): a follow-up without since reuses it.
+   */
+  changesWindow?: ChangesWindow | null;
 }
+
+/** A what_changed period as the model asked for it: since, and until when it gave one. */
+export interface ChangesWindow {
+  since: string;
+  until: string | null;
+}
+
+/** What a what_changed call without since and without an earlier period asks from: before any vault, so the digest counts from its start. */
+export const VAULT_START_SINCE = "1970-01-01";
 
 /** Document models registered in `powerhouse.manifest.json`. */
 export const DOCUMENT_TYPES = [
@@ -504,7 +518,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
         properties: {
           since: {
             type: "string",
-            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself — a month or season without a year is its most recent past occurrence, by today's date in your instructions — and tell the person which one you used.",
+            description: "Start of the period, ISO 8601 (e.g. 2026-09-01). Resolve 'since summer' and the like to a date yourself — a month or season without a year is its most recent past occurrence, by today's date in your instructions — and tell the person which one you used. Leave it out on a follow-up that names no period: the earlier question's period is reused (with none, the vault's start).",
           },
           until: {
             type: "string",
@@ -548,7 +562,6 @@ export const VAULT_TOOLS: ToolSchema[] = [
             description: `Events per page when a scope is given (default ${LIMITS.changes.default}, max ${LIMITS.changes.max}).`,
           },
         },
-        required: ["since"],
       },
     },
   },
@@ -1795,10 +1808,10 @@ const CHANGES_QUERY = `query WC($driveId: ID!, $since: String!, $until: String, 
     events @include(if: $detail) { ${CHANGE_EVENT_FIELDS} }
     nextCursor @include(if: $detail)
     story {
-      growth { notesThen notesNow from newAreas { id title } newMaps { id title area } }
-      areas { id title notesThen notesNow newCount changedCount retiredCount versions { first now }
+      growth { notesThen notesNow from notesAtStart newAreas { id title } newMaps { id title area } }
+      areas { id title notesThen notesNow notesAtStart newCount changedCount retiredCount versions { first now }
         newClaims { ${CHANGE_CLAIM_FIELDS} }
-        changedClaims { documentId then { claim gist } now { claim gist } why replacedBy thenAt }
+        changedClaims { documentId then { claim gist } now { claim gist } why replacedBy thenAt gistDiff { then now } }
         retiredClaims { ${CHANGE_CLAIM_FIELDS} } }
     }
     thenVsNow { then { ${CHANGE_CLAIM_FIELDS} thenAt } now { ${CHANGE_CLAIM_FIELDS} } unchanged { ${CHANGE_CLAIM_FIELDS} } }
@@ -1835,9 +1848,9 @@ const SCOPE_NAMED_UNKNOWN = 10;
 /** New maps and new areas named by title; the rest are counted. */
 const NAMED_MAPS = 15;
 
-const claimText = (t: { claim: string; gist: string | null }, withGist: boolean) => ({
+const claimText = (t: { claim: string; gist: string | null }, withGist: boolean, gistMax = 120) => ({
   claim: clip(t.claim, 140),
-  ...(withGist && t.gist ? { gist: clip(t.gist, 120) } : {}),
+  ...(withGist && t.gist ? { gist: clip(t.gist, gistMax) } : {}),
 });
 const chatClaim = (c: Claim, withGist = true, gistMax = 120) => ({
   documentId: c.documentId,
@@ -1846,12 +1859,14 @@ const chatClaim = (c: Claim, withGist = true, gistMax = 120) => ({
   ...(c.thenAt ? { thenAt: c.thenAt.slice(0, 10) } : {}),
 });
 function chatShift(sh: Shift): Record<string, unknown> {
-  // The gist matters only when the claim itself reads the same.
-  const sameClaim = sh.then.claim === sh.now.claim;
+  // The gist matters only when the claim itself reads the same: then only
+  // where the gists differ, not two clipped copies (Addendum D7).
+  const diff = sh.gistDiff;
+  const sameClaim = diff !== undefined || sh.then.claim === sh.now.claim;
   return {
     documentId: sh.documentId,
-    then: claimText(sh.then, sameClaim),
-    now: claimText(sh.now, sameClaim),
+    then: claimText(diff ? { claim: sh.then.claim, gist: diff.then } : sh.then, sameClaim, 170),
+    now: claimText(diff ? { claim: sh.now.claim, gist: diff.now } : sh.now, sameClaim, 170),
     ...(sh.why ? { why: clip(sh.why, 140) } : {}),
     ...(sh.replacedBy ? { replacedBy: sh.replacedBy } : {}),
     // A note created in the window: its then is as first recorded, on this date.
@@ -1867,9 +1882,11 @@ export function chatThenVsNow(t: ThenVsNow, perSide = CHAT_THEN_VS_NOW): Record<
   return { then: side(t.then), now: side(t.now), unchanged: side(t.unchanged), ...(extra ? { more: `${extra} more claims not shown` } : {}) };
 }
 
-/** Live notes then → now, or — since predates the vault — when it began and how many it holds now. */
+/** Live notes then → now, or — since predates the vault — from its first recorded state (Addendum D1), never "0 → N". */
 function growthLine(g: ChangeStory["growth"]): string {
-  return g.from ? `the vault began on ${g.from.slice(0, 10)}; ${g.notesNow} live notes now` : `live notes ${g.notesThen} → ${g.notesNow}`;
+  if (!g.from) return `live notes ${g.notesThen} → ${g.notesNow}`;
+  if (g.notesAtStart !== undefined) return `first recorded on ${g.from.slice(0, 10)}: ${g.notesAtStart} live notes → now ${g.notesNow}`;
+  return `the vault began on ${g.from.slice(0, 10)}; ${g.notesNow} live notes now`;
 }
 
 /** What a scope covered, in words: the areas named (and any not found) or matched, the sources matched, the whole vault, one map, or a search. */
@@ -1936,8 +1953,12 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
   const growthNaming = (names: number) => {
     const extra = (key: string, list: unknown[]) => (list.length > names ? { [key]: list.length - names } : {});
     return {
-      // Since predates the vault: say when it began, never "0 notes then" (Addendum C2).
-      ...(g.from ? { vaultBegan: g.from.slice(0, 10) } : { notesThen: g.notesThen }),
+      // Since predates the vault: its first recorded state (Addendum D1), never "0 notes then" (C2).
+      ...(!g.from
+        ? { notesThen: g.notesThen }
+        : g.notesAtStart !== undefined
+          ? { firstRecorded: g.from.slice(0, 10), notesAtStart: g.notesAtStart }
+          : { vaultBegan: g.from.slice(0, 10) }),
       notesNow: g.notesNow,
       newAreas: g.newAreas.slice(0, names).map((a) => clip(a.title, 80)),
       ...extra("moreNewAreas", g.newAreas),
@@ -1958,7 +1979,7 @@ export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<str
     return {
       id: a.id,
       title: a.title,
-      notes: `${a.notesThen} → ${a.notesNow}`,
+      notes: a.notesAtStart !== undefined ? `first recorded ${a.notesAtStart} → ${a.notesNow}` : `${a.notesThen} → ${a.notesNow}`,
       new: newClaims.map((c) => chatClaim(c, gists)),
       changed: changed.map(chatShift),
       retired: retired.map((c) => chatClaim(c, gists)),
@@ -2719,8 +2740,12 @@ export async function executeTool(
     }
 
     case "what_changed": {
-      const since = str(args, "since");
-      if (!since) return fail(`since is required: the start of the period as an ISO 8601 date, e.g. 2026-09-01`);
+      // A follow-up without a date keeps the earlier question's period; with
+      // none, it reads from before the vault, i.e. its start (Addendum D3).
+      const asked = str(args, "since");
+      const earlier = asked ? null : (ctx.changesWindow ?? null);
+      const since = asked ?? earlier?.since ?? VAULT_START_SINCE;
+      const fromStart = !asked && !earlier;
       const moc = str(args, "moc");
       if (moc !== null && /^(null|undefined)$/i.test(moc.trim()))
         return fail(`moc must be a map's id: Elsewhere (id null) is no map — ask about it with query instead`);
@@ -2730,7 +2755,7 @@ export async function executeTool(
       const variables = {
         driveId,
         since,
-        until: str(args, "until"),
+        until: str(args, "until") ?? earlier?.until ?? null,
         moc,
         topic: str(args, "topic"),
         q: str(args, "query"),
@@ -2755,8 +2780,10 @@ export async function executeTool(
       // before, by main area; totals are one line. The whole result stays
       // within CHANGES_CHAT_BUDGET: a page of events first (when asked), then
       // thenVsNow (fewer a side if need be), and the story fills the rest.
+      // From the vault's start: the window opens there, not at the placeholder date.
+      const window = fromStart && digest.window.vaultStart ? { ...digest.window, since: digest.window.vaultStart } : digest.window;
       const data: Record<string, unknown> = {
-        window: digest.window,
+        window,
         totals: totalsLine(digest.totals),
         ...(scopeLine ? { scope: scopeLine } : {}),
         ...(events ? { events: drillPage(events.map(named)), nextCursor: digest.nextCursor ?? null } : {}),
@@ -2773,7 +2800,12 @@ export async function executeTool(
         if (room >= STORY_MIN_ROOM) data.story = chatStory(digest.story, room);
         else data.story = "left out of this detail page — the call without detail carries it";
       }
-      const span = `between ${digest.window.since.slice(0, 10)} and ${digest.window.until.slice(0, 10)}`;
+      const span =
+        (fromStart
+          ? `between the vault's start${digest.window.vaultStart ? ` (${digest.window.vaultStart.slice(0, 10)})` : ""} and `
+          : `between ${window.since.slice(0, 10)} and `) +
+        window.until.slice(0, 10) +
+        (earlier ? " (the period of the earlier question)" : "");
       const covered = scopeLine ? `; scope: ${scopeLine}` : "";
       if (digest.totals.documents === 0) return ok(data, `nothing changed ${span}${covered}`);
       return ok(

@@ -232,6 +232,36 @@ describe("buildSystemPrompt", () => {
     expect(p).toMatch(/otherAreas/);
   });
 
+  describe("Addendum D", () => {
+    it("D4: forbids narrating tool calls, retries or errors in the answer", () => {
+      const p = buildSystemPrompt(base);
+      expect(p).toMatch(/Never describe your tool calls, retries or errors in the answer/);
+      expect(p).toMatch(/“I called …”/);
+      expect(p).toMatch(/“one call returned an error”/);
+    });
+
+    it("D1: reports growth from the vault's first recorded state, never 0 → N", () => {
+      const p = buildSystemPrompt(base);
+      expect(p).toMatch(/firstRecorded/);
+      expect(p).toMatch(/"first recorded on <date>: N notes → now M"/);
+      expect(p).toMatch(/never "0 → M"/);
+    });
+
+    it("D6: states a version range for the whole answer only when every reported area has one", () => {
+      const p = buildSystemPrompt(base);
+      expect(p).toMatch(/never state a version range for the whole answer unless every area you report has versions/);
+    });
+
+    it("D3: lets a follow-up without a date leave since out", () => {
+      const p = buildSystemPrompt(base);
+      expect(p).toMatch(/A follow-up that names no period[^.]*leave since out/);
+    });
+
+    it("D7: reads a description-only shift's gists as the part that changed", () => {
+      expect(buildSystemPrompt(base)).toMatch(/only the part of the description that changed/);
+    });
+  });
+
   it("names the vault so the main-subject rule is actionable, and says a query naming it or its hub covers the whole vault (review B, I4)", () => {
     const p = buildSystemPrompt(base);
     expect(p).toMatch(/the vault's name \(“Powerhouse Knowledge”\)/);

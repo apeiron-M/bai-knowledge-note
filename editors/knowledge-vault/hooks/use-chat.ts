@@ -25,6 +25,7 @@ import {
   CHAT_TOOLS,
   executeTool as realExecuteTool,
   resetVaultDocumentListing,
+  type ChangesWindow,
 } from "../lib/chat/vault-tools.js";
 import { classifyFailure, type Failure } from "../lib/chat/failure.js";
 import { outcomeNote } from "../lib/chat/proposal-outcomes.js";
@@ -510,6 +511,8 @@ export interface LoopOptions {
    * still has to cite, and these are the documents it can.
    */
   priorCitations?: Citation[];
+  /** The period of the conversation's latest what_changed call: a follow-up without a date reuses it (Addendum D3). */
+  changesWindow?: ChangesWindow | null;
   onText?: (delta: string) => void;
   onTrail?: (entry: TrailEntry) => void;
   /** Fires when a new round starts; the UI clears the streamed text of the previous one. */
@@ -524,6 +527,25 @@ export interface LoopResult {
   iterations: number;
   /** The model that produced the final answer; differs from `model` after a fallback. */
   answeredBy: string | null;
+  /** The what_changed period the conversation stands on after this turn (Addendum D3); absent when none was ever named. */
+  changesWindow?: ChangesWindow | null;
+}
+
+/** The period the conversation stands on (Addendum D3): the latest turn's what_changed period, else null. */
+export function latestChangesWindow(messages: readonly StoredMessage[]): ChangesWindow | null {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const w = messages[i].changesWindow;
+    if (w) return w;
+  }
+  return null;
+}
+
+/** The period a what_changed call named (Addendum D3): its since, and until when given; null when it named none. */
+export function namedChangesWindow(args: Record<string, unknown>): ChangesWindow | null {
+  const since = typeof args.since === "string" ? args.since.trim() : "";
+  if (!since) return null;
+  const until = typeof args.until === "string" && args.until.trim() ? args.until.trim() : null;
+  return { since, until };
 }
 
 function parseArgs(call: ToolCall): Record<string, unknown> | null {
@@ -545,6 +567,8 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
     executeTool: realExecuteTool,
   };
   const messages: ChatMessage[] = [...o.messages];
+  // The latest period a what_changed call named, carried into the next ones (Addendum D3).
+  let changesWindow: ChangesWindow | null = o.changesWindow ?? null;
   const trail: TrailEntry[] = [];
   let iterations = 0;
   let answeredBy: string | null = null;
@@ -844,7 +868,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
         toolsOffNextRound = true;
         continue;
       }
-      return { text, trail, iterations, answeredBy };
+      return { text, trail, iterations, answeredBy, changesWindow };
     }
 
     // The assistant turn that requested the tools must precede the results,
@@ -870,7 +894,8 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
         };
         content = JSON.stringify({ error: entry.error });
       } else {
-        const r = await deps.executeTool(name, args, { driveId: o.driveId });
+        const r = await deps.executeTool(name, args, { driveId: o.driveId, ...(changesWindow ? { changesWindow } : {}) });
+        if (r.ok && name === "what_changed") changesWindow = namedChangesWindow(args) ?? changesWindow;
         if (r.ok) {
           entry = { tool: name, summary: r.summary, ok: true, data: r.data };
           content = JSON.stringify(r.forModel ?? r.data);
@@ -1407,6 +1432,7 @@ export function useChat(o: UseChatOptions): UseChat {
       ];
 
       let finalText = "";
+      let turnWindow: ChangesWindow | null = null;
       const collected: TrailEntry[] = [];
       // Every answer starts from fresh data. The listing cache exists so
       // that several tool calls within one answer are free, not so that a
@@ -1421,6 +1447,7 @@ export function useChat(o: UseChatOptions): UseChat {
           driveId,
           messages: history,
           priorCitations: withUser.messages.flatMap((m) => m.citations ?? []),
+          changesWindow: latestChangesWindow(withUser.messages),
           signal: ctrl.signal,
           onText: (d) => {
             streamed += d;
@@ -1439,6 +1466,7 @@ export function useChat(o: UseChatOptions): UseChat {
           },
         });
         finalText = r.text;
+        turnWindow = r.changesWindow ?? null;
         if (r.answeredBy && r.answeredBy !== model) update({ routedFrom: model });
       } catch (err) {
         if (ctrl.signal.aborted) {
@@ -1480,6 +1508,7 @@ export function useChat(o: UseChatOptions): UseChat {
           citations: resolved.citations,
           ...(evidence.length > 0 ? { evidence } : {}),
           ...(consulted.length > 0 ? { consulted } : {}),
+          ...(turnWindow ? { changesWindow: turnWindow } : {}),
         };
         const done: Thread = {
           ...withUser,

@@ -358,7 +358,7 @@ describe("story: review fixes (Addendum A)", () => {
     const rows = [row("n1", "SET_DESCRIPTION", { description: "new gist" }, IN(1))];
     const s = story([["n1", note("Same claim", { description: "new gist" })]]);
     expect(digest(rows, baseline, s).story?.areas[0].changedClaims).toEqual([
-      { documentId: "n1", then: { claim: "Same claim", gist: "old gist" }, now: { claim: "Same claim", gist: "new gist" }, why: null },
+      { documentId: "n1", then: { claim: "Same claim", gist: "old gist" }, now: { claim: "Same claim", gist: "new gist" }, why: null, gistDiff: { then: "old gist", now: "new gist" } },
     ]);
   });
 
@@ -869,5 +869,190 @@ describe("scope: a specific term means the areas its notes concentrate in (Adden
   it("selects nothing when no area holds 10% of the hits, or there are no hits: the caller searches", () => {
     expect(selectAreasByHits(HITS, HUB, notes([["rd", range(0, 9)]]))).toBeNull();
     expect(selectAreasByHits([], HUB, notes([["rd", range(0, 9)]]))).toBeNull();
+  });
+});
+
+describe("story: Addendum D", () => {
+  describe("D1: growth from the vault's first import, not from 0", () => {
+    const START = "2026-11-02T08:00:00.000Z";
+    const s = () =>
+      story(
+        [
+          ["n1", note("Imported on day one", { addedAt: "2026-11-02T10:00:00.000Z" })],
+          ["n2", note("Added the day after", { addedAt: "2026-11-03T09:00:00.000Z" })],
+          ["n3", note("Imported that evening", { addedAt: "2026-11-02T20:00:00.000Z" })],
+          ["n4", note("Imported, then archived on day one", { addedAt: "2026-11-02T09:00:00.000Z", status: "ARCHIVED" })],
+        ],
+        { vaultStart: START, coreIdeas: new Map([["m1", ["n1"]], ["m2", ["n2"]], ["a2", ["n3", "n4"]]]) },
+      );
+    const rows = [
+      row("n4", "CREATE_DOCUMENT", {}, "2026-11-02T09:00:00.000Z"),
+      row("n1", "CREATE_DOCUMENT", {}, "2026-11-02T10:00:00.000Z"),
+      row("n4", "ARCHIVE_NOTE", {}, "2026-11-02T12:00:00.000Z"),
+      row("n3", "CREATE_DOCUMENT", {}, "2026-11-02T20:00:00.000Z"),
+      row("n2", "CREATE_DOCUMENT", {}, "2026-11-03T09:00:00.000Z"),
+    ];
+
+    it("reports notesAtStart (notes live at the end of the first import day) vault-wide and per area when since < vaultStart", () => {
+      const d = buildChanges(rows, [], ctx(s()), { since: "2025-09-01T00:00:00.000Z", until: W.until }, { scope: {} });
+      expect(d.story?.growth).toMatchObject({ from: START, notesAtStart: 2, notesNow: 3 });
+      const byId = new Map(d.story?.areas.map((a) => [a.id, a]));
+      expect(byId.get("a1")?.notesAtStart).toBe(1);
+      expect(byId.get("a2")?.notesAtStart).toBe(1);
+      expect(byId.get("a1")?.notesNow).toBe(2);
+    });
+
+    it("has no notesAtStart when the vault already existed at since", () => {
+      const d = buildChanges(rows, [], ctx(s()), { since: "2026-11-02T09:30:00.000Z", until: W.until }, { scope: {} });
+      expect(d.story?.growth.notesAtStart).toBeUndefined();
+      expect(d.story?.areas.every((a) => a.notesAtStart === undefined)).toBe(true);
+    });
+  });
+
+  describe("D5: punctuation-blind comparison", () => {
+    const shiftOf = (thenTitle: string, nowTitle: string, thenGist: string | null = null, nowGist: string | null = null) => {
+      const baseline = [row("n1", "SET_TITLE", { title: thenTitle }, BEFORE), ...(thenGist ? [row("n1", "SET_DESCRIPTION", { description: thenGist }, BEFORE)] : [])];
+      const rows = [row("n1", "SET_TITLE", { title: nowTitle }, IN(1)), ...(nowGist ? [row("n1", "SET_DESCRIPTION", { description: nowGist }, IN(1))] : [])];
+      const s = story([["n1", note(nowTitle, { description: nowGist })]]);
+      return digest(rows, baseline, s, { q: "x", documentIds: ["n1"] });
+    };
+
+    it("is not a shift when the claims differ only by trailing punctuation, case or whitespace", () => {
+      for (const [a, b] of [["Sync uses the drive", "Sync uses the drive."], ["Sync uses the  drive", "sync uses the drive"], ["Sync uses the drive!", " Sync uses the drive "]]) {
+        const d = shiftOf(a, b);
+        expect(d.story?.areas.flatMap((x) => x.changedClaims)).toEqual([]);
+        // Held throughout: listed once as unchanged.
+        expect(d.thenVsNow?.unchanged.map((c) => c.documentId)).toEqual(["n1"]);
+      }
+    });
+
+    it("is not a shift when the gists differ only by trailing punctuation", () => {
+      const d = shiftOf("Same claim", "Same claim", "Each operation is stored once", "Each operation is stored once.");
+      expect(d.story?.areas.flatMap((x) => x.changedClaims)).toEqual([]);
+    });
+
+    it("is still a shift when a word changes", () => {
+      expect(shiftOf("Sync uses the drive", "Sync bypasses the drive.").story?.areas.flatMap((x) => x.changedClaims.map((c) => c.documentId))).toEqual(["n1"]);
+    });
+  });
+
+  describe("D7: description-only shifts", () => {
+    const THEN_GIST = "Processors see each operation exactly once, in the order the reactor wrote them.";
+    const NOW_GIST = "Processors see each operation at least once, in the order the reactor wrote them.";
+    const gistShift = (thenGist: string, nowGist: string) => {
+      const baseline = [row("n1", "SET_TITLE", { title: "Delivery to processors" }, BEFORE), row("n1", "SET_DESCRIPTION", { description: thenGist }, BEFORE)];
+      const rows = [row("n1", "SET_DESCRIPTION", { description: nowGist }, IN(1))];
+      return digest(rows, baseline, story([["n1", note("Delivery to processors.", { description: nowGist })]]), { q: "x", documentIds: ["n1"] });
+    };
+
+    it("carries the differing span of each gist, with a few words of context, when the claim is unchanged", () => {
+      const [sh] = gistShift(THEN_GIST, NOW_GIST).story?.areas.flatMap((a) => a.changedClaims) ?? [];
+      expect(sh.gistDiff).toEqual({ then: "…see each operation exactly once, in the…", now: "…see each operation at least once, in the…" });
+    });
+
+    it("clips each side of a long differing span to 160 characters", () => {
+      const long = (w: string) => Array.from({ length: 60 }, (_, i) => `${w}${i}`).join(" ");
+      const [sh] = gistShift(`Start ${long("old")} end.`, `Start ${long("new")} end.`).story?.areas.flatMap((a) => a.changedClaims) ?? [];
+      expect(sh.gistDiff?.then.length).toBeLessThanOrEqual(160);
+      expect(sh.gistDiff?.now.length).toBeLessThanOrEqual(160);
+      expect(sh.gistDiff?.then.startsWith("Start old0")).toBe(true);
+    });
+
+    it("has no gistDiff when the claim itself changed", () => {
+      const baseline = [row("n1", "SET_TITLE", { title: "Old claim" }, BEFORE), row("n1", "SET_DESCRIPTION", { description: THEN_GIST }, BEFORE)];
+      const rows = [row("n1", "SET_TITLE", { title: "New claim" }, IN(1)), row("n1", "SET_DESCRIPTION", { description: NOW_GIST }, IN(1))];
+      const [sh] = digest(rows, baseline, story([["n1", note("New claim", { description: NOW_GIST })]])).story?.areas.flatMap((a) => a.changedClaims) ?? [];
+      expect(sh.gistDiff).toBeUndefined();
+    });
+
+    it("is no shift when the gist is a trivial rewording (token Jaccard ≥ 0.9), and lists the note as unchanged", () => {
+      const d = gistShift(
+        "Reactor stores every operation in an append only log with hash chain signature verification and replay",
+        "The reactor stores every operation in a durable append only log with hash chain signature verification and replay.",
+      );
+      expect(d.story?.areas.flatMap((a) => a.changedClaims)).toEqual([]);
+      expect(d.thenVsNow?.unchanged.map((c) => c.documentId)).toEqual(["n1"]);
+    });
+
+    it("is still a shift when a near-identical gist changes a number or adds a negation", () => {
+      const base = "The runner pool starts hosts on demand, drains them on shutdown, and reports their health to the switchboard every minute";
+      for (const now of [base.replace("every minute", "every 5 minutes"), base.replace("drains them", "never drains them")]) {
+        expect(gistShift(base, now).story?.areas.flatMap((a) => a.changedClaims.map((c) => c.documentId))).toEqual(["n1"]);
+      }
+    });
+  });
+
+  describe("D6: versions only where versioned", () => {
+    const withSources = (refs: Record<string, string | null>) => {
+      const rows = [row("n1", "SET_TITLE", { title: "New" }, IN(1))];
+      const baseline = [row("n1", "SET_TITLE", { title: "Old" }, BEFORE)];
+      const s = story([["n1", note("New")]], {
+        derivedFrom: new Map([["n1", Object.keys(refs)]]),
+        ingests: new Map(Object.entries(refs).map(([id, ref]) => [id, [{ at: IN(2), ref }]])),
+      });
+      return digest(rows, baseline, s).story?.areas.find((a) => a.id === "a1")?.versions;
+    };
+
+    it("reports no versions for an area where under half of the sources carry a git ref", () => {
+      expect(withSources({ s1: "v6.2.3-dev.91", s2: null, s3: null })).toBeUndefined();
+    });
+
+    it("reports versions when at least half of them do", () => {
+      expect(withSources({ s1: "v6.2.3-dev.91", s2: null })).toEqual({ first: "v6.2.3-dev.91", now: "v6.2.3-dev.91" });
+    });
+
+    it("counts a source with no recorded ingestion as unversioned", () => {
+      const rows = [row("n1", "SET_TITLE", { title: "New" }, IN(1))];
+      const s = story([["n1", note("New")]], {
+        derivedFrom: new Map([["n1", ["s1", "s2", "s3"]]]),
+        ingests: new Map([["s1", [{ at: IN(2), ref: "v1" }]]]),
+      });
+      expect(digest(rows, [row("n1", "SET_TITLE", { title: "Old" }, BEFORE)], s).story?.areas.find((a) => a.id === "a1")?.versions).toBeUndefined();
+    });
+  });
+
+  describe("D2: relevance inside a question's scope", () => {
+    // Ten new notes and ten revised ones in one area; the query's hits are three of each.
+    const rows: OperationRow[] = [];
+    const baseline: OperationRow[] = [];
+    const nodes: [string, StoryNode][] = [];
+    const ids: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      rows.push(row(`new${i}`, "CREATE_DOCUMENT", {}, IN(1, i)));
+      nodes.push([`new${i}`, note(`New ${i}`, { addedAt: IN(1, i), incoming: i })]);
+      baseline.push(row(`chg${i}`, "SET_TITLE", { title: `Old ${i}` }, BEFORE));
+      rows.push(row(`chg${i}`, "SET_TITLE", { title: `Changed ${i}` }, IN(2, i)));
+      nodes.push([`chg${i}`, note(`Changed ${i}`, { incoming: i })]);
+      ids.push(`new${i}`, `chg${i}`);
+    }
+    const s = story(nodes, { coreIdeas: new Map([["a2", ids]]) });
+    const rank = ["chg2", "new1", "chg7", "new6", "new3", "chg0"];
+
+    it("orders a q scope's claims by hit rank and caps the claims that did not match at half the slots", () => {
+      const d = digest(rows, baseline, s, { q: "x", documentIds: ids, rank });
+      const area = d.story?.areas[0];
+      // Matching first, in hit order; then at most 4 of 8 slots for the rest, most connected first.
+      expect(area?.newClaims.map((c) => c.documentId)).toEqual(["new1", "new6", "new3", "new9", "new8", "new7", "new5"]);
+      expect(area?.changedClaims.map((c) => c.documentId).slice(0, 3)).toEqual(["chg2", "chg7", "chg0"]);
+      expect(area?.changedClaims).toHaveLength(3 + 4);
+      // Counts stay uncapped.
+      expect([area?.newCount, area?.changedCount]).toEqual([10, 10]);
+      // thenVsNow: hits first, in hit order; at most 6 of 12 a side for the rest.
+      expect(d.thenVsNow?.now.map((c) => c.documentId).slice(0, 6)).toEqual(["chg2", "new1", "chg7", "new6", "new3", "chg0"]);
+      expect(d.thenVsNow?.now).toHaveLength(6 + 6);
+      expect(d.thenVsNow?.then.map((c) => c.documentId).slice(0, 3)).toEqual(["chg2", "chg7", "chg0"]);
+    });
+
+    it("orders by incoming edges as before when the scope has no query", () => {
+      const area = digest(rows, baseline, s, { documentIds: ids }).story?.areas[0];
+      expect(area?.newClaims.map((c) => c.documentId)).toEqual(["new9", "new8", "new7", "new6", "new5", "new4", "new3", "new2"]);
+    });
+
+    it("ranks a supersession by its replacement's hit too", () => {
+      const sRows = [row("rep", "ADD_RELATIONSHIP", { sourceId: "rep", targetId: "chg9", relationshipType: "SUPERSEDES", metadata: { reason: "Now at least once" } }, IN(3))];
+      const s2 = story([...nodes, ["rep", note("Replacement claim", { addedAt: BEFORE })]], { coreIdeas: new Map([["a2", [...ids, "rep"]]]) });
+      const area = digest([...rows, ...sRows], baseline, s2, { q: "x", documentIds: [...ids, "rep"], rank: ["chg2", "rep"] }).story?.areas[0];
+      expect(area?.changedClaims.slice(0, 2).map((c) => c.documentId)).toEqual(["chg2", "chg9"]);
+    });
   });
 });

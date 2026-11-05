@@ -370,3 +370,39 @@ mechanisms, in this order:
   selected hits.
 Acceptance additions: "powerhouse repo since summer" → `source`; "the Powerhouse stack since September" → unscoped list
 → `areas` with only technical areas; "the reactor since summer" → C1c areas led by Reactor and Drives.
+
+---
+
+## Addendum D — baselines, relevance, polish (approved 2026-11-04, after testing 1.0.54-dev.55 live)
+
+Live answers on dev.55 were substantively right with a strong model; seven defects remained:
+
+**D1. Growth from the vault's first import.** When `since` < `window.vaultStart`, growth (vault-wide and per area) is
+measured from the **first-recorded state**: notes that existed at the end of the vault's first import day
+(`vaultStart` + 24 h), not 0. `growth.from` keeps `vaultStart`; add `growth.notesAtStart` and per-area `notesAtStart`.
+The chat says "first recorded on <date>: N notes → now M", never "0 → M".
+
+**D2. Relevance ranking inside a question's scope.** For `q` / `source` / `areas` scopes, `newClaims`, `changedClaims` and
+`thenVsNow` are ordered by relevance to the question (the `q` semantic hit order when a query exists — the top-200 hits
+already fetched for C1c — else by incoming edges as today); a scoped answer prefers claims that matched the query.
+Within an area, at most half the slots go to claims that did not match the query.
+
+**D3. Follow-up without a date.** `what_changed` called without `since` in a conversation where an earlier call had one
+reuses that earlier window (the chat keeps it); with none, it defaults to the vault's start — never an error.
+
+**D4. No narration of tool calls.** The system prompt forbids describing tool calls, retries or errors in the answer
+("I called…", "one call returned an error").
+
+**D5. Punctuation-blind comparison.** Claim/gist comparison for shifts normalises case, whitespace and trailing
+punctuation; a difference that disappears under normalisation is not a shift.
+
+**D6. Versions only where versioned.** `versions` is reported for an area only when ≥ 50 % of its in-scope sources carry a
+`git:` ref; the chat never states a version range for the whole answer unless every reported area has one.
+
+**D7. Description-only shifts.** When the claim (title) is unchanged, the shift carries the gist difference: the
+differing span of each gist (word-level diff, ≤ 160 chars each side with context), not two clipped copies; a gist change
+whose normalised token Jaccard ≥ 0.9 is a trivial rewording and is not a shift.
+
+Acceptance (live, dev.56): the reactor and service-pricing questions from the dev.55 tests no longer say "0 → N", list
+no off-topic revisions (deliverables tables, roadmap ordering under pricing), state no version range for pricing, show no
+identical before/after; "the Powerhouse stack since September" answers only from technical areas chosen by title.

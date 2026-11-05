@@ -13,6 +13,7 @@ import {
   extractCitations,
   needsCitationRepair,
   resolveCitations,
+  latestChangesWindow,
   runAgentLoop,
   type TrailEntry,
 } from "./use-chat.js";
@@ -1051,5 +1052,57 @@ describe("collectKnownDocuments over a list_projects row", () => {
     // envelope's title was a sibling, a chip for the scope could be labelled
     // with whichever envelope happened to be listed first.
     expect(known.get("s1")?.title).not.toBe("Paperless × Powerhouse demo");
+  });
+});
+
+describe("runAgentLoop: the period of a what_changed conversation (Addendum D3)", () => {
+  const answer = { text: "Done [[n1]]", toolCalls: [], finishReason: "stop" };
+  const ok = { ok: true, data: { window: { since: "x", until: "y" } }, summary: "1 created" };
+
+  it("hands the conversation's earlier period to what_changed, and keeps the latest one it names", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"query":"reactor"}', "c1")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"since":"2026-09-01","areas":["A"]}', "c2")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"moc":"m1"}', "c3")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce(answer);
+    const executeTool = vi.fn().mockResolvedValue(ok);
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "and the reactor?" }],
+      changesWindow: { since: "2026-06-01", until: null },
+      deps: { streamChat, executeTool } as never,
+    });
+    const ctxs = executeTool.mock.calls.map((c) => (c[2] as { changesWindow?: unknown }).changesWindow);
+    expect(ctxs).toEqual([
+      { since: "2026-06-01", until: null },
+      { since: "2026-06-01", until: null },
+      { since: "2026-09-01", until: null },
+    ]);
+    expect(r.changesWindow).toEqual({ since: "2026-09-01", until: null });
+  });
+
+  it("does not take the period of a failed call", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"since":"nonsense"}', "c1")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce(answer);
+    const executeTool = vi.fn().mockResolvedValue({ ok: false, error: "since is not a date" });
+    const r = await runAgentLoop({ ...base, messages: [{ role: "user", content: "what changed?" }], deps: { streamChat, executeTool } as never });
+    expect(r.changesWindow ?? null).toBeNull();
+  });
+});
+
+describe("latestChangesWindow: the period a conversation stands on (Addendum D3)", () => {
+  it("is the latest assistant turn's what_changed period, else null", () => {
+    expect(latestChangesWindow([{ role: "user", content: "hi" }])).toBeNull();
+    expect(
+      latestChangesWindow([
+        { role: "assistant", content: "a", changesWindow: { since: "2026-06-01", until: null } },
+        { role: "assistant", content: "b", changesWindow: { since: "2026-09-01", until: "2026-10-01" } },
+        { role: "assistant", content: "c" },
+        { role: "user", content: "and the reactor?" },
+      ]),
+    ).toEqual({ since: "2026-09-01", until: "2026-10-01" });
   });
 });

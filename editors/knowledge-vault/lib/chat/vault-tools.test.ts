@@ -2056,10 +2056,11 @@ describe("what_changed — the change digest over a window", () => {
     nextCursor: null,
   });
 
-  it("is offered with since required and the scope arguments", () => {
+  it("is offered with the scope arguments, since optional (Addendum D3)", () => {
     const tool = VAULT_TOOLS.find((t) => t.function.name === "what_changed");
-    const params = tool?.function.parameters as { properties: Record<string, unknown>; required: string[] };
-    expect(params.required).toEqual(["since"]);
+    const params = tool?.function.parameters as { properties: Record<string, { description: string }>; required?: string[] };
+    expect(params.required ?? []).toEqual([]);
+    expect(params.properties.since.description).toMatch(/leave it out[^.]*earlier/i);
     expect(Object.keys(params.properties).sort()).toEqual(["areas", "cursor", "detail", "limit", "moc", "query", "since", "source", "topic", "until"]);
     expect(tool?.function.description).toMatch(/never search/i);
   });
@@ -2298,9 +2299,45 @@ describe("what_changed — the change digest over a window", () => {
     expect((r.data as { thenVsNow: { unchanged: { documentId: string }[] } }).thenVsNow.unchanged[0].documentId).toBe("n8");
   });
 
-  it("refuses a call without since", async () => {
-    const r = await executeTool("what_changed", {}, CTX);
-    expect(r).toEqual({ ok: false, error: expect.stringMatching(/since is required/) as unknown });
+  describe("a follow-up without a date (Addendum D3)", () => {
+    it("reuses the window of the conversation's earlier call", async () => {
+      mockGql({ knowledgeGraphChanges: digest(1) });
+      const r = await executeTool("what_changed", { query: "the reactor" }, { ...CTX, changesWindow: { since: "2026-06-01", until: "2026-10-31" } });
+      expect(r.ok).toBe(true);
+      expect(lastRequest().body.variables).toMatchObject({ since: "2026-06-01", until: "2026-10-31", q: "the reactor" });
+      if (r.ok) expect(r.summary).toMatch(/the period of the earlier question/);
+    });
+
+    it("keeps an until given with the follow-up", async () => {
+      mockGql({ knowledgeGraphChanges: digest(1) });
+      await executeTool("what_changed", { until: "2026-11-01" }, { ...CTX, changesWindow: { since: "2026-06-01", until: null } });
+      expect(lastRequest().body.variables).toMatchObject({ since: "2026-06-01", until: "2026-11-01" });
+    });
+
+    it("with no earlier window, starts at the vault's start — never an error", async () => {
+      const story = { growth: { notesThen: 0, notesNow: 3, from: "2026-09-02T10:00:00.000Z", notesAtStart: 2, newAreas: [], newMaps: [] }, areas: [] };
+      mockGql({
+        knowledgeGraphChanges: {
+          ...digest(1),
+          window: { since: "1970-01-01T00:00:00.000Z", until: "2026-11-03T23:59:59.999Z", vaultStart: "2026-09-02T10:00:00.000Z" },
+          story,
+        },
+      });
+      const r = await executeTool("what_changed", {}, CTX);
+      if (!r.ok) throw new Error(r.error);
+      expect(lastRequest().body.variables).toMatchObject({ since: "1970-01-01" });
+      // The model reads the vault's start, never 1970.
+      expect((r.data as { window: { since: string } }).window.since).toBe("2026-09-02T10:00:00.000Z");
+      expect(JSON.stringify(r.data)).not.toContain("1970");
+      expect(r.summary).toMatch(/between the vault's start \(2026-09-02\) and 2026-11-03/);
+      expect(r.summary).not.toContain("1970");
+    });
+
+    it("an explicit since wins over the earlier window", async () => {
+      mockGql({ knowledgeGraphChanges: digest(1) });
+      await executeTool("what_changed", { since: "2026-09-01" }, { ...CTX, changesWindow: { since: "2026-06-01", until: null } });
+      expect(lastRequest().body.variables).toMatchObject({ since: "2026-09-01", until: null });
+    });
   });
 
   describe("stays small for any call (Addendum B1)", () => {
@@ -2429,6 +2466,52 @@ describe("what_changed — the change digest over a window", () => {
       expect(r.summary).not.toMatch(/0 →/);
       expect(lastRequest().body.query).toContain("window { since until vaultStart }");
       expect(lastRequest().body.query).toMatch(/growth \{ notesThen notesNow from /);
+    });
+
+    it("counts growth from the vault's first recorded state, never 0 → N (Addendum D1)", async () => {
+      const story = bigStory();
+      const from = "2026-09-02T10:00:00.000Z";
+      mockGql({
+        knowledgeGraphChanges: {
+          ...heavyDigest(1, false),
+          window: { since: "2025-09-01T00:00:00.000Z", until: "2026-11-04T23:59:59.999Z", vaultStart: from },
+          story: { ...story, growth: { ...story.growth, notesThen: 0, from, notesAtStart: 120 }, areas: story.areas.map((a) => ({ ...a, notesThen: 0, notesAtStart: 7 })) },
+          thenVsNow: null,
+        },
+      });
+      const r = await executeTool("what_changed", { since: "2025-09-01" }, CTX);
+      if (!r.ok) throw new Error(r.error);
+      const out = (r.data as { story: { growth: Record<string, unknown>; areas: { notes: string }[] } }).story;
+      expect(out.growth).toMatchObject({ firstRecorded: "2026-09-02", notesAtStart: 120 });
+      expect(out.areas[0].notes).toMatch(/^first recorded 7 → \d+$/);
+      expect(r.summary).toMatch(/first recorded on 2026-09-02: 120 live notes → now \d+/);
+      expect(r.summary).not.toMatch(/\b0 →/);
+      expect(lastRequest().body.query).toMatch(/growth \{ notesThen notesNow from notesAtStart /);
+      expect(lastRequest().body.query).toContain("notesThen notesNow notesAtStart newCount");
+    });
+
+    it("gives a description-only shift the differing spans, not two clipped copies (Addendum D7)", () => {
+      const story = bigStory();
+      const longGist = (w: string) => `Processors see each operation ${w} once, ${words(40, "ctx")}`;
+      const shift = {
+        documentId: "n2",
+        then: { claim: "Delivery", gist: longGist("exactly") },
+        now: { claim: "Delivery.", gist: longGist("at least") },
+        why: null,
+        gistDiff: { then: "…see each operation exactly once, ctx0 ctx1…", now: "…see each operation at least once, ctx0 ctx1…" },
+      };
+      const areas = [{ ...story.areas[0], changedClaims: [shift] }, ...story.areas.slice(1)];
+      const out = chatStory({ ...story, areas } as Parameters<typeof chatStory>[0], 40_000) as ChatStoryOut;
+      expect(out.areas[0].changed[0]).toMatchObject({
+        then: { claim: "Delivery", gist: "…see each operation exactly once, ctx0 ctx1…" },
+        now: { claim: "Delivery.", gist: "…see each operation at least once, ctx0 ctx1…" },
+      });
+    });
+
+    it("asks for the gist spans of a description-only shift", async () => {
+      mockGql({ knowledgeGraphChanges: digest(1) });
+      await executeTool("what_changed", { since: "2026-09-01" }, CTX);
+      expect(lastRequest().body.query).toContain("thenAt gistDiff { then now }");
     });
 
     it("marks an area it names without any claim nameOnly, and no area that shows claims (Addendum C5)", () => {
