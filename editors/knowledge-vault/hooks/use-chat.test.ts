@@ -13,6 +13,8 @@ import {
   extractCitations,
   needsCitationRepair,
   resolveCitations,
+  unreadCitations,
+  tidyMarkerBrackets,
   latestChangesWindow,
   runAgentLoop,
   type TrailEntry,
@@ -1082,6 +1084,296 @@ describe("collectKnownDocuments over a list_projects row", () => {
     // envelope's title was a sibling, a chip for the scope could be labelled
     // with whichever envelope happened to be listed first.
     expect(known.get("s1")?.title).not.toBe("Paperless × Powerhouse demo");
+  });
+});
+
+describe("citing what_changed claims (Addendum E3)", () => {
+  // Real ids and shapes from the dev.57 answer to "What changed in the
+  // Powerhouse stack since September?": the vault's ids are base64url, and
+  // what_changed names a claim by its text — there is no title field.
+  const NEW = "Wq3vJ0cE1x9pJm2b7dKk0Qy0sYz4hN8uTt5LrVfA1cE";
+  const OLD = "Hk2pQ9wR4tY7uI0oP3aS6dF9gJ2kL5zX8cV1bN4mQ7w";
+  const REP = "cc79GLzdvH3xCYpgeX_NZX0PCUb5kvodcJYdN59YUaU";
+  const EDIT = "Rt5yU8iO1pA4sD7fG0hJ3kL6zX9cV2bN5mQ8wE1rT4y";
+  const story: TrailEntry = {
+    tool: "what_changed",
+    summary: "1 created, 2 revised",
+    ok: true,
+    data: {
+      window: { since: "2026-09-01T00:00:00.000Z", until: "2026-11-05T23:59:59.999Z" },
+      story: {
+        growth: { notesThen: 44, notesNow: 271 },
+        areas: [
+          {
+            id: "095fcd1a-1b4c-4f4c-bf24-6646cbe023f5",
+            title: "Reactor and Drives",
+            notes: "44 → 271",
+            new: [{ documentId: NEW, claim: "A reactor checks at boot which protocol versions its stored documents were created under" }],
+            changed: [
+              {
+                documentId: OLD,
+                then: { claim: "A failed write throws a bare Error carrying only job.error?.message" },
+                now: { claim: "A failed write rejects with JobFailedError carrying the job's JobInfo" },
+                why: "the client boundary no longer drops the typed class",
+                replacedBy: REP,
+              },
+              { documentId: EDIT, then: { claim: "dispatch takes actionOrActions" }, now: { claim: "dispatch takes actions, onErrors and onSuccess" } },
+            ],
+            retired: [],
+          },
+        ],
+      },
+    },
+  } as TrailEntry;
+
+  it("knows each claim by its text: a new claim, a revised note as it reads now, a replaced note as it read then and its replacement as it reads now", () => {
+    const known = collectKnownDocuments([story]);
+    expect(known.get(NEW)?.title).toMatch(/^A reactor checks at boot/);
+    expect(known.get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+    expect(known.get(OLD)?.title).toBe("A failed write throws a bare Error carrying only job.error?.message");
+    expect(known.get(REP)?.title).toBe("A failed write rejects with JobFailedError carrying the job's JobInfo");
+  });
+
+  it("lets a real title a later tool hands over replace the claim text", () => {
+    const read: TrailEntry = {
+      tool: "read_notes",
+      summary: "1 note",
+      ok: true,
+      data: { notes: [{ documentId: REP, title: "Failed writes reject with JobFailedError", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    const known = collectKnownDocuments([story, read]);
+    expect(known.get(REP)).toEqual({
+      documentId: REP,
+      title: "Failed writes reject with JobFailedError",
+      documentType: "bai/knowledge-note",
+      // The claim it was listed by stays an exact alias.
+      claims: ["A failed write rejects with JobFailedError carrying the job's JobInfo"],
+    });
+    // A title seen first is never overwritten by a claim seen later.
+    expect(collectKnownDocuments([read, story]).get(REP)?.title).toBe("Failed writes reject with JobFailedError");
+  });
+
+  it("keeps the citation of a story claim — no ' .' where it stood", () => {
+    const r = resolveCitations(`Branch on err.job.error.name rather than on a message string [[${REP}]].`, [story]);
+    expect(r.text).toBe(`Branch on err.job.error.name rather than on a message string [[${REP}]].`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([REP]);
+  });
+
+  it("reads a then → now pair the model wrapped in one more bracket as two citations, with no stray bracket left", () => {
+    const row = `| A failed write throws a bare Error | It rejects with JobFailedError [[[${OLD}]] → [[${REP}]]] | typed class kept |`;
+    const r = resolveCitations(row, [story]);
+    expect(r.text).toBe(`| A failed write throws a bare Error | It rejects with JobFailedError [[${OLD}]] → [[${REP}]] | typed class kept |`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([OLD, REP]);
+    expect(r.dropped).toBe(0);
+  });
+
+  it("still drops a marker no tool named, stray brackets with it", () => {
+    const r = resolveCitations("Claimed [[[Zz9yX8wV7uT6sR5qP4oN3mL2kJ1iH0gF9eD8cB7aA6]]] here.", [story]);
+    expect(r.text).toBe("Claimed  here.");
+    expect(r.citations).toEqual([]);
+  });
+
+  it("labels a note revised in place with its wording now, even when thenVsNow lists its then first (a query call)", () => {
+    const queryCall: TrailEntry = {
+      tool: "what_changed",
+      summary: "2 revised",
+      ok: true,
+      data: {
+        thenVsNow: {
+          then: [{ documentId: EDIT, claim: "dispatch takes actionOrActions" }],
+          now: [{ documentId: EDIT, claim: "dispatch takes actions, onErrors and onSuccess" }],
+          unchanged: [],
+        },
+      },
+    } as TrailEntry;
+    expect(collectKnownDocuments([queryCall]).get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+    expect(collectKnownDocuments([queryCall, story]).get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+  });
+
+  it("takes an earlier turn's title over a past title, never over this turn's current one, and keeps the claims as aliases", () => {
+    const thenOnly: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 revised",
+      ok: true,
+      data: { thenVsNow: { then: [{ documentId: EDIT, claim: "dispatch takes actionOrActions" }], now: [], unchanged: [] } },
+    } as TrailEntry;
+    // A past title gives way to the latest earlier citation with a real title; an id is no title.
+    const prior = [
+      { documentId: EDIT, title: "An older title", documentType: "bai/knowledge-note" },
+      { documentId: EDIT, title: "The editor dispatch signature", documentType: "bai/knowledge-note" },
+      { documentId: EDIT, title: EDIT, documentType: null },
+    ];
+    const r = resolveCitations(`Dispatch [[${EDIT}]], once [[dispatch takes actionOrActions]].`, [thenOnly], prior);
+    expect(r.citations).toEqual([{ documentId: EDIT, title: "The editor dispatch signature", documentType: "bai/knowledge-note" }]);
+    expect(r.text).toBe(`Dispatch [[${EDIT}]], once [[${EDIT}]].`);
+    // A current claim is the note's title as of this turn: fresher than an earlier turn's.
+    const current = resolveCitations(`It rejects [[${REP}]].`, [story], [{ documentId: REP, title: "Failed writes reject (older title)", documentType: "bai/knowledge-note" }]);
+    expect(current.citations[0].title).toBe("A failed write rejects with JobFailedError carrying the job's JobInfo");
+    // An id-titled earlier citation replaces no text.
+    expect(resolveCitations(`[[${EDIT}]]`, [thenOnly], [{ documentId: EDIT, title: EDIT }]).citations[0].title).toBe("dispatch takes actionOrActions");
+  });
+
+  it("never lets a past title replace a current one, whichever part of the result comes first (areas call: story, then thenVsNow)", () => {
+    const areasCall: TrailEntry = {
+      tool: "what_changed",
+      summary: "2 revised",
+      ok: true,
+      data: {
+        story: { areas: [{ changed: [{ documentId: EDIT, then: { claim: "dispatch takes actionOrActions" }, now: { claim: "dispatch takes actions, onErrors and onSuccess" } }] }] },
+        // The clipped now side ranks created notes first: EDIT is on the then side only.
+        thenVsNow: { then: [{ documentId: EDIT, claim: "dispatch takes actionOrActions" }], now: [{ documentId: NEW, claim: "A created note" }], unchanged: [] },
+      },
+    } as TrailEntry;
+    expect(collectKnownDocuments([areasCall]).get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+    // Its past wording still names it.
+    expect(resolveCitations("Once [[dispatch takes actionOrActions]].", [areasCall]).citations.map((c) => c.documentId)).toEqual([EDIT]);
+  });
+
+  it("lets an unclosed [[ swallow nothing: the prose stays, and the next marker is cited — as the unread check reads it", () => {
+    const hit: TrailEntry = {
+      tool: "search_vault",
+      summary: "1 hit",
+      ok: true,
+      data: { hits: [{ documentId: "B1", title: "A searched note", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    const text = "First para [[note\n\nSecond paragraph.\n\nThird [[B1]] end.";
+    const r = resolveCitations(text, [hit]);
+    expect(r.text).toBe(text);
+    expect(r.citations.map((c) => c.documentId)).toEqual(["B1"]);
+    expect(unreadCitations(text, [hit]).map((d) => d.documentId)).toEqual(["B1"]);
+  });
+
+  it("removes a bracket wrapped around markers whatever joins them, and a stray closer after a marker", () => {
+    const cases: [string, string][] = [
+      [`[[[${OLD}]] => [[${REP}]]]`, `[[${OLD}]] => [[${REP}]]`],
+      [`[[[${OLD}]] vs [[${REP}]]]`, `[[${OLD}]] vs [[${REP}]]`],
+      [`[[[${OLD}]] (then) → [[${REP}]] (now)]`, `[[${OLD}]] (then) → [[${REP}]] (now)`],
+      [`Then [[${OLD}]]] now.`, `Then [[${OLD}]] now.`],
+      [`[[[[${OLD}]]]]`, `[[${OLD}]]`],
+    ];
+    for (const [written, read] of cases) expect(resolveCitations(written, [story]).text).toBe(read);
+    // A title with a bracket in it is no marker: left whole.
+    expect(resolveCitations("Read [[Foo [draft]]] now.", [story]).text).toBe("Read [[Foo [draft]]] now.");
+  });
+
+  it("matches claim text exactly, never by prefix: [[Attachments]] is not the claim that starts with the word", () => {
+    const withClaim: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 created",
+      ok: true,
+      data: { story: { areas: [{ new: [{ documentId: NEW, claim: "Attachments are stored as content-addressed blobs and fetched by hash" }] }] } },
+    } as TrailEntry;
+    expect(resolveCitations("In [[Attachments]], files are blobs.", [withClaim]).citations).toEqual([]);
+    expect(resolveCitations("Blobs [[Attachments are stored as content-addressed blobs and fetched by hash]].", [withClaim]).citations.map((c) => c.documentId)).toEqual([NEW]);
+  });
+
+  it("leaves a markdown link's text and a bracketed phrase whole", () => {
+    expect(resolveCitations(`See [the repo [[${REP}]]](https://github.com/powerhouse-inc/powerhouse) for it.`, [story]).text).toBe(
+      `See [the repo [[${REP}]]](https://github.com/powerhouse-inc/powerhouse) for it.`,
+    );
+    expect(resolveCitations(`An aside [see [[${REP}]]] here.`, [story]).text).toBe(`An aside [see [[${REP}]]] here.`);
+  });
+
+  it("unwraps a run of markers joined by a comma or 'and', and sheds an unpaired extra bracket", () => {
+    expect(resolveCitations(`Both [[[${NEW}]], [[${EDIT}]]] hold.`, [story]).text).toBe(`Both [[${NEW}]], [[${EDIT}]] hold.`);
+    const r = resolveCitations(`Then [[[${OLD}]] → [[${REP}]] now.`, [story]);
+    expect(r.text).toBe(`Then [[${OLD}]] → [[${REP}]] now.`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([OLD, REP]);
+  });
+
+  it("still cites a document by a title that holds brackets — tried as an exact title only", () => {
+    const src: TrailEntry = {
+      tool: "list_sources",
+      summary: "1 source",
+      ok: true,
+      data: { sources: [{ documentId: "S1", title: "Meeting notes [2026-10-01]", documentType: "bai/source" }] },
+    } as TrailEntry;
+    const r = resolveCitations("Decided in [[Meeting notes [2026-10-01]]].", [src]);
+    expect(r.text).toBe("Decided in [[S1]].");
+    expect(r.citations.map((c) => c.documentId)).toEqual(["S1"]);
+    expect(needsCitationRepair("Decided in [[Meeting notes [2026-10-01]]].", [src])).toBe(false);
+    // Not a prefix, not a guess: an unknown bracketed title is left as written.
+    expect(resolveCitations("See [[Meeting notes [2026]]].", [src]).text).toBe("See [[Meeting notes [2026]]].");
+  });
+
+  it("stores a claim title as one, so a later turn matches it exactly, never by prefix", () => {
+    const withClaim: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 created",
+      ok: true,
+      data: { story: { areas: [{ new: [{ documentId: NEW, claim: "Attachments are stored as blob refs in the vault" }] }] } },
+    } as TrailEntry;
+    const turn1 = resolveCitations(`Blobs [[${NEW}]].`, [withClaim]);
+    expect(turn1.citations).toEqual([{ documentId: NEW, title: "Attachments are stored as blob refs in the vault", documentType: null, labelFrom: "claim" }]);
+    // Turn two: no tool named it again, the earlier citation did.
+    expect(resolveCitations("In [[Attachments]], files are blobs.", [], turn1.citations).citations).toEqual([]);
+    expect(resolveCitations("[[Attachments are stored as blob refs in the vault]]", [], turn1.citations).citations.map((c) => c.documentId)).toEqual([NEW]);
+  });
+
+  it("names the replacement when a replaced note and its replacement share a title", () => {
+    const sameWords: TrailEntry = {
+      tool: "what_changed",
+      summary: "1 superseded",
+      ok: true,
+      data: { story: { areas: [{ changed: [{ documentId: OLD, then: { claim: "Sync uses a cursor" }, now: { claim: "Sync uses a cursor" }, replacedBy: REP }] }] } },
+    } as TrailEntry;
+    expect(resolveCitations("[[Sync uses a cursor]]", [sameWords]).citations.map((c) => c.documentId)).toEqual([REP]);
+  });
+
+  it("reads a long run of brackets in linear time", () => {
+    const text = `${"[".repeat(40_000)} and [[${NEW}]]`;
+    const t = performance.now();
+    resolveCitations(text, [story]);
+    unreadCitations(text, [story]);
+    expect(performance.now() - t).toBeLessThan(250);
+  });
+
+  it("keeps a reference link's text whole, and takes off a wrapper with spaces inside", () => {
+    expect(tidyMarkerBrackets("[[[A]] and the docs][ref]")).toBe("[[[A]] and the docs][ref]");
+    expect(tidyMarkerBrackets("[ [[A]] → [[B]] ]")).toBe(" [[A]] → [[B]] ");
+  });
+
+  it("leaves no unread marker behind when dropping one joins the text around it into another", () => {
+    const hit: TrailEntry = {
+      tool: "search_vault",
+      summary: "1 hit",
+      ok: true,
+      data: { hits: [{ documentId: "11111111-1111-4111-8111-111111111111", title: "Reactor queues writes", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    const A = "11111111-1111-4111-8111-111111111111";
+    const r = resolveCitations(`x [[${A}[[^1]]]] y`, [hit]);
+    const left = [...r.text.matchAll(/\[\[([^[\]]+)\]\]/g)].map((m) => m[1]);
+    expect(left.every((id) => r.citations.some((c) => c.documentId === id))).toBe(true);
+    expect(r.citations.map((c) => c.documentId)).toEqual([A]);
+  });
+
+  it("reads an empty anchor as none: [[id#]] cites the document, as the unread check reads it", () => {
+    const r = resolveCitations(`Rejects [[${REP}#]].`, [story]);
+    expect(r.text).toBe(`Rejects [[${REP}]].`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([REP]);
+  });
+
+  it("unwraps in linear time: a long run of spaces after a marker is no stall", () => {
+    const text = `[[[${NEW}]]${" ".repeat(200_000)}x`;
+    const t = performance.now();
+    expect(tidyMarkerBrackets(text)).toBe(text);
+    expect(performance.now() - t).toBeLessThan(250);
+  });
+
+  it("reads a wrapped or unpaired marker as its id when checking for unread notes", () => {
+    const hit: TrailEntry = {
+      tool: "search_vault",
+      summary: "1 hit",
+      ok: true,
+      data: { hits: [{ documentId: "U1", title: "A searched note", documentType: "bai/knowledge-note" }] },
+    } as TrailEntry;
+    expect(unreadCitations("Unpaired [[[U1]] here.", [hit]).map((d) => d.documentId)).toEqual(["U1"]);
+    expect(unreadCitations("Wrapped [[[U1]]] here.", [hit]).map((d) => d.documentId)).toEqual(["U1"]);
+  });
+
+  it("does not send a change story back to read the notes it cites: the story handed over their claims", () => {
+    const text = `New [[${NEW}]]; then [[${OLD}]], now [[${REP}]]; and [[${EDIT}]].`;
+    expect(unreadCitations(text, [story])).toEqual([]);
   });
 });
 

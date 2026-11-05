@@ -236,10 +236,15 @@ describe("Query.knowledgeGraphChanges", () => {
       ["rs", new Set(range("n", 80).slice(50))],
       ["lead", new Set(range("n", 85).slice(80))],
     ]);
+    /** The hits as search ranks them: both reactor areas near the top (Addendum E1), then the rest. */
+    const REACTOR_RANKED = () => {
+      const first = [...range("n", 18), ...range("n", 57).slice(50)];
+      return hitsOf([...first, ...range("n", 100).filter((h) => !first.includes(h))]);
+    };
 
     it("scopes 'the powerhouse reactor' to the areas holding 10% of its top 200 note hits", async () => {
       changeMaps.mockResolvedValue(HUB);
-      searchVault.mockResolvedValue(hitsOf(range("n", 100)));
+      searchVault.mockResolvedValue(REACTOR_RANKED());
       changeMapNotes.mockResolvedValue(REACTOR);
       const { subgraph: s } = subgraph();
       const out = (await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "the powerhouse reactor" }, {})) as ChangeDigest;
@@ -249,6 +254,16 @@ describe("Query.knowledgeGraphChanges", () => {
         q: "the powerhouse reactor",
         resolved: { kind: "areas", areas: [{ id: "rd", title: "Reactor and Drives" }, { id: "rs", title: "Reactor Sync Infrastructure" }] },
       });
+    });
+
+    it("leaves out an area whose hits are all in the tail of the ranking, as search ranked them (Addendum E1)", async () => {
+      changeMaps.mockResolvedValue(HUB);
+      // The lead corpus holds 15 of 100 hits — over 10% — but none of the top 25.
+      searchVault.mockResolvedValue(REACTOR_RANKED());
+      changeMapNotes.mockResolvedValue(new Map([...REACTOR, ["lead", new Set(range("n", 100).slice(85))]]));
+      const { subgraph: s } = subgraph();
+      await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "authorisation" }, {});
+      expect(internalScope()).toEqual({ q: "authorisation", mocs: ["rd", "rs"] });
     });
 
     it("counts note hits only: maps and sources among the hits are left out", async () => {
@@ -283,7 +298,7 @@ describe("Query.knowledgeGraphChanges", () => {
 
     it("narrows several areas to explicit documentIds", async () => {
       changeMaps.mockResolvedValue(HUB);
-      searchVault.mockResolvedValue(hitsOf(range("n", 100)));
+      searchVault.mockResolvedValue(REACTOR_RANKED());
       changeMapNotes.mockResolvedValue(REACTOR);
       const { subgraph: s } = subgraph();
       await resolve(s)({}, { driveId: "d", since: "2026-09-01", q: "reactor", documentIds: ["n1"] }, {});

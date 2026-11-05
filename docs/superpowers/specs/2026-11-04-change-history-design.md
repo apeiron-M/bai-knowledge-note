@@ -406,3 +406,59 @@ whose normalised token Jaccard ≥ 0.9 is a trivial rewording and is not a shift
 Acceptance (live, dev.56): the reactor and service-pricing questions from the dev.55 tests no longer say "0 → N", list
 no off-topic revisions (deliverables tables, roadmap ordering under pricing), state no version range for pricing, show no
 identical before/after; "the Powerhouse stack since September" answers only from technical areas chosen by title.
+
+## Addendum E — live review of dev.57 (2026-11-05)
+
+Two live answers on dev.57 ("What changed in the Powerhouse stack since September?", then "and in authorisation?" in the
+same chat) stayed on topic and kept the period, but checked against the data they showed five defects.
+
+**E1. Tail-only areas are noise.** Semantic similarities run nearly flat (0.858 → 0.812 over 191 note hits for
+"authorisation"), so the tail of the top 200 is noise, and a large unrelated area passed C1c's 10 % on the tail alone:
+"authorisation" scoped the lead corpus (28 hits, 15 %, the best at rank 28) beside Authorization and Identity. An area
+now also needs ≥ 2 of the top 25 note hits. Measured on ten live queries: only tail-only areas leave ("authorisation"
+and "workflow engine" lose the lead corpus, "editors" Development Approaches, "drive apps" Reactor and Drives); the
+reactor, processors, pricing, sync, attachments and codegen scopes are unchanged and no new sub-map narrowing fires.
+Rank-weighted shares (1/r) were rejected: one top hit alone is worth ~17 %, which pulled in Connect Application for
+"editors" and Powerhouse Platforms for "workflow engine". With fewer than 25 hits the rule reads "two hits and 10 %",
+so a query with a single hit (keyword fallback) falls back to search instead of scoping a whole area.
+
+**E2. `listAreas`.** A broad subject's first call returned the whole vault's growth and totals, and the answer reported
+them as the stack's (836 → 2,614, seven new areas including business ones). `what_changed` takes `listAreas: true`:
+it asks only `story { areas { id title } }` for the period and returns the titles — nothing that can be mistaken for
+the subject — with the next step in `data.next` (the model reads `data`, never the summary). Elsewhere is no area to
+name, but when notes on no map changed `data.elsewhere` says so and points to `query`; when only they changed, the
+result says that, not "nothing changed". A scope given with `listAreas` (areas, query, source, moc, topic) wins, so a
+flag the model copies forward cannot hand it the same list again. Prompt and tool text send a broad subject there first.
+
+**E3. Story claims are citable.** what_changed names claims by text (`claim` — the note's title at that moment —
+and a shift's `then`/`now`), never `title`, so the chat's resolver did not know them: their citations were dropped
+(" ." in the prose) and replacements showed as raw ids. A claim is now known by its text: a replaced note as it read
+then, its `replacedBy` as it reads now. Precedence: a real title from any tool wins; a current claim (the story,
+thenVsNow's now and unchanged) is the title as of this turn and replaces an earlier claim; a thenVsNow `then` claim is
+a past title and only fills a missing label (the result's parts come in either order and its now side may be clipped);
+an earlier turn's citation — the latest one with a real title, an id being none — replaces only a past title. Every
+claim text stays an exact alias, and claim-derived titles match a label only exactly, never by prefix
+("[[Attachments]]" is not the claim that starts with the word). Story claims count as read for the read-before-citing
+rule (the story handed over their claims), so a change answer is not sent back to read them.
+Brackets: the model wrapped a then → now pair in one more bracket, `[[[old]] → [[new]]]`, which corrupted the first id
+and left "]" after the second. Before markers are read, a bracket that opens right before a marker and closes after a
+run of them is removed, whatever joins them (an arrow, "=>", "vs", "(then)"), as is a "]" right after a marker that
+closes nothing — never a markdown link's text or a bracketed phrase; one pass per line with markers as single tokens,
+so linear. A marker never crosses a bracket — in the resolver, the renderer (`numberCitations`, `markerOccurrences`),
+the evidence collector and save-as-note alike — so an unclosed `[[` swallows no prose and costs no later citation; a
+by-name marker whose title holds brackets ("[[Meeting notes [2026-10-01]]]") is tried first, as an exact title only.
+A stored citation keeps `labelFrom`, so a claim title stays exact-only in later turns; when a replaced note and its
+replacement share a title, a label names the replacement; `[[id#]]` (an empty anchor) cites the document; and the
+resolver reads again until nothing changes, so dropping a marker cannot join the text around it into an unread one.
+Every pattern on the path is linear (the markdown-link pattern was n² on a run of brackets, on `main` too).
+
+**E4. Growth belongs to the scope.** "Authorization and Identity (260 → 414 notes)" was the two-area scope's growth;
+the area's own notes went 18 → 134. The prompt: growth is the whole scope's — give it to the subject or its areas,
+never to one area; an area's own count is its notes (growth only: the totals line stays out of the answer). Same rule
+in the plugin.
+
+**E5. Story first for a broad subject.** With 25 chosen areas, thenVsNow went first and took 5.3 of the 14 KB, leaving
+the story three areas at one new and one changed claim. For `areas` and `source` scopes the story is fitted first and
+thenVsNow takes the room left (dropped when not one claim a side fits); `q` and `topic` keep thenVsNow first.
+Live: six areas instead of three, thenVsNow 2.5 KB. The 14 KB budget (B1) still limits a 25-area subject to six areas
+at one new and one changed claim; raising it is a separate decision.

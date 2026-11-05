@@ -21,7 +21,7 @@ export function numberCitations(
 ): string {
   const index = new Map(citations.map((c, i) => [c.documentId, i + 1]));
   let position = 0;
-  return text.replace(/ ?\[\[([^\]]+?)\]\]/g, (_m, label: string) => {
+  return text.replace(/ ?\[\[([^[\]]+?)\]\]/g, (_m, label: string) => {
     const k = position++;
     const n = index.get(parseMarker(label).documentId);
     return n ? ` [[cite:${n}:${k}]]` : "";
@@ -35,5 +35,5 @@ export function numberCitations(
 export function markerOccurrences(
   text: string,
 ): { documentId: string; anchor: string | null }[] {
-  return [...text.matchAll(/\[\[([^\]]+?)\]\]/g)].map((m) => parseMarker(m[1]));
+  return [...text.matchAll(/\[\[([^[\]]+?)\]\]/g)].map((m) => parseMarker(m[1]));
 }

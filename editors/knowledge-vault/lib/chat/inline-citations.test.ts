@@ -16,6 +16,13 @@ describe("numberCitations", () => {
     );
   });
 
+  it("lets an unclosed [[ hide nothing: its prose stays on screen and the next marker keeps its chip (as the resolver keeps them)", () => {
+    const text = "First para [[note\n\nSecond paragraph.\n\nThird [[b]] end.";
+    expect(numberCitations(text, citations)).toBe("First para [[note\n\nSecond paragraph.\n\nThird [[cite:2:0]] end.");
+    // Positions line up with the stored markers read back.
+    expect(markerOccurrences(text)).toEqual([{ documentId: "b", anchor: null }]);
+  });
+
   it("removes every marker while streaming (no citations yet)", () => {
     expect(numberCitations("Draft [[a]] text", [])).toBe("Draft text");
   });

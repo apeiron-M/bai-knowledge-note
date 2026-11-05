@@ -83,12 +83,12 @@ export interface AnswerDraft {
   notLinked: Citation[];
 }
 
-const MARKER = /\[\[([^\]]+)\]\]/g;
+const MARKER = /\[\[([^[\]]+)\]\]/g;
 
 /** Markdown and citation markers off, whitespace tidy: what a sentence reads as. */
 export function plainText(markdown: string): string {
   return markdown
-    .replace(/\s*\[\[[^\]]+\]\]/g, "")
+    .replace(/\s*\[\[[^[\]]+\]\]/g, "")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     .replace(/`([^`]+)`/g, "$1")
@@ -233,11 +233,11 @@ export function draftFromAnswer(message: StoredMessage, question: string): Answe
       const c = byId.get(documentId);
       return c ? `[[${referenceTitle(c.title)}]]` : "";
     })
-    .replace(/(\[\[([^\]]+)\]\])(?:\s*\[\[\2\]\])+/g, "$1")
+    .replace(/(\[\[([^[\]]+)\]\])(?:\s*\[\[\2\]\])+/g, "$1")
     // Read as citations, not prose: references side by side become one
     // parenthesis — "… years ahead ([[Turbine note]]; [[Report part 3]])."
-    .replace(/(?:[ \t]*\[\[[^\]]+\]\])+/g, (group) => {
-      const refs = group.match(/\[\[[^\]]+\]\]/g) ?? [];
+    .replace(/(?:[ \t]*\[\[[^[\]]+\]\])+/g, (group) => {
+      const refs = group.match(/\[\[[^[\]]+\]\]/g) ?? [];
       return ` (${refs.join("; ")})`;
     })
     .replace(/[ \t]+\n/g, "\n")
