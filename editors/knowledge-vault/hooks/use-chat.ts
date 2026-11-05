@@ -121,9 +121,22 @@ export function answeredWithoutLooking(
  * A model that produced one of these earlier in a conversation will produce
  * more — the transcript teaches it that this is what answers look like here
  * — and the reader is told the vault is broken when it is not.
+ *
+ * The claim needs a subject — the vault, its notes, a tool, or the assistant
+ * itself. A vault about an offline-first reactor is full of "offline",
+ * "unavailable" and "cannot read" in its own claims, and matching those
+ * words alone flagged good answers and sent the next turn off course.
  */
-const OUTAGE_CLAIM_RE =
-  /\b(?:not responding|unavailable|inaccessible|offline|temporary outage|system-wide issue)\b|\b(?:cannot|can(?:'|’)t|could\s?not|couldn(?:'|’)t|unable to)\b[^.]{0,80}\b(?:access|reach|retrieve|read|query|check)\b/i;
+const OUTAGE_CLAIM_RE = new RegExp(
+  [
+    // The vault, its notes or a tool said to be down: "the vault is unavailable".
+    String.raw`\b(?:vault|knowledge base|notes|tools?|search(?: tool)?)\b[^.]{0,40}?\b(?:not responding|unavailable|inaccessible|offline|unreachable|down)\b`,
+    // The assistant saying it could not get at something: "I couldn't access…".
+    String.raw`\b(?:I|we)\b[^.]{0,30}?\b(?:cannot|can(?:'|’)t|could\s?not|couldn(?:'|’)t|unable to)\b[^.]{0,30}?\b(?:access|reach|retrieve|read|query|load|connect)\b`,
+    String.raw`\b(?:temporary outage|system-wide issue)\b`,
+  ].join("|"),
+  "i",
+);
 
 /**
  * True when an answer blames the vault for something that did not happen:
@@ -142,7 +155,7 @@ export function claimsAnOutageThatDidNotHappen(
 /** The nudge for an answer that reports a failure nothing recorded. */
 export const NO_OUTAGE =
   "Your answer says the vault could not be read, but no tool reported an error this turn. " +
-  "The vault is there. Call the tool you need now — list_projects for projects, recent_changes for what changed, search_vault for anything else — and answer from what it returns. " +
+  "The vault is there. Answer the user's question now with the tool that fits it, and answer from what it returns. " +
   "If a call does fail, quote the error it gave you instead of describing an outage.";
 
 /** The nudge for an answer given from memory rather than from the vault. */
