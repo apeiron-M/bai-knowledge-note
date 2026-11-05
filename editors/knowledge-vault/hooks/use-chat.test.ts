@@ -459,6 +459,36 @@ describe("runAgentLoop false outage", () => {
     // A document that is genuinely absent is not an outage claim.
     expect(claimsAnOutageThatDidNotHappen("The vault has no note about Docling.", clean)).toBe(false);
   });
+
+  it("does not mistake a technical answer's vocabulary for an outage claim", () => {
+    const clean: TrailEntry[] = [{ tool: "what_changed", summary: "ok", ok: true, data: {} }];
+    // Real sentences from answers about an offline-first reactor (2026-11-05).
+    for (const text of [
+      "A read block cannot call write methods — it fails to compile and is refused at run time.",
+      "In remote mode a Connect has no reactor of its own and no PGlite at all, and it cannot write offline.",
+      "Operation-based synchronization lets offline clients edit concurrently and reconcile by merging their operation logs.",
+      "A remote service refuses a read without a documentId, so knowing a hash grants nothing.",
+      "With no signer at all, the client cannot sign, so such a client can only create and write legacy documents.",
+      "If the backend is unavailable, unroutable calls fall back to the first switchboard's service.",
+      "DocumentView will not rebuild state from operations, so a producer that omits resultingState cannot advance the snapshot.",
+      "Processors that cannot read the deletion keep the data.",
+    ]) {
+      expect(claimsAnOutageThatDidNotHappen(text, clean)).toBe(false);
+    }
+    for (const claim of [
+      "I couldn't reach the vault, so I can't say what changed.",
+      "The vault appears to be offline at the moment.",
+      "I was unable to read the notes — the search tool is not responding.",
+      "Unfortunately the knowledge base is unavailable right now.",
+    ]) {
+      expect(claimsAnOutageThatDidNotHappen(claim, clean)).toBe(true);
+    }
+  });
+
+  it("the outage nudge sends the model back to the user's question, not to projects", () => {
+    expect(NO_OUTAGE).not.toMatch(/list_projects|recent_changes/);
+    expect(NO_OUTAGE).toMatch(/question/i);
+  });
 });
 
 describe("runAgentLoop freshness", () => {

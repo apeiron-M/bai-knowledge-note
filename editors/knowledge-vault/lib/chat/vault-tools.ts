@@ -1948,7 +1948,25 @@ function* storyLayouts(areas: number): Generator<StoryLayout> {
  * citations and drill-downs; `more` says, from the uncapped counts, what each
  * shown area holds beyond its claims here.
  */
+/**
+ * A note held by several maps shows up in each of their areas. The reader
+ * should meet each claim once — under the first (most changed) area that
+ * holds it — so later areas drop it from their lists; their counts stay.
+ */
+function claimsOnce(areas: StoryArea[]): StoryArea[] {
+  const seen = new Set<string>();
+  const firstSight = <T extends { documentId: string }>(list: T[]): T[] =>
+    list.filter((c) => (seen.has(c.documentId) ? false : (seen.add(c.documentId), true)));
+  return areas.map((a) => ({
+    ...a,
+    newClaims: firstSight(a.newClaims),
+    changedClaims: firstSight(a.changedClaims),
+    retiredClaims: firstSight(a.retiredClaims),
+  }));
+}
+
 export function chatStory(story: ChangeStory, budget = STORY_BUDGET): Record<string, unknown> {
+  story = { ...story, areas: claimsOnce(story.areas) };
   const g = story.growth;
   const growthNaming = (names: number) => {
     const extra = (key: string, list: unknown[]) => (list.length > names ? { [key]: list.length - names } : {});
