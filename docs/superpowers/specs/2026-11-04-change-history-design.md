@@ -406,3 +406,40 @@ whose normalised token Jaccard ≥ 0.9 is a trivial rewording and is not a shift
 Acceptance (live, dev.56): the reactor and service-pricing questions from the dev.55 tests no longer say "0 → N", list
 no off-topic revisions (deliverables tables, roadmap ordering under pricing), state no version range for pricing, show no
 identical before/after; "the Powerhouse stack since September" answers only from technical areas chosen by title.
+
+## Addendum E — live review of dev.57 (2026-11-05)
+
+Two live answers on dev.57 ("What changed in the Powerhouse stack since September?", then "and in authorisation?" in the
+same chat) stayed on topic and kept the period, but checked against the data they showed five defects.
+
+**E1. Tail-only areas are noise.** Semantic similarities run nearly flat (0.858 → 0.812 over 191 note hits for
+"authorisation"), so the tail of the top 200 is noise, and a large unrelated area passed C1c's 10 % on the tail alone:
+"authorisation" scoped the lead corpus (28 hits, 15 %, the best at rank 28) beside Authorization and Identity. An area
+now also needs ≥ 2 of the top 25 note hits. Measured on ten live queries: only tail-only areas leave ("authorisation"
+and "workflow engine" lose the lead corpus, "editors" Development Approaches, "drive apps" Reactor and Drives); the
+reactor, processors, pricing, sync, attachments and codegen scopes are unchanged and no new sub-map narrowing fires.
+Rank-weighted shares (1/r) were rejected: one top hit alone is worth ~17 %, which pulled in Connect Application for
+"editors" and Powerhouse Platforms for "workflow engine".
+
+**E2. `listAreas`.** A broad subject's first call returned the whole vault's growth and totals, and the answer reported
+them as the stack's (836 → 2,614, seven new areas including business ones). `what_changed` takes `listAreas: true`:
+it asks only `story { areas { id title } }` for the period and returns the titles (Elsewhere left out) — nothing that
+can be mistaken for the subject. Prompt and tool text send a broad subject there first.
+
+**E3. Story claims are citable.** what_changed names claims by text (`claim`, a shift's `then`/`now`), never `title`,
+so the chat's resolver did not know them: their citations were dropped (" ." in the prose) and replacements showed as
+raw ids. A claim is now known by its text — a replaced note as it read then, its `replacedBy` as it reads now — until
+a tool hands over the real title, which wins; story claims count as read for the read-before-citing rule (the story
+handed over their claims), so a change answer is not sent back to read them. The model also wrapped a then → now pair
+in one more bracket, `[[[old]] → [[new]]]`, which corrupted the first id and left "]" after the second: a stray bracket
+either side of a marker is absorbed.
+
+**E4. Growth belongs to the scope.** "Authorization and Identity (260 → 414 notes)" was the two-area scope's growth;
+the area's own notes went 18 → 134. The prompt: growth and totals are the whole scope's — name the subject or its
+areas with them, never one area; an area's own count is its notes. Same rule in the plugin.
+
+**E5. Story first for a broad subject.** With 25 chosen areas, thenVsNow went first and took 5.3 of the 14 KB, leaving
+the story three areas at one new and one changed claim. For `areas` and `source` scopes the story is fitted first and
+thenVsNow takes the room left (dropped when not one claim a side fits); `q` and `topic` keep thenVsNow first.
+Live: six areas instead of three, thenVsNow 2.5 KB. The 14 KB budget (B1) still limits a 25-area subject to six areas
+at one new and one changed claim; raising it is a separate decision.
