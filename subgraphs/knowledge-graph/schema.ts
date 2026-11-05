@@ -795,8 +795,9 @@ export const schema: DocumentNode = gql`
     reported in scope.resolved.unknown). source: text a source's title,
     provenance URL or folder path contains — those sources and the notes
     derived from them. q: the hub or drive name means the whole vault; else
-    the areas holding at least 10% of its top 200 semantic note hits (one
-    map below them when it holds 60% of those), else its top 25 hits plus
+    the areas holding at least 10% of its top 200 semantic note hits, two
+    of them among the top 25 (one map below them when it holds 60% of
+    those), else its top 25 hits plus
     their one-hop neighbours. Readers of the drive may ask.
     """
     knowledgeGraphChanges(

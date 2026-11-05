@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildChanges, firstRecorded, type ChangeContext, type ChangeScope, type OperationRow } from "./changes.js";
 import { loadChangesFixture } from "../../tests/fixtures/changes/load.js";
-import { areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_SCOPE_AREAS, MAX_THEN_VS_NOW, selectAreasByHits, type ScopeMap, type StoryContext, type StoryNode } from "./changes-story.js";
+import { AREA_MIN_TOP_HITS, AREA_TOP_HITS, areasOf, claimTokens, isDuplicateMerge, matchMapTitle, MAX_CHANGED_CLAIMS, MAX_NEW_CLAIMS, MAX_RETIRED_CLAIMS, MAX_SCOPE_AREAS, MAX_THEN_VS_NOW, selectAreasByHits, type ScopeMap, type StoryContext, type StoryNode } from "./changes-story.js";
 
 let seq = 0;
 function row(documentId: string, operationType: string, input: Record<string, unknown>, timestamp: string): OperationRow {
@@ -833,6 +833,9 @@ describe("scope: a specific term means the areas its notes concentrate in (Adden
   const notes = (entries: [string, string[]][]) => new Map(entries.map(([id, list]) => [id, new Set(list)]));
   const ids = (picked: ScopeMap[] | null) => (picked ?? []).map((m) => m.id);
 
+  /** HITS re-ranked: these first, in this order, then every other hit in its own order. */
+  const rankedFirst = (first: string[]) => [...first, ...HITS.filter((h) => !first.includes(h))];
+
   it("selects every area holding at least 10% of the hits, most hits first — a 9% area stays out", () => {
     const mapNotes = notes([
       ["rd", range(0, 40)],
@@ -842,7 +845,30 @@ describe("scope: a specific term means the areas its notes concentrate in (Adden
       ["lead", range(80, 89)], // 9%
       ["price", []],
     ]);
-    expect(ids(selectAreasByHits(HITS, HUB, mapNotes))).toEqual(["rd", "rs", "wf"]);
+    // Each area is near the top of the ranking, the 9% one too: only the share decides.
+    const ranked = rankedFirst([...range(0, 10), ...range(40, 45), ...range(65, 68), ...range(80, 85)]);
+    expect(ids(selectAreasByHits(ranked, HUB, mapNotes))).toEqual(["rd", "rs", "wf"]);
+  });
+
+  it("leaves out an area found only in the tail of the ranking, however many hits it holds there ('authorisation' and the lead corpus)", () => {
+    // The live case: 191 note hits whose similarities ran 0.858 → 0.812. The
+    // authorization area held 57 of them, 13 in the top 25; the lead corpus
+    // 28 (15%), the best at rank 28 — noise a flat count let in.
+    const auth = range(0, 57);
+    const lead = range(57, 85);
+    const ranked = [...range(0, 13), ...range(13, 25).map((_, i) => `x${i}`), ...range(13, 57), ...lead, ...range(85, 100)];
+    const mapNotes = notes([["rd", auth], ["lead", lead]]);
+    expect(ids(selectAreasByHits(ranked, HUB, mapNotes))).toEqual(["rd"]);
+  });
+
+  it("needs two of the top 25 hits: one is a stray, two are the area", () => {
+    const mapNotes = notes([["rd", range(0, 40)], ["wf", range(60, 80)]]);
+    const oneOnTop = rankedFirst([...range(0, 24), "n60"]);
+    expect(ids(selectAreasByHits(oneOnTop, HUB, mapNotes))).toEqual(["rd"]);
+    const twoOnTop = rankedFirst([...range(0, 23), "n60", "n61"]);
+    expect(ids(selectAreasByHits(twoOnTop, HUB, mapNotes))).toEqual(["rd", "wf"]);
+    expect(AREA_TOP_HITS).toBe(25);
+    expect(AREA_MIN_TOP_HITS).toBe(2);
   });
 
   it("counts a hit in every area whose subtree holds it, and hits in no area still count toward the whole", () => {
@@ -861,7 +887,8 @@ describe("scope: a specific term means the areas its notes concentrate in (Adden
 
   it("selects at most eight areas", () => {
     const many: ScopeMap[] = Array.from({ length: 10 }, (_, i) => area(`x${i}`, `Area ${i}`));
-    const mapNotes = notes(many.map((m, i) => [m.id, range(i * 10, i * 10 + 10)]));
+    // Area i holds every hit whose rank ends in i: 10% each, and two or three of the top 25.
+    const mapNotes = notes(many.map((m, i) => [m.id, HITS.filter((_, r) => r % 10 === i)]));
     expect(selectAreasByHits(HITS, many, mapNotes)).toHaveLength(MAX_SCOPE_AREAS);
     expect(MAX_SCOPE_AREAS).toBe(8);
   });

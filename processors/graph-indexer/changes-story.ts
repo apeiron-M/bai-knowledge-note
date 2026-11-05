@@ -252,6 +252,16 @@ function queryWords(query: string): Set<string> {
 
 /** An area is in a `q` scope when it holds at least this share of the query's note hits (Addendum C1c). */
 export const AREA_HIT_SHARE = 0.1;
+/**
+ * An area in a `q` scope must also hold at least {@link AREA_MIN_TOP_HITS} of
+ * the query's top {@link AREA_TOP_HITS} note hits (spec Addendum E1). Hit
+ * similarities run nearly flat (0.858 → 0.812 over 191 hits for
+ * "authorisation"), so the tail of 200 hits is noise, and a large unrelated
+ * area — the lead corpus, 15% of those hits, the best at rank 28 — passed the
+ * share on the tail alone.
+ */
+export const AREA_TOP_HITS = 25;
+export const AREA_MIN_TOP_HITS = 2;
 /** At most this many areas make one `q` scope. */
 export const MAX_SCOPE_AREAS = 8;
 /** A map below an area replaces the selected areas when it holds at least this share of their hits. */
@@ -261,8 +271,10 @@ export const NARROW_HIT_SHARE = 0.6;
  * The areas a specific term means (spec Addendum C1c): its top semantic note
  * hits are counted per top-level area subtree (`mapNotes`: each map's notes,
  * its descendant maps' included; a hit in two areas counts for both), and
- * every area holding at least {@link AREA_HIT_SHARE} of all the hits is
- * selected, most hits first, at most {@link MAX_SCOPE_AREAS}. When one map
+ * every area holding at least {@link AREA_HIT_SHARE} of all the hits — and
+ * {@link AREA_MIN_TOP_HITS} of the top {@link AREA_TOP_HITS}, so `hits` must
+ * come most relevant first — is selected, most hits first, at most
+ * {@link MAX_SCOPE_AREAS}. When one map
  * below an area holds at least {@link NARROW_HIT_SHARE} of the selected
  * areas' hits, it alone is the scope (the one with most of them; a tie goes
  * to the deeper map). Null when no area holds enough: search instead.
@@ -270,6 +282,7 @@ export const NARROW_HIT_SHARE = 0.6;
 export function selectAreasByHits(hits: readonly string[], maps: readonly ScopeMap[], mapNotes: ReadonlyMap<string, ReadonlySet<string>>): ScopeMap[] | null {
   const all = new Set(hits);
   if (!all.size) return null;
+  const top = new Set([...all].slice(0, AREA_TOP_HITS));
   const inMap = (id: string, among: ReadonlySet<string>) => {
     const notes = mapNotes.get(id);
     return notes ? [...among].filter((n) => notes.has(n)) : [];
@@ -278,6 +291,7 @@ export function selectAreasByHits(hits: readonly string[], maps: readonly ScopeM
     .filter((m) => m.depth === 1)
     .map((area) => ({ area, hits: inMap(area.id, all) }))
     .filter((a) => a.hits.length >= AREA_HIT_SHARE * all.size)
+    .filter((a) => a.hits.filter((n) => top.has(n)).length >= AREA_MIN_TOP_HITS)
     .sort((a, b) => b.hits.length - a.hits.length || a.area.title.localeCompare(b.area.title))
     .slice(0, MAX_SCOPE_AREAS);
   if (!selected.length) return null;
