@@ -2126,9 +2126,9 @@ describe("what_changed — the change digest over a window", () => {
     expect(story.growth).not.toHaveProperty("firstRecorded");
     expect(story.areas[0].notes).toBe("16 → 134");
     // The claim changed: its wording says it, no description copies.
-    expect(story.areas[0].changed[0]).toEqual({ documentId: "c1", then: { claim: "Grants narrow WRITE" }, now: { claim: "Grants are a separate key" } });
+    expect(story.areas[0].changed[0]).toEqual({ then: { documentId: "c1", claim: "Grants narrow WRITE" }, now: { documentId: "c1", claim: "Grants are a separate key" } });
     // The claim held: only the part of the description that changed.
-    expect(story.areas[0].changed[1].then).toEqual({ claim: "Purge needs an admin", gist: "under OPEN" });
+    expect(story.areas[0].changed[1].then).toEqual({ documentId: "c2", claim: "Purge needs an admin", gist: "under OPEN" });
     // Elsewhere keeps its id: null — that null means something.
     const all = [...story.areas, ...(story.otherAreas ?? [])] as { id?: unknown; title: string }[];
     expect(all.find((a) => a.title === "Elsewhere")?.id).toBeNull();
@@ -2288,7 +2288,7 @@ describe("what_changed — the change digest over a window", () => {
     const data = r.data as {
       totals: unknown;
       groups?: unknown;
-      story: { growth: { notesThen: number; notesNow: number; newAreas: string[] }; areas: { id: string | null; title: string; new: { documentId: string }[]; changed: { documentId: string; then: unknown; now: unknown }[] }[] };
+      story: { growth: { notesThen: number; notesNow: number; newAreas: string[] }; areas: { id: string | null; title: string; new: { documentId: string }[]; changed: { then: { documentId: string }; now: { documentId: string } }[] }[] };
     };
     expect(JSON.stringify(data).length).toBeLessThan(12_000);
     expect(data).not.toHaveProperty("groups");
@@ -2302,7 +2302,10 @@ describe("what_changed — the change digest over a window", () => {
     expect(data.story.areas.length + other.length).toBe(11);
     expect(data.story.areas.length).toBeGreaterThanOrEqual(3);
     expect(data.story.areas[0].new[0].documentId).toBe("new-0-0");
-    expect(data.story.areas[0].changed[0]).toMatchObject({ documentId: "chg-0-0", then: expect.any(Object) as unknown, now: expect.any(Object) as unknown });
+    // Each side names the note it reads from (Addendum E8): a note revised in place both times, a replaced one its replacement now.
+    expect(data.story.areas[0].changed[0]).toMatchObject({ then: { documentId: "chg-0-0" }, now: { documentId: "chg-0-0" } });
+    expect(data.story.areas[0].changed[1]).toMatchObject({ then: { documentId: "chg-0-1" }, now: { documentId: "rep-0-1" } });
+    expect(data.story.areas[0].changed[1]).not.toHaveProperty("replacedBy");
   });
 
   it("answers a query scope from thenVsNow and the scoped story", async () => {

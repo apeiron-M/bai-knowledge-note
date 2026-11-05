@@ -15,6 +15,9 @@ import {
   resolveCitations,
   unreadCitations,
   tidyMarkerBrackets,
+  asksAboutPartOfVault,
+  coversWholeVault,
+  PART_OF_VAULT,
   latestChangesWindow,
   runAgentLoop,
   type TrailEntry,
@@ -1353,6 +1356,33 @@ describe("citing what_changed claims (Addendum E3)", () => {
     expect(r.citations.map((c) => c.documentId)).toEqual([REP]);
   });
 
+  it("cites each side of a changed claim with its own note — the replaced one then, the replacement now (Addendum E8)", () => {
+    const perSide: TrailEntry = {
+      tool: "what_changed",
+      summary: "2 revised",
+      ok: true,
+      data: {
+        story: {
+          areas: [
+            {
+              changed: [
+                { then: { documentId: OLD, claim: "A failed write throws a bare Error" }, now: { documentId: REP, claim: "A failed write rejects with JobFailedError" }, why: "typed class kept" },
+                { then: { documentId: EDIT, claim: "dispatch takes actionOrActions" }, now: { documentId: EDIT, claim: "dispatch takes actions, onErrors and onSuccess" } },
+              ],
+            },
+          ],
+        },
+      },
+    } as TrailEntry;
+    const known = collectKnownDocuments([perSide]);
+    expect(known.get(OLD)?.title).toBe("A failed write throws a bare Error");
+    expect(known.get(REP)?.title).toBe("A failed write rejects with JobFailedError");
+    expect(known.get(EDIT)?.title).toBe("dispatch takes actions, onErrors and onSuccess");
+    const r = resolveCitations(`Failed writes now reject with JobFailedError [[${REP}]]; dispatch takes callbacks [[${EDIT}]].`, [perSide]);
+    expect(r.citations.map((c) => c.documentId)).toEqual([REP, EDIT]);
+    expect(unreadCitations(`[[${OLD}]] [[${REP}]] [[${EDIT}]]`, [perSide])).toEqual([]);
+  });
+
   it("unwraps in linear time: a long run of spaces after a marker is no stall", () => {
     const text = `[[[${NEW}]]${" ".repeat(200_000)}x`;
     const t = performance.now();
@@ -1412,6 +1442,72 @@ describe("runAgentLoop: the period of a what_changed conversation (Addendum D3)"
     const executeTool = vi.fn().mockResolvedValue({ ok: false, error: "since is not a date" });
     const r = await runAgentLoop({ ...base, messages: [{ role: "user", content: "what changed?" }], deps: { streamChat, executeTool } as never });
     expect(r.changesWindow ?? null).toBeNull();
+  });
+});
+
+describe("a part of the vault asked of the whole (Addendum E7)", () => {
+  it("knows a question about a part — the stack, the code, the business side — from one about a subject or the whole", () => {
+    for (const q of ["What changed in the Powerhouse stack since September?", "and the business side?", "what is new in the code this month", "how did the repo change", "the technical side since June?"])
+      expect(asksAboutPartOfVault(q)).toBe(true);
+    for (const q of ["and in authorisation?", "how did the reactor change since summer?", "What changed in the vault since June?", "what is new in attachments"])
+      expect(asksAboutPartOfVault(q)).toBe(false);
+  });
+
+  it("knows a call that covers the whole vault: no scope, or a query of nothing but the vault's name, a facet and filler", () => {
+    const vault = "powerhouse-knowledge";
+    expect(coversWholeVault({ since: "2026-09-01" }, vault)).toBe(true);
+    expect(coversWholeVault({ since: "2026-09-01", query: "the Powerhouse stack" }, vault)).toBe(true);
+    expect(coversWholeVault({ query: "the stack" }, vault)).toBe(true);
+    expect(coversWholeVault({ query: "Powerhouse" }, vault)).toBe(true);
+    expect(coversWholeVault({ since: "2026-09-01", listAreas: true }, vault)).toBe(false);
+    expect(coversWholeVault({ areas: ["Reactor and Drives"] }, vault)).toBe(false);
+    expect(coversWholeVault({ query: "the reactor" }, vault)).toBe(false);
+    expect(coversWholeVault({ query: "Powerhouse authorisation" }, vault)).toBe(false);
+    expect(coversWholeVault({ source: "powerhouse-inc/powerhouse" }, vault)).toBe(false);
+    expect(coversWholeVault({ areas: [], query: " " }, vault)).toBe(true);
+  });
+
+  const answer = { text: "Done", toolCalls: [], finishReason: "stop" };
+  const ok = { ok: true, data: { window: { since: "x", until: "y" } }, summary: "1 created" };
+
+  it("sends a stack question that asked for the whole vault to choose its areas first — once, and keeps its period", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"since":"2026-09-01"}', "c1")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"listAreas":true}', "c2")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce(answer);
+    const executeTool = vi.fn().mockResolvedValue(ok);
+    const r = await runAgentLoop({
+      ...base,
+      vaultName: "powerhouse-knowledge",
+      messages: [{ role: "user", content: "What changed in the Powerhouse stack since September?" }],
+      deps: { streamChat, executeTool } as never,
+    });
+    // The whole-vault call never ran; the area list did, with the period it named.
+    expect(executeTool).toHaveBeenCalledTimes(1);
+    expect(executeTool.mock.calls[0][1]).toEqual({ listAreas: true });
+    expect((executeTool.mock.calls[0][2] as { changesWindow?: unknown }).changesWindow).toEqual({ since: "2026-09-01", until: null });
+    const told = (streamChat.mock.calls[1][0] as { messages: { role: string; content: string }[] }).messages.filter((m) => m.role === "tool");
+    expect(told[0].content).toBe(JSON.stringify({ next: PART_OF_VAULT }));
+    expect(r.trail[0]).toMatchObject({ tool: "what_changed", ok: true });
+  });
+
+  it("lets a model that insists have the whole vault, and never touches a question about the whole or a subject", async () => {
+    const insist = vi
+      .fn()
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"since":"2026-09-01"}', "c1")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"since":"2026-09-01"}', "c2")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce(answer);
+    const once = vi.fn().mockResolvedValue(ok);
+    await runAgentLoop({ ...base, messages: [{ role: "user", content: "What changed in the stack since September?" }], deps: { streamChat: insist, executeTool: once } as never });
+    expect(once).toHaveBeenCalledTimes(1);
+    const whole = vi
+      .fn()
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("what_changed", '{"since":"2026-06-01"}', "c1")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce(answer);
+    const run = vi.fn().mockResolvedValue(ok);
+    await runAgentLoop({ ...base, messages: [{ role: "user", content: "What changed in the vault since June?" }], deps: { streamChat: whole, executeTool: run } as never });
+    expect(run).toHaveBeenCalledTimes(1);
   });
 });
 

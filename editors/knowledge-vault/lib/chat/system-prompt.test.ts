@@ -279,6 +279,12 @@ describe("buildSystemPrompt", () => {
     expect(p).toMatch(/subject plus a facet[^.]*the Powerhouse stack/i);
   });
 
+  it("cites each side of a shift with its own note: then's for what the vault used to hold, now's for what it holds now (Addendum E8)", () => {
+    // Live dev.58: "now" facts cited the superseded note they replaced.
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/each side carries the documentId of the note it reads from: cite then's for what the vault used to hold and now's for what it holds now — anything the vault holds now, in any part of the answer, cites a now/);
+  });
+
   it("gives a scoped call's growth to the whole scope, never to one of its areas (Addendum E4)", () => {
     // Live: "authorisation" scoped two areas, 260 → 414 together; the answer
     // gave all of it to Authorization and Identity, whose own notes went 18 → 134.

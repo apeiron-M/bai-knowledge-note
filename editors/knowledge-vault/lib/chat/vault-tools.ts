@@ -512,7 +512,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "what_changed",
       description:
-        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, with why and, for a replaced note, replacedBy) and its retired claims; totals come as one line. With query or topic — and, with what room the story leaves, with areas or source — it also returns thenVsNow: the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). Three ways to scope a subject: areas — the hub's areas you name by their exact titles (or ids) from a listAreas call, for a broad subject such as \"the stack\" or \"the business side\"; source — the notes derived from the sources whose title, provenance URL or folder path contains the text, for \"what changed in <a repo / document set / book / meeting series>\"; query — a specific term (\"the reactor\", \"attachments\"), which means the main areas about it, the areas holding most of its top note hits (or the one map below them holding most, for a narrow term), and only when its hits are spread thin, the top search hits and their linked notes. A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query. `scope` says what was covered, and names any area title it did not find. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
+        "What changed in the vault, or in one part of it, over a period — THE tool for 'what changed in X since Y', 'what is new in <subject> this month', 'how did X work then and how does it work now'; never search for these. It returns the story: growth (live notes then → now, new areas and maps) and, per main area of the hub, its new claims, its changed claims (then → now, each side with the documentId of the note it reads from — cite then's for what the vault used to hold and now's for what it holds now — and why) and its retired claims; totals come as one line. With query or topic — and, with what room the story leaves, with areas or source — it also returns thenVsNow: the scope's claims as they stood at since (then) versus now (now), and those that held throughout (unchanged). Three ways to scope a subject: areas — the hub's areas you name by their exact titles (or ids) from a listAreas call, for a broad subject such as \"the stack\" or \"the business side\"; source — the notes derived from the sources whose title, provenance URL or folder path contains the text, for \"what changed in <a repo / document set / book / meeting series>\"; query — a specific term (\"the reactor\", \"attachments\"), which means the main areas about it, the areas holding most of its top note hits (or the one map below them holding most, for a narrow term), and only when its hits are spread thin, the top search hits and their linked notes. A query that names the vault or its hub (the main map) is answered for the whole vault, as a call without query. `scope` says what was covered, and names any area title it did not find. Per-document events come only with detail: true (ten a page; follow nextCursor). Dates are UTC: a date alone for since starts that day, for until covers it.",
       parameters: {
         type: "object",
         properties: {
@@ -1893,12 +1893,13 @@ function chatShift(sh: Shift): Record<string, unknown> {
   // where the gists differ, not two clipped copies (Addendum D7).
   const diff = sh.gistDiff;
   const sameClaim = diff !== undefined || sh.then.claim === sh.now.claim;
+  // Each side names the note it reads from — a replaced note then, its
+  // replacement now — so the sentence about what the vault holds now cites
+  // the note that holds it, not the one it replaced (Addendum E8).
   return {
-    documentId: sh.documentId,
-    then: claimText(diff ? { claim: sh.then.claim, gist: diff.then } : sh.then, sameClaim, 170),
-    now: claimText(diff ? { claim: sh.now.claim, gist: diff.now } : sh.now, sameClaim, 170),
+    then: { documentId: sh.documentId, ...claimText(diff ? { claim: sh.then.claim, gist: diff.then } : sh.then, sameClaim, 170) },
+    now: { documentId: sh.replacedBy ?? sh.documentId, ...claimText(diff ? { claim: sh.now.claim, gist: diff.now } : sh.now, sameClaim, 170) },
     ...(sh.why ? { why: clip(sh.why, 140) } : {}),
-    ...(sh.replacedBy ? { replacedBy: sh.replacedBy } : {}),
     // A note created in the window: its then is as first recorded, on this date.
     ...(sh.thenAt ? { thenAt: sh.thenAt.slice(0, 10) } : {}),
   };
